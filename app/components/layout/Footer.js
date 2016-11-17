@@ -5,7 +5,7 @@ export default class Home extends Component {
   render() {
     return (
       <footer>
-        <p>&copy; 2016 Company, Inc.</p>
+        <p>Development Gateway 2016</p>
       </footer>
     );
   }
