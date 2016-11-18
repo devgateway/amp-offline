@@ -1,6 +1,6 @@
 // @flow
-import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
+import React, {Component, PropTypes} from 'react';
+import {Link} from 'react-router';
 
 var pjson = require('../../../package.json');
 
@@ -13,14 +13,18 @@ export default class Login extends Component {
 
   constructor() {
     super();
+
     this.state = {
-      email: null,
-      password: null
+      email: "",
+      password: ""
     };
+
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
   render() {
-    const { login } = this.props;
+    const {login} = this.props;
 
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top">
@@ -31,16 +35,29 @@ export default class Login extends Component {
           <div id="navbar" className="navbar-collapse collapse">
             <form className="navbar-form navbar-right">
               <div className="form-group">
-                <input type="text" placeholder="Email" className="form-control"/>
+                <input type="text" value={this.state.email} onChange={this.handleEmailChange} className="form-control"/>
               </div>
               <div className="form-group">
-                <input type="password" placeholder="Password" className="form-control"/>
+                <input type="password" value={this.state.password} onChange={this.handlePasswordChange}
+                       className="form-control"/>
               </div>
-              <button type="button" className="btn btn-success" onClick={() => {login(this.state)} }>Log in</button>
+              <button type="button" className="btn btn-success" onClick={() => {
+                login(this.state)
+              } }>Log in
+              </button>
+              <Link to="/">Back...</Link>
             </form>
           </div>
         </div>
       </nav>
     );
+  }
+
+  handlePasswordChange(e) {
+    this.setState({password: e.target.value});
+  }
+
+  handleEmailChange(e) {
+    this.setState({email: e.target.value});
   }
 }

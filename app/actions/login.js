@@ -2,10 +2,10 @@
 export const STATE_LOGIN = 'STATE_LOGIN';
 export const STATE_LOGOUT = 'STATE_LOGOUT';
 
-export function login() {
+export function login(data) {
   return {
     type: STATE_LOGIN,
-    actionData: {}
+    actionData: data
   };
 }
 
