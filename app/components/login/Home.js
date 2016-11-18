@@ -11,7 +11,8 @@ export default class Home extends Component {
   render() {
     return (
       <div>
-        <Login/>
+        {/*<Login/>*/}
+        <Link to={'/login'} className="btn btn-default">Login</Link>
         <LandingPageContent/>
         <hr/>
         <Footer/>
