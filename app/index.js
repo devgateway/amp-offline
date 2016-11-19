@@ -9,12 +9,12 @@ import './app.global.css';
 import App from './containers/App';
 import LoginPage from './containers/LoginPage';
 import WorkspacePage from './containers/WorkspacePage';
-import auth from './modules/security/Auth'
+import auth from './modules/security/Auth';
 
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
-auth.logout();
+auth.logout();//TODO: this will dissapear when we get the login working properly.
 
 function checkAuth(nextState, replaceState) {
   console.log('index/index.js - checkAuth');
