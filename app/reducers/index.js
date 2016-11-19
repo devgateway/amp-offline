@@ -5,7 +5,8 @@ import login from './login';
 
 const rootReducer = combineReducers({
     login,
-    routing
+    routing,
+
 });
 
 export default rootReducer;

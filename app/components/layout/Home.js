@@ -1,6 +1,5 @@
 // @flow
 import React, {Component} from 'react';
-import Login from '../login/Login';
 import LandingPageContent from './LandingPageContent';
 import Footer from './Footer';
 import {Link} from 'react-router';

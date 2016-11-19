@@ -9,16 +9,20 @@ import './app.global.css';
 import App from './containers/App';
 import LoginPage from './containers/LoginPage';
 import WorkspacePage from './containers/WorkspacePage';
+import auth from './modules/security/Auth'
 
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
+auth.logout();
+
 function checkAuth(nextState, replaceState) {
   console.log('index/index.js - checkAuth');
-  let {loggedIn} = store.getState();
 
-  if (!loggedIn) {
-    replaceState({nextPathname: nextState.location.pathname}, '/')
+  if (!auth.loggedIn()) {
+    replaceState({nextPathname: nextState.location.pathname}, '/');
+  } else {
+    replaceState(null, '/workspace');
   }
 }
 

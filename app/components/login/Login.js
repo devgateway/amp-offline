@@ -8,7 +8,9 @@ export default class Login extends Component {
 
   // This seems to be a way to validate this component receives some props.
   static propTypes = {
-    login: PropTypes.func.isRequired
+    // This React component receives the login function to be dispatched as a prop,
+    // so it doesnt have to know about the implementation.
+    loginAction: PropTypes.func.isRequired
   };
 
   constructor() {
@@ -24,8 +26,9 @@ export default class Login extends Component {
   }
 
   render() {
-    const {login} = this.props;
+    const {loginAction} = this.props;
 
+    //TODO: split the login inputs and the navbar elements into smaller components.
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top">
         <div className="container">
@@ -42,10 +45,10 @@ export default class Login extends Component {
                        className="form-control"/>
               </div>
               <button type="button" className="btn btn-success" onClick={() => {
-                login(this.state)
+                loginAction(this.state.email, this.state.password)
               } }>Log in
               </button>
-              <Link to="/">Back...</Link>
+              <Link to="/workspace">workspaces...</Link>
             </form>
           </div>
         </div>

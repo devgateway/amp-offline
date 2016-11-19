@@ -5,13 +5,12 @@ import Login from '../components/login/Login';
 import * as LoginActions from '../actions/login';
 
 function mapStateToProps(state) {
-  return {
-    loggedUser: state.loggedUser,
-    test1: 0
-  };
+  console.log('containers/loginPage.js - mapStateToProps');
+  return state;
 }
 
 function mapDispatchToProps(dispatch) {
+  console.log('containers/loginPage.js - mapDispatchToProps');
   return bindActionCreators(LoginActions, dispatch);
 }
 
