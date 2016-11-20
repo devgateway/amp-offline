@@ -1,3 +1,9 @@
+const request = require('request');
+
+const BASE_URL = "http://localhost:8080";
+const LOGIN_URL = "rest/security/user";
+const HARD_CODED_WORKSPACE = 4;
+
 const Auth = {
 
   login(email, password, callback) {
@@ -7,15 +13,28 @@ const Auth = {
       return;
     }
 
-    //TODO: implement this function doing a request to AMP EP.
-    setTimeout(function () {
-      if (email === 'testuser@amp.org' && password === 'password') {
-        localStorage.setItem('token', 'ImLoggedInToken');
-        callback(true);
-      } else {
+    const self = this;
+    const options = {
+      url: BASE_URL + "/" + LOGIN_URL,
+      json: true,
+      body: {
+        "username": email,
+        "password": password,
+        "workspaceId": HARD_CODED_WORKSPACE
+      },
+      headers: {'content-type': 'application/json', 'Accept': 'application/json'},
+      method: 'POST'
+    };
+    request(options, function (error, response, body) {
+      if (error) {
+        console.error(error);
         callback(false);
+      } else {
+        console.log(body);
+        callback(true);
+        localStorage.setItem('token', 'ImLoggedInToken');
       }
-    }, 2000);//simulating the lag from server.
+    });
   },
 
   loggedIn() {
