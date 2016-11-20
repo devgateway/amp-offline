@@ -1,4 +1,4 @@
-const request = require('request');
+import request from 'request';
 
 const BASE_URL = "http://localhost:8080";
 const LOGIN_URL = "rest/security/user";
