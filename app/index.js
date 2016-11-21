@@ -30,7 +30,7 @@ render(
   <Provider store={store}>
     <Router history={history} store={store}>
       <Route path="/" component={App}>
-        <IndexRoute component={LoginPage}/>
+        <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
         <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth}/>
       </Route>
     </Router>

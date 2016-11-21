@@ -6,11 +6,13 @@ import * as LoginActions from '../actions/login';
 
 function mapStateToProps(state) {
   console.log('containers/loginPage.js - mapStateToProps');
+  console.log(state);
   return state;
 }
 
 function mapDispatchToProps(dispatch) {
   console.log('containers/loginPage.js - mapDispatchToProps');
+  console.log(dispatch);
   return bindActionCreators(LoginActions, dispatch);
 }
 

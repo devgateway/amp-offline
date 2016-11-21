@@ -1,4 +1,5 @@
 import request from 'request';
+import _ from 'underscore';
 
 const BASE_URL = "http://localhost:8080";
 const LOGIN_URL = "rest/security/user";
@@ -30,10 +31,11 @@ const Auth = {
     request(options, function (error, response, body) {
       if (response.statusCode === 500 || body.error) {
         console.error(error);
-        callback(false);
+        callback(false, ('login incorrecto' || error.toString()));
       } else {
         console.log(body);
         localStorage.setItem('token', 'ImLoggedInToken');
+        //TODO: save the token, etcetc.
         callback(true);
       }
     });

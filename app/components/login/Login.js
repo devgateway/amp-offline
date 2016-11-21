@@ -18,7 +18,9 @@ export default class Login extends Component {
 
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      errorMessage: "",
+      isProcessingLogin: false
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -44,11 +46,14 @@ export default class Login extends Component {
                 <input type="password" value={this.state.password} onChange={this.handlePasswordChange}
                        className="form-control"/>
               </div>
-              <button type="button" className="btn btn-success" onClick={() => {
+              <button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')}
+                      onClick={() => {
                 loginAction(this.state.email, this.state.password)
               } }>Log in
               </button>
-              <Link to="/workspace">workspaces...</Link>
+              <div className={'alert alert-danger ' + (this.state.errorMessage === '' ? 'hidden' : '')}>
+                <strong>Error: </strong> {this.state.errorMessage}
+              </div>
             </form>
           </div>
         </div>

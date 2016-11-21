@@ -1,7 +1,7 @@
 // @flow
 import {STATE_LOGIN_OK, STATE_LOGIN_FAIL, STATE_LOGOUT, STATE_LOGIN_PROCESSING} from '../actions/login';
 
-export default function login(state: something = '', action: Object) {
+export default function login(state = {}, action: Object) {
   console.log('reducers/login.js');
   switch (action.type) {
     case STATE_LOGIN_OK:
