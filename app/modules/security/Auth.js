@@ -2,7 +2,7 @@ import request from 'request';
 
 const BASE_URL = "http://localhost:8080";
 const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 4;
+const HARD_CODED_WORKSPACE = 23;
 
 const Auth = {
 
@@ -26,7 +26,7 @@ const Auth = {
       method: 'POST'
     };
     request(options, function (error, response, body) {
-      if (error) {
+      if (response.statusCode === 500) {
         console.error(error);
         callback(false);
       } else {
