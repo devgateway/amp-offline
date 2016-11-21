@@ -36,7 +36,7 @@ export default class Login extends Component {
     this.state.isProcessingLogin = this.props.login.loginProcessing;
 
     return (
-      <div className={styles.centered_login_form}>
+      <div className={styles.centered_form}>
         <table>
           <tr>
             <td>User:</td>
