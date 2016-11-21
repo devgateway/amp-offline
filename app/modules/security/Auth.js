@@ -7,6 +7,8 @@ const HARD_CODED_WORKSPACE = 23;
 const Auth = {
 
   login(email, password, callback) {
+    this.logout(); //TODO: remove this line, just for testing redirection.
+
     //TODO: what if we use promises instead of a callback?
     if (this.loggedIn()) {
       callback(true);
@@ -26,13 +28,13 @@ const Auth = {
       method: 'POST'
     };
     request(options, function (error, response, body) {
-      if (response.statusCode === 500) {
+      if (response.statusCode === 500 || body.error) {
         console.error(error);
         callback(false);
       } else {
         console.log(body);
-        callback(true);
         localStorage.setItem('token', 'ImLoggedInToken');
+        callback(true);
       }
     });
   },
