@@ -1,5 +1,6 @@
 // @flow
-import React, { Component, PropTypes } from 'react';
+import React, {Component, PropTypes} from 'react';
+import Navbar from '../components/layout/Navbar'
 
 export default class App extends Component {
   static propTypes = {
@@ -9,7 +10,10 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        {this.props.children}
+        <Navbar/>
+        <div>
+          {this.props.children}
+        </div>
       </div>
     );
   }

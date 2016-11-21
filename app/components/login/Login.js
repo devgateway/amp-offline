@@ -1,8 +1,7 @@
 // @flow
 import React, {Component, PropTypes} from 'react';
 import {Link} from 'react-router';
-
-var pjson = require('../../../package.json');
+import styles from './Login.css'
 
 export default class Login extends Component {
 
@@ -36,34 +35,29 @@ export default class Login extends Component {
     this.state.errorMessage = this.props.login.errorMessage || '';
     this.state.isProcessingLogin = this.props.login.loginProcessing;
 
-    //TODO: split the login inputs and the navbar elements into smaller components.
     return (
-      <nav className="navbar navbar-inverse navbar-fixed-top">
-        <div className="container">
-          <div className="navbar-header">
-            <a className="navbar-brand" href="#">{pjson.productName} - {pjson.version}</a>
-          </div>
-          <div id="navbar" className="navbar-collapse collapse">
-            <form className="navbar-form navbar-right">
-              <div className="form-group">
-                <input type="text" value={this.state.email} onChange={this.handleEmailChange} className="form-control"/>
-              </div>
-              <div className="form-group">
-                <input type="password" value={this.state.password} onChange={this.handlePasswordChange}
-                       className="form-control"/>
-              </div>
-              <button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')}
-                      onClick={() => {
-                loginAction(this.state.email, this.state.password)
-              } }>Log in
-              </button>
-              <div className={'alert alert-danger ' + (this.state.errorMessage === '' ? 'hidden' : '')}>
-                <strong>Error: </strong> {this.state.errorMessage}
-              </div>
-            </form>
-          </div>
+      <div className={styles.centered_login_form}>
+        <table>
+          <tr>
+            <td>User:</td>
+            <td><input type="text" value={this.state.email} onChange={this.handleEmailChange} className="form-control"/>
+            </td>
+          </tr>
+          <tr>
+            <td>Password:</td>
+            <td><input type="password" value={this.state.password} onChange={this.handlePasswordChange}
+                       className="form-control"/></td>
+          </tr>
+        </table>
+        <button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')} onClick={() => {
+            loginAction(this.state.email, this.state.password)
+          }}>Log in
+        </button>
+        <hr/>
+        <div className={'alert alert-danger ' + (this.state.errorMessage === '' ? 'hidden' : '')}>
+          <strong>Error: </strong> {this.state.errorMessage}
         </div>
-      </nav>
+      </div>
     );
   }
 
