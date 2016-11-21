@@ -10,15 +10,12 @@ export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
 export function loginAction(email, password) {
   return (dispatch) => {
     console.log('actions/login.js - login()');
-
-    //TODO: aca ejecutar la llamada a Auth.login() y segun q devuelva es q devuelvo un type de logueado o un type de fallo.
-    //luego para que este completo tengo q soportar un type de ajax-en-curso porque es algo q puede llevar tiempo.
     auth.login(email, password, (success, err) => {
       if (success === true) {
         // Tell react-router to move to another page.
         urlUtils.forwardTo('/workspace'); //TODO: use a constants file for all urls.
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        dispatch(loginOk(email, password));
+        dispatch(loginOk(success));
       } else {
         dispatch(loginFailed(err));
       }
@@ -28,16 +25,16 @@ export function loginAction(email, password) {
   }
 }
 
-export function loginOk(email, password) {
-  console.log('Login OK');
-  return { //TODO: esto tien q ser dispatcheado no returneado sino no se toma como un cambio de estado de redux.
+export function loginOk(data) {
+  console.log('Login OK: ' + JSON.stringify(data));
+  return {
     type: STATE_LOGIN_OK,
-    actionData: {email: email, password: password}
+    actionData: data
   };
 }
 
 export function loginFailed(err) {
-  console.log('Login Fail');
+  console.log('Login Fail: ' + err);
   return {
     type: STATE_LOGIN_FAIL,
     actionData: {errorMessage: err}

@@ -16,6 +16,8 @@ export default class Login extends Component {
   constructor() {
     super();
 
+    console.log('app/components/login/Login.js - constructor()');
+
     this.state = {
       email: "",
       password: "",
@@ -28,7 +30,11 @@ export default class Login extends Component {
   }
 
   render() {
+    console.log('app/components/login/Login.js - render()');
+
     const {loginAction} = this.props;
+    this.state.errorMessage = this.props.login.errorMessage || '';
+    this.state.isProcessingLogin = this.props.login.loginProcessing;
 
     //TODO: split the login inputs and the navbar elements into smaller components.
     return (

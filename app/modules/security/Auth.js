@@ -30,13 +30,12 @@ const Auth = {
     };
     request(options, function (error, response, body) {
       if (response.statusCode === 500 || body.error) {
-        console.error(error);
-        callback(false, ('login incorrecto' || error.toString()));
+        callback(false, (error || JSON.stringify(body.error)));
       } else {
         console.log(body);
         localStorage.setItem('token', 'ImLoggedInToken');
         //TODO: save the token, etcetc.
-        callback(true);
+        callback(true, body);
       }
     });
   },

@@ -10,9 +10,10 @@ function mapStateToProps(state) {
   return state;
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, ownProps) {
   console.log('containers/loginPage.js - mapDispatchToProps');
   console.log(dispatch);
+  console.log(ownProps);
   return bindActionCreators(LoginActions, dispatch);
 }
 
