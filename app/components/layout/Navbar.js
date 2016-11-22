@@ -6,6 +6,10 @@ const pjson = require('../../../package.json');
 
 export default class Navbar extends Component {
 
+  static propTypes = {
+    user: PropTypes.object.isRequired
+  };
+
   constructor() {
     super();
   }
@@ -16,9 +20,19 @@ export default class Navbar extends Component {
         <div className="container">
           <div className="navbar-header">
             <a className="navbar-brand" href="#">{pjson.productName} - {pjson.version}</a>
+            <a className="navbar-brand"
+               href="#">{this.extractLoggedUser(' - ')}</a>
           </div>
         </div>
       </nav>
     );
+  }
+
+  extractLoggedUser(prepend) {
+    console.log('extractLoggedUser');
+    if (this.props.user instanceof Object && this.props.user.loggedUser instanceof Object) {
+      return prepend + this.props.user.loggedUser['user-name'];
+    }
+    return '';
   }
 }

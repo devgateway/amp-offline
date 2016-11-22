@@ -1,7 +1,12 @@
 // @flow
 import {STATE_SELECT_WORKSPACE, STATE_GET_REMOTE_WORKSPACES, STATE_WORKSPACE_PROCESSING} from '../actions/workspace';
 
-export default function login(state: something = '', action: Object) {
+const defaultState = {
+  workspaceProcessing: false,
+  workspaceList: []
+};
+
+export default function login(state: something = defaultState, action: Object) {
   console.log('reducers/workspace.js');
   switch (action.type) {
     case STATE_GET_REMOTE_WORKSPACES:
@@ -17,7 +22,7 @@ export default function login(state: something = '', action: Object) {
     case STATE_WORKSPACE_PROCESSING:
       return Object.assign({}, state, {
         workspaceProcessing: true,
-        workspaceList: undefined,
+        workspaceList: [],
         currentWorkspace: undefined
       });
     default:

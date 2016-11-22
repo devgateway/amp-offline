@@ -17,7 +17,7 @@ const history = syncHistoryWithStore(hashHistory, store);
 auth.logout();//TODO: this will dissapear when we get the login working properly.
 
 function checkAuth(nextState, replaceState) {
-  console.log('index/index.js - checkAuth');
+  console.log('checkAuth');
 
   if (!auth.loggedIn()) {
     replaceState({nextPathname: nextState.location.pathname}, '/');
@@ -31,7 +31,7 @@ render(
     <Router history={history} store={store}>
       <Route path="/" component={App}>
         <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
-        <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth}/>
+        <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
       </Route>
     </Router>
   </Provider>,

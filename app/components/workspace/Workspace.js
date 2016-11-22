@@ -5,6 +5,15 @@ import styles from './Workspace.css'
 
 export default class WorkspacePage extends Component {
 
+  static propTypes = {
+    workspaceList: PropTypes.object.isRequired
+  };
+
+  constructor() {
+    super();
+    console.log('constructor()');
+  }
+
   render() {
     return (
       <div className={styles.workspaces_container}>
