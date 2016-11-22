@@ -6,8 +6,8 @@
   "main": "./main.js",
   "author": {
     "name": "DG",
-    "email": "",
-    "url": ""
+    "email": "something@developmentgateway.org",
+    "url": "http://"
   },
   "dependencies": {
   }

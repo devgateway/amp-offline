@@ -69,8 +69,8 @@
   "homepage": "",
   "author": {
     "name": "DG",
-    "email": "",
-    "url": ""
+    "email": "something@developmentgateway.org",
+    "url": "http://"
   },
   "devDependencies": {
     "asar": "^0.12.3",
