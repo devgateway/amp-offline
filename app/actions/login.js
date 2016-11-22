@@ -10,14 +10,14 @@ export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
 export function loginAction(email, password) {
   return (dispatch) => {
     console.log('actions/login.js - login()');
-    auth.login(email, password, (success, err) => {
+    auth.login(email, password, (success, data) => {
       if (success === true) {
         // Tell react-router to move to another page.
         urlUtils.forwardTo('/workspace'); //TODO: use a constants file for all urls.
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        dispatch(loginOk(success));
+        dispatch(loginOk(data));
       } else {
-        dispatch(loginFailed(err));
+        dispatch(loginFailed(data));
       }
     });
 
