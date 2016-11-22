@@ -12,10 +12,10 @@ export function loginAction(email, password) {
     console.log('actions/login.js - login()');
     auth.login(email, password, (success, data) => {
       if (success === true) {
-        // Tell react-router to move to another page.
-        urlUtils.forwardTo('/workspace'); //TODO: use a constants file for all urls.
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk(data));
+        // Tell react-router to move to another page.
+        urlUtils.forwardTo('/workspace'); //TODO: use a constants file for all urls.
       } else {
         dispatch(loginFailed(data));
       }
