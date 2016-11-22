@@ -1,9 +1,14 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "electron-react-boilerplate",
+  "name": "amp-offline",
+  "productName": "amp-offline",
   "version": "1.0.0",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "main": "./main.js",
+  "author": {
+    "name": "DG",
+    "email": "",
+    "url": ""
+  },
   "dependencies": {
   }
 }

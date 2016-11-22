@@ -1,5 +1,5 @@
 {
-  "name": "electron-react-boilerplate",
+  "name": "amp-offline",
   "productName": "AMP Offline",
   "version": "0.0.2",
   "description": "",
@@ -66,7 +66,12 @@
   "bin": {
     "electron": "./node_modules/.bin/electron"
   },
-  "homepage": "https://github.com/chentsulin/electron-react-boilerplate#readme",
+  "homepage": "",
+  "author": {
+    "name": "DG",
+    "email": "",
+    "url": ""
+  },
   "devDependencies": {
     "asar": "^0.12.3",
     "babel-core": "^6.18.0",
