@@ -12,7 +12,7 @@ export default function login(state: something = defaultState, action: Object) {
     case STATE_GET_REMOTE_WORKSPACES:
       return Object.assign({}, state, {
         workspaceProcessing: false,
-        workspaceList: action.workspaceList
+        workspaceList: action.actionData
       });
     case STATE_SELECT_WORKSPACE:
       return Object.assign({}, state, {

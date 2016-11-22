@@ -5,13 +5,14 @@ import styles from './Workspace.css'
 
 export default class WorkspacePage extends Component {
 
-  static propTypes = {
-    workspaceList: PropTypes.object.isRequired
-  };
-
   constructor() {
     super();
     console.log('constructor()');
+
+    this.state = {
+      workspaceList: [],
+      isProcessing: false
+    }
   }
 
   render() {
@@ -20,7 +21,7 @@ export default class WorkspacePage extends Component {
         <h2>Workspaces</h2>
         <hr/>
         <ul>
-          {['asdfasdf', 'tergfgdf', 'djfsdjs fajsdjf afsdk', '232j 23 123j2 k31j2', 'asdfasd'].map(function (item) {
+          {this.state.workspaceList.map(function (item) {
             return <li>{item}</li>
           })}
         </ul>

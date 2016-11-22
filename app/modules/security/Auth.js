@@ -1,7 +1,7 @@
 import request from 'request';
 import _ from 'underscore';
+import {BASE_URL} from '../../utils/constants';
 
-const BASE_URL = "http://localhost:8080";
 const LOGIN_URL = "rest/security/user";
 const HARD_CODED_WORKSPACE = 23;
 
