@@ -9,7 +9,7 @@ export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
 
 export function loginAction(email, password) {
   return (dispatch) => {
-    console.log('actions/login.js - login()');
+    console.log('loginAction');
     auth.login(email, password, (success, data) => {
       if (success === true) {
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).

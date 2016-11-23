@@ -1,7 +1,8 @@
 // @flow
 import React, {Component, PropTypes} from 'react';
 import {Link} from 'react-router';
-import styles from './Login.css'
+import styles from './Login.css';
+import ErrorMessage from '../common/ErrorMessage';
 
 export default class Login extends Component {
 
@@ -54,9 +55,7 @@ export default class Login extends Component {
           }}>Log in
         </button>
         <hr/>
-        <div className={'alert alert-danger ' + (this.state.errorMessage === '' ? 'hidden' : '')}>
-          <strong>Error: </strong> {this.state.errorMessage}
-        </div>
+        <ErrorMessage message={this.state.errorMessage}/>
       </div>
     );
   }

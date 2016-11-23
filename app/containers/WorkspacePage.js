@@ -6,14 +6,11 @@ import * as WorkspaceActions from '../actions/workspace';
 
 function mapStateToProps(state) {
   console.log('mapStateToProps');
-  // Add here everything the React component needs so it remains unaware of the implementation.
-  const newState = Object.assign({}, state, {
-
-  });
-  return newState;
+  return state;
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
+  // For better undestanding of this section: https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options
   console.log('mapDispatchToProps');
   return bindActionCreators(WorkspaceActions, dispatch);
 }
