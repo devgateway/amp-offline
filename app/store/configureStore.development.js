@@ -5,8 +5,8 @@ import {routerMiddleware, push} from 'react-router-redux';
 import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
 
-import * as loginActions from '../actions/login';
-import * as workspaceActions from '../actions/workspace';
+import * as loginActions from '../actions/LoginAction';
+import * as workspaceActions from '../actions/WorkspaceAction';
 
 const actionCreators = {
   ...loginActions,

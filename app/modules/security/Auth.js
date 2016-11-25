@@ -1,9 +1,9 @@
 import request from 'request';
 import _ from 'underscore';
-import {BASE_URL} from '../../utils/constants';
+import {BASE_URL} from '../../utils/Constants';
 
 const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 23;
+const HARD_CODED_WORKSPACE = 4;
 
 const Auth = {
 

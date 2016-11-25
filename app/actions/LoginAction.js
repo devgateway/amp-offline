@@ -1,6 +1,6 @@
 // @flow
 import auth from '../modules/security/Auth'
-import urlUtils from '../utils/urlUtils'
+import urlUtils from '../utils/URLUtils'
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -42,14 +42,14 @@ export function loginFailed(err) {
 }
 
 export function sendingRequest() {
-  console.log('Login processing...');
+  console.log('sendingRequest');
   return {
     type: STATE_LOGIN_PROCESSING
   }
 }
 
 export function logoutAction() {
-  console.log('actions/login.js - logout()');
+  console.log('logoutAction');
   return {
     type: STATE_LOGOUT
   };

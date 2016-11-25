@@ -1,5 +1,5 @@
 import request from 'request';
-import {BASE_URL} from '../../utils/constants';
+import {BASE_URL} from '../../utils/Constants';
 
 const GET_WORKSPACES_URL = "rest/security/workspaces";
 

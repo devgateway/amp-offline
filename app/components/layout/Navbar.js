@@ -12,9 +12,11 @@ export default class Navbar extends Component {
 
   constructor() {
     super();
+    console.log('constructor');
   }
 
   render() {
+    console.log('render');
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top">
         <div className="container">

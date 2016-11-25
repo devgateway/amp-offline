@@ -9,7 +9,7 @@ import ErrorMessage from '../common/ErrorMessage';
 export default class WorkspacePage extends Component {
 
   constructor() {
-    console.log('constructor()');
+    console.log('constructor');
     super();
 
     this.state = {

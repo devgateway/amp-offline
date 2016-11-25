@@ -21,7 +21,7 @@ export default class App extends Component {
   };
 
   render() {
-    console.log('render()');
+    console.log('render');
     return (
       <div>
         <Navbar user={this.context.store.getState().login}/>

@@ -1,5 +1,5 @@
 // @flow
-import urlUtils from '../utils/urlUtils'
+import urlUtils from '../utils/URLUtils'
 import WorkspaceManager from '../modules/workspace/WorkspaceManager'
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';

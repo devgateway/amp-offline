@@ -4,15 +4,15 @@ import {
   STATE_GET_REMOTE_WORKSPACES_OK,
   STATE_GET_REMOTE_WORKSPACES_FAIL,
   STATE_WORKSPACE_PROCESSING
-} from '../actions/workspace';
+} from '../actions/WorkspaceAction';
 
 const defaultState = {
   workspaceProcessing: false,
   workspaceList: []
 };
 
-export default function workspaceActionReducer(state: something = defaultState, action: Object) {
-  console.log('workspaceActionReducer');
+export default function workspaceReducer(state: something = defaultState, action: Object) {
+  console.log('WorkspaceReducer');
   switch (action.type) {
     case STATE_GET_REMOTE_WORKSPACES_OK:
       return Object.assign({}, state, {

@@ -6,7 +6,7 @@ export default class WorkspaceList extends Component {
 
   constructor() {
     super();
-    console.log('constructor()');
+    console.log('constructor');
   }
 
   render() {

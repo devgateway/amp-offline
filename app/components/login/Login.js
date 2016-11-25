@@ -16,12 +16,12 @@ export default class Login extends Component {
   constructor() {
     super();
 
-    console.log('app/components/login/Login.js - constructor()');
+    console.log('constructor');
 
     this.state = {
-      email: "",
-      password: "",
-      errorMessage: "",
+      email: '',
+      password: '',
+      errorMessage: '',
       isProcessingLogin: false
     };
 
@@ -30,7 +30,7 @@ export default class Login extends Component {
   }
 
   render() {
-    console.log('app/components/login/Login.js - render()');
+    console.log('render');
 
     const {loginAction} = this.props;
     this.state.errorMessage = this.props.login.errorMessage || '';

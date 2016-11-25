@@ -1,5 +1,5 @@
 // @flow
-import {STATE_LOGIN_OK, STATE_LOGIN_FAIL, STATE_LOGOUT, STATE_LOGIN_PROCESSING} from '../actions/login';
+import {STATE_LOGIN_OK, STATE_LOGIN_FAIL, STATE_LOGOUT, STATE_LOGIN_PROCESSING} from '../actions/LoginAction';
 
 const defaultState = {
   loggedUser: undefined,
@@ -9,7 +9,7 @@ const defaultState = {
 }
 
 export default function login(state = defaultState, action: Object) {
-  console.log('reducers/login.js');
+  console.log('LoginReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {
