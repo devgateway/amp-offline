@@ -1,23 +1,24 @@
+import Datastore from 'nedb';
+
+const fileNamePrefix = '/amp_offline/';
+const fileNameExtension = '.db';
+
+/**
+ * TODO: this class should be part of an API to connect to different databases (like NeDB).
+ * @type {{connect: ((name, callback, options)), disconnect: ((name, callback, options)), createCollection: ((name, callback, options)), destroyCollection: ((name, callback, options)), insert: ((object, callback, options)), remove: ((object, callback, options)), find: ((object, callback, options))}}
+ */
 const DatabaseManager = {
 
-  connect(name, callback, options) {
-    console.log('connect');
-    callback(true);
-  },
-
-  disconnect(name, callback, options) {
-    console.log('connect');
-    callback(true);
-  },
-
-  createCollection(name, callback, options) {
-    console.log('createCollection');
-    callback(true);
-  },
-
-  destroyCollection(name, callback, options) {
-    console.log('destroyCollection');
-    callback(true);
+  createCollectionAndConnect(name, callback, options) {
+    console.log('createCollectionAndConnect');
+    const db = new Datastore({filename: fileNamePrefix + name + fileNameExtension});
+    db.loadDatabase(function (err) {
+      if (err !== undefined) {
+        callback(false);
+      } else {
+        callback(true, db);
+      }
+    });
   },
 
   insert(object, callback, options) {
