@@ -1,9 +1,12 @@
 import Datastore from 'nedb';
-import DatabaseCollection from 'DatabaseCollection';
+import DatabaseCollection from './DatabaseCollection';
 import _ from 'underscore';
+import Crypto from 'crypto-js';
 
 const fileNamePrefix = './database/';
 const fileNameExtension = '.db';
+const hardcodedKey = 'key'; //TODO: Find a better way to store the key.
+const commonDatastoreOptions = {autoload: false, corruptAlertThreshold: 0};
 
 /**
  * Is a Singleton to centralize control over the database access.
@@ -19,6 +22,7 @@ class DatabaseManager {
   //VERY IMPORTANT 2: Loading the same datastore more than once didnt throw an error but drastically increased the MEM use.
   //VERY IMPORTANT 3: Using a filename like '/path/to/database' will create a directory in your disk root.
   //VERY IMPORTANT 4: A 60MB datastore file can use an average of 350MB with spikes of 800MB when opening (tested with 1M small documents).
+  //VERY IMPORTANT 5: We might need to have a queue of pending operations on each collection to avoid conflicts.
 
   constructor() {
     console.log('constructor');
@@ -29,16 +33,32 @@ class DatabaseManager {
     return DatabaseManager.instance;
   };
 
-  createCollectionAndConnect(name, callback, options) {
+  getCollection(name, options, callback) {
     console.log('createCollectionAndConnect');
+    let newOptions = Object.assign({}, commonDatastoreOptions, {filename: fileNamePrefix + name + fileNameExtension});
+    if (options instanceof Object) {
+      if (options.useEncryption === true) {
+        newOptions.afterSerialization = this.encryptData;
+        newOptions.beforeDeserialization = this.decryptData;
+      }
+    }
+
     //TODO: check if datastore is alredy opened/being opened.
-    const db = new Datastore({filename: fileNamePrefix + name + fileNameExtension});
+    const db = new Datastore(newOptions);
     db.loadDatabase(function (err) {
-      if (err !== undefined) {
+      if (err !== null) {
         callback(false);
       } else {
         callback(true, db);
       }
+    });
+  };
+
+  saveOrUpdate(collection, data, callback) {
+    console.log('saveOrUpdate');
+    //TODO: implement the find-and-insert-if-not-exists.
+    collection.insert(data, function (err, newDoc) {
+      callback(err, newDoc);
     });
   };
 
@@ -61,6 +81,16 @@ class DatabaseManager {
     //TODO: look for this collection in 'collections' and return it.
   }
 
+  encryptData(dataString) {
+    console.log('encryptData');
+    return Crypto.AES.encrypt(dataString, hardcodedKey);
+  }
+
+  decryptData(dataString) {
+    console.log('decryptData');
+    let bytes = Crypto.AES.decrypt(dataString, hardcodedKey);
+    return bytes.toString(Crypto.enc.Utf8);
+  }
 }
 
 const instance = new DatabaseManager();

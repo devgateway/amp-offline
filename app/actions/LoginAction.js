@@ -1,6 +1,8 @@
 // @flow
 import auth from '../modules/security/Auth'
 import urlUtils from '../utils/URLUtils'
+import DatabaseManager from '../modules/database/DatabaseManager';
+import {COLLECTION_USERS} from '../utils/Constants';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -12,10 +14,16 @@ export function loginAction(email, password) {
     console.log('loginAction');
     auth.login(email, password, (success, data) => {
       if (success === true) {
-        // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        dispatch(loginOk(data));
-        // Tell react-router to move to another page.
-        urlUtils.forwardTo('/workspace'); //TODO: use a constants file for all urls.
+        // Save user info for later usage, encrypt if possible.
+        //TODO: find how to implement DatabaseManager functions to do: DatabaseManager.getCollection(Constants.COLLECTION_USERS).saveOrUpdate(params), having in mind DatabaseManager is a Singleton and we can mess up the calls to the same collection!!!
+        DatabaseManager.getCollection(COLLECTION_USERS, {useEncryption: true}, function (success, collection) {
+          DatabaseManager.saveOrUpdate(collection, data, function () {
+            // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
+            dispatch(loginOk(data));
+            // Tell react-router to move to another page.
+            urlUtils.forwardTo('/workspace'); //TODO: use a constants file for all urls.
+          })
+        });
       } else {
         dispatch(loginFailed(data));
       }
