@@ -1,6 +1,4 @@
 import Datastore from 'nedb';
-import DatabaseCollection from './DatabaseCollection';
-import _ from 'underscore';
 import Crypto from 'crypto-js';
 import {DB_FILE_PREFIX, DB_FILE_EXTENSION, AKEY, DB_COMMON_DATASTORE_OPTIONS} from '../../utils/Constants';
 

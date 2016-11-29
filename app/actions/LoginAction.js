@@ -1,8 +1,8 @@
 // @flow
 import Auth from '../modules/security/Auth'
 import urlUtils from '../utils/URLUtils'
-import DatabaseManager from '../modules/database/DatabaseManager';
-import {COLLECTION_USERS, WORKSPACE_URL} from '../utils/Constants';
+import {WORKSPACE_URL} from '../utils/Constants';
+import LoginManager from '../modules/security/LoginManager';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -15,19 +15,15 @@ export function loginAction(email, password) {
     Auth.login(email, password, (success, data) => {
       if (success === true) {
         // Save user info for later usage, encrypt if possible.
-        //TODO: Move this section to a module and keep the action clean (only dispatch).
-        DatabaseManager.getCollection(COLLECTION_USERS, {useEncryption: true})
-          .then(DatabaseManager.saveOrUpdate.bind(null, data))
-          .then(function () {
-            // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-            dispatch(loginOk(data));
-            // Tell react-router to move to another page.
-            urlUtils.forwardTo(WORKSPACE_URL);
-          })
-          .catch(function (err) {
-            console.error(err);
-            dispatch(loginFailed(err));
-          });
+        LoginManager.registerLogin(data).then(function () {
+          // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
+          dispatch(loginOk(data));
+          // Tell react-router to move to another page.
+          urlUtils.forwardTo(WORKSPACE_URL);
+        }).catch(function (err) {
+          console.error(err);
+          dispatch(loginFailed(err));
+        });
       } else {
         dispatch(loginFailed(data));
       }
