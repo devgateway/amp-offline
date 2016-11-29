@@ -2,11 +2,7 @@ import Datastore from 'nedb';
 import DatabaseCollection from './DatabaseCollection';
 import _ from 'underscore';
 import Crypto from 'crypto-js';
-
-const fileNamePrefix = './database/';
-const fileNameExtension = '.db';
-const hardcodedKey = 'key'; //TODO: Find a better way to store the key.
-const commonDatastoreOptions = {autoload: false, corruptAlertThreshold: 0};
+import {DB_FILE_PREFIX, DB_FILE_EXTENSION, AKEY, DB_COMMON_DATASTORE_OPTIONS} from '../../utils/Constants';
 
 /**
  * Is a Singleton to centralize control over the database access.
@@ -35,7 +31,7 @@ class DatabaseManager {
 
   getCollection(name, options, callback) {
     console.log('createCollectionAndConnect');
-    let newOptions = Object.assign({}, commonDatastoreOptions, {filename: fileNamePrefix + name + fileNameExtension});
+    let newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {filename: DB_FILE_PREFIX + name + DB_FILE_EXTENSION});
     if (options instanceof Object) {
       if (options.useEncryption === true) {
         newOptions.afterSerialization = this.encryptData;
@@ -83,12 +79,12 @@ class DatabaseManager {
 
   encryptData(dataString) {
     console.log('encryptData');
-    return Crypto.AES.encrypt(dataString, hardcodedKey);
+    return Crypto.AES.encrypt(dataString, AKEY);
   }
 
   decryptData(dataString) {
     console.log('decryptData');
-    let bytes = Crypto.AES.decrypt(dataString, hardcodedKey);
+    let bytes = Crypto.AES.decrypt(dataString, AKEY);
     return bytes.toString(Crypto.enc.Utf8);
   }
 }
