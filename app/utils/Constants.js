@@ -1,4 +1,5 @@
 export const BASE_URL = 'http://localhost:8080';
+export const WORKSPACE_URL = '/workspace';
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_WORKPACES = 'workspaces';

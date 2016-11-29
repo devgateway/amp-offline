@@ -2,7 +2,7 @@
 import auth from '../modules/security/Auth'
 import urlUtils from '../utils/URLUtils'
 import DatabaseManager from '../modules/database/DatabaseManager';
-import {COLLECTION_USERS} from '../utils/Constants';
+import {COLLECTION_USERS, WORKSPACE_URL} from '../utils/Constants';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -21,7 +21,7 @@ export function loginAction(email, password) {
             // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
             dispatch(loginOk(data));
             // Tell react-router to move to another page.
-            urlUtils.forwardTo('/workspace'); //TODO: use a constants file for all urls.
+            urlUtils.forwardTo(WORKSPACE_URL);
           })
         });
       } else {
