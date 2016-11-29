@@ -12,25 +12,23 @@ export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
 export function loginAction(email, password) {
   console.log('loginAction');
   return (dispatch) => {
-    Auth.login(email, password, (success, data) => {
-      if (success === true) {
-        // Save user info for later usage, encrypt if possible.
-        LoginManager.registerLogin(data).then(function () {
-          // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-          dispatch(loginOk(data));
-          // Tell react-router to move to another page.
-          urlUtils.forwardTo(WORKSPACE_URL);
-        }).catch(function (err) {
-          console.error(err);
-          dispatch(loginFailed(err));
-        });
-      } else {
-        dispatch(loginFailed(data));
-      }
+    Auth.login(email, password).then(function (data) {
+      // Save user info for later usage, encrypt if possible.
+      LoginManager.registerLogin(data).then(function () {
+        // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
+        dispatch(loginOk(data));
+        // Tell react-router to move to another page.
+        urlUtils.forwardTo(WORKSPACE_URL);
+      }).catch(function (err) {
+        console.error(err);
+        dispatch(loginFailed(err));
+      });
+    }).catch(function (err) {
+      console.error(err);
+      dispatch(loginFailed(err));
     });
-
     dispatch(sendingRequest());
-  }
+  };
 }
 
 function loginOk(data) {

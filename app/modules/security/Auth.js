@@ -3,41 +3,42 @@ import _ from 'underscore';
 import {BASE_URL} from '../../utils/Constants';
 
 const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 4;
+const HARD_CODED_WORKSPACE = 23;
 
 const Auth = {
 
   //TODO: change callback to promise.
-  login(email, password, callback) {
-    this.logout(); //TODO: remove this line, just for testing redirection.
-
-    //TODO: what if we use promises instead of a callback?
-    if (this.loggedIn()) {
-      callback(true);
-      return;
-    }
-
+  login(email, password) {
+    console.log('login');
     const self = this;
-    const options = {
-      url: BASE_URL + "/" + LOGIN_URL,
-      json: true,
-      body: {
-        "username": email,
-        "password": password,
-        "workspaceId": HARD_CODED_WORKSPACE
-      },
-      headers: {'content-type': 'application/json', 'Accept': 'application/json'},
-      method: 'POST'
-    };
-    request(options, function (error, response, body) {
-      if (response.statusCode === 500 || body.error) {
-        callback(false, (error || JSON.stringify(body.error)));
-      } else {
-        console.log(body);
-        localStorage.setItem('token', 'ImLoggedInToken');
-        //TODO: save the token, etcetc.
-        callback(true, body);
+
+    return new Promise(function (resolve, reject) {
+      self.logout(); //TODO: remove this line, just for testing redirection.
+      if (self.loggedIn()) {
+        resolve();
       }
+
+      const options = {
+        url: BASE_URL + "/" + LOGIN_URL,
+        json: true,
+        body: {
+          "username": email,
+          "password": password,
+          "workspaceId": HARD_CODED_WORKSPACE
+        },
+        headers: {'content-type': 'application/json', 'Accept': 'application/json'},
+        method: 'POST'
+      };
+      request(options, function (error, response, body) {
+        if (response.statusCode === 500 || body.error) {
+          reject((error || JSON.stringify(body.error)));
+        } else {
+          console.log(body);
+          localStorage.setItem('token', 'ImLoggedInToken');
+          //TODO: save the token, etcetc.
+          resolve(body);
+        }
+      });
     });
   },
 
