@@ -29,34 +29,43 @@ class DatabaseManager {
     return DatabaseManager.instance;
   };
 
-  getCollection(name, options, callback) {
+  getCollection(name, options) {
     console.log('createCollectionAndConnect');
-    let newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {filename: DB_FILE_PREFIX + name + DB_FILE_EXTENSION});
-    if (options instanceof Object) {
-      if (options.useEncryption === true) {
-        newOptions.afterSerialization = this.encryptData;
-        newOptions.beforeDeserialization = this.decryptData;
+    let self = this;
+    return new Promise(function (resolve, reject) {
+      let newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {filename: DB_FILE_PREFIX + name + DB_FILE_EXTENSION});
+      if (options instanceof Object) {
+        if (options.useEncryption === true) {
+          newOptions.afterSerialization = self.encryptData;
+          newOptions.beforeDeserialization = self.decryptData;
+        }
       }
-    }
 
-    //TODO: check if datastore is alredy opened/being opened.
-    const db = new Datastore(newOptions);
-    db.loadDatabase(function (err) {
-      if (err !== null) {
-        callback(false);
-      } else {
-        callback(true, db);
-      }
+      //TODO: check if datastore is alredy opened/being opened.
+      const db = new Datastore(newOptions);
+      db.loadDatabase(function (err) {
+        if (err !== null) {
+          reject(err);
+        } else {
+          resolve(db);
+        }
+      });
     });
-  };
+  }
 
-  saveOrUpdate(collection, data, callback) {
+  saveOrUpdate(data, collection) {
+    //TODO: implement the save-or-update functionality.
     console.log('saveOrUpdate');
-    //TODO: implement the find-and-insert-if-not-exists.
-    collection.insert(data, function (err, newDoc) {
-      callback(err, newDoc);
+    return new Promise(function (resolve, reject) {
+      collection.insert(data, function (err, newDoc) {
+        if (err !== null) {
+          reject(err);
+        } else {
+          resolve(newDoc);
+        }
+      });
     });
-  };
+  }
 
   insert(object, callback, options) {
     console.log('insert');

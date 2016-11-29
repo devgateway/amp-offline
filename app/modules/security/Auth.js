@@ -7,6 +7,7 @@ const HARD_CODED_WORKSPACE = 4;
 
 const Auth = {
 
+  //TODO: change callback to promise.
   login(email, password, callback) {
     this.logout(); //TODO: remove this line, just for testing redirection.
 
