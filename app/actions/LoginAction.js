@@ -1,5 +1,5 @@
 // @flow
-import urlUtils from '../utils/URLUtils'
+import UrlUtils from '../utils/URLUtils'
 import {WORKSPACE_URL} from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 
@@ -15,7 +15,7 @@ export function loginAction(email, password) {
       // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
       dispatch(loginOk(data));
       // Tell react-router to move to another page.
-      urlUtils.forwardTo(WORKSPACE_URL);
+      UrlUtils.forwardTo(WORKSPACE_URL);
     }).catch(function (err) {
       dispatch(loginFailed(err));
     });
