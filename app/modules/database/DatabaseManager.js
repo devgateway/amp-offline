@@ -1,6 +1,8 @@
 import Datastore from 'nedb';
 import Crypto from 'crypto-js';
 import {DB_FILE_PREFIX, DB_FILE_EXTENSION, AKEY, DB_COMMON_DATASTORE_OPTIONS} from '../../utils/Constants';
+import _ from 'underscore';
+import DatabaseCollection from './DatabaseCollection';
 
 /**
  * Is a Singleton to centralize control over the database access.
@@ -10,7 +12,7 @@ import {DB_FILE_PREFIX, DB_FILE_EXTENSION, AKEY, DB_COMMON_DATASTORE_OPTIONS} fr
 class DatabaseManager {
 
   // This variable will keep a list of open datastores to avoid opening twice.
-  collections = [];
+  collections = new Array();
 
   //VERY IMPORTANT: NeDB can execute 1 operation at the same time and the rest is queued, so we always work async.
   //VERY IMPORTANT 2: Loading the same datastore more than once didnt throw an error but drastically increased the MEM use.
@@ -38,16 +40,30 @@ class DatabaseManager {
           newOptions.beforeDeserialization = self.decryptData;
         }
       }
+      self.openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
+    });
+  }
 
-      //TODO: check if datastore is alredy opened/being opened.
-      const db = new Datastore(newOptions);
-      db.loadDatabase(function (err) {
-        if (err !== null) {
-          reject(err);
-        } else {
-          resolve(db);
-        }
+  openOrGetDatastore(name, options) {
+    let self = this;
+    return new Promise(function (resolve, reject) {
+      let auxDBCollection = _.find(self.collections, function (item) {
+        return item.name === name;
       });
+      if (auxDBCollection !== undefined) {
+        resolve(auxDBCollection.nedbDatastore);
+      } else {
+        const db = new Datastore(options);
+        self.collections.push(new DatabaseCollection(name, db));
+        db.loadDatabase(function (err) {
+          if (err !== null) {
+            self.collections = _.without(self.collections, _.findWhere(self.collections, {name: name}));
+            reject(err);
+          } else {
+            resolve(db);
+          }
+        });
+      }
     });
   }
 
