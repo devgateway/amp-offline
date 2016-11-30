@@ -28,7 +28,7 @@ class DatabaseManager {
   };
 
   getCollection(name, options) {
-    console.log('createCollectionAndConnect');
+    console.log('getCollection');
     let self = this;
     return new Promise(function (resolve, reject) {
       let newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {filename: DB_FILE_PREFIX + name + DB_FILE_EXTENSION});
@@ -52,14 +52,36 @@ class DatabaseManager {
   }
 
   saveOrUpdate(data, collection) {
-    //TODO: implement the save-or-update functionality.
     console.log('saveOrUpdate');
     return new Promise(function (resolve, reject) {
-      collection.insert(data, function (err, newDoc) {
+      // Look for an object by its id.
+      let exampleObject = {id: data.id};
+      collection.find(exampleObject, function (err, docs) {
         if (err !== null) {
-          reject(err);
+          reject(err.toString());
+        }
+        if (docs.length === 1) {
+          // Update.
+          console.log('Update');
+          collection.update(exampleObject, data, {}, function (err) {
+            if (err === null) {
+              resolve(data);
+            } else {
+              reject(err);
+            }
+          });
+        } else if (docs.length === 0) {
+          // Insert.
+          console.log('Insert');
+          collection.insert(data, function (err, newDoc) {
+            if (err !== null) {
+              reject(err);
+            } else {
+              resolve(newDoc);
+            }
+          });
         } else {
-          resolve(newDoc);
+          reject("Something is really wrong with this record: " + exampleObject.id);
         }
       });
     });

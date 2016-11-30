@@ -25,12 +25,24 @@ const LoginManager = {
 
   registerLogin(userData) {
     console.log('registerLogin');
+    var self = this;
     return new Promise(function (resolve, reject) {
+      //TODO: this is just to generate an id because now we dont have it in the EP.
+      userData.id = self.emailToId(userData['user-name']);
       DatabaseManager.getCollection(COLLECTION_USERS, {useEncryption: true})
         .then(DatabaseManager.saveOrUpdate.bind(null, userData))
         .then(resolve)
         .catch(reject);
     });
+  },
+
+  emailToId(email) {
+    let hash = 5381;
+    let i = email.length;
+    while (i) {
+      hash = (hash * 33) ^ email.charCodeAt(--i);
+    }
+    return hash >>> 0;
   }
 
 };
