@@ -54,7 +54,7 @@ module.exports = {
       clear: true
     },
     {
-      file: 'app/components/Home.js',
+      file: 'app/components/layout/Home.jsx',
       pattern: /(h2|Link to)/
     }
   ],
