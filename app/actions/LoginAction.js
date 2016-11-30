@@ -1,5 +1,4 @@
 // @flow
-import Auth from '../modules/security/Auth'
 import urlUtils from '../utils/URLUtils'
 import {WORKSPACE_URL} from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
@@ -12,19 +11,12 @@ export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
 export function loginAction(email, password) {
   console.log('loginAction');
   return (dispatch) => {
-    Auth.login(email, password).then(function (data) {
-      // Save user info for later usage, encrypt if possible.
-      LoginManager.registerLogin(data).then(function () {
-        // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        dispatch(loginOk(data));
-        // Tell react-router to move to another page.
-        urlUtils.forwardTo(WORKSPACE_URL);
-      }).catch(function (err) {
-        console.error(err);
-        dispatch(loginFailed(err));
-      });
+    LoginManager.processLogin(email, password).then(function (data) {
+      // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
+      dispatch(loginOk(data));
+      // Tell react-router to move to another page.
+      urlUtils.forwardTo(WORKSPACE_URL);
     }).catch(function (err) {
-      console.error(err);
       dispatch(loginFailed(err));
     });
     dispatch(sendingRequest());

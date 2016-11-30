@@ -3,7 +3,7 @@ import _ from 'underscore';
 import {BASE_URL} from '../../utils/Constants';
 
 const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 23;
+const HARD_CODED_WORKSPACE = 4;
 
 const Auth = {
 
@@ -30,8 +30,8 @@ const Auth = {
         method: 'POST'
       };
       request(options, function (error, response, body) {
-        if (response.statusCode === 500 || body.error) {
-          reject((error || JSON.stringify(body.error)));
+        if (error != null || response.statusCode === 500 || body.error) {
+          reject(((error !== null ? error.toString() : null) || JSON.stringify(body.error)));
         } else {
           console.log(body);
           localStorage.setItem('token', 'ImLoggedInToken');
