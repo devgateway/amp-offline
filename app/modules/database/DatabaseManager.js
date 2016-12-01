@@ -1,6 +1,12 @@
 import Datastore from 'nedb';
 import Crypto from 'crypto-js';
-import {DB_FILE_PREFIX, DB_FILE_EXTENSION, AKEY, DB_COMMON_DATASTORE_OPTIONS} from '../../utils/Constants';
+import {
+  DB_FILE_PREFIX,
+  DB_FILE_EXTENSION,
+  AKEY,
+  DB_COMMON_DATASTORE_OPTIONS,
+  DB_AUTOCOMPACT_INTERVAL_SECONDS
+} from '../../utils/Constants';
 import _ from 'underscore';
 import DatabaseCollection from './DatabaseCollection';
 
@@ -54,6 +60,7 @@ class DatabaseManager {
         resolve(auxDBCollection.nedbDatastore);
       } else {
         const db = new Datastore(options);
+        db.persistence.setAutocompactionInterval(DB_AUTOCOMPACT_INTERVAL_SECONDS);
         self.collections.push(new DatabaseCollection(name, db));
         db.loadDatabase(function (err) {
           if (err !== null) {
