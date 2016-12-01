@@ -72,55 +72,76 @@ class DatabaseManager {
     });
   }
 
-  saveOrUpdate(data, collection) {
+  /**
+   * Receives an ID and a collection name (ie: 5|'users') and will insert a new record or update it if it exists by looking for id property.
+   * @param id is an integer representing the 'id' field of the object.
+   * @param data is the object to save.
+   * @param collectionName is the name of the collection/table where we save the object (dont confuse with the actual collection/datastore).
+   * @params (optional) is for sending settings to the function.
+   * @returns {Promise}
+   */
+  saveOrUpdate(id, data, collectionName, options) {
     console.log('saveOrUpdate');
+    var self = this;
     return new Promise(function (resolve, reject) {
-      // Look for an object by its id.
-      let exampleObject = {id: data.id};
-      collection.find(exampleObject, function (err, docs) {
-        if (err !== null) {
-          reject(err.toString());
-        }
-        if (docs.length === 1) {
-          // Update.
-          console.log('Update');
-          collection.update(exampleObject, data, {}, function (err) {
-            if (err === null) {
-              resolve(data);
-            } else {
-              reject(err);
-            }
-          });
-        } else if (docs.length === 0) {
-          // Insert.
-          console.log('Insert');
-          collection.insert(data, function (err, newDoc) {
-            if (err !== null) {
-              reject(err);
-            } else {
-              resolve(newDoc);
-            }
-          });
-        } else {
-          reject("Something is really wrong with this record: " + exampleObject.id);
-        }
-      });
+      self.getCollection(collectionName, options).then(function (collection) { //TODO: sacar el useencription de aca.
+        // Look for an object by its id.
+        let exampleObject = {id: id};
+        collection.find(exampleObject, function (err, docs) {
+          if (err !== null) {
+            reject(err.toString());
+          }
+          if (docs.length === 1) {
+            console.log('Update');
+            collection.update(exampleObject, data, {}, function (err) {
+              if (err === null) {
+                resolve(data);
+              } else {
+                reject(err);
+              }
+            });
+          } else if (docs.length === 0) {
+            console.log('Insert');
+            collection.insert(data, function (err, newDoc) {
+              if (err !== null) {
+                reject(err);
+              } else {
+                resolve(newDoc);
+              }
+            });
+          } else {
+            reject("Something is really wrong with this record: " + exampleObject.id + " " + collectionName);
+          }
+        });
+      }).catch(reject);
     });
   }
 
-  insert(object, callback, options) {
-    console.log('insert');
-    callback(true);
-  };
-
-  remove(object, callback, options) {
-    console.log('remove');
-    callback(true);
-  };
-
-  find(object, callback, options) {
-    console.log('find');
-    callback(true);
+  removeById(id, collectionName, options) {
+    console.log('removeById');
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      self.getCollection(collectionName, null).then(function (collection) {
+        // Look for an object by its id.
+        let exampleObject = {id: id};
+        collection.findOne(exampleObject, function (err, doc) {
+          if (err !== null) {
+            reject(err.toString());
+          }
+          if (doc !== null) {
+            collection.remove(exampleObject, data, {}, function (err) {
+              if (err === null) {
+                resolve();
+              } else {
+                reject(err);
+              }
+            });
+          } else if (docs.length === 0) {
+            resolve();
+          }
+        });
+      }).catch(reject);
+    });
   };
 
   checkIfCollectionIsOpen(name) {

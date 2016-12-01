@@ -29,8 +29,7 @@ const LoginManager = {
     return new Promise(function (resolve, reject) {
       //TODO: this is just to generate an id because now we dont have it in the EP.
       userData.id = self.emailToId(userData['user-name']);
-      DatabaseManager.getCollection(COLLECTION_USERS, {useEncryption: true})
-        .then(DatabaseManager.saveOrUpdate.bind(null, userData))
+      DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {useEncryption: true})
         .then(resolve)
         .catch(reject);
     });
