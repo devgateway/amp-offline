@@ -5,7 +5,7 @@ import {
   DB_FILE_EXTENSION,
   AKEY,
   DB_COMMON_DATASTORE_OPTIONS,
-  DB_AUTOCOMPACT_INTERVAL_SECONDS
+  DB_AUTOCOMPACT_INTERVAL_MILISECONDS
 } from '../../utils/Constants';
 import _ from 'underscore';
 import DatabaseCollection from './DatabaseCollection';
@@ -53,14 +53,12 @@ class DatabaseManager {
   openOrGetDatastore(name, options) {
     let self = this;
     return new Promise(function (resolve, reject) {
-      let auxDBCollection = _.find(self.collections, function (item) {
-        return item.name === name;
-      });
+      let auxDBCollection = self.checkIfCollectionIsOpen(name);
       if (auxDBCollection !== undefined) {
         resolve(auxDBCollection.nedbDatastore);
       } else {
         const db = new Datastore(options);
-        db.persistence.setAutocompactionInterval(DB_AUTOCOMPACT_INTERVAL_SECONDS);
+        db.persistence.setAutocompactionInterval(DB_AUTOCOMPACT_INTERVAL_MILISECONDS);
         self.collections.push(new DatabaseCollection(name, db));
         db.loadDatabase(function (err) {
           if (err !== null) {
@@ -125,8 +123,10 @@ class DatabaseManager {
     callback(true);
   };
 
-  checkIfCollectionIsOpened(name) {
-    //TODO: look for this collection in 'collections' and return it.
+  checkIfCollectionIsOpen(name) {
+    return _.find(self.collections, function (item) {
+      return item.name === name;
+    });
   }
 
   encryptData(dataString) {
