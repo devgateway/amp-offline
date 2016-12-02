@@ -15,25 +15,13 @@ import DatabaseCollection from './DatabaseCollection';
  * TODO: this class should be part of an API to connect to different databases (like NeDB).
  * @type {{connect: ((name, callback, options)), disconnect: ((name, callback, options)), createCollection: ((name, callback, options)), destroyCollection: ((name, callback, options)), insert: ((object, callback, options)), remove: ((object, callback, options)), find: ((object, callback, options))}}
  */
-class DatabaseManager {
-
-  // This variable will keep a list of open datastores to avoid opening twice.
-  collections = new Array();
+const DatabaseManager = {
 
   //VERY IMPORTANT: NeDB can execute 1 operation at the same time and the rest is queued, so we always work async.
   //VERY IMPORTANT 2: Loading the same datastore more than once didnt throw an error but drastically increased the MEM use.
   //VERY IMPORTANT 3: Using a filename like '/path/to/database' will create a directory in your disk root.
   //VERY IMPORTANT 4: A 60MB datastore file can use an average of 350MB with spikes of 800MB when opening (tested with 1M small documents).
   //VERY IMPORTANT 5: We might need to have a queue of pending operations on each collection to avoid conflicts.
-
-  constructor() {
-    console.log('constructor');
-    if (!DatabaseManager.instance) {
-      console.log('Reuse instance');
-      DatabaseManager.instance = this;
-    }
-    return DatabaseManager.instance;
-  };
 
   getCollection(name, options) {
     console.log('getCollection');
@@ -48,29 +36,29 @@ class DatabaseManager {
       }
       self.openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
     });
-  }
+  },
 
   openOrGetDatastore(name, options) {
     let self = this;
+    let auxDBCollection = DatabaseCollection.getInstance().checkIfCollectionIsOpen(name);
     return new Promise(function (resolve, reject) {
-      let auxDBCollection = self.checkIfCollectionIsOpen(name);
       if (auxDBCollection !== undefined) {
         resolve(auxDBCollection.nedbDatastore);
       } else {
         const db = new Datastore(options);
         db.persistence.setAutocompactionInterval(DB_AUTOCOMPACT_INTERVAL_MILISECONDS);
-        self.collections.push(new DatabaseCollection(name, db));
+        DatabaseCollection.getInstance().insertCollection(name, db);
         db.loadDatabase(function (err) {
           if (err !== null) {
-            self.collections = _.without(self.collections, _.findWhere(self.collections, {name: name}));
-            reject(err);
+            DatabaseCollection.getInstance().removeCollection(name);
+            reject(JSON.stringify(err));
           } else {
             resolve(db);
           }
         });
       }
     });
-  }
+  },
 
   /**
    * Receives an ID and a collection name (ie: 5|'users') and will insert a new record or update it if it exists by looking for id property.
@@ -115,7 +103,7 @@ class DatabaseManager {
         });
       }).catch(reject);
     });
-  }
+  },
 
   removeById(id, collectionName, options) {
     console.log('removeById');
@@ -142,27 +130,18 @@ class DatabaseManager {
         });
       }).catch(reject);
     });
-  };
-
-  checkIfCollectionIsOpen(name) {
-    return _.find(self.collections, function (item) {
-      return item.name === name;
-    });
-  }
+  },
 
   encryptData(dataString) {
-    console.log('encryptData');
+    //console.log('encryptData');
     return Crypto.AES.encrypt(dataString, AKEY);
-  }
+  },
 
   decryptData(dataString) {
-    console.log('decryptData');
+    //console.log('decryptData');
     let bytes = Crypto.AES.decrypt(dataString, AKEY);
     return bytes.toString(Crypto.enc.Utf8);
   }
-}
+};
 
-const instance = new DatabaseManager();
-Object.freeze(instance);
-
-export default instance;
+module.exports = DatabaseManager;
