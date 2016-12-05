@@ -53,7 +53,13 @@ const DatabaseManager = {
             DatabaseCollection.getInstance().removeCollection(name);
             reject(JSON.stringify(err));
           } else {
-            resolve(db);
+            self.createIndex(db, {}, function (err) {
+              if (err === null) {
+                resolve(db);
+              } else {
+                reject(JSON.stringify(err));
+              }
+            });
           }
         });
       }
@@ -141,6 +147,15 @@ const DatabaseManager = {
     //console.log('decryptData');
     let bytes = Crypto.AES.decrypt(dataString, AKEY);
     return bytes.toString(Crypto.enc.Utf8);
+  },
+
+  createIndex(datastore, options, callback) {
+    console.log('createIndex');
+    let newOptions = Object.assign({}, options, {
+      fieldName: 'id',
+      unique: true
+    });
+    datastore.ensureIndex(newOptions, callback);
   }
 };
 
