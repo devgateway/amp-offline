@@ -41,16 +41,9 @@ const DatabaseCollection = (function () {
        * @param resolve
        * @param reject
        */
-      addPromiseAndProcess: function (task, resolve, reject) {
+      addPromiseAndProcess: function (task) {
         console.log('addPromiseAndProcess');
-        if (resolve === undefined && reject !== undefined) {
-          // Add to queue and try to start it now, "task" promise will be resolved/rejected.
-          queue.addNow(task);
-        } else {
-          // Add to queue, start it and resolve/reject a different promise.
-          queue.add(task);
-          queue.start().then(resolve).catch(reject);
-        }
+        queue.addNow(task);
       }
     };
   }

@@ -115,9 +115,11 @@ const DatabaseManager = {
    */
   saveOrUpdate(id, data, collectionName, options) {
     console.log('saveOrUpdate');
+    // This promise will be resolved/rejected inside '_saveOrUpdate', but initiated by the queue manager in DatabaseCollection.js.
     let promise = new Promise(function (resolve, reject) {
+      // We define a variable with the function instead of calling it because a Promise will start inmediately.
       let saveOrUpdateFunc = DatabaseManager._saveOrUpdate.bind(null, id).bind(null, data).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
-      DatabaseManager.queuePromise(saveOrUpdateFunc, resolve, reject);
+      DatabaseManager.queuePromise(saveOrUpdateFunc);
     });
     return promise;
   },
@@ -182,9 +184,9 @@ const DatabaseManager = {
    * @param resolve When present is the resolve part of a another Promise we want to resolve.
    * @param reject Idem for catching an error.
    */
-  queuePromise(task, resolve, reject) {
+  queuePromise(task) {
     console.log('queuePromise');
-    DatabaseCollection.getInstance().addPromiseAndProcess(task, resolve, reject);
+    DatabaseCollection.getInstance().addPromiseAndProcess(task);
   }
 };
 
