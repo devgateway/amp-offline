@@ -7,8 +7,8 @@ import {
   DB_COMMON_DATASTORE_OPTIONS,
   DB_AUTOCOMPACT_INTERVAL_MILISECONDS
 } from '../../utils/Constants';
-import _ from 'underscore';
 import DatabaseCollection from './DatabaseCollection';
+import Promise from 'bluebird';
 
 /**
  * Is a Singleton to centralize control over the database access.
@@ -23,8 +23,8 @@ const DatabaseManager = {
   //VERY IMPORTANT 4: A 60MB datastore file can use an average of 350MB with spikes of 800MB when opening (tested with 1M small documents).
   //VERY IMPORTANT 5: We might need to have a queue of pending operations on each collection to avoid conflicts.
 
-  getCollection(name, options) {
-    console.log('getCollection');
+  _getCollection(name, options) {
+    console.log('_getCollection');
     let self = this;
     return new Promise(function (resolve, reject) {
       let newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {filename: DB_FILE_PREFIX + name + DB_FILE_EXTENSION});
@@ -34,12 +34,18 @@ const DatabaseManager = {
           newOptions.beforeDeserialization = self.decryptData;
         }
       }
-      self.openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
+      DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
     });
   },
 
-  openOrGetDatastore(name, options) {
-    let self = this;
+  getCollection(name, options) {
+    console.log('getCollection');
+    let getCollectionFunc = this._getCollection.bind(null, name).bind(null, options);
+    this.queuePromise(getCollectionFunc);
+  },
+
+  _openOrGetDatastore(name, options) {
+    console.log('_openOrGetDatastore');
     let auxDBCollection = DatabaseCollection.getInstance().checkIfCollectionIsOpen(name);
     return new Promise(function (resolve, reject) {
       if (auxDBCollection !== undefined) {
@@ -53,7 +59,7 @@ const DatabaseManager = {
             DatabaseCollection.getInstance().removeCollection(name);
             reject(JSON.stringify(err));
           } else {
-            self.createIndex(db, {}, function (err) {
+            DatabaseManager.createIndex(db, {}, function (err) {
               if (err === null) {
                 resolve(db);
               } else {
@@ -68,74 +74,86 @@ const DatabaseManager = {
 
   /**
    * Receives an ID and a collection name (ie: 5|'users') and will insert a new record or update it if it exists by looking for id property.
-   * @param id is an integer representing the 'id' field of the object.
-   * @param data is the object to save.
-   * @param collectionName is the name of the collection/table where we save the object (dont confuse with the actual collection/datastore).
-   * @params (optional) is for sending settings to the function.
-   * @returns {Promise}
+   * Dont call this function from outside this class and/or when you need to be sync with other database operations.
+   */
+  _saveOrUpdate(id, data, collectionName, options, resolve, reject) {
+    console.log('_saveOrUpdate');
+    DatabaseManager._getCollection(collectionName, options).then(function (collection) {
+      // Look for an object by its id.
+      let exampleObject = {id: id};
+      collection.find(exampleObject, function (err, docs) {
+        if (err !== null) {
+          reject(err.toString());
+        }
+        if (docs.length === 1) {
+          console.log('Update');
+          collection.update(exampleObject, data, {}, function (err) {
+            if (err === null) {
+              resolve(data);
+            } else {
+              reject(err);
+            }
+          });
+        } else if (docs.length === 0) {
+          console.log('Insert');
+          collection.insert(data, function (err, newDoc) {
+            if (err !== null) {
+              reject(err);
+            } else {
+              resolve(newDoc);
+            }
+          });
+        } else {
+          reject("Something is really wrong with this record: " + exampleObject.id + " " + collectionName);
+        }
+      });
+    }).catch(reject);
+  },
+
+  /**
+   * Wrapper for calling _saveOrUpdate when we need that operation to be sync with other database related functions.
    */
   saveOrUpdate(id, data, collectionName, options) {
     console.log('saveOrUpdate');
-    var self = this;
-    return new Promise(function (resolve, reject) {
-      self.getCollection(collectionName, options).then(function (collection) { //TODO: sacar el useencription de aca.
-        // Look for an object by its id.
-        let exampleObject = {id: id};
-        collection.find(exampleObject, function (err, docs) {
-          if (err !== null) {
-            reject(err.toString());
-          }
-          if (docs.length === 1) {
-            console.log('Update');
-            collection.update(exampleObject, data, {}, function (err) {
-              if (err === null) {
-                resolve(data);
-              } else {
-                reject(err);
-              }
-            });
-          } else if (docs.length === 0) {
-            console.log('Insert');
-            collection.insert(data, function (err, newDoc) {
-              if (err !== null) {
-                reject(err);
-              } else {
-                resolve(newDoc);
-              }
-            });
-          } else {
-            reject("Something is really wrong with this record: " + exampleObject.id + " " + collectionName);
-          }
-        });
-      }).catch(reject);
+    let promise = new Promise(function (resolve, reject) {
+      let saveOrUpdateFunc = DatabaseManager._saveOrUpdate.bind(null, id).bind(null, data).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
+      DatabaseManager.queuePromise(saveOrUpdateFunc, resolve, reject);
     });
+    return promise;
+  },
+
+  _removeById(id, collectionName, options, resolve, reject) {
+    console.log('_removeById');
+    var self = this;
+    DatabaseManager._getCollection(collectionName, null).then(function (collection) {
+      // Look for an object by its id.
+      let exampleObject = {id: id};
+      collection.findOne(exampleObject, function (err, doc) {
+        if (err !== null) {
+          reject(err.toString());
+        }
+        if (doc !== null) {
+          collection.remove(exampleObject, data, {}, function (err) {
+            if (err === null) {
+              resolve();
+            } else {
+              reject(err);
+            }
+          });
+        } else if (docs.length === 0) {
+          resolve();
+        }
+      });
+    }).catch(reject);
   },
 
   removeById(id, collectionName, options) {
     console.log('removeById');
-    var self = this;
-    return new Promise(function (resolve, reject) {
-      self.getCollection(collectionName, null).then(function (collection) {
-        // Look for an object by its id.
-        let exampleObject = {id: id};
-        collection.findOne(exampleObject, function (err, doc) {
-          if (err !== null) {
-            reject(err.toString());
-          }
-          if (doc !== null) {
-            collection.remove(exampleObject, data, {}, function (err) {
-              if (err === null) {
-                resolve();
-              } else {
-                reject(err);
-              }
-            });
-          } else if (docs.length === 0) {
-            resolve();
-          }
-        });
-      }).catch(reject);
+    let promise = new Promise(function (resolve, reject) {
+      let removeByIdFunc = this._removeById.bind(null, id).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
+      this.queuePromise(removeByIdFunc, resolve, reject);
     });
+    return promise;
   },
 
   encryptData(dataString) {
@@ -156,6 +174,17 @@ const DatabaseManager = {
       unique: true
     });
     datastore.ensureIndex(newOptions, callback);
+  },
+
+  /**
+   * Queue a Promise function for execution when there are no other database related operations running and then call resolve and reject (if provided).
+   * @param task
+   * @param resolve When present is the resolve part of a another Promise we want to resolve.
+   * @param reject Idem for catching an error.
+   */
+  queuePromise(task, resolve, reject) {
+    console.log('queuePromise');
+    DatabaseCollection.getInstance().addPromiseAndProcess(task, resolve, reject);
   }
 };
 

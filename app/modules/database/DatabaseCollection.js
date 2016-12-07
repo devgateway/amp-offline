@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import BluebirdQueue from 'bluebird-queue';
 
 // https://addyosmani.com/resources/essentialjsdesignpatterns/book/#singletonpatternjavascript
 const DatabaseCollection = (function () {
@@ -9,6 +10,7 @@ const DatabaseCollection = (function () {
   function init() {
 
     let collections = new Array();
+    let queue = new BluebirdQueue({concurrency: 1});
 
     return {
       // Public methods and variables
@@ -31,6 +33,24 @@ const DatabaseCollection = (function () {
         console.log('removeCollection');
         collections = _.without(collections, _.findWhere(collections, {name: name}));
         console.log(collections);
+      },
+
+      /**
+       * Execute one database operation at the time.
+       * @param task
+       * @param resolve
+       * @param reject
+       */
+      addPromiseAndProcess: function (task, resolve, reject) {
+        console.log('addPromiseAndProcess');
+        if (resolve === undefined && reject !== undefined) {
+          // Add to queue and try to start it now, "task" promise will be resolved/rejected.
+          queue.addNow(task);
+        } else {
+          // Add to queue, start it and resolve/reject a different promise.
+          queue.add(task);
+          queue.start().then(resolve).catch(reject);
+        }
       }
     };
   }
