@@ -11,7 +11,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   console.log('mapDispatchToProps');
-  return bindActionCreators(LoginActions, dispatch);
+  return bindActionCreators(LoginActions, dispatch, ownProps);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

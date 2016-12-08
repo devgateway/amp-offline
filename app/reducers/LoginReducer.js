@@ -6,7 +6,7 @@ const defaultState = {
   loggedIn: false,
   loginProcessing: false,
   errorMessage: ''
-}
+};
 
 export default function login(state = defaultState, action: Object) {
   console.log('LoginReducer');

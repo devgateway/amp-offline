@@ -10,15 +10,17 @@ export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
 
 export function loginAction(email, password) {
   console.log('loginAction');
-  return (dispatch) => {
-    LoginManager.processLogin(email, password).then(function (data) {
-      // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-      dispatch(loginOk(data));
-      // Tell react-router to move to another page.
-      UrlUtils.forwardTo(WORKSPACE_URL);
-    }).catch(function (err) {
-      dispatch(loginFailed(err));
-    });
+  return (dispatch, ownProps) => {
+    if (ownProps().login.loginProcessing === false) {
+      LoginManager.processLogin(email, password).then(function (data) {
+        // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
+        dispatch(loginOk(data));
+        // Tell react-router to move to another page.
+        UrlUtils.forwardTo(WORKSPACE_URL);
+      }).catch(function (err) {
+        dispatch(loginFailed(err));
+      });
+    }
     dispatch(sendingRequest());
   };
 }
