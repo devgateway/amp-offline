@@ -42,20 +42,20 @@ export default class Login extends Component {
       <div className={styles.centered_form}>
         <table>
           <tr>
-            <td>User:</td>
+            <td><Span text="login.user"/></td>
             <td><input type="text" value={this.state.email} onChange={this.handleEmailChange} className="form-control"/>
             </td>
           </tr>
           <tr>
-            <td>Password:</td>
+            <td><Span text="login.password"/></td>
             <td><input type="password" value={this.state.password} onChange={this.handlePasswordChange}
                        className="form-control"/></td>
           </tr>
         </table>
-        <button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')} onClick={() => {
+        <Button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')} onClickHandler={() => {
             loginAction(this.state.email, this.state.password)
-          }}>Log in
-        </button>
+          }} text="login.login">
+        </Button>
         <hr/>
         <ErrorMessage message={this.state.errorMessage}/>
       </div>
