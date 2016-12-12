@@ -3,6 +3,8 @@ import React, {Component, PropTypes} from 'react';
 import {Link} from 'react-router';
 import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
+import Span from '../i18n/Span';
+import Button from '../i18n/Button';
 
 export default class Login extends Component {
 

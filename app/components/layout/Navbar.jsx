@@ -1,6 +1,8 @@
 // @flow
 import React, {Component, PropTypes} from 'react';
 import {Link} from 'react-router';
+import Switcher from '../../components/i18n/Switcher';
+import style from './Home.css';
 
 const pjson = require('../../../package.json');
 
@@ -20,10 +22,11 @@ export default class Navbar extends Component {
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top">
         <div className="container">
-          <div className="navbar-header">
+          <div className={style.main_menu}>
             <a className="navbar-brand" href="#">{pjson.productName} - {pjson.version}</a>
             <a className="navbar-brand"
                href="#">{this.extractLoggedUser(' - ')}</a>
+            <Switcher/>
           </div>
         </div>
       </nav>

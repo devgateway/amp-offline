@@ -5,6 +5,7 @@ import styles from './Workspace.css';
 import Loading from '../common/Loading';
 import WorkspaceList from './WorkspaceList';
 import ErrorMessage from '../common/ErrorMessage';
+import Span from '../i18n/Span';
 
 export default class WorkspacePage extends Component {
 
@@ -35,7 +36,7 @@ export default class WorkspacePage extends Component {
 
     return (
       <div className={styles.workspaces_container}>
-        <h2>Workspaces</h2>
+        <h2><Span text="workspace.title"/></h2>
         <hr/>
         {this.selectContentElementToDraw()}
       </div>

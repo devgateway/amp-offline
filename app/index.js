@@ -10,6 +10,8 @@ import App from './containers/App';
 import LoginPage from './containers/LoginPage';
 import WorkspacePage from './containers/WorkspacePage';
 import auth from './modules/security/Auth';
+import i18next from 'i18next';
+import XHR from 'i18next-xhr-backend';
 
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
@@ -26,14 +28,24 @@ function checkAuth(nextState, replaceState) {
   }
 }
 
-render(
-  <Provider store={store}>
-    <Router history={history} store={store}>
-      <Route path="/" component={App}>
-        <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
-        <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
-      </Route>
-    </Router>
-  </Provider>,
-  document.getElementById('root')
-);
+//TODO: Make a Settings.js class for all settings.
+const settingsFile = require('./conf/settings.json');
+// Initialize translations module.
+const i18nOptions = settingsFile.I18N.OPTIONS.development;
+i18next.use(XHR).init(i18nOptions, (err, t) => {
+  if (err) {
+    console.error(err);
+  }
+
+  render(
+    <Provider store={store}>
+      <Router history={history} store={store}>
+        <Route path="/" component={App}>
+          <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
+          <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
+        </Route>
+      </Router>
+    </Provider>,
+    document.getElementById('root')
+  );
+});
