@@ -28,12 +28,8 @@ const DatabaseManager = {
     let self = this;
     return new Promise(function (resolve, reject) {
       let newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {filename: DB_FILE_PREFIX + name + DB_FILE_EXTENSION});
-      if (options instanceof Object) {
-        if (options.useEncryption === true) {
-          newOptions.afterSerialization = self.encryptData;
-          newOptions.beforeDeserialization = self.decryptData;
-        }
-      }
+      newOptions.afterSerialization = self.encryptData;
+      newOptions.beforeDeserialization = self.decryptData;
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
     });
   },
