@@ -7,7 +7,6 @@ const HARD_CODED_WORKSPACE = 4;
 
 const Auth = {
 
-  //TODO: change callback to promise.
   login(email, password) {
     console.log('login');
     const self = this;
@@ -29,6 +28,7 @@ const Auth = {
         headers: {'content-type': 'application/json', 'Accept': 'application/json'},
         method: 'POST'
       };
+      //TODO: we need an util class for handling all ajax requests.
       request(options, function (error, response, body) {
         if (error != null || response.statusCode === 500 || body.error) {
           reject(((error !== null ? error.toString() : null) || JSON.stringify(body.error)));

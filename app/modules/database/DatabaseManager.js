@@ -154,6 +154,22 @@ const DatabaseManager = {
     return promise;
   },
 
+  findOne(example, collectionName) {
+    console.log('_findOne');
+    return new Promise(function (resolve, reject) {
+      DatabaseManager._getCollection(collectionName, null).then(function (collection) {
+        collection.findOne(example, function (err, doc) {
+          if (err !== null) {
+            reject(err.toString());
+          }
+          if (doc !== null) {
+            resolve(doc);
+          }
+        });
+      }).catch(reject);
+    });
+  },
+
   encryptData(dataString) {
     //console.log('encryptData');
     return Crypto.AES.encrypt(dataString, AKEY);

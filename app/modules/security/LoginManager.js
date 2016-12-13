@@ -1,6 +1,5 @@
-import DatabaseManager from '../database/DatabaseManager';
-import {COLLECTION_USERS} from '../../utils/Constants';
 import Auth from '../security/Auth';
+import UserHelper from '../helpers/UserHelper';
 
 const LoginManager = {
 
@@ -25,25 +24,8 @@ const LoginManager = {
 
   registerLogin(userData) {
     console.log('registerLogin');
-    var self = this;
-    return new Promise(function (resolve, reject) {
-      //TODO: this is just to generate an id because now we dont have it in the EP.
-      userData.id = self.emailToId(userData['user-name']);
-      DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {})
-        .then(resolve)
-        .catch(reject);
-    });
-  },
-
-  emailToId(email) {
-    let hash = 5381;
-    let i = email.length;
-    while (i) {
-      hash = (hash * 33) ^ email.charCodeAt(--i);
-    }
-    return hash >>> 0;
+    return UserHelper.saveOrUpdateUser(userData);
   }
-
 };
 
 module.exports = LoginManager;
