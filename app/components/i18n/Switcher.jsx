@@ -3,6 +3,7 @@ import i18next from 'i18next';
 import {connect} from 'react-redux';
 import {setLanguage} from '../../actions/TranslationAction';
 import styles from './i18n.css';
+import {LANGUAGE_ENGLISH, LANGUAGE_SPANISH} from '../../utils/Constants';
 
 class Switcher extends React.Component {
 
@@ -20,8 +21,8 @@ class Switcher extends React.Component {
   render() {
     return (
       <div className="navbar-brand">
-        <img className={styles.usa_icon} onClick={this.changeLanguage.bind(this,'en')}/>
-        <img className={styles.spa_icon} onClick={this.changeLanguage.bind(this,'es')}/>
+        <img className={styles.usa_icon} onClick={this.changeLanguage.bind(this, LANGUAGE_ENGLISH)}/>
+        <img className={styles.spa_icon} onClick={this.changeLanguage.bind(this, LANGUAGE_SPANISH)}/>
       </div>
     );
   }
