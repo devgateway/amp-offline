@@ -7,7 +7,7 @@ const defaultState = {
   lang: TEST_LANG_EN
 };
 
-describe('TranslationReducer', () => {
+describe('@@ TranslationReducer @@', () => {
   it('func translationReducer - Should return default state with empty params.', () => {
     expect(translationReducer(undefined, {})).to.deep.equal(defaultState);
   });

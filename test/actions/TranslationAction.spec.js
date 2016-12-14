@@ -5,7 +5,7 @@ import * as actions from '../../app/actions/TranslationAction';
 import * as constants from '../Constants';
 
 
-describe('TranslationAction', () => {
+describe('@@ TranslationAction @@', () => {
   it('func language - Should set language to english', () => {
     expect(actions.language(constants.TEST_LANG_EN)).to.deep.equal({
       type: actions.STATE_CHANGE_LANGUAGE,
