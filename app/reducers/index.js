@@ -4,12 +4,14 @@ import {routerReducer as routing} from 'react-router-redux';
 import login from './LoginReducer';
 import workspace from './WorkspaceReducer';
 import translation from './TranslationReducer';
+import syncUp from './SyncUpReducer';
 
 const rootReducer = combineReducers({
   login,
   workspace,
   routing,
-  translation
+  translation,
+  syncUp,
 });
 
 export default rootReducer;

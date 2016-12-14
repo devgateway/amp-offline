@@ -21,6 +21,7 @@ export default class Navbar extends Component {
     console.log('render');
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top">
+        <Link to="syncUp" >Sync upd</Link>
         <div className="container">
           <div className={style.main_menu}>
             <a className="navbar-brand" href="#">{pjson.productName} - {pjson.version}</a>

@@ -9,6 +9,7 @@ import './app.global.css';
 import App from './containers/App';
 import LoginPage from './containers/LoginPage';
 import WorkspacePage from './containers/WorkspacePage';
+import SyncUpPage from './containers/SyncUpPage';
 import auth from './modules/security/Auth';
 import i18next from 'i18next';
 import XHR from 'i18next-xhr-backend';
@@ -43,6 +44,7 @@ i18next.use(XHR).init(i18nOptions, (err, t) => {
         <Route path="/" component={App}>
           <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
           <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
+          <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth}/>
         </Route>
       </Router>
     </Provider>,

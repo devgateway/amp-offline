@@ -21,8 +21,8 @@ export default class Login extends Component {
     console.log('constructor');
 
     this.state = {
-      email: '',
-      password: '',
+      email: 'testuser@amp.org',
+      password: '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',
       errorMessage: '',
       isProcessingLogin: false
     };
@@ -34,7 +34,7 @@ export default class Login extends Component {
   render() {
     console.log('render');
 
-    const {loginAction} = this.props;
+    const { loginAction } = this.props;
     this.state.errorMessage = this.props.login.errorMessage || '';
     this.state.isProcessingLogin = this.props.login.loginProcessing;
 

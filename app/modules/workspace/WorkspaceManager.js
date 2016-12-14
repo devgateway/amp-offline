@@ -1,29 +1,23 @@
 import request from 'request';
-import {BASE_URL} from '../../utils/Constants';
+import {BASE_URL, COLLECTION_WORKPACES} from '../../utils/Constants';
 
-const GET_WORKSPACES_URL = "rest/security/workspaces";
+import DatabaseManager from '../database/DatabaseManager';
+export const GET_WORKSPACES_URL = "rest/security/workspaces";
 
 const WorkspaceManager = {
-
-  getWorkspacesFromRemote(token, callback) {
-    console.log('getWorkspacesFromRemote');
-    const self = this;
-    const options = {
-      url: BASE_URL + "/" + GET_WORKSPACES_URL,
-      json: true,
-      headers: {'content-type': 'application/json', 'Accept': 'application/json', 'X-Auth-Token': token},
-      method: 'GET'
-    };
-    request(options, function (error, response, body) {
-      console.log(body);
-      if (response.statusCode === 500 || body.error) {
-        callback(false, (error || JSON.stringify(body.error)));
-      } else {
-        console.log(body);
-        callback(true, body);
-      }
+  getWorkspacesFromStore(){
+    return new Promise(function (resolve, reject) {
+      DatabaseManager._getCollection(COLLECTION_WORKPACES, null).then(function (workspaceStore) {
+        workspaceStore.find({}, function (err, workspaceCollection) {
+          if (err != null) {
+            reject(err);
+          } else {
+            resolve(workspaceCollection);
+          }
+        });
+      }).catch(reject);
     });
   }
-};
+}
 
 module.exports = WorkspaceManager;

@@ -17,12 +17,11 @@ export function selectWorkspace(data) {
 export function getRemoteWorkspaces(token) {
   return (dispatch) => {
     console.log('getRemoteWorkspaces');
-    WorkspaceManager.getWorkspacesFromRemote(token, (success, data) => {
-      if (success) {
-        dispatch(remoteCallCompleteOk(data));
-      } else {
-        dispatch(remoteCallCompleteFail(data));
-      }
+
+    WorkspaceManager.getWorkspacesFromStore().then(function (data) {
+      dispatch(remoteCallCompleteOk(data));
+    }).catch(function (err) {
+      dispatch(remoteCallCompleteFail(err));
     });
     dispatch(sendingRequest());
   }
