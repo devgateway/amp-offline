@@ -120,6 +120,62 @@ const DatabaseManager = {
     return promise;
   },
 
+  _replaceAll(collectionData, collectionName, options, resolve, reject) {
+    console.log('_replaceAll');
+    DatabaseManager._getCollection(collectionName, options).then(function (collection) {
+      collection.remove({}, function (err) {
+        if (err === null) {
+          collection.insert(collectionData, function (err, newDocs) {
+            if (err === null && newDoc.length === collectionData.length) {
+              resolve(newDocs);
+            } else {
+              reject(err);
+            }
+          });
+        } else {
+          reject(err);
+        }
+      });
+    }).catch(reject);
+  },
+
+  _insertAll(collectionData, collectionName, options, resolve, reject) {
+    console.log('_insertAll');
+    DatabaseManager._getCollection(collectionName, options).then(function (collection) {
+      collection.insert(collectionData, function (err, newDocs) {
+        if (err === null && newDoc.length === collectionData.length) {
+          resolve(newDocs);
+        } else {
+          reject(err);
+        }
+      });
+    }).catch(reject);
+  },
+
+  /**
+   * Replace entire collection with the new set of data
+   * @param collectionData
+   * @param collectionName
+   * @param options
+   */
+  replaceCollection(collectionData, collectionName, options) {
+    let promise = new Promise(function (resolve, reject) {
+      let replaceAll = DatabaseManager._replaceAll.bind(null, collectionData).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
+      DatabaseManager.queuePromise(replaceAll);
+    });
+    return promise;
+  },
+
+  /**
+   *
+   * @param collectionData
+   * @param collectionName
+   * @param options
+   */
+  saveOrUpdateCollection(collectionData, collectionName, options) {
+    //TODO:
+  },
+
   _removeById(id, collectionName, options, resolve, reject) {
     console.log('_removeById');
     var self = this;
