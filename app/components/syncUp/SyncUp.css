@@ -1,6 +1,6 @@
 .container {
-  position: absolute;
-  margin-top: 40px;
+  position: relative;
+  top: 55px;
   margin-left: 10px;
 }
 
