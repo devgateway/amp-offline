@@ -53,13 +53,13 @@ const DatabaseManager = {
         db.loadDatabase(function (err) {
           if (err !== null) {
             DatabaseCollection.getInstance().removeCollection(name);
-            reject(JSON.stringify(err));
+            reject(err.toString());
           } else {
             DatabaseManager.createIndex(db, {}, function (err) {
               if (err === null) {
                 resolve(db);
               } else {
-                reject(JSON.stringify(err));
+                reject(err.toString());
               }
             });
           }
