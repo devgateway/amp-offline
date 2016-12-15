@@ -3,7 +3,7 @@ import _ from 'underscore';
 import {BASE_URL} from '../../utils/Constants';
 
 const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 4;
+const HARD_CODED_WORKSPACE = 95;
 
 const Auth = {
 

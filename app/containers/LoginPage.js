@@ -1,6 +1,6 @@
 // @flow
 import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import Login from '../components/login/Login';
 import * as LoginActions from '../actions/LoginAction';
 

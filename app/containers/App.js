@@ -21,11 +21,14 @@ export default class App extends Component {
   };
 
   render() {
+    const containerStyle = {
+      "margin-top": "60px"
+    };
     console.log('render');
     return (
       <div>
         <Navbar user={this.context.store.getState().login}/>
-        <div>
+        <div style={containerStyle}>
           {this.props.children}
         </div>
       </div>
