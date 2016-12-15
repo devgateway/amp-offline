@@ -8,11 +8,11 @@ import translate from '../../../app/utils/translate';
 
 function setup() {
   const props = {
-    onClickHandler: spy(),
+    onClick: spy(),
     text: 'test',
     className: 'test-class'
   };
-  const component = shallow(<Button text={props.text} onClickHandler={props.onClickHandler}
+  const component = shallow(<Button text={props.text} onClick={props.onClick}
                                     className={props.className}/>);
   return {
     component,
@@ -36,6 +36,6 @@ describe('@@ Button @@', () => {
   it('Should use the click handler from props.', () => {
     const {buttons, props} = setup();
     buttons.at(0).simulate('click');
-    expect(props.onClickHandler.called).to.be.true;
+    expect(props.onClick.called).to.be.true;
   });
 });

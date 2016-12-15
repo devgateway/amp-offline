@@ -52,7 +52,7 @@ export default class Login extends Component {
                        className="form-control"/></td>
           </tr>
         </table>
-        <Button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')} onClickHandler={() => {
+        <Button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')} onClick={() => {
             loginAction(this.state.email, this.state.password)
           }} text="login.login">
         </Button>
