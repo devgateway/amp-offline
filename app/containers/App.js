@@ -1,7 +1,7 @@
 // @flow
 import React, {Component, PropTypes} from 'react';
 import Navbar from '../components/layout/Navbar'
-
+import styles from './App.css';
 export default class App extends Component {
 
   constructor(props, context) {
@@ -21,14 +21,11 @@ export default class App extends Component {
   };
 
   render() {
-    const containerStyle = {
-      "margin-top": "60px"
-    };
     console.log('render');
     return (
       <div>
         <Navbar user={this.context.store.getState().login}/>
-        <div style={containerStyle}>
+        <div className={styles.container}>
           {this.props.children}
         </div>
       </div>

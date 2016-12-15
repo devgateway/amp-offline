@@ -1,10 +1,9 @@
 // @flow
 import React, {Component, PropTypes} from 'react';
-import {Link} from 'react-router';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Loading from '../common/Loading';
-
+import Button from '../i18n/Button';
 
 export default class SyncUp extends Component {
   static propTypes = {
@@ -47,13 +46,13 @@ export default class SyncUp extends Component {
     this.state.loadingSyncHistory = this.props.syncUp.loadingSyncHistory;
     this.state.syncUpInProgress = this.props.syncUp.syncUpInProgress;
     return (
-      <div className={styles.syncUp_container}>
+      <div className={styles.container}>
         <div className={styles.display_inline}>
-          <button type="button" className={'btn btn-success ' + (this.state.loadingSyncHistory ? 'disabled' : '')}
+          <Button type="button"  text="Start Sync Up" className={'btn btn-success ' + (this.state.loadingSyncHistory ? 'disabled' : '')}
                   onClick={() => {
             startSyncUp(historyData,this.props.login.loggedUser.token)
-          }}>Start Sync Up
-          </button>
+          }} >
+          </Button>
         </div>
         <div className={styles.display_inline}>
           <div className={ + this.state.syncUpInProgress? styles.loader : ''}>
