@@ -123,10 +123,10 @@ const DatabaseManager = {
   _replaceAll(collectionData, collectionName, options, resolve, reject) {
     console.log('_replaceAll');
     DatabaseManager._getCollection(collectionName, options).then(function (collection) {
-      collection.remove({}, function (err) {
+      collection.remove({}, { multi: true }, function (err) {
         if (err === null) {
           collection.insert(collectionData, function (err, newDocs) {
-            if (err === null && newDoc.length === collectionData.length) {
+            if (err === null && newDocs.length === collectionData.length) {
               resolve(newDocs);
             } else {
               reject(err);
@@ -220,6 +220,22 @@ const DatabaseManager = {
           }
           if (doc !== null) {
             resolve(doc);
+          }
+        });
+      }).catch(reject);
+    });
+  },
+
+  findAll(example, collectionName) {
+    console.log('findAll');
+    return new Promise(function (resolve, reject) {
+      DatabaseManager._getCollection(collectionName, null).then(function (collection) {
+        collection.find(example, function (err, docs) {
+          if (err !== null) {
+            reject(err.toString());
+          }
+          if (docs !== null) {
+            resolve(docs);
           }
         });
       }).catch(reject);

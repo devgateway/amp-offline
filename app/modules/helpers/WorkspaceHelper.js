@@ -13,7 +13,7 @@ const WorkspaceHelper = {
    */
   findById(id) {
     console.log('findById');
-    let filter = {_id: id};
+    let filter = {id: id};
     return this.findWorkspace(filter);
   },
 
@@ -26,6 +26,24 @@ const WorkspaceHelper = {
     console.log('findByName');
     let filter = {name: name};
     return this.findWorkspace(filter);
+  },
+
+  /**
+   * Find workspaces by user id
+   * @param userId
+   * @returns {Promise}
+   */
+  findAllByUserId(userId) {
+    console.log('findWorkspace');
+    //TODO find ws ids from team member configs, then search workspaces
+    let filter = {};
+    return this.findAll(filter)
+  },
+
+  findAll(filter) {
+    return new Promise(function (resolve, reject) {
+      DatabaseManager.findAll(filter, COLLECTION_WORKPACES).then(resolve).catch(reject);
+    });
   },
 
   /**
