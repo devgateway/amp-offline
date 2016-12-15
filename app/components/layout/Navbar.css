@@ -1,0 +1,31 @@
+.container {
+  position: absolute;
+  top: 30%;
+  left: 10px;
+  text-align: center;
+  width: 100%;
+  min-height: 100%;
+  margin-bottom: -30px;
+}
+
+.container h2 {
+  font-size: 5rem;
+}
+
+.container a {
+  font-size: 1.4rem;
+}
+
+html, body {
+  height: 100%;
+}
+
+.footer, .container:after {
+  height: 30px;
+}
+
+/* https://css-tricks.com/snippets/css/sticky-footer/ */
+.footer {
+  background: #3d5166;
+  color: white;
+}

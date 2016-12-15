@@ -1,2 +1,10 @@
 @import "../resources/css/bootstrap.css";
 @import "../resources/css/bootstrap-theme.css";
+
+* {
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+}

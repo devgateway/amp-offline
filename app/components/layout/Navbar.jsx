@@ -2,7 +2,8 @@
 import React, {Component, PropTypes} from 'react';
 import {Link} from 'react-router';
 import Switcher from '../../components/i18n/Switcher';
-import style from './Home.css';
+import style from './Navbar.css';
+import translate from '../../utils/translate';
 
 const pjson = require('../../../package.json');
 
@@ -21,13 +22,13 @@ export default class Navbar extends Component {
     console.log('render');
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top">
-        <Link to="syncUp" >Sync upd</Link>
-        <div className="container">
-          <div className={style.main_menu}>
+        <div className={style.container}>
+          <div>
             <a className="navbar-brand" href="#">{pjson.productName} - {pjson.version}</a>
             <a className="navbar-brand"
                href="#">{this.extractLoggedUser(' - ')}</a>
             <Switcher/>
+            <Link to="syncUp">{translate('Sync upd')}</Link>
           </div>
         </div>
       </nav>
