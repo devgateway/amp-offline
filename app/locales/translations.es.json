@@ -1,0 +1,10 @@
+{
+  "login": {
+    "user": "Usuario:",
+    "password": "Contraseña:",
+    "login": "Ingresar"
+  },
+  "workspace": {
+    "title": "Espacios de Trabajo"
+  }
+}

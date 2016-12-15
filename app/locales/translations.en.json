@@ -1,0 +1,10 @@
+{
+  "login": {
+    "user": "User:",
+    "password": "Password:",
+    "login": "Log In"
+  },
+  "workspace": {
+    "title": "Workspaces"
+  }
+}
