@@ -8,12 +8,10 @@ import {
 } from '../utils/constants/syncConstants'
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 
-
+//Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
 export const STATE_SYNCUP_LOADING_HISTORY = 'STATE_SYNCUP_LOADING_HISTORY';
 export const STATE_SYNCUP_SEARCH_FAILED = 'STATE_SYNCUP_SEARCH_FAILED';
-
-
 export const STATE_SYNCUP_IN_PROCESS = 'STATE_SYNCUP_IN_PROCESS';
 export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
@@ -35,10 +33,8 @@ export function getSyncUpHistory() {
 }
 export function startSyncUp(historyData, token) {
   console.log("startSyncUp");
-
   return (dispatch, ownProps) => {
     if (ownProps().syncUp.syncUpInProgress === false) {
-
       SyncUpManager.syncUp(token).then((response) => {
         //TODO probably the way in which we will update the ui will change
         //once we get the final version also it will change the way in which pass
@@ -52,10 +48,8 @@ export function startSyncUp(historyData, token) {
         dispatch({type: "STATE_SYNCUP_FAILED", actionData: {errorMessage: err}})
       });
       dispatch(syncUpInProgress());
-
       console.log('startSyncUp');
     }
-    ;
   }
 }
 

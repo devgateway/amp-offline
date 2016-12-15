@@ -6,7 +6,6 @@ import {
   STATE_SYNCUP_IN_PROCESS,
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED
-
 } from '../actions/SyncUpAction';
 
 const defaultState = {
@@ -33,7 +32,6 @@ export default function syncUp(state = defaultState, action: Object) {
     case STATE_SYNCUP_LOADING_HISTORY:
       return Object.assign({}, state, {loadingSyncHistory: true});
       break;
-
     case STATE_SYNCUP_COMPLETED:
       return Object.assign({}, state, {syncUpInProgress: false,syncUpResutls: action.actionData,});
       break;

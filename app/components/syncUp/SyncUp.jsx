@@ -13,9 +13,7 @@ export default class SyncUp extends Component {
 
   constructor() {
     super();
-
     console.log('constructor');
-
     this.state = {
       errorMessage: '',
       syncUpInProgress: false,
