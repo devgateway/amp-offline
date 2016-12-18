@@ -1,7 +1,9 @@
 // @flow
 import React, {Component, PropTypes} from 'react';
-import Navbar from '../components/layout/Navbar'
+import Navbar from '../components/layout/Navbar';
 import styles from './App.css';
+import Footer from '../components/layout/Footer'
+
 export default class App extends Component {
 
   constructor(props, context) {
@@ -23,11 +25,12 @@ export default class App extends Component {
   render() {
     console.log('render');
     return (
-      <div>
-        <Navbar user={this.context.store.getState().login}/>
+      <div className={styles.container}>
         <div className={styles.container}>
+          <Navbar user={this.context.store.getState().login}/>
           {this.props.children}
         </div>
+        <Footer/>
       </div>
     );
   }

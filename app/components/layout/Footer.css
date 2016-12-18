@@ -1,0 +1,9 @@
+/* https://css-tricks.com/snippets/css/sticky-footer/ */
+.footer, .container:after {
+  height: 30px;
+}
+
+.footer {
+  background: #3d5166;
+  color: white;
+}
