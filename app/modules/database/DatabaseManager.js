@@ -227,10 +227,14 @@ const DatabaseManager = {
   },
 
   findAll(example, collectionName) {
+    return this.findAll(example, null, collectionName);
+  },
+
+  findAll(example, projections, collectionName) {
     console.log('findAll');
     return new Promise(function (resolve, reject) {
       DatabaseManager._getCollection(collectionName, null).then(function (collection) {
-        collection.find(example, function (err, docs) {
+        collection.find(example, projections, function (err, docs) {
           if (err !== null) {
             reject(err.toString());
           }

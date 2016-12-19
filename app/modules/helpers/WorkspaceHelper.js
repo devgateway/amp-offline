@@ -1,4 +1,5 @@
 import DatabaseManager from '../database/DatabaseManager';
+import TeamMemberHelper from './TeamMemberHelper';
 import {COLLECTION_WORKPACES} from '../../utils/Constants';
 
 /**
@@ -34,13 +35,18 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   findAllByUserId(userId) {
-    console.log('findWorkspace');
-    //TODO find ws ids from team member configs, then search workspaces
-    let filter = {};
-    return this.findAll(filter)
+    console.log('findAllByUserId');
+    return new Promise(function (resolve, reject) {
+      TeamMemberHelper.findWorkspaceIdsByUserId(userId).then((workspacesIds) => {
+        let filter = {id: {$in: workspacesIds}};
+        return this.findAll(filter);
+        }
+      ).catch(reject);
+    });
   },
 
   findAll(filter) {
+    console.log('findAll');
     return new Promise(function (resolve, reject) {
       DatabaseManager.findAll(filter, COLLECTION_WORKPACES).then(resolve).catch(reject);
     });
@@ -88,7 +94,7 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   replaceWorkspaces(workspaces) {
-    console.log('deleteById');
+    console.log('replaceWorkspaces');
     return new Promise(function (resolve, reject) {
       DatabaseManager.replaceCollection(workspaces, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
     });
@@ -99,9 +105,10 @@ const WorkspaceHelper = {
    * Saves or updates only the given list of workspaces
    * @param workspaces
    * @returns {Promise}
+   * @see replaceWorkspaces
    */
   saveOrUpdateWorkspaces(workspaces) {
-    console.log('deleteById');
+    console.log('saveOrUpdateWorkspaces');
     return new Promise(function (resolve, reject) {
       DatabaseManager.saveOrUpdateCollection(workspaces, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
     });
