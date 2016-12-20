@@ -1,6 +1,9 @@
 // @flow
 import urlUtils from '../utils/URLUtils'
 import WorkspaceManager from '../modules/workspace/WorkspaceManager'
+/* uncomment once TeamMemberHelper is merged
+import TeamMemberHelper from '../helpers/TeamMemberHelper'
+*/
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_GET_REMOTE_WORKSPACES_OK = 'STATE_GET_REMOTE_WORKSPACES_OK';
@@ -8,10 +11,27 @@ export const STATE_GET_REMOTE_WORKSPACES_FAIL = 'STATE_GET_REMOTE_WORKSPACES_FAI
 export const STATE_WORKSPACE_PROCESSING = 'STATE_WORKSPACE_PROCESSING';
 
 export function selectWorkspace(data) {
-  return {
-    type: STATE_SELECT_WORKSPACE,
-    actionData: data
-  };
+  return (dispatch) => {
+    let actionData = {
+      teamMember: undefined,
+      workspace: data
+    };
+    /* uncomment once TeamMemberHelper is merged
+    TeamMemberHelper.findByUserAndWorkspaceId(this.context.store.getState().user.userData.id, data.id)
+      .then((teamMember) => {
+        teamMember.workspace = data;
+        actionData.teamMember = teamMember;
+        dispatch({
+          type: STATE_SELECT_WORKSPACE,
+          actionData: actionData
+        });
+      }
+    */
+    dispatch({
+      type: STATE_SELECT_WORKSPACE,
+      actionData: actionData
+    });
+  }
 }
 
 export function getRemoteWorkspaces(token) {
