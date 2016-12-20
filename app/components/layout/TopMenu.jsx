@@ -19,13 +19,15 @@ class TopMenu extends Component {
 
   render() {
     console.log('render');
+    return this.buildMenu();
+  }
 
+  //TODO: make this menu work with N levels!!!
+  buildMenu() {
     const defaultMenu = require('../../conf/menu.json');
     let topLevelMenu;
     let self = this;
     const menuTrnPrefix = 'menu';
-
-    //TODO: make this menu work with N levels.
     let firstLevelEntries = [];
     Object.keys(defaultMenu.menu).forEach(function (key) {
       let obj = defaultMenu.menu[key];
@@ -57,7 +59,6 @@ class TopMenu extends Component {
 
     return React.cloneElement(topLevelMenu, {
       onOpenChange: this.onOpenChange,
-      /*openKeys: this.state.openKeys,*/
       mode: 'horizontal',
       openAnimation: 'slide-up',
       openSubMenuOnMouseEnter: true,
@@ -66,6 +67,7 @@ class TopMenu extends Component {
   }
 }
 
+// We link this component with Redux to detect when the language changes.
 const mapStateToProps = (state, props) => {
   console.log('mapStateToProps');
   return state;
