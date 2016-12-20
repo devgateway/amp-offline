@@ -21,3 +21,11 @@ html, body {
 .rc-menu-vertical > .rc-menu-item {
   padding: 5px 0px 5px 0px !important;
 }
+
+.rc-menu-submenu {
+  cursor: pointer;
+}
+
+.rc-menu-item {
+  cursor: pointer;
+}

@@ -4,6 +4,7 @@ import Menu, {SubMenu, Item as MenuItem, Divider} from 'rc-menu';
 import animate from 'css-animation';
 import translate from '../../utils/translate';
 import {connect} from 'react-redux';
+import UrlUtils from '../../utils/URLUtils'
 
 class TopMenu extends Component {
 
@@ -12,9 +13,11 @@ class TopMenu extends Component {
     console.log('constructor');
   }
 
-  handleSelect(info) {
+  handleClick(info) {
     console.log(info);
-    console.log('selected ${info.key}');
+    if (info.item.props.route) {
+      UrlUtils.forwardTo(info.item.props.route);
+    }
   }
 
   render() {
@@ -40,7 +43,8 @@ class TopMenu extends Component {
             subMenu = true;
             Object.keys(obj.nodes[key2].nodes).forEach(function (key3) {
               if (self.checkIfPublic(obj.nodes[key2].nodes[key3].public)) {
-                thirdLevelEntries.push(<MenuItem key={key3} route={obj.nodes[key2].nodes[key3].route}>{translate(menuTrnPrefix + '.' + key3)}</MenuItem>);
+                thirdLevelEntries.push(<MenuItem key={key3}
+                                                 route={obj.nodes[key2].nodes[key3].route}>{translate(menuTrnPrefix + '.' + key3)}</MenuItem>);
               }
             });
           } else {
@@ -53,7 +57,8 @@ class TopMenu extends Component {
               secondLevelEntries.push(<SubMenu title={translate(menuTrnPrefix + '.' + key2)}
                                                key={key2}>{thirdLevelEntries}</SubMenu>);
             } else {
-              secondLevelEntries.push(<MenuItem key={key2}>{thirdLevelEntries}</MenuItem>);
+              secondLevelEntries.push(<MenuItem key={key2}
+                                                route={obj.nodes[key2].route}>{thirdLevelEntries}</MenuItem>);
             }
           }
         });
@@ -64,7 +69,7 @@ class TopMenu extends Component {
                    key={key}>{secondLevelEntries}</SubMenu>));
       }
     });
-    topLevelMenu = (<Menu onClick={self.handleSelect}>{firstLevelEntries}</Menu>);
+    topLevelMenu = (<Menu onClick={self.handleClick}>{firstLevelEntries}</Menu>);
 
     return React.cloneElement(topLevelMenu, {
       onOpenChange: this.onOpenChange,
