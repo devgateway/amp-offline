@@ -22,63 +22,58 @@ export default class TopMenu extends Component {
   render() {
     console.log('render');
 
-    const animation = {
-      enter(node, done) {
-        let height;
-        return animate(node, 'rc-menu-collapse', {
-          start() {
-            height = node.offsetHeight;
-            node.style.height = 0;
-          },
-          active() {
-            node.style.height = `${height}px`;
-          },
-          end() {
-            node.style.height = '';
-            done();
-          },
+    const defaultMenu = require('../../conf/menu.json');
+    let topLevelMenu;
+    let self = this;
+
+    let firstLevelEntries = [];
+    Object.keys(defaultMenu.menu).forEach(function (key) {
+      let obj = defaultMenu.menu[key];
+      let secondLevelEntries = [];
+      if (obj.nodes) {
+        Object.keys(obj.nodes).forEach(function (key2) {
+          let thirdLevelEntries = [];
+          let subMenu = false;
+          if (obj.nodes[key2].nodes) {
+            subMenu = true;
+            Object.keys(obj.nodes[key2].nodes).forEach(function (key3) {
+              if (obj.nodes[key2].nodes[key3].nodes) {
+                thirdLevelEntries.push(<MenuItem key={key3}>{key3}</MenuItem>);
+              } else {
+                thirdLevelEntries.push(<MenuItem key={key3}>{key3}</MenuItem>);
+              }
+            });
+          } else {
+            thirdLevelEntries = key2;
+          }
+          if (subMenu) {
+            secondLevelEntries.push(<SubMenu title={key2} key={key2}>{thirdLevelEntries}</SubMenu>);
+          } else {
+            secondLevelEntries.push(<MenuItem key={key2}>{thirdLevelEntries}</MenuItem>);
+          }
         });
-      },
+      }
+      firstLevelEntries.push((<SubMenu title={<span>{key}</span>} key={key}>{secondLevelEntries}</SubMenu>));
+    });
+    topLevelMenu = (<Menu onSelect={self.handleSelect}>{firstLevelEntries}</Menu>);
 
-      appear() {
-        return this.enter.apply(this, arguments);
-      },
 
-      leave(node, done) {
-        return animate(node, 'rc-menu-collapse', {
-          start() {
-            node.style.height = `${node.offsetHeight}px`;
-          },
-          active() {
-            node.style.height = 0;
-          },
-          end() {
-            node.style.height = '';
-            done();
-          },
-        });
-      },
-    };
-
-    const commonMenu = (<Menu onSelect={this.handleSelect}>
-      <SubMenu title={<span>sub menu</span>} key="1">
-        <MenuItem key="1-1">0-1</MenuItem>
-        <MenuItem key="1-2">0-2</MenuItem>
-      </SubMenu>
-      {nestSubMenu}
-      <MenuItem key="2">1</MenuItem>
-      <MenuItem key="3">outer</MenuItem>
-      <MenuItem disabled>disabled</MenuItem>
-      <MenuItem key="5">outer3</MenuItem>
-    </Menu>);
+    /*const topLevelMenu = (<Menu onSelect={this.handleSelect}>
+     <SubMenu title={<span>sub menu</span>} key="1">
+     <MenuItem key="1-1">0-1</MenuItem>
+     <MenuItem key="1-2">0-2</MenuItem>
+     </SubMenu>
+     {nestSubMenu}
+     <MenuItem key="2">1</MenuItem>
+     <MenuItem key="3">outer</MenuItem>
+     <MenuItem disabled>disabled</MenuItem>
+     <MenuItem key="5">outer3</MenuItem>
+     </Menu>);*/
 
     const nestSubMenu = (<SubMenu title={<span>sub menu 2</span>} key="4">
       <MenuItem key="4-1">inner inner</MenuItem>
       <Divider/>
-      <SubMenu
-        key="4-2"
-        title={<span>sub menu 3</span>}
-      >
+      <SubMenu key="4-2" title={<span>sub menu 3</span>}>
         <SubMenu title="sub 4-2-0" key="4-2-0">
           <MenuItem key="4-2-0-1">inner inner</MenuItem>
           <MenuItem key="4-2-0-2">inner inner2</MenuItem>
@@ -95,25 +90,19 @@ export default class TopMenu extends Component {
       </SubMenu>
     </SubMenu>);
 
-    const subMenus = (<Menu>
-      <SubMenu title={<span>sub menu</span>} key="1">
-        <MenuItem key="1-1">0-1</MenuItem>
-        <MenuItem key="1-2">0-2</MenuItem>
-      </SubMenu>
-      <SubMenu title={<span>sub menu 1</span>} key="2">
-        <MenuItem key="2-1">2-1</MenuItem>
-        <MenuItem key="2-2">2-2</MenuItem>
-      </SubMenu>
-      {nestSubMenu}
-    </Menu>);
+    /*const subMenus = (<Menu>
+     <SubMenu title={<span>sub menu</span>} key="1">
+     <MenuItem key="1-1">0-1</MenuItem>
+     <MenuItem key="1-2">0-2</MenuItem>
+     </SubMenu>
+     <SubMenu title={<span>sub menu 1</span>} key="2">
+     <MenuItem key="2-1">2-1</MenuItem>
+     <MenuItem key="2-2">2-2</MenuItem>
+     </SubMenu>
+     {nestSubMenu}
+     </Menu>);*/
 
-    const horizontalMenu = React.cloneElement(commonMenu, {
-      mode: 'horizontal',
-      // use openTransition for antd
-      openAnimation: 'slide-up',
-    });
-
-    return React.cloneElement(subMenus, {
+    return React.cloneElement(topLevelMenu, {
       onOpenChange: this.onOpenChange,
       /*openKeys: this.state.openKeys,*/
       mode: 'horizontal',
