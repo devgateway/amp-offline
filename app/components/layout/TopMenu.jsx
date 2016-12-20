@@ -39,21 +39,30 @@ class TopMenu extends Component {
           if (obj.nodes[key2].nodes) {
             subMenu = true;
             Object.keys(obj.nodes[key2].nodes).forEach(function (key3) {
-              thirdLevelEntries.push(<MenuItem key={key3}>{translate(menuTrnPrefix + '.' + key3)}</MenuItem>);
+              if (self.checkIfPublic(obj.public)) {
+                thirdLevelEntries.push(<MenuItem key={key3}>{translate(menuTrnPrefix + '.' + key3)}</MenuItem>);
+              }
             });
           } else {
-            thirdLevelEntries = translate(menuTrnPrefix + '.' + key2);
+            if (self.checkIfPublic(obj.public)) {
+              thirdLevelEntries = translate(menuTrnPrefix + '.' + key2);
+            }
           }
-          if (subMenu) {
-            secondLevelEntries.push(<SubMenu title={translate(menuTrnPrefix + '.' + key2)}
-                                             key={key2}>{thirdLevelEntries}</SubMenu>);
-          } else {
-            secondLevelEntries.push(<MenuItem key={key2}>{thirdLevelEntries}</MenuItem>);
+          if (self.checkIfPublic(obj.public)) {
+            if (subMenu) {
+              secondLevelEntries.push(<SubMenu title={translate(menuTrnPrefix + '.' + key2)}
+                                               key={key2}>{thirdLevelEntries}</SubMenu>);
+            } else {
+              secondLevelEntries.push(<MenuItem key={key2}>{thirdLevelEntries}</MenuItem>);
+            }
           }
         });
       }
-      firstLevelEntries.push((
-        <SubMenu title={<span>{translate(menuTrnPrefix + '.' + key)}</span>} key={key}>{secondLevelEntries}</SubMenu>));
+      if (self.checkIfPublic(obj.public)) {
+        firstLevelEntries.push((
+          <SubMenu title={<span>{translate(menuTrnPrefix + '.' + key)}</span>}
+                   key={key}>{secondLevelEntries}</SubMenu>));
+      }
     });
     topLevelMenu = (<Menu onSelect={self.handleSelect}>{firstLevelEntries}</Menu>);
 
@@ -64,6 +73,21 @@ class TopMenu extends Component {
       openSubMenuOnMouseEnter: true,
       closeSubMenuOnMouseLeave: true,
     });
+  }
+
+  checkIfPublic(isPublic) {
+    const loggedIn = this.props.login.loggedIn;
+    let show = false;
+    if (isPublic === true) {
+      show = true;
+    } else {
+      if (loggedIn === true) {
+        show = true;
+      } else {
+        show = false;
+      }
+    }
+    return show;
   }
 }
 

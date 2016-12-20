@@ -3,6 +3,7 @@
   "menu": {
     "DESKTOP": {
       "route": null,
+      "public": false,
       "nodes": {
         "My Desktop": {
           "route": "/desktop",
@@ -15,32 +16,35 @@
     },
     "TOOLS": {
       "route": null,
+      "public": false,
       "nodes": {
         "Synchronize Data": {
+          "public": false,
           "route": null,
           "nodes": {
             "Synchronize Projects": {
               "route": "/bla"
             },
             "Synchronize Workspaces": {
-              "route": "/bla",
-              "nodes": {
-                "Change Language": {
-                  "nodes": {
-                    "English": {
-                      "route": "/bla"
-                    },
-                    "Spanish": {
-                      "route": "/bla"
-                    }
-                  }
-                }
-              }
+              "route": "/syncUp"
             }
           }
-        },
-        "Help": {
-          "route": "/help"
+        }
+      }
+    },
+    "HELP": {
+      "public": true,
+      "route": "/help",
+      "nodes": {
+        "Change Language": {
+          "nodes": {
+            "English": {
+              "route": "/bla"
+            },
+            "Spanish": {
+              "route": "/bla"
+            }
+          }
         }
       }
     }
