@@ -28,7 +28,9 @@ export default class App extends Component {
       <div className={styles.container}>
         <div className={styles.container}>
           <Navbar user={this.context.store.getState().login}/>
-          {this.props.children}
+          <div className={styles.content}>
+            {this.props.children}
+          </div>
         </div>
         <Footer/>
       </div>

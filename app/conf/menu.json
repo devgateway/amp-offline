@@ -1,0 +1,48 @@
+{
+  "options": null,
+  "menu": {
+    "DESKTOP": {
+      "route": null,
+      "nodes": {
+        "My Desktop": {
+          "route": "/desktop",
+          "params": null
+        },
+        "Change Workspace": {
+          "route": "/workspace"
+        }
+      }
+    },
+    "TOOLS": {
+      "route": null,
+      "nodes": {
+        "Synchronize Data": {
+          "route": null,
+          "nodes": {
+            "Synchronize Projects": {
+              "route": "/bla"
+            },
+            "Synchronize Workspaces": {
+              "route": "/bla",
+              "nodes": {
+                "Change Language": {
+                  "nodes": {
+                    "English": {
+                      "route": "/bla"
+                    },
+                    "Spanish": {
+                      "route": "/bla"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "Help": {
+          "route": "/help"
+        }
+      }
+    }
+  }
+}

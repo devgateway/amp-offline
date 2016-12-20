@@ -4,6 +4,7 @@ import {Link} from 'react-router';
 import Switcher from '../../components/i18n/Switcher';
 import style from './Navbar.css';
 import translate from '../../utils/translate';
+import TopMenu from './TopMenu';
 
 const pjson = require('../../../package.json');
 
@@ -21,17 +22,16 @@ export default class Navbar extends Component {
   render() {
     console.log('render');
     return (
-      <nav className="navbar navbar-inverse navbar-fixed-top">
-        <div className={style.container}>
-          <div>
-            <a className="navbar-brand" href="#">{pjson.productName} - {pjson.version}</a>
-            <a className="navbar-brand"
-               href="#">{this.extractLoggedUser(' - ')}</a>
-            <Switcher/>
-            <Link to="syncUp">{translate('Sync upd')}</Link>
-          </div>
+      <div className={style.container}>
+        <div className={style.navbar}>
+          <a className={style.navbar_left_side} href="#">{pjson.productName} - {pjson.version}</a>
+          <a className={style.navbar_left_side} href="#">{this.extractLoggedUser(' - ')}</a>
+          <Switcher/>
         </div>
-      </nav>
+        <div className={style.main_menu}>
+          <TopMenu/>
+        </div>
+      </div>
     );
   }
 

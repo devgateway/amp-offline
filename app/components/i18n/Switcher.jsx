@@ -20,7 +20,7 @@ class Switcher extends React.Component {
 
   render() {
     return (
-      <div className="navbar-brand">
+      <div className={styles.flags_container}>
         <img className={styles.usa_icon} onClick={this.changeLanguage.bind(this, LANGUAGE_ENGLISH)}/>
         <img className={styles.spa_icon} onClick={this.changeLanguage.bind(this, LANGUAGE_SPANISH)}/>
       </div>
