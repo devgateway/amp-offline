@@ -6,5 +6,15 @@
   },
   "workspace": {
     "title": "Workspaces"
+  },
+  "menu": {
+    "DESKTOP": "DESKTOP",
+    "My Desktop": "My Desktop",
+    "Change Workspace": "Change Workspace",
+    "TOOLS": "TOOLS",
+    "Synchronize Projects": "Synchronize Projects",
+    "Synchronize Workspaces": "Synchronize Workspaces",
+    "Synchronize Data": "Synchronize Data",
+    "Help": "Help"
   }
 }
