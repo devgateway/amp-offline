@@ -142,6 +142,7 @@
     "i18next": "^4.1.1",
     "i18next-xhr-backend": "^1.2.1",
     "nedb": "^1.8.0",
+    "rc-menu": "^5.0.7",
     "react": "^15.3.2",
     "react-bootstrap": "^0.30.6",
     "react-dom": "^15.3.2",

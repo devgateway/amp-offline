@@ -1,6 +1,5 @@
 .container {
   position: absolute;
-  top: 30%;
   left: 10px;
   text-align: center;
   width: 100%;
@@ -14,5 +13,37 @@
 
 .container a {
   font-size: 1.4rem;
+}
+
+.navbar {
+  height: 30px;
+  background-color: #3d5166;
+  color: #FFF;
+  top: 0;
+  left: -10px;
+  position: absolute;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: white;
+}
+
+.navbar_left_side {
+  float: left;
+  padding-top: 5px;
+}
+
+.main_menu {
+  float: left;
+  position: relative;
+  top: 30px;
+  left: 0px;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
 }
 
