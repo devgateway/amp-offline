@@ -28,7 +28,7 @@ export default function workspaceReducer(state: something = defaultState, action
     case STATE_SELECT_WORKSPACE:
       return Object.assign({}, state, {
         workspaceProcessing: false,
-        currentWorkspace: action.workspace
+        currentWorkspace: action.actionData.workspace
       });
     case STATE_WORKSPACE_PROCESSING:
       return Object.assign({}, state, {
