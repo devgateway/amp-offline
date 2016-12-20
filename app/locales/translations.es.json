@@ -6,5 +6,11 @@
   },
   "workspace": {
     "title": "Espacios de Trabajo"
+  },
+  "menu": {
+    "DESKTOP": "ESCRITORIO",
+    "My Desktop": "Mi Escritorio",
+    "Change Workspace": "Cambiar Espacio de Trabajo",
+    "TOOLS": "HERRAMIENTAS"
   }
 }

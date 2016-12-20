@@ -29,7 +29,7 @@ export default class Navbar extends Component {
           <Switcher/>
         </div>
         <div className={style.main_menu}>
-          <TopMenu user=""/>
+          <TopMenu/>
         </div>
       </div>
     );
