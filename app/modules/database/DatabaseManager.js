@@ -179,7 +179,7 @@ const DatabaseManager = {
   _removeById(id, collectionName, options, resolve, reject) {
     console.log('_removeById');
     var self = this;
-    DatabaseManager._getCollection(collectionName, null).then(function (collection) {
+    this._getCollection(collectionName, null).then(function (collection) {
       // Look for an object by its id.
       let exampleObject = {id: id};
       collection.findOne(exampleObject, function (err, doc) {
@@ -187,9 +187,9 @@ const DatabaseManager = {
           reject(err.toString());
         }
         if (doc !== null) {
-          collection.remove(exampleObject, {multi: false}, function (err, count) {
+          collection.remove(exampleObject, {multi: false}, function (err) {
             if (err === null) {
-              resolve(count);
+              resolve(doc);
             } else {
               reject(err);
             }
@@ -213,7 +213,7 @@ const DatabaseManager = {
 
   findOne(example, collectionName) {
     console.log('_findOne');
-    let projections = Object.assign({_id: 0});
+    projections = Object.assign({_id: 0});
     return new Promise(function (resolve, reject) {
       DatabaseManager._getCollection(collectionName, null).then(function (collection) {
         collection.findOne(example, projections, function (err, doc) {
