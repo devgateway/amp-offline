@@ -13,7 +13,7 @@ export default function login(state = defaultState, action: Object) {
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {
-        loggedUser: action.actionData,
+        loggedUser: action.actionData.userData,
         loggedIn: true,
         loginProcessing: false
       });
