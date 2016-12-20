@@ -39,16 +39,16 @@ class TopMenu extends Component {
           if (obj.nodes[key2].nodes) {
             subMenu = true;
             Object.keys(obj.nodes[key2].nodes).forEach(function (key3) {
-              if (self.checkIfPublic(obj.public)) {
-                thirdLevelEntries.push(<MenuItem key={key3}>{translate(menuTrnPrefix + '.' + key3)}</MenuItem>);
+              if (self.checkIfPublic(obj.nodes[key2].nodes[key3].public)) {
+                thirdLevelEntries.push(<MenuItem key={key3} route={obj.nodes[key2].nodes[key3].route}>{translate(menuTrnPrefix + '.' + key3)}</MenuItem>);
               }
             });
           } else {
-            if (self.checkIfPublic(obj.public)) {
+            if (self.checkIfPublic(obj.nodes[key2].public)) {
               thirdLevelEntries = translate(menuTrnPrefix + '.' + key2);
             }
           }
-          if (self.checkIfPublic(obj.public)) {
+          if (self.checkIfPublic(obj.nodes[key2].public)) {
             if (subMenu) {
               secondLevelEntries.push(<SubMenu title={translate(menuTrnPrefix + '.' + key2)}
                                                key={key2}>{thirdLevelEntries}</SubMenu>);
@@ -64,7 +64,7 @@ class TopMenu extends Component {
                    key={key}>{secondLevelEntries}</SubMenu>));
       }
     });
-    topLevelMenu = (<Menu onSelect={self.handleSelect}>{firstLevelEntries}</Menu>);
+    topLevelMenu = (<Menu onClick={self.handleSelect}>{firstLevelEntries}</Menu>);
 
     return React.cloneElement(topLevelMenu, {
       onOpenChange: this.onOpenChange,

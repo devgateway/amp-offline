@@ -37,11 +37,14 @@
       "route": "/help",
       "nodes": {
         "Change Language": {
+          "public": true,
           "nodes": {
             "English": {
+              "public": true,
               "route": "/bla"
             },
             "Spanish": {
+              "public": true,
               "route": "/bla"
             }
           }
