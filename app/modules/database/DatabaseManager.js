@@ -179,7 +179,7 @@ const DatabaseManager = {
   _removeById(id, collectionName, options, resolve, reject) {
     console.log('_removeById');
     var self = this;
-    DatabaseManager._getCollection(collectionName, null).then(function (collection) {
+    this._getCollection(collectionName, null).then(function (collection) {
       // Look for an object by its id.
       let exampleObject = {id: id};
       collection.findOne(exampleObject, function (err, doc) {
@@ -187,14 +187,14 @@ const DatabaseManager = {
           reject(err.toString());
         }
         if (doc !== null) {
-          collection.remove(exampleObject, data, {}, function (err) {
+          collection.remove(exampleObject, {multi: false}, function (err) {
             if (err === null) {
-              resolve();
+              resolve(doc);
             } else {
               reject(err);
             }
           });
-        } else if (docs.length === 0) {
+        } else if (doc === null) {
           resolve();
         }
       });
@@ -203,18 +203,20 @@ const DatabaseManager = {
 
   removeById(id, collectionName, options) {
     console.log('removeById');
+    let self = this;
     let promise = new Promise(function (resolve, reject) {
-      let removeByIdFunc = this._removeById.bind(null, id).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
-      this.queuePromise(removeByIdFunc, resolve, reject);
+      let removeByIdFunc = self._removeById.bind(null, id).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
+      self.queuePromise(removeByIdFunc, resolve, reject);
     });
     return promise;
   },
 
   findOne(example, collectionName) {
     console.log('_findOne');
+    projections = Object.assign({_id: 0});
     return new Promise(function (resolve, reject) {
       DatabaseManager._getCollection(collectionName, null).then(function (collection) {
-        collection.findOne(example, function (err, doc) {
+        collection.findOne(example, projections, function (err, doc) {
           if (err !== null) {
             reject(err.toString());
           }
@@ -227,11 +229,12 @@ const DatabaseManager = {
   },
 
   findAll(example, collectionName) {
-    return this.findAll(example, null, collectionName);
+    return this.findAllWithProjections(example, null, collectionName);
   },
 
-  findAll(example, projections, collectionName) {
+  findAllWithProjections(example, projections, collectionName) {
     console.log('findAll');
+    projections = Object.assign({_id: 0}, projections);
     return new Promise(function (resolve, reject) {
       DatabaseManager._getCollection(collectionName, null).then(function (collection) {
         collection.find(example, projections, function (err, docs) {

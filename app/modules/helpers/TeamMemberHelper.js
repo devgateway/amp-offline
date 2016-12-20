@@ -76,6 +76,18 @@ const TeamMemberHelper = {
     return new Promise(function (resolve, reject) {
       DatabaseManager.saveOrUpdate(teamMember.id, teamMember, COLLECTION_TEAMMEMBERS, {}).then(resolve).catch(reject);
     });
+  },
+
+  /**
+   * Delete a team member by id
+   * @param id the team member id
+   * @returns {Promise}
+   */
+  deleteById(id) {
+    console.log('deleteById');
+    return new Promise(function (resolve, reject) {
+      DatabaseManager.removeById(id, COLLECTION_TEAMMEMBERS, {}).then(resolve).catch(reject);
+    });
   }
 
 };
