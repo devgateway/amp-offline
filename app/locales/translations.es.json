@@ -11,6 +11,10 @@
     "DESKTOP": "ESCRITORIO",
     "My Desktop": "Mi Escritorio",
     "Change Workspace": "Cambiar Espacio de Trabajo",
-    "TOOLS": "HERRAMIENTAS"
+    "TOOLS": "HERRAMIENTAS",
+    "Synchronize Projects": "Synchronize Projects",
+    "Synchronize Workspaces": "Synchronize Workspaces",
+    "Synchronize Data": "Synchronize Data",
+    "Help": "Help"
   }
 }
