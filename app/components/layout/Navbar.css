@@ -1,6 +1,6 @@
 .container {
   position: absolute;
-  left: 10px;
+  /*left: 10px;*/
   text-align: center;
   width: 100%;
   min-height: 100%;
@@ -20,11 +20,12 @@
   background-color: #3d5166;
   color: #FFF;
   top: 0;
-  left: -10px;
+  /*left: -10px;*/
   position: absolute;
   width: 100%;
   margin: 0;
   padding: 0;
+  padding-left: 10px;
 }
 
 .navbar a {
