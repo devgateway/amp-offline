@@ -69,17 +69,13 @@ const menuUtils = {
   },
 
   checkIfPublic(isPublic, loggedIn) {
-    let show = false;
-    if (isPublic === true) {
-      show = true;
-    } else {
-      if (loggedIn === true) {
-        show = true;
-      } else {
-        show = false;
-      }
-    }
-    return show;
+    /* Truth table:
+     * true, true --> true
+     * true, false --> true
+     * false, true --> true
+     * false, false --> false
+     * */
+    return isPublic || loggedIn;
   }
 };
 
