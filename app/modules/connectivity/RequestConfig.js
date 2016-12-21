@@ -27,8 +27,11 @@ const RequestConfig = {
     if (paramsMap === null || paramsMap === undefined) {
       return "";
     }
-    // TODO: return "" for now, then "?param1=xx&..."
-    return "";
+    var kv = [];
+    for (var prop in paramsMap)
+      kv.push(prop + '=' + paramsMap[prop]);
+    let paramsStr = '?' + kv.join('&');
+    return paramsStr;
   }
 }
 
