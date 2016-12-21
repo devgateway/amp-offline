@@ -5,6 +5,7 @@ import login from './LoginReducer';
 import workspace from './WorkspaceReducer';
 import translation from './TranslationReducer';
 import syncUp from './SyncUpReducer';
+import user from './UserReducer';
 
 const rootReducer = combineReducers({
   login,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   routing,
   translation,
   syncUp,
+  user,
 });
 
 export default rootReducer;
