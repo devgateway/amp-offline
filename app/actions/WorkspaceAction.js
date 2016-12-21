@@ -19,12 +19,11 @@ export function selectWorkspace(data) {
       .then((teamMember) => {
         actionData.teamMember = teamMember;
         actionData.teamMember.workspace = data;
-      }).catch();
-
-    dispatch({
-      type: STATE_SELECT_WORKSPACE,
-      actionData: actionData
-    });
+        dispatch({
+          type: STATE_SELECT_WORKSPACE,
+          actionData: actionData
+        });
+      }).catch(error => {console.log(error)});
   }
 }
 
