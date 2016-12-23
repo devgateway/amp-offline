@@ -14,17 +14,17 @@ export function loadDesktop(teamId) {
       console.log('loading desktop');
       //this is to simulate loading activities in desktop
       setTimeout(_loadDesktop(teamId), 5000);
-      let desktopData = {teamId: teamId};
-      return {
-        type: STATE_DESKTOP_LOADED,
-        actionData: desktopData,
-      }
+      dispatch(_loadDesktop(teamId));
     }
     dispatch(sendingRequest());
   };
 }
 function _loadDesktop(teamId) {
-
+  let desktopData = {teamId: teamId};
+  return {
+    type: STATE_DESKTOP_LOADED,
+    actionData: desktopData,
+  }
 }
 function sendingRequest() {
   console.log('sendingRequestLoadingDesktop');
