@@ -16,5 +16,8 @@
     "Synchronize Workspaces": "Synchronize Workspaces",
     "Synchronize Data": "Synchronize Data",
     "Help": "Help"
+  },
+  "desktop": {
+    "goback": "Atras"
   }
 }
