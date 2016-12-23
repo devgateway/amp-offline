@@ -4,7 +4,7 @@ import UrlUtils from '../utils/URLUtils'
 
 //Types of redux actions
 export const STATE_DESKTOP_LOADING = 'STATE_DESKTOP_LOADING';
-export const STATE_DESKTOP_LOADED = 'STATE_DESKTOP_LOADING';
+export const STATE_DESKTOP_LOADED = 'STATE_DESKTOP_LOADED';
 
 //this will change its just a mockup
 export function loadDesktop(teamId) {
