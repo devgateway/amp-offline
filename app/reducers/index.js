@@ -1,5 +1,5 @@
 // @flow
-import {combineReducers, createStore} from 'redux';
+import {combineReducers} from 'redux';
 import {routerReducer as routing} from 'react-router-redux';
 import login from './LoginReducer';
 import workspace from './WorkspaceReducer';
@@ -18,9 +18,6 @@ const rootReducer = combineReducers({
   ampConnectionStatus,
 });
 
-const rootStore = createStore(rootReducer);
-export const dispatch = rootStore.dispatch;
-export const getState = rootStore.getState;
 
 
 export default rootReducer;

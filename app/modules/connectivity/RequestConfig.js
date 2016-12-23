@@ -28,8 +28,13 @@ const RequestConfig = {
       return "";
     }
     var kv = [];
-    for (var prop in paramsMap)
-      kv.push(prop + '=' + paramsMap[prop]);
+    if (paramsMap instanceof Map) {
+      paramsMap.forEach((key, value) => kv.push(key + "=" + value));
+    } else {
+      for (var prop in paramsMap) {
+        kv.push(prop + '=' + paramsMap[prop]);
+      }
+    }
     let paramsStr = '?' + kv.join('&');
     return paramsStr;
   }
