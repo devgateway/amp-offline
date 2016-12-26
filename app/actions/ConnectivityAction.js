@@ -7,16 +7,13 @@ import {store} from '../index.js';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
 
-const ampClientVersion = require('../../package.json').version;
-
-
 /**
  * Checks and updates the connectivity status
  * @returns ConnectivityStatus
  */
 export function connectivityCheck() {
   store.dispatch({type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING});
-  ConnectionHelper.doGet(URL_CONNECTIVITY_CHECK_EP, {"amp-offline-version": ampClientVersion}).then(data => {
+  ConnectionHelper.doGet(URL_CONNECTIVITY_CHECK_EP, {"amp-offline-version": VERSION}).then(data => {
     return _processResult(data);
   }).catch(error => {
     console.error('Couldn\'t check the connection status. Error: ' + error);
@@ -25,8 +22,8 @@ export function connectivityCheck() {
 }
 
 function _processResult(data) {
-  let lastConnectivityStatus = store.getState().ampConnectionStatus.status;
-  let currentConnectivityStatus = _toConnectivityStatus(data, lastConnectivityStatus);
+  const lastConnectivityStatus = store.getState().ampConnectionStatus.status;
+  const currentConnectivityStatus = _toConnectivityStatus(data, lastConnectivityStatus);
   store.dispatch({type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: currentConnectivityStatus});
   return currentConnectivityStatus;
 }
@@ -45,8 +42,8 @@ function _toConnectivityStatus(data, lastConnectivityStatus) {
       );
     }
   } else {
-    let isAmpClientEnabled = true === data["amp-offline-enabled"];
-    let isAmpCompatible = true === data["amp-offline-compatible"];
+    const isAmpClientEnabled = true === data["amp-offline-enabled"];
+    const isAmpCompatible = true === data["amp-offline-compatible"];
     status = new ConnectivityStatus(true, isAmpClientEnabled, isAmpCompatible, data["amp-version"]);
   }
   return Object.freeze(status);

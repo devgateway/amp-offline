@@ -9,9 +9,9 @@ const RequestConfig = {
    * @param body
    */
   getRequestConfig(method, url, paramsMap, body) {
-    let urlParams = this._paramsMapToString(paramsMap);
-    let fullUrl = BASE_URL + "/rest/" + url + urlParams;
-    let requestConfig = {
+    const urlParams = this._paramsMapToString(paramsMap);
+    const fullUrl = BASE_URL + "/rest/" + url + urlParams;
+    const requestConfig = {
       url: fullUrl,
       json: true,
       headers: {'content-type': 'application/json', 'Accept': 'application/json'},
@@ -27,15 +27,15 @@ const RequestConfig = {
     if (paramsMap === null || paramsMap === undefined) {
       return "";
     }
-    var kv = [];
+    let kv = [];
     if (paramsMap instanceof Map) {
       paramsMap.forEach((key, value) => kv.push(key + "=" + value));
     } else {
-      for (var prop in paramsMap) {
+      for (let prop in paramsMap) {
         kv.push(prop + '=' + paramsMap[prop]);
       }
     }
-    let paramsStr = '?' + kv.join('&');
+    const paramsStr = '?' + kv.join('&');
     return paramsStr;
   }
 }

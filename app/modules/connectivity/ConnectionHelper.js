@@ -7,21 +7,21 @@ const GET_WORKSPACES_URL = "rest/security/workspaces";
 const ConnectionHelper = {
 
   getCallAuthenticated(token, url) {
+    const self = this;
     return new Promise(function (resolve, reject) {
       console.log('invoke get for ' + BASE_URL + "/" + url);
-      const self = this;
       const options = {
         url: BASE_URL + "/" + url,
         json: true,
         headers: {'content-type': 'application/json', 'Accept': 'application/json', 'X-Auth-Token': token},
         method: 'GET'
       };
-      return this._doMethod(options);
+      return self._doMethod(options);
     });
   },
 
   doGet(url, paramsMap) {
-    let requestConfig = RequestConfig.getRequestConfig('GET', url, paramsMap);
+    const requestConfig = RequestConfig.getRequestConfig('GET', url, paramsMap);
     return this._doMethod(requestConfig);
   },
 
