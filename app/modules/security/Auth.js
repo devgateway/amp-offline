@@ -1,9 +1,8 @@
 import request from 'request';
-import _ from 'underscore';
 import {BASE_URL} from '../../utils/Constants';
 
 const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 95;
+const HARD_CODED_WORKSPACE = 4;
 
 const Auth = {
 
@@ -49,6 +48,42 @@ const Auth = {
 
   logout() {
     localStorage.removeItem('token');
+  },
+
+  secureHash(password, salt, iterations) {
+    return new Promise(function (resolve, reject) {
+      console.log('secureHash');
+      // https://blog.engelke.com/2015/02/14/deriving-keys-from-passwords-with-webcrypto/
+      let saltBuffer = Buffer.from(salt, 'utf8');
+      let passphraseKey = Buffer.from(password, 'utf8');
+      window.crypto.subtle.importKey(
+        'raw',
+        passphraseKey,
+        {name: 'PBKDF2'},
+        false,
+        ['deriveBits', 'deriveKey']
+      ).then(function (key) {
+        return window.crypto.subtle.deriveKey(
+          {
+            "name": 'PBKDF2',
+            "salt": saltBuffer,
+            "iterations": iterations,
+            "hash": 'SHA-256'
+          },
+          key,
+          {"name": 'AES-CBC', "length": 256},
+          true,
+          ["encrypt", "decrypt"]
+        )
+      }).then(function (webKey) {
+        return crypto.subtle.exportKey("raw", webKey);
+      }).then(function (buffer) {
+        let passwordHash = Buffer.from(buffer).toString('hex');
+        resolve(passwordHash);
+      }).catch(function (err) {
+        reject("Key derivation failed: " + err.message);
+      });
+    });
   }
 };
 
