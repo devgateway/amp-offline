@@ -1,7 +1,7 @@
 import {STATE_LOGIN_OK, STATE_LOGOUT} from '../actions/LoginAction';
 import {STATE_SELECT_WORKSPACE} from '../actions/WorkspaceAction';
 
-export const STATE_USER_CLEAR = Symbol('STATE_USER_CLEAR');
+export const STATE_USER_CLEAR = 'STATE_USER_CLEAR';
 
 const defaultState = {
   userData: undefined,

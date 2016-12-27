@@ -15,7 +15,7 @@ import auth from './modules/security/Auth';
 import i18next from 'i18next';
 import XHR from 'i18next-xhr-backend';
 
-const store = configureStore();
+export const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
 auth.logout();//TODO: this will dissapear when we get the login working properly.
