@@ -8,13 +8,14 @@ import configureStore from './store/configureStore';
 import './app.global.css';
 import App from './containers/App';
 import LoginPage from './containers/LoginPage';
+import DesktopPage from './containers/DesktopPage'
 import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './containers/SyncUpPage';
 import auth from './modules/security/Auth';
 import i18next from 'i18next';
 import XHR from 'i18next-xhr-backend';
 
-const store = configureStore();
+export const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
 auth.logout();//TODO: this will dissapear when we get the login working properly.
@@ -45,6 +46,7 @@ i18next.use(XHR).init(i18nOptions, (err, t) => {
           <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
           <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
           <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth}/>
+          <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth}/>
         </Route>
       </Router>
     </Provider>,

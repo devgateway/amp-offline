@@ -24,7 +24,7 @@ export default class Navbar extends Component {
     return (
       <div className={style.container}>
         <div className={style.navbar}>
-          <a className={style.navbar_left_side} href="#">{pjson.productName} - {pjson.version}</a>
+          <a className={style.navbar_left_side} href="#">{pjson.productName} - {VERSION}</a>
           <a className={style.navbar_left_side} href="#">{this.extractLoggedUser(' - ')}</a>
           <Switcher/>
         </div>

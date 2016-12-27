@@ -2,7 +2,7 @@ import request from 'request';
 import {BASE_URL} from '../../utils/Constants';
 
 const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 4;
+const HARD_CODED_WORKSPACE = 2;
 
 const Auth = {
 

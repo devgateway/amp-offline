@@ -1,4 +1,4 @@
-import ConnectionHelper from '../Connectivity/ConnectionHelper'
+import ConnectionHelper from '../connectivity/ConnectionHelper'
 import DatabaseManager from '../database/DatabaseManager';
 import {COLLECTION_WORKPACES} from '../../utils/Constants';
 
