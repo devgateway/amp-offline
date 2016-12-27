@@ -25,5 +25,8 @@
     "About": "About",
     "Synchronize": "Synchronize",
     "Add Activity": "Add Activity"
+  },
+  "desktop": {
+    "goback": "Atras"
   }
 }

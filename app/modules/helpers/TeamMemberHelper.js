@@ -16,11 +16,11 @@ const TeamMemberHelper = {
     let filter = {"user-id": userId};
     return new Promise(function (resolve, reject) {
       let projections = {"workspace-id" : 1}
-      DatabaseManager.findAll(filter, projections, COLLECTION_TEAMMEMBERS)
+      DatabaseManager.findAllWithProjections(filter, projections, COLLECTION_TEAMMEMBERS)
         .then((teamMembers) => {
           var wsIds = [];
-          teamMembers.forEach((teamMember) => wsIds.add(teamMember.workspaceId));
-          return wsIds;
+          teamMembers.forEach((teamMember) => wsIds.push(teamMember["workspace-id"]));
+          resolve(wsIds);
       }).catch(reject);
     });
   },
