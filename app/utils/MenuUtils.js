@@ -13,14 +13,18 @@ const menuUtils = {
     }
   },
 
-  generateTree(object, key, level, node){
+  generateTree(object, key, level, node, loggedIn){
     let self = this;
     const menuTrnPrefix = "menu";
     if (object.nodes) {
       node[level] = [];
-      Object.keys(object.nodes).forEach(function (key) {
-        node[level].push(self.generateTree(object.nodes[key], key, level + 1, node));
-      });
+      if (self.checkIfPublic(object.public, loggedIn)) {
+        Object.keys(object.nodes).forEach(function (key) {
+          if (self.checkIfPublic(object.nodes[key].public, loggedIn)) {
+            node[level].push(self.generateTree(object.nodes[key], key, level + 1, node, loggedIn));
+          }
+        });
+      }
       return (<SubMenu title={translate(menuTrnPrefix + '.' + key)} key={key}>{node[level]}</SubMenu>);
     } else {
       return (<MenuItem title={translate(menuTrnPrefix + '.' + key)} key={key}
@@ -34,17 +38,14 @@ const menuUtils = {
     let self = this;
     let firstLevelEntries = [];
     if (defaultMenu.menu !== undefined && defaultMenu.menu !== null) {
-      let currentLevel = 0;
       // Iterate first level items.
       Object.keys(defaultMenu.menu).forEach(function (key) {
         let firstLevelObject = defaultMenu.menu[key];
         if (self.checkIfPublic(firstLevelObject.public, loggedIn)) {
-          let structure = self.generateTree(firstLevelObject, key, 0, []);
+          let structure = self.generateTree(firstLevelObject, key, 0, [], loggedIn);
           firstLevelEntries.push(structure);
         }
       });
-    } else {
-      console.warn("Empty menu");
     }
     topLevelMenu = (<Menu onClick={self.handleClick}>{firstLevelEntries}</Menu>);
 
