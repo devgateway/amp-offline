@@ -63,7 +63,7 @@ function generateTree(object, key, level, node, loggedIn) {
   }
 }
 
-function toShow(isPublic, loggedIn) {
+export function toShow(isPublic, loggedIn) {
   /* Truth table:
    * true, true --> true
    * true, false --> true

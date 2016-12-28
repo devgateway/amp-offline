@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import MenuUtils from '../../app/utils/MenuUtils';
+import * as MenuUtils from '../../app/utils/MenuUtils';
 
 describe('@@ MenuUtils @@', () => {
   it('func toShow - Should allow when logged in', () => {
