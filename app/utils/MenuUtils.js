@@ -18,9 +18,9 @@ const menuUtils = {
     const menuTrnPrefix = "menu";
     if (object.nodes) {
       node[level] = [];
-      if (self.checkIfPublic(object.public, loggedIn)) {
+      if (self.toShow(object.public, loggedIn)) {
         Object.keys(object.nodes).forEach(function (key) {
-          if (self.checkIfPublic(object.nodes[key].public, loggedIn)) {
+          if (self.toShow(object.nodes[key].public, loggedIn)) {
             node[level].push(self.generateTree(object.nodes[key], key, level + 1, node, loggedIn));
           }
         });
@@ -41,7 +41,7 @@ const menuUtils = {
       // Iterate first level items.
       Object.keys(defaultMenu.menu).forEach(function (key) {
         let firstLevelObject = defaultMenu.menu[key];
-        if (self.checkIfPublic(firstLevelObject.public, loggedIn)) {
+        if (self.toShow(firstLevelObject.public, loggedIn)) {
           let structure = self.generateTree(firstLevelObject, key, 0, [], loggedIn);
           firstLevelEntries.push(structure);
         }
@@ -58,7 +58,7 @@ const menuUtils = {
     });
   },
 
-  checkIfPublic(isPublic, loggedIn) {
+  toShow(isPublic, loggedIn) {
     /* Truth table:
      * true, true --> true
      * true, false --> true
