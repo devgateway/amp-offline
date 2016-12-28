@@ -10,15 +10,14 @@ class MenuUtils {
     console.log('MenuUtils');
   };
 
-  buildMenu(loggedIn) {
-    const defaultMenu = require('../conf/menu.json');
+  buildMenu(loggedIn, menu) {
     let topLevelMenu;
     const self = this;
     let firstLevelEntries = [];
-    if (defaultMenu.menu !== undefined && defaultMenu.menu !== null) {
+    if (menu.menu !== undefined && menu.menu !== null) {
       // Iterate first level items.
-      Object.keys(defaultMenu.menu).forEach(function (key) {
-        let firstLevelObject = defaultMenu.menu[key];
+      Object.keys(menu.menu).forEach(function (key) {
+        let firstLevelObject = menu.menu[key];
         if (toShow(firstLevelObject.public, loggedIn)) {
           let structure = generateTree(firstLevelObject, key, 0, [], loggedIn);
           firstLevelEntries.push(structure);
@@ -37,7 +36,7 @@ class MenuUtils {
   }
 }
 
-function handleClick(info) {
+export function handleClick(info) {
   console.log('handleClick');
   if (info.item.props.route) {
     UrlUtils.forwardTo(info.item.props.route);
@@ -63,6 +62,7 @@ function generateTree(object, key, level, node, loggedIn) {
   }
 }
 
+// Export function so we can access it from outside (ie: from MenuUtil.spec.js).
 export function toShow(isPublic, loggedIn) {
   /* Truth table:
    * true, true --> true

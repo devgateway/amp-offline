@@ -2,10 +2,12 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 
-class TopMenu extends Component {
+// Use named export for unconnected component (for tests)
+export class TopMenu extends Component {
 
   static propTypes = {
-    builder: PropTypes.func.isRequired
+    builder: PropTypes.func.isRequired,
+    loggedIn: PropTypes.bool.isRequired
   };
 
   constructor() {
@@ -20,7 +22,7 @@ class TopMenu extends Component {
 
   render() {
     console.log('render');
-    return this.props.builder(this.props.login.loggedIn);
+    return this.props.builder(this.props.loggedIn, this.props.menu);
   }
 }
 
