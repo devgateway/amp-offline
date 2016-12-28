@@ -25,7 +25,7 @@ const DatabaseManager = {
 
   _getCollection(name, options) {
     console.log('_getCollection');
-    let self = this;
+    const self = this;
     return new Promise(function (resolve, reject) {
       let newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {filename: DB_FILE_PREFIX + name + DB_FILE_EXTENSION});
       newOptions.afterSerialization = self.encryptData;
@@ -203,7 +203,7 @@ const DatabaseManager = {
 
   removeById(id, collectionName, options) {
     console.log('removeById');
-    let self = this;
+    const self = this;
     let promise = new Promise(function (resolve, reject) {
       let removeByIdFunc = self._removeById.bind(null, id).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
       self.queuePromise(removeByIdFunc, resolve, reject);

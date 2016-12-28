@@ -14,7 +14,7 @@ const menuUtils = {
   },
 
   generateTree(object, key, level, node, loggedIn){
-    let self = this;
+    const self = this;
     const menuTrnPrefix = "menu";
     if (object.nodes) {
       node[level] = [];
@@ -35,7 +35,7 @@ const menuUtils = {
   buildMenu(loggedIn) {
     const defaultMenu = require('../conf/menu.json');
     let topLevelMenu;
-    let self = this;
+    const self = this;
     let firstLevelEntries = [];
     if (defaultMenu.menu !== undefined && defaultMenu.menu !== null) {
       // Iterate first level items.
