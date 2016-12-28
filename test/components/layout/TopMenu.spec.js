@@ -7,9 +7,10 @@ import {shallow} from 'enzyme';
 import {TopMenu} from '../../../app/components/layout/TopMenu.jsx';
 import * as MenuUtils from '../../../app/utils/MenuUtils';
 import Menu, {SubMenu, Item as MenuItem, Divider} from 'rc-menu';
+import TestUtils from 'react-addons-test-utils';
 
 function setup() {
-  const menu = {
+  const menuJson = {
     "menu": {
       "OPTION1": {
         "route": null,
@@ -29,16 +30,15 @@ function setup() {
   const loggedUser = true;
   const component = shallow(<TopMenu builder={MenuUtils.default.prototype.buildMenu}
                                      onClick={MenuUtils.handleClick}
-                                     loggedIn={loggedUser} menu={menu}/>);
+                                     loggedIn={loggedUser} menu={menuJson}/>);
   console.log('html completo');
   console.log(component.html());
   console.log('debug completo');
   console.log(component.debug());
-  console.log('html 2do render');
-  console.log(component.find(SubMenu).render());
   console.log(component.render().find('.rc-menu-item').first().text());
   return {
     component,
+    menuJson: menuJson,
     loggedUser: loggedUser,
     trnPrefix: 'menu.',
     menu: component.render().find('.rc-menu').find('div'),
@@ -63,10 +63,14 @@ describe('@@ TopMenu @@', () => {
     expect(firstLevelOption.html()).to.equal(trnPrefix + 'OPTION1');
   });
 
-  it('Should render a menu item', () => {
-    const {secondLevelOption, trnPrefix} = setup();
-    console.log('cccccccccccccccccccccccccccc');
-    console.log('3' + secondLevelOption.html() + '3');
-    expect(secondLevelOption.html()).to.equal(trnPrefix + 'option11');
+  it('Should render a 2st level options', () => {
+    const {trnPrefix, menuJson, loggedUser} = setup();
+    console.log('ccccccccccccccccccccccccccccccc');
+
+    var playerProfile = TestUtils.renderIntoDocument(<TopMenu builder={MenuUtils.default.prototype.buildMenu}
+                                                              onClick={MenuUtils.handleClick}
+                                                              loggedIn={loggedUser} menu={menuJson}/>);
+    var numberOfAvatars = TestUtils.scryRenderedComponentsWithType(playerProfile, SubMenu).length;
+    expect(numberOfAvatars).to.equal(1);
   });
 });
