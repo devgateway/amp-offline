@@ -55,7 +55,7 @@ const Auth = {
       console.log('secureHash');
       // https://blog.engelke.com/2015/02/14/deriving-keys-from-passwords-with-webcrypto/
       const saltBuffer = Buffer.from(salt, 'utf8');
-      let passphraseKey = Buffer.from(password, 'utf8');
+      const passphraseKey = Buffer.from(password, 'utf8');
       window.crypto.subtle.importKey(
         'raw',
         passphraseKey,
