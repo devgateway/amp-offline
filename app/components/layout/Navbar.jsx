@@ -5,6 +5,7 @@ import Switcher from '../../components/i18n/Switcher';
 import style from './Navbar.css';
 import translate from '../../utils/translate';
 import TopMenu from './TopMenu';
+import * as MenuUtils from '../../utils/MenuUtils';
 
 const pjson = require('../../../package.json');
 
@@ -29,7 +30,8 @@ export default class Navbar extends Component {
           <Switcher/>
         </div>
         <div className={style.main_menu}>
-          <TopMenu/>
+          <TopMenu builder={MenuUtils.default.prototype.buildMenu} onClick={MenuUtils.handleClick}
+                   user={this.props.user.loggedIn}/>
         </div>
       </div>
     );

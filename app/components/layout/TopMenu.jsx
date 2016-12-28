@@ -1,9 +1,12 @@
 // @flow
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import MenuUtils from '../../utils/MenuUtils';
 
 class TopMenu extends Component {
+
+  static propTypes = {
+    builder: PropTypes.func.isRequired
+  };
 
   constructor() {
     super();
@@ -12,12 +15,12 @@ class TopMenu extends Component {
 
   handleClick(info) {
     console.log('handleClick');
-    MenuUtils.handleClick(info);
+    this.props.handleClick(info);
   }
 
   render() {
     console.log('render');
-    return MenuUtils.buildMenu(this.props.login.loggedIn);
+    return this.props.builder(this.props.login.loggedIn);
   }
 }
 
