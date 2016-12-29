@@ -6,8 +6,11 @@ import {shallow} from 'enzyme';
 // Note the curly braces: grab the named export instead of default export
 import {TopMenu} from '../../../app/components/layout/TopMenu.jsx';
 import * as MenuUtils from '../../../app/utils/MenuUtils';
-import Menu, {SubMenu, Item as MenuItem, Divider} from 'rc-menu';
+import Menu, {SubMenu, MenuItem} from 'rc-menu';
 import TestUtils from 'react-addons-test-utils';
+import ReactDOM from 'react-dom';
+import ReactDOMServer from 'react-dom/server'
+import {mount} from 'enzyme';
 
 function setup() {
   const menuJson = {
@@ -17,10 +20,12 @@ function setup() {
         "public": false,
         "nodes": {
           "option11": {
+            "public": false,
             "route": "/test11",
             "params": null
           },
           "option12": {
+            "public": false,
             "route": "/test12"
           }
         }
@@ -28,9 +33,10 @@ function setup() {
     }
   };
   const loggedUser = true;
-  const component = shallow(<TopMenu builder={MenuUtils.default.prototype.buildMenu}
-                                     onClick={MenuUtils.handleClick}
-                                     loggedIn={loggedUser} menu={menuJson}/>);
+  const topMenuComponent = <TopMenu builder={MenuUtils.default.prototype.buildMenu}
+                                    onClick={MenuUtils.handleClick}
+                                    loggedIn={loggedUser} menu={menuJson}/>;
+  const component = shallow(topMenuComponent);
   console.log('html completo');
   console.log(component.html());
   console.log('debug completo');
@@ -43,7 +49,8 @@ function setup() {
     trnPrefix: 'menu.',
     menu: component.render().find('.rc-menu').find('div'),
     firstLevelOption: component.render().find('.rc-menu-submenu-title'),
-    secondLevelOption: component.render().find('.rc-menu-item')
+    secondLevelOption: component.render().find('.rc-menu-item'),
+    topMenuComponent: topMenuComponent
   };
 }
 
@@ -63,14 +70,19 @@ describe('@@ TopMenu @@', () => {
     expect(firstLevelOption.html()).to.equal(trnPrefix + 'OPTION1');
   });
 
-  it('Should render a 2st level options', () => {
-    const {trnPrefix, menuJson, loggedUser} = setup();
+  it('Should render 2st level options', () => {
+    const {trnPrefix, menuJson, loggedUser, topMenuComponent} = setup();
     console.log('ccccccccccccccccccccccccccccccc');
+    const renderTopMenuComponent = TestUtils.renderIntoDocument(topMenuComponent);
+    const numberOfSubMenus = TestUtils.scryRenderedComponentsWithType(renderTopMenuComponent, SubMenu).length;
+    expect(numberOfSubMenus).to.equal(1);
+  });
 
-    var playerProfile = TestUtils.renderIntoDocument(<TopMenu builder={MenuUtils.default.prototype.buildMenu}
-                                                              onClick={MenuUtils.handleClick}
-                                                              loggedIn={loggedUser} menu={menuJson}/>);
-    var numberOfAvatars = TestUtils.scryRenderedComponentsWithType(playerProfile, SubMenu).length;
-    expect(numberOfAvatars).to.equal(1);
+  it('Should render 3rd level options', () => {
+    // This test is different to detect the rendering of MenuItems.
+    const {trnPrefix, component} = setup();
+    console.log('ddddddddddddddddddddddddddd');
+    expect(component.debug().toString().indexOf(trnPrefix + 'option12')).to.not.equal(-1);
+    expect(component.debug().toString().indexOf(trnPrefix + 'option11')).to.not.equal(-1);
   });
 });

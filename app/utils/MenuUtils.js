@@ -1,16 +1,17 @@
 import translate from './translate';
 import UrlUtils from './URLUtils'
-import Menu, {SubMenu, Item as MenuItem, Divider} from 'rc-menu';
+import Menu, {SubMenu, MenuItem, Divider} from 'rc-menu';
 import animate from 'css-animation';
 import React from 'react';
 
 class MenuUtils {
 
   constructor() {
-    console.log('MenuUtils');
+    console.log('constructor');
   };
 
   buildMenu(loggedIn, menu) {
+    console.log('buildMenu');
     let topLevelMenu;
     const self = this;
     let firstLevelEntries = [];
@@ -24,7 +25,7 @@ class MenuUtils {
         }
       });
     }
-    topLevelMenu = (<Menu onClick={handleClick}>{firstLevelEntries}</Menu>);
+    topLevelMenu = <Menu onClick={handleClick}>{firstLevelEntries}</Menu>;
 
     return React.cloneElement(topLevelMenu, {
       onOpenChange: this.onOpenChange,
@@ -44,6 +45,7 @@ export function handleClick(info) {
 }
 
 function generateTree(object, key, level, node, loggedIn) {
+  console.log('generateTree');
   const self = this;
   const menuTrnPrefix = "menu";
   if (object.nodes) {
@@ -55,15 +57,16 @@ function generateTree(object, key, level, node, loggedIn) {
         }
       });
     }
-    return (<SubMenu title={translate(menuTrnPrefix + '.' + key)} key={key}>{node[level]}</SubMenu>);
+    return <SubMenu title={translate(menuTrnPrefix + '.' + key)} key={key}>{node[level]}</SubMenu>;
   } else {
-    return (<MenuItem title={translate(menuTrnPrefix + '.' + key)} key={key}
-                      route={object.route}>{translate(menuTrnPrefix + '.' + key)}</MenuItem>);
+    return <MenuItem title={translate(menuTrnPrefix + '.' + key)} key={key}
+                      route={object.route}>{translate(menuTrnPrefix + '.' + key)}</MenuItem>;
   }
 }
 
 // Export function so we can access it from outside (ie: from MenuUtil.spec.js).
 export function toShow(isPublic, loggedIn) {
+  console.log('toShow');
   /* Truth table:
    * true, true --> true
    * true, false --> true
