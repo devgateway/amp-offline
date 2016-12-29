@@ -18,7 +18,7 @@ class MenuUtils {
     if (menu.menu !== undefined && menu.menu !== null) {
       // Iterate first level items.
       Object.keys(menu.menu).forEach(function (key) {
-        let firstLevelObject = menu.menu[key];
+        const firstLevelObject = menu.menu[key];
         if (toShow(firstLevelObject.public, loggedIn)) {
           let structure = generateTree(firstLevelObject, key, 0, [], loggedIn);
           firstLevelEntries.push(structure);
