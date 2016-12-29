@@ -15,14 +15,9 @@ export class TopMenu extends Component {
     console.log('constructor');
   }
 
-  handleClick(info) {
-    console.log('handleClick');
-    this.props.handleClick(info);
-  }
-
   render() {
     console.log('render');
-    return this.props.builder(this.props.loggedIn, this.props.menu);
+    return this.props.builder(this.props.loggedIn, this.props.menu, this.props.onClick);
   }
 }
 

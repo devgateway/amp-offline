@@ -10,7 +10,7 @@ class MenuUtils {
     console.log('constructor');
   };
 
-  buildMenu(loggedIn, menu) {
+  buildMenu(loggedIn, menu, onClickHandler) {
     console.log('buildMenu');
     let topLevelMenu;
     const self = this;
@@ -25,7 +25,7 @@ class MenuUtils {
         }
       });
     }
-    topLevelMenu = <Menu onClick={handleClick}>{firstLevelEntries}</Menu>;
+    topLevelMenu = <Menu onClick={onClickHandler}>{firstLevelEntries}</Menu>;
 
     return React.cloneElement(topLevelMenu, {
       onOpenChange: this.onOpenChange,
