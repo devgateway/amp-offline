@@ -49,23 +49,30 @@ function setup() {
 // http://redux.js.org/docs/recipes/WritingTests.html
 describe('@@ TopMenu @@', () => {
   it('Should render the menu', () => {
+    const {topMenuComponent} = setup();
+    const renderTopMenuComponent = TestUtils.renderIntoDocument(topMenuComponent);
+    const numberOfMenus = TestUtils.scryRenderedComponentsWithType(renderTopMenuComponent, Menu).length;
+    expect(numberOfMenus).to.equal(1);
+  });
+
+  it('Should render the menu title', () => {
     const {menu, trnPrefix} = setup();
     expect(menu.html()).to.equal(trnPrefix + 'OPTION1');
   });
 
-  it('Should render a 1st level option', () => {
-    const {firstLevelOption, trnPrefix} = setup();
-    expect(firstLevelOption.html()).to.equal(trnPrefix + 'OPTION1');
-  });
-
-  it('Should render 2st level option', () => {
+  it('Should render 1st level option', () => {
     const {topMenuComponent} = setup();
     const renderTopMenuComponent = TestUtils.renderIntoDocument(topMenuComponent);
     const numberOfSubMenus = TestUtils.scryRenderedComponentsWithType(renderTopMenuComponent, SubMenu).length;
     expect(numberOfSubMenus).to.equal(1);
   });
 
-  it('Should render 3rd level options', () => {
+  it('Should render a 1st level option title', () => {
+    const {firstLevelOption, trnPrefix} = setup();
+    expect(firstLevelOption.html()).to.equal(trnPrefix + 'OPTION1');
+  });
+
+  it('Should render 2rd level options', () => {
     // This test is different to detect the rendering of MenuItems.
     const {trnPrefix, component} = setup();
     expect(component.debug().toString().indexOf(trnPrefix + 'option12')).to.not.equal(-1);
