@@ -2,11 +2,11 @@ import request from 'request';
 import {BASE_URL} from '../../utils/Constants';
 
 const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 2;
+const HARD_CODED_WORKSPACE = 4;
 
 const Auth = {
 
-  login(email, password) {
+  onlineLogin(email, password) {
     console.log('login');
     const self = this;
 
@@ -33,7 +33,6 @@ const Auth = {
           reject(((error !== null ? error.toString() : null) || JSON.stringify(body.error)));
         } else {
           console.log(body);
-          localStorage.setItem('token', 'ImLoggedInToken');
           //TODO: save the token, etcetc.
           resolve(body);
         }
@@ -41,13 +40,13 @@ const Auth = {
     });
   },
 
-  loggedIn() {
+  loggedIn(store) {
     //TODO: Implement more complex token validation scheme with expiration time, multiple users, etc.
-    return !!localStorage.token;
+    return (store.getState().login && store.getState().login.loggedIn);
   },
 
-  logout() {
-    localStorage.removeItem('token');
+  logout(store) {
+    //TODO: Implement this logic.
   },
 
   secureHash(password, salt, iterations) {

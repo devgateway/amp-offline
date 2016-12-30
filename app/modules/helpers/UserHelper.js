@@ -1,5 +1,6 @@
 import DatabaseManager from '../database/DatabaseManager';
-import {COLLECTION_USERS} from '../../utils/Constants';
+import {COLLECTION_USERS, AKEY, HASH_ITERATIONS} from '../../utils/Constants';
+import Auth from '../security/Auth';
 
 /**
  * This helper is for User functions only.
@@ -33,15 +34,21 @@ const UserHelper = {
     });
   },
 
-  saveOrUpdateUser(userData) {
+  /**
+   * Save the User without the original password, with an ID and with the hash of the online password.
+   * @param userData
+   * @returns {Promise}
+   */
+  saveOrUpdateUser(userData, password) {
     console.log('saveOrUpdateUser');
-    let self = this;
+    const self = this;
     return new Promise(function (resolve, reject) {
       //TODO: this is just to generate an id because now we dont have it in the EP.
       userData.id = self.emailToId(userData['user-name']);
-      DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {})
-        .then(resolve)
-        .catch(reject);
+      self.generateAMPOfflineHashFromPassword(password).then(function (hash) {
+        userData.ampOfflinePassword = hash;
+        DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {}).then(resolve).catch(reject);
+      }).catch(reject);
     });
   },
 
@@ -52,6 +59,10 @@ const UserHelper = {
       hash = (hash * 33) ^ email.charCodeAt(--i);
     }
     return hash >>> 0;
+  },
+
+  generateAMPOfflineHashFromPassword(password) {
+    return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
   }
 };
 

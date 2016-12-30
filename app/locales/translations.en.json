@@ -3,7 +3,9 @@
     "user": "User:",
     "password": "Password:",
     "login": "Log In",
-    "AMPOfflineUnavailableError": "AMP Offline is currently unavailable. Please contact the AMP Administrator."
+    "AMPOfflineUnavailableError": "AMP Offline is currently unavailable. Please contact the AMP Administrator.",
+    "AMPUnreachableError": "AMP Server is unreachable to authorize the login. Please try again later.",
+    "wrongPassword": "Wrong user or password."
   },
   "workspace": {
     "title": "Workspaces"

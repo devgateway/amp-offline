@@ -23,7 +23,7 @@ auth.logout();//TODO: this will dissapear when we get the login working properly
 function checkAuth(nextState, replaceState) {
   console.log('checkAuth');
 
-  if (!auth.loggedIn()) {
+  if (!auth.loggedIn(store)) {
     replaceState({nextPathname: nextState.location.pathname}, '/');
   } else {
     replaceState(null, '/workspace');

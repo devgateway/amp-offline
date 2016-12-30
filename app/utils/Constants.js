@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://local.amp.org:8080';
+export const BASE_URL = 'http://localhost:8080';
 export const WORKSPACE_URL = '/workspace';
 
 export const COLLECTION_USERS = 'users';
@@ -14,5 +14,7 @@ export const DB_AUTOCOMPACT_INTERVAL_MILISECONDS = 60000;
 
 export const LANGUAGE_ENGLISH = 'en';
 export const LANGUAGE_SPANISH = 'es';
+
+export const HASH_ITERATIONS = 100;
 
 
