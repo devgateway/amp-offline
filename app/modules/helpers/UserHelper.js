@@ -35,7 +35,7 @@ const UserHelper = {
 
   saveOrUpdateUser(userData) {
     console.log('saveOrUpdateUser');
-    let self = this;
+    const self = this;
     return new Promise(function (resolve, reject) {
       //TODO: this is just to generate an id because now we dont have it in the EP.
       userData.id = self.emailToId(userData['user-name']);

@@ -30,3 +30,26 @@ html, body {
 .table > tfoot > tr > td {
   border-top: 0;
 }
+.rc-menu-submenu {
+  cursor: pointer;
+}
+
+.rc-menu-item {
+  cursor: pointer;
+}
+
+.rc-menu-vertical.rc-menu-sub {
+  padding: 0;
+  padding-left: 10px;
+  padding-right: 10px;
+  min-width: 0px;
+}
+
+.rc-menu-item-selected {
+  background-color: #ffffff;
+}
+
+.rc-menu-submenu-selected {
+  background-color: transparent;
+}
+

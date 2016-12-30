@@ -5,7 +5,7 @@ const LoginManager = {
 
   processLogin(email, password) {
     console.log('processLogin');
-    let self = this;
+    const self = this;
     return new Promise(function (resolve, reject) {
       Auth.login(email, password).then(function (data) {
         // Save user info for later usage, encrypt if possible.

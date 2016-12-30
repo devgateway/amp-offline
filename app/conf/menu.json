@@ -3,44 +3,59 @@
   "menu": {
     "DESKTOP": {
       "route": null,
+      "public": false,
       "nodes": {
         "My Desktop": {
           "route": "/desktop",
           "params": null
         },
-        "Change Workspace": {
-          "route": "/workspace"
+        "Add Activity": {
+          "route": "/addActivity"
         }
       }
     },
     "TOOLS": {
       "route": null,
+      "public": true,
       "nodes": {
-        "Synchronize Data": {
-          "route": null,
+        "Change Language": {
+          "public": true,
           "nodes": {
-            "Synchronize Projects": {
+            "English": {
+              "public": true,
               "route": "/bla"
             },
-            "Synchronize Workspaces": {
-              "route": "/bla",
-              "nodes": {
-                "Change Language": {
-                  "nodes": {
-                    "English": {
-                      "route": "/bla"
-                    },
-                    "Spanish": {
-                      "route": "/bla"
-                    }
-                  }
-                }
-              }
+            "Spanish": {
+              "public": true,
+              "route": "/bla"
             }
           }
         },
-        "Help": {
-          "route": "/help"
+        "Settings": {
+          "public": false,
+          "route": "/settings"
+        }
+      }
+    },
+    "SYNC": {
+      "public": false,
+      "nodes": {
+        "Synchronize": {
+          "route": "/syncUp",
+          "public": false
+        }
+      }
+    },
+    "HELP": {
+      "public": true,
+      "nodes": {
+        "AMP Offline Help": {
+          "route": "/help",
+          "public": true
+        },
+        "About": {
+          "route": "/about",
+          "public": true
         }
       }
     }

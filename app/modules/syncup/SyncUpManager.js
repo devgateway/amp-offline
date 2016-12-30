@@ -48,7 +48,7 @@ const SyncUpManager = {
   },
   syncUp(token){
     console.log("syncup in progress");
-    let self = this;
+    const self = this;
 
     return new Promise(function (resolve, reject) {
       //we are going to syncup users
