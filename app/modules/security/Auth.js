@@ -11,11 +11,6 @@ const Auth = {
     const self = this;
 
     return new Promise(function (resolve, reject) {
-      self.logout(); //TODO: remove this line, just for testing redirection.
-      if (self.loggedIn()) {
-        resolve();
-      }
-
       const options = {
         url: BASE_URL + "/" + LOGIN_URL,
         json: true,
