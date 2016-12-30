@@ -9,6 +9,7 @@ import {
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Promise from 'bluebird';
+import translate from '../../utils/translate';
 
 /**
  * Is a Singleton to centralize control over the database access.
@@ -123,7 +124,7 @@ const DatabaseManager = {
   _replaceAll(collectionData, collectionName, options, resolve, reject) {
     console.log('_replaceAll');
     DatabaseManager._getCollection(collectionName, options).then(function (collection) {
-      collection.remove({}, { multi: true }, function (err) {
+      collection.remove({}, {multi: true}, function (err) {
         if (err === null) {
           collection.insert(collectionData, function (err, newDocs) {
             if (err === null && newDocs.length === collectionData.length) {
@@ -178,7 +179,7 @@ const DatabaseManager = {
 
   _removeById(id, collectionName, options, resolve, reject) {
     console.log('_removeById');
-    var self = this;
+    const self = this;
     DatabaseManager._getCollection(collectionName, null).then(function (collection) {
       // Look for an object by its id.
       let exampleObject = {id: id};
@@ -212,28 +213,32 @@ const DatabaseManager = {
   },
 
   findOne(example, collectionName) {
-    console.log('_findOne');
-    let projections = Object.assign({_id: 0});
+    console.log('findOne');
+    const projections = Object.assign({_id: 0});
     return new Promise(function (resolve, reject) {
-      DatabaseManager._getCollection(collectionName, null).then(function (collection) {
-        collection.findOne(example, projections, function (err, doc) {
-          if (err !== null) {
-            reject(err.toString());
-          }
-          if (doc !== null) {
-            resolve(doc);
-          }
-        });
+      DatabaseManager.findAll(example, collectionName, projections).then(function (docs) {
+        switch (docs.length) {
+          case 0:
+            resolve(null);
+            break;
+          case 1:
+            resolve(docs[0]);
+            break;
+          default:
+            reject(translate("database.moreThanOneResultFound"));
+            break;
+        }
       }).catch(reject);
     });
   },
 
-  findAll(example, collectionName) {
-    return this.findAllWithProjections(example, null, collectionName);
+  findAll(example, collectionName, projections) {
+    console.log('findAll');
+    return this.findAllWithProjections(example, collectionName, projections);
   },
 
-  findAllWithProjections(example, projections, collectionName) {
-    console.log('findAll');
+  findAllWithProjections(example, collectionName, projections) {
+    console.log('findAllWithProjections');
     projections = Object.assign({_id: 0}, projections);
     return new Promise(function (resolve, reject) {
       DatabaseManager._getCollection(collectionName, null).then(function (collection) {

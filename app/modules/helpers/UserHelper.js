@@ -22,7 +22,7 @@ const UserHelper = {
 
   findByUsername(name) {
     console.log('findByUsername');
-    let example = {userName: name};
+    let example = {'user-name': name};
     return this.findUserByExample(example);
   },
 
