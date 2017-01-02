@@ -1,5 +1,5 @@
 import DatabaseManager from '../database/DatabaseManager';
-import {COLLECTION_USERS, AKEY, HASH_ITERATIONS} from '../../utils/Constants';
+import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
 
 /**
