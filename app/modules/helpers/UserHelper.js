@@ -17,13 +17,13 @@ const UserHelper = {
    */
   findByEmail(email) {
     console.log('findByEmail');
-    let example = {email: email};
+    const example = {email: email};
     return this.findUserByExample(example);
   },
 
   findByUsername(name) {
     console.log('findByUsername');
-    let example = {'user-name': name};
+    const example = {'user-name': name};
     return this.findUserByExample(example);
   },
 
