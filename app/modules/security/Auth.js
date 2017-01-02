@@ -1,5 +1,6 @@
 import request from 'request';
 import {BASE_URL} from '../../utils/Constants';
+import {store} from '../../index';
 
 const LOGIN_URL = "rest/security/user";
 const HARD_CODED_WORKSPACE = 4;
@@ -35,12 +36,12 @@ const Auth = {
     });
   },
 
-  loggedIn(store) {
+  loggedIn() {
     //TODO: Implement more complex token validation scheme with expiration time, multiple users, etc.
     return (store.getState().login && store.getState().login.loggedIn);
   },
 
-  logout(store) {
+  logout() {
     //TODO: Implement this logic.
   },
 
