@@ -1,36 +1,34 @@
 import request from 'request';
-import {BASE_URL} from '../../utils/Constants';
 import RequestConfig from './RequestConfig';
-
-const GET_WORKSPACES_URL = "rest/security/workspaces";
 
 const ConnectionHelper = {
 
-  getCallAuthenticated(token, url) {
-    const self = this;
-    return new Promise(function (resolve, reject) {
-      console.log('invoke get for ' + BASE_URL + "/" + url);
-      const options = {
-        url: BASE_URL + "/" + url,
-        json: true,
-        headers: {'content-type': 'application/json', 'Accept': 'application/json', 'X-Auth-Token': token},
-        method: 'GET'
-      };
-      return self._doMethod(options);
-    });
-  },
-
-  doGet(url, paramsMap) {
-    const requestConfig = RequestConfig.getRequestConfig('GET', url, paramsMap);
+  doGet({ url, paramsMap }) {
+    const method = 'GET';
+    // Modify the call to use ES6 destructuring
+    const requestConfig = RequestConfig.getRequestConfig({method, url, paramsMap});
     return this._doMethod(requestConfig);
   },
-
+  /**
+   *
+   * @param url
+   * @param paramsMap
+   * @param body
+   * @returns {Promise}
+   */
+  doPost({url, paramsMap, body}) {
+    // Notice that we are actually receiving an object as a parameter  but we are destructuring it
+    const method = 'POST';
+    const requestConfig = RequestConfig.getRequestConfig({method, url, paramsMap, body});
+    return this._doMethod(requestConfig);
+  },
+  
   _doMethod(options) {
     return new Promise((resolve, reject) => {
       request(options, function (error, response, body) {
-        //console.log(body);
         if (error || response.statusCode !== 200 || body.error) {
-          reject((error || JSON.stringify(body === undefined? response.statusCode : body.error)));
+          // We return body.error without string
+          reject(response.error);
         } else {
           resolve(body);
         }

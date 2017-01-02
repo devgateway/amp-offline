@@ -1,8 +1,5 @@
-import request from 'request';
-import {BASE_URL, COLLECTION_WORKPACES} from '../../utils/Constants';
-
+import { COLLECTION_WORKPACES } from '../../utils/Constants';
 import DatabaseManager from '../database/DatabaseManager';
-export const GET_WORKSPACES_URL = "rest/security/workspaces";
 
 const WorkspaceManager = {
   getWorkspacesFromStore(){

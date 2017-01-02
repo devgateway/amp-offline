@@ -1,7 +1,5 @@
-import request from 'request';
-import {BASE_URL} from '../../utils/Constants';
-
-const LOGIN_URL = "rest/security/user";
+import { LOGIN_URL } from '../connectivity/AmpApiConstants';
+import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
 const HARD_CODED_WORKSPACE = 2;
 
 const Auth = {
@@ -9,43 +7,34 @@ const Auth = {
   login(email, password) {
     console.log('login');
     const self = this;
-
+    const url = LOGIN_URL;
+    const body = {
+      "username": email,
+      "password": password
+    };
     return new Promise(function (resolve, reject) {
-      self.logout(); //TODO: remove this line, just for testing redirection.
+      // TODO: remove this line, just for testing redirection.
+      self.logout();
       if (self.loggedIn()) {
         resolve();
       }
 
-      const options = {
-        url: BASE_URL + "/" + LOGIN_URL,
-        json: true,
-        body: {
-          "username": email,
-          "password": password,
-          "workspaceId": HARD_CODED_WORKSPACE
-        },
-        headers: {'content-type': 'application/json', 'Accept': 'application/json'},
-        method: 'POST'
-      };
-      //TODO: we need an util class for handling all ajax requests.
-      request(options, function (error, response, body) {
-        if (error != null || response.statusCode === 500 || body.error) {
-          reject(((error !== null ? error.toString() : null) || JSON.stringify(body.error)));
-        } else {
-          console.log(body);
-          localStorage.setItem('token', 'ImLoggedInToken');
-          //TODO: save the token, etcetc.
-          resolve(body);
-        }
+      ConnectionHelper.doPost({url, body}).then((data) => {
+        resolve(data);
+        console.log(body);
+        localStorage.setItem('token', 'ImLoggedInToken');
+        // TODO: save the token, etcetc.
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
       });
     });
   },
 
   loggedIn() {
-    //TODO: Implement more complex token validation scheme with expiration time, multiple users, etc.
+    // TODO: Implement more complex token validation scheme with expiration time, multiple users, etc.
     return !!localStorage.token;
   },
-
   logout() {
     localStorage.removeItem('token');
   },
