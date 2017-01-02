@@ -1,4 +1,9 @@
-export const BASE_URL = 'http://localhost:8080';
+export const SERVER_URL = 'localhost';
+export const BASE_REST_URL = '/rest';
+export const PROTOCOL = 'http';
+export const BASE_PORT = '8080';
+export const CONNECTION_TIMEOUT = '2500';
+
 export const WORKSPACE_URL = '/workspace';
 
 export const COLLECTION_USERS = 'users';

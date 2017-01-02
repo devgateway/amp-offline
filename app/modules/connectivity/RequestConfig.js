@@ -1,4 +1,5 @@
-import {BASE_URL} from '../../utils/Constants';
+import {store} from '../../index';
+import routesConfiguration from '../../utils/RoutesConfiguration';
 
 const RequestConfig = {
   /**
@@ -8,15 +9,26 @@ const RequestConfig = {
    * @param paramsMap
    * @param body
    */
-  getRequestConfig(method, url, paramsMap, body) {
+  /* adding {} to destructure method body so we can or can not send paramsMap
+   in case we don't want to send id we dont have to send null or nothing*/
+  getRequestConfig({method, url, paramsMap, body}) {
+    const fullBaseUrl = this._getFullBaseUrl(url);
     const urlParams = this._paramsMapToString(paramsMap);
-    const fullUrl = BASE_URL + "/rest/" + url + urlParams;
+    const fullUrl = fullBaseUrl + urlParams;
     const requestConfig = {
       url: fullUrl,
       json: true,
       headers: {'content-type': 'application/json', 'Accept': 'application/json'},
       method: method
+    };
+    if (store.getState().startUp.connectionInformation.timeOut) {
+      requestConfig.timeout = store.getState().startUp.connectionInformation.timeOut;
     }
+    const token = this._getToken(method, url);
+    if (token) {
+      requestConfig.headers['X-Auth-Token'] = token;
+    }
+
     if (body !== undefined) {
       requestConfig.body = body;
     }
@@ -37,7 +49,29 @@ const RequestConfig = {
     }
     const paramsStr = '?' + kv.join('&');
     return paramsStr;
+  },
+
+  _getFullBaseUrl(url) {
+    return store.getState().startUp.connectionInformation.getFullRestUrl() + url;
+  },
+
+  _getToken(method, url) {
+    // We go to check to routes config to see if we need to generate a token
+    const routesConfigurationFiltered = routesConfiguration.filter(function (element) {
+      return element.url === url && element.method === method;
+    });
+    if (routesConfigurationFiltered && routesConfigurationFiltered.length === 1) {
+      if (routesConfigurationFiltered[0].requiresToken) {
+        if (store.getState().login.loggedUser.token) {
+          return store.getState().login.loggedUser.token;
+        } else {
+          // TODO if the token is not present we try to log the user in;
+        }
+      }
+    } else {
+      throw 'Route ' + url + ' for method ' + method + ' is not configured';
+    }
   }
-}
+};
 
 module.exports = RequestConfig;

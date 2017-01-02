@@ -31,11 +31,11 @@ export function getSyncUpHistory() {
     dispatch(sendingRequest());
   };
 }
-export function startSyncUp(historyData, token) {
+export function startSyncUp(historyData) {
   console.log("startSyncUp");
   return (dispatch, ownProps) => {
     if (ownProps().syncUp.syncUpInProgress === false) {
-      SyncUpManager.syncUp(token).then((response) => {
+      SyncUpManager.syncUp().then((response) => {
         //TODO probably the way in which we will update the ui will change
         //once we get the final version also it will change the way in which pass
         //the historyData object

@@ -14,7 +14,7 @@ import SyncUpPage from './containers/SyncUpPage';
 import auth from './modules/security/Auth';
 import i18next from 'i18next';
 import XHR from 'i18next-xhr-backend';
-
+import {ampStartUp} from './actions/StartUpAction';
 export const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
@@ -39,17 +39,19 @@ i18next.use(XHR).init(i18nOptions, (err, t) => {
     console.error(err);
   }
 
-  render(
-    <Provider store={store}>
-      <Router history={history} store={store}>
-        <Route path="/" component={App}>
-          <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
-          <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
-          <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth}/>
-          <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth}/>
-        </Route>
-      </Router>
-    </Provider>,
-    document.getElementById('root')
-  );
+  ampStartUp().then(() => {
+    render(
+      <Provider store={store}>
+        <Router history={history} store={store}>
+          <Route path="/" component={App}>
+            <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
+            <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
+            <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth}/>
+            <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth}/>
+          </Route>
+        </Router>
+      </Provider>,
+      document.getElementById('root')
+    );
+  });
 });

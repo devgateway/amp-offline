@@ -9,10 +9,10 @@ const LoginManager = {
     const self = this;
     return new Promise(function (resolve, reject) {
       // 1) Check if AMPOffline is available.
-      const isAMPOfflineAvailable = true; //TODO: read from a redux state.
+      const isAMPOfflineAvailable = true; // TODO: read from a redux state (to be done on AMPOFFLINE-100).
       if (isAMPOfflineAvailable) {
         // 2) Find this email in db.
-        UserHelper.findByUsername(email).then(function (dbUser) {
+        UserHelper.findByUsername(email).then((dbUser) => {
           if (dbUser !== null) {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
             UserHelper.generateAMPOfflineHashFromPassword(password).then(function (hash) {
@@ -24,7 +24,7 @@ const LoginManager = {
             }).catch(reject);
           } else {
             // 3.1) First time this user login.
-            //TODO: call another function to check if amp is online.
+            // TODO: call another function to check if amp is online (to be done on AMPOFFLINE-103).
             const isAMPAvailable = true;
             if (isAMPAvailable) {
               Auth.onlineLogin(email, password).then(function (data) {

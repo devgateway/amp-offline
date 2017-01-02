@@ -26,7 +26,7 @@ const DatabaseManager = {
 
   _getCollection(name, options) {
     console.log('_getCollection');
-    let self = this;
+    const self = this;
     return new Promise(function (resolve, reject) {
       let newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {filename: DB_FILE_PREFIX + name + DB_FILE_EXTENSION});
       newOptions.afterSerialization = self.encryptData;
@@ -113,9 +113,9 @@ const DatabaseManager = {
   saveOrUpdate(id, data, collectionName, options) {
     console.log('saveOrUpdate');
     // This promise will be resolved/rejected inside '_saveOrUpdate', but initiated by the queue manager in DatabaseCollection.js.
-    let promise = new Promise(function (resolve, reject) {
+    const promise = new Promise(function (resolve, reject) {
       // We define a variable with the function instead of calling it because a Promise will start inmediately.
-      let saveOrUpdateFunc = DatabaseManager._saveOrUpdate.bind(null, id).bind(null, data).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
+      const saveOrUpdateFunc = DatabaseManager._saveOrUpdate.bind(null, id).bind(null, data).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
       DatabaseManager.queuePromise(saveOrUpdateFunc);
     });
     return promise;
@@ -204,7 +204,7 @@ const DatabaseManager = {
 
   removeById(id, collectionName, options) {
     console.log('removeById');
-    let self = this;
+    const self = this;
     let promise = new Promise(function (resolve, reject) {
       let removeByIdFunc = self._removeById.bind(null, id).bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
       self.queuePromise(removeByIdFunc, resolve, reject);

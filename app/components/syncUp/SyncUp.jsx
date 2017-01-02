@@ -48,7 +48,7 @@ export default class SyncUp extends Component {
         <div className={styles.display_inline}>
           <Button type="button"  text="Start Sync Up" className={'btn btn-success ' + (this.state.loadingSyncHistory ? 'disabled' : '')}
                   onClick={() => {
-            startSyncUp(historyData,this.props.login.loggedUser.token)
+            startSyncUp(historyData)
           }} >
           </Button>
         </div>

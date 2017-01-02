@@ -14,10 +14,6 @@ export function loginAction(email, password) {
     if (ownProps().login.loginProcessing === false) {
       LoginManager.processLogin(email, password).then(function (data) {
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        // this logic will change with online/offline login and different sources for method params may be needed
-        /* TODO: switch to
-         dispatch(loginOk(data.userData, password, data.token));
-         */
         dispatch(loginOk(data, password, data.token));
         // Tell react-router to move to another page.
         UrlUtils.forwardTo(WORKSPACE_URL);

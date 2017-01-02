@@ -1,8 +1,6 @@
 import ConnectionHelper from '../connectivity/ConnectionHelper'
-import DatabaseManager from '../database/DatabaseManager';
-import {COLLECTION_WORKPACES} from '../../utils/Constants';
-
-const GET_WORKSPACES_URL = "rest/security/workspaces";
+import WorkspaceHelper from  '../helpers/WorkspaceHelper';
+import { GET_WORKSPACES_URL } from '../connectivity/AmpApiConstants';
 
 
 
@@ -46,13 +44,13 @@ const SyncUpManager = {
       resolve(syncUpHistory);
     });
   },
-  syncUp(token){
+  syncUp(){
     console.log("syncup in progress");
-    let self = this;
+    const self = this;
 
     return new Promise(function (resolve, reject) {
       //we are going to syncup users
-      self.syncUpWs(token, GET_WORKSPACES_URL).then(function (data) {
+      self.syncUpWs( GET_WORKSPACES_URL).then(function (data) {
         const syncUpResult = {
           syncStatus: "synced",
         }
@@ -64,30 +62,19 @@ const SyncUpManager = {
       });
     });
   },
-  syncUpUser(token){
+  syncUpUser(){
     //once we
   },
   //this will be moved to its own utility class
-  syncUpWs(token, wsUrl){
+  syncUpWs(url){
     return new Promise(function (resolve, reject) {
       //TODO the workspace list should be for the useres in the UserStore, once we have defined
       //The userSync we can modify this call to only retrieve
-      ConnectionHelper.getCallAuthenticated(token, wsUrl).then(function (data) {
-        //TODO this is now async resolving in line 85 with an empty object. Once we have the bulk insert
-        //we will make the call sync and resolve only when resolved
-        data.forEach(function (value) {
-          DatabaseManager.saveOrUpdate(value.id, value, COLLECTION_WORKPACES, null).then(function () {
-          }).catch(function (err) {
-            reject(err);
-          });
-        });
-        resolve({});
-      }).catch(function (err) {
-        console.log("There was an error retrieving workspace data");
-        console.log(JSON.stringify(err));
-
+      ConnectionHelper.doGet({url}).then((data) => {
+        WorkspaceHelper.replaceWorkspaces(data).then(resolve).catch(reject);
+      }).catch((error) => {
+        reject(error);
       });
-
     });
   }
 };

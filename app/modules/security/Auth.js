@@ -1,37 +1,24 @@
-import request from 'request';
-import {BASE_URL} from '../../utils/Constants';
-import {store} from '../../index';
-
-const LOGIN_URL = "rest/security/user";
-const HARD_CODED_WORKSPACE = 4;
+import { LOGIN_URL } from '../connectivity/AmpApiConstants';
+import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
+import { store } from '../../index';
 
 const Auth = {
 
   onlineLogin(email, password) {
     console.log('login');
     const self = this;
-
+    const url = LOGIN_URL;
+    const body = {
+      "username": email,
+      "password": password
+    };
     return new Promise(function (resolve, reject) {
-      const options = {
-        url: BASE_URL + "/" + LOGIN_URL,
-        json: true,
-        body: {
-          "username": email,
-          "password": password,
-          "workspaceId": HARD_CODED_WORKSPACE
-        },
-        headers: {'content-type': 'application/json', 'Accept': 'application/json'},
-        method: 'POST'
-      };
-      //TODO: we need an util class for handling all ajax requests.
-      request(options, function (error, response, body) {
-        if (error != null || response.statusCode === 500 || body.error) {
-          reject(((error !== null ? error.toString() : null) || JSON.stringify(body.error)));
-        } else {
-          console.log(body);
-          //TODO: save the token, etcetc.
-          resolve(body);
-        }
+      ConnectionHelper.doPost({url, body}).then((data) => {
+        resolve(data);
+        console.log(body);
+      }).catch((err) => {
+        console.log(err);
+        reject(err);
       });
     });
   },

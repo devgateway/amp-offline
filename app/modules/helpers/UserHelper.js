@@ -42,8 +42,8 @@ const UserHelper = {
   saveOrUpdateUser(userData, password) {
     console.log('saveOrUpdateUser');
     const self = this;
-    return new Promise(function (resolve, reject) {
-      //TODO: this is just to generate an id because now we dont have it in the EP.
+    return new Promise((resolve, reject) => {
+      // TODO: this is just to generate an id because now we dont have it in the EP.
       userData.id = self.emailToId(userData['user-name']);
       self.generateAMPOfflineHashFromPassword(password).then(function (hash) {
         userData.ampOfflinePassword = hash;
