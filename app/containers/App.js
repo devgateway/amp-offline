@@ -1,5 +1,5 @@
 // @flow
-import React, {Component, PropTypes} from 'react';
+import React, { Component, PropTypes } from 'react';
 import Navbar from '../components/layout/Navbar';
 import styles from './App.css';
 import Footer from '../components/layout/Footer'
@@ -27,7 +27,7 @@ export default class App extends Component {
     return (
       <div className={styles.container}>
         <div className={styles.container}>
-          <Navbar user={this.context.store.getState().login}/>
+          <Navbar user={this.context.store.getState().user} login={this.context.store.getState().login}/>
           <div className={styles.content}>
             {this.props.children}
           </div>

@@ -17,7 +17,7 @@ const LoginManager = {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
             UserHelper.generateAMPOfflineHashFromPassword(password).then(function (hash) {
               if (hash === dbUser.ampOfflinePassword) {
-                resolve(dbUser);
+                resolve({dbUser: dbUser});
               } else {
                 reject(translate('login.wrongPassword'));
               }
@@ -52,8 +52,7 @@ const LoginManager = {
     return new Promise(function (resolve, reject) {
       Auth.onlineLogin(email, password).then(function (data) {
         self.saveLoginData(data, password).then(function (dbData) {
-          dbData.token = data.token;
-          resolve(dbData);
+          resolve({dbUser: dbData, token: data.token});
         }).catch(function (err) {
           reject(err);
         });

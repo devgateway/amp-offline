@@ -1,6 +1,6 @@
 // @flow
-import React, {Component, PropTypes} from 'react';
-import {Link} from 'react-router';
+import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
 import Switcher from '../../components/i18n/Switcher';
 import style from './Navbar.css';
 import translate from '../../utils/translate';
@@ -32,7 +32,7 @@ export default class Navbar extends Component {
         </div>
         <div className={style.main_menu}>
           <TopMenu builder={MenuUtils.default.prototype.buildMenu} onClick={MenuUtils.handleClick}
-                   loggedIn={this.props.user.loggedIn} menu={defaultMenu}/>
+                   loggedIn={this.props.login.loggedIn} menu={defaultMenu}/>
         </div>
       </div>
     );
@@ -40,8 +40,8 @@ export default class Navbar extends Component {
 
   extractLoggedUser(prepend) {
     console.log('extractLoggedUser');
-    if (this.props.user instanceof Object && this.props.user.loggedUser instanceof Object) {
-      return prepend + this.props.user.loggedUser.email;
+    if (this.props.user instanceof Object && this.props.user.userData instanceof Object) {
+      return prepend + this.props.user.userData.email;
     }
     return '';
   }

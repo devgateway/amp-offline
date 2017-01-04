@@ -1,32 +1,37 @@
 // @flow
-import {STATE_LOGIN_OK, STATE_LOGIN_FAIL, STATE_LOGOUT, STATE_LOGIN_PROCESSING} from '../actions/LoginAction';
+import { STATE_LOGIN_OK, STATE_LOGIN_FAIL, STATE_LOGOUT, STATE_LOGIN_PROCESSING } from '../actions/LoginAction';
 
 const defaultState = {
-  loggedUser: undefined,
   loggedIn: false,
   loginProcessing: false,
   errorMessage: ''
 };
 
+/**
+ * This reducer saves info related to the login process only.
+ * @param state
+ * @param action
+ * @returns {*}
+ */
 export default function login(state = defaultState, action: Object) {
   console.log('LoginReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {
-        loggedUser: action.actionData.userData,
         loggedIn: true,
+        token: action.actionData.token,
+        plainPassword: action.actionData.password,
+        userName: action.actionData.userName,
         loginProcessing: false
       });
     case STATE_LOGIN_FAIL:
       return Object.assign({}, state, {
-        loggedUser: undefined,
         loggedIn: false,
         loginProcessing: false,
         errorMessage: action.actionData.errorMessage
       });
     case STATE_LOGOUT:
       return Object.assign({}, state, {
-        loggedUser: undefined,
         loggedIn: false,
         loginProcessing: false
       });
