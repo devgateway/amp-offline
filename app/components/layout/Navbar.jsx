@@ -41,7 +41,7 @@ export default class Navbar extends Component {
   extractLoggedUser(prepend) {
     console.log('extractLoggedUser');
     if (this.props.user instanceof Object && this.props.user.loggedUser instanceof Object) {
-      return prepend + this.props.user.loggedUser['user-name'];
+      return prepend + this.props.user.loggedUser.email;
     }
     return '';
   }
