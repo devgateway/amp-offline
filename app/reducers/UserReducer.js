@@ -17,7 +17,7 @@ export default function user(state = defaultState, action: Object) {
       return Object.assign({}, state, {
         userData: action.actionData.userData,
         plainPassword: action.actionData.plainPassword,
-        token: action.actionData.token
+        token: action.actionData.userData.token
       });
     case STATE_SELECT_WORKSPACE:
       return Object.assign({}, state, {

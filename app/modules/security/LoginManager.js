@@ -12,7 +12,7 @@ const LoginManager = {
       const isAMPOfflineAvailable = true; // TODO: read from a redux state (to be done on AMPOFFLINE-100).
       if (isAMPOfflineAvailable) {
         // 2) Find this email in db.
-        UserHelper.findByUsername(email).then((dbUser) => {
+        UserHelper.findByEmail(email).then((dbUser) => {
           if (dbUser !== null) {
             if (dbUser.ampOfflinePassword && dbUser.ampOfflinePassword.toString() !== '') {
               // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
@@ -63,7 +63,9 @@ const LoginManager = {
 
   saveLoginData(userData, password) {
     console.log('saveLoginData');
-    return UserHelper.saveOrUpdateUser(userData, password);
+    // The user we save in db is different than userData coming from the login EP.
+    const userToSave = {email: userData['user-name']};
+    return UserHelper.saveOrUpdateUser(userToSave, password);
   }
 };
 
