@@ -9,6 +9,7 @@ const ConnectionHelper = {
     const requestConfig = RequestConfig.getRequestConfig({method, url, paramsMap});
     return this._doMethod(requestConfig);
   },
+
   /**
    *
    * @param url
@@ -22,20 +23,19 @@ const ConnectionHelper = {
     const requestConfig = RequestConfig.getRequestConfig({method, url, paramsMap, body});
     return this._doMethod(requestConfig);
   },
-  
+
   _doMethod(options) {
     return new Promise((resolve, reject) => {
       request(options, function (error, response, body) {
         if (error || response.statusCode !== 200 || body.error) {
           // We return body.error without string
-          reject(response.error);
+          reject(error || body.error);
         } else {
           resolve(body);
         }
       });
     });
   }
-
 };
 
 module.exports = ConnectionHelper;

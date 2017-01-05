@@ -26,7 +26,7 @@ export default class WorkspacePage extends Component {
     console.log('componentDidMount');
     this.state.firstLoad = false;
     //TODO: Find a way to move this code outside the React component, it could be done in WorkspacePage but I still dont know how to do it.
-    this.props.getRemoteWorkspaces(this.props.login.loggedUser.token);
+    this.props.getRemoteWorkspaces(this.props.login.token);
   }
 
   render() {

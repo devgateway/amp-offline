@@ -1,5 +1,7 @@
 import DatabaseManager from '../database/DatabaseManager';
-import {COLLECTION_USERS} from '../../utils/Constants';
+import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
+import Auth from '../security/Auth';
+import Utils from '../../utils/Utils';
 
 /**
  * This helper is for User functions only.
@@ -16,13 +18,7 @@ const UserHelper = {
    */
   findByEmail(email) {
     console.log('findByEmail');
-    let example = {email: email};
-    return this.findUserByExample(example);
-  },
-
-  findByUsername(name) {
-    console.log('findByUsername');
-    let example = {userName: name};
+    const example = {email: email};
     return this.findUserByExample(example);
   },
 
@@ -33,25 +29,24 @@ const UserHelper = {
     });
   },
 
-  saveOrUpdateUser(userData) {
+  /**
+   * Save the User without the original password, with an ID and with the hash of the online password.
+   * @param userData
+   * @returns {Promise}
+   */
+  saveOrUpdateUser(userData, password) {
     console.log('saveOrUpdateUser');
     const self = this;
-    return new Promise(function (resolve, reject) {
-      //TODO: this is just to generate an id because now we dont have it in the EP.
-      userData.id = self.emailToId(userData['user-name']);
-      DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {})
-        .then(resolve)
-        .catch(reject);
+    return new Promise((resolve, reject) => {
+      self.generateAMPOfflineHashFromPassword(password).then(function (hash) {
+        userData.ampOfflinePassword = hash;
+        DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {}).then(resolve).catch(reject);
+      }).catch(reject);
     });
   },
 
-  emailToId(email) {
-    let hash = 5381;
-    let i = email.length;
-    while (i) {
-      hash = (hash * 33) ^ email.charCodeAt(--i);
-    }
-    return hash >>> 0;
+  generateAMPOfflineHashFromPassword(password) {
+    return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
   }
 };
 

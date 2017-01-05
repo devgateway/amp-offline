@@ -1,10 +1,10 @@
 import { LOGIN_URL } from '../connectivity/AmpApiConstants';
 import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
-const HARD_CODED_WORKSPACE = 2;
+import { store } from '../../index';
 
 const Auth = {
 
-  login(email, password) {
+  onlineLogin(email, password) {
     console.log('login');
     const self = this;
     const url = LOGIN_URL;
@@ -13,17 +13,9 @@ const Auth = {
       "password": password
     };
     return new Promise(function (resolve, reject) {
-      // TODO: remove this line, just for testing redirection.
-      self.logout();
-      if (self.loggedIn()) {
-        resolve();
-      }
-
       ConnectionHelper.doPost({url, body}).then((data) => {
         resolve(data);
         console.log(body);
-        localStorage.setItem('token', 'ImLoggedInToken');
-        // TODO: save the token, etcetc.
       }).catch((err) => {
         console.log(err);
         reject(err);
@@ -32,11 +24,12 @@ const Auth = {
   },
 
   loggedIn() {
-    // TODO: Implement more complex token validation scheme with expiration time, multiple users, etc.
-    return !!localStorage.token;
+    //TODO: Implement more complex token validation scheme with expiration time, multiple users, etc.
+    return (store.getState().login && store.getState().login.loggedIn);
   },
+
   logout() {
-    localStorage.removeItem('token');
+    //TODO: Implement this logic.
   },
 
   secureHash(password, salt, iterations) {

@@ -1,6 +1,5 @@
-export const BASE_URL = 'http://local.amp.org:8080';
-export const SERVER_URL = 'local.amp.org';
-export const BASE_REST_URL= '/rest';
+export const SERVER_URL = 'localhost';
+export const BASE_REST_URL = '/rest';
 export const PROTOCOL = 'http';
 export const BASE_PORT = '8080';
 export const CONNECTION_TIMEOUT = '2500';
@@ -20,5 +19,7 @@ export const DB_AUTOCOMPACT_INTERVAL_MILISECONDS = 60000;
 
 export const LANGUAGE_ENGLISH = 'en';
 export const LANGUAGE_SPANISH = 'es';
+
+export const HASH_ITERATIONS = 100;
 
 

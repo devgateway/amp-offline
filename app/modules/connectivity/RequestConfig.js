@@ -1,4 +1,4 @@
-import {store} from '../../index';
+import { store } from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 
 const RequestConfig = {
@@ -62,8 +62,8 @@ const RequestConfig = {
     });
     if (routesConfigurationFiltered && routesConfigurationFiltered.length === 1) {
       if (routesConfigurationFiltered[0].requiresToken) {
-        if (store.getState().login.loggedUser.token) {
-          return store.getState().login.loggedUser.token;
+        if (store.getState().login.token) {
+          return store.getState().login.token;
         } else {
           // TODO if the token is not present we try to log the user in;
         }
