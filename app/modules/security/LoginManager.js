@@ -1,6 +1,7 @@
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
 import translate from '../../utils/translate';
+import Util from '../../utils/Utils';
 
 const LoginManager = {
 
@@ -62,9 +63,24 @@ const LoginManager = {
     });
   },
 
+  /**
+   * Transform auth user data to db user data.
+   */
   saveLoginData(userData, password) {
     console.log('saveLoginData');
-    return UserHelper.saveOrUpdateUser(userData, password);
+    return new Promise(function (resolve, reject) {
+      const email = userData.email || userData['user-name'];
+      UserHelper.findByEmail(email).then(function (dbData) {
+        if (dbData) {
+          UserHelper.saveOrUpdateUser(dbData, password).then(resolve).catch(reject);
+        } else {
+          // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
+          const id = userData.id || Util.stringToId(email);
+          const dbUserData = {id: id, email: email};
+          UserHelper.saveOrUpdateUser(dbUserData, password).then(resolve).catch(reject);
+        }
+      }).catch(reject);
+    });
   }
 };
 

@@ -15,9 +15,8 @@ export function loginAction(email, password) {
       LoginManager.processLogin(email, password).then(function (data) {
         const userData = data.dbUser;
         const token = data.token;
-        const userName = data.dbUser.email;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        dispatch(loginOk({userData, password, token, userName}));
+        dispatch(loginOk({userData, password, token}));
         // Tell react-router to move to another page.
         UrlUtils.forwardTo(WORKSPACE_URL);
       }).catch(function (err) {
@@ -32,13 +31,12 @@ export function loginAction(email, password) {
  * Register successful login user data
  * @returns {{type: string, actionData: {userData: *, plainPassword: *, token: *}}}
  */
-function loginOk({userData, password, token, userName}) {
+function loginOk({userData, password, token}) {
   console.log('Login OK: ' + JSON.stringify(userData));
   let loginData = {
     userData: userData,
     password: password,
-    token: token,
-    userName: userName
+    token: token
   };
   return {
     type: STATE_LOGIN_OK,

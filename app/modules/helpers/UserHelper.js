@@ -1,6 +1,7 @@
 import DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
+import Utils from '../../utils/Utils';
 
 /**
  * This helper is for User functions only.
@@ -37,27 +38,11 @@ const UserHelper = {
     console.log('saveOrUpdateUser');
     const self = this;
     return new Promise((resolve, reject) => {
-      if (!userData.email) {
-        userData.email = userData['user-name'];
-      }
-      if (!userData.id) {
-        // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
-        userData.id = self.emailToId(userData.email);
-      }
       self.generateAMPOfflineHashFromPassword(password).then(function (hash) {
         userData.ampOfflinePassword = hash;
         DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {}).then(resolve).catch(reject);
       }).catch(reject);
     });
-  },
-
-  emailToId(email) {
-    let hash = 5381;
-    let i = email.length;
-    while (i) {
-      hash = (hash * 33) ^ email.charCodeAt(--i);
-    }
-    return hash >>> 0;
   },
 
   generateAMPOfflineHashFromPassword(password) {
