@@ -64,9 +64,7 @@ const LoginManager = {
 
   saveLoginData(userData, password) {
     console.log('saveLoginData');
-    // The user we save in db is different than userData coming from the login EP.
-    const userToSave = {email: userData['user-name']};
-    return UserHelper.saveOrUpdateUser(userToSave, password);
+    return UserHelper.saveOrUpdateUser(userData, password);
   }
 };
 

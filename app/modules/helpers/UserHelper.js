@@ -43,8 +43,13 @@ const UserHelper = {
     console.log('saveOrUpdateUser');
     const self = this;
     return new Promise((resolve, reject) => {
-      // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
-      userData.id = self.emailToId(userData.email);
+      if (!userData.email) {
+        userData.email = userData['user-name'];
+      }
+      if (!userData.id) {
+        // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
+        userData.id = self.emailToId(userData.email);
+      }
       self.generateAMPOfflineHashFromPassword(password).then(function (hash) {
         userData.ampOfflinePassword = hash;
         DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {}).then(resolve).catch(reject);
