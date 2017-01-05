@@ -21,12 +21,6 @@ const UserHelper = {
     return this.findUserByExample(example);
   },
 
-  findByUsername(name) {
-    console.log('findByUsername');
-    const example = {'user-name': name};
-    return this.findUserByExample(example);
-  },
-
   findUserByExample(example) {
     console.log('findUserByExample');
     return new Promise(function (resolve, reject) {
