@@ -1,12 +1,12 @@
 // @flow
 import UrlUtils from '../utils/URLUtils'
-import { WORKSPACE_URL } from '../utils/Constants';
+import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
-export const STATE_LOGOUT = 'STATE_LOGOUT';
 export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
+export const STATE_LOGOUT = 'STATE_LOGOUT';
 
 export function loginAction(email, password) {
   console.log('loginAction');
@@ -24,6 +24,14 @@ export function loginAction(email, password) {
       });
     }
     dispatch(sendingRequest());
+  };
+}
+
+export function logoutAction() {
+  console.log('loginAction');
+  return (dispatch, ownProps) => {
+    dispatch(logout());
+    UrlUtils.forwardTo(LOGIN_URL);
   };
 }
 
@@ -59,7 +67,7 @@ function sendingRequest() {
   }
 }
 
-export function logoutAction() {
+export function logout() {
   console.log('logoutAction');
   return {
     type: STATE_LOGOUT

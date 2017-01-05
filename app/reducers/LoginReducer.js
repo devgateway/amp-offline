@@ -32,7 +32,8 @@ export default function login(state = defaultState, action: Object) {
     case STATE_LOGOUT:
       return Object.assign({}, state, {
         loggedIn: false,
-        loginProcessing: false
+        loginProcessing: false,
+        errorMessage: ''
       });
     case STATE_LOGIN_PROCESSING:
       return Object.assign({}, state, {

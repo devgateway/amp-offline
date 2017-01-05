@@ -26,6 +26,10 @@ export default function user(state = defaultState, action: Object) {
         teamMember: action.actionData.teamMember
       });
     case STATE_LOGOUT:
+      return Object.assign({}, state, {
+        userData: undefined,
+        teamMember: undefined
+      });
     case STATE_USER_CLEAR:
       return Object.assign({}, state, defaultState);
     default:
