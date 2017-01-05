@@ -21,7 +21,6 @@ export default function login(state = defaultState, action: Object) {
         loggedIn: true,
         token: action.actionData.token,
         plainPassword: action.actionData.password,
-        userName: action.actionData.userName,
         loginProcessing: false
       });
     case STATE_LOGIN_FAIL:
