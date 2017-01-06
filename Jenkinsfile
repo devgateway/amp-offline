@@ -19,8 +19,7 @@ println "Branch: ${branch}"
 println "Pull request: ${pr}"
 println "Tag: ${tag}"
 
-def codeVersion
-def dbVersion
+def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
 stage('Build') {
     node {
@@ -45,12 +44,10 @@ stage('Build') {
 }
 
 def deployed = false
-def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
 // If this stage fails then next stage will retry deployment. Otherwise next stage will be skipped.
 stage('Deploy') {
 
-    // Find list of countries which have database dumps compatible with ${codeVersion}
 
     node {
         try {
