@@ -41,12 +41,12 @@ stage('Build') {
 				//throw e
 			}
 			try{
-			//run eslint
+			//run test
 				sh 'npm run test'
 			}catch(e){
 			//eslint failed
 				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
-				//commenting the exception so the process continues until we fix every eslint error
+				//commenting the exception so the process continues until we fix every failing test
 				//throw e
 			}			
     }
