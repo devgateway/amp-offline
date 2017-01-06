@@ -42,11 +42,11 @@ stage('Build') {
 				//throw e;
 			}
 			try {
-				npm run test;
+				sh 'npm run test'
 			}catch(e{
 				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TEST check Failed on ${changePretty}")
 				//commenting the exception so the process continues until we fix every test
-				//throw e;
+				//throw e
 			}
         //}
     }
