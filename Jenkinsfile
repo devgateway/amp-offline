@@ -25,7 +25,6 @@ stage('Build') {
     node {
         checkout scm
 
-        //withEnv(["PATH+MAVEN=${tool 'M339'}/bin"]) {
 			//we print node version
 			sh 'node -v'
 			//remove Extraneous packages
@@ -34,21 +33,22 @@ stage('Build') {
             sh 'npm install'
 			try{
 			//run eslint
-			sh 'npm run lint'
+				sh 'npm run lint'
 			}catch(e){
 			//eslint failed
 				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
 				//commenting the exception so the process continues until we fix every eslint error
-				//throw e;
-			}
-			try {
-				sh 'npm run test'
-			}catch(e{
-				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TEST check Failed on ${changePretty}")
-				//commenting the exception so the process continues until we fix every test
 				//throw e
 			}
-        //}
+			try{
+			//run eslint
+				sh 'npm run test'
+			}catch(e){
+			//eslint failed
+				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
+				//commenting the exception so the process continues until we fix every eslint error
+				//throw e
+			}			
     }
 }
 
