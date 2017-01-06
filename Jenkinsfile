@@ -35,13 +35,11 @@ stage('Build') {
             sh 'npm install'
 			//run eslint
 			sh 'npm run lint'
-        }
+        //}
     }
 }
 
 def deployed = false
-def country
-
 def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
 // If this stage fails then next stage will retry deployment. Otherwise next stage will be skipped.
