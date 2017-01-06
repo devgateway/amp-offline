@@ -1,51 +1,70 @@
-node('node') {
-    currentBuild.result = "SUCCESS"
+#!groovy
 
-    try {
+// Important: What is BRANCH_NAME?
+// It is branch name for builds triggered from branches.
+// It is PR-<pr-id> for builds triggered from pull requests.
+def tag
+if (BRANCH_NAME ==~ /feature\/AMP-\d+.*/) {
+    def jiraId = (BRANCH_NAME =~ /feature\/AMP-(\d+).*/)[0][1]
+    tag = "feature-${jiraId}"
+} else {
+    tag = BRANCH_NAME.replaceAll(/[^a-zA-Z0-9_-]/, "-").toLowerCase()
+}
 
-       stage 'Checkout'
+// Record original branch or pull request for cleanup jobs
+def branch = env.CHANGE_ID == null ? BRANCH_NAME : null
+def pr = env.CHANGE_ID
 
-            checkout scm
+println "Branch: ${branch}"
+println "Pull request: ${pr}"
+println "Tag: ${tag}"
 
-       stage 'Test'
+def codeVersion
+def dbVersion
 
-            env.NODE_ENV = "test"
+stage('Build') {
+    node {
+        checkout scm
 
-            print "Environment will be : ${env.NODE_ENV}"
-
-            sh 'node -v'
+        //withEnv(["PATH+MAVEN=${tool 'M339'}/bin"]) {
+			//we print node version
+			sh 'node -v'
+			//remove Extraneous packages
             sh 'npm prune'
+			//install all needed dependencies
             sh 'npm install'
-            sh 'npm test'
+			//run eslint
+			sh 'npm run lint'
+        }
+    }
+}
 
-       stage 'Build'
+def deployed = false
+def country
 
+def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
+
+// If this stage fails then next stage will retry deployment. Otherwise next stage will be skipped.
+stage('Deploy') {
+
+    // Find list of countries which have database dumps compatible with ${codeVersion}
+
+    node {
+        try {
+            // we run package version
             sh 'npm run package'
 
-       stage 'Deploy'
+            // here we will copy the build file to a web server
+            
 
-            echo 'Push to a remote server so it can be downloaded'
+            slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE- Success\nDeployed ${changePretty} ")
 
-       stage 'Cleanup'
+            deployed = true
+        } catch (e) {
+            slackSend(channel: 'amp-offline-i', color: 'warning', message: "Deploy AMP OFFLINE - Failed\nFailed to deploy ${changePretty}")
 
-            echo 'prune and cleanup'
-            sh 'npm prune'
-            sh 'rm node_modules -rf'
-            slackSend(channel: 'amp-ci', color: 'good', message: "project build successful")
-            mail body: '',
-                        from: 'jdeanquin@developmentgateway.org',
-                        replyTo: 'jdeanquin@developmentgateway.org',
-                        subject: 'project build successful',
-                        to: 'jdeanquin@developmentgateway.org'
-
+            currentBuild.result = 'UNSTABLE'
         }
-
-
-    catch (err) {
-
-        currentBuild.result = "FAILURE"
-		slackSend(channel: 'amp-offline-ci', color: 'warning', message: "project build error is here: ${env.BUILD_URL}")
-        throw err
     }
-
 }
+
