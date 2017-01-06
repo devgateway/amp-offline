@@ -33,8 +33,13 @@ stage('Build') {
             sh 'npm prune'
 			//install all needed dependencies
             sh 'npm install'
+			try{
 			//run eslint
 			sh 'npm run lint'
+			}catch(e){
+			//eslint failed
+				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
+			}
         //}
     }
 }
