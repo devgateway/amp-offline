@@ -5,7 +5,9 @@
     "login": "Log In",
     "AMPOfflineUnavailableError": "AMP Offline is currently unavailable. Please contact the AMP Administrator.",
     "AMPUnreachableError": "AMP Server is unreachable to authorize the login. Please try again later.",
-    "wrongPassword": "Wrong user or password."
+    "wrongPassword": "Wrong user or password.",
+    "cantLogoffThisUser": "Error trying to logoff user.",
+    "logoff": "Log Off"
   },
   "workspace": {
     "title": "Workspaces"
@@ -28,7 +30,7 @@
     "About": "About",
     "Synchronize": "Synchronize",
     "Add Activity": "Add Activity"
-  },  
+  },
   "desktop": {
     "goback": "Go Back"
   },

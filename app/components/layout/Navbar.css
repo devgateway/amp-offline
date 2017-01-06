@@ -38,6 +38,11 @@
   padding-top: 5px;
 }
 
+.navbar_right_side {
+  float: right;
+  padding-top: 5px;
+}
+
 .main_menu {
   float: left;
   position: relative;

@@ -28,7 +28,7 @@ export function loginAction(email, password) {
 }
 
 export function logoutAction() {
-  console.log('loginAction');
+  console.log('logoutAction');
   return (dispatch, ownProps) => {
     dispatch(logout());
     UrlUtils.forwardTo(LOGIN_URL);

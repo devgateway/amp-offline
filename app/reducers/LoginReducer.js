@@ -30,11 +30,7 @@ export default function login(state = defaultState, action: Object) {
         errorMessage: action.actionData.errorMessage
       });
     case STATE_LOGOUT:
-      return Object.assign({}, state, {
-        loggedIn: false,
-        loginProcessing: false,
-        errorMessage: ''
-      });
+      return defaultState;
     case STATE_LOGIN_PROCESSING:
       return Object.assign({}, state, {
         loginProcessing: true,
