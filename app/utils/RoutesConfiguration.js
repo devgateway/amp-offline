@@ -2,17 +2,15 @@ import { GET_WORKSPACES_URL, LOGIN_URL, URL_CONNECTIVITY_CHECK_EP } from '../mod
 
 const routesConfiguration = [{
   url: GET_WORKSPACES_URL,
-  method: "GET",
+  method: 'GET',
   requiresToken: true
 }, {
   url: URL_CONNECTIVITY_CHECK_EP,
-  method: "GET",
+  method: 'GET',
   requiresToken: false
 }, {
   url: LOGIN_URL,
-  method: "POST",
+  method: 'POST',
   requiresToken: false
 }];
 module.exports = routesConfiguration;
-
-
