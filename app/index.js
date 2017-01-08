@@ -20,11 +20,8 @@ const history = syncHistoryWithStore(hashHistory, store);
 
 function checkAuth(nextState, replaceState) {
   console.log('checkAuth');
-
   if (!auth.loggedIn()) {
     replaceState({nextPathname: nextState.location.pathname}, '/');
-  } else {
-    replaceState(null, '/workspace');
   }
 }
 
