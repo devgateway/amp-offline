@@ -2,6 +2,7 @@ import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
 import translate from '../../utils/translate';
 import Util from '../../utils/Utils';
+import { store } from '../../index';
 
 const LoginManager = {
 
@@ -42,6 +43,20 @@ const LoginManager = {
     });
   },
 
+  clearCredentialsInDB(email) {
+    console.log('clearCredentialsInDB');
+    return new Promise(function (resolve, reject) {
+      UserHelper.findByEmail(email).then(function (data) {
+        if (data) {
+          delete data.ampOfflinePassword;
+          UserHelper.saveOrUpdateUser(data, password).then(resolve).catch(reject);
+        } else {
+          reject(translate('cantCleanupCredentials'));
+        }
+      }).catch(reject);
+    });
+  },
+
   /**
    * We always return the data from User in database + current token.
    * @param email
@@ -71,14 +86,18 @@ const LoginManager = {
     return new Promise(function (resolve, reject) {
       const email = userData.email || userData['user-name'];
       UserHelper.findByEmail(email).then(function (dbData) {
-        if (dbData) {
-          UserHelper.saveOrUpdateUser(dbData, password).then(resolve).catch(reject);
-        } else {
-          // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
-          const id = userData.id || Util.stringToId(email);
-          const dbUserData = {id: id, email: email};
-          UserHelper.saveOrUpdateUser(dbUserData, password).then(resolve).catch(reject);
-        }
+        UserHelper.generateAMPOfflineHashFromPassword(password).then(function (hash) {
+          if (dbData) {
+            dbData.ampOfflinePassword = hash;
+            UserHelper.saveOrUpdateUser(dbData, password).then(resolve).catch(reject);
+          } else {
+            // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
+            const id = userData.id || Util.stringToId(email);
+            const dbUserData = {id: id, email: email};
+            dbUserData.ampOfflinePassword = hash;
+            UserHelper.saveOrUpdateUser(dbUserData, password).then(resolve).catch(reject);
+          }
+        }).catch(reject);
       }).catch(reject);
     });
   }

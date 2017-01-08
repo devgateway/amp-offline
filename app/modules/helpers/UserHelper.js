@@ -36,16 +36,13 @@ const UserHelper = {
    */
   saveOrUpdateUser(userData, password) {
     console.log('saveOrUpdateUser');
-    const self = this;
     return new Promise((resolve, reject) => {
-      self.generateAMPOfflineHashFromPassword(password).then(function (hash) {
-        userData.ampOfflinePassword = hash;
-        DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {}).then(resolve).catch(reject);
-      }).catch(reject);
+      DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {}).then(resolve).catch(reject);
     });
   },
 
   generateAMPOfflineHashFromPassword(password) {
+    console.log('generateAMPOfflineHashFromPassword');
     return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
   }
 };
