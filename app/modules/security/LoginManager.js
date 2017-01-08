@@ -49,7 +49,7 @@ const LoginManager = {
       UserHelper.findByEmail(email).then(function (data) {
         if (data) {
           delete data.ampOfflinePassword;
-          UserHelper.saveOrUpdateUser(data, password).then(resolve).catch(reject);
+          UserHelper.saveOrUpdateUser(data).then(resolve).catch(reject);
         } else {
           reject(translate('cantCleanupCredentials'));
         }
