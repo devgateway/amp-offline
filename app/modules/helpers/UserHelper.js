@@ -34,7 +34,7 @@ const UserHelper = {
    * @param userData
    * @returns {Promise}
    */
-  saveOrUpdateUser(userData, password) {
+  saveOrUpdateUser(userData) {
     console.log('saveOrUpdateUser');
     return new Promise((resolve, reject) => {
       DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {}).then(resolve).catch(reject);

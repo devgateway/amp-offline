@@ -89,13 +89,13 @@ const LoginManager = {
         UserHelper.generateAMPOfflineHashFromPassword(password).then(function (hash) {
           if (dbData) {
             dbData.ampOfflinePassword = hash;
-            UserHelper.saveOrUpdateUser(dbData, password).then(resolve).catch(reject);
+            UserHelper.saveOrUpdateUser(dbData).then(resolve).catch(reject);
           } else {
             // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
             const id = userData.id || Util.stringToId(email);
             const dbUserData = {id: id, email: email};
             dbUserData.ampOfflinePassword = hash;
-            UserHelper.saveOrUpdateUser(dbUserData, password).then(resolve).catch(reject);
+            UserHelper.saveOrUpdateUser(dbUserData).then(resolve).catch(reject);
           }
         }).catch(reject);
       }).catch(reject);
