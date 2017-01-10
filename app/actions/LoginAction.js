@@ -2,6 +2,7 @@
 import UrlUtils from '../utils/URLUtils'
 import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
+import { store } from '../index';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -33,6 +34,21 @@ export function logoutAction() {
     dispatch(logout());
     UrlUtils.forwardTo(LOGIN_URL);
   };
+}
+
+export function loginAutomaticallyAction() {
+  console.log('loginAutomaticallyAction');
+  return dispatch => new Promise((resolve, reject) => {
+    dispatch(sendingRequest());
+    const email = store.getState().user.userData.email;
+    const password = store.getState().login.plainPassword;
+    LoginManager.processLogin(email, password).then(function (data) {
+      const userData = data.dbUser;
+      const token = data.token;
+      dispatch(loginOk({userData, password, token}));
+      resolve(data);
+    }).catch(reject);
+  });
 }
 
 /**
