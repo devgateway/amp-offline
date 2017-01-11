@@ -33,8 +33,7 @@ export default function login(state = defaultState, action: Object) {
       return defaultState;
     case STATE_LOGIN_PROCESSING:
       return Object.assign({}, state, {
-        loginProcessing: true,
-        errorMessage: ''
+        loginProcessing: true
       });
     default:
       console.log('default state: ' + action.type);

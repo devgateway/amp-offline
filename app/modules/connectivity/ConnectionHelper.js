@@ -1,7 +1,7 @@
 import request from 'request';
 import RequestConfig from './RequestConfig';
 import { store } from '../../index';
-import { loginAutomaticallyAction } from '../../actions/LoginAction';
+import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
 
 const ConnectionHelper = {
 
@@ -35,16 +35,16 @@ const ConnectionHelper = {
       request(options, function (error, response, body) {
         if (error || response.statusCode !== 200 || body.error) {
           if (response && response.statusCode === 401) {
-            // Lets try to relogin.
-            // https://github.com/reactjs/redux/issues/974
+            // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
             store.dispatch(loginAutomaticallyAction()).then((data) => {
               if (data) {
                 options = RequestConfig.replaceToken(options);
                 self._doMethod(options).then(function (body_) {
                   resolve(body_);
                 }).catch(function (error_) {
-                  //TODO: we need to check if the user needs to relogin manually, invalidate the session and send him to login page.
+                  // If we couldnt relogin online automatically we logout completely and forward to login page.
                   reject(error_);
+                  store.dispatch(logoutAction());
                 });
               } else {
                 resolve();
