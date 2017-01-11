@@ -45,8 +45,8 @@ export function loginAutomaticallyAction() {
     LoginManager.processOnlineLogin(email, password).then(function (data) {
       const userData = data.dbUser;
       const token = data.token;
-      dispatch(loginOk({userData, password, token}));
       resolve(data);
+      dispatch(loginOk({userData, password, token}));
     }).catch(reject);
   });
 }
