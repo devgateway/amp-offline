@@ -42,7 +42,7 @@ export function loginAutomaticallyAction() {
     dispatch(sendingRequest());
     const email = store.getState().user.userData.email;
     const password = store.getState().login.plainPassword;
-    LoginManager.processLogin(email, password).then(function (data) {
+    LoginManager.processOnlineLogin(email, password).then(function (data) {
       const userData = data.dbUser;
       const token = data.token;
       dispatch(loginOk({userData, password, token}));

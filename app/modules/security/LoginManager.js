@@ -63,7 +63,7 @@ const LoginManager = {
    * @param password
    * @returns {Promise}
    */
-  processOnlineLogin({email, password}) {
+  processOnlineLogin(email, password) {
     const self = this;
     return new Promise(function (resolve, reject) {
       Auth.onlineLogin(email, password).then(function (data) {

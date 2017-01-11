@@ -27,9 +27,7 @@ const ConnectionHelper = {
   },
 
   _doMethod(options) {
-    debugger
     const self = this;
-    const dontRepeat = options.dontRepeat;
     return new Promise((resolve, reject) => {
       request(options, function (error, response, body) {
         if (error || response.statusCode !== 200 || body.error) {
@@ -38,14 +36,9 @@ const ConnectionHelper = {
           // https://github.com/reactjs/redux/issues/974
           if (response && response.statusCode === 401) {
             // Lets try to relogin.
-            store.dispatch(loginAutomaticallyAction()).then(function () {
-              if (dontRepeat) {
-                options.dontRepeat = true;
-                self._doMethod(options);
-              } else {
-                reject(error || body.error);
-              }
-            }).catch(reject);
+            store.dispatch(loginAutomaticallyAction()).then(() => {
+              self._doMethod(options);
+            }).catch(reject('problema'));
           } else {
             reject(error || body.error);
           }
