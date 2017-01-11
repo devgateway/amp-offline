@@ -37,18 +37,14 @@ const ConnectionHelper = {
           if (response && response.statusCode === 401) {
             // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
             store.dispatch(loginAutomaticallyAction()).then((data) => {
-              if (data) {
-                options = RequestConfig.replaceToken(options);
-                self._doMethod(options).then(function (body_) {
-                  resolve(body_);
-                }).catch(function (error_) {
-                  // If we couldnt relogin online automatically we logout completely and forward to login page.
-                  reject(error_);
-                  store.dispatch(logoutAction());
-                });
-              } else {
-                resolve();
-              }
+              options = RequestConfig.replaceToken(options);
+              self._doMethod(options).then(function (body_) {
+                resolve(body_);
+              }).catch(function (error_) {
+                // If we couldnt relogin online automatically we logout completely and forward to login page.
+                reject(error_);
+                store.dispatch(logoutAction());
+              });
             }).catch(function () {
               reject(error || (body && body.error))
             });
