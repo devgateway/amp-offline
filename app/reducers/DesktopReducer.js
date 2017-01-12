@@ -21,7 +21,6 @@ export default function loadDesktop(state = defaultState, action: Object) {
       return Object.assign({}, state, {isLoadingDesktop: true});
       break;
     default:
-      console.log('default state: ' + action.type);
       return state;
   }
 }

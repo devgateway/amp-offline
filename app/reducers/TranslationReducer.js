@@ -14,7 +14,6 @@ export default function translationReducer(state: something = defaultState, acti
         lang: action.actionData
       });
     default:
-      console.log('default state: ' + action.type);
       return state;
   }
 }

@@ -19,7 +19,6 @@ export default function startUp(state = defaultState, action: Object) {
     case STATE_PARAMETERS_FAILED:
       return Object.assign({}, state, {error: action.error, loadingInProgress: false});
     default:
-      console.log('default state: ' + action.type);
       return state;
   }
 }

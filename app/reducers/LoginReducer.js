@@ -36,7 +36,6 @@ export default function login(state = defaultState, action: Object) {
         loginProcessing: true
       });
     default:
-      console.log('default state: ' + action.type);
       return state;
   }
 }

@@ -43,9 +43,7 @@ export default function syncUp(state = defaultState, action: Object) {
         syncUpInProgress: false, errorMessage: action.actionData.errorMessage,
       });
       break;
-
     default:
-      console.log('default state: ' + action.type);
       return state;
   }
 }
