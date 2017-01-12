@@ -2,6 +2,7 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
 import React from 'react';
+import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import Logout from '../../../app/components/login/Logout';
 import translate from '../../../app/utils/translate';
