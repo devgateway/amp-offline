@@ -22,3 +22,6 @@ Run
 Test
 -----
   	npm run test
+Build for windows 10
+----
+There is a .bat file named generate-installer.bat in the root directory that you can use to checkout code and build the client. you can check https://wiki.dgfoundation.org/display/AMPDOC/How+to+generate+a+windows10+installar+for+amp-offline for mor details
