@@ -51,7 +51,7 @@ const LoginManager = {
           delete data.ampOfflinePassword;
           UserHelper.saveOrUpdateUser(data).then(resolve).catch(reject);
         } else {
-          reject(translate('cantCleanupCredentials'));
+          resolve();
         }
       }).catch(reject);
     });
