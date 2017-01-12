@@ -29,7 +29,7 @@ export default function user(state = defaultState, action: Object) {
     case STATE_USER_CLEAR:
       return Object.assign({}, state, defaultState);
     default:
-      console.log('default state: ' + action.type);
+      console.log(`default state: ${action.type}`);
       return state;
   }
 }
