@@ -14,66 +14,64 @@ if (BRANCH_NAME ==~ /feature\/AMP-\d+.*/) {
 // Record original branch or pull request for cleanup jobs
 def branch = env.CHANGE_ID == null ? BRANCH_NAME : null
 def pr = env.CHANGE_ID
-
-println "Branch: ${branch}"
+println  "Branch: ${branch}"
 println "Pull request: ${pr}"
 println "Tag: ${tag}"
 
 def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
-stage('Build') {
-    node {
-        checkout scm
-
-			//we print node version
-			sh 'node -v'
-			//remove Extraneous packages
-            sh 'npm prune'
-			//install all needed dependencies
-            sh 'npm install'
-			try{
+stage('PrepareSetup'){
+	node {
+		checkout scm
+		//we print node version
+		sh 'node -v'
+		//remove Extraneous packages
+		sh 'npm prune'
+		//install all needed dependencies
+		sh 'npm install'
+	}
+}
+stage('StyleCheck') {
+	node {
+		try{
 			//run eslint
-				sh 'npm run lint'
-			}catch(e){
+			sh 'npm run lint'
+		}catch(e){
 			//eslint failed
-				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
-				//commenting the exception so the process continues until we fix every eslint error
-				//throw e
-			}
-			try{
+			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
+			//commenting the exception so the process continues until we fix every eslint error
+			//throw e
+		}
+}
+stage('UnitTest') {
+	node{
+		try{
 			//run test
-				sh 'npm run test'
-			}catch(e){
+			sh 'npm run test'
+		}catch(e){
 			//eslint failed
-				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
-				//commenting the exception so the process continues until we fix every failing test
-				//throw e
-			}			
-    }
+			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
+			//commenting the exception so the process continues until we fix every failing test
+			//throw e
+		}
+	}
 }
 
+
 def deployed = false
-
 // If this stage fails then next stage will retry deployment. Otherwise next stage will be skipped.
-stage('Deploy') {
-
-
-    node {
-        try {
-            // we run package version
-            sh 'npm run package-win'
-
-            // here we will copy the build file to a web server
-            
-
-            slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE- Success\nDeployed ${changePretty} ")
-
-            deployed = true
-        } catch (e) {
-            slackSend(channel: 'amp-offline-i', color: 'warning', message: "Deploy AMP OFFLINE - Failed\nFailed to deploy ${changePretty}")
-
-            currentBuild.result = 'UNSTABLE'
-        }
-    }
+stage('Build') {
+	node {
+		try {
+			// we run package version
+			sh 'npm run package-win'
+			// here we will copy the build file to a web server
+			slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE- Success\nDeployed ${changePretty} ")
+			deployed = true
+		} catch (e) {
+			slackSend(channel: 'amp-offline-i', color: 'warning', message: "Deploy AMP OFFLINE - Failed\nFailed to deploy ${changePretty}")
+			currentBuild.result = 'UNSTABLE'
+		}
+	}
 }
 
