@@ -30,7 +30,7 @@ export default class Navbar extends Component {
           <a className={style.navbar_left_side} href="#">{pjson.productName} - {VERSION}</a>
           <a className={style.navbar_left_side} href="#">{this.extractLoggedUser(' - ')}</a>
           <Switcher/>
-          <Logout/>
+          <Logout loggedIn={this.props.login.loggedIn}/>
         </div>
         <div className={style.main_menu}>
           <TopMenu builder={MenuUtils.default.prototype.buildMenu} onClick={MenuUtils.handleClick}

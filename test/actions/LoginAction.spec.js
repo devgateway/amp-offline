@@ -11,7 +11,7 @@ const mockStore = configureMockStore(middlewares);
 
 describe('@@ LoginAction @@', () => {
 
-  it('func logoutAction - Should dispatch STATE_LOGOUT.', (done) => {
+  it('Should dispatch STATE_LOGOUT.', (done) => {
     const fn = actions.logoutAction();
     expect(fn).to.be.a('function');
     const dispatch = spy();
@@ -30,7 +30,7 @@ describe('@@ LoginAction @@', () => {
    * NOTICE: Online login cant be tested until we figure out how to import
    *  native window.crypto to the test platform (without having the browser).
    */
-  /*it('func loginAction - Should dispatch STATE_LOGIN_OK.', (done) => {
+  /*it('Should dispatch STATE_LOGIN_OK.', (done) => {
     ampStartUp().then(() => {
       const store = mockStore(actions.STATE_LOGOUT);
       return store.dispatch(actions.loginAction('testuser@amp.org', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'))

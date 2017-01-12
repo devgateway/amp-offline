@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import translate from '../../utils/translate';
 import { logoutAction } from '../../actions/LoginAction';
 import style from '../layout/Navbar.css';
-import { store } from '../../index';
 
 class Logout extends React.Component {
+
+  static propTypes = {
+    loggedIn: PropTypes.bool.isRequired
+  };
 
   constructor() {
     super();
@@ -18,7 +21,7 @@ class Logout extends React.Component {
 
   render() {
     console.log('render');
-    if (store.getState().login.loggedIn) {
+    if (this.props.loggedIn) {
       return (
         <a className={style.navbar_right_side} href="#"
            onClick={this.clickLogout.bind(this)}>{translate('login.logoff')}</a>
