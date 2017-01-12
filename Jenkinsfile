@@ -42,6 +42,7 @@ stage('StyleCheck') {
 			//commenting the exception so the process continues until we fix every eslint error
 			//throw e
 		}
+	}
 }
 stage('UnitTest') {
 	node{
