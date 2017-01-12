@@ -29,7 +29,7 @@ const LoginManager = {
             // TODO: call another function to check if amp is online (to be done on AMPOFFLINE-103).
             const isAMPAvailable = true;
             if (isAMPAvailable) {
-              self.processOnlineLogin({email, password}).then(resolve).catch(reject);
+              self.processOnlineLogin(email, password).then(resolve).catch(reject);
             } else {
               reject(translate('login.AMPUnreachableError'));
             }

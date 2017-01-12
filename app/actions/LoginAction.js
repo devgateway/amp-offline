@@ -12,8 +12,8 @@ export const STATE_LOGOUT = 'STATE_LOGOUT';
 export function loginAction(email, password) {
   console.log('loginAction');
   return (dispatch, ownProps) => {
-    if (ownProps().login.loginProcessing === false) {
-      LoginManager.processLogin(email, password).then(function (data) {
+    if (store.getState().login.loginProcessing === false) {
+      return LoginManager.processLogin(email, password).then(function (data) {
         const userData = data.dbUser;
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
