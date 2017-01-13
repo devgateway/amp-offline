@@ -1,7 +1,6 @@
 import DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
-import Utils from '../../utils/Utils';
 
 /**
  * This helper is for User functions only.
@@ -24,9 +23,7 @@ const UserHelper = {
 
   findUserByExample(example) {
     console.log('findUserByExample');
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.findOne(example, COLLECTION_USERS).then(resolve).catch(reject);
-    });
+    return DatabaseManager.findOne(example, COLLECTION_USERS);
   },
 
   /**
@@ -34,18 +31,13 @@ const UserHelper = {
    * @param userData
    * @returns {Promise}
    */
-  saveOrUpdateUser(userData, password) {
+  saveOrUpdateUser(userData) {
     console.log('saveOrUpdateUser');
-    const self = this;
-    return new Promise((resolve, reject) => {
-      self.generateAMPOfflineHashFromPassword(password).then(function (hash) {
-        userData.ampOfflinePassword = hash;
-        DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {}).then(resolve).catch(reject);
-      }).catch(reject);
-    });
+    return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {});
   },
 
   generateAMPOfflineHashFromPassword(password) {
+    console.log('generateAMPOfflineHashFromPassword');
     return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
   }
 };

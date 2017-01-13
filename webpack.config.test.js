@@ -12,5 +12,9 @@ module.exports = validate({
   module: {
     // Use base + development loaders, but exclude 'babel-loader'
     loaders: devConfig.module.loaders.slice(1)
-  }
+  },
+  // https://webpack.github.io/docs/configuration.html#resolve
+  resolve: {
+    extensions: ['.js', '.jsx', '.json', '']
+  },
 });
