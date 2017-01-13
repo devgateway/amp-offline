@@ -32,20 +32,20 @@ const ConnectionHelper = {
     console.log('_doMethod');
     const self = this;
     return new Promise((resolve, reject) => {
-      request(options, function (error, response, body) {
+      request(options, (error, response, body) => {
         if (error || response.statusCode !== 200 || body.error) {
           if (response && response.statusCode === 401) {
             // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
             store.dispatch(loginAutomaticallyAction()).then((data) => {
               options = RequestConfig.replaceToken(options);
-              self._doMethod(options).then(function (body_) {
+              self._doMethod(options).then((body_) => {
                 resolve(body_);
-              }).catch(function (error_) {
+              }).catch((error_) => {
                 // If we couldnt relogin online automatically we logout completely and forward to login page.
                 reject(error_);
                 store.dispatch(logoutAction());
               });
-            }).catch(function () {
+            }).catch(() => {
               reject(error || (body && body.error))
             });
           } else {

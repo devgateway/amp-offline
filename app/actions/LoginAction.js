@@ -13,14 +13,14 @@ export function loginAction(email, password) {
   console.log('loginAction');
   return (dispatch, ownProps) => {
     if (store.getState().login.loginProcessing === false) {
-      return LoginManager.processLogin(email, password).then(function (data) {
+      return LoginManager.processLogin(email, password).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({userData, password, token}));
         // Tell react-router to move to another page.
         UrlUtils.forwardTo(WORKSPACE_URL);
-      }).catch(function (err) {
+      }).catch((err) => {
         dispatch(loginFailed(err));
       });
     }
@@ -42,7 +42,7 @@ export function loginAutomaticallyAction() {
     dispatch(sendingRequest());
     const email = store.getState().user.userData.email;
     const password = store.getState().login.plainPassword;
-    LoginManager.processOnlineLogin(email, password).then(function (data) {
+    LoginManager.processOnlineLogin(email, password).then((data) => {
       const userData = data.dbUser;
       const token = data.token;
       dispatch(loginOk({userData, password, token}));

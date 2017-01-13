@@ -9,7 +9,7 @@ const LoginManager = {
   processLogin(email, password) {
     console.log('processLogin');
     const self = this;
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       // 1) Check if AMPOffline is available.
       const isAMPOfflineAvailable = true; // TODO: read from a redux state (to be done on AMPOFFLINE-100).
       if (isAMPOfflineAvailable) {
@@ -17,7 +17,7 @@ const LoginManager = {
         UserHelper.findByEmail(email).then((dbUser) => {
           if (dbUser !== null && dbUser.ampOfflinePassword && dbUser.ampOfflinePassword.toString() !== '') {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
-            UserHelper.generateAMPOfflineHashFromPassword(password).then(function (hash) {
+            UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
               if (hash === dbUser.ampOfflinePassword) {
                 resolve({dbUser: dbUser});
               } else {
@@ -34,7 +34,7 @@ const LoginManager = {
               reject(translate('login.AMPUnreachableError'));
             }
           }
-        }).catch(function (err) {
+        }).catch((err) => {
           reject(err);
         });
       } else {
@@ -45,8 +45,8 @@ const LoginManager = {
 
   clearCredentialsInDB(email) {
     console.log('clearCredentialsInDB');
-    return new Promise(function (resolve, reject) {
-      UserHelper.findByEmail(email).then(function (data) {
+    return new Promise((resolve, reject) => {
+      UserHelper.findByEmail(email).then((data) => {
         if (data) {
           delete data.ampOfflinePassword;
           UserHelper.saveOrUpdateUser(data).then(resolve).catch(reject);
@@ -65,14 +65,14 @@ const LoginManager = {
    */
   processOnlineLogin(email, password) {
     const self = this;
-    return new Promise(function (resolve, reject) {
-      Auth.onlineLogin(email, password).then(function (data) {
-        self.saveLoginData(data, password).then(function (dbData) {
+    return new Promise((resolve, reject) => {
+      Auth.onlineLogin(email, password).then((data) => {
+        self.saveLoginData(data, password).then((dbData) => {
           resolve({dbUser: dbData, token: data.token});
-        }).catch(function (err) {
+        }).catch((err) => {
           reject(err);
         });
-      }).catch(function (err) {
+      }).catch((err) => {
         reject(err);
       });
     });
@@ -83,10 +83,10 @@ const LoginManager = {
    */
   saveLoginData(userData, password) {
     console.log('saveLoginData');
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       const email = userData.email || userData['user-name'];
-      UserHelper.findByEmail(email).then(function (dbData) {
-        UserHelper.generateAMPOfflineHashFromPassword(password).then(function (hash) {
+      UserHelper.findByEmail(email).then((dbData) => {
+        UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
           if (dbData) {
             dbData.ampOfflinePassword = hash;
             UserHelper.saveOrUpdateUser(dbData).then(resolve).catch(reject);
