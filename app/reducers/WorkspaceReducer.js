@@ -11,7 +11,7 @@ const defaultState = {
   workspaceList: []
 };
 
-export default function workspaceReducer(state: something = defaultState, action: Object) {
+export default function workspaceReducer(state: Object = defaultState, action: Object) {
   console.log('WorkspaceReducer');
   switch (action.type) {
     case STATE_GET_REMOTE_WORKSPACES_OK:

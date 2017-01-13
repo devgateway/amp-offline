@@ -1,6 +1,6 @@
 // @flow
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import Workspace from '../components/workspace/Workspace';
 import * as WorkspaceActions from '../actions/WorkspaceAction';
 

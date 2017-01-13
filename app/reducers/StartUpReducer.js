@@ -1,4 +1,4 @@
-import {STATE_PARAMETERS_LOADING, STATE_PARAMETERS_LOADED, STATE_PARAMETERS_FAILED} from '../actions/StartUpAction';
+import { STATE_PARAMETERS_LOADING, STATE_PARAMETERS_LOADED, STATE_PARAMETERS_FAILED } from '../actions/StartUpAction';
 
 const defaultState = {
   connectionInformation: undefined,
