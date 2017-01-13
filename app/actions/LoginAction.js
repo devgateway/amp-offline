@@ -1,30 +1,54 @@
 // @flow
 import UrlUtils from '../utils/URLUtils'
-import { WORKSPACE_URL } from '../utils/Constants';
+import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
+import { store } from '../index';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
-export const STATE_LOGOUT = 'STATE_LOGOUT';
 export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
+export const STATE_LOGOUT = 'STATE_LOGOUT';
 
 export function loginAction(email, password) {
   console.log('loginAction');
   return (dispatch, ownProps) => {
-    if (ownProps().login.loginProcessing === false) {
-      LoginManager.processLogin(email, password).then(function (data) {
+    if (store.getState().login.loginProcessing === false) {
+      return LoginManager.processLogin(email, password).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({userData, password, token}));
         // Tell react-router to move to another page.
         UrlUtils.forwardTo(WORKSPACE_URL);
-      }).catch(function (err) {
+      }).catch((err) => {
         dispatch(loginFailed(err));
       });
     }
     dispatch(sendingRequest());
   };
+}
+
+export function logoutAction() {
+  console.log('logoutAction');
+  return (dispatch, ownProps) => {
+    dispatch(logout());
+    UrlUtils.forwardTo(LOGIN_URL);
+  };
+}
+
+export function loginAutomaticallyAction() {
+  console.log('loginAutomaticallyAction');
+  return dispatch => new Promise((resolve, reject) => {
+    dispatch(sendingRequest());
+    const email = store.getState().user.userData.email;
+    const password = store.getState().login.plainPassword;
+    LoginManager.processOnlineLogin(email, password).then((data) => {
+      const userData = data.dbUser;
+      const token = data.token;
+      dispatch(loginOk({userData, password, token}));
+      resolve(data);
+    }).catch(reject);
+  });
 }
 
 /**
@@ -59,7 +83,7 @@ function sendingRequest() {
   }
 }
 
-export function logoutAction() {
+export function logout() {
   console.log('logoutAction');
   return {
     type: STATE_LOGOUT

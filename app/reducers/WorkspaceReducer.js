@@ -37,7 +37,6 @@ export default function workspaceReducer(state: Object = defaultState, action: O
         currentWorkspace: undefined
       });
     default:
-      console.log(`default state:  ${action.type}`);
       return state;
   }
 }

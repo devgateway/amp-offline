@@ -15,11 +15,10 @@ export default function startUp(state = defaultState, action: Object) {
         loadingInProgress: false
       });
     case STATE_PARAMETERS_LOADING:
-      return Object.assign({}, state, { loadingInProgress: true });
+      return Object.assign({}, state, {loadingInProgress: true});
     case STATE_PARAMETERS_FAILED:
-      return Object.assign({}, state, { error: action.error, loadingInProgress: false });
+      return Object.assign({}, state, {error: action.error, loadingInProgress: false});
     default:
-      console.log(`default state: ${action.type}`);
       return state;
   }
 }

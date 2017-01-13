@@ -5,6 +5,7 @@ export const BASE_PORT = '8080';
 export const CONNECTION_TIMEOUT = '2500';
 
 export const WORKSPACE_URL = '/workspace';
+export const LOGIN_URL = '/';
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_WORKPACES = 'workspaces';
