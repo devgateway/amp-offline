@@ -1,8 +1,11 @@
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
-import translate from '../../utils/translate';
 import Util from '../../utils/Utils';
-import { store } from '../../index';
+import Notification from '../helpers/NotificationHelper';
+import {
+  NOTIFICATION_ORIGIN_AUTHENTICATION,
+  NOTIFICATION_ORIGIN_API_SECURITY
+} from '../../utils/constants/ErrorConstants';
 
 const LoginManager = {
 
@@ -19,9 +22,12 @@ const LoginManager = {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
             UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
               if (hash === dbUser.ampOfflinePassword) {
-                resolve({dbUser: dbUser});
+                resolve({ dbUser });
               } else {
-                reject(translate('login.wrongPassword'));
+                reject(new Notification({
+                  message: 'login.wrongPassword',
+                  origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+                }));
               }
             }).catch(reject);
           } else {
@@ -31,14 +37,18 @@ const LoginManager = {
             if (isAMPAvailable) {
               self.processOnlineLogin(email, password).then(resolve).catch(reject);
             } else {
-              reject(translate('login.AMPUnreachableError'));
+              reject(new Notification({
+                message: 'login.AMPUnreachableError',
+                origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+              }));
             }
           }
-        }).catch((err) => {
-          reject(err);
-        });
+        }).catch(reject);
       } else {
-        reject(translate('login.AMPOfflineUnavailableError'));
+        reject(new Notification({
+          message: 'login.AMPOfflineUnavailableError',
+          origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+        }));
       }
     });
   },
@@ -68,12 +78,14 @@ const LoginManager = {
     return new Promise((resolve, reject) => {
       Auth.onlineLogin(email, password).then((data) => {
         self.saveLoginData(data, password).then((dbData) => {
-          resolve({dbUser: dbData, token: data.token});
-        }).catch((err) => {
-          reject(err);
-        });
-      }).catch((err) => {
-        reject(err);
+          resolve({ dbUser: dbData, token: data.token });
+        }).catch(reject);
+      }).catch((error) => {
+        // If error was caused because an authentication problem then we clear ampOfflinePassword.
+        if (error.origin === NOTIFICATION_ORIGIN_API_SECURITY) {
+          this.clearCredentialsInDB(email);
+        }
+        reject(error);
       });
     });
   },
@@ -93,7 +105,7 @@ const LoginManager = {
           } else {
             // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
             const id = userData.id || Util.stringToId(email);
-            const dbUserData = {id: id, email: email};
+            const dbUserData = { id, email };
             dbUserData.ampOfflinePassword = hash;
             UserHelper.saveOrUpdateUser(dbUserData).then(resolve).catch(reject);
           }

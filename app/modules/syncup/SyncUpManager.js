@@ -1,9 +1,11 @@
 import ConnectionHelper from '../connectivity/ConnectionHelper';
-import WorkspaceHelper from '../helpers/WorkspaceHelper';
+import WorkspaceHelper from  '../helpers/WorkspaceHelper';
 import { GET_WORKSPACES_URL } from '../connectivity/AmpApiConstants';
 
 const SyncUpManager = {
+
   getSyncUpHistory() {
+
     return new Promise( (resolve, reject) => {
       // TODO this should come from the Database
       // it's just a sample to show it in the sync page
@@ -42,6 +44,7 @@ const SyncUpManager = {
       resolve(syncUpHistory);
     });
   },
+
   syncUp() {
     console.log('syncup in progress');
     const self = this;
@@ -54,15 +57,14 @@ const SyncUpManager = {
         };
         resolve(syncUpResult);
         console.log('end sncup');
-      }).catch((err) => {
-        console.log(err);
-        reject(err);
-      });
+      }).catch(reject);
     });
   },
+
   syncUpUser() {
     // once we
   },
+
   // this will be moved to its own utility class
   syncUpWs(url) {
     return new Promise((resolve, reject) => {
@@ -70,12 +72,9 @@ const SyncUpManager = {
       // The userSync we can modify this call to only retrieve
       ConnectionHelper.doGet({ url }).then((data) => {
         WorkspaceHelper.replaceWorkspaces(data).then(resolve).catch(reject);
-      }).catch((error) => {
-        reject(error);
-      });
+      }).catch(reject);
     });
   }
 };
-
 
 module.exports = SyncUpManager;

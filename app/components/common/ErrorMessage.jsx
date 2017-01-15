@@ -1,5 +1,5 @@
 // @flow
-import React, {Component, PropTypes} from 'react';
+import React, { Component, PropTypes } from 'react';
 
 export default class ErrorMessage extends Component {
 
@@ -12,7 +12,7 @@ export default class ErrorMessage extends Component {
     console.log('render');
     return (
       <div className={'alert alert-danger ' + (this.props.message === '' ? 'hidden' : '')}>
-        <strong>Error: </strong> {JSON.stringify(this.props.message)}
+        <strong>Error: </strong> {this.props.message.message}
       </div>
     );
   }

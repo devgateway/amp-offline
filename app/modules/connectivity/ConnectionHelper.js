@@ -1,5 +1,11 @@
 import request from 'request';
 import RequestConfig from './RequestConfig';
+import Notification from '../helpers/NotificationHelper';
+import {
+  NOTIFICATION_ORIGIN_API_SECURITY,
+  NOTIFICATION_ORIGIN_API_NETWORK,
+  NOTIFICATION_SEVERITY_ERROR
+} from '../../utils/constants/ErrorConstants';
 import { store } from '../../index';
 import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
 
@@ -42,14 +48,26 @@ const ConnectionHelper = {
                 resolve(body_);
               }).catch((error_) => {
                 // If we couldnt relogin online automatically we logout completely and forward to login page.
-                reject(error_);
+                reject(new Notification({
+                  errorObject: error_,
+                  origin: NOTIFICATION_ORIGIN_API_SECURITY,
+                  severity: NOTIFICATION_SEVERITY_ERROR
+                }));
                 store.dispatch(logoutAction());
               });
             }).catch(() => {
-              reject(error || (body && body.error))
+              reject(new Notification({
+                errorObject: error || body.error,
+                origin: NOTIFICATION_ORIGIN_API_SECURITY,
+                severity: NOTIFICATION_SEVERITY_ERROR
+              }));
             });
           } else {
-            reject(error || body.error);
+            reject(new Notification({
+              errorObject: error || body.error,
+              origin: NOTIFICATION_ORIGIN_API_NETWORK,
+              severity: NOTIFICATION_SEVERITY_ERROR
+            }));
           }
         } else {
           resolve(body);

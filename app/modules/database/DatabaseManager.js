@@ -1,5 +1,5 @@
-import Promise from 'bluebird';
 import Datastore from 'nedb';
+import Promise from 'bluebird';
 import Crypto from 'crypto-js';
 import {
   DB_FILE_PREFIX,
@@ -9,7 +9,8 @@ import {
   DB_AUTOCOMPACT_INTERVAL_MILISECONDS
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
-import translate from '../../utils/translate';
+import Notification from '../helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
 /**
  * Is a Singleton to centralize control over the database access.
@@ -28,7 +29,7 @@ const DatabaseManager = {
   // 1M small documents).
   // VERY IMPORTANT 5: We might need to have a queue of pending operations on each collection to avoid conflicts.
 
-  _getCollection(name, options) {
+  _getCollection(name) {
     console.log('_getCollection');
     const self = this;
     return new Promise((resolve, reject) => {
@@ -61,13 +62,13 @@ const DatabaseManager = {
         db.loadDatabase((err) => {
           if (err !== null) {
             DatabaseCollection.getInstance().removeCollection(name);
-            reject(err.toString());
+            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
           } else {
             DatabaseManager.createIndex(db, {}, (err2) => {
               if (err2 === null) {
                 resolve(db);
               } else {
-                reject(err2.toString());
+                reject(new Notification({ message: err2.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
               }
             });
           }
@@ -85,10 +86,10 @@ const DatabaseManager = {
     console.log('_saveOrUpdate');
     DatabaseManager._getCollection(collectionName, options).then((collection) => {
       // Look for an object by its id.
-      const exampleObject = { id: id };
+      const exampleObject = { id };
       collection.find(exampleObject, (err, docs) => {
         if (err !== null) {
-          reject(err.toString());
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
         }
         if (docs.length === 1) {
           console.log('Update');
@@ -96,20 +97,23 @@ const DatabaseManager = {
             if (err2 === null) {
               resolve(data);
             } else {
-              reject(err2);
+              reject(new Notification({ message: err2.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
             }
           });
         } else if (docs.length === 0) {
           console.log('Insert');
           collection.insert(data, (err3, newDoc) => {
             if (err3 !== null) {
-              reject(err3);
+              reject(new Notification({ message: err3.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
             } else {
               resolve(newDoc);
             }
           });
         } else {
-          reject(`Something is really wrong with this record: ${exampleObject.id}  ${collectionName}`);
+          reject(new Notification({
+            message: `Something is really wrong with this record: ${exampleObject.id} - ${collectionName}`,
+            origin: NOTIFICATION_ORIGIN_DATABASE
+          }));
         }
       });
     }).catch(reject);
@@ -122,29 +126,33 @@ const DatabaseManager = {
     console.log('saveOrUpdate');
     // This promise will be resolved/rejected inside '_saveOrUpdate', but initiated by the queue manager in
     // DatabaseCollection.js.
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       // We define a variable with the function instead of calling it because a Promise will start inmediately.
-      const saveOrUpdateFunc = DatabaseManager._saveOrUpdate.bind(null, id).bind(null, data)
-        .bind(null, collectionName).bind(null, options).bind(null, resolve).bind(null, reject);
+      const saveOrUpdateFunc = DatabaseManager._saveOrUpdate
+        .bind(null, id)
+        .bind(null, data)
+        .bind(null, collectionName)
+        .bind(null, options)
+        .bind(null, resolve)
+        .bind(null, reject);
       DatabaseManager.queuePromise(saveOrUpdateFunc);
     });
-    return promise;
   },
 
   _replaceAll(collectionData, collectionName, options, resolve, reject) {
     console.log('_replaceAll');
     DatabaseManager._getCollection(collectionName, options).then((collection) => {
-      collection.remove({ }, { multi: true }, (err) => {
+      collection.remove({}, { multi: true }, (err) => {
         if (err === null) {
-          collection.insert(collectionData, (err, newDocs) => {
-            if (err === null && newDocs.length === collectionData.length) {
+          collection.insert(collectionData, (err2, newDocs) => {
+            if (err2 === null && newDocs.length === collectionData.length) {
               resolve(newDocs);
             } else {
-              reject(err);
+              reject(new Notification({ message: err2.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
             }
           });
         } else {
-          reject(err);
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
         }
       });
     }).catch(reject);
@@ -157,7 +165,7 @@ const DatabaseManager = {
         if (err === null && newDocs.length === collectionData.length) {
           resolve(newDocs);
         } else {
-          reject(err);
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
         }
       });
     }).catch(reject);
@@ -170,48 +178,40 @@ const DatabaseManager = {
    * @param options
    */
   replaceCollection(collectionData, collectionName, options) {
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const replaceAll = DatabaseManager._replaceAll
         .bind(null, collectionData)
         .bind(null, collectionName)
-        .bind(null,options)
+        .bind(null, options)
         .bind(null, resolve)
         .bind(null, reject);
       DatabaseManager.queuePromise(replaceAll);
     });
-    return promise;
   },
 
-  /**
-   *
-   * @param collectionData
-   * @param collectionName
-   * @param options
-   */
-  saveOrUpdateCollection(collectionData, collectionName, options) {
+  saveOrUpdateCollection() {
     // TODO:
   },
 
   _removeById(id, collectionName, options, resolve, reject) {
     console.log('_removeById');
-    const self = this;
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       // Look for an object by its id.
-      const exampleObject = { id: id };
+      const exampleObject = { id };
       collection.findOne(exampleObject, (err, doc) => {
         if (err !== null) {
-          reject(err.toString());
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
         }
         if (doc !== null) {
           collection.remove(exampleObject, { multi: false }, (err2, count) => {
             if (err2 === null) {
               resolve(count);
             } else {
-              reject(err2);
+              reject(new Notification({ message: err2.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
             }
           });
         } else if (doc === null) {
-          resolve();
+          resolve(null);
         }
       });
     }).catch(reject);
@@ -220,12 +220,14 @@ const DatabaseManager = {
   removeById(id, collectionName, options) {
     console.log('removeById');
     const self = this;
-    const promise = new Promise((resolve, reject) => {
-      const removeByIdFunc = self._removeById.bind(null, id).bind(null, collectionName).bind(null, options)
-        .bind(null, resolve).bind(null, reject);
+    return new Promise((resolve, reject) => {
+      const removeByIdFunc = self._removeById.bind(null, id)
+        .bind(null, collectionName)
+        .bind(null, options)
+        .bind(null, resolve)
+        .bind(null, reject);
       self.queuePromise(removeByIdFunc, resolve, reject);
     });
-    return promise;
   },
 
   findOne(example, collectionName) {
@@ -241,7 +243,10 @@ const DatabaseManager = {
             resolve(docs[0]);
             break;
           default:
-            reject(translate('database.moreThanOneResultFound'));
+            reject(new Notification({
+              message: 'database.moreThanOneResultFound',
+              origin: NOTIFICATION_ORIGIN_DATABASE
+            }));
             break;
         }
       }).catch(reject);
@@ -255,12 +260,12 @@ const DatabaseManager = {
 
   findAllWithProjections(example, collectionName, projections) {
     console.log('findAllWithProjections');
-    projections = Object.assign({ _id: 0 }, projections);
+    const newProjections = Object.assign({ _id: 0 }, projections);
     return new Promise((resolve, reject) => {
       DatabaseManager._getCollection(collectionName, null).then((collection) => {
-        collection.find(example, projections, (err, docs) => {
+        collection.find(example, newProjections, (err, docs) => {
           if (err !== null) {
-            reject(err.toString());
+            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
           }
           if (docs !== null) {
             resolve(docs);

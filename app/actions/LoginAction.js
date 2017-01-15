@@ -1,5 +1,5 @@
 // @flow
-import UrlUtils from '../utils/URLUtils'
+import UrlUtils from '../utils/URLUtils';
 import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import { store } from '../index';
@@ -9,15 +9,15 @@ export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
 export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
 export const STATE_LOGOUT = 'STATE_LOGOUT';
 
-export function loginAction(email, password) {
+export function loginAction(email: string, password: string) {
   console.log('loginAction');
-  return (dispatch, ownProps) => {
+  return (dispatch) => {
     if (store.getState().login.loginProcessing === false) {
       return LoginManager.processLogin(email, password).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        dispatch(loginOk({userData, password, token}));
+        dispatch(loginOk({ userData, password, token }));
         // Tell react-router to move to another page.
         UrlUtils.forwardTo(WORKSPACE_URL);
       }).catch((err) => {
@@ -30,7 +30,7 @@ export function loginAction(email, password) {
 
 export function logoutAction() {
   console.log('logoutAction');
-  return (dispatch, ownProps) => {
+  return (dispatch) => {
     dispatch(logout());
     UrlUtils.forwardTo(LOGIN_URL);
   };
@@ -45,7 +45,7 @@ export function loginAutomaticallyAction() {
     LoginManager.processOnlineLogin(email, password).then((data) => {
       const userData = data.dbUser;
       const token = data.token;
-      dispatch(loginOk({userData, password, token}));
+      dispatch(loginOk({ userData, password, token }));
       resolve(data);
     }).catch(reject);
   });
@@ -55,12 +55,12 @@ export function loginAutomaticallyAction() {
  * Register successful login user data
  * @returns {{type: string, actionData: {userData: *, plainPassword: *, token: *}}}
  */
-function loginOk({userData, password, token}) {
-  console.log('Login OK: ' + JSON.stringify(userData));
-  let loginData = {
-    userData: userData,
-    password: password,
-    token: token
+function loginOk({ userData, password, token }) {
+  console.log('loginOk');
+  const loginData = {
+    userData,
+    password,
+    token
   };
   return {
     type: STATE_LOGIN_OK,
@@ -69,10 +69,10 @@ function loginOk({userData, password, token}) {
 }
 
 function loginFailed(err) {
-  console.error('Login Fail: ' + err);
+  console.log('loginFailed');
   return {
     type: STATE_LOGIN_FAIL,
-    actionData: {errorMessage: err}
+    actionData: { errorMessage: err }
   };
 }
 
@@ -80,7 +80,7 @@ function sendingRequest() {
   console.log('sendingRequest');
   return {
     type: STATE_LOGIN_PROCESSING
-  }
+  };
 }
 
 export function logout() {

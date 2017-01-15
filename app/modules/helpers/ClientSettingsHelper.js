@@ -1,9 +1,9 @@
 import DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
 import { validate } from "jsonschema";
+import Notification from './NotificationHelper';
 
-
-const INVALID_FORMAT_ERROR = new Error('INVALID_FORMAT');
+const INVALID_FORMAT_ERROR = new Notification({message: 'INVALID_FORMAT'});
 
 /**
  * A simplified helper for "Client Settings" storage for loading, searching /
