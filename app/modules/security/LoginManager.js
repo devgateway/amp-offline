@@ -6,6 +6,7 @@ import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
   NOTIFICATION_ORIGIN_API_SECURITY
 } from '../../utils/constants/ErrorConstants';
+import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
 
 const LoginManager = {
 
@@ -76,16 +77,18 @@ const LoginManager = {
   processOnlineLogin(email, password) {
     const self = this;
     return new Promise((resolve, reject) => {
-      Auth.onlineLogin(email, password).then((data) => {
-        self.saveLoginData(data, password).then((dbData) => {
-          resolve({ dbUser: dbData, token: data.token });
-        }).catch(reject);
-      }).catch((error) => {
-        // If error was caused because an authentication problem then we clear ampOfflinePassword.
-        if (error.origin === NOTIFICATION_ORIGIN_API_SECURITY) {
-          this.clearCredentialsInDB(email);
-        }
-        reject(error);
+      Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => {
+        Auth.onlineLogin(email, passwordDigest).then((data) => {
+          self.saveLoginData(data, password).then((dbData) => {
+            resolve({ dbUser: dbData, token: data.token });
+          }).catch(reject);
+        }).catch((error) => {
+          // If error was caused because an authentication problem then we clear ampOfflinePassword.
+          if (error.origin === NOTIFICATION_ORIGIN_API_SECURITY) {
+            this.clearCredentialsInDB(email);
+          }
+          reject(error);
+        });
       });
     });
   },

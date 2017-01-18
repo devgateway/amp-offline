@@ -3,6 +3,8 @@ import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
 import { store } from '../../index';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_AUTHENTICATION } from '../../utils/constants/ErrorConstants';
+import { hexBufferToString } from '../../utils/Utils';
+import { DIGEST_ALGORITHM_SHA256 } from '../../utils/Constants';
 
 const Auth = {
 
@@ -47,7 +49,7 @@ const Auth = {
           name: 'PBKDF2',
           salt: saltBuffer,
           iterations,
-          hash: 'SHA-256'
+          hash: DIGEST_ALGORITHM_SHA256
         },
         key,
         { name: 'AES-CBC', length: 256 },
@@ -63,6 +65,19 @@ const Auth = {
         }));
       });
     });
+  },
+
+  /**
+   * Generate SHA digest from string.
+   * @param password
+   * @param algorithm can be DIGEST_ALGORITHM_SHA256 or DIGEST_ALGORITHM_SHA1
+   * @returns {Promise.<TResult>|*}
+   */
+  sha(password, algorithm) {
+    console.log('sha');
+    // Transform the string into an arraybuffer.
+    const buffer = new TextEncoder('utf-8').encode(password);
+    return crypto.subtle.digest(algorithm, buffer).then((hash) => hexBufferToString(hash));
   }
 };
 
