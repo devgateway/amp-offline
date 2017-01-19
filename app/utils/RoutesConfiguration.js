@@ -1,4 +1,9 @@
-import { GET_WORKSPACES_URL, LOGIN_URL, URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
+import {
+  GET_WORKSPACES_URL,
+  LOGIN_URL,
+  URL_CONNECTIVITY_CHECK_EP,
+  GLOBAL_SETTINGS_URL
+} from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
   url: GET_WORKSPACES_URL,
@@ -12,5 +17,10 @@ const routesConfiguration = [{
   url: LOGIN_URL,
   method: 'POST',
   requiresToken: false
-}];
+}
+  , {
+    url: GLOBAL_SETTINGS_URL,
+    method: 'GET',
+    requiresToken: true
+  }];
 module.exports = routesConfiguration;

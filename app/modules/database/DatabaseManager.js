@@ -139,6 +139,26 @@ const DatabaseManager = {
     });
   },
 
+  /**
+   * Schedule saveOrUpdate for all elements on 'data'. Then returns the list of elements saved.
+   * @param data
+   * @param collectionName
+   * @param options
+   */
+  saveOrUpdateCollection(data, collectionName, options) {
+    console.log('saveOrUpdateCollection');
+    const savedData = [];
+    return new Promise((resolve, reject) => {
+      Promise.all(data.map((item) => {
+        return this.saveOrUpdate(item.id, item, collectionName, options).then((dbData) => {
+          savedData.push(dbData);
+        }).catch(reject);
+      })).then(() => {
+        resolve(savedData);
+      }).catch(reject);
+    });
+  },
+
   _replaceAll(collectionData, collectionName, options, resolve, reject) {
     console.log('_replaceAll');
     DatabaseManager._getCollection(collectionName, options).then((collection) => {
@@ -187,10 +207,6 @@ const DatabaseManager = {
         .bind(null, reject);
       DatabaseManager.queuePromise(replaceAll);
     });
-  },
-
-  saveOrUpdateCollection() {
-    // TODO:
   },
 
   _removeById(id, collectionName, options, resolve, reject) {

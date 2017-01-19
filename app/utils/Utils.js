@@ -2,11 +2,11 @@
 
 const Utils = {
 
-  stringToId(email) {
+  stringToId(text) {
     let hash = 5381;
-    let i = email.length;
+    let i = text.length;
     while (i) {
-      hash = (hash * 33) ^ email.charCodeAt(--i);
+      hash = (hash * 33) ^ text.charCodeAt(--i);
     }
     return hash >>> 0;
   },
