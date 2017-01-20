@@ -71,6 +71,12 @@ const RequestConfig = {
     } else {
       throw 'Route ' + url + ' for method ' + method + ' is not configured';
     }
+  },
+
+  replaceToken(requestConfig){
+    console.log('replaceToken');
+    requestConfig.headers['X-Auth-Token'] = store.getState().login.token;
+    return requestConfig;
   }
 };
 

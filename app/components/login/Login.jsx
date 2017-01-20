@@ -1,11 +1,9 @@
 // @flow
-import React, {Component, PropTypes} from 'react';
-import {Link} from 'react-router';
+import React, { Component, PropTypes } from 'react';
 import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import Button from '../i18n/Button';
-import ConnectionInformation from '../../modules/connectivity/ConnectionInformation'
 
 export default class Login extends Component {
 
@@ -22,7 +20,7 @@ export default class Login extends Component {
 
     this.state = {
       email: 'testuser@amp.org',
-      password: '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',
+      password: 'password',
       errorMessage: '',
       isProcessingLogin: false
     };
@@ -63,10 +61,10 @@ export default class Login extends Component {
   }
 
   handlePasswordChange(e) {
-    this.setState({password: e.target.value});
+    this.setState({ password: e.target.value });
   }
 
   handleEmailChange(e) {
-    this.setState({email: e.target.value});
+    this.setState({ email: e.target.value });
   }
 }

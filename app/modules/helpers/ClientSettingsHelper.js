@@ -1,14 +1,15 @@
 import DatabaseManager from '../database/DatabaseManager';
-import {COLLECTION_CLIENT_SETTINGS} from '../../utils/Constants';
-import {validate} from "jsonschema";
+import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
+import { validate } from "jsonschema";
+import Notification from './NotificationHelper';
 
-
-const INVALID_FORMAT_ERROR = new Error('INVALID_FORMAT');
+const INVALID_FORMAT_ERROR = new Notification({message: 'INVALID_FORMAT'});
 
 /**
- * A simplified helper for "Client Settings" storage for loading, searching / filtering and saving client settings.
- * The structure to fulfill to ensure we can store, use and display settings properly:
- * {
+ * A simplified helper for "Client Settings" storage for loading, searching /
+ *  filtering and saving client settings.
+ *  The structure to fulfill to ensure we can store, use and display settings properly:
+ *  {
  *  "id": 1, // setting id
  *  "name": "AMP Offline Client Enabled", // setting name that can be used to display and translate
  *  "description": "Clarifies if the AMP Offline client can still be used, controlled at AMP server", // setting description

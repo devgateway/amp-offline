@@ -8,6 +8,6 @@ const WorkspaceManager = {
     const wsFilterBuilder = new WorkspaceFilterBuilder();
     return wsFilterBuilder.getDBFilter();
   }
-};
+}
 
 module.exports = WorkspaceManager;

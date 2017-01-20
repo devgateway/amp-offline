@@ -1,14 +1,19 @@
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
-import translate from '../../utils/translate';
 import Util from '../../utils/Utils';
+import Notification from '../helpers/NotificationHelper';
+import {
+  NOTIFICATION_ORIGIN_AUTHENTICATION,
+  NOTIFICATION_ORIGIN_API_SECURITY
+} from '../../utils/constants/ErrorConstants';
+import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
 
 const LoginManager = {
 
   processLogin(email, password) {
     console.log('processLogin');
     const self = this;
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       // 1) Check if AMPOffline is available.
       const isAMPOfflineAvailable = true; // TODO: read from a redux state (to be done on AMPOFFLINE-100).
       if (isAMPOfflineAvailable) {
@@ -16,11 +21,14 @@ const LoginManager = {
         UserHelper.findByEmail(email).then((dbUser) => {
           if (dbUser !== null && dbUser.ampOfflinePassword && dbUser.ampOfflinePassword.toString() !== '') {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
-            UserHelper.generateAMPOfflineHashFromPassword(password).then(function (hash) {
+            UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
               if (hash === dbUser.ampOfflinePassword) {
-                resolve({dbUser: dbUser});
+                resolve({ dbUser });
               } else {
-                reject(translate('login.wrongPassword'));
+                reject(new Notification({
+                  message: 'login.wrongPassword',
+                  origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+                }));
               }
             }).catch(reject);
           } else {
@@ -28,17 +36,35 @@ const LoginManager = {
             // TODO: call another function to check if amp is online (to be done on AMPOFFLINE-103).
             const isAMPAvailable = true;
             if (isAMPAvailable) {
-              self.processOnlineLogin({email, password}).then(resolve).catch(reject);
+              self.processOnlineLogin(email, password).then(resolve).catch(reject);
             } else {
-              reject(translate('login.AMPUnreachableError'));
+              reject(new Notification({
+                message: 'login.AMPUnreachableError',
+                origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+              }));
             }
           }
-        }).catch(function (err) {
-          reject(err);
-        });
+        }).catch(reject);
       } else {
-        reject(translate('login.AMPOfflineUnavailableError'));
+        reject(new Notification({
+          message: 'login.AMPOfflineUnavailableError',
+          origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+        }));
       }
+    });
+  },
+
+  clearCredentialsInDB(email) {
+    console.log('clearCredentialsInDB');
+    return new Promise((resolve, reject) => {
+      UserHelper.findByEmail(email).then((data) => {
+        if (data) {
+          delete data.ampOfflinePassword;
+          UserHelper.saveOrUpdateUser(data).then(resolve).catch(reject);
+        } else {
+          resolve();
+        }
+      }).catch(reject);
     });
   },
 
@@ -48,17 +74,21 @@ const LoginManager = {
    * @param password
    * @returns {Promise}
    */
-  processOnlineLogin({email, password}) {
+  processOnlineLogin(email, password) {
     const self = this;
-    return new Promise(function (resolve, reject) {
-      Auth.onlineLogin(email, password).then(function (data) {
-        self.saveLoginData(data, password).then(function (dbData) {
-          resolve({dbUser: dbData, token: data.token});
-        }).catch(function (err) {
-          reject(err);
+    return new Promise((resolve, reject) => {
+      Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => {
+        Auth.onlineLogin(email, passwordDigest).then((data) => {
+          self.saveLoginData(data, password).then((dbData) => {
+            resolve({ dbUser: dbData, token: data.token });
+          }).catch(reject);
+        }).catch((error) => {
+          // If error was caused because an authentication problem then we clear ampOfflinePassword.
+          if (error.origin === NOTIFICATION_ORIGIN_API_SECURITY) {
+            this.clearCredentialsInDB(email);
+          }
+          reject(error);
         });
-      }).catch(function (err) {
-        reject(err);
       });
     });
   },
@@ -68,17 +98,21 @@ const LoginManager = {
    */
   saveLoginData(userData, password) {
     console.log('saveLoginData');
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       const email = userData.email || userData['user-name'];
-      UserHelper.findByEmail(email).then(function (dbData) {
-        if (dbData) {
-          UserHelper.saveOrUpdateUser(dbData, password).then(resolve).catch(reject);
-        } else {
-          // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
-          const id = userData.id || Util.stringToId(email);
-          const dbUserData = {id: id, email: email};
-          UserHelper.saveOrUpdateUser(dbUserData, password).then(resolve).catch(reject);
-        }
+      UserHelper.findByEmail(email).then((dbData) => {
+        UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
+          if (dbData) {
+            dbData.ampOfflinePassword = hash;
+            UserHelper.saveOrUpdateUser(dbData).then(resolve).catch(reject);
+          } else {
+            // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
+            const id = userData.id || Util.stringToId(email);
+            const dbUserData = { id, email };
+            dbUserData.ampOfflinePassword = hash;
+            UserHelper.saveOrUpdateUser(dbUserData).then(resolve).catch(reject);
+          }
+        }).catch(reject);
       }).catch(reject);
     });
   }

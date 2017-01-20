@@ -14,7 +14,6 @@ export default function ampConnectionStatus(state = defaultState, action: Object
     case STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING:
       return Object.assign({}, state, {updateInProgress: true});
     default:
-      console.log('default state: ' + action.type);
       return state;
   }
 }

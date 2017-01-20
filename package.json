@@ -5,7 +5,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
+    "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
     "test-watch": "npm test -- --watch",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --retries 2 --compilers js:babel-register --require ./test/setup.js ./test/e2e.js",
     "lint": "eslint --ignore-path .gitignore --format=node_modules/eslint-formatter-pretty app test *.js",
@@ -120,8 +120,9 @@
     "minimist": "^1.2.0",
     "mocha": "^3.1.2",
     "react-addons-test-utils": "^15.3.2",
-    "react-bootstrap-table":"^2.7.1",
+    "react-bootstrap-table": "^2.7.1",
     "redux-logger": "^2.7.4",
+    "redux-mock-store": "^1.2.1",
     "request": "^2.79.0",
     "sinon": "^1.17.6",
     "spectron": "^3.4.0",
@@ -136,6 +137,7 @@
     "webpack-validator": "^2.2.9"
   },
   "dependencies": {
+    "babel-plugin-webpack-alias": "^2.1.2",
     "bluebird": "^3.4.6",
     "bluebird-queue": "0.0.8",
     "crypto-js": "^3.1.8",

@@ -6,6 +6,7 @@ import style from './Navbar.css';
 import translate from '../../utils/translate';
 import TopMenu from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
+import Logout from '../login/Logout';
 
 const pjson = require('../../../package.json');
 
@@ -29,6 +30,7 @@ export default class Navbar extends Component {
           <a className={style.navbar_left_side} href="#">{pjson.productName} - {VERSION}</a>
           <a className={style.navbar_left_side} href="#">{this.extractLoggedUser(' - ')}</a>
           <Switcher/>
+          <Logout loggedIn={this.props.login.loggedIn}/>
         </div>
         <div className={style.main_menu}>
           <TopMenu builder={MenuUtils.default.prototype.buildMenu} onClick={MenuUtils.handleClick}

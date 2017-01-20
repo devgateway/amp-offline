@@ -1,9 +1,9 @@
 // @flow
 import React from 'react';
-import {render} from 'react-dom';
-import {Provider} from 'react-redux';
-import {Router, hashHistory, Route, IndexRoute} from 'react-router';
-import {syncHistoryWithStore} from 'react-router-redux';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import { Router, hashHistory, Route, IndexRoute } from 'react-router';
+import { syncHistoryWithStore } from 'react-router-redux';
 import configureStore from './store/configureStore';
 import './app.global.css';
 import App from './containers/App';
@@ -14,19 +14,14 @@ import SyncUpPage from './containers/SyncUpPage';
 import auth from './modules/security/Auth';
 import i18next from 'i18next';
 import XHR from 'i18next-xhr-backend';
-import {ampStartUp} from './actions/StartUpAction';
+import { ampStartUp } from './actions/StartUpAction';
 export const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 
-auth.logout();//TODO: this will dissapear when we get the login working properly.
-
 function checkAuth(nextState, replaceState) {
   console.log('checkAuth');
-
   if (!auth.loggedIn()) {
     replaceState({nextPathname: nextState.location.pathname}, '/');
-  } else {
-    replaceState(null, '/workspace');
   }
 }
 

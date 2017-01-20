@@ -13,7 +13,7 @@ const defaultState = {
  * @param action
  * @returns {*}
  */
-export default function login(state = defaultState, action: Object) {
+export default function login(state: Object = defaultState, action: Object) {
   console.log('LoginReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:
@@ -30,17 +30,12 @@ export default function login(state = defaultState, action: Object) {
         errorMessage: action.actionData.errorMessage
       });
     case STATE_LOGOUT:
-      return Object.assign({}, state, {
-        loggedIn: false,
-        loginProcessing: false
-      });
+      return defaultState;
     case STATE_LOGIN_PROCESSING:
       return Object.assign({}, state, {
-        loginProcessing: true,
-        errorMessage: ''
+        loginProcessing: true
       });
     default:
-      console.log('default state: ' + action.type);
       return state;
   }
 }
