@@ -1,5 +1,7 @@
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as Utils from '../../utils/Utils';
+import Notification from '../helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
 
 /**
  * Activity Filter class
@@ -318,8 +320,10 @@ function getApprovalStatusFilter(id) {
       break;
   }
   if (options === undefined) {
-    // TODO replace with notification error
-    throw new Error(`Unrecognized approval status value: ${id}`);
+    throw new Notification({
+      message: `Unrecognized approval status value: ${id}`,
+      origin: NOTIFICATION_ORIGIN_WORKSPACE_FILTER
+    });
   }
   const approvalStatusOptions = Utils.toMap('$in', options);
   const approvalStatusfilter = Utils.toMap(AC.APPROVAL_STATUS, approvalStatusOptions);
@@ -342,8 +346,10 @@ function listToBoolean(intList) {
       } else if (int === 2) {
         return false;
       }
-      // TODO replace with notification error
-      throw new Error(`Unable to convert int value to boolean (expecting 1 or 2): ${int}`);
+      throw new Notification({
+        message: `Unable to convert int value to boolean (expecting 1 or 2): ${int}`,
+        origin: NOTIFICATION_ORIGIN_WORKSPACE_FILTER
+      });
     });
   }
   return boolList;
