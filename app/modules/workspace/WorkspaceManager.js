@@ -1,20 +1,13 @@
-import { COLLECTION_WORKPACES } from '../../utils/Constants';
-import DatabaseManager from '../database/DatabaseManager';
+import WorkspaceFilterBuilder from './WorkspaceFilter';
 
 const WorkspaceManager = {
-  getWorkspacesFromStore(){
-    return new Promise(function (resolve, reject) {
-      DatabaseManager._getCollection(COLLECTION_WORKPACES, null).then(function (workspaceStore) {
-        workspaceStore.find({}, function (err, workspaceCollection) {
-          if (err != null) {
-            reject(err);
-          } else {
-            resolve(workspaceCollection);
-          }
-        });
-      }).catch(reject);
-    });
+  /**
+   * @returns {Promise}
+   */
+  getWorkspaceFilter() {
+    const wsFilterBuilder = new WorkspaceFilterBuilder();
+    return wsFilterBuilder.getDBFilter();
   }
-}
+};
 
 module.exports = WorkspaceManager;

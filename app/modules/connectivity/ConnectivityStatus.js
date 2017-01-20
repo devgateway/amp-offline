@@ -16,28 +16,28 @@ export default class ConnectivityStatus {
   /**
    * @returns {boolean} that clarifies if AMP is reachable or not
    */
-  isAmpAvailable() {
+  get isAmpAvailable() {
     return this._isAmpAvailable;
   }
 
   /**
    * @returns {boolean} that clarifies if AMP Client is still enabled on AMP or not
    */
-  isAmpClientEnabled() {
+  get isAmpClientEnabled() {
     return this._isAmpClientEnabled;
   }
 
   /**
    * @returns {boolean} that clarifies if AMP is compatible or not
    */
-  isAmpCompatible() {
+  get isAmpCompatible() {
     return this._isAmpCompatible;
   }
 
   /**
    * @returns {String} AMP version
    */
-  getAmpVersion() {
+  get getAmpVersion() {
     return this._ampVersion;
   }
 }

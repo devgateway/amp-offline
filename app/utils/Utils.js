@@ -1,12 +1,19 @@
 const Utils = {
 
-  stringToId(email) {
+  stringToId(string: string) {
     let hash = 5381;
-    let i = email.length;
-    while (i) {
-      hash = (hash * 33) ^ email.charCodeAt(--i);
+    for (let i = string.length - 1; i >= 0; i--) {
+      /* eslint-disable */
+      hash = (hash * 33) ^ string.charCodeAt(i);
     }
     return hash >>> 0;
+    /* eslint-enable */
+  },
+
+  toMap(key, value) {
+    const result = {};
+    result[key] = value;
+    return result;
   }
 
 };
