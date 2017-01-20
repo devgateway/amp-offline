@@ -1,7 +1,7 @@
-export const SERVER_URL = 'localhost';
+export const SERVER_URL = '__SERVER_URL__';
 export const BASE_REST_URL = '/rest';
-export const PROTOCOL = 'http';
-export const BASE_PORT = '8080';
+export const PROTOCOL = '__SERVER_PROTOCOL__';
+export const BASE_PORT = '__SERVER_PORT__';
 export const CONNECTION_TIMEOUT = '2500';
 
 export const WORKSPACE_URL = '/workspace';

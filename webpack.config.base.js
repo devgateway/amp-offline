@@ -18,7 +18,50 @@ export default validate({
     }, {
       test: /\.json$/,
       loader: 'json-loader'
-    }]
+    },
+      {
+        test: /Constants.js$/,
+        loader: StringReplacePlugin.replace({
+          replacements: [
+            {
+              pattern: /__SERVER_URL__/,
+              replacement: function (match, p1, offset, string) {
+                console.log('server url ' + process.env.npm_package_config_ampServerUrl);
+                return process.env.npm_package_config_ampServerUrl;
+              }
+            }
+          ],
+        })
+      },
+      {
+        test: /Constants.js$/,
+        loader: StringReplacePlugin.replace({
+          replacements: [
+            {
+              pattern: /__SERVER_PORT__/,
+              replacement: function (match, p1, offset, string) {
+                console.log('server port ' + process.env.npm_package_config_ampServerPort);
+                return process.env.npm_package_config_ampServerPort;
+              }
+            }
+          ],
+        })
+      },
+      {
+        test: /Constants.js$/,
+        loader: StringReplacePlugin.replace({
+          replacements: [
+            {
+              pattern: /__SERVER_PROTOCOL__/,
+              replacement: function (match, p1, offset, string) {
+                console.log('server protocol ' + process.env.npm_package_config_ampServerProtocol);
+                return process.env.npm_package_config_ampServerProtocol;
+              }
+            }
+          ],
+        })
+      }
+    ],
   },
 
   output: {
@@ -38,7 +81,7 @@ export default validate({
   plugins: [
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(require('./app/package.json').version)
-    })
+    }), new StringReplacePlugin(),
   ],
 
   externals: Object.keys(externals || {})
