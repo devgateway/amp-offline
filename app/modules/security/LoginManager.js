@@ -12,7 +12,6 @@ const LoginManager = {
 
   processLogin(email, password) {
     console.log('processLogin');
-    const self = this;
     return new Promise((resolve, reject) => {
       // 1) Check if AMPOffline is available.
       const isAMPOfflineAvailable = true; // TODO: read from a redux state (to be done on AMPOFFLINE-100).
@@ -36,7 +35,7 @@ const LoginManager = {
             // TODO: call another function to check if amp is online (to be done on AMPOFFLINE-103).
             const isAMPAvailable = true;
             if (isAMPAvailable) {
-              self.processOnlineLogin(email, password).then(resolve).catch(reject);
+              this.processOnlineLogin(email, password).then(resolve).catch(reject);
             } else {
               reject(new Notification({
                 message: 'login.AMPUnreachableError',
@@ -75,11 +74,11 @@ const LoginManager = {
    * @returns {Promise}
    */
   processOnlineLogin(email, password) {
-    const self = this;
+    console.log('processOnlineLogin');
     return new Promise((resolve, reject) => {
       Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => {
         Auth.onlineLogin(email, passwordDigest).then((data) => {
-          self.saveLoginData(data, password).then((dbData) => {
+          this.saveLoginData(data, password).then((dbData) => {
             resolve({ dbUser: dbData, token: data.token });
           }).catch(reject);
         }).catch((error) => {
