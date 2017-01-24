@@ -17,13 +17,18 @@ const UserHelper = {
    */
   findByEmail(email) {
     console.log('findByEmail');
-    const example = {email: email};
+    const example = { email: email };
     return this.findUserByExample(example);
   },
 
   findUserByExample(example) {
     console.log('findUserByExample');
     return DatabaseManager.findOne(example, COLLECTION_USERS);
+  },
+
+  findAllUserByExample(example) {
+    console.log('findUserByExample');
+    return DatabaseManager.findAll(example, COLLECTION_USERS);
   },
 
   /**
@@ -39,6 +44,11 @@ const UserHelper = {
   generateAMPOfflineHashFromPassword(password) {
     console.log('generateAMPOfflineHashFromPassword');
     return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
+  },
+
+  saveOrUpdateUserCollection(usersData) {
+    console.log('saveOrUpdateUserCollection');
+    return DatabaseManager.saveOrUpdateCollection(usersData, COLLECTION_USERS);
   }
 };
 

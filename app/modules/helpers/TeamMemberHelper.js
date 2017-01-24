@@ -1,8 +1,8 @@
 import DatabaseManager from '../database/DatabaseManager';
-import {COLLECTION_TEAMMEMBERS} from '../../utils/Constants';
+import { COLLECTION_TEAMMEMBERS } from '../../utils/Constants';
 
 /**
- * A simplified helper for "Team Member" storage for loading, searching / filtering and saving team members configs.
+ * A simplified helper for 'Team Member' storage for loading, searching / filtering and saving team members configs.
  */
 const TeamMemberHelper = {
 
@@ -13,15 +13,15 @@ const TeamMemberHelper = {
    */
   findWorkspaceIdsByUserId(userId) {
     console.log('findWorkspaceIdsByUserId');
-    let filter = {"user-id": userId};
-    return new Promise(function (resolve, reject) {
-      let projections = {"workspace-id" : 1}
+    const filter = { 'user-id': userId };
+    return new Promise((resolve, reject) => {
+      const projections = { 'workspace-id': 1 }
       DatabaseManager.findAllWithProjections(filter, projections, COLLECTION_TEAMMEMBERS)
         .then((teamMembers) => {
-          var wsIds = [];
-          teamMembers.forEach((teamMember) => wsIds.push(teamMember["workspace-id"]));
+          const wsIds = [];
+          teamMembers.forEach((teamMember) => wsIds.push(teamMember['workspace-id']));
           resolve(wsIds);
-      }).catch(reject);
+        }).catch(reject);
     });
   },
 
@@ -32,7 +32,7 @@ const TeamMemberHelper = {
    */
   findAllByWorkspaceId(workspaceId) {
     console.log('findAllByWorkspaceId');
-    let filter = {"workspace-id": workspaceId};
+    const filter = { 'workspace-id': workspaceId };
     return this.findAll(filter);
   },
 
@@ -44,14 +44,13 @@ const TeamMemberHelper = {
    */
   findByUserAndWorkspaceId(userId, workspaceId) {
     console.log('findByUserAndWorkspaceId');
-    let filter = {"workspace-id": workspaceId, "user-id": userId};
-    return this.findTeamMember(filter)
+    const filter = { 'workspace-id': workspaceId, 'user-id': userId };
+    return this.findTeamMember(filter);
   },
 
   findAll(filter) {
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS).then(resolve).catch(reject);
-    });
+    console.log('findAll');
+    return DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS);
   },
 
   /**
@@ -61,9 +60,7 @@ const TeamMemberHelper = {
    */
   findTeamMember(filter) {
     console.log('findTeamMember');
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.findOne(filter, COLLECTION_TEAMMEMBERS).then(resolve).catch(reject);
-    });
+    return DatabaseManager.findOne(filter, COLLECTION_TEAMMEMBERS);
   },
 
   /**
@@ -73,9 +70,12 @@ const TeamMemberHelper = {
    */
   saveOrUpdateTeamMember(teamMember) {
     console.log('saveOrUpdateWorkspace');
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.saveOrUpdate(teamMember.id, teamMember, COLLECTION_TEAMMEMBERS, {}).then(resolve).catch(reject);
-    });
+    return DatabaseManager.saveOrUpdate(teamMember.id, teamMember, COLLECTION_TEAMMEMBERS, {});
+  },
+
+  saveOrUpdateTeamMembers(data) {
+    console.log('saveOrUpdateTeamMembers');
+    return DatabaseManager.saveOrUpdateCollection(data, COLLECTION_TEAMMEMBERS);
   },
 
   /**
@@ -85,9 +85,7 @@ const TeamMemberHelper = {
    */
   deleteById(id) {
     console.log('deleteById');
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.removeById(id, COLLECTION_TEAMMEMBERS, {}).then(resolve).catch(reject);
-    });
+    return DatabaseManager.removeById(id, COLLECTION_TEAMMEMBERS, {});
   }
 
 };
