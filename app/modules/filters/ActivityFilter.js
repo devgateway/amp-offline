@@ -72,7 +72,7 @@ export default class ActivityFilter {
     this._addGeneralFilters();
     this._addDateFilters();
     this._addSectorFilters();
-    // TODO: change locationSelected once possible values EP for locations includes also parent info
+    // TODO (noted): change locationSelected once possible values EP for locations includes also parent info
     this._addListMapValueFilter(AC.LOCATIONS, AC.LOCATION, '$in', 'locationSelected');
     this._addProgramFilters();
     this._addOrgsFilters();
@@ -135,7 +135,7 @@ export default class ActivityFilter {
 
   _addProgramFilters() {
     console.log('_addProgramFilters');
-    // TODO: expand with descendants program filters once the full programs tree info is available via EP
+    // TODO (noted): expand with descendants program filters once the full programs tree info is available via EP
     this._addListMapValueFilter(AC.NATIONAL_PLAN_OBJECTIVE, AC.PROGRAM, '$in', 'nationalPlanningObjectives');
     this._addListMapValueFilter(AC.PRIMARY_PROGRAMS, AC.PROGRAM, '$in', 'primaryPrograms');
     this._addListMapValueFilter(AC.SECONDARY_PROGRAMS, AC.PROGRAM, '$in', 'secondaryPrograms');
