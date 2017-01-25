@@ -1,9 +1,9 @@
-export const SERVER_URL = 'localhost';
+export const SERVER_URL = 'amp-timor-future-v3-0-tc9.ampsite.net';
 export const BASE_REST_URL = '/rest';
 export const PROTOCOL = 'http';
-export const BASE_PORT = '8080';
+export const BASE_PORT = '80';
 export const CONNECTION_TIMEOUT = '2500';
-
+export const CONNECTIVITY_CHECK_INTERVAL = 300000000;//value in microseconds it means to 5 minutes
 export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';
 

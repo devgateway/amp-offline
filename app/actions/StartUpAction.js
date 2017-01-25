@@ -1,30 +1,56 @@
-//TODO: this action is not going to be called from a componet, its an initialization action
-import {store} from '../index.js';
-import ConnectionInformation from '../modules/connectivity/ConnectionInformation'
-//this is temporal will be stored in settings
-import {SERVER_URL, BASE_REST_URL, PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT} from '../utils/Constants';
-
+// TODO: this action is not going to be called from a componet, its an initialization action
+import { store } from '../index';
+import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
+import { connectivityCheck } from './ConnectivityAction';
+import {
+  SERVER_URL,
+  BASE_REST_URL,
+  PROTOCOL,
+  BASE_PORT,
+  CONNECTION_TIMEOUT,
+  CONNECTIVITY_CHECK_INTERVAL
+} from '../utils/Constants';
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
 export const STATE_PARAMETERS_FAILED = 'STATE_PARAMETERS_FAILED';
 
+export const TIMER_START = 'TIMER_START';
+// this will be used if we decide to have an action stopping
+export const TIMER_STOP = 'TIMER_STOP';
+// we keep the timer as a variable in case we want to be able to stop it
+export let timer = null;
 
 /**
  * Checks and updates the connectivity status
  * @returns ConnectivityStatus
  */
 export function ampStartUp() {
-  return new Promise(function (resolve, reject) {
+  return loadConnectionInformation().then(scheduleConnectivityCheck);
+}
+
+export function loadConnectionInformation() {
+  return new Promise((resolve, reject) => {
     console.log('ampStartUp');
     store.dispatch(sendingRequest());
-    //TODO we will have a module that will return this from storage, hardcoded in this first commit
-    const connectionInformation = new ConnectionInformation(SERVER_URL, BASE_REST_URL, PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT);
+    // TODO we will have a module that will return this from storage, hardcoded in this first commit
+    const connectionInformation = new ConnectionInformation(SERVER_URL, BASE_REST_URL,
+      PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT);
     store.dispatch(startUpLoaded(connectionInformation));
-    //we will call a helper in the module to load this information
+    // we will call a helper in the module to load this information
     resolve();
   });
-
 }
+
+function scheduleConnectivityCheck() {
+  return new Promise((resolve, reject) => {
+    clearInterval(timer);
+    timer = setInterval(() => store.dispatch(connectivityCheck()), CONNECTIVITY_CHECK_INTERVAL);
+    store.dispatch({ type: TIMER_START });
+    store.dispatch(connectivityCheck());
+    resolve();
+  });
+};
+
 
 function startUpLoaded(connectionInformation) {
   return {
