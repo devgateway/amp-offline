@@ -23,8 +23,7 @@ export default class ActivityFilter {
       if (self._dbFilter === undefined && self._filters) {
         self._prepareFilter().then(() => {
           self._dbFilter = self._generateFilter();
-          resolve(self._dbFilter);
-          return self._dbFilter;
+          return resolve(self._dbFilter);
         }).catch(reject);
       } else {
         resolve(self._dbFilter);

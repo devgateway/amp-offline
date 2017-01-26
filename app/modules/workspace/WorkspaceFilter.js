@@ -32,7 +32,7 @@ export default class WorkspaceFilterBuilder {
         self._filterBuilt = true;
         self._dbFilter = self._prepareFilters().then(() => {
           self._dbFilter = self._generateDBFilter();
-          return self._dbFilter;
+          return resolve(self._dbFilter);
         }).catch(reject);
       } else {
         resolve(self._dbFilter);
@@ -45,7 +45,7 @@ export default class WorkspaceFilterBuilder {
     return new Promise((resolve, reject) =>
       self._getActivityFiltersPromise().then(activityDbFilter => {
         self._activityDbFilter = activityDbFilter;
-        return self._activityDbFilter;
+        return resolve(self._activityDbFilter);
       }).catch(reject));
   }
 
