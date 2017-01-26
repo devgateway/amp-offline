@@ -1,9 +1,10 @@
 import DatabaseManager from '../database/DatabaseManager';
 import TeamMemberHelper from './TeamMemberHelper';
-import {COLLECTION_WORKPACES} from '../../utils/Constants';
+import { COLLECTION_WORKPACES } from '../../utils/Constants';
 
 /**
  * A simplified helper for "workspaces" storage for loading, searching / filtering and saving workspaces.
+ * @author Nadejda Mandrescu
  */
 const WorkspaceHelper = {
 
@@ -14,7 +15,7 @@ const WorkspaceHelper = {
    */
   findById(id) {
     console.log('findById');
-    let filter = {id: id};
+    const filter = { id };
     return this.findWorkspace(filter);
   },
 
@@ -25,7 +26,7 @@ const WorkspaceHelper = {
    */
   findByName(name) {
     console.log('findByName');
-    let filter = {name: name};
+    const filter = { name };
     return this.findWorkspace(filter);
   },
 
@@ -36,31 +37,32 @@ const WorkspaceHelper = {
    */
   findAllByUserId(userId) {
     console.log('findAllByUserId');
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       TeamMemberHelper.findWorkspaceIdsByUserId(userId).then((workspacesIds) => {
-        let filter = {id: {$in: workspacesIds}};
+        const filter = { id: { $in: workspacesIds } };
         return this.findAll(filter);
-        }
+      }
       ).catch(reject);
     });
   },
 
-  findAll(filter) {
+  findAll(filter, projections) {
     console.log('findAll');
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.findAll(filter, COLLECTION_WORKPACES).then(resolve).catch(reject);
+    return new Promise((resolve, reject) => {
+      DatabaseManager.findAll(filter, COLLECTION_WORKPACES, projections).then(resolve).catch(reject);
     });
   },
 
   /**
    * Find a workspace by a set of filter settings
    * @param filter filters to apply
+   * @param projections fields to extract
    * @returns {Promise}
    */
-  findWorkspace(filter) {
+  findWorkspace(filter, projections) {
     console.log('findWorkspace');
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.findOne(filter, COLLECTION_WORKPACES).then(resolve).catch(reject);
+    return new Promise((resolve, reject) => {
+      DatabaseManager.findOne(filter, COLLECTION_WORKPACES, projections).then(resolve).catch(reject);
     });
   },
 
@@ -71,7 +73,7 @@ const WorkspaceHelper = {
    */
   saveOrUpdateWorkspace(workspace) {
     console.log('saveOrUpdateWorkspace');
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       DatabaseManager.saveOrUpdate(workspace.id, workspace, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
     });
   },
@@ -83,7 +85,7 @@ const WorkspaceHelper = {
    */
   deleteById(id) {
     console.log('deleteById');
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       DatabaseManager.removeById(id, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
     });
   },
@@ -95,7 +97,7 @@ const WorkspaceHelper = {
    */
   replaceWorkspaces(workspaces) {
     console.log('replaceWorkspaces');
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       DatabaseManager.replaceCollection(workspaces, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
     });
   },
@@ -109,7 +111,7 @@ const WorkspaceHelper = {
    */
   saveOrUpdateWorkspaces(workspaces) {
     console.log('saveOrUpdateWorkspaces');
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       DatabaseManager.saveOrUpdateCollection(workspaces, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
     });
   }
