@@ -1,14 +1,13 @@
-/* eslint-disable no-bitwise */
-
 const Utils = {
 
-  stringToId(text) {
+  stringToId(string: string) {
     let hash = 5381;
-    let i = text.length;
-    while (i) {
-      hash = (hash * 33) ^ text.charCodeAt(--i);
+    for (let i = string.length - 1; i >= 0; i--) {
+      /* eslint-disable no-bitwise */
+      hash = (hash * 33) ^ string.charCodeAt(i);
     }
     return hash >>> 0;
+    /* eslint-enable no-bitwise */
   },
 
   hexBufferToString(buffer) {
@@ -27,6 +26,12 @@ const Utils = {
     }
     // Join all the hex strings into one
     return hexCodes.join('');
+  },
+
+  toMap(key, value) {
+    const result = {};
+    result[key] = value;
+    return result;
   }
 
 };

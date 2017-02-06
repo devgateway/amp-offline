@@ -1,64 +1,35 @@
-// @flow
-import urlUtils from '../utils/URLUtils'
-import WorkspaceManager from '../modules/workspace/WorkspaceManager'
-import TeamMemberHelper from '../modules/helpers/TeamMemberHelper'
-
+import WorkspaceManager from '../modules/workspace/WorkspaceManager';
+import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
-export const STATE_GET_REMOTE_WORKSPACES_OK = 'STATE_GET_REMOTE_WORKSPACES_OK';
-export const STATE_GET_REMOTE_WORKSPACES_FAIL = 'STATE_GET_REMOTE_WORKSPACES_FAIL';
-export const STATE_WORKSPACE_PROCESSING = 'STATE_WORKSPACE_PROCESSING';
+export const STATE_CONFIGURING_WORKSPACE_FILTER = 'STATE_CONFIGURING_WORKSPACE_FILTER';
+export const STATE_CONFIGURED_WORKSPACE_FILTER = 'STATE_CONFIGURED_WORKSPACE_FILTER';
 
+// TODO: THIS must be properly integrated through AMPOFFLINE-147
 export function selectWorkspace(data) {
-  return (dispatch) => {
-    let actionData = {
-      teamMember: undefined,
-      workspace: data
-    };
-    TeamMemberHelper.findByUserAndWorkspaceId(this.context.store.getState().user.userData.id, data.id)
-      .then((teamMember) => {
-        actionData.teamMember = teamMember;
-        actionData.teamMember.workspace = data;
-        dispatch({
-          type: STATE_SELECT_WORKSPACE,
-          actionData: actionData
-        });
-      }).catch(error => {console.log(error)});
-  }
-}
-
-export function getRemoteWorkspaces(token) {
-  return (dispatch) => {
-    console.log('getRemoteWorkspaces');
-
-    WorkspaceManager.getWorkspacesFromStore().then(function (data) {
-      dispatch(remoteCallCompleteOk(data));
-    }).catch(function (err) {
-      dispatch(remoteCallCompleteFail(err));
+  const actionData = {
+    teamMember: undefined,
+    workspace: data
+  };
+  // TODO: remove, is temporary for dev testing until we have proper team members definitions
+  store.dispatch({ type: STATE_SELECT_WORKSPACE, actionData });
+  TeamMemberHelper.findByUserAndWorkspaceId(this.context.store.getState().user.userData.id, data.id).then(
+    (teamMember) => {
+      actionData.teamMember = teamMember;
+      actionData.teamMember.workspace = data;
+      dispatch({ type: STATE_SELECT_WORKSPACE, actionData });
+      return resolve(actionData);
+    })
+    .then((actionData) => {
+      dispatch({ type: STATE_CONFIGURING_WORKSPACE_FILTER });
+      return WorkspaceManager.getWorkspaceFilter().then(wsFilter => {
+        dispatch({ type: STATE_CONFIGURED_WORKSPACE_FILTER, actionData: wsFilter });
+        return wsFilter;
+      });
+    })
+    .catch(error => {
+      console.log(error);
+      throw error;
     });
-    dispatch(sendingRequest());
-  }
 }
 
-export function remoteCallCompleteOk(data) {
-  console.log('remoteCallCompleteOk');
-  return {
-    type: STATE_GET_REMOTE_WORKSPACES_OK,
-    actionData: data
-  }
-}
-
-export function remoteCallCompleteFail(err) {
-  console.log('remoteCallCompleteFail');
-  return {
-    type: STATE_GET_REMOTE_WORKSPACES_FAIL,
-    actionData: err
-  }
-}
-
-export function sendingRequest() {
-  console.log('sendingRequest');
-  return {
-    type: STATE_WORKSPACE_PROCESSING
-  }
-}
