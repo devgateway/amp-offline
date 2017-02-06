@@ -1,8 +1,7 @@
 /**
  * Base webpack config used across other specific configs
  */
-var StringReplacePlugin = require("string-replace-webpack-plugin");
-
+import StringReplacePlugin from 'string-replace-webpack-plugin';
 import path from 'path';
 import validate from 'webpack-validator';
 import {
