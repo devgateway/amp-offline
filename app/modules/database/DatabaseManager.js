@@ -12,6 +12,9 @@ import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
+// NeDB API is based on callbacks and not promises. Disabling always-return to avoid encapsulating each into a promise
+/* eslint-disable promise/always-return */
+
 /**
  * Is a Singleton to centralize control over the database access.
  * TODO: this class should be part of an API to connect to different databases (like NeDB).
@@ -142,22 +145,124 @@ const DatabaseManager = {
   },
 
   /**
-   * Schedule saveOrUpdate for all elements on 'data'. Then returns the list of elements saved.
-   * @param data
-   * @param collectionName
-   * @param options
+   * SaveOrUpdate elements by inserting in bulk, but still update one by one, as permitted by NeDB. However insert
+   * and updates will bypass multiple DB promises queueing, therefore optimizing the bulk saveUpdate.
+   * @param collectionData elements to update
+   * @param collectionName name of the collection to update
    */
-  saveOrUpdateCollection(data, collectionName, options) {
+  saveOrUpdateCollection(collectionData, collectionName) {
     console.log('saveOrUpdateCollection');
-    const savedData = [];
     return new Promise((resolve, reject) => {
-      Promise.all(data.map((item) => {
-        return this.saveOrUpdate(item.id, item, collectionName, options).then((dbData) => {
-          savedData.push(dbData);
-        }).catch(reject);
-      })).then(() => {
-        resolve(savedData);
-      }).catch(reject);
+      const saveOrUpdateCollectionFunc = DatabaseManager._saveOrUpdateCollection
+        .bind(null, collectionData)
+        .bind(null, collectionName)
+        .bind(null, resolve)
+        .bind(null, reject);
+      DatabaseManager.queuePromise(saveOrUpdateCollectionFunc);
+    });
+  },
+
+  /**
+   * Insert all new items in one go and update existing items one by one
+   */
+  _saveOrUpdateCollection(collectionData, collectionName, resolve, reject) {
+    console.log('_saveOrUpdateCollection');
+    DatabaseManager._saveOrUpdateColl(collectionData, collectionName).then(newData => resolve(newData))
+      .catch((saveUpdateError) =>
+        // reject as a notification
+        reject(new Notification({ message: saveUpdateError.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }))
+      );
+  },
+
+  /**
+   * Saves or updates items from the collection
+   */
+  _saveOrUpdateColl(collectionData, collectionName) {
+    return new Promise((resolve, reject) =>
+      DatabaseManager._getCollection(collectionName).then((collection) => {
+        const ids = collectionData.map(item => item.id);
+        collection.find({ id: { $in: ids } }, { id: 1 }, (err, foundItems) => {
+          if (err) {
+            reject(err);
+          } else {
+            const itemsToInsert = [];
+            const itemsToUpdate = [];
+            this._splitItems(collectionData, itemsToInsert, itemsToUpdate, foundItems, reject);
+            console.log(`Inserting ${itemsToInsert.length} elements`);
+            // we cannot chain through return from within a callback
+            /* eslint-disable promise/catch-or-return */
+            this._bulkInsert(collection, itemsToInsert).then(newDocs => {
+              console.log(`Updating ${itemsToUpdate.length} elements`);
+              return Promise.all(itemsToUpdate.map(item => this._collectionItemUpdate(collection, item)))
+                .then(updatedDocs => {
+                  const allDocs = newDocs.concat(updatedDocs);
+                  resolve(allDocs);
+                }).catch(reject);
+            }).catch(reject);
+            /* eslint-enable promise/catch-or-return */
+          }
+        });
+      }).catch(reject)
+    );
+  },
+
+  _splitItems(collectionData, itemsToInsert, itemsToUpdate, foundItems, reject) {
+    const foundIds = foundItems.map(item => item.id);
+    const uniqueInsertIds = new Set();
+    collectionData.forEach(item => {
+      if (foundIds.includes(item.id)) {
+        itemsToUpdate.push(item);
+      } else {
+        if (uniqueInsertIds.has(item.id)) {
+          reject('Invalid data with duplicate ids');
+        }
+        uniqueInsertIds.add(item.id);
+        itemsToInsert.push(item);
+      }
+    });
+  },
+
+  _bulkInsert(collection, itemsToInsert) {
+    return new Promise((resolve, reject) => {
+      collection.insert(itemsToInsert, (insertErr, newData) => {
+        if (insertErr) {
+          reject(insertErr);
+        } else {
+          let newDocs = [];
+          if (itemsToInsert.length === 1) {
+            newDocs.push(newData);
+          } else if (itemsToInsert.length > 1) {
+            newDocs = newData;
+          }
+          resolve(newDocs);
+        }
+      });
+    });
+  },
+
+  /**
+   * This is reserved for bulk collection update, expecting the item to definitely exist.
+   * Do not use in a different context.
+   */
+  _collectionItemUpdate(collection, item) {
+    return new Promise((resolve, reject) => {
+      const filter = { id: item.id };
+      // double check that this is the only item before executing the update
+      collection.find(filter, (err, docs) => {
+        if (err) {
+          reject(err);
+        } else if (docs.length !== 1) {
+          reject(`Data corruption. Matching ${docs.length} documents, instead of 1.`);
+        } else {
+          collection.update(filter, item, { returnUpdatedDocs: true }, (updateErr, numAffected, newDoc) => {
+            if (updateErr) {
+              reject(updateErr);
+            } else {
+              resolve(newDoc);
+            }
+          });
+        }
+      });
     });
   },
 
