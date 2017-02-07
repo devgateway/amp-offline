@@ -46,7 +46,6 @@ function scheduleConnectivityCheck() {
     clearInterval(timer);
     timer = setInterval(() => store.dispatch(connectivityCheck()), CONNECTIVITY_CHECK_INTERVAL);
     store.dispatch({ type: TIMER_START });
-    store.dispatch(connectivityCheck());
     resolve();
   });
 };

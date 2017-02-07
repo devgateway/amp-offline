@@ -3,6 +3,8 @@ export const BASE_REST_URL = '/rest';
 export const PROTOCOL = '__SERVER_PROTOCOL__';
 export const BASE_PORT = '__SERVER_PORT__';
 export const CONNECTION_TIMEOUT = '2500';
+export const CONNECTIVITY_CHECK_INTERVAL ="3000";//"300000";//5 minutes
+
 
 export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';
