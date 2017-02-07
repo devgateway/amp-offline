@@ -78,7 +78,7 @@ const LoginManager = {
     return new Promise((resolve, reject) => {
       Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => {
         Auth.onlineLogin(email, passwordDigest).then((data) => {
-          this.saveLoginData(data, email, password).then((dbData) => {
+          this.saveLoginData(data, password).then((dbData) => {
             resolve({ dbUser: dbData, token: data.token });
           }).catch(reject);
         }).catch((error) => {
@@ -95,14 +95,22 @@ const LoginManager = {
   /**
    * Transform auth user data to db user data.
    */
-  saveLoginData(userData, email, password) {
+  saveLoginData(userData, password) {
     console.log('saveLoginData');
     return new Promise((resolve, reject) => {
+      const email = userData.email || userData['user-name'];
       UserHelper.findByEmail(email).then((dbData) => {
         UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
-          const dbUserData = dbData || { id: userData['user-id'], email };
-          dbUserData.ampOfflinePassword = hash;
-          return UserHelper.saveOrUpdateUser(dbUserData);
+          if (dbData) {
+            dbData.ampOfflinePassword = hash;
+            UserHelper.saveOrUpdateUser(dbData).then(resolve).catch(reject);
+          } else {
+            // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
+            const id = userData.id || Util.stringToId(email);
+            const dbUserData = { id, email };
+            dbUserData.ampOfflinePassword = hash;
+            UserHelper.saveOrUpdateUser(dbUserData).then(resolve).catch(reject);
+          }
         }).catch(reject);
       }).catch(reject);
     });
