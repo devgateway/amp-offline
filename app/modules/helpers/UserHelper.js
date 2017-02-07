@@ -17,7 +17,7 @@ const UserHelper = {
    */
   findByEmail(email) {
     console.log('findByEmail');
-    const example = { email: email };
+    const example = { email };
     return this.findUserByExample(example);
   },
 
@@ -49,6 +49,11 @@ const UserHelper = {
   saveOrUpdateUserCollection(usersData) {
     console.log('saveOrUpdateUserCollection');
     return DatabaseManager.saveOrUpdateCollection(usersData, COLLECTION_USERS);
+  },
+
+  replaceUsers(users) {
+    console.log('replaceUsers');
+    return DatabaseManager.replaceCollection(users, COLLECTION_USERS);
   }
 };
 
