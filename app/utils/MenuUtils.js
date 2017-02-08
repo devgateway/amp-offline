@@ -18,7 +18,7 @@ class MenuUtils {
     let firstLevelEntries = [];
     let nodes = {};
     for (let value of workspaceList) {
-      nodes[value.name] = { 'objId': value.id, 'is-traslatable': false };
+      nodes[value.name] = { 'objId': value.id, 'translation-type': 'content' };
     }
     menu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
 
@@ -56,7 +56,6 @@ export function handleClick(info) {
 function generateTree(object, key, level, node, loggedIn, menuOnClickHandler) {
   console.log('generateTree');
   const self = this;
-  const menuTrnPrefix = "menu";
   if (object.nodes) {
     node[level] = [];
     if (toShow(object.public, loggedIn)) {
@@ -66,16 +65,25 @@ function generateTree(object, key, level, node, loggedIn, menuOnClickHandler) {
         }
       });
     }
-    let menuTrnPrefixAux = menuTrnPrefix;
-    console.log(node['is-traslatable']);
-    return <SubMenu title={translate(menuTrnPrefix + '.' + key)} key={key}>{node[level]}</SubMenu>;
+
+
+    return <SubMenu title={_getTitle(object,key)} key={key}>{node[level]}</SubMenu>;
   } else {
-    return <MenuItem title={translate(menuTrnPrefix + '.' + key)} key={key} objId={object.objId}
+    return <MenuItem title={_getTitle(object,key)} key={key} objId={object.objId}
                      menuOnClickHandler={menuOnClickHandler}
-                     route={object.route}>{translate(menuTrnPrefix + '.' + key)}</MenuItem>;
+                     route={object.route}>{_getTitle(object, key)}</MenuItem>;
   }
 }
-
+function _getTitle(object, key) {
+  let title;
+  const menuTrnPrefix = "menu";
+  if (object['translation-type'] && object['translation-type'] === 'content') {
+    title = key;
+  } else {
+    title = translate(menuTrnPrefix + '.' + key);
+  }
+  return title;
+}
 // Export function so we can access it from outside (ie: from MenuUtil.spec.js).
 export function toShow(isPublic, loggedIn) {
   console.log('toShow');
