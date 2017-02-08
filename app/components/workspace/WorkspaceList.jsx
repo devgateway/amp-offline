@@ -4,7 +4,6 @@ import styles from './Workspace.css';
 
 import {Link} from 'react-router';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import {forwardTo} from '../../utils/URLUtils'
 
 export default class WorkspaceList extends Component {
 
@@ -12,12 +11,11 @@ export default class WorkspaceList extends Component {
     super();
     console.log('constructor');
   }
-
   render() {
     let tableOptions = {
       onRowClick: row => {
         const worspaceId = row.id;
-        forwardTo('/desktop/' + worspaceId + '?WorkspaceName=' + row.name);
+        this.props.onClickHandler(worspaceId);
       }
     };
     return (

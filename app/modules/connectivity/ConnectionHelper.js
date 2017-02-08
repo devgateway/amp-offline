@@ -64,7 +64,7 @@ const ConnectionHelper = {
             });
           } else {
             reject(new Notification({
-              errorObject: error || body.error,
+              errorObject: error || body.error || "Unknow Network Error",
               origin: NOTIFICATION_ORIGIN_API_NETWORK,
               severity: NOTIFICATION_SEVERITY_ERROR
             }));

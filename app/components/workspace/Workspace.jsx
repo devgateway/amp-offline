@@ -26,12 +26,14 @@ export default class WorkspacePage extends Component {
     console.log('componentDidMount');
     this.state.firstLoad = false;
     //TODO: Find a way to move this code outside the React component, it could be done in WorkspacePage but I still dont know how to do it.
-    this.props.getRemoteWorkspaces(this.props.login.token);
+    const userId = (this.props.user instanceof Object && this.props.user.userData instanceof Object && this.props.user.userData.id )
+      ? this.props.user.userData.id : undefined;
+    this.props.loadWorkspaces(userId);
   }
 
   render() {
     console.log('render');
-    this.state.isProcessing = this.props.workspace.workspaceProcessing;
+    this.state.isProcessing = this.props.workspace.workspaceLoading;
     this.state.errorMessage = this.props.workspace.errorMessage || '';
 
     return (
@@ -51,7 +53,7 @@ export default class WorkspacePage extends Component {
       if (this.state.errorMessage !== '') {
         return <ErrorMessage message={this.state.errorMessage}/>;
       } else {
-        return <WorkspaceList workspaceList={this.props.workspace.workspaceList}/>;
+        return <WorkspaceList workspaceList={this.props.workspace.workspaceList} onClickHandler = {this.props.selectWorkspace}/>;
       }
     }
   }

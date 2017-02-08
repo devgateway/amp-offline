@@ -21,16 +21,18 @@ export default class Desktop extends Component {
   };
   componentDidMount() {
     console.log('componentDidMount');
-    this.props.loadDesktop('teamId');
+    //this.props.loadDesktop('teamId');
   }
 
   render() {
-    const {teamId} = this.props.params.teamId;
-    const {WorkspaceName}=this.props.location.query;
+    debugger;
+    const {currentWorkspace}=this.props.workspace;
+    const {id} = currentWorkspace;
+    const {name}=currentWorkspace
     this.state.errorMessage = this.props.desktop.errorMessage || '';
     this.state.isLoadingDesktop = this.props.desktop.isLoadingDesktop;
     return (
-      <div>We are going to load desktop for teamId :{teamId} name :{WorkspaceName}
+      <div>We are going to load desktop for teamId :{id} name :{name}
         <Button type="button" className={'btn btn-success ' } onClick={() => {
             UrlUtils.goBack()
           }} text="desktop.goback">

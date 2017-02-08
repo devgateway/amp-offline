@@ -22,7 +22,7 @@ export default class Navbar extends Component {
   }
 
   render() {
-    console.log('render');
+    console.log('render navBar');
     const defaultMenu = require('../../conf/menu.json');
     return (
       <div className={style.container}>
@@ -34,7 +34,7 @@ export default class Navbar extends Component {
         </div>
         <div className={style.main_menu}>
           <TopMenu builder={MenuUtils.default.prototype.buildMenu} onClick={MenuUtils.handleClick}
-                   loggedIn={this.props.login.loggedIn} menu={defaultMenu}/>
+                   loggedIn={this.props.login.loggedIn} workspaceList={this.props.workspaceList} menu={defaultMenu} menuOnClickHandler={this.props.menuOnClickHandler}/>
         </div>
       </div>
     );
