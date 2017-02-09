@@ -1,12 +1,12 @@
 // @flow
-import React, {Component, PropTypes} from 'react';
-import {Link} from 'react-router';
-import styles from './Workspace.css';
-import Loading from '../common/Loading';
-import WorkspaceList from './WorkspaceList';
-import ErrorMessage from '../common/ErrorMessage';
-import Span from '../i18n/Span';
-
+import React, { Component, PropTypes } from "react";
+import { Link } from "react-router";
+import styles from "./Workspace.css";
+import Loading from "../common/Loading";
+import WorkspaceList from "./WorkspaceList";
+import ErrorMessage from "../common/ErrorMessage";
+import Span from "../i18n/Span";
+import { WORKSPACES_GROUPS } from "../../utils/constants/WorkspaceGroupsConstants";
 export default class WorkspacePage extends Component {
 
   constructor() {
@@ -53,8 +53,28 @@ export default class WorkspacePage extends Component {
       if (this.state.errorMessage !== '') {
         return <ErrorMessage message={this.state.errorMessage}/>;
       } else {
-        return <WorkspaceList workspaceList={this.props.workspace.workspaceList} onClickHandler = {this.props.selectWorkspace}/>;
+        return this.splitWorkspaceByGroups().map(this.drawWorkspaceList);
       }
+    }
+  }
+
+  splitWorkspaceByGroups() {
+    let workspacesByGroup = [];
+    WORKSPACES_GROUPS.forEach((wgValue) => {
+      let wsByGroup = this.props.workspace.workspaceList.filter((wsValue) => {
+        return wsValue['workspace-group'] === wgValue.type;
+      });
+      workspacesByGroup.push(wsByGroup);
+    });
+    return workspacesByGroup;
+  }
+
+  drawWorkspaceList(workspaceList) {
+    if (workspaceList.length > 0) {
+      return <WorkspaceList workspaceList={workspaceList}
+                            workspaceGroup={workspaceList[0]['workspace-group']}/>;
+    } else {
+      return <br/>
     }
   }
 }
