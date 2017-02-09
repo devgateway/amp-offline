@@ -35,5 +35,8 @@
   },
   "database": {
     "moreThanOneResultFound": "Query returned more than one result."
+  },
+  "network": {
+    "unknownNetworkError": "Unknown network error"
   }
 }

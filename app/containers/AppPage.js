@@ -1,8 +1,8 @@
 // @flow
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import App from '../components/layout/App';
-import * as WorkspaceActions from '../actions/WorkspaceAction';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import App from "../components/layout/App";
+import * as WorkspaceActions from "../actions/WorkspaceAction";
 
 function mapStateToProps(state) {
   console.log('mapStateToProps');

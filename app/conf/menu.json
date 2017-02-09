@@ -16,14 +16,6 @@
           "public": false,
           "route": null,
           "nodes": {
-            "WS 1": {
-              "route": "/workspaces/id1",
-              "is-traslatable": false
-            },
-            "WS 2": {
-              "route": "/workspaces/id2",
-              "is-traslatable": false
-            }
           }
         }
       }
