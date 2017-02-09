@@ -25,10 +25,6 @@ export default class WorkspacePage extends Component {
   componentDidMount() {
     console.log('componentDidMount');
     this.state.firstLoad = false;
-    //TODO: Find a way to move this code outside the React component, it could be done in WorkspacePage but I still dont know how to do it.
-    const userId = (this.props.user instanceof Object && this.props.user.userData instanceof Object && this.props.user.userData.id )
-      ? this.props.user.userData.id : undefined;
-    this.props.loadWorkspaces(userId);
   }
 
   render() {
