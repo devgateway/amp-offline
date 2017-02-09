@@ -165,8 +165,8 @@
     "npm": ">=3.x"
 	},
   "config": {
-    "ampServerUrl": "localhost",
-    "ampServerPort":"8080",
+    "ampServerUrl": "amp-timor-future-v3-0-tc9.ampsite.net",
+    "ampServerPort":"80",
     "ampServerProtocol":"http"
   }
 }

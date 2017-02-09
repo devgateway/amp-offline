@@ -11,6 +11,12 @@
         },
         "Add Activity": {
           "route": "/addActivity"
+        },
+        "Change workspace": {
+          "public": false,
+          "route": null,
+          "nodes": {
+          }
         }
       }
     },

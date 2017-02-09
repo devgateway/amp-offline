@@ -1,14 +1,14 @@
-import request from 'request';
-import RequestConfig from './RequestConfig';
-import Notification from '../helpers/NotificationHelper';
+import request from "request";
+import RequestConfig from "./RequestConfig";
+import Notification from "../helpers/NotificationHelper";
 import {
   NOTIFICATION_ORIGIN_API_SECURITY,
   NOTIFICATION_ORIGIN_API_NETWORK,
   NOTIFICATION_SEVERITY_ERROR
-} from '../../utils/constants/ErrorConstants';
-import { store } from '../../index';
-import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
-
+} from "../../utils/constants/ErrorConstants";
+import { store } from "../../index";
+import { loginAutomaticallyAction, logoutAction } from "../../actions/LoginAction";
+import translate from "../../utils/translate";
 const ConnectionHelper = {
 
   doGet({url, paramsMap}) {
@@ -64,7 +64,7 @@ const ConnectionHelper = {
             });
           } else {
             reject(new Notification({
-              errorObject: error || body.error,
+              errorObject: error || body.error || translate('network.unknownNetworkError'),
               origin: NOTIFICATION_ORIGIN_API_NETWORK,
               severity: NOTIFICATION_SEVERITY_ERROR
             }));

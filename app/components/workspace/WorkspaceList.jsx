@@ -1,10 +1,7 @@
 // @flow
-import React, {Component, PropTypes} from 'react';
-import styles from './Workspace.css';
-
-import {Link} from 'react-router';
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import {forwardTo} from '../../utils/URLUtils'
+import React, { Component, PropTypes } from "react";
+import styles from "./Workspace.css";
+import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 
 export default class WorkspaceList extends Component {
 
@@ -12,12 +9,11 @@ export default class WorkspaceList extends Component {
     super();
     console.log('constructor');
   }
-
   render() {
     let tableOptions = {
       onRowClick: row => {
         const worspaceId = row.id;
-        forwardTo('/desktop/' + worspaceId + '?WorkspaceName=' + row.name);
+        this.props.onClickHandler(worspaceId);
       }
     };
     return (
@@ -29,7 +25,7 @@ export default class WorkspaceList extends Component {
                       hover
                       trClassName={styles.row}
       >
-        <TableHeaderColumn dataField='name'>Government</TableHeaderColumn>
+        <TableHeaderColumn dataField='name'>{this.props.workspaceGroup}</TableHeaderColumn>
       </BootstrapTable>
     );
   }
