@@ -1,8 +1,8 @@
 import {
   STATE_SELECT_WORKSPACE,
-  STATE_DESKTOP_LOADING,
-  STATE_DESKTOP_LOADED,
-  STATE_DESKTOP_ERROR,
+  STATE_WORKSPACE_LOADING,
+  STATE_WORKSPACE_LOADED,
+  STATE_WORKSPACE_ERROR,
   STATE_CONFIGURING_WORKSPACE_FILTER,
   STATE_CONFIGURED_WORKSPACE_FILTER
 } from '../actions/WorkspaceAction';
@@ -17,12 +17,12 @@ const defaultState = {
 export default function workspace(state = defaultState, action: Object) {
   console.log('WorkspaceReducer');
   switch (action.type) {
-    case STATE_DESKTOP_LOADED:
+    case STATE_WORKSPACE_LOADED:
       return Object.assign({}, state, {
         workspaceLoading: false,
         workspaceList: action.actionData
       });
-    case STATE_DESKTOP_ERROR:
+    case STATE_WORKSPACE_ERROR:
       return Object.assign({}, state, {
         workspaceLoading: false,
         workspaceList: [],
@@ -35,7 +35,7 @@ export default function workspace(state = defaultState, action: Object) {
         workspaceFilterGeneration: false,
         workspaceFilter: undefined
       });
-    case STATE_DESKTOP_LOADING:
+    case STATE_WORKSPACE_LOADING:
       return Object.assign({}, state, {
         workspaceLoading: true,
         workspaceList: [],

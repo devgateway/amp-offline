@@ -33,6 +33,7 @@ export default class WorkspacePage extends Component {
     this.state.isProcessing = this.props.workspace.workspaceLoading;
     this.state.errorMessage = this.props.workspace.errorMessage || '';
 
+
     return (
       <div className={styles.workspaces_container}>
         <h2 className={styles.title}><Span text="workspace.title"/></h2>
@@ -50,7 +51,9 @@ export default class WorkspacePage extends Component {
       if (this.state.errorMessage !== '') {
         return <ErrorMessage message={this.state.errorMessage}/>;
       } else {
-        return this.splitWorkspaceByGroups().map(this.drawWorkspaceList);
+        return this.splitWorkspaceByGroups().map((workspaceList) => {
+          return this.drawWorkspaceList(workspaceList, this.props.selectWorkspace);
+        });
       }
     }
   }
@@ -68,10 +71,11 @@ export default class WorkspacePage extends Component {
     return workspacesByGroup;
   }
 
-  drawWorkspaceList(workspaceList) {
+  drawWorkspaceList(workspaceList, selectWorkspace) {
     if (workspaceList.length > 0) {
       return <WorkspaceList workspaceList={workspaceList}
-                            workspaceGroup={workspaceList[0]['workspace-group']}/>;
+                            workspaceGroup={workspaceList[0]['workspace-group']}
+                            onClickHandler={this.props.selectWorkspace}/>;
     } else {
       return <br/>
     }
