@@ -25,6 +25,7 @@ export default class WorkspacePage extends Component {
   componentDidMount() {
     console.log('componentDidMount');
     this.state.firstLoad = false;
+    this.props.loadWorkspaces();
   }
 
   render() {
@@ -56,12 +57,14 @@ export default class WorkspacePage extends Component {
 
   splitWorkspaceByGroups() {
     let workspacesByGroup = [];
+    if (this.props.workspace.workspaceList.length > 0) {
     WORKSPACES_GROUPS.forEach((wgValue) => {
       let wsByGroup = this.props.workspace.workspaceList.filter((wsValue) => {
         return wsValue['workspace-group'] === wgValue.type;
       });
       workspacesByGroup.push(wsByGroup);
     });
+    }
     return workspacesByGroup;
   }
 
