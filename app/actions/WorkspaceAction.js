@@ -15,7 +15,6 @@ export function selectWorkspace(wsId) {
   return (dispatch, ownProps) => {
     //with data we load ws
     WorkspaceManager.findWorkspaceById(wsId).then((data) => {
-      debugger;
       const actionData = {
         teamMember: undefined,
         workspace: data

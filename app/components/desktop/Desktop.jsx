@@ -25,7 +25,6 @@ export default class Desktop extends Component {
   }
 
   render() {
-    debugger;
     const {currentWorkspace}=this.props.workspace;
     const {id} = currentWorkspace;
     const {name}=currentWorkspace
