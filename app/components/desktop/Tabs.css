@@ -1,0 +1,10 @@
+.container {
+  text-align: center;
+  width: 90%;
+  float: left;
+  margin-top: 10px;
+}
+
+.nav-tabs > li.active > a {
+  background-color: lightblue;
+}

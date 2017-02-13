@@ -23,8 +23,7 @@ export default class WorkspaceList extends Component {
                       bordered={false}
                       striped
                       hover
-                      trClassName={styles.row}
-      >
+                      trClassName={styles.row}>
         <TableHeaderColumn dataField='name'>{this.props.workspaceGroup}</TableHeaderColumn>
       </BootstrapTable>
     );

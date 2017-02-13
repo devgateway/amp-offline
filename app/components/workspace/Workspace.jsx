@@ -1,12 +1,13 @@
 // @flow
-import React, { Component, PropTypes } from "react";
-import { Link } from "react-router";
-import styles from "./Workspace.css";
-import Loading from "../common/Loading";
-import WorkspaceList from "./WorkspaceList";
-import ErrorMessage from "../common/ErrorMessage";
-import Span from "../i18n/Span";
-import { WORKSPACES_GROUPS } from "../../utils/constants/WorkspaceGroupsConstants";
+import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
+import styles from './Workspace.css';
+import Loading from '../common/Loading';
+import WorkspaceList from './WorkspaceList';
+import ErrorMessage from '../common/ErrorMessage';
+import Span from '../i18n/Span';
+import { WORKSPACES_GROUPS } from '../../utils/constants/WorkspaceGroupsConstants';
+
 export default class WorkspacePage extends Component {
 
   constructor() {
@@ -14,7 +15,7 @@ export default class WorkspacePage extends Component {
     super();
 
     this.state = {
-      errorMessage: "",
+      errorMessage: '',
       isProcessing: false,
       firstLoad: true
     };
@@ -39,7 +40,7 @@ export default class WorkspacePage extends Component {
         <h2 className={styles.title}><Span text="workspace.title"/></h2>
         <hr/>
         {this.selectContentElementToDraw()}
-        <Link to="syncUp" >Sync upd</Link>
+        <Link to="syncUp">Sync upd</Link>
       </div>
     );
   }
@@ -61,12 +62,12 @@ export default class WorkspacePage extends Component {
   splitWorkspaceByGroups() {
     let workspacesByGroup = [];
     if (this.props.workspace.workspaceList.length > 0) {
-    WORKSPACES_GROUPS.forEach((wgValue) => {
-      let wsByGroup = this.props.workspace.workspaceList.filter((wsValue) => {
-        return wsValue['workspace-group'] === wgValue.type;
+      WORKSPACES_GROUPS.forEach((wgValue) => {
+        let wsByGroup = this.props.workspace.workspaceList.filter((wsValue) => {
+          return wsValue['workspace-group'] === wgValue.type;
+        });
+        workspacesByGroup.push(wsByGroup);
       });
-      workspacesByGroup.push(wsByGroup);
-    });
     }
     return workspacesByGroup;
   }

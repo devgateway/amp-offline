@@ -25,7 +25,7 @@ function checkAuth(nextState, replaceState) {
   }
 }
 
-//TODO: Make a Settings.js class for all settings.
+// TODO: Make a Settings.js class for all settings.
 const settingsFile = require('./conf/settings.json');
 // Initialize translations module.
 const i18nOptions = settingsFile.I18N.OPTIONS.development;
@@ -42,7 +42,7 @@ i18next.use(XHR).init(i18nOptions, (err, t) => {
             <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
             <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
             <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth}/>
-            <Route path="/desktop" component={DesktopPage} onEnter={checkAuth} store={store}/>
+            <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store}/>
           </Route>
         </Router>
       </Provider>,
