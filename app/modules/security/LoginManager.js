@@ -1,12 +1,12 @@
-import Auth from '../security/Auth';
-import UserHelper from '../helpers/UserHelper';
-import Util from '../../utils/Utils';
-import Notification from '../helpers/NotificationHelper';
+import Auth from "../security/Auth";
+import UserHelper from "../helpers/UserHelper";
+import Util from "../../utils/Utils";
+import Notification from "../helpers/NotificationHelper";
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
   NOTIFICATION_ORIGIN_API_SECURITY
-} from '../../utils/constants/ErrorConstants';
-import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
+} from "../../utils/constants/ErrorConstants";
+import { DIGEST_ALGORITHM_SHA1 } from "../../utils/Constants";
 
 const LoginManager = {
 
@@ -95,7 +95,7 @@ const LoginManager = {
   /**
    * Transform auth user data to db user data.
    */
-  saveLoginData(userData, email,password) {
+  saveLoginData(userData, email, password) {
     console.log('saveLoginData');
     return new Promise((resolve, reject) => {
       //const email = userData.email || userData['user-name'];
