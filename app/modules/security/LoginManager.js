@@ -1,12 +1,12 @@
-import Auth from "../security/Auth";
-import UserHelper from "../helpers/UserHelper";
-import Util from "../../utils/Utils";
-import Notification from "../helpers/NotificationHelper";
+import Auth from '../security/Auth';
+import UserHelper from '../helpers/UserHelper';
+import Util from '../../utils/Utils';
+import Notification from '../helpers/NotificationHelper';
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
   NOTIFICATION_ORIGIN_API_SECURITY
-} from "../../utils/constants/ErrorConstants";
-import { DIGEST_ALGORITHM_SHA1 } from "../../utils/Constants";
+} from '../../utils/constants/ErrorConstants';
+import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
 
 const LoginManager = {
 
@@ -98,7 +98,6 @@ const LoginManager = {
   saveLoginData(userData, email, password) {
     console.log('saveLoginData');
     return new Promise((resolve, reject) => {
-      //const email = userData.email || userData['user-name'];
       UserHelper.findByEmail(email).then((dbData) => {
         UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
           if (dbData) {
