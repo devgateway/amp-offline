@@ -78,7 +78,7 @@ const LoginManager = {
     return new Promise((resolve, reject) => {
       Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => {
         Auth.onlineLogin(email, passwordDigest).then((data) => {
-          this.saveLoginData(data, password).then((dbData) => {
+          this.saveLoginData(data, email, password).then((dbData) => {
             resolve({ dbUser: dbData, token: data.token });
           }).catch(reject);
         }).catch((error) => {
@@ -95,10 +95,10 @@ const LoginManager = {
   /**
    * Transform auth user data to db user data.
    */
-  saveLoginData(userData, password) {
+  saveLoginData(userData, email,password) {
     console.log('saveLoginData');
     return new Promise((resolve, reject) => {
-      const email = userData.email || userData['user-name'];
+      //const email = userData.email || userData['user-name'];
       UserHelper.findByEmail(email).then((dbData) => {
         UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
           if (dbData) {
