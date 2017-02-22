@@ -5,7 +5,8 @@ import {
   GET_WORKSPACES_URL,
   GLOBAL_SETTINGS_URL,
   USER_PROFILE_URL,
-  WORKSPACE_MEMBER_URL
+  WORKSPACE_MEMBER_URL,
+  TEST_URL
 } from '../connectivity/AmpApiConstants';
 import UserHelper from '../helpers/UserHelper';
 import TeamMemberHelper from '../helpers/TeamMemberHelper';
@@ -55,18 +56,31 @@ const SyncUpManager = {
   syncUp() {
     console.log('syncUp');
     return new Promise((resolve, reject) => {
-      Promise.all([this.syncUpWorkspace(GET_WORKSPACES_URL),
-        this.syncUpGlobalSettings(GLOBAL_SETTINGS_URL),
-        this.syncUpUsers(USER_PROFILE_URL),
-        this.syncWorkspaceMembers(WORKSPACE_MEMBER_URL)])
-        .then(() => {
-          const syncUpResult = {
-            syncStatus: 'synced',
-          };
-          resolve(syncUpResult);
-          console.log('end sncup');
-        }).catch(reject);
+      this.prepareNetworkForSyncUp(TEST_URL).then(() => {
+        Promise.all([this.syncUpWorkspace(GET_WORKSPACES_URL),
+          this.syncUpGlobalSettings(GLOBAL_SETTINGS_URL),
+          this.syncUpUsers(USER_PROFILE_URL),
+          this.syncWorkspaceMembers(WORKSPACE_MEMBER_URL)])
+          .then(() => {
+            const syncUpResult = {
+              syncStatus: 'synced',
+            };
+            resolve(syncUpResult);
+            console.log('end sncup');
+          }).catch(reject);
+      }).catch(reject);
     });
+  },
+
+  /**
+   * This function is used to call a testing EP that will force the online login (just one time) if needed.
+   * This way we avoid having multiple concurrent online logins for each sync call.
+   * @param url
+   * @returns {*}
+   */
+  prepareNetworkForSyncUp(url) {
+    console.log('prepareNetworkForSyncUp');
+    return ConnectionHelper.doGet({ url });
   },
 
   // this will be moved to its own utility class

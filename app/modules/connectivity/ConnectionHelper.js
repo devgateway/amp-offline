@@ -11,11 +11,11 @@ import { loginAutomaticallyAction, logoutAction } from "../../actions/LoginActio
 import translate from "../../utils/translate";
 const ConnectionHelper = {
 
-  doGet({url, paramsMap}) {
+  doGet({ url, paramsMap }) {
     console.log('doGet');
     const method = 'GET';
     // Modify the call to use ES6 destructuring
-    const requestConfig = RequestConfig.getRequestConfig({method, url, paramsMap});
+    const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap });
     return this._doMethod(requestConfig);
   },
 
@@ -26,11 +26,11 @@ const ConnectionHelper = {
    * @param body
    * @returns {Promise}
    */
-  doPost({url, paramsMap, body}) {
+  doPost({ url, paramsMap, body }) {
     console.log('doPost');
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
-    const requestConfig = RequestConfig.getRequestConfig({method, url, paramsMap, body});
+    const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body });
     return this._doMethod(requestConfig);
   },
 
@@ -57,14 +57,14 @@ const ConnectionHelper = {
               });
             }).catch(() => {
               reject(new Notification({
-                errorObject: error || body.error,
+                message: error || body.error || translate('network.unknownNetworkError'),
                 origin: NOTIFICATION_ORIGIN_API_SECURITY,
                 severity: NOTIFICATION_SEVERITY_ERROR
               }));
             });
           } else {
             reject(new Notification({
-              errorObject: error || body.error || translate('network.unknownNetworkError'),
+              message: error || body.error || translate('network.unknownNetworkError'),
               origin: NOTIFICATION_ORIGIN_API_NETWORK,
               severity: NOTIFICATION_SEVERITY_ERROR
             }));

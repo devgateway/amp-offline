@@ -4,7 +4,8 @@ import {
   URL_CONNECTIVITY_CHECK_EP,
   GLOBAL_SETTINGS_URL,
   USER_PROFILE_URL,
-  WORKSPACE_MEMBER_URL
+  WORKSPACE_MEMBER_URL,
+  TEST_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -29,6 +30,10 @@ const routesConfiguration = [{
   requiresToken: true
 }, {
   url: WORKSPACE_MEMBER_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: TEST_URL,
   method: 'GET',
   requiresToken: true
 }];

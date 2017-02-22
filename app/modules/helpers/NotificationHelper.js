@@ -39,7 +39,7 @@ export default class NotificationHelper {
           case constants.NOTIFICATION_ORIGIN_API_NETWORK:
           case constants.NOTIFICATION_ORIGIN_API_SECURITY:
           case constants.NOTIFICATION_ORIGIN_API_GENERAL:
-            if (errorObject) {
+            if (errorObject instanceof Object) {
               const fields = Object.keys(errorObject);
               if (fields && errorObject[fields[0]] && !isNaN(fields[0])) {
                 this.internalCode = parseInt(fields[0], 10);
