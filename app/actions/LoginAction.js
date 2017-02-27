@@ -11,7 +11,6 @@ export const STATE_LOGOUT = 'STATE_LOGOUT';
 export function loginAction(email: string, password: string) {
   console.log('loginAction');
   return (dispatch,ownProps) => {
-    debugger;
     if (ownProps().login.loginProcessing === false) {
       return LoginManager.processLogin(email, password,ownProps().ampConnectionStatus.status.isAmpAvailable).then((data) => {
         const userData = data.dbUser;
@@ -39,7 +38,6 @@ export function logoutAction() {
 export function loginAutomaticallyAction() {
   console.log('loginAutomaticallyAction');
   return (dispatch,ownProps) => new Promise((resolve, reject) => {
-    debugger;
     dispatch(sendingRequest());
     const email = ownProps.user.userData.email;
     const password = ownProps.login.plainPassword;

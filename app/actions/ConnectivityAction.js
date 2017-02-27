@@ -10,7 +10,6 @@ export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_
  */
 
 export function connectivityCheck() {
-  debugger;
   console.log('connectivityCheck');
   return (dispatch, ownProps) => {
     dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
