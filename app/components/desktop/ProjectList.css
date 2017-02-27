@@ -25,3 +25,7 @@
 .row {
   border-top: 0;
 }
+
+.empty_column {
+  width: 2%;
+}
