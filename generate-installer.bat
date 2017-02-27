@@ -1,13 +1,13 @@
 @echo off
-call "C:\Program Files\nodejs\nodevars.bat" 
+call "C:\Program Files\nodejs\nodevars.bat"
 set ampServerUrl=%1
 set ampServerPort=%2
 set ampServerProtocol=%3
-set ampClientLocation="C:\git\amp-offline\amp-client" 
+set ampClientLocation="C:\git\amp-offline\amp-client"
 
 pushd %ampClientLocation%
 set "branchName="
-set /p branchName=Please enter the branch name, then hit ENTER key to continue. Pressing only ENTER key will work with develop 
+set /p branchName=Please enter the branch name, then hit ENTER key to continue. Pressing only ENTER key will work with develop
 if defined branchName (git checkout %branchName%) else (echo will work with develop)
 git pull
 if defined ampServerUrl call npm config set amp-offline:ampServerUrl %ampServerUrl%

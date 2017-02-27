@@ -39,12 +39,14 @@ export default class NotificationHelper {
           case constants.NOTIFICATION_ORIGIN_API_NETWORK:
           case constants.NOTIFICATION_ORIGIN_API_SECURITY:
           case constants.NOTIFICATION_ORIGIN_API_GENERAL:
-            const fields = Object.keys(errorObject);
-            if (fields && errorObject[fields[0]] && !isNaN(fields[0])) {
-              this.internalCode = parseInt(fields[0], 10);
-              this.message = translate(errorObject[fields[0]][0]);
-            } else {
-              this.message = errorObject.toString();
+            if (errorObject instanceof Object) {
+              const fields = Object.keys(errorObject);
+              if (fields && errorObject[fields[0]] && !isNaN(fields[0])) {
+                this.internalCode = parseInt(fields[0], 10);
+                this.message = translate(errorObject[fields[0]][0]);
+              } else {
+                this.message = errorObject.toString();
+              }
             }
             break;
           default:

@@ -17,7 +17,7 @@ export class TopMenu extends Component {
 
   render() {
     console.log('render');
-    return this.props.builder(this.props.loggedIn, this.props.menu, this.props.onClick);
+    return this.props.builder(this.props.loggedIn, this.props.menu, this.props.onClick, this.props.workspaceList,this.props.menuOnClickHandler);
   }
 }
 

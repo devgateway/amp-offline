@@ -10,7 +10,7 @@ import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
 
 const LoginManager = {
 
-  processLogin(email, password) {
+  processLogin(email, password,isAMPAvailable) {
     console.log('processLogin');
     return new Promise((resolve, reject) => {
       // 1) Check if AMPOffline is available.
@@ -32,8 +32,6 @@ const LoginManager = {
             }).catch(reject);
           } else {
             // 3.1) First time this user login.
-            // TODO: call another function to check if amp is online (to be done on AMPOFFLINE-103).
-            const isAMPAvailable = true;
             if (isAMPAvailable) {
               this.processOnlineLogin(email, password).then(resolve).catch(reject);
             } else {
@@ -78,7 +76,7 @@ const LoginManager = {
     return new Promise((resolve, reject) => {
       Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => {
         Auth.onlineLogin(email, passwordDigest).then((data) => {
-          this.saveLoginData(data, password).then((dbData) => {
+          this.saveLoginData(data, email, password).then((dbData) => {
             resolve({ dbUser: dbData, token: data.token });
           }).catch(reject);
         }).catch((error) => {
@@ -95,10 +93,9 @@ const LoginManager = {
   /**
    * Transform auth user data to db user data.
    */
-  saveLoginData(userData, password) {
+  saveLoginData(userData, email, password) {
     console.log('saveLoginData');
     return new Promise((resolve, reject) => {
-      const email = userData.email || userData['user-name'];
       UserHelper.findByEmail(email).then((dbData) => {
         UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
           if (dbData) {

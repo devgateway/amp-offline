@@ -2,7 +2,6 @@
 import UrlUtils from '../utils/URLUtils';
 import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
-import { store } from '../index';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -11,15 +10,16 @@ export const STATE_LOGOUT = 'STATE_LOGOUT';
 
 export function loginAction(email: string, password: string) {
   console.log('loginAction');
-  return (dispatch) => {
-    if (store.getState().login.loginProcessing === false) {
-      return LoginManager.processLogin(email, password).then((data) => {
+  return (dispatch,ownProps) => {
+    debugger;
+    if (ownProps().login.loginProcessing === false) {
+      return LoginManager.processLogin(email, password,ownProps().ampConnectionStatus.status.isAmpAvailable).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
         // Tell react-router to move to another page.
-        UrlUtils.forwardTo(WORKSPACE_URL);
+        return UrlUtils.forwardTo(WORKSPACE_URL);
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
@@ -38,15 +38,16 @@ export function logoutAction() {
 
 export function loginAutomaticallyAction() {
   console.log('loginAutomaticallyAction');
-  return dispatch => new Promise((resolve, reject) => {
+  return (dispatch,ownProps) => new Promise((resolve, reject) => {
+    debugger;
     dispatch(sendingRequest());
-    const email = store.getState().user.userData.email;
-    const password = store.getState().login.plainPassword;
-    LoginManager.processOnlineLogin(email, password).then((data) => {
+    const email = ownProps.user.userData.email;
+    const password = ownProps.login.plainPassword;
+    return LoginManager.processOnlineLogin(email, password).then((data) => {
       const userData = data.dbUser;
       const token = data.token;
       dispatch(loginOk({ userData, password, token }));
-      resolve(data);
+      return resolve(data);
     }).catch(reject);
   });
 }

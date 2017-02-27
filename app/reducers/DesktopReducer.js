@@ -1,25 +1,38 @@
 // @flow
 import {
   STATE_DESKTOP_LOADED,
-  STATE_DESKTOP_LOADING
+  STATE_DESKTOP_LOADING,
+  STATE_DESKTOP_ERROR
 } from '../actions/DesktopAction';
 
 const defaultState = {
   errorMessage: '',
-  isLoadingDesktop: false
+  isLoadingDesktop: false,
+  loaded: false,
+  activeProjects: [],
+  rejectedProjects: [],
+  tabsData: [],
+  paginationOptions: undefined
 };
 
-export default function loadDesktop(state = defaultState, action: Object) {
-
-  console.log('loadDesktopReducer');
-
+export default function desktop(state = defaultState, action: Object) {
+  console.log('desktop');
   switch (action.type) {
     case STATE_DESKTOP_LOADED:
-      return Object.assign({}, state, {isLoadingDesktop: false});
-      break;
+      return Object.assign({}, state, {
+        isLoadingDesktop: false,
+        loaded: true,
+        activeProjects: action.actionData.activeProjects,
+        rejectedProjects: action.actionData.rejectedProjects,
+        tabsData: action.actionData.tabs,
+        paginationOptions: action.actionData.paginationOptions
+      });
     case STATE_DESKTOP_LOADING:
-      return Object.assign({}, state, {isLoadingDesktop: true});
-      break;
+      return Object.assign({}, defaultState, { isLoadingDesktop: true });
+    case STATE_DESKTOP_ERROR:
+      return Object.assign({}, defaultState, {
+        errorMessage: action.errorMessage
+      });
     default:
       return state;
   }

@@ -1,11 +1,12 @@
 // @flow
-import React, {Component, PropTypes} from 'react';
-import {Link} from 'react-router';
+import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
 import styles from './Workspace.css';
 import Loading from '../common/Loading';
 import WorkspaceList from './WorkspaceList';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
+import { WORKSPACES_GROUPS } from '../../utils/constants/WorkspaceGroupsConstants';
 
 export default class WorkspacePage extends Component {
 
@@ -14,7 +15,7 @@ export default class WorkspacePage extends Component {
     super();
 
     this.state = {
-      errorMessage: "",
+      errorMessage: '',
       isProcessing: false,
       firstLoad: true
     };
@@ -25,21 +26,21 @@ export default class WorkspacePage extends Component {
   componentDidMount() {
     console.log('componentDidMount');
     this.state.firstLoad = false;
-    //TODO: Find a way to move this code outside the React component, it could be done in WorkspacePage but I still dont know how to do it.
-    this.props.getRemoteWorkspaces(this.props.login.token);
+    this.props.loadWorkspaces();
   }
 
   render() {
     console.log('render');
-    this.state.isProcessing = this.props.workspace.workspaceProcessing;
+    this.state.isProcessing = this.props.workspace.workspaceLoading;
     this.state.errorMessage = this.props.workspace.errorMessage || '';
+
 
     return (
       <div className={styles.workspaces_container}>
         <h2 className={styles.title}><Span text="workspace.title"/></h2>
         <hr/>
         {this.selectContentElementToDraw()}
-        <Link to="syncUp" >Sync upd</Link>
+        <Link to="syncUp">Sync upd</Link>
       </div>
     );
   }
@@ -51,8 +52,33 @@ export default class WorkspacePage extends Component {
       if (this.state.errorMessage !== '') {
         return <ErrorMessage message={this.state.errorMessage}/>;
       } else {
-        return <WorkspaceList workspaceList={this.props.workspace.workspaceList}/>;
+        return this.splitWorkspaceByGroups().map((workspaceList) => {
+          return this.drawWorkspaceList(workspaceList, this.props.selectWorkspace);
+        });
       }
+    }
+  }
+
+  splitWorkspaceByGroups() {
+    let workspacesByGroup = [];
+    if (this.props.workspace.workspaceList.length > 0) {
+      WORKSPACES_GROUPS.forEach((wgValue) => {
+        let wsByGroup = this.props.workspace.workspaceList.filter((wsValue) => {
+          return wsValue['workspace-group'] === wgValue.type;
+        });
+        workspacesByGroup.push(wsByGroup);
+      });
+    }
+    return workspacesByGroup;
+  }
+
+  drawWorkspaceList(workspaceList, selectWorkspace) {
+    if (workspaceList.length > 0) {
+      return <WorkspaceList workspaceList={workspaceList}
+                            workspaceGroup={workspaceList[0]['workspace-group']}
+                            onClickHandler={this.props.selectWorkspace}/>;
+    } else {
+      return <br/>
     }
   }
 }

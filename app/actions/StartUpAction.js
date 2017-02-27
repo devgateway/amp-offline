@@ -36,7 +36,9 @@ export function loadConnectionInformation() {
     const connectionInformation = new ConnectionInformation(SERVER_URL, BASE_REST_URL,
       PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT);
     store.dispatch(startUpLoaded(connectionInformation));
-    // we will call a helper in the module to load this information
+    //  It is dispatch here so its called righ away. since for default it is
+    // Scheduled every 5 minutes, we need to check whether amp is on line or not right away
+    store.dispatch(connectivityCheck());
     resolve();
   });
 }

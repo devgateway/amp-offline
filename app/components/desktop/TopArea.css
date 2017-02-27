@@ -1,0 +1,9 @@
+.container {
+  text-align: center;
+  width: 90%;
+  border-color: #efefef;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 5px;
+  float: left;
+}
