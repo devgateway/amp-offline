@@ -5,6 +5,7 @@ import style from './ProjectList.css';
 import translate from '../../utils/translate';
 import IconFormatter from './IconFormatter';
 import LinkFormatter from './LinkFormatter';
+import Legends from './Legends';
 
 export default class ProjectList extends Component {
 
@@ -36,6 +37,7 @@ export default class ProjectList extends Component {
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     return (
       <div className={style.container}>
+        <Legends />
         <BootstrapTable data={this.props.projects} striped hover pagination
                         options={this.props.paginationOptions}
                         containerClass={style.containerTable}

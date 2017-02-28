@@ -1,6 +1,5 @@
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
-import Util from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
@@ -104,8 +103,7 @@ const LoginManager = {
             dbData.ampOfflinePassword = hash;
             UserHelper.saveOrUpdateUser(dbData).then(resolve).catch(reject);
           } else {
-            // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
-            const id = userData.id || Util.stringToId(email);
+            const id = userData['user-id'];
             const dbUserData = { id, email };
             dbUserData.ampOfflinePassword = hash;
             UserHelper.saveOrUpdateUser(dbUserData).then(resolve).catch(reject);

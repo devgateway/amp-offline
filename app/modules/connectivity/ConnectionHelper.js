@@ -43,7 +43,7 @@ const ConnectionHelper = {
       request(requestConfig, (error, response, body) => {
         if (error ||  !(response.statusCode >= 200 &&  response.statusCode < 400 )||  body.error) {
           const shouldRetryOnError = ERRORS_TO_RETRY.filter((value) => {
-            return value === error.code;
+            return value === (error ? error.code : (body ? body.error : 'network.unknownNetworkError'));
           });
           if (shouldRetryOnError.length > 0) {
             if (maxRetryAttemps > 0 && shouldRetry) {
