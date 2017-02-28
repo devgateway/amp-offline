@@ -155,7 +155,7 @@ const DesktopManager = {
       lastPage: translate('Last'),
       paginationShowsTotal: false,
       hideSizePerPage: true,
-      noDataText: translate('This is custom text for empty data')
+      noDataText: translate('desktop.customTextForEmptyData')
     };
     return options;
   }

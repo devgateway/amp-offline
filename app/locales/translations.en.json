@@ -31,7 +31,10 @@
     "Add Activity": "Add Activity"
   },
   "desktop": {
-    "goback": "Go Back"
+    "goback": "Go Back",
+    "clickToPreviewActivity": "Click to preview the activity",
+    "clickToEditActivity": "Click to edit the activity",
+    "customTextForEmptyData": "Empty data."
   },
   "database": {
     "moreThanOneResultFound": "Query returned more than one result."

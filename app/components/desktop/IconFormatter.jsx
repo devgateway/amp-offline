@@ -15,12 +15,12 @@ export default class IconFormatter extends Component {
     const viewLink = ACTIVITY_PREVIEW_URL + '/' + this.props.row.ampId;
     const iconWidth = 20;
     if (this.props.row.edit) {
-      return (<a href={editLink} title={translate('Click to edit this activity.')}>
+      return (<a href={editLink} title={translate('desktop.clickToEditActivity')}>
         <img alt="edit" src="../resources/images/edit.svg" width={iconWidth}/>
       </a>);
     }
     if (this.props.row.view) {
-      return (<a href={viewLink} title={translate('Click to preview this activity.')}>
+      return (<a href={viewLink} title={translate('desktop.clickToPreviewActivity')}>
         <img alt="view" src="../resources/images/view.svg" width={iconWidth}/>
       </a>);
     }
