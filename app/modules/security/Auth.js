@@ -16,7 +16,8 @@ const Auth = {
       password
     };
     return new Promise((resolve, reject) => {
-      ConnectionHelper.doPost({ url, body }).then((data) => {
+      const shouldRetry = true;
+      ConnectionHelper.doPost({ url, body ,shouldRetry}).then((data) => {
         resolve(data);
         console.log(body);
       }).catch(reject);
