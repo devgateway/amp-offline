@@ -3,6 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
+import Legends from './Legends';
 
 export default class ProjectList extends Component {
 
@@ -20,6 +21,7 @@ export default class ProjectList extends Component {
     console.log('render');
     return (
       <div className={style.container}>
+        <Legends />
         <BootstrapTable data={this.props.projects} striped hover pagination
                         options={this.props.paginationOptions}
                         containerClass={style.containerTable}
