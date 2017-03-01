@@ -87,7 +87,6 @@ const ConnectionHelper = {
               origin: NOTIFICATION_ORIGIN_API_NETWORK,
               severity: NOTIFICATION_SEVERITY_ERROR
             }));
-            reject(notifErro2);
           }
         } else {
           resolve(body);

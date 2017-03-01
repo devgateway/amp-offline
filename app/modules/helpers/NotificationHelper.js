@@ -29,7 +29,14 @@ export default class NotificationHelper {
       this.severity = notificationHelperObject.severity;
     } else {
       if (message) {
-        this.message = translate(message);
+        /* This is just in case the function that created the NotificationHelper object
+         sent as message something that might break the translation plugin. */
+        try {
+          this.message = translate(message);
+        } catch (err) {
+          console.warn(err);
+          this.message = message.toString();
+        }
       }
       this.severity = severity;
       if (origin) {
