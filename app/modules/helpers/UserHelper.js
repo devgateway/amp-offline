@@ -53,7 +53,17 @@ const UserHelper = {
 
   replaceUsers(users) {
     console.log('replaceUsers');
-    return DatabaseManager.replaceCollection(users, COLLECTION_USERS);
+    return DatabaseManager.replaceCollection(users, COLLECTION_USERS, {});
+  },
+
+  /**
+   * Remove the user by id
+   * @param userId
+   * @returns {Promise}
+   */
+  deleteUserById(userId) {
+    console.log('deleteUserById');
+    return DatabaseManager.removeById(userId, COLLECTION_USERS, {});
   }
 };
 
