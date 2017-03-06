@@ -2,6 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import { ACTIVITY_PREVIEW_URL, ACTIVITY_EDIT_URL } from '../../utils/Constants';
 import translate from '../../utils/translate';
+import styles from './IconFormatter.css';
 
 export default class IconFormatter extends Component {
 
@@ -13,15 +14,14 @@ export default class IconFormatter extends Component {
     // TODO: These links could be dispatch to some action too if needed.
     const editLink = ACTIVITY_EDIT_URL + '/' + this.props.row.ampId;
     const viewLink = ACTIVITY_PREVIEW_URL + '/' + this.props.row.ampId;
-    const iconWidth = 20;
     if (this.props.row.edit) {
       return (<a href={editLink} title={translate('desktop.clickToEditActivity')}>
-        <img alt="edit" src="../resources/images/edit.svg" width={iconWidth}/>
+        <img className={styles.edit_icon} alt="edit"/>
       </a>);
     }
     if (this.props.row.view) {
       return (<a href={viewLink} title={translate('desktop.clickToPreviewActivity')}>
-        <img alt="view" src="../resources/images/view.svg" width={iconWidth}/>
+        <img className={styles.view_icon} alt="view"/>
       </a>);
     }
     return <span/>;
