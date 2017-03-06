@@ -6,16 +6,17 @@ import {
   NOTIFICATION_ORIGIN_API_SECURITY,
   NOTIFICATION_ORIGIN_API_NETWORK,
   NOTIFICATION_SEVERITY_ERROR
-} from '../../utils/constants/ErrorConstants';
-import { store } from '../../index';
-import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
-import translate from '../../utils/translate';
+} from "../../utils/constants/ErrorConstants";
+import { store } from "../../index";
+import { loginAutomaticallyAction, logoutAction } from "../../actions/LoginAction";
+import translate from "../../utils/translate";
 const ConnectionHelper = {
-  doGet({ url, paramsMap, shouldRetry }) {
+
+  doGet({ url, paramsMap, shouldRetry, extraUrlParam }) {
     console.log('doGet');
     const method = 'GET';
     // Modify the call to use ES6 destructuring
-    const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap });
+    const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
     const maxRetryAttemps = MAX_RETRY_ATEMPTS;
     return this._doMethod(requestConfig, maxRetryAttemps, shouldRetry);
   },
@@ -27,11 +28,11 @@ const ConnectionHelper = {
    * @param body
    * @returns {Promise}
    */
-  doPost({ url, paramsMap, body, shouldRetry }) {
+  doPost({ url, paramsMap, body, shouldRetry, extraUrlParam }) {
     console.log('doPost');
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
-    const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body });
+    const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
     const maxRetryAttemps = MAX_RETRY_ATEMPTS;
     return this._doMethod(requestConfig, maxRetryAttemps, shouldRetry);
   },
@@ -41,9 +42,9 @@ const ConnectionHelper = {
     const self = this;
     return new Promise((resolve, reject) => {
       request(requestConfig, (error, response, body) => {
-        if (error ||  !(response.statusCode >= 200 &&  response.statusCode < 400 )||  body.error) {
+        if (error || !(response.statusCode >= 200 && response.statusCode < 400 ) || body.error) {
           const shouldRetryOnError = ERRORS_TO_RETRY.filter((value) => {
-            return value === (error ? error.code : (body ? body.error : 'network.unknownNetworkError'));
+            return value === (error ? error.code : (body ? body.error : 'unknownNetworkError'));
           });
           if (shouldRetryOnError.length > 0) {
             if (maxRetryAttemps > 0 && shouldRetry) {
@@ -74,16 +75,16 @@ const ConnectionHelper = {
                 }));
                 store.dispatch(logoutAction());
               });
-            }).catch(() => {
+            }).catch((error2) => {
               reject(new Notification({
-                message: error || body.error || translate('network.unknownNetworkError'),
+                message: error2 || body.error || translate('unknownNetworkError'),
                 origin: NOTIFICATION_ORIGIN_API_SECURITY,
                 severity: NOTIFICATION_SEVERITY_ERROR
               }));
             });
           } else {
             reject(new Notification({
-              message: error || body.error || translate('network.unknownNetworkError'),
+              message: error || body.error || translate('unknownNetworkError'),
               origin: NOTIFICATION_ORIGIN_API_NETWORK,
               severity: NOTIFICATION_SEVERITY_ERROR
             }));

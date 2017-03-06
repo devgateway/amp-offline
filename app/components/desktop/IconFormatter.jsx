@@ -15,12 +15,12 @@ export default class IconFormatter extends Component {
     const editLink = ACTIVITY_EDIT_URL + '/' + this.props.row.ampId;
     const viewLink = ACTIVITY_PREVIEW_URL + '/' + this.props.row.ampId;
     if (this.props.row.edit) {
-      return (<a href={editLink} title={translate('desktop.clickToEditActivity')}>
+      return (<a href={editLink} title={translate('clickToEditActivity')}>
         <img className={styles.edit_icon} alt="edit"/>
       </a>);
     }
     if (this.props.row.view) {
-      return (<a href={viewLink} title={translate('desktop.clickToPreviewActivity')}>
+      return (<a href={viewLink} title={translate('clickToPreviewActivity')}>
         <img className={styles.view_icon} alt="view"/>
       </a>);
     }

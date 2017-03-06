@@ -39,7 +39,6 @@ function setup() {
     component,
     menuJson: menuJson,
     loggedUser: loggedUser,
-    trnPrefix: 'menu.',
     menu: component.render().find('.rc-menu').find('div'),
     firstLevelOption: component.render().find('.rc-menu-submenu-title'),
     topMenuComponent: topMenuComponent
@@ -56,8 +55,8 @@ describe('@@ TopMenu @@', () => {
   });
 
   it('Should render the menu title', () => {
-    const {menu, trnPrefix} = setup();
-    expect(menu.html()).to.equal(trnPrefix + 'OPTION1');
+    const {menu} = setup();
+    expect(menu.html()).to.equal('OPTION1');
   });
 
   it('Should render 1st level option', () => {
@@ -68,14 +67,14 @@ describe('@@ TopMenu @@', () => {
   });
 
   it('Should render a 1st level option title', () => {
-    const {firstLevelOption, trnPrefix} = setup();
-    expect(firstLevelOption.html()).to.equal(trnPrefix + 'OPTION1');
+    const {firstLevelOption} = setup();
+    expect(firstLevelOption.html()).to.equal('OPTION1');
   });
 
   it('Should render 2rd level options', () => {
     // This test is different to detect the rendering of MenuItems.
-    const {trnPrefix, component} = setup();
-    expect(component.debug().toString().indexOf(trnPrefix + 'option12')).to.not.equal(-1);
-    expect(component.debug().toString().indexOf(trnPrefix + 'option11')).to.not.equal(-1);
+    const {component} = setup();
+    expect(component.debug().toString().indexOf('option12')).to.not.equal(-1);
+    expect(component.debug().toString().indexOf('option11')).to.not.equal(-1);
   });
 });

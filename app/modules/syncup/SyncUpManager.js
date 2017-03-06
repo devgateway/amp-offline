@@ -10,6 +10,9 @@ import {
   TEST_URL
 } from '../connectivity/AmpApiConstants';
 import TeamMemberHelper from '../helpers/TeamMemberHelper';
+import TranslationSyncUpManager from './TranslationSyncUpManager';
+import { loadAllLanguages } from '../../actions/TranslationAction';
+import { store } from '../../index';
 
 const SyncUpManager = {
 
@@ -56,16 +59,20 @@ const SyncUpManager = {
   syncUp() {
     console.log('syncUp');
     return new Promise((resolve, reject) => {
-      this.prepareNetworkForSyncUp(TEST_URL).then(() => {
-        Promise.all([
-          syncUpUsers(USER_PROFILE_URL),
-          this.syncUpWorkspace(GET_WORKSPACES_URL),
+      return this.prepareNetworkForSyncUp(TEST_URL).then(() => {
+        /* TODO: Call /rest/sync with the last time we did a successful update to know what we need to re-sync.
+         * for now we dont send that time parameter. */
+        return Promise.all([this.syncUpWorkspace(GET_WORKSPACES_URL),
           this.syncUpGlobalSettings(GLOBAL_SETTINGS_URL),
-          this.syncWorkspaceMembers(WORKSPACE_MEMBER_URL)])
+          syncUpUsers(USER_PROFILE_URL),
+          this.syncWorkspaceMembers(WORKSPACE_MEMBER_URL),
+          TranslationSyncUpManager.syncUpLangList()])
           .then(() => {
             const syncUpResult = {
               syncStatus: 'synced',
             };
+            const restart = true;
+            store.dispatch(loadAllLanguages(restart));
             resolve(syncUpResult);
             console.log('end sncup');
           }).catch(reject);

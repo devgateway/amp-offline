@@ -5,6 +5,7 @@ import {
   NOTIFICATION_ORIGIN_API_NETWORK,
   NOTIFICATION_SEVERITY_ERROR
 } from '../../utils/constants/ErrorConstants';
+import { PARAM_AMPOFFLINE_AGENT } from './AmpApiConstants';
 
 const RequestConfig = {
   /**
@@ -16,15 +17,19 @@ const RequestConfig = {
    */
   /* adding {} to destructure method body so we can or can not send paramsMap
    in case we don't want to send id we dont have to send null or nothing*/
-  getRequestConfig({ method, url, paramsMap, body }) {
+  getRequestConfig({ method, url, paramsMap, body, extraUrlParam }) {
     const fullBaseUrl = this._getFullBaseUrl(url);
     const urlParams = this._paramsMapToString(paramsMap);
-    const fullUrl = fullBaseUrl + urlParams;
+    const fullUrl = fullBaseUrl + (extraUrlParam ? '/' + extraUrlParam : '') + urlParams;
     const requestConfig = {
       url: fullUrl,
       json: true,
-      headers: { 'content-type': 'application/json', 'Accept': 'application/json' },
-      method: method
+      headers: {
+        'content-type': 'application/json',
+        Accept: 'application/json',
+        'User-Agent': PARAM_AMPOFFLINE_AGENT
+      },
+      method
     };
     if (store.getState().startUp.connectionInformation.timeOut) {
       requestConfig.timeout = store.getState().startUp.connectionInformation.timeOut;

@@ -29,7 +29,7 @@ export default class TabsContainer extends Component {
           {this.props.tabsData.map((tab) => {
             return <Tab tabData={tab} isActive={tab.id === this.state.activeTab}
                         handleClick={this.handleClick.bind(this, tab)}/>
-          })};
+          })}
         </ul>
         <TabContent activeTab={this.state.activeTab} data={this.props.tabsData}
                     paginationOptions={this.props.paginationOptions}/>

@@ -25,7 +25,8 @@ export default class App extends Component {
       <div className={styles.container}>
         <div className={styles.container}>
           <Navbar user={this.props.user} login={this.props.login}
-                  workspaceList={this.props.workspace.workspaceList} menuOnClickHandler={this.props.selectWorkspace}/>
+                  workspaceList={this.props.workspace.workspaceList} menuOnClickHandler={this.props.selectWorkspace}
+                  translation={this.props.translation}/>
           <div className={styles.content}>
             {this.props.children}
           </div>
