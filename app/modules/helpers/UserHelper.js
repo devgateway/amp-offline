@@ -26,9 +26,9 @@ const UserHelper = {
     return DatabaseManager.findOne(example, COLLECTION_USERS);
   },
 
-  findAllUserByExample(example) {
+  findAllUsersByExample(example, projections) {
     console.log('findUserByExample');
-    return DatabaseManager.findAll(example, COLLECTION_USERS);
+    return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
   },
 
   /**

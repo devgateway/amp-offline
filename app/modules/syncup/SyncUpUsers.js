@@ -9,7 +9,7 @@ import UserHelper from '../helpers/UserHelper';
 export default function syncUpUsers(url) {
   console.log('syncUpUsers');
   return new Promise((resolve, reject) =>
-    UserHelper.findAllUserByExample({}).then((dbUsers) => {
+    UserHelper.findAllUsersByExample({}).then((dbUsers) => {
       if (dbUsers) {
         const userIds = dbUsers.map(value => value.id);
         return ConnectionHelper.doGet({ url, paramsMap: { ids: userIds } }).then(

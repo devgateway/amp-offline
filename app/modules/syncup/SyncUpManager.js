@@ -1,4 +1,5 @@
 import syncUpUsers from './SyncUpUsers';
+import SyncUpActivities from './SyncUpActivities';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import WorkspaceHelper from '../helpers/WorkspaceHelper';
 import GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
@@ -53,15 +54,32 @@ const SyncUpManager = {
     });
   },
 
+  /**
+   *
+   * @returns {Promise}
+   */
   syncUp() {
     console.log('syncUp');
+    const syncUpActivities = new SyncUpActivities();
+    // TODO the diff structure will come from AMPOFFLINE-122
+    const activitiesDiff = {};
     return new Promise((resolve, reject) => {
       this.prepareNetworkForSyncUp(TEST_URL).then(() => {
-        Promise.all([
-          syncUpUsers(USER_PROFILE_URL),
-          this.syncUpWorkspace(GET_WORKSPACES_URL),
-          this.syncUpGlobalSettings(GLOBAL_SETTINGS_URL),
-          this.syncWorkspaceMembers(WORKSPACE_MEMBER_URL)])
+        // dependecy flow will be implemented via AMPOFFLINE-209
+        Promise.all(this._beforeActivitiesSyncUp().concat(syncUpActivities.importActivitiesToAMP(activitiesDiff)))
+        // another diff will be executed here, pending AMPOFFLINE-122
+          .then(Promise.all(this._beforeActivitiesSyncUp()
+            .concat(syncUpActivities.exportActivitiesFromAMP(activitiesDiff))
+            .concat(this._afterActivitiesSyncUp())
+          )
+          .then(result => {
+            if (doImport) {
+              return Promise.resolve(result);
+            }
+            return Promise.all([
+
+            ]);
+          })
           .then(() => {
             const syncUpResult = {
               syncStatus: 'synced',
@@ -71,6 +89,15 @@ const SyncUpManager = {
           }).catch(reject);
       }).catch(reject);
     });
+  },
+
+  // TODO: this is temporary, to be adjusted once AMPOFFLINE-122 is done, to avoid restart call from Activities Sync up
+  _beforeActivitiesSyncUp() {
+    return [syncUpUsers(USER_PROFILE_URL), this.syncWorkspaceMembers(WORKSPACE_MEMBER_URL)];
+  },
+
+  _afterActivitiesSyncUp() {
+    return [this.syncUpWorkspace(GET_WORKSPACES_URL), this.syncUpGlobalSettings(GLOBAL_SETTINGS_URL)];
   },
 
   /**
