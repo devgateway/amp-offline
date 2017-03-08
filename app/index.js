@@ -14,7 +14,7 @@ import SyncUpPage from './containers/SyncUpPage';
 import auth from './modules/security/Auth';
 import { ampStartUp } from './actions/StartUpAction';
 import { loadAllLanguages } from './actions/TranslationAction';
-import { initializeI18Next } from './modules/util/TranslationManager';
+import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 
 console.log('index');
 export const store = configureStore();
@@ -26,6 +26,7 @@ function checkAuth(nextState, replaceState) {
     replaceState({ nextPathname: nextState.location.pathname }, '/');
   }
 }
+initializeLanguageDirectory();
 
 initializeI18Next().then(() => {
   store.dispatch(loadAllLanguages());

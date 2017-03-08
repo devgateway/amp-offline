@@ -29,9 +29,7 @@ export const DB_COMMON_DATASTORE_OPTIONS = { autoload: false, corruptAlertThresh
 export const DB_AUTOCOMPACT_INTERVAL_MILISECONDS = 60000;
 
 export const LANGUAGE_ENGLISH = 'en';
-export const LANGUAGE_SPANISH = 'es';
-export const LANGUAGE_FRENCH = 'fr';
-export const FS_LOCALES_DIRECTORY = './app/locales/';
+export const FS_LOCALES_DIRECTORY = './lang/';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
 
