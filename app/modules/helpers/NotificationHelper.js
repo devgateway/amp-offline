@@ -62,7 +62,7 @@ export default class NotificationHelper {
       }
     }
     // TODO: If we save the stacktrace here we can have the full info about the error's origin.
-    console.log(`${this.message} - ${this.internalCode} - ${this.origin}`);
+    console.error(`${this.message} - ${this.internalCode} - ${this.origin}`);
   }
 
   toString() {
