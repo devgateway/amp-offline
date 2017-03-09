@@ -316,11 +316,11 @@ const DatabaseManager = {
     });
   },
 
-  _removeById(id, collectionName, options, resolve, reject) {
+  _removeById(id, collectionName, example, resolve, reject) {
     console.log('_removeById');
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       // Look for an object by its id.
-      const exampleObject = { id };
+      const exampleObject = Object.assign({ id }, example);
       collection.findOne(exampleObject, (err, doc) => {
         if (err !== null) {
           reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
@@ -340,13 +340,13 @@ const DatabaseManager = {
     }).catch(reject);
   },
 
-  removeById(id, collectionName, options) {
+  removeById(id, collectionName, example) {
     console.log('removeById');
     const self = this;
     return new Promise((resolve, reject) => {
       const removeByIdFunc = self._removeById.bind(null, id)
         .bind(null, collectionName)
-        .bind(null, options)
+        .bind(null, example)
         .bind(null, resolve)
         .bind(null, reject);
       self.queuePromise(removeByIdFunc, resolve, reject);

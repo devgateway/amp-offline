@@ -112,7 +112,7 @@ const ClientSettingsHelper = {
   deleteById(id) {
     console.log('deleteById');
     return new Promise(function (resolve, reject) {
-      DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS, {}).then(resolve).catch(reject);
+      DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS).then(resolve).catch(reject);
     });
   }
 

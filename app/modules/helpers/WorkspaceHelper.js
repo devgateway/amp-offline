@@ -86,7 +86,7 @@ const WorkspaceHelper = {
   deleteById(id) {
     console.log('deleteById');
     return new Promise((resolve, reject) => {
-      DatabaseManager.removeById(id, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
+      DatabaseManager.removeById(id, COLLECTION_WORKPACES).then(resolve).catch(reject);
     });
   },
 
