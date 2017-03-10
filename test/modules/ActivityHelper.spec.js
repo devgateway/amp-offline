@@ -127,8 +127,8 @@ describe('@@ ActivityHelper @@', () => {
     )
   );
 
-  describe('removeRejected', () =>
-    it('should be able to remove a rejected activity', () =>
+  describe('removeAll', () =>
+    it('should be able to remove all activities', () =>
       expect(actions.replaceAll(activities).then(actions.removeAll({}))).to.eventually.have.lengthOf(activities.length)
     )
   );
