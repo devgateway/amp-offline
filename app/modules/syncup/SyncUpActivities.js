@@ -117,8 +117,6 @@ export default class SyncUpActivities {
 
   _importActivity(activity) {
     console.log('_importActivity');
-    const activityId = activity[AC.INTERNAL_ID];
-    const importURL = ACTIVITY_IMPORT_URL + (activityId ? `/${activityId}` : '');
     return new Promise((resolve, reject) =>
     /*
     shouldRetry: true may be problematic if the request was received but timed out
@@ -126,7 +124,8 @@ export default class SyncUpActivities {
     Final solution will be handled with 'client-change-id' - proposed for iteration 2
      */
     // TODO: add timeout handling, to continue the process, to not halt entire list import
-      ConnectionHelper.doPost({ url: importURL, body: activity, shouldRetry: false })
+      ConnectionHelper.doPost(
+        { url: ACTIVITY_IMPORT_URL, body: activity, shouldRetry: false, extraUrlParam: activity[AC.INTERNAL_ID] })
         .then((result) => this._processImportResult(activity, result)).then(resolve).catch(reject)
     );
   }
@@ -217,9 +216,9 @@ export default class SyncUpActivities {
   }
 
   _exportActivity(ampId) {
-    const exportURL = `${ACTIVITY_EXPORT_URL}/${ampId}`;
     // TODO content translations (iteration 2)
-    return ConnectionHelper.doGet(exportURL).then(this._processActivityExport, this._onExportError);
+    return ConnectionHelper.doGet({ url: ACTIVITY_EXPORT_URL, extraUrlParam: ampId })
+      .then(this._processActivityExport, this._onExportError);
   }
 
   static _onExportError(error) {
