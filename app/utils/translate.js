@@ -6,6 +6,6 @@ export default (k) => {
     ret = k;
     console.error(`Missing translation for: ${k}`);
   }
-  console.log(`translate ${k}  ${ret}`);
+  // console.log(`translate ${k}  ${ret}`);
   return ret;
 };

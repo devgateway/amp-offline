@@ -37,7 +37,7 @@ export default class WorkspacePage extends Component {
 
     return (
       <div className={styles.workspaces_container}>
-        <h2 className={styles.title}><Span text="workspace.title"/></h2>
+        <h2 className={styles.title}><Span text="workspaceTitle"/></h2>
         <hr/>
         {this.selectContentElementToDraw()}
         <Link to="syncUp">Sync upd</Link>

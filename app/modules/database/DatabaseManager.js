@@ -367,7 +367,7 @@ const DatabaseManager = {
             break;
           default:
             reject(new Notification({
-              message: 'database.moreThanOneResultFound',
+              message: 'moreThanOneResultFound',
               origin: NOTIFICATION_ORIGIN_DATABASE
             }));
             break;

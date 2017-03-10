@@ -4,32 +4,6 @@
   padding-right: 5px;
 }
 
-.usa_icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
-  margin-left: 10px;
+.flags_container span {
   cursor: pointer;
-  display: inline-block !important;
-  content: url('../../assets/flags/usa.png');
-}
-
-.spa_icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
-  margin-left: 10px;
-  cursor: pointer;
-  display: inline-block !important;
-  content: url('../../assets/flags/spa.png');
-}
-
-.fra_icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
-  margin-left: 10px;
-  cursor: pointer;
-  display: inline-block !important;
-  content: url('../../assets/flags/fra.png');
 }

@@ -18,19 +18,19 @@ export default class Legends extends Component {
       <ReactTooltip place="top" type="light" effect="float" delayHide={250}>
         <div className={style.container}>
           <span className={style.red}>*</span><span className={style.red}>{translate('red')}</span>
-          <span> - {translate('desktop.newDraftLegend')}</span>
+          <span> - {translate('newDraftLegend')}</span>
           <hr/>
           <span className={style.green}>*</span><span className={style.green}>{translate('green text')}</span>
-          <span> - {translate('desktop.newUnvalidatedLegend')}</span>
+          <span> - {translate('newUnvalidatedLegend')}</span>
           <hr/>
           <span className={style.blue}>{translate('blue text')}</span>
-          <span> - {translate('desktop.validatedActivitiesLegend')}</span>
+          <span> - {translate('validatedActivitiesLegend')}</span>
           <hr/>
           <span className={style.red}>{translate('red')}</span>
-          <span> - {translate('desktop.existingDraftsLegend')}</span>
+          <span> - {translate('existingDraftsLegend')}</span>
           <hr/>
           <span className={style.green}>{translate('green text')}</span>
-          <span> - {translate('desktop.existingUnvalidatedLegend')}</span>
+          <span> - {translate('existingUnvalidatedLegend')}</span>
         </div>
       </ReactTooltip>
     </div>);

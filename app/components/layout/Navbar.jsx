@@ -1,9 +1,7 @@
 // @flow
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
 import Switcher from '../../components/i18n/Switcher';
 import style from './Navbar.css';
-import translate from '../../utils/translate';
 import TopMenu from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
@@ -22,19 +20,24 @@ export default class Navbar extends Component {
   }
 
   render() {
-    console.log('render navBar');
+    console.log('render');
     const defaultMenu = require('../../conf/menu.json');
     return (
       <div className={style.container}>
         <div className={style.navbar}>
           <a className={style.navbar_left_side} href="#">{pjson.productName} - {VERSION}</a>
           <a className={style.navbar_left_side} href="#">{this.extractLoggedUser(' - ')}</a>
-          <Switcher/>
+          <Switcher languages={this.props.translation.languageList}/>
           <Logout loggedIn={this.props.login.loggedIn}/>
         </div>
         <div className={style.main_menu}>
-          <TopMenu builder={MenuUtils.default.prototype.buildMenu} onClick={MenuUtils.handleClick}
-                   loggedIn={this.props.login.loggedIn} workspaceList={this.props.workspaceList} menu={defaultMenu} menuOnClickHandler={this.props.menuOnClickHandler}/>
+          <TopMenu builder={MenuUtils.default.prototype.buildMenu}
+                   onClick={MenuUtils.handleClick}
+                   loggedIn={this.props.login.loggedIn}
+                   workspaceList={this.props.workspaceList}
+                   menu={defaultMenu}
+                   menuOnClickHandler={this.props.menuOnClickHandler}
+                   languageList={this.props.translation.languageList}/>
         </div>
       </div>
     );

@@ -53,3 +53,7 @@
   width: 100%;
 }
 
+.logout_container a {
+  margin-right: 5px;
+}
+

@@ -13,7 +13,7 @@ export default class LinkFormatter extends Component {
     // TODO: This link could be dispatch to some action too if needed.
     const link = ACTIVITY_PREVIEW_URL + '/' + this.props.row.ampId;
     return (
-      <a href={link} title={translate('desktop.clickToPreviewActivity')}>{this.props.row.title}</a>
+      <a href={link} title={translate('clickToPreviewActivity')}>{this.props.row.title}</a>
     );
   }
 }

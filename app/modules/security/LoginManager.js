@@ -24,7 +24,7 @@ const LoginManager = {
                 resolve({ dbUser });
               } else {
                 reject(new Notification({
-                  message: 'login.wrongPassword',
+                  message: 'wrongPassword',
                   origin: NOTIFICATION_ORIGIN_AUTHENTICATION
                 }));
               }
@@ -37,7 +37,7 @@ const LoginManager = {
               this.processOnlineLogin(email, password).then(resolve).catch(reject);
             } else {
               reject(new Notification({
-                message: 'login.AMPUnreachableError',
+                message: 'AMPUnreachableError',
                 origin: NOTIFICATION_ORIGIN_AUTHENTICATION
               }));
             }
@@ -45,7 +45,7 @@ const LoginManager = {
         }).catch(reject);
       } else {
         reject(new Notification({
-          message: 'login.AMPOfflineUnavailableError',
+          message: 'AMPOfflineUnavailableError',
           origin: NOTIFICATION_ORIGIN_AUTHENTICATION
         }));
       }

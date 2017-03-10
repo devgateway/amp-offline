@@ -11,6 +11,9 @@ import {
   TEST_URL
 } from '../connectivity/AmpApiConstants';
 import TeamMemberHelper from '../helpers/TeamMemberHelper';
+import TranslationSyncUpManager from './TranslationSyncUpManager';
+import { loadAllLanguages } from '../../actions/TranslationAction';
+import { store } from '../../index';
 
 const SyncUpManager = {
 
@@ -65,6 +68,8 @@ const SyncUpManager = {
     const activitiesDiff = {};
     return new Promise((resolve, reject) => {
       this.prepareNetworkForSyncUp(TEST_URL).then(() => {
+        /* TODO: Call /rest/sync with the last time we did a successful update to know what we need to re-sync.
+         * for now we dont send that time parameter. */
         // dependecy flow will be implemented via AMPOFFLINE-209
         Promise.all(this._beforeActivitiesSyncUp().concat(syncUpActivities.importActivitiesToAMP(activitiesDiff)))
         // another diff will be executed here, pending AMPOFFLINE-122
@@ -72,18 +77,12 @@ const SyncUpManager = {
             .concat(syncUpActivities.exportActivitiesFromAMP(activitiesDiff))
             .concat(this._afterActivitiesSyncUp())
           )
-          .then(result => {
-            if (doImport) {
-              return Promise.resolve(result);
-            }
-            return Promise.all([
-
-            ]);
-          })
           .then(() => {
             const syncUpResult = {
               syncStatus: 'synced',
             };
+            const restart = true;
+            store.dispatch(loadAllLanguages(restart));
             resolve(syncUpResult);
             console.log('end sncup');
           }).catch(reject);
@@ -97,7 +96,8 @@ const SyncUpManager = {
   },
 
   _afterActivitiesSyncUp() {
-    return [this.syncUpWorkspace(GET_WORKSPACES_URL), this.syncUpGlobalSettings(GLOBAL_SETTINGS_URL)];
+    return [this.syncUpWorkspace(GET_WORKSPACES_URL), this.syncUpGlobalSettings(GLOBAL_SETTINGS_URL),
+      TranslationSyncUpManager.syncUpLangList()];
   },
 
   /**
