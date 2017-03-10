@@ -34,7 +34,6 @@ const DatabaseManager = {
 
   _getCollection(name) {
     console.log('_getCollection');
-    const self = this;
     return new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: DB_FILE_PREFIX + name
