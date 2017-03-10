@@ -1,5 +1,5 @@
+import { describe, it } from 'mocha';
 import * as actions from '../../app/modules/helpers/ClientSettingsHelper';
-import { INVALID_FORMAT } from '../../app/modules/helpers/ClientSettingsHelper';
 
 const chaiAsPromised = require('chai-as-promised');
 const chai = require('chai');
@@ -110,43 +110,54 @@ const invalidSettings = [
 
 describe('@@ ClientSettingsHelper @@', () => {
   // positive
-  it('should save the valid setting -> func saveOrUpdateSetting  ', (done) => {
-    expect(actions.saveOrUpdateSetting(
-      validSetting)).to.eventually.deep.equal(validSetting).notify(done);
-  });
+  describe('saveOrUpdateSetting', () =>
+    it('should save the valid setting', () =>
+      expect(actions.saveOrUpdateSetting(validSetting)).to.eventually.deep.equal(validSetting)
+    )
+  );
 
-  it('should save the valid setting -> func saveOrUpdateSetting', (done) => {
-    expect(actions.saveOrUpdateSetting(
-      validSettingNoOptions)).to.eventually.deep.equal(validSettingNoOptions).notify(done);
-  });
+  describe('saveOrUpdateSetting', () =>
+    it('should save the valid setting', () =>
+      expect(actions.saveOrUpdateSetting(validSettingNoOptions)).to.eventually.deep.equal(validSettingNoOptions)
+    )
+  );
 
-  it('should find the exact setting by id -> func findSettingById', (done) => {
-    expect(actions.findSettingById(
-      validSetting.id)).to.eventually.deep.equal(validSetting).notify(done);
-  });
+  describe('findSettingById', () =>
+    it('should find the exact setting by id', () =>
+      expect(actions.findSettingById(
+        validSetting.id)).to.eventually.deep.equal(validSetting)
+    )
+  );
 
-  it('should find none visible -> func findAllVisibleSettings', (done) => {
-    expect(actions.findAllVisibleSettings()).to.deep.equal({}).notify(done);
-  });
+  describe('findAllVisibleSettings', () =>
+    it('should find none visible', () =>
+      expect(actions.findAllVisibleSettings()).to.deep.equal({})
+    )
+  );
 
-  it('should provide a different updated-at value than the previous one -> func findSettingById', (done) => {
-    validSetting['updated-at'] = undefined;
-    actions.findSettingById(validSetting.id).then((setting) => {
-      expect(setting['updated-at']).to.not.equal(validSetting['updated-at']);
-      done();
-    }).catch(error => done(error));
-  });
+  describe('findSettingById', () =>
+    it('should provide a different updated-at value than the previous one -> func findSettingById', (done) => {
+      validSetting['updated-at'] = undefined;
+      actions.findSettingById(validSetting.id).then((setting) => {
+        expect(setting['updated-at']).to.not.equal(validSetting['updated-at']);
+        return done();
+      }).catch(error => done(error));
+    })
+  );
 
-  it('should delete the setting data -> func deleteById ', (done) => {
-    expect(actions.deleteById(validSetting.id)).to.eventually.equal(1);
-    expect(actions.deleteById(validSettingNoOptions.id)).to.eventually.equal(1).notify(done);
-  });
+  describe('deleteById', () =>
+    it('should delete the setting data ', (done) => {
+      expect(actions.deleteById(validSetting.id)).to.eventually.equal(1);
+      expect(actions.deleteById(validSettingNoOptions.id)).to.eventually.equal(1).notify(done);
+    })
+  );
 
   // negative
-  invalidSettings.forEach(is => {
-    console.log(`invalidSetting.id = ${is.id} `);
-    it('should throw invalid format error for an invalid setting to be saved -> func saveOrUpdateSetting', (done) => {
-      expect(actions.saveOrUpdateSetting(is)).to.be.rejectedWith(INVALID_FORMAT).notify(done);
-    });
-  });
+  describe('saveOrUpdateSetting', () =>
+    invalidSettings.forEach(is =>
+      it('should throw invalid format error for an invalid setting to be saved', () =>
+        expect(actions.saveOrUpdateSetting(is)).to.be.rejectedWith(actions.INVALID_FORMAT)
+      )
+    )
+  );
 });

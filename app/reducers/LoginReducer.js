@@ -1,4 +1,3 @@
-// @flow
 import { STATE_LOGIN_OK, STATE_LOGIN_FAIL, STATE_LOGOUT, STATE_LOGIN_PROCESSING } from '../actions/LoginAction';
 
 const defaultState = {

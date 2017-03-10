@@ -20,7 +20,7 @@ const RequestConfig = {
   getRequestConfig({ method, url, paramsMap, body, extraUrlParam }) {
     const fullBaseUrl = this._getFullBaseUrl(url);
     const urlParams = this._paramsMapToString(paramsMap);
-    const fullUrl = fullBaseUrl + (extraUrlParam ? '/' + extraUrlParam : '') + urlParams;
+    const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
     const requestConfig = {
       url: fullUrl,
       json: true,
@@ -49,16 +49,13 @@ const RequestConfig = {
     if (paramsMap === null || paramsMap === undefined) {
       return '';
     }
-    let kv = [];
+    const kv = [];
     if (paramsMap instanceof Map) {
-      paramsMap.forEach((key, value) => kv.push(key + '=' + value));
+      paramsMap.forEach((key, value) => kv.push(`${key}=${value}`));
     } else {
-      for (let prop in paramsMap) {
-        kv.push(prop + '=' + paramsMap[prop]);
-      }
+      Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${paramsMap[prop]}`));
     }
-    const paramsStr = '?' + kv.join('&');
-    return paramsStr;
+    return `?${kv.join('&')}`;
   },
 
   _getFullBaseUrl(url) {
@@ -67,16 +64,14 @@ const RequestConfig = {
 
   _getToken(method, url) {
     // We go to check to routes config to see if we need to generate a token
-    const routesConfigurationFiltered = routesConfiguration.filter((element) => {
-      return element.url === url && element.method === method;
-    });
+    const routesConfigurationFiltered = routesConfiguration.filter(element =>
+      element.url === url && element.method === method);
     if (routesConfigurationFiltered && routesConfigurationFiltered.length === 1) {
       if (routesConfigurationFiltered[0].requiresToken) {
         if (store.getState().login.token) {
           return store.getState().login.token;
-        } else {
-          // TODO if the token is not present we try to log the user in;
         }
+          // TODO if the token is not present we try to log the user in;
       }
     } else {
       throw new Notification({
@@ -89,7 +84,9 @@ const RequestConfig = {
 
   replaceToken(requestConfig) {
     console.log('replaceToken');
+    /* eslint-disable no-param-reassign */
     requestConfig.headers['X-Auth-Token'] = store.getState().login.token;
+    /* eslint-enable no-param-reassign */
     return requestConfig;
   }
 };

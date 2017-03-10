@@ -1,5 +1,5 @@
-import DatabaseManager from '../database/DatabaseManager';
-import TeamMemberHelper from './TeamMemberHelper';
+import * as DatabaseManager from '../database/DatabaseManager';
+import * as TeamMemberHelper from './TeamMemberHelper';
 import { COLLECTION_WORKPACES } from '../../utils/Constants';
 
 /**
@@ -103,7 +103,6 @@ const WorkspaceHelper = {
   },
 
   /**
-   * TODO: not expecting this one to be useful
    * Saves or updates only the given list of workspaces
    * @param workspaces
    * @returns {Promise}

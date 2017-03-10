@@ -1,3 +1,4 @@
+import { describe, it } from 'mocha';
 import * as actions from '../../app/modules/helpers/WSSettingsHelper';
 
 const chai = require('chai');
