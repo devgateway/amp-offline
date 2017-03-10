@@ -1,4 +1,4 @@
-import { store } from '../../index';
+import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import {

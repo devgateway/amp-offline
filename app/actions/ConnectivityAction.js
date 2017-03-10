@@ -2,7 +2,7 @@ import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
 import { URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
 // TODO: this is temporary to move on and final binding to the store will be done through AMPOFFLINE-103
-import { store } from '../index';
+import store from '../index';
 
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
