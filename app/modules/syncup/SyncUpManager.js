@@ -66,8 +66,8 @@ const SyncUpManager = {
     const syncUpActivities = new SyncUpActivities();
     // TODO the diff structure will come from AMPOFFLINE-122
     const activitiesDiff = {};
-    return new Promise((resolve, reject) => {
-      this.prepareNetworkForSyncUp(TEST_URL).then(() => {
+    return new Promise((resolve, reject) =>
+      this.prepareNetworkForSyncUp(TEST_URL).then(() =>
         /* TODO: Call /rest/sync with the last time we did a successful update to know what we need to re-sync.
          * for now we dont send that time parameter. */
         // dependecy flow will be implemented via AMPOFFLINE-209
@@ -76,8 +76,7 @@ const SyncUpManager = {
           .then(Promise.all(this._beforeActivitiesSyncUp()
             .concat(syncUpActivities.exportActivitiesFromAMP(activitiesDiff))
             .concat(this._afterActivitiesSyncUp())
-          )
-          .then(() => {
+          ).then(() => {
             const syncUpResult = {
               syncStatus: 'synced',
             };
@@ -85,12 +84,12 @@ const SyncUpManager = {
             store.dispatch(loadAllLanguages(restart));
             resolve(syncUpResult);
             console.log('end sncup');
-          }).catch(reject);
-      }).catch(reject);
-    });
+          }).catch(reject)
+      ).catch(reject)
+    ));
   },
 
-  // TODO: this is temporary, to be adjusted once AMPOFFLINE-122 is done, to avoid restart call from Activities Sync up
+  // TODO: this is temporary, to be adjusted once AMPOFFLINE-122 is done
   _beforeActivitiesSyncUp() {
     return [syncUpUsers(USER_PROFILE_URL), this.syncWorkspaceMembers(WORKSPACE_MEMBER_URL)];
   },

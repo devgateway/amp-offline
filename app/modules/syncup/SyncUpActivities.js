@@ -39,17 +39,15 @@ export default class SyncUpActivities {
     return (dispatch, ownProps) => new Promise((resolve, reject) => {
       // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
       if (ownProps.user.userData.plainPassword) {
-        return this._rejectActivitiesClientSide(activitiesDiff).then(_import).then(resolve).catch(reject);
+        return this._rejectActivitiesClientSide(activitiesDiff).then(this._import).then(resolve).catch(reject);
       }
-      // TODO once merged from develop, move message to translation file.
-      const errorMsg = 'You are not allowed to sync up. Please re-login.';
-      const errorMsgTrn = translate(errorMsg); // translate('NotAllowedToSyncRelogin');
+      const errorMsgTrn = translate('SyncupDeniedMustRelogin');
       reject(new Notification({ message: errorMsgTrn, origin: NOTIFICATION_ORIGIN_API_SYNCUP }));
     });
   }
 
   /* eslint-disable no-unused-vars */
-  _rejectActivitiesClientSide(activitiesDiff) {
+  static _rejectActivitiesClientSide(activitiesDiff) {
     /* eslint-enable no-unused-vars */
     /*
      TODO client side reject of some activities (iteration 2+):
@@ -78,25 +76,22 @@ export default class SyncUpActivities {
     return UserHelper.findAllUsersByExample(filter, projections).then(this._getWSMembers);
   }
 
-  _getWSMembers(users) {
+  static _getWSMembers(users) {
     const wsMembersFilter = { 'user-id': { $in: Utils.flattenToListByKey(users, 'id') } };
     return TeamMemberHelper.findAll(wsMembersFilter);
   }
 
   /**
    * Get all activities modified by the specified workspace members only and filter out rejected activities
-   * @param users
+   * @param workspaceMembers
    * @private
    * @returns {Promise}
    */
-  _getActivitiesToImport(workspaceMembers) {
+  static _getActivitiesToImport(workspaceMembers) {
     console.log('_getActivitiesToImport');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
-    // TODO use findAllNotRejected
-    const excludeRejected = { $not: Utils.toDefinedOrNullRule(AC.REJECTED_ID) };
-    const filter = { $and: [modifiedBySpecificWSMembers, excludeRejected] };
-    return ActivityHelper.findAll(filter);
+    return ActivityHelper.findAllNonRejected(modifiedBySpecificWSMembers);
   }
 
   /**
@@ -112,26 +107,25 @@ export default class SyncUpActivities {
       activities.reduce((currentPromise, nextActivity) =>
         currentPromise.then(() => {
           if (this._cancel === true) {
-            resolve();
-          } else {
-            // uninterruptible call
-            return this._importActivity(nextActivity)
+            return resolve();
           }
-        })
-        , Promise.resolve()).then(resolve).catch(reject);
+          // uninterruptible call
+          return this._importActivity(nextActivity);
+        }), Promise.resolve()).then(resolve).catch(reject);
     });
   }
 
   _importActivity(activity) {
     console.log('_importActivity');
-    const activityId = activity[AC.ID];
-    const importURL = ACTIVITIES_IMPORT_URL + (activityId ? `/${activityId}` : '');
+    const activityId = activity[AC.INTERNAL_ID];
+    const importURL = ACTIVITY_IMPORT_URL + (activityId ? `/${activityId}` : '');
     return new Promise((resolve, reject) =>
     /*
     shouldRetry: true may be problematic if the request was received but timed out
     => we need a reasonable timeout for now to minimize such risk, while if anything didn't sync
     Final solution will be handled with 'client-change-id' - proposed for iteration 2
      */
+    // TODO: add timeout handling, to continue the process, to not halt entire list import
       ConnectionHelper.doPost({ url: importURL, body: activity, shouldRetry: false })
         .then((result) => this._processImportResult(activity, result)).then(resolve).catch(reject)
     );
@@ -155,19 +149,25 @@ export default class SyncUpActivities {
 
   static _getRejectedId(activity) {
     console.log('_getRejectedId');
+    // check if it was already rejected before and increment the maximum rejectedId
     const ampId = activity[AC.AMP_ID];
-    // if this is an existing activity, check if it was already rejected before and increment the maximum rejectedId
+    const projectTile = activity[AC.PROJECT_TITLE];
+    let filter = null;
+    // first by ampId, if the activity is also available on AMP server
     if (ampId) {
-      // TODO: move under ActivityHelper.findAllRejected(filter)
-      const existingRejections = Utils.toMap(AC.REJECTED_ID, { $exists: true });
-      const ampIdFilter = Utils.toMap(AC.AMP_ID, ampId);
-      const filter = { $and: [existingRejections, ampIdFilter] };
+      filter = Utils.toMap(AC.AMP_ID, ampId);
+    } else if (projectTile) {
+      // or try to match by the same project title for same named activities not yet available on AMP server
+      // TODO adjust for multilingual - iteration 2+
+      filter = Utils.toMap(AC.PROJECT_TITLE, projectTile);
+    }
+    if (filter !== null) {
       const projections = Utils.toMap(AC.REJECTED_ID, 1);
-      /* Assumming for simplicity for now we'll use the max found rejectedId and increment it.
+      /* Assuming for simplicity for now we'll use the max found rejectedId and increment it.
        Once we add the option to delete rejected activities from storage, some rejectedIds will be reused.
        If it will be needed, we can always increment, that will require tracking rejected # per activity
        */
-      return ActivityHelper.findAll(filter, projections).then(prevRejections => {
+      return ActivityHelper.findAllRejected(filter, projections).then(prevRejections => {
         const maxRejectedId = prevRejections.reduce((curr, next) => Math.max(curr, next[AC.REJECTED_ID]), 0);
         return maxRejectedId + 1;
       });
@@ -179,8 +179,7 @@ export default class SyncUpActivities {
     console.log('_saveRejectActivity');
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;
-    // rejectedActivity: check that Rejected label matches what we need
-    rejectedActivity[AC.PROJECT_TITLE] = activity[AC.PROJECT_TITLE] + translate('Rejected') + rejectedId;
+    rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
     rejectedActivity.error = error;
     return ActivityHelper.saveOrUpdate(rejectedActivity);
   }
@@ -202,44 +201,36 @@ export default class SyncUpActivities {
 
   static _removeActivities(ampIds) {
     const ampIdsFilter = Utils.toMap(AC.AMP_ID, { $in: ampIds });
-    // It will also remove rejected copies
-    return ActivityHelper.deleteAll(ampIdsFilter);
+    // remove both rejected and non rejected if the activity is removed
+    return ActivityHelper.removeAll(ampIdsFilter);
   }
 
   _getLatestActivities(ampIds) {
     return new Promise((resolve, reject) =>
-    ampIds.reduce((currentPromise, nextAmpId) => currentPromise.then(() => {
+    ampIds.reduce((currentPromise, nextAmpId) => currentPromise.then(
+      () => {
         if (this._cancel) {
-          resolve();
-        } else {
-          return this._exportActivity(nextAmpId);
+          return resolve();
         }
+        return this._exportActivity(nextAmpId);
       }), Promise.resolve()).then(resolve).catch(reject));
-
   }
 
   _exportActivity(ampId) {
-    const exportURL = ACTIVITY_EXPORT_URL + ampId;
+    const exportURL = `${ACTIVITY_EXPORT_URL}/${ampId}`;
     // TODO content translations (iteration 2)
     return ConnectionHelper.doGet(exportURL).then(this._processActivityExport, this._onExportError);
   }
 
   static _onExportError(error) {
-    console.log(error);
+    console.error(error);
     // TODO any special handling
     // normally shouldn't happen
   }
 
-  _processActivityExport(activity) {
-    return this._removeExisting(activity).then(() => ActivityHelper.saveOrUpdate(activity));
-  }
-
-  static _removeExisting(activity) {
-    // TODO move to ActivityHelper.saveOrUpdate
-    const excludeRejections = Utils.toMap(AC.REJECTED_ID, { $exists: false });
-    const ampIdsFilter = Utils.toMap(AC.AMP_ID, { $eq: activity[AC.AMP_ID] });
-    const filter = { $and: [excludeRejections, ampIdsFilter] };
-    return ActivityHelper.delete(filter);
+  static _processActivityExport(activity) {
+    return ActivityHelper.removeNonRejectedByAmpId(activity[AC.AMP_ID])
+      .then(() => ActivityHelper.saveOrUpdate(activity));
   }
 }
 

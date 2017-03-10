@@ -58,7 +58,7 @@ export const JOINT_CRITERIA = 'joint_criteria';
 export const TEAM = 'team';
 export const MODIFIED_BY = 'modified_by';
 export const REJECTED_ID = 'rejectedId';
-export const ID = 'internal_id';
+export const INTERNAL_ID = 'internal_id';
 export const AMP_ID = 'amp_id';
 export const PROJECT_TITLE = 'project_title';
 

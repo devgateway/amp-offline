@@ -44,5 +44,7 @@
   "Actual Commitments": "Actual Commitments",
   "Actual Disbursements": "Actual Disbursements",
   "Next": "Next",
-  "Prev": "Prev"
+  "Prev": "Prev",
+  "SyncupDeniedMustRelogin": "You are not allowed to sync up. Please re-login",
+  "Rejected": "Rejected"
 }
