@@ -353,6 +353,35 @@ const DatabaseManager = {
     });
   },
 
+  /**
+   * Removes all entries that match filter criteria
+   * @param filter
+   * @param collectionName
+   */
+  removeAll(filter, collectionName) {
+    console.log('removeAll');
+    return new Promise((resolve, reject) => {
+      const removeByIdFunc = this._removeAll.bind(null, filter)
+        .bind(null, collectionName)
+        .bind(null, resolve)
+        .bind(null, reject);
+      this.queuePromise(removeByIdFunc, resolve, reject);
+    });
+  },
+
+  _removeAll(filter, collectionName, resolve, reject) {
+    console.log('_removeAll');
+    DatabaseManager._getCollection(collectionName, null).then((collection) => {
+      collection.remove(filter, { multi: true }, (err, count) => {
+        if (err === null) {
+          resolve(count);
+        } else {
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+        }
+      });
+    }).catch(reject);
+  },
+
   findOne(example, collectionName) {
     console.log('findOne');
     const projections = Object.assign({ _id: 0 });

@@ -171,6 +171,11 @@ const ActivityHelper = {
     return DatabaseManager.removeById(id, COLLECTION_ACTIVITIES, this._getRejectedRule());
   },
 
+  removeAll(filter) {
+    console.log('removeAll');
+    return DatabaseManager.removeAll(filter, COLLECTION_ACTIVITIES);
+  },
+
   _getNonRejectedRule() {
     return Utils.toMap(AC.REJECTED_ID, { $exists: false });
   },

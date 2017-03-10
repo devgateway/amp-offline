@@ -126,4 +126,10 @@ describe('@@ ActivityHelper @@', () => {
       expect(actions.removeRejected(rejectedActivity2.id)).to.eventually.equal(1)
     )
   );
+
+  describe('removeRejected', () =>
+    it('should be able to remove a rejected activity', () =>
+      expect(actions.replaceAll(activities).then(actions.removeAll({}))).to.eventually.have.lengthOf(activities.length)
+    )
+  );
 });
