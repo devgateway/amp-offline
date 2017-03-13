@@ -2,8 +2,9 @@ import { validate } from 'jsonschema';
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
+import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
-const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT' });
+const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT', origin: NOTIFICATION_ORIGIN_DATABASE });
 
 const possibleValuesSchema = {
   id: '/PossibleValues',
