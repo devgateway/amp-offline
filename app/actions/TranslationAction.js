@@ -1,4 +1,3 @@
-// @flow
 import TranslationManager from '../modules/util/TranslationManager';
 
 export const STATE_CHANGE_LANGUAGE = 'STATE_CHANGE_LANGUAGE';
@@ -7,12 +6,10 @@ export const STATE_LIST_OF_LANGUAGES_LOADED = 'STATE_LIST_OF_LANGUAGES_LOADED';
 
 export function setLanguage(lang: string) {
   console.log('setLanguage');
-  return dispatch => new Promise((resolve, reject) => {
-    return TranslationManager.changeLanguage(lang).then(() => {
-      dispatch(language(lang));
-      resolve(lang);
-    });
-  });
+  return dispatch => new Promise((resolve, reject) => TranslationManager.changeLanguage(lang).then(() => {
+    dispatch(language(lang));
+    resolve(lang);
+  }).catch(reject));
 }
 
 export function loadAllLanguages(restart = false) {

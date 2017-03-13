@@ -7,7 +7,7 @@ import {
   NOTIFICATION_ORIGIN_API_NETWORK,
   NOTIFICATION_SEVERITY_ERROR
 } from "../../utils/constants/ErrorConstants";
-import { store } from "../../index";
+import store from "../../index";
 import { loginAutomaticallyAction, logoutAction } from "../../actions/LoginAction";
 import translate from "../../utils/translate";
 const ConnectionHelper = {

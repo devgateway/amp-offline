@@ -1,4 +1,4 @@
-import DatabaseManager from '../database/DatabaseManager';
+import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_WS_SETTINGS } from '../../utils/Constants';
 
 /**

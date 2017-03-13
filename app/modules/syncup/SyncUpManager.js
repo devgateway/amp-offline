@@ -12,7 +12,7 @@ import {
 import TeamMemberHelper from '../helpers/TeamMemberHelper';
 import TranslationSyncUpManager from './TranslationSyncUpManager';
 import { loadAllLanguages } from '../../actions/TranslationAction';
-import { store } from '../../index';
+import store from '../../index';
 
 const SyncUpManager = {
 
