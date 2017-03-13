@@ -66,14 +66,12 @@ const ClientSettingsHelper = {
    */
   findSetting(filter) {
     console.log('findSetting');
-    return new Promise((resolve, reject) => {
-      DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS).then(resolve).catch(reject);
-    });
+    return DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS);
   },
 
   /**
    * Find all visible settings
-   * @returns {*}
+   * @returns {Promise}
    */
   findAllVisibleSettings() {
     console.log('findAllVisibleSettings');
@@ -81,9 +79,7 @@ const ClientSettingsHelper = {
   },
 
   findAll(filter) {
-    return new Promise((resolve, reject) => {
-      DatabaseManager.findAll(filter, COLLECTION_CLIENT_SETTINGS).then(resolve).catch(reject);
-    });
+    return DatabaseManager.findAll(filter, COLLECTION_CLIENT_SETTINGS);
   },
 
   /**
@@ -94,16 +90,14 @@ const ClientSettingsHelper = {
   saveOrUpdateSetting(setting) {
     console.log('saveOrUpdateSetting');
     // console.log(validate(setting, settingsSchema));
-    return new Promise((resolve, reject) => {
-      if (validate(setting, settingsSchema).valid) {
-        console.log(`Valid setting.id = ${setting.id}`);
-        /* eslint-disable no-param-reassign */
-        setting['updated-at'] = (new Date()).toISOString();
-        /* eslint-enable no-param-reassing */
-        return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS, {});
-      }
-      reject(INVALID_FORMAT_ERROR);
-    });
+    if (validate(setting, settingsSchema).valid) {
+      console.log(`Valid setting.id = ${setting.id}`);
+      /* eslint-disable no-param-reassign */
+      setting['updated-at'] = (new Date()).toISOString();
+      /* eslint-enable no-param-reassing */
+      return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
+    }
+    return Promise.reject(INVALID_FORMAT_ERROR);
   },
 
   /**
@@ -113,9 +107,7 @@ const ClientSettingsHelper = {
    */
   deleteById(id) {
     console.log('deleteById');
-    return new Promise((resolve, reject) => {
-      DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS, {}).then(resolve).catch(reject);
-    });
+    return DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS);
   }
 
 };

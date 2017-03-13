@@ -131,7 +131,7 @@ describe('@@ ClientSettingsHelper @@', () => {
 
   describe('findAllVisibleSettings', () =>
     it('should find none visible', () =>
-      expect(actions.findAllVisibleSettings()).to.deep.equal({})
+      expect(actions.findAllVisibleSettings()).to.eventually.deep.equal([])
     )
   );
 
