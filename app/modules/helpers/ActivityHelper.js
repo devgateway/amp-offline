@@ -112,7 +112,7 @@ const ActivityHelper = {
   },
 
   _setIdIfUndefined(activity) {
-    console.log('_setActivityIdIfUndefined');
+    console.log('_setIdIfUndefined');
     /* eslint-disable no-param-reassign */
     // if this activity version is not yet available offline
     if (activity.id === undefined) {
