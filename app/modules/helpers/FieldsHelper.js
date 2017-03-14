@@ -1,5 +1,6 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_FIELDS } from '../../utils/Constants';
+import * as Utils from '../../utils/Utils';
 
 /**
  * A simplified helper for 'Workspace Settings' storage for loading, searching / filtering and saving ws settings.
@@ -70,11 +71,7 @@ const FieldsHelper = {
   _setIdIfUndefined(fields) {
     console.log('_setIdIfUndefined');
     if (fields.id === undefined) {
-      // TODO update with changes from PR 53
-      // fields.id = Utils.stringToUniqueId('');
-      /* eslint-disable no-param-reassign */
-      fields.id = `${Date.now()}-${Math.random()}`;
-      /* eslint-enable no-param-reassign */
+      fields.id = Utils.stringToUniqueId(''); // eslint-disable-line no-param-reassign
     }
   },
 
