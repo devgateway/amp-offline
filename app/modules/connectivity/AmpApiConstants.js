@@ -10,6 +10,8 @@ export const POST_TRANSLATIONS_URL = '/translations/translate';
 export const GET_TRANSLATIONS_URL = '/sync/translations';
 export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
+export const SINGLE_FIELDS_TREE_URL = '/activity/fields';
+export const FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';

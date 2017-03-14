@@ -1,4 +1,4 @@
-import syncUpUsers from './SyncUpUsers';
+import syncUpUsers from './UsersSyncUpManager';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import WorkspaceHelper from '../helpers/WorkspaceHelper';
 import GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
