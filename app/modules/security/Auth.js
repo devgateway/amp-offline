@@ -1,6 +1,6 @@
 import { LOGIN_URL } from '../connectivity/AmpApiConstants';
 import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
-import { store } from '../../index';
+import store from '../../index';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_AUTHENTICATION } from '../../utils/constants/ErrorConstants';
 import { hexBufferToString } from '../../utils/Utils';

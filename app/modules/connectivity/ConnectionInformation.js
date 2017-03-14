@@ -5,6 +5,7 @@ export default class ConnectionInformation {
    * @param baseRestUrl usually /rest in case of AMP
    * @param protocol usually will be HTTPS
    * @param basePort usually will be 443
+   * @param timeout request timeout
    */
   constructor(serverUrl, baseRestUrl, protocol, basePort, timeout) {
     this._serverUrl = serverUrl;
@@ -15,7 +16,7 @@ export default class ConnectionInformation {
   }
 
   getFullRestUrl() {
-    return this.protocol + '://' + this.serverUrl + this.getPort() + this.baseRestUrl;
+    return `${this.protocol}://${this.serverUrl}${this.getPort()}${this.baseRestUrl}`;
   }
 
   get baseRestUrl() {
@@ -39,10 +40,11 @@ export default class ConnectionInformation {
   }
 
   getPort() {
-    let portPart = "";
-    //if we are in secure mode and the port is not 443 or if we are not secure and the port is not 80 we have to add the port to the url
-    if ((this.protocol === "https" && this.basePort != 443) || (this.protocol == "http" && this.basePort !== 80)) {
-      portPart = ":" + this.basePort;
+    let portPart = '';
+    /* configure the port if we are in secure mode and the port is not 443
+    or if we are not in secure and the port is not 80 */
+    if ((this.protocol === 'https' && this.basePort !== 443) || (this.protocol === 'http' && this.basePort !== 80)) {
+      portPart = `:${this.basePort}`;
     }
     return portPart;
   }

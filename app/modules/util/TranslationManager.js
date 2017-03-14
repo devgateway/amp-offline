@@ -50,11 +50,8 @@ const TranslationManager = {
     console.log('getListOfLocalLanguages');
     return new Promise((resolve, reject) => {
       const files = fs.readdirSync(FS_LOCALES_DIRECTORY);
-      const langs = files.filter((item) => {
-        return item.match(/^((translations.)[a-z]{2}(.json))/ig);
-      }).map((item) => {
-        return item.substr(13, 2);
-      });
+      const langs = files.filter((item) =>
+        item.match(/^((translations.)[a-z]{2}(.json))/ig)).map((item) => item.substr(13, 2));
       // We want to reinitialize the i18next module with new local transaction files.
       if (restart) {
         return this.initializeI18Next().then(resolve(langs)).catch(reject);
@@ -77,7 +74,7 @@ const TranslationManager = {
         i18nOptions.ns = [LANGUAGE_TRANSLATIONS_FILE];
         i18nOptions.defaultNS = [LANGUAGE_TRANSLATIONS_FILE];
       }
-      return i18next.use(Backend).init(i18nOptions, (err, t) => {
+      return i18next.use(Backend).init(i18nOptions, (err) => {
         if (err) {
           reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }));
         } else {
@@ -90,7 +87,7 @@ const TranslationManager = {
   changeLanguage(lang) {
     console.log('changeLanguage');
     return new Promise((resolve, reject) => {
-      i18next.changeLanguage(lang, (err, t) => {
+      i18next.changeLanguage(lang, (err) => {
         if (err) {
           reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }));
         } else {

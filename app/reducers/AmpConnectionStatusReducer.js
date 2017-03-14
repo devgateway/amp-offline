@@ -1,4 +1,5 @@
-import {STATE_AMP_CONNECTION_STATUS_UPDATE, STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING} from '../actions/ConnectivityAction';
+import { STATE_AMP_CONNECTION_STATUS_UPDATE,
+  STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING } from '../actions/ConnectivityAction';
 
 const defaultState = {
   status: undefined,
@@ -10,9 +11,9 @@ export default function ampConnectionStatus(state = defaultState, action: Object
 
   switch (action.type) {
     case STATE_AMP_CONNECTION_STATUS_UPDATE:
-      return Object.assign({}, state, {status: action.actionData, updateInProgress: false});
+      return Object.assign({}, state, { status: action.actionData, updateInProgress: false });
     case STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING:
-      return Object.assign({}, state, {updateInProgress: true});
+      return Object.assign({}, state, { updateInProgress: true });
     default:
       return state;
   }

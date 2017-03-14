@@ -1,4 +1,4 @@
-import DatabaseManager from '../database/DatabaseManager';
+import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_TEAMMEMBERS } from '../../utils/Constants';
 
 /**
@@ -15,12 +15,12 @@ const TeamMemberHelper = {
     console.log('findWorkspaceIdsByUserId');
     const filter = { 'user-id': userId };
     return new Promise((resolve, reject) => {
-      const projections = { 'workspace-id': 1 }
-      DatabaseManager.findAllWithProjections(filter, projections, COLLECTION_TEAMMEMBERS)
+      const projections = { 'workspace-id': 1 };
+      DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS, projections)
         .then((teamMembers) => {
           const wsIds = [];
           teamMembers.forEach((teamMember) => wsIds.push(teamMember['workspace-id']));
-          resolve(wsIds);
+          return resolve(wsIds);
         }).catch(reject);
     });
   },
@@ -44,7 +44,7 @@ const TeamMemberHelper = {
    */
   findByUserAndWorkspaceId(userId, workspaceId) {
     console.log('findByUserAndWorkspaceId');
-    const filter = { 'workspace-id': workspaceId, 'user-id': userId };
+    const filter = { $and: [{ 'workspace-id': workspaceId }, { 'user-id': userId }] };
     return this.findTeamMember(filter);
   },
 

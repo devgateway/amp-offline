@@ -1,5 +1,4 @@
-// @flow
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import style from './Footer.css';
 import translate from '../../utils/translate';
 

@@ -1,5 +1,5 @@
 // TODO: this is temporary to move on and final binding to the store will be done through AMPOFFLINE-103
-import { store } from '../../index';
+import store from '../../index';
 import WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
 import * as ActivityConstants from '../../utils/constants/ActivityConstants';

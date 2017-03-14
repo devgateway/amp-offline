@@ -1,6 +1,6 @@
-import DatabaseManager from '../database/DatabaseManager';
+import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
-import Auth from '../security/Auth';
+import * as Auth from '../security/Auth';
 
 /**
  * This helper is for User functions only.
@@ -38,7 +38,7 @@ const UserHelper = {
    */
   saveOrUpdateUser(userData) {
     console.log('saveOrUpdateUser');
-    return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {});
+    return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS);
   },
 
   generateAMPOfflineHashFromPassword(password) {

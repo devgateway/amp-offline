@@ -1,5 +1,5 @@
 //TODO: this action is not going to be called from a componet, its an initialization action
-import {store} from '../index.js';
+import store from '../index.js';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation'
 //this is temporal will be stored in settings
 import {SERVER_URL, BASE_REST_URL, PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT} from '../utils/Constants';

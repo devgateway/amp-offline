@@ -3,7 +3,7 @@ import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
-import { store } from '../index';
+import store from '../index';
 
 class MenuUtils {
 
