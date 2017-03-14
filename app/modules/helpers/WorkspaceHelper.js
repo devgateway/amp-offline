@@ -48,9 +48,7 @@ const WorkspaceHelper = {
 
   findAll(filter, projections) {
     console.log('findAll');
-    return new Promise((resolve, reject) => {
-      DatabaseManager.findAll(filter, COLLECTION_WORKPACES, projections).then(resolve).catch(reject);
-    });
+    return DatabaseManager.findAll(filter, COLLECTION_WORKPACES, projections);
   },
 
   /**
@@ -61,9 +59,7 @@ const WorkspaceHelper = {
    */
   findWorkspace(filter, projections) {
     console.log('findWorkspace');
-    return new Promise((resolve, reject) => {
-      DatabaseManager.findOne(filter, COLLECTION_WORKPACES, projections).then(resolve).catch(reject);
-    });
+    return DatabaseManager.findOne(filter, COLLECTION_WORKPACES, projections);
   },
 
   /**
@@ -73,9 +69,7 @@ const WorkspaceHelper = {
    */
   saveOrUpdateWorkspace(workspace) {
     console.log('saveOrUpdateWorkspace');
-    return new Promise((resolve, reject) => {
-      DatabaseManager.saveOrUpdate(workspace.id, workspace, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
-    });
+    return DatabaseManager.saveOrUpdate(workspace.id, workspace, COLLECTION_WORKPACES);
   },
 
   /**
@@ -85,9 +79,7 @@ const WorkspaceHelper = {
    */
   deleteById(id) {
     console.log('deleteById');
-    return new Promise((resolve, reject) => {
-      DatabaseManager.removeById(id, COLLECTION_WORKPACES).then(resolve).catch(reject);
-    });
+    return DatabaseManager.removeById(id, COLLECTION_WORKPACES);
   },
 
   /**
@@ -97,9 +89,7 @@ const WorkspaceHelper = {
    */
   replaceWorkspaces(workspaces) {
     console.log('replaceWorkspaces');
-    return new Promise((resolve, reject) => {
-      DatabaseManager.replaceCollection(workspaces, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
-    });
+    return DatabaseManager.replaceCollection(workspaces, COLLECTION_WORKPACES);
   },
 
   /**
@@ -110,9 +100,7 @@ const WorkspaceHelper = {
    */
   saveOrUpdateWorkspaces(workspaces) {
     console.log('saveOrUpdateWorkspaces');
-    return new Promise((resolve, reject) => {
-      DatabaseManager.saveOrUpdateCollection(workspaces, COLLECTION_WORKPACES, {}).then(resolve).catch(reject);
-    });
+    return DatabaseManager.saveOrUpdateCollection(workspaces, COLLECTION_WORKPACES);
   }
 
 };
