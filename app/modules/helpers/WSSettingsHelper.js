@@ -60,7 +60,7 @@ const WSSettingsHelper = {
    */
   deleteById(wsSettingsId) {
     console.log('saveOrUpdateWSSettings');
-    return DatabaseManager.removeById(wsSettingsId, COLLECTION_WS_SETTINGS, {});
+    return DatabaseManager.removeById(wsSettingsId, COLLECTION_WS_SETTINGS);
   },
 
   /**

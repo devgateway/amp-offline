@@ -85,7 +85,7 @@ const TeamMemberHelper = {
    */
   deleteById(id) {
     console.log('deleteById');
-    return DatabaseManager.removeById(id, COLLECTION_TEAMMEMBERS, {});
+    return DatabaseManager.removeById(id, COLLECTION_TEAMMEMBERS);
   }
 
 };
