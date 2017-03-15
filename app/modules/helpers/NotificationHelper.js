@@ -1,3 +1,4 @@
+import stringifyObject from 'stringify-object';
 import translate from '../../utils/translate';
 import * as constants from '../../utils/constants/ErrorConstants';
 
@@ -13,56 +14,52 @@ export default class NotificationHelper {
    *
    * @param message
    * @param origin
-   * @param notificationHelperObject
    * @param errorObject
    * @param severity
    */
   constructor({
-    message, origin, notificationHelperObject, errorObject,
+    message, origin, errorObject,
     severity = constants.NOTIFICATION_SEVERITY_ERROR
   }) {
     console.log('constructor');
-    if (notificationHelperObject) {
-      this.message = notificationHelperObject.message;
-      this.internalCode = notificationHelperObject.internalCode;
-      this.origin = notificationHelperObject.origin;
-      this.severity = notificationHelperObject.severity;
+    if (errorObject) {
+      this.message = errorObject.message;
+      this.internalCode = errorObject.internalCode;
+      this.origin = errorObject.origin;
+      this.severity = errorObject.severity;
     } else {
       if (message) {
-        /* This is just in case the function that created the NotificationHelper object
-         sent as message something that might break the translation plugin. */
-        try {
-          this.message = translate(message);
-        } catch (err) {
-          console.warn(err);
-          this.message = message.toString();
-        }
+        this.message = this.processMessageParams(message);
       }
       this.severity = severity;
       if (origin) {
         this.origin = origin;
-        // Do some special processing here depending of the origin reported.
-        switch (this.origin) {
-          case constants.NOTIFICATION_ORIGIN_API_NETWORK:
-          case constants.NOTIFICATION_ORIGIN_API_SECURITY:
-          case constants.NOTIFICATION_ORIGIN_API_GENERAL:
-            if (errorObject instanceof Object) {
-              const fields = Object.keys(errorObject);
-              if (fields && errorObject[fields[0]] && !isNaN(fields[0])) {
-                this.internalCode = parseInt(fields[0], 10);
-                this.message = translate(errorObject[fields[0]][0]);
-              } else {
-                this.message = errorObject.toString();
-              }
-            }
-            break;
-          default:
-            break;
-        }
       }
     }
     // TODO: If we save the stacktrace here we can have the full info about the error's origin.
     console.error(`${this.message} - ${this.internalCode} - ${this.origin}`);
+  }
+
+  processMessageParams(message) {
+    /* We need to be sure the message param (it can be a String, Object, Array inside an Object, etc
+     * is shown correctly to the user. */
+    let retMessage = null;
+    try {
+      if (message instanceof Object) {
+        const fields = Object.keys(message);
+        if (fields && message[fields[0]] && !isNaN(fields[0])) {
+          retMessage = this.processMessageParams(message[fields[0]][0]);
+        } else {
+          retMessage = stringifyObject(message, { inlineCharacterLimit: 200 });
+        }
+      } else {
+        retMessage = translate(message);
+      }
+    } catch (err) {
+      console.warn(err);
+      retMessage = stringifyObject(message());
+    }
+    return retMessage;
   }
 
   toString() {

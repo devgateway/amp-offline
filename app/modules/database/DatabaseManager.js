@@ -40,8 +40,8 @@ const DatabaseManager = {
         + DB_FILE_EXTENSION
       });
       if (process.env.NODE_ENV === 'production') {
-       /* newOptions.afterSerialization = self.encryptData;
-        newOptions.beforeDeserialization = self.decryptData;*/
+        /* newOptions.afterSerialization = self.encryptData;
+         newOptions.beforeDeserialization = self.decryptData;*/
       }
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
     });

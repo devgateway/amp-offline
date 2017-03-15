@@ -17,8 +17,7 @@ const ConnectionHelper = {
     const method = 'GET';
     // Modify the call to use ES6 destructuring
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    const maxRetryAttemps = MAX_RETRY_ATEMPTS;
-    return this._doMethod(requestConfig, maxRetryAttemps, shouldRetry);
+    return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
   },
 
   /**
@@ -33,66 +32,65 @@ const ConnectionHelper = {
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    const maxRetryAttemps = MAX_RETRY_ATEMPTS;
-    return this._doMethod(requestConfig, maxRetryAttemps, shouldRetry);
+    return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
   },
 
   _doMethod(requestConfig, maxRetryAttemps, shouldRetry) {
-    console.log('_doMethod');
+    console.log('_doMethod ');
+    console.log(requestConfig.url);
     const self = this;
     return new Promise((resolve, reject) => {
-      request(requestConfig, (error, response, body) => {
+      return request(requestConfig, (error, response, body) => {
         if (error || !(response.statusCode >= 200 && response.statusCode < 400 ) || body.error) {
           const shouldRetryOnError = ERRORS_TO_RETRY.filter((value) => {
             return value === (error ? error.code : (body ? body.error : 'unknownNetworkError'));
           });
           if (shouldRetryOnError.length > 0) {
             if (maxRetryAttemps > 0 && shouldRetry) {
-
               return this._doMethod(requestConfig, --maxRetryAttemps, shouldRetry).then(resolve).catch(reject);
-
             } else {
-              const notifErrorTimeout = new Notification({
-                errorObject: error,
-                origin: NOTIFICATION_ORIGIN_API_NETWORK,
-                severity: NOTIFICATION_SEVERITY_ERROR,
-                message: error.code
+              const notifErrorTimeout = this.createNotification({
+                message: translate('timeoutError'),
+                origin: NOTIFICATION_ORIGIN_API_NETWORK
               });
               reject(notifErrorTimeout);
             }
           } else if (response && response.statusCode === 401) {
             // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
-            store.dispatch(loginAutomaticallyAction()).then((data) => {
+            return store.dispatch(loginAutomaticallyAction()).then((data) => {
               const options_ = RequestConfig.replaceToken(requestConfig);
-              self._doMethod(options_).then((body_) => {
+              return self._doMethod(options_).then((body_) => {
                 resolve(body_);
               }).catch((error_) => {
                 // If we couldnt relogin online automatically we logout completely and forward to login page.
-                reject(new Notification({
-                  errorObject: error_,
-                  origin: NOTIFICATION_ORIGIN_API_SECURITY,
-                  severity: NOTIFICATION_SEVERITY_ERROR
-                }));
-                store.dispatch(logoutAction());
+                reject(this.createNotification({ errorObject: error_, origin: NOTIFICATION_ORIGIN_API_SECURITY }));
+                return store.dispatch(logoutAction());
               });
             }).catch((error2) => {
-              reject(new Notification({
-                message: error2 || body.error || translate('unknownNetworkError'),
-                origin: NOTIFICATION_ORIGIN_API_SECURITY,
-                severity: NOTIFICATION_SEVERITY_ERROR
+              reject(this.createNotification({
+                errorObject: error2,
+                message: body.error || translate('unknownNetworkError'),
+                origin: NOTIFICATION_ORIGIN_API_SECURITY
               }));
             });
           } else {
-            reject(new Notification({
+            reject(this.createNotification({
               message: error || body.error || translate('unknownNetworkError'),
-              origin: NOTIFICATION_ORIGIN_API_NETWORK,
-              severity: NOTIFICATION_SEVERITY_ERROR
+              origin: NOTIFICATION_ORIGIN_API_NETWORK
             }));
           }
         } else {
           resolve(body);
         }
       });
+    });
+  },
+
+  createNotification({ message, origin, errorObject }) {
+    return new Notification({
+      message,
+      origin,
+      errorObject
     });
   }
 };

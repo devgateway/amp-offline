@@ -8,7 +8,8 @@ import {
   AVAILABLE_LANGUAGES_URL,
   POST_TRANSLATIONS_URL,
   TEST_URL,
-  GET_TRANSLATIONS_URL
+  GET_TRANSLATIONS_URL,
+  SYNC_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -49,6 +50,10 @@ const routesConfiguration = [{
   requiresToken: true
 }, {
   url: TEST_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: SYNC_URL,
   method: 'GET',
   requiresToken: true
 }];

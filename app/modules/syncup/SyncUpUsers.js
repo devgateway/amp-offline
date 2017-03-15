@@ -1,18 +1,19 @@
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import UserHelper from '../helpers/UserHelper';
+import { USER_PROFILE_URL } from '../connectivity/AmpApiConstants';
 
 /**
  * Sync detailed data about the users we currently have in the local db.
  * @param url
  * @returns {Promise}
  */
-export default function syncUpUsers(url) {
+export default function syncUpUsers() {
   console.log('syncUpUsers');
   return new Promise((resolve, reject) =>
     UserHelper.findAllUserByExample({}).then((dbUsers) => {
       if (dbUsers) {
         const userIds = dbUsers.map(value => value.id);
-        return ConnectionHelper.doGet({ url, paramsMap: { ids: userIds } }).then(
+        return ConnectionHelper.doGet({ url: USER_PROFILE_URL, paramsMap: { ids: userIds } }).then(
           // any user deleted on AMP, will be removed from the client as well as part of the replace
           (data) => resolve(UserHelper.replaceUsers(_getNewUsers(data, dbUsers)))
         ).catch(reject);
