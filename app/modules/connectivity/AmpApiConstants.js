@@ -10,6 +10,7 @@ export const POST_TRANSLATIONS_URL = '/translations/translate';
 export const GET_TRANSLATIONS_URL = '/sync/translations';
 export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
+export const POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
