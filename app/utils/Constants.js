@@ -19,7 +19,7 @@ export const COLLECTION_GLOBAL_SETTINGS = 'global-settings';
 export const COLLECTION_ACTIVITIES = 'activities';
 export const COLLECTION_FIELDS = 'fields';
 export const COLLECTION_POSSIBLE_VALUES = 'possible-values';
-export const COLLECTION_SYNC_LOG = 'sync_log';
+export const COLLECTION_SYNCUP_LOG = 'syncup_log';
 export const COLLECTION_LANGS = 'languages';
 export const COLLECTION_WS_SETTINGS = 'workspace-settings';
 
@@ -41,3 +41,16 @@ export const DIGEST_ALGORITHM_SHA256 = 'SHA-256';
 
 export const ACTIVITY_EDIT = 'ACTIVITY_EDIT';
 export const ACTIVITY_VIEW = 'ACTIVITY_VIEW';
+
+export const SYNCUP_FORCE_DAYS = 14;
+export const SYNCUP_BEST_BEFORE_DAYS = 7;
+export const SYNCUP_NO_DATE = '1900-01-01T00:00:00.000+0000';
+export const SYNCUP_TYPE_TRANSLATIONS = 'translations';
+export const SYNCUP_TYPE_USERS = 'users';
+export const SYNCUP_TYPE_WORKSPACES = 'workspaces';
+export const SYNCUP_TYPE_GS = 'global-settings';
+export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
+export const SYNCUP_TYPE_ACTIVITIES = 'activities';
+export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
+export const SYNCUP_STATUS_FAIL = 'FAIL';
+export const SYNCUP_DATETIME_FIELD = 'timestamp';
