@@ -6,20 +6,20 @@ import * as AC from '../../utils/constants/ActivityConstants';
 import * as Utils from '../../utils/Utils';
 import translate from '../../utils/translate';
 import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../utils/constants/ErrorConstants';
-import { ACTIVITY_IMPORT_URL, ACTIVITY_EXPORT_URL } from '../connectivity/AmpApiConstants';
+import { ACTIVITY_IMPORT_URL } from '../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 
 /**
- * Activities SyncUp processor
+ * Activities Import to AMP Manager
  * @author Nadejda Mandrescu
  */
-export default class SyncUpActivities {
+export default class ActivitiesImportToAMP {
   constructor() {
     this._cancel = false;
   }
 
   /**
-   * Interrupts
+   * Interrupt activities sync up gracefully
    * @param cancel
    */
   set cancel(cancel) {
@@ -46,6 +46,12 @@ export default class SyncUpActivities {
     });
   }
 
+  /**
+   * Rejects activities on the client side using activities diff
+   * @param activitiesDiff
+   * @return {Promise.<Array>}
+   * @private
+   */
   /* eslint-disable no-unused-vars */
   static _rejectActivitiesClientSide(activitiesDiff) {
     /* eslint-enable no-unused-vars */
@@ -181,55 +187,6 @@ export default class SyncUpActivities {
     rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
     rejectedActivity.error = error;
     return ActivityHelper.saveOrUpdate(rejectedActivity);
-  }
-
-  /**
-   * Exports activities from AMP by adding/updating them to the client DB
-   * @param activitiesDiff the activities difference from the general syncup EP
-   * activitiesDiff : {
-   *    "saved" : [ampId1, ...],
-   *    "removed" : [ampId2, ...]
-   * }
-   * @return {Promise}
-   */
-  exportActivitiesFromAMP(activitiesDiff) {
-    console.log('exportActivitiesFromAMP');
-    return Promise.all([this._removeActivities(activitiesDiff.removed),
-      this._getLatestActivities(activitiesDiff.saved)]);
-  }
-
-  static _removeActivities(ampIds) {
-    const ampIdsFilter = Utils.toMap(AC.AMP_ID, { $in: ampIds });
-    // remove both rejected and non rejected if the activity is removed
-    return ActivityHelper.removeAll(ampIdsFilter);
-  }
-
-  _getLatestActivities(ampIds) {
-    return new Promise((resolve, reject) =>
-    ampIds.reduce((currentPromise, nextAmpId) => currentPromise.then(
-      () => {
-        if (this._cancel) {
-          return resolve();
-        }
-        return this._exportActivity(nextAmpId);
-      }), Promise.resolve()).then(resolve).catch(reject));
-  }
-
-  _exportActivity(ampId) {
-    // TODO content translations (iteration 2)
-    return ConnectionHelper.doGet({ url: ACTIVITY_EXPORT_URL, extraUrlParam: ampId })
-      .then(this._processActivityExport, this._onExportError);
-  }
-
-  static _onExportError(error) {
-    console.error(error);
-    // TODO any special handling
-    // normally shouldn't happen
-  }
-
-  static _processActivityExport(activity) {
-    return ActivityHelper.removeNonRejectedByAmpId(activity[AC.AMP_ID])
-      .then(() => ActivityHelper.saveOrUpdate(activity));
   }
 }
 

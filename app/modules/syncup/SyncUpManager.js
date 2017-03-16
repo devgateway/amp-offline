@@ -14,6 +14,7 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACES,
+  SYNCUP_TYPE_ACTIVITIES,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_STATUS_FAIL,
   SYNCUP_DATETIME_FIELD,
@@ -22,20 +23,40 @@ import {
 import WorkspaceSyncUpManager from './WorkspaceSyncUpManager';
 import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
 import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
+import ActivitiesImportToAMP from './ActivitiesImportToAMP';
+import ActivitiesExportFromAMP from './ActivitiesExportFromAMP';
 
 const SyncUpManager = {
 
   /* This list allow us to un-hardcode and simplify the syncup process. */
   syncUpModuleList: [
-    { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
-    { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
-    { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings },
     { type: SYNCUP_TYPE_USERS, fn: syncUpUsers },
     {
       type: SYNCUP_TYPE_WORKSPACE_MEMBERS,
       fn: WorkspaceMemberSyncUpManager.syncWorkspaceMembers,
       context: WorkspaceMemberSyncUpManager
-    }],
+    },
+    {
+      type: SYNCUP_TYPE_ACTIVITIES,
+      fn: () => {
+        const importToAMP = new ActivitiesImportToAMP();
+        return importToAMP.importActivitiesToAMP;
+      },
+      context: ActivitiesImportToAMP
+    },
+    { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
+    { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
+    { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings }
+  ],
+
+  activitiesExport: {
+    type: SYNCUP_TYPE_ACTIVITIES,
+    fn: () => {
+      const exportToAMP = new ActivitiesExportFromAMP();
+      return exportToAMP.exportActivitiesFromAMP;
+    },
+    context: ActivitiesExportFromAMP
+  },
 
   /**
    * Return the most recent successful syncup in general (not of every type).
@@ -100,6 +121,20 @@ const SyncUpManager = {
    */
   syncUpAllTypesOnDemand() {
     console.log('syncUpAllTypesOnDemand');
+    // run sync up with activities import first time, then with activities export
+    return this._doSyncUp().then(() => {
+      this._configureExportInsteadOfImport();
+      return this._doSyncUp();
+    });
+  },
+
+  _configureExportInsteadOfImport() {
+    const activitiesStep = this.syncUpModuleList.findIndex(el => el.type === SYNCUP_TYPE_ACTIVITIES);
+    this.syncUpModuleList[activitiesStep] = this.activitiesExport;
+  },
+
+  _doSyncUp() {
+    console.log('_doSyncUp');
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     return new Promise((resolve, reject) => {
