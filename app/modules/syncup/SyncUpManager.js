@@ -14,6 +14,7 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACES,
+  SYNCUP_TYPE_FIELDS,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_STATUS_FAIL,
   SYNCUP_DATETIME_FIELD,
@@ -22,6 +23,7 @@ import {
 import WorkspaceSyncUpManager from './WorkspaceSyncUpManager';
 import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
 import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
+import FieldsSyncUpManager from './FieldsSyncUpManager';
 
 const SyncUpManager = {
 
@@ -35,7 +37,16 @@ const SyncUpManager = {
       type: SYNCUP_TYPE_WORKSPACE_MEMBERS,
       fn: WorkspaceMemberSyncUpManager.syncWorkspaceMembers,
       context: WorkspaceMemberSyncUpManager
-    }],
+    },
+    {
+      type: SYNCUP_TYPE_FIELDS,
+      fn: () => {
+        const fieldsSyncUp = new FieldsSyncUpManager();
+        return fieldsSyncUp.syncUp();
+      },
+      context: FieldsSyncUpManager
+    }
+  ],
 
   /**
    * Return the most recent successful syncup in general (not of every type).
@@ -132,6 +143,8 @@ const SyncUpManager = {
 
   _filterOutModulesToSync(changes) {
     // Filter out syncUpModuleList and keep only what needs to be resynced.
+    // TODO: remove this flag once AMP-25568 is done
+    changes[SYNCUP_TYPE_FIELDS] = true; // eslint-disable-line no-param-reassign
     return this.syncUpModuleList.filter((item) => {
       const changeItem = changes[item.type];
       if (changeItem instanceof Object) {

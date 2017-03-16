@@ -45,5 +45,6 @@
   "Actual Disbursements": "Actual Disbursements",
   "Next": "Next",
   "Prev": "Prev",
-  "timeoutError": "Connection timeout. Please check your internet connection."
+  "timeoutError": "Connection timeout. Please check your internet connection.",
+  "noUniqueFieldsTree": "No unique fields tree is found for usage"
 }

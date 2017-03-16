@@ -2,14 +2,13 @@ import { SINGLE_FIELDS_TREE_URL, FIELDS_PER_WORKSPACE_MEMBER_URL } from '../conn
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import * as FieldsHelper from '../helpers/FieldsHelper';
 import * as TeamMemberHelper from '../helpers/TeamMemberHelper';
-import * as Notification from '../helpers/NotificationHelper';
+import Notification from '../helpers/NotificationHelper';
 import * as Utils from '../../utils/Utils';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
 // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
 const FIELDS_ERROR = new Notification({
-  // since this is a temporary notification, not adding to translations store
-  message: 'No unique fields tree is found for usage',
+  message: 'noUniqueFieldsTree',
   origin: NOTIFICATION_ORIGIN_DATABASE
 });
 
@@ -19,10 +18,10 @@ const FIELDS_ERROR = new Notification({
  * @author Nadejda Mandrescu
  */
 export default class FieldsSyncUpManager {
-  constructor(doUpdate) {
+  constructor() {
     // TODO remove once AMP-25568 is done, as part of AMPOFFLINE-270
     this._useSingleTreeEP = true;
-    this._doUpdate = doUpdate;
+    this._doUpdate = true;
   }
 
   /**

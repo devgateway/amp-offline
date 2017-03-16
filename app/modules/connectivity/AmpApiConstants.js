@@ -10,7 +10,8 @@ export const POST_TRANSLATIONS_URL = '/translations/translate';
 export const GET_TRANSLATIONS_URL = '/sync/translations';
 export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
-export const SINGLE_FIELDS_TREE_URL = '/activity/fields';
+// TODO remove as part of AMPOFFLINE-270
+export const SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
 export const FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
 
 /** OTHER */
