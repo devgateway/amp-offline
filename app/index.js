@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
@@ -17,8 +16,9 @@ import { loadAllLanguages } from './actions/TranslationAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 
 console.log('index');
-export const store = configureStore();
+const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
+export default store;
 
 function checkAuth(nextState, replaceState) {
   console.log('checkAuth');
@@ -30,19 +30,19 @@ initializeLanguageDirectory();
 
 initializeI18Next().then(() => {
   store.dispatch(loadAllLanguages());
-  ampStartUp().then(() => {
+  return ampStartUp().then(() =>
     render(
       <Provider store={store}>
         <Router history={history} store={store}>
           <Route path="/" component={AppPage}>
-            <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
-            <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
-            <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth}/>
-            <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store}/>
+            <IndexRoute component={LoginPage} dispatch={store.dispatch} />
+            <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
+            <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} />
+            <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
           </Route>
         </Router>
       </Provider>,
       document.getElementById('root')
-    );
-  });
-});
+    )
+  ).catch(console.error);
+}).catch(console.error);

@@ -1,4 +1,3 @@
-// @flow
 import {
   STATE_DESKTOP_LOADED,
   STATE_DESKTOP_LOADING,

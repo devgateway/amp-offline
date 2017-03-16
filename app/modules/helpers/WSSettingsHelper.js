@@ -1,4 +1,4 @@
-import DatabaseManager from '../database/DatabaseManager';
+import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_WS_SETTINGS } from '../../utils/Constants';
 
 /**
@@ -60,7 +60,7 @@ const WSSettingsHelper = {
    */
   deleteById(wsSettingsId) {
     console.log('saveOrUpdateWSSettings');
-    return DatabaseManager.removeById(wsSettingsId, COLLECTION_WS_SETTINGS, {});
+    return DatabaseManager.removeById(wsSettingsId, COLLECTION_WS_SETTINGS);
   },
 
   /**

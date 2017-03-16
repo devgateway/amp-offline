@@ -56,11 +56,11 @@ export const SECONDARY_PROGRAMS = 'secondary_programs';
 export const GOVERNMENT_APPROVAL_PROCEDURES = 'government_approval_procedures';
 export const JOINT_CRITERIA = 'joint_criteria';
 export const TEAM = 'team';
-export const MODIFIED_BY = 'modified_by';
 export const REJECTED_ID = 'rejectedId';
 export const INTERNAL_ID = 'internal_id';
 export const AMP_ID = 'amp_id';
 export const PROJECT_TITLE = 'project_title';
+export const MODIFIED_BY = 'modified_by';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
