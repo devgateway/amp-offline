@@ -23,8 +23,8 @@ import {
 import WorkspaceSyncUpManager from './WorkspaceSyncUpManager';
 import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
 import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
-import ActivitiesImportToAMP from './ActivitiesImportToAMP';
-import ActivitiesExportFromAMP from './ActivitiesExportFromAMP';
+import ActivitiesImportToAMPManager from './ActivitiesImportToAMPManager';
+import ActivitiesExportFromAMPManager from './ActivitiesExportFromAMPManager';
 
 const SyncUpManager = {
 
@@ -41,7 +41,7 @@ const SyncUpManager = {
     {
       type: SYNCUP_TYPE_ACTIVITIES,
       fn: (saved, removed) => {
-        const exporter = new ActivitiesExportFromAMP();
+        const exporter = new ActivitiesExportFromAMPManager();
         return exporter.exportActivitiesFromAMP(saved, removed);
       }
     },
@@ -56,7 +56,7 @@ const SyncUpManager = {
     type: SYNCUP_TYPE_ACTIVITIES,
     fn: (saved, removed) => {
       // passing importer as a context doesn't work (this is undefined, even though in debug it is set)
-      const importer = new ActivitiesImportToAMP();
+      const importer = new ActivitiesImportToAMPManager();
       return importer.importActivitiesToAMP(saved, removed);
     }
   },

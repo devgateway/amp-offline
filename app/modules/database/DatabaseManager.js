@@ -412,12 +412,12 @@ const DatabaseManager = {
   findAllWithProjections(example, collectionName, projections) {
     console.log('findAllWithProjections');
     return new Promise((resolve, reject) => {
-      const removeByIdFunc = this._findAllWithProjections.bind(null, example)
+      const findAllWithProjectionsFunc = this._findAllWithProjections.bind(null, example)
         .bind(null, collectionName)
         .bind(null, projections)
         .bind(null, resolve)
         .bind(null, reject);
-      this.queuePromise(removeByIdFunc, resolve, reject);
+      this.queuePromise(findAllWithProjectionsFunc, resolve, reject);
     });
   },
 
