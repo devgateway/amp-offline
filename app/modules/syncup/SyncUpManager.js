@@ -29,22 +29,21 @@ const SyncUpManager = {
 
   /* This list allow us to un-hardcode and simplify the syncup process. */
   syncUpModuleList: [
-    { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
-    { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
-    { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings },
     { type: SYNCUP_TYPE_USERS, fn: syncUpUsers },
     {
       type: SYNCUP_TYPE_WORKSPACE_MEMBERS,
       fn: WorkspaceMemberSyncUpManager.syncWorkspaceMembers,
       context: WorkspaceMemberSyncUpManager
     },
+    { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
+    { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
+    { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings },
     {
       type: SYNCUP_TYPE_FIELDS,
       fn: () => {
         const fieldsSyncUp = new FieldsSyncUpManager();
         return fieldsSyncUp.syncUp();
-      },
-      context: FieldsSyncUpManager
+      }
     }
   ],
 
@@ -174,7 +173,7 @@ const SyncUpManager = {
           const removed = changeItem.removed;
           return type.fn.call(type.context, saved, removed).then(resolve(ret)).catch(reject);
         } else {
-          return type.fn().then(resolve(ret)).catch(reject);
+          return type.fn().then(() => resolve(ret)).catch(reject);
         }
       });
     };

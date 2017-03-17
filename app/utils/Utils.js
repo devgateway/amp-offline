@@ -41,8 +41,11 @@ const Utils = {
     const result = {};
     result[key] = value;
     return result;
-  }
+  },
 
+  delay(timeout) {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  }
 };
 
 module.exports = Utils;

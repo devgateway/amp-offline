@@ -12,6 +12,8 @@ const FIELDS_ERROR = new Notification({
   origin: NOTIFICATION_ORIGIN_DATABASE
 });
 
+/* eslint-disable class-methods-use-this */
+
 // TODO update once AMP-25568 is also done, as part of AMPOFFLINE-270
 /**
  * Fields definition syncup Manager
@@ -42,11 +44,14 @@ export default class FieldsSyncUpManager {
   }
 
   _syncUpSingleFieldsTree() {
-    return ConnectionHelper.doGet({ url: SINGLE_FIELDS_TREE_URL, shouldRetry: true })
-      .then(this._linkAllWSMembersToSingleFieldsTree);
+    return new Promise((resolve, reject) =>
+      ConnectionHelper.doGet({ url: SINGLE_FIELDS_TREE_URL, shouldRetry: true })
+        .then((fieldsDefTree) => this._linkAllWSMembersToSingleFieldsTree(fieldsDefTree))
+        .then(resolve)
+        .catch(reject));
   }
 
-  static _getSingleFieldsDef() {
+  _getSingleFieldsDef() {
     return FieldsHelper.findAll({}).then(fieldDefs => {
       if (fieldDefs.length === 1) {
         return Promise.resolve(fieldDefs[0].fields);
@@ -55,9 +60,8 @@ export default class FieldsSyncUpManager {
     });
   }
 
-  static _linkAllWSMembersToSingleFieldsTree(fieldsDefTree) {
-    return TeamMemberHelper.findAll({}).then(wsMemberIdsMap => {
-      const wsMemberIds = Utils.flattenToListByKey(wsMemberIdsMap, 'id');
+  _linkAllWSMembersToSingleFieldsTree(fieldsDefTree) {
+    return this._getExistingWsMemberIds(2).then(wsMemberIds => {
       const newFieldsDef = {
         'ws-member-ids': wsMemberIds,
         fields: fieldsDefTree
@@ -66,7 +70,19 @@ export default class FieldsSyncUpManager {
     });
   }
 
-  static _syncUpFieldsTreePerWorkspaceMembers() {
+  _getExistingWsMemberIds(retries) {
+    return TeamMemberHelper.findAll({}).then(wsMemberIdsMap => {
+      // workaround for the first fields sync up that may execute before wsMembers, fix AMPOFFLINE-270 or AMPOFFLINE-209
+      if (wsMemberIdsMap.length === 0 && retries > 0) {
+        /* eslint-disable no-param-reassign, no-plusplus */
+        return Utils.delay(5000).then(() => this._getExistingWsMemberIds(--retries));
+        /* eslint-enable no-param-reassign, no-plusplus */
+      }
+      return Utils.flattenToListByKey(wsMemberIdsMap, 'id');
+    });
+  }
+
+  _syncUpFieldsTreePerWorkspaceMembers() {
     return TeamMemberHelper.findAll({}).then(wsMemberIdsMap => {
       const paramsMap = { 'ws-member-ids': Utils.flattenToListByKey(wsMemberIdsMap, 'id') };
       return ConnectionHelper.doGet({ url: FIELDS_PER_WORKSPACE_MEMBER_URL, paramsMap, shouldRetry: true })
