@@ -33,7 +33,7 @@ const TranslationSyncUpManager = {
             // Now sync translations for all languages at once.
             return this.syncUpTranslations(langs).then(resolve(langs)).catch(reject);
           }).catch(reject);
-        });
+        }).catch(reject);
       }).catch(reject);
     });
   },

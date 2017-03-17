@@ -10,6 +10,15 @@ const Utils = {
     /* eslint-enable no-bitwise */
   },
 
+  /**
+   * Generates a unique id for each call, over the same string
+   * @param string
+   * @return {string}
+   */
+  stringToUniqueId(string: string) {
+    return `${this.stringToId(string)}-${Date.now()}-${Math.random()}`;
+  },
+
   hexBufferToString(buffer) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
     const hexCodes = [];

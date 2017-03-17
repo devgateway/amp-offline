@@ -47,7 +47,11 @@ export function loginAutomaticallyAction() {
       const token = data.token;
       dispatch(loginOk({ userData, password, token }));
       return resolve(data);
-    }).catch(reject);
+    }).catch((err) => {
+      dispatch(loginFailed(err));
+      dispatch(logoutAction());
+      reject(err);
+    });
   });
 }
 

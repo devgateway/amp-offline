@@ -44,5 +44,6 @@
   "Actual Commitments": "Actual Commitments",
   "Actual Disbursements": "Actual Disbursements",
   "Next": "Next",
-  "Prev": "Prev"
+  "Prev": "Prev",
+  "timeoutError": "Connection timeout. Please check your internet connection."
 }

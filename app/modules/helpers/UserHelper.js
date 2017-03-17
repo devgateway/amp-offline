@@ -63,7 +63,7 @@ const UserHelper = {
    */
   deleteUserById(userId) {
     console.log('deleteUserById');
-    return DatabaseManager.removeById(userId, COLLECTION_USERS, {});
+    return DatabaseManager.removeById(userId, COLLECTION_USERS);
   }
 };
 
