@@ -9,6 +9,7 @@ import {
   POST_TRANSLATIONS_URL,
   TEST_URL,
   GET_TRANSLATIONS_URL,
+  POSSIBLE_VALUES_PER_FIELD_PATHS,
   SYNC_URL
 } from '../modules/connectivity/AmpApiConstants';
 
@@ -47,6 +48,10 @@ const routesConfiguration = [{
 }, {
   url: GET_TRANSLATIONS_URL,
   method: 'GET',
+  requiresToken: true
+}, {
+  url: POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
   requiresToken: true
 }, {
   url: TEST_URL,
