@@ -3,7 +3,14 @@ import * as AC from '../../utils/constants/ActivityConstants';
 import * as Utils from '../../utils/Utils';
 import { ACTIVITY_EXPORT_URL } from '../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
+// TODO remove this limitation once at least first export is optimized
+import { FIRST_ACTIVITIES_EXPORT_LIMIT } from '../../utils/Constants';
 
+/* eslint-disable class-methods-use-this */
+/**
+ * Activity Export from AMP
+ * @author Nadejda Mandrescu
+ */
 export default class ActivitiesExportFromAMP {
   constructor() {
     this._cancel = false;
@@ -11,50 +18,77 @@ export default class ActivitiesExportFromAMP {
 
   /**
    * Exports activities from AMP by adding/updating them to the client DB
-   * @param activitiesDiff the activities difference from the general syncup EP
-   * activitiesDiff : {
+   * @param saved the activities saved as new or update on AMP
+   * @param removed deleted activities on AMP
+   * Parameters are comming for the from sync diff EP as:
+   * {
+   *  "activities": {
    *    "saved" : [ampId1, ...],
    *    "removed" : [ampId2, ...]
+   *  },
+   *  ...
    * }
    * @return {Promise}
    */
-  exportActivitiesFromAMP(activitiesDiff) {
+  exportActivitiesFromAMP(saved, removed) {
     console.log('exportActivitiesFromAMP');
-    return Promise.all([this._removeActivities(activitiesDiff.removed),
-      this._getLatestActivities(activitiesDiff.saved)]);
+    return Promise.all([this._removeActivities(removed),
+      this._getLatestActivities(saved)]);
   }
 
-  static _removeActivities(ampIds) {
+  _removeActivities(ampIds) {
     const ampIdsFilter = Utils.toMap(AC.AMP_ID, { $in: ampIds });
     // remove both rejected and non rejected if the activity is removed
     return ActivityHelper.removeAll(ampIdsFilter);
   }
 
   _getLatestActivities(ampIds) {
-    return new Promise((resolve, reject) =>
-      ampIds.reduce((currentPromise, nextAmpId) => currentPromise.then(
-        () => {
-          if (this._cancel) {
-            return resolve();
-          }
-          return this._exportActivity(nextAmpId);
-        }), Promise.resolve()).then(resolve).catch(reject));
+    // TODO remove as part of AMPOFFLINE-273 or AMPOFFLINE-274 (or other dervided tasks)
+    ampIds = ampIds.slice(0, FIRST_ACTIVITIES_EXPORT_LIMIT); // eslint-disable-line no-param-reassign
+    return new Promise(
+      (resolve, reject) => {
+        // we need to ensure we run chain promises execution in order: get, remove existing, save, process error
+        const pFactories = [];
+        ampIds.forEach(ampId => {
+          const fnExport = this._exportActivity.bind(this, ampId);
+          pFactories.push(...[fnExport, this._removeExistingNonRejected, this._saveExport, this._onExportError]);
+        });
+
+        return pFactories.reduce((currentPromise, pFactory) =>
+            currentPromise.then(pFactory), Promise.resolve()).then(resolve).catch(reject);
+      });
   }
 
   _exportActivity(ampId) {
     // TODO content translations (iteration 2)
-    return ConnectionHelper.doGet({ url: ACTIVITY_EXPORT_URL, paramasMap: { 'amp-id': ampId } })
-      .then(this._processActivityExport, this._onExportError);
+    return Promise.resolve()
+      .then(() => ConnectionHelper.doGet({ url: ACTIVITY_EXPORT_URL, paramsMap: { 'amp-id': ampId } }))
+      .catch((error) => this._onExportError(null, error));
   }
 
-  static _onExportError(error) {
-    console.error(error);
-    // TODO any special handling
-    // normally shouldn't happen
-  }
-
-  static _processActivityExport(activity) {
+  _removeExistingNonRejected(activity, error) {
+    if (error) {
+      return Promise.resolve(activity, error);
+    }
     return ActivityHelper.removeNonRejectedByAmpId(activity[AC.AMP_ID])
-      .then(() => ActivityHelper.saveOrUpdate(activity));
+      .then(() => activity);
+  }
+
+  _saveExport(activity, error) {
+    if (error) {
+      return Promise.resolve(activity, error);
+    }
+    return ActivityHelper.saveOrUpdate(activity)
+      .then(() => activity)
+      .catch((err) => this._onExportError(null, err));
+  }
+
+  _onExportError(activity, error) {
+    console.log('_onExportError');
+    // TODO the un-synced activity should be remembered and re-synced on next attempt AMPOFFLINE-256
+    if (error) {
+      console.error(error);
+    }
+    return Promise.resolve();
   }
 }

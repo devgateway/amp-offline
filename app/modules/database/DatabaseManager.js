@@ -411,19 +411,29 @@ const DatabaseManager = {
 
   findAllWithProjections(example, collectionName, projections) {
     console.log('findAllWithProjections');
-    const newProjections = Object.assign({ _id: 0 }, projections);
     return new Promise((resolve, reject) => {
-      DatabaseManager._getCollection(collectionName, null).then((collection) => {
-        collection.find(example, newProjections, (err, docs) => {
-          if (err !== null) {
-            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
-          }
-          if (docs !== null) {
-            resolve(docs);
-          }
-        });
-      }).catch(reject);
+      const removeByIdFunc = this._findAllWithProjections.bind(null, example)
+        .bind(null, collectionName)
+        .bind(null, projections)
+        .bind(null, resolve)
+        .bind(null, reject);
+      this.queuePromise(removeByIdFunc, resolve, reject);
     });
+  },
+
+  _findAllWithProjections(example, collectionName, projections, resolve, reject) {
+    console.log('findAllWithProjections');
+    const newProjections = Object.assign({ _id: 0 }, projections);
+    DatabaseManager._getCollection(collectionName, null).then((collection) => {
+      collection.find(example, newProjections, (err, docs) => {
+        if (err !== null) {
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+        }
+        if (docs !== null) {
+          resolve(docs);
+        }
+      });
+    }).catch(reject);
   },
 
   encryptData(dataString) {

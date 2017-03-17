@@ -36,26 +36,29 @@ const SyncUpManager = {
       fn: WorkspaceMemberSyncUpManager.syncWorkspaceMembers,
       context: WorkspaceMemberSyncUpManager
     },
+    // keep import placeholder first or, if needed, change _configureActivitiesImportSyncUp, or AMPOFFLINE-209
+    { type: SYNCUP_TYPE_ACTIVITIES },
     {
       type: SYNCUP_TYPE_ACTIVITIES,
-      fn: () => {
-        const importToAMP = new ActivitiesImportToAMP();
-        return importToAMP.importActivitiesToAMP;
-      },
-      context: ActivitiesImportToAMP
+      fn: (saved, removed) => {
+        const exporter = new ActivitiesExportFromAMP();
+        return exporter.exportActivitiesFromAMP(saved, removed);
+      }
     },
     { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
     { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
     { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings }
   ],
 
-  activitiesExport: {
+  _noActivitiesImport: { type: SYNCUP_TYPE_ACTIVITIES },
+
+  _activitiesImport: {
     type: SYNCUP_TYPE_ACTIVITIES,
-    fn: () => {
-      const exportToAMP = new ActivitiesExportFromAMP();
-      return exportToAMP.exportActivitiesFromAMP;
-    },
-    context: ActivitiesExportFromAMP
+    fn: (saved, removed) => {
+      // passing importer as a context doesn't work (this is undefined, even though in debug it is set)
+      const importer = new ActivitiesImportToAMP();
+      return importer.importActivitiesToAMP(saved, removed);
+    }
   },
 
   /**
@@ -122,15 +125,17 @@ const SyncUpManager = {
   syncUpAllTypesOnDemand() {
     console.log('syncUpAllTypesOnDemand');
     // run sync up with activities import first time, then with activities export
+    // TODO a better solution can be done through AMPOFFLINE-209
+    this._configureActivitiesImportSyncUp(this._activitiesImport);
     return this._doSyncUp().then(() => {
-      this._configureExportInsteadOfImport();
+      this._configureActivitiesImportSyncUp(this._noActivitiesImport);
       return this._doSyncUp();
     });
   },
 
-  _configureExportInsteadOfImport() {
+  _configureActivitiesImportSyncUp(activitiesImport) {
     const activitiesStep = this.syncUpModuleList.findIndex(el => el.type === SYNCUP_TYPE_ACTIVITIES);
-    this.syncUpModuleList[activitiesStep] = this.activitiesExport;
+    this.syncUpModuleList[activitiesStep] = activitiesImport;
   },
 
   _doSyncUp() {
@@ -194,7 +199,7 @@ const SyncUpManager = {
           // Activities, ws members, etc.
           const saved = changeItem.saved;
           const removed = changeItem.removed;
-          return type.fn.call(type.context, saved, removed).then(resolve(ret)).catch(reject);
+          return type.fn.call(type.context, saved, removed).then(() => resolve(ret)).catch(reject);
         } else {
           return type.fn().then(resolve(ret)).catch(reject);
         }
