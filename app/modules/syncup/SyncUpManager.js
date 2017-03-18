@@ -85,11 +85,13 @@ const SyncUpManager = {
 
   _saveMainSyncUpLog({ status, userId, modules, newTimestamp }) {
     console.log('_saveMainSyncUpLog');
+    const syncDate = new Date();
     const log = {
       id: Math.random(),
       status,
       'requested-by': userId,
       modules,
+      'sync-date': syncDate.toISOString()
     };
     log[SYNCUP_DATETIME_FIELD] = newTimestamp;
     return SyncUpHelper.saveOrUpdateSyncUp(log);
