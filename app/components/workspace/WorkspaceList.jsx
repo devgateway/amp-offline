@@ -1,4 +1,3 @@
-// @flow
 import React, { Component, PropTypes } from "react";
 import styles from "./Workspace.css";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";

@@ -1,15 +1,17 @@
+/* eslint no-nested-ternary: 0*/
+
 import request from 'request';
 import RequestConfig from './RequestConfig';
 import Notification from '../helpers/NotificationHelper';
 import { MAX_RETRY_ATEMPTS, ERRORS_TO_RETRY } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_API_SECURITY,
-  NOTIFICATION_ORIGIN_API_NETWORK,
-  NOTIFICATION_SEVERITY_ERROR
-} from "../../utils/constants/ErrorConstants";
-import store from "../../index";
-import { loginAutomaticallyAction, logoutAction } from "../../actions/LoginAction";
-import translate from "../../utils/translate";
+  NOTIFICATION_ORIGIN_API_NETWORK
+} from '../../utils/constants/ErrorConstants';
+import store from '../../index';
+import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
+import translate from '../../utils/translate';
+
 const ConnectionHelper = {
 
   doGet({ url, paramsMap, shouldRetry, extraUrlParam }) {
@@ -35,19 +37,20 @@ const ConnectionHelper = {
     return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
   },
 
-  _doMethod(requestConfig, maxRetryAttemps, shouldRetry) {
+  _doMethod(requestConfig, maxRetryAttempts, shouldRetry) {
     console.log('_doMethod ');
     console.log(requestConfig.url);
     const self = this;
-    return new Promise((resolve, reject) => {
-      return request(requestConfig, (error, response, body) => {
-        if (error || !(response.statusCode >= 200 && response.statusCode < 400 ) || body.error) {
-          const shouldRetryOnError = ERRORS_TO_RETRY.filter((value) => {
-            return value === (error ? error.code : (body ? body.error : 'unknownNetworkError'));
-          });
+    return new Promise((resolve, reject) => (
+      request(requestConfig, (error, response, body) => {
+        if (error || !(response.statusCode >= 200 && response.statusCode < 400) || body.error) {
+          const shouldRetryOnError = ERRORS_TO_RETRY.filter((value) => (
+            value === (error ? error.code : (body ? body.error : 'unknownNetworkError'))
+          ));
           if (shouldRetryOnError.length > 0) {
-            if (maxRetryAttemps > 0 && shouldRetry) {
-              return this._doMethod(requestConfig, --maxRetryAttemps, shouldRetry).then(resolve).catch(reject);
+            if (maxRetryAttempts > 0 && shouldRetry) {
+              maxRetryAttempts -= 1;
+              return this._doMethod(requestConfig, maxRetryAttempts, shouldRetry).then(resolve).catch(reject);
             } else {
               const notifErrorTimeout = this.createNotification({
                 message: translate('timeoutError'),
@@ -57,11 +60,11 @@ const ConnectionHelper = {
             }
           } else if (response && response.statusCode === 401) {
             // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
-            return store.dispatch(loginAutomaticallyAction()).then((data) => {
+            return store.dispatch(loginAutomaticallyAction()).then(() => {
               const options_ = RequestConfig.replaceToken(requestConfig);
-              return self._doMethod(options_).then((body_) => {
-                resolve(body_);
-              }).catch((error_) => {
+              return self._doMethod(options_).then((body_) => (
+                resolve(body_)
+              )).catch((error_) => {
                 // If we couldnt relogin online automatically we logout completely and forward to login page.
                 reject(this.createNotification({ errorObject: error_, origin: NOTIFICATION_ORIGIN_API_SECURITY }));
                 return store.dispatch(logoutAction());
@@ -82,8 +85,8 @@ const ConnectionHelper = {
         } else {
           resolve(body);
         }
-      });
-    });
+      })
+    ));
   },
 
   createNotification({ message, origin, errorObject }) {

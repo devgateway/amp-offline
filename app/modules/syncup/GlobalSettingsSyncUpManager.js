@@ -13,11 +13,11 @@ const GlobalSettingsSyncUpManager = {
    */
   syncUpGlobalSettings() {
     console.log('syncUpGlobalSettings');
-    return new Promise((resolve, reject) => {
-      return ConnectionHelper.doGet({ url: GLOBAL_SETTINGS_URL }).then(
+    return new Promise((resolve, reject) => (
+      ConnectionHelper.doGet({ url: GLOBAL_SETTINGS_URL }).then(
         (data) => GlobalSettingsHelper.saveGlobalSetting(data).then(resolve).catch(reject)
-      ).catch(reject);
-    });
+      ).catch(reject)
+    ));
   }
 
 };

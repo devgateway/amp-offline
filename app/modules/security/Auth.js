@@ -17,10 +17,9 @@ const Auth = {
     };
     return new Promise((resolve, reject) => {
       const shouldRetry = true;
-      ConnectionHelper.doPost({ url, body ,shouldRetry}).then((data) => {
-        resolve(data);
-        console.log(body);
-      }).catch(reject);
+      ConnectionHelper.doPost({ url, body, shouldRetry }).then((data) => (
+        resolve(data)
+      )).catch(reject);
     });
   },
 
@@ -58,13 +57,14 @@ const Auth = {
         ['encrypt', 'decrypt']
       )).then((webKey) => crypto.subtle.exportKey('raw', webKey)).then((buffer) => {
         const passwordHash = Buffer.from(buffer).toString('hex');
-        resolve(passwordHash);
-      }).catch((err) => {
-        reject(new Notification({
-          message: `Key derivation failed: ${err.message}`,
-          origin: NOTIFICATION_ORIGIN_AUTHENTICATION
-        }));
-      });
+        return resolve(passwordHash);
+      })
+        .catch((err) => {
+          reject(new Notification({
+            message: `Key derivation failed: ${err.message}`,
+            origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+          }));
+        });
     });
   },
 

@@ -1,4 +1,3 @@
-// @flow
 import {
   STATE_CHANGE_LANGUAGE,
   STATE_LOADING_LIST_OF_LANGUAGES,
@@ -12,7 +11,7 @@ const defaultState = {
   loadingListOfLanguages: false
 };
 
-export default function translation(state = defaultState, action: Object) {
+export default function translation(state: Object = defaultState, action: Object) {
   console.log('translation');
   switch (action.type) {
     case STATE_CHANGE_LANGUAGE:
