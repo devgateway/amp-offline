@@ -34,6 +34,7 @@ export const LANGUAGE_ENGLISH = 'en';
 export const FS_LOCALES_DIRECTORY = './lang/';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
+export const APP_DIRECTORY = './app/';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
