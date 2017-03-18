@@ -1,3 +1,4 @@
+/* eslint "no-nested-ternary": 0 */
 import syncUpUsers from './SyncUpUsers';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import {
@@ -43,8 +44,8 @@ const SyncUpManager = {
    */
   getLastSuccessfulSyncUp() {
     console.log('getLastSuccessfulSyncUps');
-    return new Promise((resolve, reject) => {
-      return SyncUpHelper.findAllSyncUpByExample({
+    return new Promise((resolve, reject) => (
+      SyncUpHelper.findAllSyncUpByExample({
         status: SYNCUP_STATUS_SUCCESS,
         $not: { timestamp: null }
       }).then(data => {
@@ -55,8 +56,8 @@ const SyncUpManager = {
         const emptyDateItem = {};
         emptyDateItem[SYNCUP_DATETIME_FIELD] = SYNCUP_NO_DATE; // just not to leave it undefined.
         return resolve(emptyDateItem);
-      }).catch(reject);
-    });
+      }).catch(reject)
+    ));
   },
 
   /**
@@ -77,7 +78,7 @@ const SyncUpManager = {
    * Check the timestamp of the newest successful syncup older than N days (or none),
    * produce a sublist from 'syncUpModuleList' and call _syncUpTypes with it.
    */
-  syncUpTooOldTypes(days) {
+  syncUpTooOldTypes(/* days */) {
     console.log('syncUpTooOldTypes');
     // TODO: To be implemented.
   },
@@ -102,35 +103,35 @@ const SyncUpManager = {
     console.log('syncUpAllTypesOnDemand');
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
-    return new Promise((resolve, reject) => {
-      return Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSuccessfulSyncUp()]).then((promises) => {
+    return new Promise((resolve, reject) => (
+      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSuccessfulSyncUp()]).then((promises) => {
         const lastSuccessfulSyncUp = promises[1];
         const userId = store.getState().user.userData.id;
         const oldTimestamp = lastSuccessfulSyncUp[SYNCUP_DATETIME_FIELD];
-        return this.getWhatChangedInAMP(userId, oldTimestamp)
-          .then((changes) => {
-            // Get list of types that need to be synced.
-            const toSyncList = this._filterOutModulesToSync(changes);
-            // Call each sync EP in parallel.
-            return this._syncUpTypes(toSyncList, changes).then((modules) => {
-              console.log('SyncUp Ok');
-              const status = SYNCUP_STATUS_SUCCESS;
-              const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
-              return this._saveMainSyncUpLog({ status, userId, modules, newTimestamp }).then((log) => {
-                const restart = true;
-                return store.dispatch(loadAllLanguages(restart).then(resolve(log)));
-              }).catch(reject);
-            }).catch(err => {
-              console.log('SyncUp Fail');
-              // Always reject so we can display the error after saving the log.
-              return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(reject(err)).catch(reject);
-            });
-          }).catch(reject);
-      }).catch(reject);
-    });
+        return this.getWhatChangedInAMP(userId, oldTimestamp).then((changes) => {
+          // Get list of types that need to be synced.
+          const toSyncList = this._filterOutModulesToSync(changes);
+          // Call each sync EP in parallel.
+          return this._syncUpTypes(toSyncList, changes).then((modules) => {
+            console.log('SyncUp Ok');
+            const status = SYNCUP_STATUS_SUCCESS;
+            const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
+            return this._saveMainSyncUpLog({ status, userId, modules, newTimestamp }).then((log) => {
+              const restart = true;
+              return store.dispatch(loadAllLanguages(restart).then(resolve(log)));
+            }).catch(reject);
+          }).catch(err => {
+            console.log('SyncUp Fail');
+            // Always reject so we can display the error after saving the log.
+            return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(reject(err)).catch(reject);
+          });
+        }).catch(reject);
+      }).catch(reject)
+    ));
   },
 
   _filterOutModulesToSync(changes) {
+    console.log('_filterOutModulesToSync');
     // Filter out syncUpModuleList and keep only what needs to be resynced.
     return this.syncUpModuleList.filter((item) => {
       const changeItem = changes[item.type];
@@ -139,9 +140,11 @@ const SyncUpManager = {
         if (changeItem.removed.length > 0 || changeItem.saved.length > 0) {
           return item;
         }
+        return undefined;
       } else if (changeItem === true) { // Workspaces, translations, etc.
         return item;
       }
+      return undefined;
     });
   },
 
@@ -151,8 +154,9 @@ const SyncUpManager = {
    */
   _syncUpTypes(types, changes) {
     console.log('_syncUpTypes');
-    const fnSync = (type) => {
-      return new Promise((resolve, reject) => {
+
+    const fnSync = (type) => (
+      new Promise((resolve, reject) => {
         const changeItem = changes[type.type];
         const ret = { type: type.type, status: SYNCUP_STATUS_SUCCESS };
         if (changeItem instanceof Object) {
@@ -163,8 +167,8 @@ const SyncUpManager = {
         } else {
           return type.fn().then(resolve(ret)).catch(reject);
         }
-      });
-    };
+      })
+    );
 
     const promises = types.map(fnSync);
     return Promise.all(promises);

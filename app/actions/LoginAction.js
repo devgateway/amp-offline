@@ -1,4 +1,4 @@
-// @flow
+/* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
 import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';

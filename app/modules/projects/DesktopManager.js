@@ -1,3 +1,4 @@
+/* eslint "no-nested-ternary": 0 */
 import translate from '../../utils/translate';
 import { ACTIVITY_EDIT, ACTIVITY_VIEW } from '../../utils/Constants';
 
@@ -87,17 +88,17 @@ const rejectedProjects = [{
 
 const DesktopManager = {
 
-  generateDesktopData(teamId) {
+  generateDesktopData() {
     console.log('generateDesktopData');
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // TODO: go to an EP and load the projects from this WS, then combine with the local projects. This is just
       // an example to show some data in the tabs.
-      const activeProjectsWithLinks = activeProjects.map((item) => {
-        return Object.assign({}, item, {
+      const activeProjectsWithLinks = activeProjects.map((item) => (
+        Object.assign({}, item, {
           key: item.id,
           icon: (item.edit ? ACTIVITY_EDIT : (item.view ? ACTIVITY_VIEW : ''))
-        });
-      });
+        })
+      ));
       resolve({
         activeProjectsWithLinks,
         rejectedProjects,
@@ -112,14 +113,14 @@ const DesktopManager = {
     return number;
   },
 
-  generateDefaultTabsStructure(rojectsWithLinks, rejectedProjects) {
+  generateDefaultTabsStructure(projectsWithLinks, rejected) {
     // TODO: this function can be more complex and take data from GS, local preferences, etc.
     const defaultTabs = [
       {
         id: 0,
         name: translate('Activities'),
         isActive: true,
-        projects: rojectsWithLinks,
+        projects: projectsWithLinks,
         sorting: null,
         page: 0
       },
@@ -127,7 +128,7 @@ const DesktopManager = {
         id: 1,
         name: translate('Rejected Activities'),
         isActive: false,
-        projects: rejectedProjects,
+        projects: rejected,
         sorting: null,
         page: 0
       }

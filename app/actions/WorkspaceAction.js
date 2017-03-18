@@ -11,7 +11,7 @@ export const STATE_WORKSPACE_ERROR = 'STATE_WORKSPACE_ERROR';
 
 // TODO: THIS must be properly integrated through AMPOFFLINE-147
 export function selectWorkspace(wsId) {
-  return (dispatch, ownProps) => {
+  return (dispatch) => {
     // With data we load ws.
     WorkspaceManager.findWorkspaceById(wsId).then((data) => {
       const actionData = {
@@ -42,7 +42,7 @@ export function selectWorkspace(wsId) {
        */
 
       // This is like "chaining actions".
-      dispatch(loadDesktop(wsId));
+      return dispatch(loadDesktop(wsId));
     }).catch(errorFetchingWorkspace => {
       console.log(errorFetchingWorkspace);
       throw errorFetchingWorkspace;
@@ -50,18 +50,18 @@ export function selectWorkspace(wsId) {
   };
 }
 export function loadWorkspaces() {
-  return (dispatch, ownProps) => {
+  return (dispatch) => {
     dispatch({ type: STATE_WORKSPACE_LOADING });
     const userId = {};
     // TODO extract user id
-    WorkspaceManager.findAllWorkspacesForUser(userId).then((workspaces) => {
-      //dispatch sucess on load action
-      //this.props.workspace.workspaceList
-      dispatch({ type: STATE_WORKSPACE_LOADED, actionData: workspaces });
-    }).catch((error) => {
-      //dispatch sucess on error load
-      dispatch({ type: STATE_WORKSPACE_ERROR, actionData: workspaces });
+    WorkspaceManager.findAllWorkspacesForUser(userId).then((workspaces) => (
+      // dispatch sucess on load action
+      // this.props.workspace.workspaceList
+      dispatch({ type: STATE_WORKSPACE_LOADED, actionData: workspaces })
+    )).catch((error) => {
       console.log(error);
+      // dispatch sucess on error load
+      return dispatch({ type: STATE_WORKSPACE_ERROR, actionData: error });
     });
   };
 }

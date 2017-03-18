@@ -1,4 +1,3 @@
-// @flow
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import style from './ProjectList.css';

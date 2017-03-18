@@ -1,13 +1,17 @@
+/* eslint no-unused-vars: 0 */
+
 /**
  * Base webpack config used across other specific configs
  */
 import StringReplacePlugin from 'string-replace-webpack-plugin';
 import path from 'path';
 import validate from 'webpack-validator';
+import webpack from 'webpack';
 import {
   dependencies as externals
 } from './app/package.json';
-import webpack from 'webpack';
+
+const packageJson = require('./app/package.json');
 
 export default validate({
   module: {
@@ -18,50 +22,46 @@ export default validate({
     }, {
       test: /\.json$/,
       loader: 'json-loader'
-    },
-      {
-        test: /Constants.js$/,
-        loader: StringReplacePlugin.replace({
-          replacements: [
-            {
-              pattern: /__SERVER_URL__/,
-              replacement: function (match, p1, offset, string) {
-                console.log('server url ' + process.env.npm_package_config_ampServerUrl);
-                return process.env.npm_package_config_ampServerUrl;
-              }
+    }, {
+      test: /Constants.js$/,
+      loader: StringReplacePlugin.replace({
+        replacements: [
+          {
+            pattern: /__SERVER_URL__/,
+            replacement: (match, p1, offset, string) => {
+              console.log(`server url ${process.env.npm_package_config_ampServerUrl}`);
+              return process.env.npm_package_config_ampServerUrl;
             }
-          ],
-        })
-      },
-      {
-        test: /Constants.js$/,
-        loader: StringReplacePlugin.replace({
-          replacements: [
-            {
-              pattern: /__SERVER_PORT__/,
-              replacement: function (match, p1, offset, string) {
-                console.log('server port ' + process.env.npm_package_config_ampServerPort);
-                return process.env.npm_package_config_ampServerPort;
-              }
+          }
+        ],
+      })
+    }, {
+      test: /Constants.js$/,
+      loader: StringReplacePlugin.replace({
+        replacements: [
+          {
+            pattern: /__SERVER_PORT__/,
+            replacement: (match, p1, offset, string) => {
+              console.log(`server port ${process.env.npm_package_config_ampServerPort}`);
+              return process.env.npm_package_config_ampServerPort;
             }
-          ],
-        })
-      },
-      {
-        test: /Constants.js$/,
-        loader: StringReplacePlugin.replace({
-          replacements: [
-            {
-              pattern: /__SERVER_PROTOCOL__/,
-              replacement: function (match, p1, offset, string) {
-                console.log('server protocol ' + process.env.npm_package_config_ampServerProtocol);
-                return process.env.npm_package_config_ampServerProtocol;
-              }
+          }
+        ],
+      })
+    }, {
+      test: /Constants.js$/,
+      loader: StringReplacePlugin.replace({
+        replacements: [
+          {
+            pattern: /__SERVER_PROTOCOL__/,
+            replacement: (match, p1, offset, string) => {
+              console.log(`server protocol ${process.env.npm_package_config_ampServerProtocol}`);
+              return process.env.npm_package_config_ampServerProtocol;
             }
-          ],
-        })
-      }
-    ],
+          }
+        ],
+      })
+    }],
   },
 
   output: {
@@ -80,7 +80,7 @@ export default validate({
 
   plugins: [
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(require('./app/package.json').version)
+      VERSION: JSON.stringify(packageJson.version)
     }), new StringReplacePlugin(),
   ],
 

@@ -54,3 +54,5 @@ export const SYNCUP_TYPE_ACTIVITIES = 'activities';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
+
+export const VERSION = '0.0.1';

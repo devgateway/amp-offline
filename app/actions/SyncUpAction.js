@@ -1,6 +1,5 @@
-// @flow
+/* eslint flowtype-errors/show-errors: 0 */
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
-
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 
 // Types of redux actions
@@ -15,12 +14,12 @@ export function getSyncUpHistory() {
   console.log('getSyncUpHistory');
   return (dispatch, ownProps) => {
     if (ownProps().syncUp.loadingSyncHistory === false) {
-      SyncUpManager.getSyncUpHistory().then((data) => {
+      SyncUpManager.getSyncUpHistory().then((data) => (
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        dispatch(syncUpSearchHistoryOk(data));
-      }).catch((err) => {
-        dispatch(syncUpSearchHistoryFailed(err));
-      });
+        dispatch(syncUpSearchHistoryOk(data))
+      )).catch((err) => (
+        dispatch(syncUpSearchHistoryFailed(err))
+      ));
     }
     dispatch(sendingRequest());
   };
@@ -30,16 +29,16 @@ export function startSyncUp(historyData) {
   console.log('startSyncUp');
   return (dispatch, ownProps) => {
     if (ownProps().syncUp.syncUpInProgress === false) {
-      SyncUpManager.syncUpAllTypesOnDemand().then((response) => {
+      SyncUpManager.syncUpAllTypesOnDemand().then(() => {
         // TODO probably the way in which we will update the ui will change
         // once we get the final version also it will change the way in which pass
         // the historyData object
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
         console.log('syncupSucessfull');
-        dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
+        return dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
       }).catch((err) => {
         console.log('syncupSucessfailed');
-        dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage: err } });
+        return dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage: err } });
       });
       dispatch(syncUpInProgress());
       console.log('startSyncUp');

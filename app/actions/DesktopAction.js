@@ -1,4 +1,4 @@
-// @flow
+/* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
 import DesktopManager from '../modules/projects/DesktopManager';
 
@@ -18,7 +18,7 @@ export function loadDesktop(teamId) {
           tabs: data.defaultTabs,
           paginationOptions: data.paginationOptions
         }));
-        UrlUtils.forwardTo(`/desktop/${teamId}`);
+        return UrlUtils.forwardTo(`/desktop/${teamId}`);
       }).catch((error) => {
         dispatch(errorLoadDesktop(error));
       });
@@ -29,7 +29,7 @@ export function loadDesktop(teamId) {
 function _loadDesktop(actionData) {
   return {
     type: STATE_DESKTOP_LOADED,
-    actionData: actionData,
+    actionData,
   };
 }
 

@@ -1,4 +1,3 @@
-// @flow
 import React, { Component, PropTypes } from 'react';
 import style from './Tabs.css';
 import Tab from './Tab';

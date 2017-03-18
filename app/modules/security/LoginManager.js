@@ -1,3 +1,5 @@
+/* eslint no-else-return: 0*/
+
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
 import Notification from '../helpers/NotificationHelper';
@@ -21,9 +23,9 @@ const LoginManager = {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
             return UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
               if (hash === dbUser.ampOfflinePassword) {
-                resolve({ dbUser });
+                return resolve({ dbUser });
               } else {
-                reject(new Notification({
+                return reject(new Notification({
                   message: 'wrongPassword',
                   origin: NOTIFICATION_ORIGIN_AUTHENTICATION
                 }));
@@ -36,7 +38,7 @@ const LoginManager = {
             if (isAMPAvailable) {
               return this.processOnlineLogin(email, password).then(resolve).catch(reject);
             } else {
-              reject(new Notification({
+              return reject(new Notification({
                 message: 'AMPUnreachableError',
                 origin: NOTIFICATION_ORIGIN_AUTHENTICATION
               }));
@@ -58,6 +60,8 @@ const LoginManager = {
       if (data) {
         delete data.ampOfflinePassword;
         return UserHelper.saveOrUpdateUser(data);
+      } else {
+        return undefined;
       }
     });
   },
@@ -70,21 +74,21 @@ const LoginManager = {
    */
   processOnlineLogin(email, password) {
     console.log('processOnlineLogin');
-    return new Promise((resolve, reject) => {
-      return Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => {
-        return Auth.onlineLogin(email, passwordDigest).then((data) => {
-          return this.saveLoginData(data, email, password).then((dbData) => {
-            resolve({ dbUser: dbData, token: data.token });
-          }).catch(reject);
-        }).catch((error) => {
+    return new Promise((resolve, reject) => (
+      Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => (
+        Auth.onlineLogin(email, passwordDigest).then((data) => (
+          this.saveLoginData(data, email, password).then((dbData) => (
+            resolve({ dbUser: dbData, token: data.token })
+          )).catch(reject)
+        )).catch((error) => {
           // If error was caused because an authentication problem then we clear ampOfflinePassword.
           if (error.origin === NOTIFICATION_ORIGIN_API_SECURITY) {
             return this.clearCredentialsInDB(email);
           }
           reject(error);
-        });
-      });
-    });
+        })
+      ))
+    ));
   },
 
   /**
@@ -92,8 +96,8 @@ const LoginManager = {
    */
   saveLoginData(userData, email, password) {
     console.log('saveLoginData');
-    return UserHelper.findByEmail(email).then((dbData) => {
-      return UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
+    return UserHelper.findByEmail(email).then((dbData) => (
+      UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
         if (dbData) {
           dbData.ampOfflinePassword = hash;
           return UserHelper.saveOrUpdateUser(dbData);
@@ -103,8 +107,8 @@ const LoginManager = {
           dbUserData.ampOfflinePassword = hash;
           return UserHelper.saveOrUpdateUser(dbUserData);
         }
-      });
-    });
+      })
+    ));
   }
 };
 
