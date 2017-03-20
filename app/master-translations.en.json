@@ -45,5 +45,7 @@
   "Actual Disbursements": "Actual Disbursements",
   "Next": "Next",
   "Prev": "Prev",
-  "timeoutError": "Connection timeout. Please check your internet connection."
+  "timeoutError": "Connection timeout. Please check your internet connection.",
+  "noWorkspace": "No workspace is selected",
+  "noFieldsDef": "No fields definition found"
 }
