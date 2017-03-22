@@ -56,6 +56,7 @@ export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
 
-// TODO this is a temporary limitation of the initial set of activities to export, AMPOFFLINE-273 or AMPOFFLINE-274
-export const FIRST_ACTIVITIES_EXPORT_LIMIT = 50;
 export const VERSION = '0.0.1';
+
+// TODO this is a temporary limitation of the initial set of activities to export, AMPOFFLINE-273 or AMPOFFLINE-274
+export const FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT = 50;

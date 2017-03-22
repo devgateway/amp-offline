@@ -12,10 +12,10 @@ import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 
 /* eslint-disable class-methods-use-this */
 /**
- * Activities Import to AMP Manager
+ * Activities push to AMP Manager
  * @author Nadejda Mandrescu
  */
-export default class ActivitiesImportToAMP {
+export default class ActivitiesPushToAMP {
   constructor() {
     this._cancel = false;
   }
@@ -32,12 +32,12 @@ export default class ActivitiesImportToAMP {
     this._cancel = cancel;
   }
   /**
-   * Imports activities to AMP
+   * Pushes activities to AMP
    * @param saved the activities saved as new or update on AMP
    * @param removed deleted activities on AMP
    * @return {Promise}
    */
-  importActivitiesToAMP(saved, removed) {
+  pushActivitiesToAMP(saved, removed) {
     console.log('syncUpActivities');
     return new Promise((resolve, reject) => {
       // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
@@ -45,8 +45,8 @@ export default class ActivitiesImportToAMP {
         return this._rejectActivitiesClientSide(saved, removed)
           .then(() => {
             const steps = [
-              this._getValidUsers, this._getWSMembers, this._getActivitiesToImport, this._importActivities.bind(this)];
-            return this._importSteps(steps);
+              this._getValidUsers, this._getWSMembers, this._getActivitiesToPush, this._pushActivities.bind(this)];
+            return this._pushSteps(steps);
           }).then(resolve).catch(reject);
       }
       const errorMsgTrn = translate('SyncupDeniedMustRelogin');
@@ -72,8 +72,8 @@ export default class ActivitiesImportToAMP {
     return Promise.resolve([]);
   }
 
-  _importSteps(steps) {
-    console.log('_importSteps');
+  _pushSteps(steps) {
+    console.log('_pushSteps');
     return steps.reduce((currentPromise, promiseFactory) => currentPromise.then(promiseFactory), Promise.resolve());
   }
 
@@ -100,22 +100,22 @@ export default class ActivitiesImportToAMP {
    * @private
    * @returns {Promise}
    */
-  _getActivitiesToImport(workspaceMembers) {
-    console.log('_getActivitiesToImport');
+  _getActivitiesToPush(workspaceMembers) {
+    console.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
     return ActivityHelper.findAllNonRejectedModifiedOnClient(modifiedBySpecificWSMembers);
   }
 
   /**
-   * Imports activities to AMP and provides the activities that where rejected
+   * Pushes activities to AMP and provides the activities that where rejected
    * @param activities
    * @private
    * @return {Promise}
    */
-  _importActivities(activities) {
-    console.log('_importActivities');
-    // executing import one by one for now and sequentially to avoid AMP / client overload
+  _pushActivities(activities) {
+    console.log('_pushActivities');
+    // executing push one by one for now and sequentially to avoid AMP / client overload
     return new Promise((resolve, reject) => {
       if (!activities) {
         return Promise.resolve();
@@ -126,13 +126,13 @@ export default class ActivitiesImportToAMP {
             return resolve();
           }
           // uninterruptible call
-          return this._importActivity(nextActivity);
+          return this._pushActivity(nextActivity);
         }), Promise.resolve()).then(resolve).catch(reject);
     });
   }
 
-  _importActivity(activity) {
-    console.log('_importActivity');
+  _pushActivity(activity) {
+    console.log('_pushActivity');
     // TODO remove once invalid fields are ignored by AMP
     /* eslint-disable no-param-reassign */
     activity = Object.assign({}, activity);
@@ -146,22 +146,22 @@ export default class ActivitiesImportToAMP {
        */
       ConnectionHelper.doPost(
         { url: ACTIVITY_IMPORT_URL, body: activity, shouldRetry: false, extraUrlParam: activity[AC.INTERNAL_ID] })
-        .then((importResult) => this._processImportResult({ activity, importResult })).then(resolve)
-        .catch((error) => this._processImportResult({ activity, error }).then(resolve))
+        .then((pushResult) => this._processPushResult({ activity, pushResult })).then(resolve)
+        .catch((error) => this._processPushResult({ activity, error }).then(resolve))
     );
   }
 
   /**
-   * Process activity import result - an uninterruptable method
+   * Process activity push result - an uninterruptable method
    * @param activity
-   * @param importResult
+   * @param pushResult
    * @param error
    * @private
    */
-  _processImportResult({ activity, importResult, error }) {
-    console.log('_processImportResult');
+  _processPushResult({ activity, pushResult, error }) {
+    console.log('_processPushResult');
     // save the rejection immediately to allow a quicker syncup cancellation
-    const errorData = error || (importResult ? importResult.error : undefined);
+    const errorData = error || (pushResult ? pushResult.error : undefined);
     if (errorData) {
       // TODO the unsynced activity should be remembered and resynced on next attempt AMPOFFLINE-256
       return new Promise((resolve, reject) => ActivityHelper.removeNonRejectedById(activity.id)
