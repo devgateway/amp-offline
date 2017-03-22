@@ -12,22 +12,28 @@ const possibleValuesSchema = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    'possible-options': {
+    'field-path': {
       type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'integer' },
-          'parent-id': { type: 'integer' },
-          value: {
-            anyOf: [{ type: 'string' }, { type: 'object' }]
-          }
-        },
-        required: ['id', 'value']
+      items: { type: 'string' }
+    },
+    'possible-options': {
+      type: 'object',
+      properties: {
+        id: { type: 'integer' },
+        value: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            value: {
+              anyOf: [{ type: 'string' }, { type: 'object' }]
+            }
+          },
+          required: ['id', 'value']
+        }
       }
     }
   },
-  required: ['id', 'possible-options']
+  required: ['id', 'field-path', 'possible-options']
 };
 
 /**

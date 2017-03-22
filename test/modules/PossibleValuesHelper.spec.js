@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha';
 import * as actions from '../../app/modules/helpers/PossibleValuesHelper';
+import PossibleValuesSyncUpManager from '../../app/modules/syncup/PossibleValuesSyncUpManager';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -7,23 +8,20 @@ const chaiAsPromised = require('chai-as-promised');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const pv1 = {
-  id: 'donor_organization~organization',
-  'possible-options': [
+const pv1 = PossibleValuesSyncUpManager.transformToClientUsage({
+  'donor_organization~organization': [
     {
       id: 1,
       value: 'African Capacity Building Foundation'
     },
     {
       id: 2,
-      'parent-id': 1,
       value: 'Agence Canadienne pour le Développement International'
     }
   ]
-};
-const pv2 = {
-  id: 'executing_agency~organization',
-  'possible-options': [
+});
+const pv2 = PossibleValuesSyncUpManager.transformToClientUsage({
+  'executing_agency~organization': [
     {
       id: 3,
       value: 'Agence Française de Développement'
@@ -33,10 +31,9 @@ const pv2 = {
       value: "Agence internationale de l'Energie Atomique"
     }
   ]
-};
-const pvTranslations = {
-  id: 'beneficiary_agency~organization',
-  'possible-options': [
+});
+const pvTranslations = PossibleValuesSyncUpManager.transformToClientUsage({
+  'beneficiary_agency~organization': [
     {
       id: 3,
       value: {
@@ -50,11 +47,11 @@ const pvTranslations = {
       }
     }
   ]
-};
+});
 
 const validPossibleValuesColl = [pv1, pv2, pvTranslations];
 const invalidPV = { id: 'some-id', 'invalid-field-name': 'some value' };
-const missingId = { 'possible-options': { id: 2, value: 'aa' } };
+const missingId = { 'possible-options': { 2: { id: 2, value: 'aa' } } };
 const mixedValidInvalid = [pv1, invalidPV];
 
 describe('@@ PossibleValuesHelper @@', () => {
