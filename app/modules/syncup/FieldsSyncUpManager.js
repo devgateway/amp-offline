@@ -6,12 +6,6 @@ import Notification from '../helpers/NotificationHelper';
 import * as Utils from '../../utils/Utils';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
-// TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
-const FIELDS_ERROR = new Notification({
-  message: 'noUniqueFieldsTree',
-  origin: NOTIFICATION_ORIGIN_DATABASE
-});
-
 /* eslint-disable class-methods-use-this */
 
 // TODO update once AMP-25568 is also done, as part of AMPOFFLINE-270
@@ -56,7 +50,11 @@ export default class FieldsSyncUpManager {
       if (fieldDefs.length === 1) {
         return Promise.resolve(fieldDefs[0].fields);
       }
-      return Promise.reject(FIELDS_ERROR);
+      // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
+      return Promise.reject(new Notification({
+        message: 'noUniqueFieldsTree',
+        origin: NOTIFICATION_ORIGIN_DATABASE
+      }));
     });
   }
 

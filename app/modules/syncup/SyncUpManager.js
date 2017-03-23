@@ -204,6 +204,7 @@ const SyncUpManager = {
   /**
    * Iterate the list of types (which is a sublist of 'syncUpModuleList') and perform all 'fn' functions.
    * @param types
+   * @param changes
    */
   _syncUpTypes(types, changes) {
     console.log('_syncUpTypes');
