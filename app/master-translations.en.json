@@ -47,5 +47,6 @@
   "Prev": "Prev",
   "timeoutError": "Connection timeout. Please check your internet connection.",
   "SyncupDeniedMustRelogin": "You are not allowed to sync up. Please re-login",
-  "Rejected": "Rejected"
+  "Rejected": "Rejected",
+  "noUniqueFieldsTree": "No unique fields tree is found for usage"
 }

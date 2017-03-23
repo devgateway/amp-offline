@@ -1,5 +1,5 @@
 /* eslint "no-nested-ternary": 0 */
-import syncUpUsers from './SyncUpUsers';
+import syncUpUsers from './UsersSyncUpManager';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import {
   TEST_URL,
@@ -16,6 +16,7 @@ import {
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACES,
   SYNCUP_TYPE_ACTIVITIES,
+  SYNCUP_TYPE_FIELDS,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_STATUS_FAIL,
   SYNCUP_DATETIME_FIELD,
@@ -26,6 +27,7 @@ import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
 import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
 import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
+import FieldsSyncUpManager from './FieldsSyncUpManager';
 
 const SyncUpManager = {
 
@@ -44,6 +46,13 @@ const SyncUpManager = {
       fn: (saved, removed) => {
         const exporter = new ActivitiesPullFromAMPManager();
         return exporter.pullActivitiesFromAMP(saved, removed);
+      }
+    },
+    {
+      type: SYNCUP_TYPE_FIELDS,
+      fn: () => {
+        const fieldsSyncUp = new FieldsSyncUpManager();
+        return fieldsSyncUp.syncUp();
       }
     },
     { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
@@ -175,6 +184,8 @@ const SyncUpManager = {
   _filterOutModulesToSync(changes) {
     console.log('_filterOutModulesToSync');
     // Filter out syncUpModuleList and keep only what needs to be resynced.
+    // TODO: remove this flag once AMP-25568 is done
+    changes[SYNCUP_TYPE_FIELDS] = true; // eslint-disable-line no-param-reassign
     return this.syncUpModuleList.filter((item) => {
       const changeItem = changes[item.type];
       if (changeItem instanceof Object) {
@@ -193,6 +204,7 @@ const SyncUpManager = {
   /**
    * Iterate the list of types (which is a sublist of 'syncUpModuleList') and perform all 'fn' functions.
    * @param types
+   * @param changes
    */
   _syncUpTypes(types, changes) {
     console.log('_syncUpTypes');
@@ -207,7 +219,7 @@ const SyncUpManager = {
           const removed = changeItem.removed;
           return type.fn.call(type.context, saved, removed).then(() => resolve(ret)).catch(reject);
         } else {
-          return type.fn().then(resolve(ret)).catch(reject);
+          return type.fn().then(() => resolve(ret)).catch(reject);
         }
       })
     );

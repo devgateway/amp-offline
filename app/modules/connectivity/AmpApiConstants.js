@@ -12,6 +12,9 @@ export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
 export const ACTIVITY_IMPORT_URL = '/activity';
 export const ACTIVITY_EXPORT_URL = '/activity/project';
+// TODO remove as part of AMPOFFLINE-270
+export const SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
+export const FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
