@@ -1,6 +1,7 @@
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
 import { URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
+import { VERSION } from '../utils/Constants';
 // TODO: this is temporary to move on and final binding to the store will be done through AMPOFFLINE-103
 import store from '../index';
 

@@ -1,4 +1,3 @@
-// @flow
 import React, { Component, PropTypes } from 'react';
 import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';

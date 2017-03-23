@@ -1,4 +1,3 @@
-// @flow
 import React, { Component, PropTypes } from 'react';
 import Switcher from '../../components/i18n/Switcher';
 import style from './Navbar.css';

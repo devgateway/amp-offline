@@ -43,6 +43,27 @@ const Utils = {
     return result;
   },
 
+  toDefinedOrNullRule(key) {
+    const result = {};
+    result[key] = { $exists: true };
+    return result;
+  },
+
+  toDefinedNotNullRule(key) {
+    const result = {};
+    result[key] = { $and: [{ $exists: true }, { $ne: null }] };
+    return result;
+  },
+
+  /**
+   * Expects a list of map elements that contain ids and extracts those ids into a flatten list
+   * @param listOfMap a list of map elements, each having id field e.g. [ { id: 1, ...}, { id: 2,... }, ...]
+   * @return flatten list of ids, e.g. [1, 2, ...]
+   */
+  flattenToListByKey(listOfMap, key) {
+    return listOfMap.reduce((acc, val) => acc.concat(val[key]), []);
+  },
+
   delay(timeout) {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   }

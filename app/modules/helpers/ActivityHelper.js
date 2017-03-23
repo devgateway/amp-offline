@@ -65,6 +65,11 @@ const ActivityHelper = {
     return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
   },
 
+  findAllNonRejectedModifiedOnClient(filterRule, projections) {
+    const filter = { $and: [this._getNonRejectedRule(), this._getModifiedOnClientSide(), filterRule] };
+    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+  },
+
   /**
    * Find all rejected activities by amp id
    * @param ampId activity amp_id in AMP DB
@@ -107,12 +112,12 @@ const ActivityHelper = {
    */
   saveOrUpdate(activity) {
     console.log('saveOrUpdate');
-    this._setIdIfUndefined(activity);
+    this._setOrUpdateIds(activity);
     return DatabaseManager.saveOrUpdate(activity.id, activity, COLLECTION_ACTIVITIES);
   },
 
-  _setIdIfUndefined(activity) {
-    console.log('_setIdIfUndefined');
+  _setOrUpdateIds(activity) {
+    console.log('_setOrUpdateIds');
     /* eslint-disable no-param-reassign */
     // if this activity version is not yet available offline
     if (activity.id === undefined) {
@@ -121,6 +126,13 @@ const ActivityHelper = {
         activity.id = activity[AC.INTERNAL_ID];
       } else {
         activity.id = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
+        // also flag activity changed on the client side
+        activity[AC.CLIENT_CHANGE_ID] = activity.id;
+      }
+    } else {
+      activity[AC.CLIENT_CHANGE_ID] = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
+      if (activity[AC.REJECTED_ID]) {
+        activity.id = `${activity.id}-${activity[AC.CLIENT_CHANGE_ID]}`;
       }
     }
     // any other logic like cleanup of existing activity during sync up must be done by the calling module
@@ -134,7 +146,7 @@ const ActivityHelper = {
    */
   saveOrUpdateCollection(activities) {
     console.log('saveOrUpdateCollection');
-    activities.forEach(this._setIdIfUndefined);
+    activities.forEach(this._setOrUpdateIds);
     return DatabaseManager.saveOrUpdateCollection(activities, COLLECTION_ACTIVITIES);
   },
 
@@ -145,7 +157,7 @@ const ActivityHelper = {
    */
   replaceAll(activities) {
     console.log('replaceAll');
-    activities.forEach(this._setIdIfUndefined);
+    activities.forEach(this._setOrUpdateIds);
     return DatabaseManager.replaceCollection(activities, COLLECTION_ACTIVITIES);
   },
 
@@ -161,7 +173,8 @@ const ActivityHelper = {
         if (result === null) {
           return resolve(null);
         }
-        return DatabaseManager.removeById(result.id, COLLECTION_ACTIVITIES, this._getNonRejectedRule());
+        return DatabaseManager.removeById(result.id, COLLECTION_ACTIVITIES, this._getNonRejectedRule())
+          .then(resolve).catch(reject);
       }).catch(reject)
     );
   },
@@ -174,6 +187,10 @@ const ActivityHelper = {
   removeAll(filter) {
     console.log('removeAll');
     return DatabaseManager.removeAll(filter, COLLECTION_ACTIVITIES);
+  },
+
+  _getModifiedOnClientSide() {
+    return Utils.toMap(AC.CLIENT_CHANGE_ID, { $exists: true });
   },
 
   _getNonRejectedRule() {
