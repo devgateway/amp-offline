@@ -10,7 +10,7 @@ import { FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT } from '../../utils/Constants';
  * Pulls the latest activities state from AMP
  * @author Nadejda Mandrescu
  */
-export default class ActivitiesPullFromAMP {
+export default class ActivitiesPullFromAMPManager {
   constructor() {
     this._cancel = false;
   }

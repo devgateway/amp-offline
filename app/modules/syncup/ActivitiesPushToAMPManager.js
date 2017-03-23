@@ -15,7 +15,7 @@ import * as ConnectionHelper from '../connectivity/ConnectionHelper';
  * Activities push to AMP Manager
  * @author Nadejda Mandrescu
  */
-export default class ActivitiesPushToAMP {
+export default class ActivitiesPushToAMPManager {
   constructor() {
     this._cancel = false;
   }
