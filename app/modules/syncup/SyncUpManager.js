@@ -160,12 +160,13 @@ const SyncUpManager = {
             const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
             return this._saveMainSyncUpLog({ status, userId, modules, newTimestamp }).then((log) => {
               const restart = true;
-              return store.dispatch(loadAllLanguages(restart).then(resolve(log)));
+              store.dispatch(loadAllLanguages(restart));
+              return resolve(log);
             }).catch(reject);
           }).catch(err => {
             console.log('SyncUp Fail');
             // Always reject so we can display the error after saving the log.
-            return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(reject(err)).catch(reject);
+            return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(() => (reject(err))).catch(reject);
           });
         }).catch(reject);
       }).catch(reject)
@@ -207,7 +208,7 @@ const SyncUpManager = {
           const removed = changeItem.removed;
           return type.fn.call(type.context, saved, removed).then(() => resolve(ret)).catch(reject);
         } else {
-          return type.fn().then(resolve(ret)).catch(reject);
+          return type.fn().then(() => resolve(ret)).catch(reject);
         }
       })
     );
