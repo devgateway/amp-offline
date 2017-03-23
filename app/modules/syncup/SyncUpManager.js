@@ -15,6 +15,7 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACES,
+  SYNCUP_TYPE_ACTIVITIES,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_STATUS_FAIL,
   SYNCUP_DATETIME_FIELD,
@@ -23,20 +24,43 @@ import {
 import WorkspaceSyncUpManager from './WorkspaceSyncUpManager';
 import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
 import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
+import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
+import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
 
 const SyncUpManager = {
 
   /* This list allow us to un-hardcode and simplify the syncup process. */
   syncUpModuleList: [
-    { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
-    { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
-    { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings },
     { type: SYNCUP_TYPE_USERS, fn: syncUpUsers },
     {
       type: SYNCUP_TYPE_WORKSPACE_MEMBERS,
       fn: WorkspaceMemberSyncUpManager.syncWorkspaceMembers,
       context: WorkspaceMemberSyncUpManager
-    }],
+    },
+    // keep import placeholder first or, if needed, change _configureActivitiesImportSyncUp, or AMPOFFLINE-209
+    { type: SYNCUP_TYPE_ACTIVITIES },
+    {
+      type: SYNCUP_TYPE_ACTIVITIES,
+      fn: (saved, removed) => {
+        const exporter = new ActivitiesPullFromAMPManager();
+        return exporter.pullActivitiesFromAMP(saved, removed);
+      }
+    },
+    { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
+    { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
+    { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings }
+  ],
+
+  _noActivitiesImport: { type: SYNCUP_TYPE_ACTIVITIES },
+
+  _activitiesImport: {
+    type: SYNCUP_TYPE_ACTIVITIES,
+    fn: (saved, removed) => {
+      // passing importer as a context doesn't work (this is undefined, even though in debug it is set)
+      const importer = new ActivitiesPushToAMPManager();
+      return importer.pushActivitiesToAMP(saved, removed);
+    }
+  },
 
   /**
    * Return the most recent successful syncup in general (not of every type).
@@ -103,6 +127,22 @@ const SyncUpManager = {
    */
   syncUpAllTypesOnDemand() {
     console.log('syncUpAllTypesOnDemand');
+    // run sync up with activities import first time, then with activities export
+    // TODO a better solution can be done through AMPOFFLINE-209
+    this._configureActivitiesImportSyncUp(this._activitiesImport);
+    return this._doSyncUp().then(() => {
+      this._configureActivitiesImportSyncUp(this._noActivitiesImport);
+      return this._doSyncUp();
+    });
+  },
+
+  _configureActivitiesImportSyncUp(activitiesImport) {
+    const activitiesStep = this.syncUpModuleList.findIndex(el => el.type === SYNCUP_TYPE_ACTIVITIES);
+    this.syncUpModuleList[activitiesStep] = activitiesImport;
+  },
+
+  _doSyncUp() {
+    console.log('_doSyncUp');
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     return new Promise((resolve, reject) => (
@@ -165,7 +205,7 @@ const SyncUpManager = {
           // Activities, ws members, etc.
           const saved = changeItem.saved;
           const removed = changeItem.removed;
-          return type.fn.call(type.context, saved, removed).then(resolve(ret)).catch(reject);
+          return type.fn.call(type.context, saved, removed).then(() => resolve(ret)).catch(reject);
         } else {
           return type.fn().then(resolve(ret)).catch(reject);
         }

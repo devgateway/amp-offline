@@ -45,5 +45,7 @@
   "Actual Disbursements": "Actual Disbursements",
   "Next": "Next",
   "Prev": "Prev",
-  "timeoutError": "Connection timeout. Please check your internet connection."
+  "timeoutError": "Connection timeout. Please check your internet connection.",
+  "SyncupDeniedMustRelogin": "You are not allowed to sync up. Please re-login",
+  "Rejected": "Rejected"
 }
