@@ -1,4 +1,3 @@
-// @flow
 import {
   STATE_SYNCUP_SHOW_HISTORY,
   STATE_SYNCUP_LOADING_HISTORY,
@@ -15,10 +14,8 @@ const defaultState = {
   historyData: {}
 };
 
-export default function syncUp(state = defaultState, action: Object) {
-
+export default function syncUp(state: Object = defaultState, action: Object) {
   console.log('SyncUpReducer');
-
   switch (action.type) {
     case STATE_SYNCUP_SHOW_HISTORY:
       return Object.assign({}, state, { loadingSyncHistory: false, historyData: action.actionData, });

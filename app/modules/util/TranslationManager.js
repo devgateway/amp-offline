@@ -6,7 +6,8 @@ import {
   FS_LOCALES_DIRECTORY,
   LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
-  LANGUAGE_TRANSLATIONS_FILE
+  LANGUAGE_TRANSLATIONS_FILE,
+  APP_DIRECTORY
 } from '../../utils/Constants';
 import { detectSynchronizedTranslationFile } from '../syncup/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
@@ -21,11 +22,15 @@ const TranslationManager = {
    */
   initializeLanguageDirectory() {
     console.log('initializeLanguageDirectory');
-    // We cant trust __dirname at this point.
     let langDir = '';
-    const rootDir = `${process.resourcesPath.substring(0, process.resourcesPath.length - 'resources'.length)}`;
-    const masterFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
-    if (process.env.NODE_ENV === 'production') {
+    let rootDir = '';
+    if (process.env.NODE_ENV === 'test') {
+      rootDir = `${__dirname.substring(0, __dirname.length - 'modules\\util'.length)}`;
+    } else if (process.env.NODE_ENV === 'production') {
+      // We cant trust __dirname at this point.
+      rootDir = `${process.resourcesPath.substring(0, process.resourcesPath.length - 'resources'.length)}`;
+    }
+    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
       langDir = path.resolve(rootDir, FS_LOCALES_DIRECTORY);
     } else {
       langDir = FS_LOCALES_DIRECTORY;
@@ -35,15 +40,17 @@ const TranslationManager = {
       fs.mkdirSync(langDir);
     }
     // Copy master translations file.
+    const masterFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+    let masterTranslationsFileName;
     if (process.env.NODE_ENV === 'production') {
-      const masterTranslationsFileName = `${process.resourcesPath}/app.asar/${masterFileName}`;
-      const masterTranslationsFile = JSON.parse(fs.readFileSync(masterTranslationsFileName, 'utf8'));
-      fs.writeFileSync(path.resolve(langDir, masterFileName), JSON.stringify(masterTranslationsFile));
+      masterTranslationsFileName = `${process.resourcesPath}/app.asar/${masterFileName}`;
+    } else if (process.env.NODE_ENV === 'test') {
+      masterTranslationsFileName = path.resolve(APP_DIRECTORY, masterFileName);
     } else {
-      const masterTranslationsFileName = `./app/${masterFileName}`;
-      const masterTranslationsFile = JSON.parse(fs.readFileSync(masterTranslationsFileName, 'utf8'));
-      fs.writeFileSync(path.resolve(FS_LOCALES_DIRECTORY, masterFileName), JSON.stringify(masterTranslationsFile));
+      masterTranslationsFileName = path.resolve(APP_DIRECTORY, masterFileName);
     }
+    const masterTranslationsFile = JSON.parse(fs.readFileSync(masterTranslationsFileName, 'utf8'));
+    fs.writeFileSync(path.resolve(langDir, masterFileName), JSON.stringify(masterTranslationsFile));
   },
 
   getListOfLocalLanguages(restart: false) {

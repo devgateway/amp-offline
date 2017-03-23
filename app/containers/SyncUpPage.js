@@ -1,6 +1,5 @@
-// @flow
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import SyncUp from '../components/syncUp/SyncUp';
 import * as SyncUpActions from '../actions/SyncUpAction';
 

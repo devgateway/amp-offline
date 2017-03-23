@@ -1,4 +1,3 @@
-// @flow
 import React, { Component, PropTypes } from 'react';
 import TopArea from '../desktop/TopArea';
 import TabsContainer from './TabsContainer';

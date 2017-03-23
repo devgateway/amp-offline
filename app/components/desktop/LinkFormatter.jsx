@@ -1,4 +1,3 @@
-// @flow
 import React, { Component, PropTypes } from 'react';
 import { ACTIVITY_PREVIEW_URL } from '../../utils/Constants';
 import translate from '../../utils/translate';

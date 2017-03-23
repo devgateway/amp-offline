@@ -14,31 +14,30 @@ class MenuUtils {
   buildMenu(loggedIn, menu, onClickHandler, workspaceList, menuOnClickHandler, languageList) {
     console.log('buildMenu');
     const firstLevelEntries = [];
+    const newMenu = Object.assign({}, menu);
 
     // Dynamic list of workspaces.
     const nodes = {};
-    for (let value of workspaceList) {
-      nodes[value.name] = { objId: value.id, 'translation-type': 'content' };
-    }
-    menu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
+    workspaceList.forEach(value => (
+      nodes[value.name] = { objId: value.id, 'translation-type': 'content' }
+    ));
+    newMenu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
 
     // Dynamic list of languages with its own click handler.
     const langNodes = {};
-    for (let value of languageList) {
-      langNodes[value] = {
-        objId: value,
-        public: true,
-        onItemClickHandler: ((lang) => {
-          store.dispatch(setLanguage(lang));
-        })
-      };
-    }
-    menu.menu.TOOLS.nodes['Change Language'].nodes = langNodes;
+    languageList.forEach(value => (langNodes[value] = {
+      objId: value,
+      public: true,
+      onItemClickHandler: ((lang) => {
+        store.dispatch(setLanguage(lang));
+      })
+    }));
+    newMenu.menu.TOOLS.nodes['Change Language'].nodes = langNodes;
 
-    if (menu.menu !== undefined && menu.menu !== null) {
+    if (newMenu.menu !== undefined && newMenu.menu !== null) {
       // Iterate first level items.
-      Object.keys(menu.menu).forEach((key) => {
-        const firstLevelObject = menu.menu[key];
+      Object.keys(newMenu.menu).forEach((key) => {
+        const firstLevelObject = newMenu.menu[key];
         if (toShow(firstLevelObject.public, loggedIn)) {
           const structure = generateTree(firstLevelObject, key, 0, [], loggedIn, menuOnClickHandler);
           firstLevelEntries.push(structure);
@@ -61,36 +60,38 @@ export function handleClick(info) {
   console.log('handleClick');
   if (info.item.props.route) { // if it doesn't have a route, we invoke a ClickHandler
     UrlUtils.forwardTo(info.item.props.route);
+  } else if (info.item.props.onItemClickHandler) {
+    info.item.props.onItemClickHandler(info.item.props.objId);
   } else {
-    if (info.item.props.onItemClickHandler) {
-      info.item.props.onItemClickHandler(info.item.props.objId);
-    } else {
-      info.item.props.menuOnClickHandler(info.item.props.objId);
-    }
+    info.item.props.menuOnClickHandler(info.item.props.objId);
   }
 }
 
 function generateTree(object, key, level, node, loggedIn, menuOnClickHandler) {
   // console.log('generateTree');
+  const newNode = Object.assign({}, node);
   if (object.nodes) {
-    node[level] = [];
+    newNode[level] = [];
     if (toShow(object.public, loggedIn)) {
-      Object.keys(object.nodes).forEach((key) => {
-        if (toShow(object.nodes[key].public, loggedIn)) {
-          node[level].push(generateTree(object.nodes[key], key, level + 1, node, loggedIn, menuOnClickHandler));
+      Object.keys(object.nodes).forEach((key2) => {
+        if (toShow(object.nodes[key2].public, loggedIn)) {
+          newNode[level].push(generateTree(object.nodes[key2], key2, level + 1, newNode, loggedIn, menuOnClickHandler));
         }
       });
     }
-    return <SubMenu title={_getTitle(object,key)} key={key}>{node[level]}</SubMenu>;
-  } else {
-    return <MenuItem title={_getTitle(object,key)}
-                     key={key}
-                     objId={object.objId}
-                     menuOnClickHandler={menuOnClickHandler}
-                     route={object.route}
-                     onItemClickHandler={object.onItemClickHandler}>{_getTitle(object, key)}</MenuItem>;
+    return <SubMenu title={_getTitle(object, key)} key={key}>{newNode[level]}</SubMenu>;
   }
+  return (
+    <MenuItem
+      title={_getTitle(object, key)}
+      key={key}
+      objId={object.objId}
+      menuOnClickHandler={menuOnClickHandler}
+      route={object.route}
+      onItemClickHandler={object.onItemClickHandler}
+    >{_getTitle(object, key)}</MenuItem>);
 }
+
 function _getTitle(object, key) {
   let title;
   if (object['translation-type'] && object['translation-type'] === 'content') {
@@ -100,6 +101,7 @@ function _getTitle(object, key) {
   }
   return title;
 }
+
 // Export function so we can access it from outside (ie: from MenuUtil.spec.js).
 export function toShow(isPublic, loggedIn) {
   // console.log('toShow');

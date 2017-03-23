@@ -2,7 +2,7 @@ export const SERVER_URL = '__SERVER_URL__';
 export const BASE_REST_URL = '/rest';
 export const PROTOCOL = '__SERVER_PROTOCOL__';
 export const BASE_PORT = '__SERVER_PORT__';
-export const CONNECTION_TIMEOUT = 5000;
+export const CONNECTION_TIMEOUT = 15000;
 export const MAX_RETRY_ATEMPTS = 5;
 export const ERRORS_TO_RETRY = ['ESOCKETTIMEDOUT', 'ETIMEDOUT'];
 
@@ -34,6 +34,7 @@ export const LANGUAGE_ENGLISH = 'en';
 export const FS_LOCALES_DIRECTORY = './lang/';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
+export const APP_DIRECTORY = './app/';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -55,3 +56,8 @@ export const SYNCUP_TYPE_POSSIBLE_VALUES = 'field-paths';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
+
+export const VERSION = '0.0.1';
+
+// TODO this is a temporary limitation of the initial set of activities to export, AMPOFFLINE-273 or AMPOFFLINE-274
+export const FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT = 50;
