@@ -61,7 +61,7 @@ const TranslationManager = {
         item.match(/^((translations.)[a-z]{2}(.json))/ig)).map((item) => item.substr(13, 2));
       // We want to reinitialize the i18next module with new local transaction files.
       if (restart) {
-        return this.initializeI18Next().then(resolve(langs)).catch(reject);
+        return this.initializeI18Next().then(() => (resolve(langs))).catch(reject);
       }
       resolve(langs);
     });
