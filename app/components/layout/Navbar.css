@@ -36,6 +36,7 @@
 .navbar_left_side {
   float: left;
   padding-top: 5px;
+  padding-left: 5px;
 }
 
 .navbar_right_side {

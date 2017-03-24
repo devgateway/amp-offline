@@ -52,10 +52,15 @@ export const SYNCUP_TYPE_WORKSPACES = 'workspaces';
 export const SYNCUP_TYPE_GS = 'global-settings';
 export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
 export const SYNCUP_TYPE_ACTIVITIES = 'activities';
+export const SYNCUP_TYPE_FIELDS = 'fields';
 export const SYNCUP_TYPE_POSSIBLE_VALUES = 'field-paths';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
+
+export const ACTIVITY_STATUS_DRAFT = 'ACTIVITY_STATUS_DRAFT';
+export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';
+export const ACTIVITY_STATUS_VALIDATED = 'ACTIVITY_STATUS_VALIDATED';
 
 export const VERSION = '0.0.1';
 

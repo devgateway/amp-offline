@@ -31,7 +31,7 @@ const TranslationSyncUpManager = {
           const langIds = langs.map(value => value.id);
           return this.removeDisabledLanguageFiles(langIds).then(() => (
             // Now sync translations for all languages at once.
-            this.syncUpTranslations(langs).then(resolve(langs)).catch(reject)
+            this.syncUpTranslations(langs).then(() => (resolve(langs))).catch(reject)
           )).catch(reject);
         }).catch(reject)
       )).catch(reject)

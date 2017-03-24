@@ -5,6 +5,7 @@
 
 .legend_container {
   text-align: right;
+  margin-top: 4px;
 }
 
 .legend_container hr {
@@ -18,16 +19,16 @@
 }
 
 .red {
-  color: red;
+  color: #c84545;
   font-weight: bold;
 }
 
 .green {
-  color: green;
+  color: #70a628;
   font-weight: bold;
 }
 
 .blue {
-  color: rgb(1, 78, 134);
+  color: #2e6fa1;
   font-weight: bold;
 }

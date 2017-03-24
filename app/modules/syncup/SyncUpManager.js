@@ -1,5 +1,5 @@
 /* eslint "no-nested-ternary": 0 */
-import syncUpUsers from './SyncUpUsers';
+import syncUpUsers from './UsersSyncUpManager';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import {
   TEST_URL,
@@ -16,6 +16,7 @@ import {
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACES,
   SYNCUP_TYPE_ACTIVITIES,
+  SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_STATUS_FAIL,
@@ -27,6 +28,7 @@ import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
 import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
 import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
+import FieldsSyncUpManager from './FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './PossibleValuesSyncUpManager';
 
 const SyncUpManager = {
@@ -46,6 +48,13 @@ const SyncUpManager = {
       fn: (saved, removed) => {
         const exporter = new ActivitiesPullFromAMPManager();
         return exporter.pullActivitiesFromAMP(saved, removed);
+      }
+    },
+    {
+      type: SYNCUP_TYPE_FIELDS,
+      fn: () => {
+        const fieldsSyncUp = new FieldsSyncUpManager();
+        return fieldsSyncUp.syncUp();
       }
     },
     { type: SYNCUP_TYPE_POSSIBLE_VALUES, fn: PossibleValuesSyncUpManager.syncUp },
@@ -163,12 +172,13 @@ const SyncUpManager = {
             const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
             return this._saveMainSyncUpLog({ status, userId, modules, newTimestamp }).then((log) => {
               const restart = true;
-              return store.dispatch(loadAllLanguages(restart).then(resolve(log)));
+              store.dispatch(loadAllLanguages(restart));
+              return resolve(log);
             }).catch(reject);
           }).catch(err => {
             console.log('SyncUp Fail');
             // Always reject so we can display the error after saving the log.
-            return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(reject(err)).catch(reject);
+            return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(() => (reject(err))).catch(reject);
           });
         }).catch(reject);
       }).catch(reject)
@@ -178,6 +188,8 @@ const SyncUpManager = {
   _filterOutModulesToSync(changes) {
     console.log('_filterOutModulesToSync');
     // Filter out syncUpModuleList and keep only what needs to be resynced.
+    // TODO: remove this flag once AMP-25568 is done
+    changes[SYNCUP_TYPE_FIELDS] = true; // eslint-disable-line no-param-reassign
     return this.syncUpModuleList.filter((item) => {
       const changeItem = changes[item.type];
       if (changeItem instanceof Object) {
@@ -198,6 +210,7 @@ const SyncUpManager = {
   /**
    * Iterate the list of types (which is a sublist of 'syncUpModuleList') and perform all 'fn' functions.
    * @param types
+   * @param changes
    */
   _syncUpTypes(types, changes) {
     console.log('_syncUpTypes');

@@ -62,6 +62,10 @@ const Utils = {
    */
   flattenToListByKey(listOfMap, key) {
     return listOfMap.reduce((acc, val) => acc.concat(val[key]), []);
+  },
+
+  delay(timeout) {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
   }
 };
 
