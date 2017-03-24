@@ -17,7 +17,7 @@ const possibleValuesSchema = {
     'possible-options': {
       type: 'object',
       patternProperties: {
-        '^([1-9]*|0)$': {
+        '^([1-9]+[0-9]*)$': {
           type: 'object',
           properties: {
             id: { type: 'integer' },
@@ -65,11 +65,11 @@ const PossibleValuesHelper = {
    */
   saveOrUpdate(fieldValues) {
     console.log('saveOrUpdate');
-    if (this._isValid(fieldValues)) {
-      console.log(fieldValues);
+    const validationResult = this._validate(fieldValues);
+    if (validationResult.valid) {
       return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(this._getInvalidFormatError());
+    return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
 
   /**
@@ -79,10 +79,11 @@ const PossibleValuesHelper = {
    */
   saveOrUpdateCollection(fieldValuesCollection) {
     console.log('saveOrUpdateCollection');
-    if (this._isValidCollection(fieldValuesCollection)) {
+    const validationResult = this._validateCollection(fieldValuesCollection);
+    if (validationResult.valid) {
       return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(this._getInvalidFormatError());
+    return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
 
   /**
@@ -93,18 +94,31 @@ const PossibleValuesHelper = {
   replaceAll(fieldValuesCollection) {
     console.log('replaceAll');
     // if we are replacing existing collection, then let's just reject the new set if some of its data is invalid
-    if (this._isValidCollection(fieldValuesCollection)) {
+    const validationResult = this._validateCollection(fieldValuesCollection);
+    if (validationResult.valid) {
       return DatabaseManager.replaceCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(this._getInvalidFormatError());
+    return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
 
-  _isValidCollection(fieldValuesCollection) {
-    return fieldValuesCollection.filter(this._isValid).length === fieldValuesCollection.length;
+  _validateCollection(fieldValuesCollection) {
+    const errors = [];
+    const validValuesCollection = fieldValuesCollection.filter((value) => {
+      const result = this._validate(value);
+      if (result.errors !== undefined && result.errors.length > 0) {
+        errors.push({ id: value.id, errors: result.errors });
+      }
+      return result.valid;
+    });
+    return { valid: validValuesCollection.length === fieldValuesCollection.length, errors };
   },
 
-  _isValid(fieldValues) {
-    return validate(fieldValues, possibleValuesSchema).valid;
+  _validate(fieldValues) {
+    const result = validate(fieldValues, possibleValuesSchema);
+    if (!result.valid) {
+      result.id = fieldValues.id;
+    }
+    return result;
   },
 
   /**
@@ -143,8 +157,10 @@ const PossibleValuesHelper = {
     return possibleValuesForLocalUsage;
   },
 
-  _getInvalidFormatError() {
-    return new Notification({ message: 'INVALID_FORMAT', origin: NOTIFICATION_ORIGIN_DATABASE });
+  _getInvalidFormatError(errors) {
+    const errorMessage = JSON.stringify(errors).substring(0, 120);
+    console.error(errorMessage);
+    return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
   }
 };
 

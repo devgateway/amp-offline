@@ -45,7 +45,7 @@ const SyncUpManager = {
     { type: SYNCUP_TYPE_ACTIVITIES },
     {
       type: SYNCUP_TYPE_ACTIVITIES,
-      fn: (saved, removed) => {
+      fn: ({ saved, removed }) => {
         const exporter = new ActivitiesPullFromAMPManager();
         return exporter.pullActivitiesFromAMP(saved, removed);
       }
@@ -63,7 +63,7 @@ const SyncUpManager = {
     { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings }
   ],
 
-  _noActivitiesImport: { type: SYNCUP_TYPE_ACTIVITIES },
+  _noActivitiesImport: { type: SYNCUP_TYPE_ACTIVITIES, fn: () => Promise.resolve() },
 
   _activitiesImport: {
     type: SYNCUP_TYPE_ACTIVITIES,
