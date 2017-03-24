@@ -46,6 +46,15 @@
   "Next": "Next",
   "Prev": "Prev",
   "timeoutError": "Connection timeout. Please check your internet connection.",
+  "Legend": "Legend",
+  "New": "New",
+  "Drafts": "Drafts",
+  "Unvalidated": "Unvalidated",
+  "Validated": "Validated",
+  "Unsynced": "Unsynced",
+  "enter AMP ID#": "enter AMP ID#",
+  "enter project title": "enter project title",
+  "Clear filters": "Clear filters"
   "SyncupDeniedMustRelogin": "You are not allowed to sync up. Please re-login",
   "Rejected": "Rejected",
   "noUniqueFieldsTree": "No unique fields tree is found for usage"

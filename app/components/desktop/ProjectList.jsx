@@ -1,10 +1,17 @@
+/* eslint react/jsx-space-before-closing: 0 */
+/* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import classNames from 'classnames';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
 import IconFormatter from './IconFormatter';
 import LinkFormatter from './LinkFormatter';
-import Legends from './Legends';
+import {
+  ACTIVITY_STATUS_DRAFT,
+  ACTIVITY_STATUS_UNVALIDATED,
+  ACTIVITY_STATUS_VALIDATED
+} from '../../utils/Constants';
 
 export default class ProjectList extends Component {
 
@@ -12,11 +19,6 @@ export default class ProjectList extends Component {
     projects: PropTypes.array.isRequired,
     paginationOptions: PropTypes.object.isRequired
   };
-
-  constructor() {
-    super();
-    console.log('constructor');
-  }
 
   linkFormatter(cell, row) {
     return (
@@ -30,34 +32,72 @@ export default class ProjectList extends Component {
     );
   }
 
+  projectNameFormatter(cell, row) {
+    const nameStyles = [];
+    switch (row.status) {
+      case ACTIVITY_STATUS_DRAFT:
+        nameStyles.push(style.status_draft);
+        break;
+      case ACTIVITY_STATUS_UNVALIDATED:
+        nameStyles.push(style.status_unvalidated);
+        break;
+      case ACTIVITY_STATUS_VALIDATED:
+        nameStyles.push(style.status_validated);
+        break;
+      default:
+        break;
+    }
+    if (!row.synced) {
+      nameStyles.push(style.uncynced);
+    }
+    const classes = classNames(nameStyles.toString()).replace(',', ' ');
+    return `<span class='${classes}'>${row.new ? '* ' : ''}${cell}</span>`;
+  }
+
+  handlerClickCleanFiltered() {
+    this.refs.ampId.cleanFiltered();
+    this.refs.title.cleanFiltered();
+  }
+
   render() {
     console.log('render');
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#style
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     return (
       <div className={style.container}>
-        <Legends />
-        <BootstrapTable data={this.props.projects} striped hover pagination
-                        options={this.props.paginationOptions}
-                        containerClass={style.containerTable}
-                        tableHeaderClass={style.header}>
-          <TableHeaderColumn dataField="icon"
-                             dataFormat={this.iconFormatter}
-                             columnClassName={style.empty_column}>
+        <a onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
+          {translate('Clear filters')}
+        </a>
+        <BootstrapTable
+          data={this.props.projects} striped hover pagination options={this.props.paginationOptions}
+          containerClass={style.containerTable} tableHeaderClass={style.header}
+        >
+          <TableHeaderColumn
+            dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.empty_column}
+          />
+          <TableHeaderColumn
+            dataField="ampId" isKey dataAlign="center" dataSort ref="ampId"
+            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }}
+          >
+            {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="ampId"
-            isKey
-            dataAlign="center"
-            dataSort>{translate('AMP ID')}
+            dataField="title" dataFormat={this.projectNameFormatter} dataSort ref="title"
+            filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
+          >
+            {translate('Project Title')}
           </TableHeaderColumn>
-          <TableHeaderColumn dataField="title" dataFormat={this.linkFormatter}
-                             dataSort>{translate('Project Title')}</TableHeaderColumn>
           <TableHeaderColumn dataField="fundingAgency" dataSort>{translate('Funding Agency')}</TableHeaderColumn>
-          <TableHeaderColumn dataField="actualCommitments"
-                             dataSort>{translate('Actual Commitments')}</TableHeaderColumn>
-          <TableHeaderColumn dataField="actualDisbursements"
-                             dataSort>{translate('Actual Disbursements')}</TableHeaderColumn>
+          <TableHeaderColumn
+            dataField="actualCommitments" dataSort
+          >
+            {translate('Actual Commitments')}
+          </TableHeaderColumn>
+          <TableHeaderColumn
+            dataField="actualDisbursements" dataSort
+          >
+            {translate('Actual Disbursements')}
+          </TableHeaderColumn>
         </BootstrapTable>
       </div>
     );

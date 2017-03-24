@@ -1,6 +1,12 @@
 /* eslint "no-nested-ternary": 0 */
 import translate from '../../utils/translate';
-import { ACTIVITY_EDIT, ACTIVITY_VIEW } from '../../utils/Constants';
+import {
+  ACTIVITY_EDIT,
+  ACTIVITY_VIEW,
+  ACTIVITY_STATUS_DRAFT,
+  ACTIVITY_STATUS_UNVALIDATED,
+  ACTIVITY_STATUS_VALIDATED
+} from '../../utils/Constants';
 
 // TODO: remove these test data.
 const activeProjects = [{
@@ -10,7 +16,10 @@ const activeProjects = [{
   actualCommitments: '100.000',
   actualDisbursements: '157.000',
   view: false,
-  edit: false
+  edit: false,
+  new: true,
+  synced: true,
+  status: ACTIVITY_STATUS_DRAFT
 }, {
   ampId: 2,
   title: 'Project 2',
@@ -18,7 +27,10 @@ const activeProjects = [{
   actualCommitments: '100.000',
   actualDisbursements: '5.000',
   view: true,
-  edit: false
+  edit: false,
+  new: true,
+  synced: true,
+  status: ACTIVITY_STATUS_UNVALIDATED
 }, {
   ampId: 3,
   title: 'Project 3',
@@ -26,7 +38,10 @@ const activeProjects = [{
   actualCommitments: '100.000',
   actualDisbursements: '5.000',
   view: true,
-  edit: false
+  edit: false,
+  new: true,
+  synced: false,
+  status: ACTIVITY_STATUS_VALIDATED
 }, {
   ampId: 4,
   title: 'Project 4',
@@ -34,7 +49,10 @@ const activeProjects = [{
   actualCommitments: '10.000',
   actualDisbursements: '5.000',
   view: false,
-  edit: true
+  edit: true,
+  new: false,
+  synced: true,
+  status: ACTIVITY_STATUS_DRAFT
 }, {
   ampId: 5,
   title: 'Project 5',
@@ -42,7 +60,10 @@ const activeProjects = [{
   actualCommitments: '100.000',
   actualDisbursements: '5.000',
   view: false,
-  edit: true
+  edit: true,
+  new: false,
+  synced: false,
+  status: ACTIVITY_STATUS_DRAFT
 }, {
   ampId: 6,
   title: 'Project 6',
@@ -50,7 +71,10 @@ const activeProjects = [{
   actualCommitments: '100.000',
   actualDisbursements: '5.000',
   view: true,
-  edit: false
+  edit: false,
+  new: false,
+  synced: true,
+  status: ACTIVITY_STATUS_VALIDATED
 }];
 const rejectedProjects = [{
   ampId: 1,
@@ -59,7 +83,10 @@ const rejectedProjects = [{
   actualCommitments: '10.000',
   actualDisbursements: '157.000',
   view: true,
-  edit: false
+  edit: false,
+  new: true,
+  synced: false,
+  status: ACTIVITY_STATUS_DRAFT
 }, {
   ampId: 2,
   title: 'Project a2',
@@ -67,7 +94,10 @@ const rejectedProjects = [{
   actualCommitments: '100',
   actualDisbursements: '5.000',
   view: false,
-  edit: true
+  edit: true,
+  new: true,
+  synced: true,
+  status: ACTIVITY_STATUS_UNVALIDATED
 }, {
   ampId: 5,
   title: 'Project 5a',
@@ -75,7 +105,10 @@ const rejectedProjects = [{
   actualCommitments: '1.000',
   actualDisbursements: '5.000',
   view: false,
-  edit: true
+  edit: true,
+  new: true,
+  synced: true,
+  status: ACTIVITY_STATUS_VALIDATED
 }, {
   ampId: 6,
   title: 'Project 6a',
@@ -83,7 +116,10 @@ const rejectedProjects = [{
   actualCommitments: '8.000',
   actualDisbursements: '5.000',
   view: true,
-  edit: true
+  edit: true,
+  new: false,
+  synced: true,
+  status: ACTIVITY_STATUS_DRAFT
 }];
 
 const DesktopManager = {
@@ -138,6 +174,9 @@ const DesktopManager = {
 
   getGeneralPaginationOptions() {
     // TODO: this function can be more complex and take data from GS, local preferences, etc.
+    /* TODO: also this needs to react to changes in the data, meaning we need to move it to the component or call it
+     from there. */
+    // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#pagination
     const options = {
       page: 1,
       sizePerPageList: [{
@@ -154,8 +193,8 @@ const DesktopManager = {
       nextPage: translate('Next'),
       firstPage: translate('First'),
       lastPage: translate('Last'),
-      paginationShowsTotal: false,
-      hideSizePerPage: true,
+      paginationShowsTotal: true,
+      hideSizePerPage: false,
       noDataText: translate('customTextForEmptyData')
     };
     return options;
