@@ -4,8 +4,6 @@ import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
-const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT', origin: NOTIFICATION_ORIGIN_DATABASE });
-
 const possibleValuesSchema = {
   id: '/PossibleValues',
   $schema: 'http://json-schema.org/draft-04/schema#',
@@ -18,9 +16,8 @@ const possibleValuesSchema = {
     },
     'possible-options': {
       type: 'object',
-      properties: {
-        id: { type: 'integer' },
-        value: {
+      patternProperties: {
+        '^([1-9]*|0)$': {
           type: 'object',
           properties: {
             id: { type: 'integer' },
@@ -29,8 +26,9 @@ const possibleValuesSchema = {
             }
           },
           required: ['id', 'value']
-        }
-      }
+        },
+      },
+      additionalProperties: false
     }
   },
   required: ['id', 'field-path', 'possible-options']
@@ -71,7 +69,7 @@ const PossibleValuesHelper = {
       console.log(fieldValues);
       return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(this._getInvalidFormatError());
   },
 
   /**
@@ -84,7 +82,7 @@ const PossibleValuesHelper = {
     if (this._isValidCollection(fieldValuesCollection)) {
       return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(this._getInvalidFormatError());
   },
 
   /**
@@ -98,7 +96,7 @@ const PossibleValuesHelper = {
     if (this._isValidCollection(fieldValuesCollection)) {
       return DatabaseManager.replaceCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(this._getInvalidFormatError());
   },
 
   _isValidCollection(fieldValuesCollection) {
@@ -117,7 +115,37 @@ const PossibleValuesHelper = {
   deleteById(id) {
     console.log('replaceAll');
     return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
+  },
+
+  /**
+   * Transforms data from AMP format to local format
+   * @param fieldPath
+   * @param possibleOptionsFromAMP
+   * @return {{id: *, field-path: (Array|*), possible-options: {}}}
+   */
+  transformToClientUsage([fieldPath, possibleOptionsFromAMP]) {
+    // TODO do recursive when AMP EP will provide the parent-child relationship by having the fields in a tree
+    const fieldPathParts = !fieldPath ? [] : fieldPath.split('~');
+    let possibleOptions = {};
+    if (Array.isArray(possibleOptionsFromAMP)) {
+      possibleOptionsFromAMP.forEach(option => {
+        possibleOptions[option.id] = option;
+      });
+    } else {
+      // delegating data structure validation to the point it will be saved to DB, now keeping options as is
+      possibleOptions = possibleOptionsFromAMP;
+    }
+    const possibleValuesForLocalUsage = {
+      id: fieldPath,
+      'field-path': fieldPathParts,
+      'possible-options': possibleOptions
+    };
+    return possibleValuesForLocalUsage;
+  },
+
+  _getInvalidFormatError() {
+    return new Notification({ message: 'INVALID_FORMAT', origin: NOTIFICATION_ORIGIN_DATABASE });
   }
 };
 
-module.exports = PossibleValuesHelper;
+export default PossibleValuesHelper;
