@@ -186,7 +186,7 @@ const SyncUpManager = {
     console.log('_filterOutModulesToSync');
     // Filter out syncUpModuleList and keep only what needs to be resynced.
     // TODO: remove this flag once AMP-25568 is done
-    changes[SYNCUP_TYPE_FIELDS] = true; // eslint-disable-line no-param-reassign
+    changes[SYNCUP_TYPE_FIELDS] = true;
     return this.syncUpModuleList.filter((item) => {
       const changeItem = changes[item.type];
       if (changeItem instanceof Object) {

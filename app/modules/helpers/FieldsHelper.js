@@ -71,7 +71,7 @@ const FieldsHelper = {
   _setIdIfUndefined(fields) {
     console.log('_setIdIfUndefined');
     if (fields.id === undefined) {
-      fields.id = Utils.stringToUniqueId(''); // eslint-disable-line no-param-reassign
+      fields.id = Utils.stringToUniqueId('');
     }
   },
 
