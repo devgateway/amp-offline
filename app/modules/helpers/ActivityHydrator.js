@@ -60,10 +60,13 @@ export default class ActivityHydrator {
    */
   hydrateActivities(activities, fieldPaths) {
     return new Promise((resolve, reject) =>
-      this._getPossibleValues(fieldPaths).then(possibleValuesMap => {
-        possibleValuesMap.forEach(pv => this._hydrateFieldPath(activities, pv, 0, this._fieldsDef.fields));
-        return activities;
-      }).catch(reject));
+      this._getPossibleValues(fieldPaths).then(possibleValuesCollection =>
+        this._hydrateActivitiesWithFullObjects(activities, possibleValuesCollection)).catch(reject));
+  }
+
+  _hydrateActivitiesWithFullObjects(activities, possibleValuesCollection) {
+    possibleValuesCollection.forEach(pv => this._hydrateFieldPath(activities, pv, 0, this._fieldsDef.fields));
+    return activities;
   }
 
   _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs) {
@@ -154,6 +157,7 @@ export default class ActivityHydrator {
    * @return {Promise}
    */
   static hydrateActivities({ activities, fieldPaths, teamMember }) {
+    // Note: 926 activities are hydrated in 0.2s, where a significant time is consumed by promises
     return new Promise((resolve, reject) => {
       if (teamMember === undefined) {
         teamMember = store.getState().user.teamMember;
