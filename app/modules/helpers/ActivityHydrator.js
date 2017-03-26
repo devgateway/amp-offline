@@ -42,18 +42,37 @@ export default class ActivityHydrator {
     this._fieldsDef = fieldsDef;
   }
 
+  /**
+   * Replaces an activity related objects ids with full object data for the specified field paths
+   * @param activity
+   * @param fieldPaths
+   * @return {Object} the modified activity
+   */
   hydrateActivity(activity, fieldPaths: []) {
-    return this.hydrateActivities(...activity, fieldPaths);
+    return this.hydrateActivities(...activity, fieldPaths).then(activities => activities[0]);
   }
 
+  /**
+   * Replaces each activity related objects ids with full object data for the specified field paths
+   * @param activities
+   * @param fieldPaths
+   * @return {Object} the modified activities
+   */
   hydrateActivities(activities, fieldPaths) {
-    const possibleValuesMap = this._getPossibleValues(fieldPaths);
-    possibleValuesMap.forEach(pv => this._hydrateFieldPath(activities, pv, 0, this._fieldsDef));
+    return new Promise((resolve, reject) =>
+      this._getPossibleValues(fieldPaths).then(possibleValuesMap => {
+        possibleValuesMap.forEach(pv => this._hydrateFieldPath(activities, pv, 0, this._fieldsDef.fields));
+        return activities;
+      }).catch(reject));
   }
 
   _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs) {
     const fieldName = possibleValues['field-path'][pathIndex];
-    const fieldDef = fieldDefs.findFirst(fd => fd.field_name === fieldName);
+    const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
+    if (fieldDef === undefined) {
+      console.warn(`Field definition not found for: ${possibleValues['field-path'].slice(0, pathIndex + 1).join('~')}`);
+      return;
+    }
     const isList = fieldDef.field_type === 'list';
 
     if (possibleValues['field-path'].length === pathIndex + 1) {
@@ -61,14 +80,14 @@ export default class ActivityHydrator {
       const options = possibleValues['possible-options'];
       objects.forEach(obj => {
         const fieldValue = obj[fieldName];
-        if (fieldValue !== undefined) {
+        if (fieldValue !== undefined && fieldValue !== null) {
           if (isList) {
             for (let index = 0; index < fieldValue.length; index++) {
               const id = fieldValue[index];
               fieldValue[index] = options[id];
             }
           } else {
-            obj[fieldName] = options[fieldValue]; // eslint-disable-line no-param-reassign
+            obj[fieldName] = options[fieldValue];
           }
         }
       });
@@ -76,7 +95,7 @@ export default class ActivityHydrator {
       let nextLevelObjects = [];
       objects.forEach(obj => {
         const fieldValue = obj[fieldName];
-        if (fieldValue !== undefined) {
+        if (fieldValue !== undefined && fieldValue !== null) {
           if (isList) {
             nextLevelObjects = nextLevelObjects.concat(fieldValue);
           } else {
@@ -84,17 +103,32 @@ export default class ActivityHydrator {
           }
         }
       });
-      this._hydrateFieldPath(nextLevelObjects, possibleValues, pathIndex + 1, fieldDefs.children);
+      if (nextLevelObjects.length > 0) {
+        this._hydrateFieldPath(nextLevelObjects, possibleValues, pathIndex + 1, fieldDef.children);
+      }
     }
   }
 
+  /**
+   * Retrieves possible field options for specified field paths or all options if no field paths are given
+   * @param fieldPaths
+   * @private
+   * @return {Promise}
+   */
   _getPossibleValues(fieldPaths) {
     const filter = {};
     if (fieldPaths && fieldPaths.length > 0) {
       filter.id = { $in: fieldPaths };
     }
-    return PossibleValuesHelper.findAll(filter);
-    // TODO once we have notification system, to flag if some possible values are not found, but not to block usage?
+    return PossibleValuesHelper.findAll(filter).then(possibleValuesCollection => {
+      if (fieldPaths && fieldPaths.legth !== 0 && possibleValuesCollection.length !== fieldPaths.length) {
+        const missing = new Map(fieldPaths.map(fieldPath => [fieldPath, 1]));
+        possibleValuesCollection.forEach(pv => missing.delete(pv.id));
+        // TODO once we have notification system, to flag if some possible values are not found, but not to block usage
+        console.error(`Field paths not found: ${missing}`);
+      }
+      return possibleValuesCollection;
+    });
   }
 
   /**
@@ -102,9 +136,14 @@ export default class ActivityHydrator {
    * @param activity activities to hydrate with full field values
    * @param fieldPaths the field paths to hydrate
    * @param teamMember the workspace member for which rules will be applied (or the current one if unspecified)
+   * @return {Promise}
    */
   static hydrateActivity({ activity, fieldPaths, teamMember }) {
-    return ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, teamMember });
+    return new Promise((resolve, reject) =>
+      ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, teamMember })
+        .then(activities => activities[0])
+        .catch(reject)
+    );
   }
 
   /**
@@ -112,11 +151,12 @@ export default class ActivityHydrator {
    * @param activities activities to hydrate with full field values
    * @param fieldPaths the field paths to hydrate
    * @param teamMember the workspace member for which rules will be applied (or the current one if unspecified)
+   * @return {Promise}
    */
   static hydrateActivities({ activities, fieldPaths, teamMember }) {
     return new Promise((resolve, reject) => {
       if (teamMember === undefined) {
-        teamMember = store.getState().user.teamMember; // eslint-disable-line no-param-reassign
+        teamMember = store.getState().user.teamMember;
         if (teamMember === undefined) {
           reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY_HYDRATOR }));
         }
@@ -126,8 +166,7 @@ export default class ActivityHydrator {
           throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY_HYDRATOR });
         } else {
           const hydrator = new ActivityHydrator(fieldsDef);
-          hydrator.hydrateActivities(activities, fieldPaths);
-          return resolve();
+          return hydrator.hydrateActivities(activities, fieldPaths);
         }
       }).catch(reject);
     });
