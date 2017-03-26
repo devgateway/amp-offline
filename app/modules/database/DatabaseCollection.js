@@ -1,3 +1,4 @@
+/* eslint func-names: 0 */
 import _ from 'underscore';
 import BluebirdQueue from 'bluebird-queue';
 

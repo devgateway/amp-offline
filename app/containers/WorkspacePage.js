@@ -1,4 +1,3 @@
-// @flow
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Workspace from '../components/workspace/Workspace';
@@ -9,8 +8,10 @@ function mapStateToProps(state) {
   return state;
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
-  // For better undestanding of this section: https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options
+function mapDispatchToProps(dispatch) {
+  // For better undestanding of this section:
+  // https://github.com/reactjs/react-redux/blob/master/docs/api.md
+  // #connectmapstatetoprops-mapdispatchtoprops-mergeprops-options
   console.log('mapDispatchToProps');
   return bindActionCreators(WorkspaceActions, dispatch);
 }

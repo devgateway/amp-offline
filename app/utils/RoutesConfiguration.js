@@ -9,6 +9,9 @@ import {
   POST_TRANSLATIONS_URL,
   TEST_URL,
   GET_TRANSLATIONS_URL,
+  ACTIVITY_IMPORT_URL,
+  ACTIVITY_EXPORT_URL,
+  SINGLE_FIELDS_TREE_URL,
   SYNC_URL
 } from '../modules/connectivity/AmpApiConstants';
 
@@ -46,6 +49,18 @@ const routesConfiguration = [{
   requiresToken: true
 }, {
   url: GET_TRANSLATIONS_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: ACTIVITY_IMPORT_URL,
+  method: 'POST',
+  requiresToken: true
+}, {
+  url: ACTIVITY_EXPORT_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: SINGLE_FIELDS_TREE_URL,
   method: 'GET',
   requiresToken: true
 }, {

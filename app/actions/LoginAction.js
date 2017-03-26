@@ -1,4 +1,4 @@
-// @flow
+/* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
 import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
@@ -47,7 +47,11 @@ export function loginAutomaticallyAction() {
       const token = data.token;
       dispatch(loginOk({ userData, password, token }));
       return resolve(data);
-    }).catch(reject);
+    }).catch((err) => {
+      dispatch(loginFailed(err));
+      dispatch(logoutAction());
+      reject(err);
+    });
   });
 }
 

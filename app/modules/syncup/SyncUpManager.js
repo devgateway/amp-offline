@@ -1,4 +1,5 @@
-import syncUpUsers from './SyncUpUsers';
+/* eslint "no-nested-ternary": 0 */
+import syncUpUsers from './UsersSyncUpManager';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import {
   TEST_URL,
@@ -14,6 +15,8 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACES,
+  SYNCUP_TYPE_ACTIVITIES,
+  SYNCUP_TYPE_FIELDS,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_STATUS_FAIL,
   SYNCUP_DATETIME_FIELD,
@@ -22,20 +25,51 @@ import {
 import WorkspaceSyncUpManager from './WorkspaceSyncUpManager';
 import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
 import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
+import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
+import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
+import FieldsSyncUpManager from './FieldsSyncUpManager';
 
 const SyncUpManager = {
 
   /* This list allow us to un-hardcode and simplify the syncup process. */
   syncUpModuleList: [
-    { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
-    { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
-    { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings },
     { type: SYNCUP_TYPE_USERS, fn: syncUpUsers },
     {
       type: SYNCUP_TYPE_WORKSPACE_MEMBERS,
       fn: WorkspaceMemberSyncUpManager.syncWorkspaceMembers,
       context: WorkspaceMemberSyncUpManager
-    }],
+    },
+    // keep import placeholder first or, if needed, change _configureActivitiesImportSyncUp, or AMPOFFLINE-209
+    { type: SYNCUP_TYPE_ACTIVITIES },
+    {
+      type: SYNCUP_TYPE_ACTIVITIES,
+      fn: (saved, removed) => {
+        const exporter = new ActivitiesPullFromAMPManager();
+        return exporter.pullActivitiesFromAMP(saved, removed);
+      }
+    },
+    {
+      type: SYNCUP_TYPE_FIELDS,
+      fn: () => {
+        const fieldsSyncUp = new FieldsSyncUpManager();
+        return fieldsSyncUp.syncUp();
+      }
+    },
+    { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
+    { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
+    { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings }
+  ],
+
+  _noActivitiesImport: { type: SYNCUP_TYPE_ACTIVITIES },
+
+  _activitiesImport: {
+    type: SYNCUP_TYPE_ACTIVITIES,
+    fn: (saved, removed) => {
+      // passing importer as a context doesn't work (this is undefined, even though in debug it is set)
+      const importer = new ActivitiesPushToAMPManager();
+      return importer.pushActivitiesToAMP(saved, removed);
+    }
+  },
 
   /**
    * Return the most recent successful syncup in general (not of every type).
@@ -43,8 +77,8 @@ const SyncUpManager = {
    */
   getLastSuccessfulSyncUp() {
     console.log('getLastSuccessfulSyncUps');
-    return new Promise((resolve, reject) => {
-      return SyncUpHelper.findAllSyncUpByExample({
+    return new Promise((resolve, reject) => (
+      SyncUpHelper.findAllSyncUpByExample({
         status: SYNCUP_STATUS_SUCCESS,
         $not: { timestamp: null }
       }).then(data => {
@@ -55,8 +89,8 @@ const SyncUpManager = {
         const emptyDateItem = {};
         emptyDateItem[SYNCUP_DATETIME_FIELD] = SYNCUP_NO_DATE; // just not to leave it undefined.
         return resolve(emptyDateItem);
-      }).catch(reject);
-    });
+      }).catch(reject)
+    ));
   },
 
   /**
@@ -77,18 +111,20 @@ const SyncUpManager = {
    * Check the timestamp of the newest successful syncup older than N days (or none),
    * produce a sublist from 'syncUpModuleList' and call _syncUpTypes with it.
    */
-  syncUpTooOldTypes(days) {
+  syncUpTooOldTypes(/* days */) {
     console.log('syncUpTooOldTypes');
     // TODO: To be implemented.
   },
 
   _saveMainSyncUpLog({ status, userId, modules, newTimestamp }) {
     console.log('_saveMainSyncUpLog');
+    const syncDate = new Date();
     const log = {
       id: Math.random(),
       status,
       'requested-by': userId,
       modules,
+      'sync-date': syncDate.toISOString()
     };
     log[SYNCUP_DATETIME_FIELD] = newTimestamp;
     return SyncUpHelper.saveOrUpdateSyncUp(log);
@@ -100,38 +136,57 @@ const SyncUpManager = {
    */
   syncUpAllTypesOnDemand() {
     console.log('syncUpAllTypesOnDemand');
-    /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
-     and the other the local database. */
-    return new Promise((resolve, reject) => {
-      return Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSuccessfulSyncUp()]).then((promises) => {
-        const lastSuccessfulSyncUp = promises[1];
-        const userId = store.getState().user.userData.id;
-        const oldTimestamp = lastSuccessfulSyncUp[SYNCUP_DATETIME_FIELD];
-        return this.getWhatChangedInAMP(userId, oldTimestamp)
-          .then((changes) => {
-            // Get list of types that need to be synced.
-            const toSyncList = this._filterOutModulesToSync(changes);
-            // Call each sync EP in parallel.
-            return this._syncUpTypes(toSyncList, changes).then((modules) => {
-              console.log('SyncUp Ok');
-              const status = SYNCUP_STATUS_SUCCESS;
-              const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
-              return this._saveMainSyncUpLog({ status, userId, modules, newTimestamp }).then((log) => {
-                const restart = true;
-                return store.dispatch(loadAllLanguages(restart).then(resolve(log)));
-              }).catch(reject);
-            }).catch(err => {
-              console.log('SyncUp Fail');
-              // Always reject so we can display the error after saving the log.
-              return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(reject(err)).catch(reject);
-            });
-          }).catch(reject);
-      }).catch(reject);
+    // run sync up with activities import first time, then with activities export
+    // TODO a better solution can be done through AMPOFFLINE-209
+    this._configureActivitiesImportSyncUp(this._activitiesImport);
+    return this._doSyncUp().then(() => {
+      this._configureActivitiesImportSyncUp(this._noActivitiesImport);
+      return this._doSyncUp();
     });
   },
 
+  _configureActivitiesImportSyncUp(activitiesImport) {
+    const activitiesStep = this.syncUpModuleList.findIndex(el => el.type === SYNCUP_TYPE_ACTIVITIES);
+    this.syncUpModuleList[activitiesStep] = activitiesImport;
+  },
+
+  _doSyncUp() {
+    console.log('_doSyncUp');
+    /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
+     and the other the local database. */
+    return new Promise((resolve, reject) => (
+      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSuccessfulSyncUp()]).then((promises) => {
+        const lastSuccessfulSyncUp = promises[1];
+        const userId = store.getState().user.userData.id;
+        const oldTimestamp = lastSuccessfulSyncUp[SYNCUP_DATETIME_FIELD];
+        return this.getWhatChangedInAMP(userId, oldTimestamp).then((changes) => {
+          // Get list of types that need to be synced.
+          const toSyncList = this._filterOutModulesToSync(changes);
+          // Call each sync EP in parallel.
+          return this._syncUpTypes(toSyncList, changes).then((modules) => {
+            console.log('SyncUp Ok');
+            const status = SYNCUP_STATUS_SUCCESS;
+            const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
+            return this._saveMainSyncUpLog({ status, userId, modules, newTimestamp }).then((log) => {
+              const restart = true;
+              store.dispatch(loadAllLanguages(restart));
+              return resolve(log);
+            }).catch(reject);
+          }).catch(err => {
+            console.log('SyncUp Fail');
+            // Always reject so we can display the error after saving the log.
+            return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(() => (reject(err))).catch(reject);
+          });
+        }).catch(reject);
+      }).catch(reject)
+    ));
+  },
+
   _filterOutModulesToSync(changes) {
+    console.log('_filterOutModulesToSync');
     // Filter out syncUpModuleList and keep only what needs to be resynced.
+    // TODO: remove this flag once AMP-25568 is done
+    changes[SYNCUP_TYPE_FIELDS] = true; // eslint-disable-line no-param-reassign
     return this.syncUpModuleList.filter((item) => {
       const changeItem = changes[item.type];
       if (changeItem instanceof Object) {
@@ -139,32 +194,36 @@ const SyncUpManager = {
         if (changeItem.removed.length > 0 || changeItem.saved.length > 0) {
           return item;
         }
+        return undefined;
       } else if (changeItem === true) { // Workspaces, translations, etc.
         return item;
       }
+      return undefined;
     });
   },
 
   /**
    * Iterate the list of types (which is a sublist of 'syncUpModuleList') and perform all 'fn' functions.
    * @param types
+   * @param changes
    */
   _syncUpTypes(types, changes) {
     console.log('_syncUpTypes');
-    const fnSync = (type) => {
-      return new Promise((resolve, reject) => {
+
+    const fnSync = (type) => (
+      new Promise((resolve, reject) => {
         const changeItem = changes[type.type];
         const ret = { type: type.type, status: SYNCUP_STATUS_SUCCESS };
         if (changeItem instanceof Object) {
           // Activities, ws members, etc.
           const saved = changeItem.saved;
           const removed = changeItem.removed;
-          return type.fn.call(type.context, saved, removed).then(resolve(ret)).catch(reject);
+          return type.fn.call(type.context, saved, removed).then(() => resolve(ret)).catch(reject);
         } else {
-          return type.fn().then(resolve(ret)).catch(reject);
+          return type.fn().then(() => resolve(ret)).catch(reject);
         }
-      });
-    };
+      })
+    );
 
     const promises = types.map(fnSync);
     return Promise.all(promises);

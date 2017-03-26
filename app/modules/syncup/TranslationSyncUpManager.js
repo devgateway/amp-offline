@@ -23,33 +23,33 @@ const TranslationSyncUpManager = {
 
   syncUpLangList() {
     console.log('syncUpLangList');
-    return new Promise((resolve, reject) => {
-      return ConnectionHelper.doGet({ url: AVAILABLE_LANGUAGES_URL }).then((langs) => {
+    return new Promise((resolve, reject) => (
+      ConnectionHelper.doGet({ url: AVAILABLE_LANGUAGES_URL }).then((langs) => (
         // Replace the list of available languages first.
-        return LanguageHelper.replaceCollection(langs).then(() => {
+        LanguageHelper.replaceCollection(langs).then(() => {
           // Delete removed language files if needed (it can happen!).
           const langIds = langs.map(value => value.id);
-          return this.removeDisabledLanguageFiles(langIds).then(() => {
+          return this.removeDisabledLanguageFiles(langIds).then(() => (
             // Now sync translations for all languages at once.
-            return this.syncUpTranslations(langs).then(resolve(langs)).catch(reject);
-          }).catch(reject);
-        }).catch(reject);
-      }).catch(reject);
-    });
+            this.syncUpTranslations(langs).then(() => (resolve(langs))).catch(reject)
+          )).catch(reject);
+        }).catch(reject)
+      )).catch(reject)
+    ));
   },
 
   removeDisabledLanguageFiles(langs) {
     console.log('removeDisabledLanguageFiles');
     const restart = false;
-    return new Promise((resolve, reject) => {
-      return TranslationManager.getListOfLocalLanguages(restart).then((existingLangs) => {
+    return new Promise((resolve, reject) => (
+      TranslationManager.getListOfLocalLanguages(restart).then((existingLangs) => {
         const toDelete = existingLangs.filter((item) => langs.indexOf(item) === -1);
-        toDelete.forEach((item) => {
-          TranslationManager.removeLanguageFile(item);
-        });
-        resolve();
-      }).catch(reject);
-    });
+        toDelete.forEach((item) => (
+          TranslationManager.removeLanguageFile(item)
+        ));
+        return resolve();
+      }).catch(reject)
+    ));
   },
 
   // TODO: use lastSyncDate when calling the EP.
@@ -80,9 +80,9 @@ const TranslationSyncUpManager = {
       url: POST_TRANSLATIONS_URL,
       body: masterTexts,
       paramsMap: { translations: langIds.join('|') }
-    }).then((newTranslations) => {
-      return this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds);
-    });
+    }).then((newTranslations) => (
+      this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
+    ));
   },
 
   doIncrementalSyncup(langIds, originalMasterTrnFile) {
@@ -90,9 +90,9 @@ const TranslationSyncUpManager = {
     return ConnectionHelper.doGet({
       url: GET_TRANSLATIONS_URL,
       paramsMap: { translations: langIds.join('|') }
-    }).then((newTranslations) => {
-      return this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds);
-    });
+    }).then((newTranslations) => (
+      this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
+    ));
   },
 
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {

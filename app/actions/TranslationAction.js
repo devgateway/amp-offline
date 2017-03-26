@@ -8,7 +8,7 @@ export function setLanguage(lang: string) {
   console.log('setLanguage');
   return dispatch => new Promise((resolve, reject) => TranslationManager.changeLanguage(lang).then(() => {
     dispatch(language(lang));
-    resolve(lang);
+    return resolve(lang);
   }).catch(reject));
 }
 
@@ -18,7 +18,7 @@ export function loadAllLanguages(restart = false) {
     dispatch(sendingRequest());
     return TranslationManager.getListOfLocalLanguages(restart).then((data) => {
       dispatch(languagesOk(data));
-      resolve(data);
+      return resolve(data);
     }).catch(reject);
   });
 }

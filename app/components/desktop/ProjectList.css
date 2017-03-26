@@ -13,7 +13,7 @@
   border-top: 1px;
   border-bottom: 0;
   position: relative;
-  top: 2px;
+  top: 10px;
   padding-left: 10px;
   padding-right: 10px;
 }
@@ -28,4 +28,31 @@
 
 .empty_column {
   width: 2%;
+}
+
+.status_draft {
+  color: #c84545;
+}
+
+.status_validated {
+  color: #2e6fa1;
+}
+
+.status_unvalidated {
+  color: #70a628;
+}
+
+.uncynced {
+  font-style: italic;
+}
+
+.clearFilters {
+  cursor: pointer;
+  color: #70a628;
+  float: right;
+  font-size: 12px;
+  font-weight: bold;
+  right: 13px;
+  top: 7px;
+  position: relative;
 }

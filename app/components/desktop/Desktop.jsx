@@ -1,4 +1,5 @@
-// @flow
+/* eslint react/jsx-space-before-closing: 0 */
+/* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import TopArea from '../desktop/TopArea';
 import TabsContainer from './TabsContainer';
