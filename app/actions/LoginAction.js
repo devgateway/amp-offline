@@ -1,8 +1,9 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
-import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
+import { WORKSPACE_URL, LOGIN_URL, SYNCUP_FORCE_DAYS, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import store from '../index';
+import SyncUpManager from '../modules/syncup/SyncUpManager';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -18,8 +19,15 @@ export function loginAction(email: string, password: string) {
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
+
         // Tell react-router to move to another page.
-        return UrlUtils.forwardTo(WORKSPACE_URL);
+        return SyncUpManager.getLastSyncInDays().then(days => { // TODO: mover a LoginManager o dispachear SyncUpAction para tener los dias en redux.
+          if (days > SYNCUP_FORCE_DAYS) {
+            return UrlUtils.forwardTo(SYNCUP_URL);
+          } else {
+            return UrlUtils.forwardTo(WORKSPACE_URL);
+          }
+        });
       }).catch((err) => {
         dispatch(loginFailed(err));
       });

@@ -9,7 +9,7 @@ import {
   LANGUAGE_TRANSLATIONS_FILE,
   APP_DIRECTORY
 } from '../../utils/Constants';
-import { detectSynchronizedTranslationFile } from '../syncup/TranslationSyncUpManager';
+import TranslationSyncUpManager from '../syncup/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';
@@ -74,7 +74,7 @@ const TranslationManager = {
       // Load i18n config file.
       const i18nOptions = settingsFile.I18N.OPTIONS[process.env.NODE_ENV];
       // Check if we have to use the master config file or we have sync files for translations.
-      if (!detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
+      if (!TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
         i18nOptions.ns = [LANGUAGE_MASTER_TRANSLATIONS_FILE];
         i18nOptions.defaultNS = [LANGUAGE_MASTER_TRANSLATIONS_FILE];
       } else {
