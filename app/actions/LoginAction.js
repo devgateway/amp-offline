@@ -1,6 +1,6 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
-import { WORKSPACE_URL, LOGIN_URL, SYNCUP_FORCE_DAYS, SYNCUP_URL } from '../utils/Constants';
+import { WORKSPACE_URL, LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import store from '../index';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
@@ -21,8 +21,9 @@ export function loginAction(email: string, password: string) {
         dispatch(loginOk({ userData, password, token }));
 
         // Tell react-router to move to another page.
-        return SyncUpManager.getLastSyncInDays().then(days => { // TODO: mover a LoginManager o dispachear SyncUpAction para tener los dias en redux.
-          if (days > SYNCUP_FORCE_DAYS) {
+        // TODO: mover a LoginManager o dispachear SyncUpAction para tener los dias en redux.
+        return SyncUpManager.isForceSyncUp().then(force => {
+          if (force) {
             return UrlUtils.forwardTo(SYNCUP_URL);
           } else {
             return UrlUtils.forwardTo(WORKSPACE_URL);

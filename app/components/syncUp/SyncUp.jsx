@@ -4,7 +4,6 @@ import ErrorMessage from '../common/ErrorMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
-import { SYNCUP_FORCE_DAYS } from '../../utils/Constants';
 
 export default class SyncUp extends Component {
   static propTypes = {
@@ -20,7 +19,7 @@ export default class SyncUp extends Component {
       syncUpInProgress: false,
       loadingSyncHistory: false,
       firstLoadSyncUp: true,
-      days: 0
+      forceSyncUp: false
     };
 
     this.selectContentElementToDraw.bind(this);
@@ -32,16 +31,13 @@ export default class SyncUp extends Component {
     this.props.getSyncUpHistory();
     this.state.firstLoadSyncUp = false;
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
-    SyncUpManager.getLastSyncInDays().then((days) => (this.state.days = days));
+    SyncUpManager.isForceSyncUp().then((force) => (this.state.forceSyncUp = force));
   }
 
   routerWillLeave(nextLocation) {
     // FFR: https://github.com/ReactTraining/react-router/blob/v3/docs/guides/ConfirmingNavigation.md
-    if (this.state.days > SYNCUP_FORCE_DAYS) {
-      return false;
-    } else {
-      return true;
-    }
+    return !this.state.forceSyncUp;
+    // TODO: mostrar warning o error para que el usuario sepa.
   }
 
   selectContentElementToDraw(historyData) {
@@ -79,29 +75,20 @@ export default class SyncUp extends Component {
     return (
       <div className={styles.container}>
         <div className={styles.display_inline}>
-          <Button type="button" text="Start Sync Up"
-                  className={'btn btn-success ' + (this.state.loadingSyncHistory ? 'disabled' : '')}
-                  onClick={() => {
-                    startSyncUp(historyData)
-                  }}>
-          </Button>
+          <Button
+            type="button" text="Start Sync Up"
+            className={`btn btn-success ${(this.state.loadingSyncHistory ? 'disabled' : '')}`}
+            onClick={() => {
+              startSyncUp(historyData);
+            }}
+          />
         </div>
         <div className={styles.display_inline}>
-          <div className={ +this.state.syncUpInProgress ? styles.loader : ''}>
-          </div>
+          <div className={+this.state.syncUpInProgress ? styles.loader : ''}/>
         </div>
         <hr/>
         {this.selectContentElementToDraw(historyData)}
       </div>
     );
   }
-
-  /*
-   handlePasswordChange(e) {
-   this.setState({password: e.target.value});
-   }
-
-   handleEmailChange(e) {
-   this.setState({email: e.target.value});
-   }*/
 }

@@ -21,7 +21,9 @@ import {
   SYNCUP_STATUS_FAIL,
   SYNCUP_DATETIME_FIELD,
   SYNCUP_NO_DATE,
-  SYNCUP_OLD_DAYS
+  SYNCUP_OLD_DAYS,
+  SYNCUP_FORCE_DAYS,
+  SYNCUP_BEST_BEFORE_DAYS
 } from '../../utils/Constants';
 import WorkspaceSyncUpManager from './WorkspaceSyncUpManager';
 import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
@@ -261,5 +263,19 @@ export default class SyncUpManager {
         }
       }).catch(reject)
     ));
+  }
+
+  static isForceSyncUp() {
+    console.log('isForceSyncUp');
+    return SyncUpManager.getLastSyncInDays().then((days) =>
+      days > SYNCUP_FORCE_DAYS
+    );
+  }
+
+  static isWarnSyncUp() {
+    console.log('isWarnSyncUp');
+    return SyncUpManager.getLastSyncInDays().then((days) =>
+      days > SYNCUP_BEST_BEFORE_DAYS
+    );
   }
 }
