@@ -2,10 +2,14 @@
 import React, { Component, PropTypes } from 'react';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
+import WarnMessage from '../common/WarnMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
+import translate from '../../utils/translate';
+import { SYNCUP_FORCE_DAYS } from '../../utils/Constants';
 
 export default class SyncUp extends Component {
+
   static propTypes = {
     getSyncUpHistory: PropTypes.func.isRequired,
     startSyncUp: PropTypes.func.isRequired,
@@ -19,6 +23,7 @@ export default class SyncUp extends Component {
     console.log('constructor');
     this.state = {
       errorMessage: '',
+      warnMessage: '',
       syncUpInProgress: false,
       loadingSyncHistory: false,
       firstLoadSyncUp: true
@@ -32,13 +37,23 @@ export default class SyncUp extends Component {
     // TODO: this might change once we have the final layout for the syncupPage
     this.props.getSyncUpHistory();
     this.state.firstLoadSyncUp = false;
+    this._setForceSyncUpWarnMessage();
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
   routerWillLeave() {
     // FFR: https://github.com/ReactTraining/react-router/blob/v3/docs/guides/ConfirmingNavigation.md
-    return !this.props.syncUp.forceSyncUp;
-    // TODO: mostrar warning o error para que el usuario sepa.
+    return !this._setForceSyncUpWarnMessage();
+  }
+
+  _setForceSyncUpWarnMessage() {
+    if (this.props.syncUp.forceSyncUp && !this.props.syncUp.syncUpInProgress) {
+      this.state.warnMessage = translate('tooOldSyncWarning');
+      return true;
+    } else {
+      this.state.warnMessage = '';
+      return false;
+    }
   }
 
   selectContentElementToDraw(historyData) {
@@ -47,6 +62,8 @@ export default class SyncUp extends Component {
     } else {
       if (this.state.errorMessage !== '') {
         return <ErrorMessage message={this.state.errorMessage}/>;
+      } else if (this.state.warnMessage !== '') {
+        return <WarnMessage message={this.state.warnMessage}/>;
       } else {
         return (<div className={'container'}>
           <div className={'row'}>
@@ -73,6 +90,7 @@ export default class SyncUp extends Component {
     this.state.errorMessage = this.props.syncUp.errorMessage || '';
     this.state.loadingSyncHistory = this.props.syncUp.loadingSyncHistory;
     this.state.syncUpInProgress = this.props.syncUp.syncUpInProgress;
+    this._setForceSyncUpWarnMessage();
     return (
       <div className={styles.container}>
         <div className={styles.display_inline}>
