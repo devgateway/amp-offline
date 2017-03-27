@@ -17,6 +17,7 @@ import {
   SYNCUP_TYPE_WORKSPACES,
   SYNCUP_TYPE_ACTIVITIES,
   SYNCUP_TYPE_FIELDS,
+  SYNCUP_TYPE_POSSIBLE_VALUES,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_STATUS_FAIL,
   SYNCUP_DATETIME_FIELD,
@@ -31,6 +32,7 @@ import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
 import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
 import FieldsSyncUpManager from './FieldsSyncUpManager';
+import PossibleValuesSyncUpManager from './PossibleValuesSyncUpManager';
 import UserHelper from '../helpers/UserHelper';
 import translate from '../../utils/translate';
 
@@ -46,7 +48,7 @@ const syncUpModuleList = [
   { type: SYNCUP_TYPE_ACTIVITIES },
   {
     type: SYNCUP_TYPE_ACTIVITIES,
-    fn: (saved, removed) => {
+    fn: ({ saved, removed }) => {
       const exporter = new ActivitiesPullFromAMPManager();
       return exporter.pullActivitiesFromAMP(saved, removed);
     }
@@ -58,12 +60,13 @@ const syncUpModuleList = [
       return fieldsSyncUp.syncUp();
     }
   },
+  { type: SYNCUP_TYPE_POSSIBLE_VALUES, fn: PossibleValuesSyncUpManager.syncUp },
   { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
   { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
   { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings }
 ];
 
-const _noActivitiesImport = { type: SYNCUP_TYPE_ACTIVITIES };
+const _noActivitiesImport = { type: SYNCUP_TYPE_ACTIVITIES, fn: () => Promise.resolve() };
 
 const _activitiesImport = {
   type: SYNCUP_TYPE_ACTIVITIES,
@@ -184,12 +187,14 @@ export default class SyncUpManager {
     console.log('_filterOutModulesToSync');
     // Filter out syncUpModuleList and keep only what needs to be resynced.
     // TODO: remove this flag once AMP-25568 is done
-    changes[SYNCUP_TYPE_FIELDS] = true; // eslint-disable-line no-param-reassign
+    changes[SYNCUP_TYPE_FIELDS] = true;
     return syncUpModuleList.filter((item) => {
       const changeItem = changes[item.type];
       if (changeItem instanceof Object) {
         // Activities, users, etc.
-        if (changeItem.removed.length > 0 || changeItem.saved.length > 0) {
+        if ((Object.prototype.hasOwnProperty.call(changeItem, 'length') && changeItem.length > 0) ||
+          (Object.prototype.hasOwnProperty.call(changeItem, 'removed') && changeItem.removed.length > 0) ||
+          (Object.prototype.hasOwnProperty.call(changeItem, 'saved') && changeItem.saved.length > 0)) {
           return item;
         }
         return undefined;
@@ -214,9 +219,8 @@ export default class SyncUpManager {
         const ret = { type: type.type, status: SYNCUP_STATUS_SUCCESS };
         if (changeItem instanceof Object) {
           // Activities, ws members, etc.
-          const saved = changeItem.saved;
-          const removed = changeItem.removed;
-          return type.fn.call(type.context, saved, removed).then(() => resolve(ret)).catch(reject);
+          // it is not always saved or removed, let's just pass the diff to be processed as needed
+          return type.fn.call(type.context, changeItem).then(() => resolve(ret)).catch(reject);
         } else {
           return type.fn().then(() => resolve(ret)).catch(reject);
         }

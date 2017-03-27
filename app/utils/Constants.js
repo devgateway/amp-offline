@@ -54,6 +54,7 @@ export const SYNCUP_TYPE_GS = 'global-settings';
 export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
 export const SYNCUP_TYPE_ACTIVITIES = 'activities';
 export const SYNCUP_TYPE_FIELDS = 'fields';
+export const SYNCUP_TYPE_POSSIBLE_VALUES = 'possible-values-fields';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
