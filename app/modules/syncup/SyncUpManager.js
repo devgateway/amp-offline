@@ -32,6 +32,7 @@ import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
 import FieldsSyncUpManager from './FieldsSyncUpManager';
 import UserHelper from '../helpers/UserHelper';
+import translate from '../../utils/translate';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
 const syncUpModuleList = [
@@ -267,7 +268,7 @@ export default class SyncUpManager {
   }
 
   /**
-   * Check if the last syncup is too old or there is not user data in storage.
+   * Check if the last syncup is too old or there is not user data in storage, also set the message.
    */
   static isForceSyncUp() {
     console.log('isForceSyncUp');
@@ -275,7 +276,16 @@ export default class SyncUpManager {
       const forceBecauseDays = days > SYNCUP_FORCE_DAYS;
       return UserHelper.findByEmail(store.getState().user.userData.email).then((user) => {
         const hasUserData = user['first-name'] ? true : false;
-        return forceBecauseDays || !hasUserData;
+        const force = forceBecauseDays || !hasUserData;
+        let message = '';
+        if (force) {
+          if (forceBecauseDays) {
+            message = translate('tooOldSyncWarning');
+          } else {
+            message = translate('noUserDataSyncWarning');
+          }
+        }
+        return { force: force, message: message };
       });
     });
   }

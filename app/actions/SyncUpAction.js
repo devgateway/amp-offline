@@ -49,12 +49,12 @@ export function startSyncUp(historyData) {
 export function isForceSyncUpAction(callback) {
   console.log('isForceSyncUpAction');
   return (dispatch) => (
-    SyncUpManager.isForceSyncUp().then((force) => {
+    SyncUpManager.isForceSyncUp().then((forceData) => {
       dispatch({
         type: STATE_SYNCUP_IS_FORCE_NEEDED,
-        actionData: force
+        actionData: { force: forceData.force, message: forceData.message }
       });
-      return callback(force);
+      return callback(forceData.force);
     }));
 }
 

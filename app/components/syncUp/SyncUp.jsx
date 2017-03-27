@@ -5,8 +5,6 @@ import ErrorMessage from '../common/ErrorMessage';
 import WarnMessage from '../common/WarnMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
-import translate from '../../utils/translate';
-import { SYNCUP_FORCE_DAYS } from '../../utils/Constants';
 
 export default class SyncUp extends Component {
 
@@ -47,7 +45,7 @@ export default class SyncUp extends Component {
 
   _setForceSyncUpWarnMessage() {
     if (this.props.syncUp.forceSyncUp) {
-      this.state.warnMessage = translate('tooOldSyncWarning');
+      this.state.warnMessage = this.props.syncUp.forceSyncUpMessage;
       return true;
     } else {
       this.state.warnMessage = '';

@@ -13,7 +13,8 @@ const defaultState = {
   syncUpInProgress: false,
   errorMessage: '',
   historyData: {},
-  forceSyncUp: false
+  forceSyncUp: false,
+  forceSyncUpMessage: ''
 };
 
 export default function syncUp(state: Object = defaultState, action: Object) {
@@ -33,7 +34,8 @@ export default function syncUp(state: Object = defaultState, action: Object) {
         syncUpInProgress: false,
         syncUpResutls: action.actionData,
         errorMessage: '',
-        forceSyncUp: false
+        forceSyncUp: false,
+        forceSyncUpMessage: ''
       });
     case STATE_SYNCUP_IN_PROCESS:
       return Object.assign({}, state, { syncUpInProgress: true, errorMessage: '' });
@@ -42,7 +44,10 @@ export default function syncUp(state: Object = defaultState, action: Object) {
         syncUpInProgress: false, errorMessage: action.actionData.errorMessage,
       });
     case STATE_SYNCUP_IS_FORCE_NEEDED:
-      return Object.assign({}, state, { forceSyncUp: action.actionData });
+      return Object.assign({}, state, {
+        forceSyncUp: action.actionData.force,
+        forceSyncUpMessage: action.actionData.message
+      });
     default:
       return state;
   }
