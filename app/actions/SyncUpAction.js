@@ -9,6 +9,7 @@ export const STATE_SYNCUP_SEARCH_FAILED = 'STATE_SYNCUP_SEARCH_FAILED';
 export const STATE_SYNCUP_IN_PROCESS = 'STATE_SYNCUP_IN_PROCESS';
 export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
+export const STATE_SYNCUP_IS_FORCE_NEEDED = 'STATE_SYNCUP_IS_FORCE_NEEDED';
 
 export function getSyncUpHistory() {
   console.log('getSyncUpHistory');
@@ -29,7 +30,8 @@ export function startSyncUp(historyData) {
   console.log('startSyncUp');
   return (dispatch, ownProps) => {
     if (ownProps().syncUp.syncUpInProgress === false) {
-      SyncUpManager.syncUpAllTypesOnDemand().then(() => {
+      dispatch(syncUpInProgress());
+      return SyncUpManager.syncUpAllTypesOnDemand().then(() => {
         // TODO probably the way in which we will update the ui will change
         // once we get the final version also it will change the way in which pass
         // the historyData object
@@ -40,10 +42,20 @@ export function startSyncUp(historyData) {
         console.log('syncupSucessfailed');
         return dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage: err } });
       });
-      dispatch(syncUpInProgress());
-      console.log('startSyncUp');
     }
   };
+}
+
+export function isForceSyncUpAction(callback) {
+  console.log('isForceSyncUpAction');
+  return (dispatch) => (
+    SyncUpManager.isForceSyncUp().then((force) => {
+      dispatch({
+        type: STATE_SYNCUP_IS_FORCE_NEEDED,
+        actionData: force
+      });
+      return callback(force);
+    }));
 }
 
 function syncUpSearchHistoryOk(data) {

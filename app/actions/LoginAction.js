@@ -3,7 +3,7 @@ import UrlUtils from '../utils/URLUtils';
 import { WORKSPACE_URL, LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import store from '../index';
-import SyncUpManager from '../modules/syncup/SyncUpManager';
+import { isForceSyncUpAction } from './SyncUpAction';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -21,14 +21,13 @@ export function loginAction(email: string, password: string) {
         dispatch(loginOk({ userData, password, token }));
 
         // Tell react-router to move to another page.
-        // TODO: mover a LoginManager o dispachear SyncUpAction para tener los dias en redux.
-        return SyncUpManager.isForceSyncUp().then(force => {
+        return dispatch(isForceSyncUpAction((force) => {
           if (force) {
             return UrlUtils.forwardTo(SYNCUP_URL);
           } else {
             return UrlUtils.forwardTo(WORKSPACE_URL);
           }
-        });
+        }));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });

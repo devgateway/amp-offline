@@ -1,14 +1,17 @@
+/* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
-import SyncUpManager from '../../modules/syncup/SyncUpManager';
 
 export default class SyncUp extends Component {
   static propTypes = {
     getSyncUpHistory: PropTypes.func.isRequired,
-    startSyncUp: PropTypes.func.isRequired
+    startSyncUp: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
+    route: PropTypes.object.isRequired,
+    syncUp: PropTypes.object.isRequired
   };
 
   constructor() {
@@ -18,8 +21,7 @@ export default class SyncUp extends Component {
       errorMessage: '',
       syncUpInProgress: false,
       loadingSyncHistory: false,
-      firstLoadSyncUp: true,
-      forceSyncUp: false
+      firstLoadSyncUp: true
     };
 
     this.selectContentElementToDraw.bind(this);
@@ -31,12 +33,11 @@ export default class SyncUp extends Component {
     this.props.getSyncUpHistory();
     this.state.firstLoadSyncUp = false;
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
-    SyncUpManager.isForceSyncUp().then((force) => (this.state.forceSyncUp = force));
   }
 
-  routerWillLeave(nextLocation) {
+  routerWillLeave() {
     // FFR: https://github.com/ReactTraining/react-router/blob/v3/docs/guides/ConfirmingNavigation.md
-    return !this.state.forceSyncUp;
+    return !this.props.syncUp.forceSyncUp;
     // TODO: mostrar warning o error para que el usuario sepa.
   }
 
@@ -79,7 +80,7 @@ export default class SyncUp extends Component {
             type="button" text="Start Sync Up"
             className={`btn btn-success ${(this.state.loadingSyncHistory ? 'disabled' : '')}`}
             onClick={() => {
-              startSyncUp(historyData);
+              startSyncUp();
             }}
           />
         </div>
