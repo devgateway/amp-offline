@@ -37,7 +37,6 @@ export default class SyncUp extends Component {
     // TODO: this might change once we have the final layout for the syncupPage
     this.props.getSyncUpHistory();
     this.state.firstLoadSyncUp = false;
-    this._setForceSyncUpWarnMessage();
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
@@ -47,7 +46,7 @@ export default class SyncUp extends Component {
   }
 
   _setForceSyncUpWarnMessage() {
-    if (this.props.syncUp.forceSyncUp && !this.props.syncUp.syncUpInProgress) {
+    if (this.props.syncUp.forceSyncUp) {
       this.state.warnMessage = translate('tooOldSyncWarning');
       return true;
     } else {

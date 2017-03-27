@@ -31,6 +31,7 @@ import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
 import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
 import FieldsSyncUpManager from './FieldsSyncUpManager';
+import UserHelper from '../helpers/UserHelper';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
 const syncUpModuleList = [
@@ -265,11 +266,18 @@ export default class SyncUpManager {
     ));
   }
 
+  /**
+   * Check if the last syncup is too old or there is not user data in storage.
+   */
   static isForceSyncUp() {
     console.log('isForceSyncUp');
-    return SyncUpManager.getLastSyncInDays().then((days) =>
-      days > SYNCUP_FORCE_DAYS
-    );
+    return SyncUpManager.getLastSyncInDays().then((days) => {
+      const forceBecauseDays = days > SYNCUP_FORCE_DAYS;
+      return UserHelper.findByEmail(store.getState().user.userData.email).then((user) => {
+        const hasUserData = user['first-name'] ? true : false;
+        return forceBecauseDays || !hasUserData;
+      });
+    });
   }
 
   static isWarnSyncUp() {
