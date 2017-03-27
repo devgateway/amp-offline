@@ -57,5 +57,7 @@
   "Clear filters": "Clear filters",
   "SyncupDeniedMustRelogin": "You are not allowed to sync up. Please re-login",
   "Rejected": "Rejected",
-  "noUniqueFieldsTree": "No unique fields tree is found for usage"
+  "noUniqueFieldsTree": "No unique fields tree is found for usage",
+  "noWorkspace": "No workspace is selected",
+  "noFieldsDef": "No fields definition found"
 }

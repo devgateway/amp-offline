@@ -84,9 +84,7 @@ const RequestConfig = {
 
   replaceToken(requestConfig) {
     console.log('replaceToken');
-    /* eslint-disable no-param-reassign */
     requestConfig.headers['X-Auth-Token'] = store.getState().login.token;
-    /* eslint-enable no-param-reassign */
     return requestConfig;
   }
 };

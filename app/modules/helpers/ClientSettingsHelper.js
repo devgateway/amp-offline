@@ -92,9 +92,7 @@ const ClientSettingsHelper = {
     // console.log(validate(setting, settingsSchema));
     if (validate(setting, settingsSchema).valid) {
       console.log(`Valid setting.id = ${setting.id}`);
-      /* eslint-disable no-param-reassign */
       setting['updated-at'] = (new Date()).toISOString();
-      /* eslint-enable no-param-reassing */
       return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
     }
     return Promise.reject(INVALID_FORMAT_ERROR);

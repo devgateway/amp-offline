@@ -72,9 +72,9 @@ export default class FieldsSyncUpManager {
     return TeamMemberHelper.findAll({}).then(wsMemberIdsMap => {
       // workaround for the first fields sync up that may execute before wsMembers, fix AMPOFFLINE-270 or AMPOFFLINE-209
       if (wsMemberIdsMap.length === 0 && retries > 0) {
-        /* eslint-disable no-param-reassign, no-plusplus */
+        /* eslint-disable no-plusplus */
         return Utils.delay(5000).then(() => this._getExistingWsMemberIds(--retries));
-        /* eslint-enable no-param-reassign, no-plusplus */
+        /* eslint-enable no-plusplus */
       }
       return Utils.flattenToListByKey(wsMemberIdsMap, 'id');
     });
