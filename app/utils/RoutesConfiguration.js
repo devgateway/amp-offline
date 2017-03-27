@@ -12,6 +12,7 @@ import {
   ACTIVITY_IMPORT_URL,
   ACTIVITY_EXPORT_URL,
   SINGLE_FIELDS_TREE_URL,
+  POSSIBLE_VALUES_PER_FIELD_PATHS,
   SYNC_URL
 } from '../modules/connectivity/AmpApiConstants';
 
@@ -62,6 +63,10 @@ const routesConfiguration = [{
 }, {
   url: SINGLE_FIELDS_TREE_URL,
   method: 'GET',
+  requiresToken: true
+}, {
+  url: POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
   requiresToken: true
 }, {
   url: TEST_URL,
