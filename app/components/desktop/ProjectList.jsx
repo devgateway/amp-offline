@@ -72,30 +72,27 @@ export default class ProjectList extends Component {
           data={this.props.projects} striped hover pagination options={this.props.paginationOptions}
           containerClass={style.containerTable} tableHeaderClass={style.header}
         >
+          <TableHeaderColumn dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.column_5}/>
           <TableHeaderColumn
-            dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.empty_column}
-          />
-          <TableHeaderColumn
-            dataField="ampId" isKey dataAlign="center" dataSort ref="ampId"
-            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }}
-          >
+            dataField="ampId" isKey dataAlign="center" dataSort ref="ampId" columnClassName={style.column_15}
+            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="title" dataFormat={this.projectNameFormatter} dataSort ref="title"
-            filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
-          >
+            columnClassName={style.column_20}
+            filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}>
             {translate('Project Title')}
           </TableHeaderColumn>
-          <TableHeaderColumn dataField="fundingAgency" dataSort>{translate('Funding Agency')}</TableHeaderColumn>
+          <TableHeaderColumn dataField="fundingAgency" dataSort
+                             columnClassName={style.column_20}>{translate('Funding Agency')}
+          </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualCommitments" dataSort
-          >
+            dataField="actualCommitments" dataSort columnClassName={style.column_20}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualDisbursements" dataSort
-          >
+            dataField="actualDisbursements" dataSort columnClassName={style.column_20}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>

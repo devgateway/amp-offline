@@ -26,8 +26,16 @@
   border-top: 0;
 }
 
-.empty_column {
-  width: 2%;
+.column_5 {
+  width: 5%;
+}
+
+.column_15 {
+  width: 15%;
+}
+
+.column_20 {
+  width: 20%;
 }
 
 .status_draft {
