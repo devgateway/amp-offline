@@ -58,7 +58,7 @@
   "SyncupDeniedMustRelogin": "You are not allowed to sync up. Please re-login",
   "Rejected": "Rejected",
   "noUniqueFieldsTree": "No unique fields tree is found for usage",
-  "Error": "Error:",
-  "Warning:": "Warning:",
+  "Error": "Error",
+  "Warning": "Warning",
   "tooOldSyncWarning": "Your last data synchronization is older than 14 days, please click Sync button to continue."
 }
