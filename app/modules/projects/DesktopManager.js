@@ -10,6 +10,8 @@ import {
 
 // TODO: remove these test data.
 const activeProjects = [{
+  // using Timor IDs for activity preview testing
+  id: 10098,
   ampId: 1,
   title: 'Project 1',
   fundingAgency: 'Japan',
@@ -21,6 +23,7 @@ const activeProjects = [{
   synced: true,
   status: ACTIVITY_STATUS_DRAFT
 }, {
+  id: 10098,
   ampId: 2,
   title: 'Project 2',
   fundingAgency: 'USAID',
@@ -32,6 +35,7 @@ const activeProjects = [{
   synced: true,
   status: ACTIVITY_STATUS_UNVALIDATED
 }, {
+  id: 10098,
   ampId: 3,
   title: 'Project 3',
   fundingAgency: 'USAID',
@@ -43,6 +47,7 @@ const activeProjects = [{
   synced: false,
   status: ACTIVITY_STATUS_VALIDATED
 }, {
+  id: 10098,
   ampId: 4,
   title: 'Project 4',
   fundingAgency: 'UNICEF',
@@ -54,6 +59,7 @@ const activeProjects = [{
   synced: true,
   status: ACTIVITY_STATUS_DRAFT
 }, {
+  id: 10098,
   ampId: 5,
   title: 'Project 5',
   fundingAgency: 'USAID',
@@ -65,6 +71,7 @@ const activeProjects = [{
   synced: false,
   status: ACTIVITY_STATUS_DRAFT
 }, {
+  id: 10098,
   ampId: 6,
   title: 'Project 6',
   fundingAgency: 'USAID',

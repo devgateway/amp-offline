@@ -13,3 +13,8 @@ export const SECTOR_GROUP = 'Sector Group';
 
 export const ORG_ROLE_NAMES = [DONOR_ORGANIZATION, RESPONSIBLE_ORGANIZATION, EXECUTING_AGENCY, IMPLEMENTING_AGENCY,
   BENEFICIARY_AGENCY, CONTRACTING_AGENCY, REGIONAL_GROUP, SECTOR_GROUP];
+
+export const ACTUAL = 'Actual';
+export const PLANNED = 'Planned';
+export const COMMITMENTS = 'Commitments';
+export const DISBURSEMENTS = 'Disbursements';

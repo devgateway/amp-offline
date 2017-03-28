@@ -1,0 +1,41 @@
+.preview_container {
+}
+
+.preview_header {
+    border-top: 5px solid #4A687A;
+    background-color: #F0F0F0;
+}
+
+.section_title {
+    background-color: #4A687A;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: auto;
+    display: block;
+}
+
+.section_group {
+    background-color: #FFFFFF;
+    border-top: 1px solid #DADAD6;
+    border-left: 1px solid #DADAD6;
+    border-right: 2px solid #C2C1BA;
+    border-bottom: 2px solid #C2C1BA;
+    padding: 10px;
+    margin-top: 15px;
+}
+
+.field_name {
+
+}
+
+.field_value {
+    font-weight: bold;
+}
+
+hr {
+    color: #333;
+}

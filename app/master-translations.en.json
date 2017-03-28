@@ -57,5 +57,9 @@
   "Clear filters": "Clear filters",
   "SyncupDeniedMustRelogin": "You are not allowed to sync up. Please re-login",
   "Rejected": "Rejected",
-  "noUniqueFieldsTree": "No unique fields tree is found for usage"
+  "noUniqueFieldsTree": "No unique fields tree is found for usage",
+  "activityLoading": "Activity is loading",
+  "activityUnexpectedError": "Unexpected error occurred. Activity could not be loaded.",
+  "total": "Total",
+  "fundingInformation": "Funding Information"
 }

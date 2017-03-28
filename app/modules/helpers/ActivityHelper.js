@@ -123,7 +123,8 @@ const ActivityHelper = {
     if (activity.id === undefined) {
       // set id to internal_id (== activity comes from sync) or generate a new local id (== activity created offline)
       if (activity[AC.INTERNAL_ID]) {
-        activity.id = activity[AC.INTERNAL_ID];
+        // set the id as string for consistency with other use cases
+        activity.id = `${activity[AC.INTERNAL_ID]}`;
       } else {
         activity.id = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
         // also flag activity changed on the client side

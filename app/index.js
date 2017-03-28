@@ -8,6 +8,7 @@ import './app.global.css';
 import AppPage from './containers/AppPage';
 import LoginPage from './containers/LoginPage';
 import DesktopPage from './containers/DesktopPage';
+import ActivityPage from './containers/ActivityPage';
 import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './containers/SyncUpPage';
 import auth from './modules/security/Auth';
@@ -39,6 +40,9 @@ initializeI18Next().then(() => {
             <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
             <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} />
             <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
+            <Route
+              path="/activity/preview/:activityId" component={ActivityPage} onEnter={checkAuth} store={store}
+            />
           </Route>
         </Router>
       </Provider>,
