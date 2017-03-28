@@ -27,14 +27,14 @@ const rejectedProjects = [{
 
 const DesktopManager = {
 
-  generateDesktopData(teamId) {
+  generateDesktopData(teamId, teamMemberId) {
     console.log('generateDesktopData');
-    return new Promise((resolve, reject) => {
-      return ActivityHelper.findAllNonRejected({ team: teamId }).then((activities) => {
-        return ActivityHydrator.hydrateActivities({
+    return new Promise((resolve, reject) => (
+      ActivityHelper.findAllNonRejected({ team: teamId }).then((activities) => (
+        ActivityHydrator.hydrateActivities({
           activities,
           fieldPaths: ['donor_organization~organization'],
-          teamMember: { id: 787 } // just for testing.
+          teamMember: { id: teamMemberId }
         }).then((hydratedActivities) => {
           const activeProjectsWithLinks = hydratedActivities.map((item) => (
             Object.assign({}, item, {
@@ -54,9 +54,9 @@ const DesktopManager = {
             defaultTabs: this.generateDefaultTabsStructure(activeProjectsWithLinks, rejectedProjects),
             paginationOptions: this.getGeneralPaginationOptions() // TODO: split pagination options.
           });
-        }).catch(reject);
-      }).catch(reject);
-    });
+        }).catch(reject)
+      )).catch(reject)
+    ));
   },
 
   getAmounts(/* item */) {
