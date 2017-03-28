@@ -55,8 +55,8 @@ export default class ProjectList extends Component {
   }
 
   handlerClickCleanFiltered() {
-    this.refs.ampId.cleanFiltered();
-    this.refs.title.cleanFiltered();
+    this.refs.amp_id.cleanFiltered();
+    this.refs.project_title.cleanFiltered();
   }
 
   render() {
@@ -74,25 +74,25 @@ export default class ProjectList extends Component {
         >
           <TableHeaderColumn dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.column_5}/>
           <TableHeaderColumn
-            dataField="ampId" isKey dataAlign="center" dataSort ref="ampId" columnClassName={style.column_15}
+            dataField="amp_id" isKey dataAlign="center" dataSort ref="amp_id" columnClassName={style.column_10}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="title" dataFormat={this.projectNameFormatter} dataSort ref="title"
-            columnClassName={style.column_20}
+            dataField="project_title" dataFormat={this.projectNameFormatter} dataSort ref="project_title"
+            columnClassName={style.column_40}
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}>
             {translate('Project Title')}
           </TableHeaderColumn>
           <TableHeaderColumn dataField="fundingAgency" dataSort
-                             columnClassName={style.column_20}>{translate('Funding Agency')}
+                             columnClassName={style.column_15}>{translate('Funding Agency')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualCommitments" dataSort columnClassName={style.column_20}>
+            dataField="actualCommitments" dataSort columnClassName={style.column_15}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualDisbursements" dataSort columnClassName={style.column_20}>
+            dataField="actualDisbursements" dataSort columnClassName={style.column_15}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>
