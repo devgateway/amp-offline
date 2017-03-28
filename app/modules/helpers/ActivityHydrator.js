@@ -61,7 +61,7 @@ export default class ActivityHydrator {
   hydrateActivities(activities, fieldPaths) {
     return new Promise((resolve, reject) =>
       this._getPossibleValues(fieldPaths).then(possibleValuesCollection =>
-        this._hydrateActivitiesWithFullObjects(activities, possibleValuesCollection)).catch(reject));
+        this._hydrateActivitiesWithFullObjects(activities, possibleValuesCollection)).then(resolve).catch(reject));
   }
 
   _hydrateActivitiesWithFullObjects(activities, possibleValuesCollection) {
@@ -170,7 +170,7 @@ export default class ActivityHydrator {
           throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
         } else {
           const hydrator = new ActivityHydrator(fieldsDef);
-          return hydrator.hydrateActivities(activities, fieldPaths);
+          return hydrator.hydrateActivities(activities, fieldPaths).then(resolve).catch(reject);
         }
       }).catch(reject);
     });
