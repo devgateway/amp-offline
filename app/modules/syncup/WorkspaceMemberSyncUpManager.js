@@ -6,9 +6,9 @@ import TeamMemberHelper from '../helpers/TeamMemberHelper';
 
 const WorkspaceMemberSyncUpManager = {
 
-  syncWorkspaceMembers(added, removed) {
+  syncWorkspaceMembers({ saved, removed }) {
     console.log('syncWorkspaceMembers');
-    return ConnectionHelper.doGet({ url: WORKSPACE_MEMBER_URL, paramsMap: { ids: added } })
+    return ConnectionHelper.doGet({ url: WORKSPACE_MEMBER_URL, paramsMap: { ids: saved } })
       .then((data) => TeamMemberHelper.saveOrUpdateTeamMembers(data)
         .then(() => (TeamMemberHelper.deleteByIds(removed))));
   }

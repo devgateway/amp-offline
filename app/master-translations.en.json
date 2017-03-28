@@ -58,6 +58,8 @@
   "SyncupDeniedMustRelogin": "You are not allowed to sync up. Please re-login",
   "Rejected": "Rejected",
   "noUniqueFieldsTree": "No unique fields tree is found for usage",
+  "noWorkspace": "No workspace is selected",
+  "noFieldsDef": "No fields definition found",
   "activityLoading": "Activity is loading",
   "activityUnexpectedError": "Unexpected error occurred. Activity could not be loaded.",
   "total": "Total",

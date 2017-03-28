@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha';
-import * as actions from '../../app/modules/helpers/PossibleValuesHelper';
+import actions from '../../app/modules/helpers/PossibleValuesHelper';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -7,23 +7,20 @@ const chaiAsPromised = require('chai-as-promised');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const pv1 = {
-  id: 'donor_organization~organization',
-  'possible-options': [
+let ampFormatPV1 = {
+  'donor_organization~organization': [
     {
       id: 1,
       value: 'African Capacity Building Foundation'
     },
     {
       id: 2,
-      'parent-id': 1,
       value: 'Agence Canadienne pour le Développement International'
     }
   ]
 };
-const pv2 = {
-  id: 'executing_agency~organization',
-  'possible-options': [
+let ampFormatPV2 = {
+  'executing_agency~organization': [
     {
       id: 3,
       value: 'Agence Française de Développement'
@@ -34,9 +31,8 @@ const pv2 = {
     }
   ]
 };
-const pvTranslations = {
-  id: 'beneficiary_agency~organization',
-  'possible-options': [
+let ampFormatPVwithTranslations = {
+  'beneficiary_agency~organization': [
     {
       id: 3,
       value: {
@@ -52,15 +48,33 @@ const pvTranslations = {
   ]
 };
 
-const validPossibleValuesColl = [pv1, pv2, pvTranslations];
-const invalidPV = { id: 'some-id', 'invalid-field-name': 'some value' };
-const missingId = { 'possible-options': { id: 2, value: 'aa' } };
-const mixedValidInvalid = [pv1, invalidPV];
+let validPossibleValuesColl = [/* ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations */];
+let invalidPV = { 'invalid-field-name': 'some value' };
+let missingId = { 'possible-options': [{ value: 'aa' }, { id: 2, value: 'bb' }] };
+let mixedValidInvalid = [/* ampFormatPV1, invalidPV*/];
 
 describe('@@ PossibleValuesHelper @@', () => {
   describe('replaceAll', () =>
     it('should clear data', () =>
       expect(actions.replaceAll([])).to.eventually.have.lengthOf(0)
+    )
+  );
+
+  describe('transformToClientUsage', () =>
+    it('should successfully transform data',
+      () => {
+        expect(() => {
+          ampFormatPV1 = actions.transformToClientUsage(Object.entries(ampFormatPV1)[0]);
+          ampFormatPV2 = actions.transformToClientUsage(Object.entries(ampFormatPV2)[0]);
+          ampFormatPVwithTranslations = actions.transformToClientUsage(Object.entries(ampFormatPVwithTranslations)[0]);
+          validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations];
+
+          invalidPV = actions.transformToClientUsage(Object.entries(invalidPV)[0]);
+          missingId = actions.transformToClientUsage(Object.entries(missingId)[0]);
+          mixedValidInvalid = [invalidPV, missingId];
+          console.log(ampFormatPV1);
+        }).to.not.throw(Error);
+      }
     )
   );
 
@@ -79,7 +93,7 @@ describe('@@ PossibleValuesHelper @@', () => {
 
   describe('saveOrUpdate', () =>
     it('should successfully save valid possible values', () =>
-      expect(actions.saveOrUpdate(pv2)).to.eventually.deep.equal(pv2)
+      expect(actions.saveOrUpdate(ampFormatPV2)).to.eventually.deep.equal(ampFormatPV2)
     )
   );
 
@@ -91,7 +105,7 @@ describe('@@ PossibleValuesHelper @@', () => {
 
   describe('findById', () =>
     it('should find by id', () =>
-      expect(actions.findById(pv1.id)).to.eventually.deep.equal(pv1)
+      expect(actions.findById(ampFormatPV1.id)).to.eventually.deep.equal(ampFormatPV1)
     )
   );
 

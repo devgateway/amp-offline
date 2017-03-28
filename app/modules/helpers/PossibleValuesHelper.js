@@ -4,30 +4,34 @@ import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
-const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT', origin: NOTIFICATION_ORIGIN_DATABASE });
-
 const possibleValuesSchema = {
   id: '/PossibleValues',
   $schema: 'http://json-schema.org/draft-04/schema#',
   type: 'object',
   properties: {
     id: { type: 'string' },
-    'possible-options': {
+    'field-path': {
       type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'integer' },
-          'parent-id': { type: 'integer' },
-          value: {
-            anyOf: [{ type: 'string' }, { type: 'object' }]
-          }
+      items: { type: 'string' }
+    },
+    'possible-options': {
+      type: 'object',
+      patternProperties: {
+        '^([1-9]+[0-9]*)$': {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            value: {
+              anyOf: [{ type: 'string' }, { type: 'object' }]
+            }
+          },
+          required: ['id', 'value']
         },
-        required: ['id', 'value']
-      }
+      },
+      additionalProperties: false
     }
   },
-  required: ['id', 'possible-options']
+  required: ['id', 'field-path', 'possible-options']
 };
 
 /**
@@ -61,11 +65,11 @@ const PossibleValuesHelper = {
    */
   saveOrUpdate(fieldValues) {
     console.log('saveOrUpdate');
-    if (this._isValid(fieldValues)) {
-      console.log(fieldValues);
+    const validationResult = this._validate(fieldValues);
+    if (validationResult.valid) {
       return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
 
   /**
@@ -75,10 +79,11 @@ const PossibleValuesHelper = {
    */
   saveOrUpdateCollection(fieldValuesCollection) {
     console.log('saveOrUpdateCollection');
-    if (this._isValidCollection(fieldValuesCollection)) {
+    const validationResult = this._validateCollection(fieldValuesCollection);
+    if (validationResult.valid) {
       return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
 
   /**
@@ -89,18 +94,31 @@ const PossibleValuesHelper = {
   replaceAll(fieldValuesCollection) {
     console.log('replaceAll');
     // if we are replacing existing collection, then let's just reject the new set if some of its data is invalid
-    if (this._isValidCollection(fieldValuesCollection)) {
+    const validationResult = this._validateCollection(fieldValuesCollection);
+    if (validationResult.valid) {
       return DatabaseManager.replaceCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
 
-  _isValidCollection(fieldValuesCollection) {
-    return fieldValuesCollection.filter(this._isValid).length === fieldValuesCollection.length;
+  _validateCollection(fieldValuesCollection) {
+    const errors = [];
+    const validValuesCollection = fieldValuesCollection.filter((value) => {
+      const result = this._validate(value);
+      if (result.errors !== undefined && result.errors.length > 0) {
+        errors.push({ id: value.id, errors: result.errors });
+      }
+      return result.valid;
+    });
+    return { valid: validValuesCollection.length === fieldValuesCollection.length, errors };
   },
 
-  _isValid(fieldValues) {
-    return validate(fieldValues, possibleValuesSchema).valid;
+  _validate(fieldValues) {
+    const result = validate(fieldValues, possibleValuesSchema);
+    if (!result.valid) {
+      result.id = fieldValues.id;
+    }
+    return result;
   },
 
   /**
@@ -111,7 +129,39 @@ const PossibleValuesHelper = {
   deleteById(id) {
     console.log('replaceAll');
     return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
+  },
+
+  /**
+   * Transforms data from AMP format to local format
+   * @param fieldPath
+   * @param possibleOptionsFromAMP
+   * @return {{id: *, field-path: (Array|*), possible-options: {}}}
+   */
+  transformToClientUsage([fieldPath, possibleOptionsFromAMP]) {
+    // TODO do recursive when AMP EP will provide the parent-child relationship by having the fields in a tree
+    const fieldPathParts = !fieldPath ? [] : fieldPath.split('~');
+    let possibleOptions = {};
+    if (Array.isArray(possibleOptionsFromAMP)) {
+      possibleOptionsFromAMP.forEach(option => {
+        possibleOptions[option.id] = option;
+      });
+    } else {
+      // delegating data structure validation to the point it will be saved to DB, now keeping options as is
+      possibleOptions = possibleOptionsFromAMP;
+    }
+    const possibleValuesForLocalUsage = {
+      id: fieldPath,
+      'field-path': fieldPathParts,
+      'possible-options': possibleOptions
+    };
+    return possibleValuesForLocalUsage;
+  },
+
+  _getInvalidFormatError(errors) {
+    const errorMessage = JSON.stringify(errors).substring(0, 120);
+    console.error(errorMessage);
+    return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
   }
 };
 
-module.exports = PossibleValuesHelper;
+export default PossibleValuesHelper;

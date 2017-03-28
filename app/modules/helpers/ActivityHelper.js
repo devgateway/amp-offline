@@ -118,7 +118,6 @@ const ActivityHelper = {
 
   _setOrUpdateIds(activity) {
     console.log('_setOrUpdateIds');
-    /* eslint-disable no-param-reassign */
     // if this activity version is not yet available offline
     if (activity.id === undefined) {
       // set id to internal_id (== activity comes from sync) or generate a new local id (== activity created offline)
@@ -137,7 +136,6 @@ const ActivityHelper = {
       }
     }
     // any other logic like cleanup of existing activity during sync up must be done by the calling module
-    /* eslint-enable no-param-reassign */
   },
 
   /**

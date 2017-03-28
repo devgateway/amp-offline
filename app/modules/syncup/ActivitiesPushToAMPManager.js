@@ -134,10 +134,8 @@ export default class ActivitiesPushToAMPManager {
   _pushActivity(activity) {
     console.log('_pushActivity');
     // TODO remove once invalid fields are ignored by AMP
-    /* eslint-disable no-param-reassign */
     activity = Object.assign({}, activity);
     delete activity[AC.CLIENT_CHANGE_ID];
-    /* eslint-enable no-param-reassign */
     return new Promise((resolve) =>
       /*
        shouldRetry: true may be problematic if the request was received but timed out
