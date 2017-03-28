@@ -84,7 +84,7 @@ export default class ProjectList extends Component {
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}>
             {translate('Project Title')}
           </TableHeaderColumn>
-          <TableHeaderColumn dataField="fundingAgency" dataSort
+          <TableHeaderColumn dataField="donor" dataSort
                              columnClassName={style.column_15}>{translate('Funding Agency')}
           </TableHeaderColumn>
           <TableHeaderColumn

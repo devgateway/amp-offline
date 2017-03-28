@@ -7,75 +7,11 @@ import {
   ACTIVITY_STATUS_UNVALIDATED,
   ACTIVITY_STATUS_VALIDATED
 } from '../../utils/Constants';
+import ActivityHelper from '../../modules/helpers/ActivityHelper';
+import ActivityHydrator from '../helpers/ActivityHydrator';
+import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 // TODO: remove these test data.
-const activeProjects = [{
-  ampId: 1,
-  title: 'Project 1',
-  fundingAgency: 'Japan',
-  actualCommitments: '100.000',
-  actualDisbursements: '157.000',
-  view: false,
-  edit: false,
-  new: true,
-  synced: true,
-  status: ACTIVITY_STATUS_DRAFT
-}, {
-  ampId: 2,
-  title: 'Project 2',
-  fundingAgency: 'USAID',
-  actualCommitments: '100.000',
-  actualDisbursements: '5.000',
-  view: true,
-  edit: false,
-  new: true,
-  synced: true,
-  status: ACTIVITY_STATUS_UNVALIDATED
-}, {
-  ampId: 3,
-  title: 'Project 3',
-  fundingAgency: 'USAID',
-  actualCommitments: '100.000',
-  actualDisbursements: '5.000',
-  view: true,
-  edit: false,
-  new: true,
-  synced: false,
-  status: ACTIVITY_STATUS_VALIDATED
-}, {
-  ampId: 4,
-  title: 'Project 4',
-  fundingAgency: 'UNICEF',
-  actualCommitments: '10.000',
-  actualDisbursements: '5.000',
-  view: false,
-  edit: true,
-  new: false,
-  synced: true,
-  status: ACTIVITY_STATUS_DRAFT
-}, {
-  ampId: 5,
-  title: 'Project 5',
-  fundingAgency: 'USAID',
-  actualCommitments: '100.000',
-  actualDisbursements: '5.000',
-  view: false,
-  edit: true,
-  new: false,
-  synced: false,
-  status: ACTIVITY_STATUS_DRAFT
-}, {
-  ampId: 6,
-  title: 'Project 6',
-  fundingAgency: 'USAID',
-  actualCommitments: '100.000',
-  actualDisbursements: '5.000',
-  view: true,
-  edit: false,
-  new: false,
-  synced: true,
-  status: ACTIVITY_STATUS_VALIDATED
-}];
 const rejectedProjects = [{
   ampId: 1,
   title: 'Project 1a',
@@ -87,61 +23,61 @@ const rejectedProjects = [{
   new: true,
   synced: false,
   status: ACTIVITY_STATUS_DRAFT
-}, {
-  ampId: 2,
-  title: 'Project a2',
-  fundingAgency: 'USAID',
-  actualCommitments: '100',
-  actualDisbursements: '5.000',
-  view: false,
-  edit: true,
-  new: true,
-  synced: true,
-  status: ACTIVITY_STATUS_UNVALIDATED
-}, {
-  ampId: 5,
-  title: 'Project 5a',
-  fundingAgency: 'USAID',
-  actualCommitments: '1.000',
-  actualDisbursements: '5.000',
-  view: false,
-  edit: true,
-  new: true,
-  synced: true,
-  status: ACTIVITY_STATUS_VALIDATED
-}, {
-  ampId: 6,
-  title: 'Project 6a',
-  fundingAgency: 'USAID',
-  actualCommitments: '8.000',
-  actualDisbursements: '5.000',
-  view: true,
-  edit: true,
-  new: false,
-  synced: true,
-  status: ACTIVITY_STATUS_DRAFT
 }];
 
 const DesktopManager = {
 
-  generateDesktopData() {
+  generateDesktopData(teamId) {
     console.log('generateDesktopData');
-    return new Promise((resolve) => {
-      // TODO: go to an EP and load the projects from this WS, then combine with the local projects. This is just
-      // an example to show some data in the tabs.
-      const activeProjectsWithLinks = activeProjects.map((item) => (
-        Object.assign({}, item, {
-          key: item.id,
-          icon: (item.edit ? ACTIVITY_EDIT : (item.view ? ACTIVITY_VIEW : ''))
-        })
-      ));
-      resolve({
-        activeProjectsWithLinks,
-        rejectedProjects,
-        defaultTabs: this.generateDefaultTabsStructure(activeProjectsWithLinks, rejectedProjects),
-        paginationOptions: this.getGeneralPaginationOptions()
-      });
+    return new Promise((resolve, reject) => {
+      return ActivityHelper.findAllNonRejected({ team: teamId }).then((activities) => {
+        return ActivityHydrator.hydrateActivities({
+          activities,
+          fieldPaths: ['donor_organization~organization'],
+          teamMember: { id: 787 } // just for testing.
+        }).then((hydratedActivities) => {
+          const activeProjectsWithLinks = hydratedActivities.map((item) => (
+            Object.assign({}, item, {
+              key: item.id,
+              icon: this.getActivityIcon(item),
+              status: this.getActivityStatus(item),
+              donor: this.getActivityDonors(item),
+              synced: this.getActivitySynced(item),
+              actualDisbursements: this.getAmounts(item),
+              actualCommitments: this.getAmounts(item)
+            })
+          ));
+          console.log(activeProjectsWithLinks);
+          return resolve({
+            activeProjectsWithLinks,
+            rejectedProjects,
+            defaultTabs: this.generateDefaultTabsStructure(activeProjectsWithLinks, rejectedProjects),
+            paginationOptions: this.getGeneralPaginationOptions() // TODO: split pagination options.
+          });
+        }).catch(reject);
+      }).catch(reject);
     });
+  },
+
+  getAmounts(/* item */) {
+    return (Math.random() * 1000000).toString().substring(0, 9); // TODO: to be implemented.
+  },
+
+  getActivityDonors(item) {
+    return item.donor_organization.map((donor) => (donor.organization.value));
+  },
+
+  getActivitySynced(/* item */) {
+    // TODO: to be implemented.
+    return true;
+  },
+
+  getActivityIcon(item) {
+    return (item.edit ? ACTIVITY_EDIT : (item.view ? ACTIVITY_VIEW : ''));
+  },
+
+  getActivityStatus(item) {
+    return (item.is_draft ? ACTIVITY_STATUS_DRAFT : null);
   },
 
   formatNumbers(number) {
@@ -186,7 +122,7 @@ const DesktopManager = {
       }, {
         text: translate('All'), value: 100
       }],
-      sizePerPage: 5,
+      sizePerPage: 10,
       pageStartIndex: 1,
       paginationSize: 3,
       prePage: translate('Prev'),
