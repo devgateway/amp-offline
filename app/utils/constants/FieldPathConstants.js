@@ -3,5 +3,5 @@
  * @author Nadejda Mandrescu
  */
 
-export const ADJUSTMENT_TYPE_PATH = 'funding~funding_details~adjustment_type';
-export const TRANSACTION_TYPE_PATH = 'funding~funding_details~transaction_type';
+export const ADJUSTMENT_TYPE_PATH = 'fundings~funding_details~adjustment_type';
+export const TRANSACTION_TYPE_PATH = 'fundings~funding_details~transaction_type';

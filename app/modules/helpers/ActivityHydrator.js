@@ -2,7 +2,7 @@ import * as PossibleValuesHelper from './PossibleValuesHelper';
 import * as FieldsHelper from './FieldsHelper';
 import { store } from '../../index';
 import Notification from './NotificationHelper';
-import { NOTIFICATION_ORIGIN_ACTIVITY_HYDRATOR } from '../../utils/constants/ErrorConstants';
+import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -162,12 +162,12 @@ export default class ActivityHydrator {
       if (teamMember === undefined) {
         teamMember = store.getState().user.teamMember;
         if (teamMember === undefined) {
-          reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY_HYDRATOR }));
+          reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
         }
       }
       return FieldsHelper.findByWorkspaceMemberId(teamMember.id).then((fieldsDef) => {
         if (fieldsDef === null) {
-          throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY_HYDRATOR });
+          throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
         } else {
           const hydrator = new ActivityHydrator(fieldsDef);
           return hydrator.hydrateActivities(activities, fieldPaths);

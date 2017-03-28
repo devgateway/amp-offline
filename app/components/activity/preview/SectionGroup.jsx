@@ -18,7 +18,7 @@ export default class SectionGroup extends Component {
 
   render() {
     return (<div className={styles.section_group}>
-      <div>{this.props.title}</div>
+      <div className={styles.section_title}>{this.props.title}</div>
       {this.props.simpleFields}
     </div>);
   }

@@ -11,11 +11,10 @@ import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTota
 import translate from '../../../utils/translate';
 
 export default class SummaryGroup extends Component {
-  static propTypes = {
-    activityReducer: {
-      activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
-      activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
-    }
+  static contextTypes = {
+    activity: PropTypes.object.isRequired,
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
   };
 
   constructor(props) {
@@ -25,16 +24,17 @@ export default class SummaryGroup extends Component {
 
   _buildFundingInformation() {
     const fundingInfoSummary = [];
-    const actFieldsManager = this.props.activityReducer.activityFieldsManager;
+    const actFieldsManager = this.context.activityFieldsManager;
     const actualTrn = actFieldsManager.getTranslation(PC.ADJUSTMENT_TYPE_PATH, VC.ACTUAL);
     const plannedTrn = actFieldsManager.getTranslation(PC.ADJUSTMENT_TYPE_PATH, VC.PLANNED);
     const commTrn = actFieldsManager.getTranslation(PC.TRANSACTION_TYPE_PATH, VC.COMMITMENTS);
     const disbTrn = actFieldsManager.getTranslation(PC.TRANSACTION_TYPE_PATH, VC.DISBURSEMENTS);
     const totalTrn = translate(TC.TOTAL);
     const combinations = [[actualTrn, commTrn], [plannedTrn, commTrn], [actualTrn, disbTrn], [plannedTrn, disbTrn]];
+    const self = this;
     combinations.forEach(([adjType, trnType]) => {
       if (adjType && trnType) {
-        const value = this.props.activityReducer.activityFundingTotals.getTotals(adjType, trnType, {});
+        const value = self.context.activityFundingTotals.getTotals(adjType, trnType, {});
         const title = `${totalTrn} ${adjType} ${trnType}`;
         fundingInfoSummary.push(<SimpleField title={title} value={value} />);
       }

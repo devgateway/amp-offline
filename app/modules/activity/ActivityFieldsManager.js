@@ -71,7 +71,6 @@ export default class ActivityFieldsManager {
    * @return {string|null}
    */
   getTranslationForLanguage(fieldPath, origValue, lang, defaultLang) {
-    const options = this._possibleValuesMap[fieldPath];
     let trnValue;
     let cached = this._translationsCache[fieldPath];
     if (cached) {
@@ -80,6 +79,7 @@ export default class ActivityFieldsManager {
 
     if (trnValue === undefined) {
       trnValue = null; // set to null to cache null and avoid the outer "if" test later
+      const options = this._possibleValuesMap[fieldPath];
       if (options) {
         // TODO update based on latest AMP API AMP-25621 solution, set to default lang value if requested lang not found
         // const option = options.find(opt => opt['orig-value'] === origValue);
@@ -94,6 +94,9 @@ export default class ActivityFieldsManager {
         }
         cached[origValue] = trnValue;
         this._translationsCache[fieldPath] = cached;
+      } else {
+        // TODO this is a temporary workaround for AMP-25752, remove once AMP-25752 is fixed
+        trnValue = origValue;
       }
     }
     return trnValue;

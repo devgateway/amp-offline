@@ -27,7 +27,8 @@ export default class ActivityFundingTotals {
         this._filteredTotals[adjType][trnType] = {};
       }
     } else {
-      this._filteredTotals[adjType] = { trnType: {} };
+      this._filteredTotals[adjType] = { };
+      this._filteredTotals[adjType][trnType] = {};
     }
     return cached;
   }

@@ -3,6 +3,7 @@ import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import SummaryGroup from './SummaryGroup';
+import MainGroup from './MainGroup';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 
@@ -19,17 +20,31 @@ export default class ActivityPreview extends Component {
       activity: PropTypes.object,
       activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
-      errorMessage: PropTypes.string
+      errorMessage: PropTypes.object
     }).isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
-    params: {
+    params: PropTypes.shape({
       activityId: PropTypes.string.isRequired
-    }
+    }).isRequired
+  };
+
+  static childContextTypes ={
+    activity: PropTypes.object,
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals)
   };
 
   constructor(props) {
     super(props);
     console.log('constructor');
+  }
+
+  getChildContext() {
+    return {
+      activity: this.props.activityReducer.activity,
+      activityFieldsManager: this.props.activityReducer.activityFieldsManager,
+      activityFundingTotals: this.props.activityReducer.activityFundingTotals
+    };
   }
 
   componentWillMount() {
@@ -38,25 +53,25 @@ export default class ActivityPreview extends Component {
 
   _renderData() {
     const activity = this.props.activityReducer.activity;
-    const actReducer = {
-      activityFieldsManager: this.props.activityReducer.activityFieldsManager,
-      activityFundingTotals: this.props.activityReducer.activityFundingTotals
-    };
+
+    // TODO a proper styling will come once we get UI Desing from Llanco
     return (
       <div className={styles.preview_container}>
         <div className={styles.preview_header}>
-          <span className={styles.section_title}>{activity[AC.PROJECT_TITLE]}</span>
+          <span className={styles.preview_title}>{activity[AC.PROJECT_TITLE]}</span>
         </div>
         <div>
           <table>
-            <tr>
-              <td width={30}>
-                <SummaryGroup activityReducer={actReducer} />
-              </td>
-              <td width={70}>
-                <span>right data</span>
-              </td>
-            </tr>
+            <tbody>
+              <tr>
+                <td width="215">
+                  <SummaryGroup />
+                </td>
+                <td width="689">
+                  <MainGroup />
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>

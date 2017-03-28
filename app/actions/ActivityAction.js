@@ -4,13 +4,16 @@ import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 // import ActivityHydrator from '../modules/helpers/ActivityHydrator';
 import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
+import Notification from '../modules/helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_ACTIVITY } from '../utils/constants/ErrorConstants';
+import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
 export const ACTIVITY_LOAD_ERROR = 'ACTIVITY_LOAD_ERROR';
 
 export function loadActivityForActivityPreview(activityId) {
-  const paths = ['funding~funding_details~transaction_type', 'funding~funding_details~adjustment_type'];
+  const paths = [ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH];
   return (dispatch, ownProps) => {
     dispatch({ type: ACTIVITY_LOAD_PENDING });
     return _loadActivity(activityId, _getTeamMemberId(ownProps().user), paths)
@@ -51,7 +54,7 @@ function _loadActivity(activityId, teamMemberId, possibleValuesPaths) {
           actionData: { activity, activityFieldsManager, activityFundingTotals }
         });
       })
-      .catch(reject);
+      .catch(error => reject(new Notification({ message: error, origin: NOTIFICATION_ORIGIN_ACTIVITY })));
   });
 }
 
