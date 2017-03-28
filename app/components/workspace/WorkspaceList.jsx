@@ -1,4 +1,4 @@
-/* eslint react/forbid-prop-types:  */
+/* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './Workspace.css';

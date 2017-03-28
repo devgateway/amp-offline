@@ -9,7 +9,6 @@ import {
 } from '../../utils/Constants';
 import ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
-import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 // TODO: remove these test data.
 const rejectedProjects = [{
@@ -42,9 +41,12 @@ const DesktopManager = {
               icon: this.getActivityIcon(item),
               status: this.getActivityStatus(item),
               donor: this.getActivityDonors(item),
-              synced: this.getActivitySynced(item),
-              actualDisbursements: this.getAmounts(item),
-              actualCommitments: this.getAmounts(item)
+              synced: this.getActivityIsSynced(item),
+              actualDisbursements: this.getActivityAmounts(item),
+              actualCommitments: this.getActivityAmounts(item),
+              view: true,
+              edit: this.getActivityCanEdit(item),
+              new: this.getActivityIsNew(item)
             })
           ));
           console.log(activeProjectsWithLinks);
@@ -59,7 +61,26 @@ const DesktopManager = {
     ));
   },
 
-  getAmounts(/* item */) {
+  getActivityIsNew(item) {
+    if (item.is_draft) {
+      if (item.approval_status === 'approved' || item.approval_status === 'edited') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (item.approval_status === 'started') {
+        return true;
+      }
+      return false;
+    }
+  },
+
+  getActivityCanEdit(/* item */) {
+    return false; // TODO: to be implemented.
+  },
+
+  getActivityAmounts(/* item */) {
     return (Math.random() * 1000000).toString().substring(0, 9); // TODO: to be implemented.
   },
 
@@ -67,17 +88,28 @@ const DesktopManager = {
     return item.donor_organization.map((donor) => (donor.organization.value));
   },
 
-  getActivitySynced(/* item */) {
+  getActivityIsSynced(/* item */) {
     // TODO: to be implemented.
     return true;
   },
 
   getActivityIcon(item) {
+    // TODO: to be implemented.
     return (item.edit ? ACTIVITY_EDIT : (item.view ? ACTIVITY_VIEW : ''));
   },
 
   getActivityStatus(item) {
-    return (item.is_draft ? ACTIVITY_STATUS_DRAFT : null);
+    let status = '';
+    if (item.is_draft) {
+      status = ACTIVITY_STATUS_DRAFT;
+    } else {
+      if (item.approval_status === 'approved' || item.approval_status === 'startedapproved') {
+        status = ACTIVITY_STATUS_VALIDATED;
+      } else {
+        status = ACTIVITY_STATUS_UNVALIDATED;
+      }
+    }
+    return status;
   },
 
   formatNumbers(number) {
