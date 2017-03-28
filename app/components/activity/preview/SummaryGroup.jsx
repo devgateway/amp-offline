@@ -13,6 +13,7 @@ import translate from '../../../utils/translate';
 export default class SummaryGroup extends Component {
   static contextTypes = {
     activity: PropTypes.object.isRequired,
+    activityWorkspace: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
   };
@@ -24,31 +25,59 @@ export default class SummaryGroup extends Component {
 
   _buildFundingInformation() {
     const fundingInfoSummary = [];
-    const actFieldsManager = this.context.activityFieldsManager;
-    const actualTrn = actFieldsManager.getTranslation(PC.ADJUSTMENT_TYPE_PATH, VC.ACTUAL);
-    const plannedTrn = actFieldsManager.getTranslation(PC.ADJUSTMENT_TYPE_PATH, VC.PLANNED);
-    const commTrn = actFieldsManager.getTranslation(PC.TRANSACTION_TYPE_PATH, VC.COMMITMENTS);
-    const disbTrn = actFieldsManager.getTranslation(PC.TRANSACTION_TYPE_PATH, VC.DISBURSEMENTS);
     const totalTrn = translate(TC.TOTAL);
-    const combinations = [[actualTrn, commTrn], [plannedTrn, commTrn], [actualTrn, disbTrn], [plannedTrn, disbTrn]];
-    const self = this;
-    combinations.forEach(([adjType, trnType]) => {
-      if (adjType && trnType) {
-        const value = self.context.activityFundingTotals.getTotals(adjType, trnType, {});
-        const title = `${totalTrn} ${adjType} ${trnType}`;
-        fundingInfoSummary.push(<SimpleField title={title} value={value} />);
-      }
+    VC.TRANSACTION_TYPES.forEach(trnType => {
+      const trnTypeTrn = this.context.activityFieldsManager.getTranslation(PC.TRANSACTION_TYPE_PATH, trnType);
+      VC.ADJUSTMENT_TYPES.forEach(adjType => {
+        const adjTypeTrn = this.context.activityFieldsManager.getTranslation(PC.ADJUSTMENT_TYPE_PATH, adjType);
+        if (adjTypeTrn && trnTypeTrn) {
+          const value = this.context.activityFundingTotals.getTotals(adjTypeTrn, trnTypeTrn, {});
+          const title = `${totalTrn} ${adjTypeTrn} ${trnTypeTrn}`;
+          fundingInfoSummary.push(<SimpleField title={title} value={value} />);
+        }
+      });
     });
+    // TODO add all other funding totals
+
     // TODO: update with current WS currency
     const currency = 'USD';
     const fundingInfoSummaryTitle = `${(translate(TC.FUNDING_INFORMATION))} ${currency}`;
     return <SectionGroup title={fundingInfoSummaryTitle} simpleFields={fundingInfoSummary} />;
   }
 
+  _buildAdditionalInfo() {
+    const additionalInfo = [];
+    // TODO update once possible values are available for it
+    const createdBy = this.context.activity[AC.CREATED_BY];
+    // TODO update once translations are available for workspace data
+    const teamName = this.context.activityWorkspace.name;
+    const accessType = this.context.activityWorkspace['access-type'];
+    const isComputedTeam = this.context.activityWorkspace['is-computed'] === true ? translate('yes') : translate('no');
+    const createdOn = this.context.activity[AC.CREATED_ON];
+    const updatedOn = this.context.activity[AC.MODIFIED_ON];
+
+    additionalInfo.push(<SimpleField title={translate('activityCreatedBy')} value={createdBy} />);
+    additionalInfo.push(<SimpleField title={translate('createdInWorkspace')} value={`${teamName} - ${accessType}`} />);
+    additionalInfo.push(<SimpleField title={translate('computation')} value={isComputedTeam} />);
+    additionalInfo.push(<SimpleField title={translate('activityCreatedOn')} value={createdOn} />);
+    // TODO check if updated on can be displayed by ActivityPreview FM
+    if (updatedOn) {
+      additionalInfo.push(<SimpleField title={translate('activityUpdatedOn')} value={updatedOn} />);
+    }
+    additionalInfo.push(<SimpleField title={translate('dataTeamLeader')} value={this._getWorkspaceLeadData()} />);
+
+    return <SectionGroup title={translate('additionalInfo')} simpleFields={additionalInfo} />;
+  }
+
+  _getWorkspaceLeadData() {
+    // TODO update once full lead data is provided here
+    return this.context.activityWorkspace['workspace-lead-id'];
+  }
+
   render() {
-    const fundingInfoSummary = this._buildFundingInformation();
-    return (<div>
-      {fundingInfoSummary}
+    return (<div className={styles.section_group}>
+      {this._buildFundingInformation()}
+      {this._buildAdditionalInfo()}
     </div>);
   }
 

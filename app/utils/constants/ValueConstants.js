@@ -18,3 +18,7 @@ export const ACTUAL = 'Actual';
 export const PLANNED = 'Planned';
 export const COMMITMENTS = 'Commitments';
 export const DISBURSEMENTS = 'Disbursements';
+export const EXPENDITURES = 'Expenditures';
+
+export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
+export const TRANSACTION_TYPES = [COMMITMENTS, DISBURSEMENTS, EXPENDITURES];

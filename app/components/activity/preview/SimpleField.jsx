@@ -8,7 +8,7 @@ import styles from './ActivityPreview.css';
 export default class SimpleField extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
+    value: PropTypes.any.isRequired, // eslint-disable-line react/forbid-prop-types
     sameLine: PropTypes.bool
   };
 
@@ -23,7 +23,7 @@ export default class SimpleField extends Component {
     };
     return (<div>
       <div className={styles.field_name} style={style}>{this.props.title}</div>
-      <div className={styles.field_name}>{this.props.value}</div>
+      <div className={styles.field_value}>{this.props.value}</div>
       <hr />
     </div>);
   }

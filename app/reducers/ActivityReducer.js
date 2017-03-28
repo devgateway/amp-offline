@@ -10,6 +10,7 @@ const defaultState = {
   isActivityLoading: false,
   isActivityLoaded: false,
   activity: undefined,
+  activityWorkspace: undefined,
   activityFieldsManager: undefined,
   activityFundingTotals: undefined,
   errorMessage: undefined
@@ -25,6 +26,7 @@ const activityReducer = (state = defaultState, action: Object) => {
         isActivityPreviewLoading: false,
         isActivityPreviewLoaded: true,
         activity: action.actionData.activity,
+        activityWorkspace: action.actionData.activityWorkspace,
         activityFieldsManager: action.actionData.activityFieldsManager,
         activityFundingTotals: action.actionData.activityFundingTotals
       };

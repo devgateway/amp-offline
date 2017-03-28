@@ -1,6 +1,6 @@
 import * as PossibleValuesHelper from './PossibleValuesHelper';
 import * as FieldsHelper from './FieldsHelper';
-import { store } from '../../index';
+import store from '../../index';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 
@@ -144,7 +144,7 @@ export default class ActivityHydrator {
   static hydrateActivity({ activity, fieldPaths, teamMember }) {
     return new Promise((resolve, reject) =>
       ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, teamMember })
-        .then(activities => activities[0])
+        .then(activities => resolve(activities[0]))
         .catch(reject)
     );
   }

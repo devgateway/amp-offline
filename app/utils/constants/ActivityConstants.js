@@ -61,6 +61,9 @@ export const INTERNAL_ID = 'internal_id';
 export const AMP_ID = 'amp_id';
 export const PROJECT_TITLE = 'project_title';
 export const MODIFIED_BY = 'modified_by';
+export const MODIFIED_ON = 'update_date';
+export const CREATED_BY = 'created_by';
+export const CREATED_ON = 'creation_date';
 export const CLIENT_CHANGE_ID = 'client-change-id';
 
 export function toFieldNames(listOfNames) {

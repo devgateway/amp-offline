@@ -30,6 +30,7 @@ export default class ActivityPreview extends Component {
 
   static childContextTypes ={
     activity: PropTypes.object,
+    activityWorkspace: PropTypes.object,
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals)
   };
@@ -42,6 +43,7 @@ export default class ActivityPreview extends Component {
   getChildContext() {
     return {
       activity: this.props.activityReducer.activity,
+      activityWorkspace: this.props.activityReducer.activityWorkspace,
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals
     };

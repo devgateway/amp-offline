@@ -63,5 +63,14 @@
   "activityLoading": "Activity is loading",
   "activityUnexpectedError": "Unexpected error occurred. Activity could not be loaded.",
   "total": "Total",
-  "fundingInformation": "Funding Information"
+  "fundingInformation": "Funding Information",
+  "additionalInfo": "Additional info",
+  "activityCreatedBy": "Activity created by",
+  "createdInWorkspace": "Created in workspace",
+  "computation": "Computation",
+  "activityCreatedOn": "Activity created on",
+  "activityUpdatedOn": "Activity updated on",
+  "dataTeamLeader": "Data Team Leader",
+  "yes": "Yes",
+  "no": "No"
 }
