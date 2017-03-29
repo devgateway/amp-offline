@@ -34,14 +34,14 @@ const DesktopManager = {
     console.log('generateOneTabData');
     return new Promise((resolve, reject) => (
       fn(teamId)
-        .then((activities) => (this.hidrateActivities(activities, teamMemberId)
-          .then((hydratedActivities) => (
-            this.convertActivitiesToGridStructure(hydratedActivities)
-              .then((activitiesForGrid) => {
-                console.log(activitiesForGrid);
-                return resolve(activitiesForGrid);
-              }).catch(reject)
-          )).catch(reject))
+        .then((activities) => (
+          this.hidrateActivities(activities, teamMemberId)
+            .then((hydratedActivities) => (
+              this.convertActivitiesToGridStructure(hydratedActivities)
+                .then((activitiesForGrid) => (
+                  resolve(activitiesForGrid)
+                )).catch(reject)
+            )).catch(reject))
         ).catch(reject)
     ));
   },
@@ -70,7 +70,6 @@ const DesktopManager = {
     const forGrid = hydratedActivities.map((item) => (
       Object.assign({}, item, {
         key: item.id,
-        icon: this.getActivityIcon(item),
         status: this.getActivityStatus(item),
         donor: this.getActivityDonors(item),
         synced: this.getActivityIsSynced(item),
@@ -114,11 +113,6 @@ const DesktopManager = {
   getActivityIsSynced(/* item */) {
     // TODO: to be implemented.
     return true;
-  },
-
-  getActivityIcon(item) {
-    // TODO: to be implemented.
-    return (item.edit ? ACTIVITY_EDIT : (item.view ? ACTIVITY_VIEW : ''));
   },
 
   getActivityStatus(item) {
@@ -169,13 +163,12 @@ const DesktopManager = {
     const options = {
       page: 1,
       sizePerPageList: [{
-        text: '5', value: 5
-      }, {
         text: '10', value: 10
+      }, {
+        text: '50', value: 50
       }, {
         text: translate('All'), value: 100
       }],
-      sizePerPage: 10,
       pageStartIndex: 1,
       paginationSize: 3,
       prePage: translate('Prev'),
