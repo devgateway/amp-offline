@@ -13,6 +13,7 @@ import {
   ACTIVITY_STATUS_VALIDATED
 } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/projects/DesktopManager'; // TODO: receive as props.
+import { AMP_ID, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
 
 export default class ProjectList extends Component {
 
@@ -55,8 +56,8 @@ export default class ProjectList extends Component {
   }
 
   handlerClickCleanFiltered() {
-    this.refs.amp_id.cleanFiltered();
-    this.refs.project_title.cleanFiltered();
+    this.refs[AMP_ID].cleanFiltered();
+    this.refs[PROJECT_TITLE].cleanFiltered();
   }
 
   render() {
@@ -76,12 +77,12 @@ export default class ProjectList extends Component {
         >
           <TableHeaderColumn dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.column_5}/>
           <TableHeaderColumn
-            dataField="amp_id" isKey dataAlign="center" dataSort ref="amp_id" columnClassName={style.column_10}
+            dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.column_10}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="project_title" dataFormat={this.projectNameFormatter} dataSort ref="project_title"
+            dataField={PROJECT_TITLE} dataFormat={this.projectNameFormatter} dataSort ref="project_title"
             columnClassName={style.column_40}
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}>
             {translate('Project Title')}

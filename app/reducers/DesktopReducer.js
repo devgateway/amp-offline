@@ -10,8 +10,7 @@ const defaultState = {
   loaded: false,
   activeProjects: [],
   rejectedProjects: [],
-  tabsData: [],
-  paginationOptions: undefined
+  tabsData: []
 };
 
 export default function desktop(state = defaultState, action: Object) {

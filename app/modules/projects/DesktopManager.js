@@ -7,6 +7,7 @@ import {
 } from '../../utils/Constants';
 import ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
+import { IS_DRAFT, APPROVAL_STATUS } from '../../utils/constants/ActivityConstants';
 
 const DesktopManager = {
 
@@ -81,14 +82,14 @@ const DesktopManager = {
   },
 
   getActivityIsNew(item) {
-    if (item.is_draft) {
-      if (item.approval_status === 'approved' || item.approval_status === 'edited') {
+    if (item[IS_DRAFT]) {
+      if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'edited') {
         return true;
       } else {
         return false;
       }
     } else {
-      if (item.approval_status === 'started') {
+      if (item[APPROVAL_STATUS] === 'started') {
         return true;
       }
       return false;
@@ -114,9 +115,9 @@ const DesktopManager = {
 
   getActivityStatus(item) {
     let status = '';
-    if (item.is_draft) {
+    if (item[IS_DRAFT]) {
       status = ACTIVITY_STATUS_DRAFT;
-    } else if (item.approval_status === 'approved' || item.approval_status === 'startedapproved') {
+    } else if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'startedapproved') {
       status = ACTIVITY_STATUS_VALIDATED;
     } else {
       status = ACTIVITY_STATUS_UNVALIDATED;
