@@ -10,55 +10,78 @@ import {
 import ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 
-// TODO: remove these test data.
-const rejectedProjects = [{
-  ampId: 1,
-  title: 'Project 1a',
-  fundingAgency: 'Japan',
-  actualCommitments: '10.000',
-  actualDisbursements: '157.000',
-  view: true,
-  edit: false,
-  new: true,
-  synced: false,
-  status: ACTIVITY_STATUS_DRAFT
-}];
-
 const DesktopManager = {
 
   generateDesktopData(teamId, teamMemberId) {
     console.log('generateDesktopData');
     return new Promise((resolve, reject) => (
-      ActivityHelper.findAllNonRejected({ team: teamId }).then((activities) => (
-        ActivityHydrator.hydrateActivities({
-          activities,
-          fieldPaths: ['donor_organization~organization'],
-          teamMember: { id: teamMemberId }
-        }).then((hydratedActivities) => {
-          const activeProjectsWithLinks = hydratedActivities.map((item) => (
-            Object.assign({}, item, {
-              key: item.id,
-              icon: this.getActivityIcon(item),
-              status: this.getActivityStatus(item),
-              donor: this.getActivityDonors(item),
-              synced: this.getActivityIsSynced(item),
-              actualDisbursements: this.getActivityAmounts(item),
-              actualCommitments: this.getActivityAmounts(item),
-              view: true,
-              edit: this.getActivityCanEdit(item),
-              new: this.getActivityIsNew(item)
-            })
-          ));
-          console.log(activeProjectsWithLinks);
-          return resolve({
-            activeProjectsWithLinks,
-            rejectedProjects,
-            defaultTabs: this.generateDefaultTabsStructure(activeProjectsWithLinks, rejectedProjects),
-            paginationOptions: this.getGeneralPaginationOptions() // TODO: split pagination options.
-          });
-        }).catch(reject)
-      )).catch(reject)
+      this.generateOneTabData(teamId, teamMemberId, this.getActivitiesNonRejected)
+        .then((tab1Data) => (
+          this.generateOneTabData(teamId, teamMemberId, this.getActivitiesRejected)
+            .then((tab2Data) => (
+              resolve({
+                activeProjectsWithLinks: tab1Data,
+                rejectedProjectsWithLinks: tab2Data,
+                defaultTabs: this.generateDefaultTabsStructure(tab1Data, tab2Data),
+                paginationOptions: this.getGeneralPaginationOptions() // TODO: split pagination options.
+              })
+            )).catch(reject)
+        )).catch(reject)
     ));
+  },
+
+  generateOneTabData(teamId, teamMemberId, fn) {
+    console.log('generateOneTabData');
+    return new Promise((resolve, reject) => (
+      fn(teamId)
+        .then((activities) => (this.hidrateActivities(activities, teamMemberId)
+          .then((hydratedActivities) => (
+            this.convertActivitiesToGridStructure(hydratedActivities)
+              .then((activitiesForGrid) => {
+                console.log(activitiesForGrid);
+                return resolve(activitiesForGrid);
+              }).catch(reject)
+          )).catch(reject))
+        ).catch(reject)
+    ));
+  },
+
+  getActivitiesNonRejected(teamId) {
+    console.log('getActivitiesNonRejected');
+    return ActivityHelper.findAllNonRejected({ team: teamId });
+  },
+
+  getActivitiesRejected(teamId) {
+    console.log('getActivitiesRejected');
+    return ActivityHelper.findAllRejected({ team: teamId });
+  },
+
+  hidrateActivities(activities, teamMemberId) {
+    console.log('hidrateActivities');
+    return ActivityHydrator.hydrateActivities({
+      activities,
+      fieldPaths: ['donor_organization~organization'],
+      teamMember: { id: teamMemberId }
+    });
+  },
+
+  convertActivitiesToGridStructure(hydratedActivities) {
+    console.log('convertActivitiesToGridStructure');
+    const forGrid = hydratedActivities.map((item) => (
+      Object.assign({}, item, {
+        key: item.id,
+        icon: this.getActivityIcon(item),
+        status: this.getActivityStatus(item),
+        donor: this.getActivityDonors(item),
+        synced: this.getActivityIsSynced(item),
+        actualDisbursements: this.getActivityAmounts(item),
+        actualCommitments: this.getActivityAmounts(item),
+        view: true,
+        edit: this.getActivityCanEdit(item),
+        new: this.getActivityIsNew(item)
+      })
+    ));
+    return Promise.resolve(forGrid);
   },
 
   getActivityIsNew(item) {
@@ -77,7 +100,7 @@ const DesktopManager = {
   },
 
   getActivityCanEdit(/* item */) {
-    return false; // TODO: to be implemented.
+    return true; // TODO: to be implemented.
   },
 
   getActivityAmounts(/* item */) {
@@ -102,12 +125,10 @@ const DesktopManager = {
     let status = '';
     if (item.is_draft) {
       status = ACTIVITY_STATUS_DRAFT;
+    } else if (item.approval_status === 'approved' || item.approval_status === 'startedapproved') {
+      status = ACTIVITY_STATUS_VALIDATED;
     } else {
-      if (item.approval_status === 'approved' || item.approval_status === 'startedapproved') {
-        status = ACTIVITY_STATUS_VALIDATED;
-      } else {
-        status = ACTIVITY_STATUS_UNVALIDATED;
-      }
+      status = ACTIVITY_STATUS_UNVALIDATED;
     }
     return status;
   },
