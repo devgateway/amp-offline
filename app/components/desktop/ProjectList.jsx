@@ -17,8 +17,7 @@ import { getGeneralPaginationOptions } from '../../modules/projects/DesktopManag
 export default class ProjectList extends Component {
 
   static propTypes = {
-    projects: PropTypes.array.isRequired,
-    paginationOptions: PropTypes.object.isRequired
+    projects: PropTypes.array.isRequired
   };
 
   linkFormatter(cell, row) {

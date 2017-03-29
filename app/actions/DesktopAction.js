@@ -15,8 +15,7 @@ export function loadDesktop(teamId, teamMemberId) {
         dispatch(_loadDesktop({
           activeProjects: data.activeProjects,
           rejectedProjects: data.rejectedProjects,
-          tabs: data.defaultTabs,
-          paginationOptions: data.paginationOptions
+          tabs: data.defaultTabs
         }));
         return UrlUtils.forwardTo(`/desktop/${teamId}`);
       }).catch((error) => {

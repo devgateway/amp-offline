@@ -20,8 +20,7 @@ const DesktopManager = {
               resolve({
                 activeProjects: tab1Data,
                 rejectedProjects: tab2Data,
-                defaultTabs: this.generateDefaultTabsStructure(tab1Data, tab2Data),
-                paginationOptions: this.getGeneralPaginationOptions()
+                defaultTabs: this.generateDefaultTabsStructure(tab1Data, tab2Data)
               })
             )).catch(reject)
         )).catch(reject)
