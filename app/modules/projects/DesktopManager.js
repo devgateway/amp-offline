@@ -135,7 +135,7 @@ const DesktopManager = {
     const defaultTabs = [
       {
         id: 0,
-        name: translate('Activities'),
+        name: 'Activities',
         isActive: true,
         projects: projectsWithLinks,
         sorting: null,
@@ -143,7 +143,7 @@ const DesktopManager = {
       },
       {
         id: 1,
-        name: translate('Rejected Activities'),
+        name: 'Rejected Activities',
         isActive: false,
         projects: rejected,
         sorting: null,
