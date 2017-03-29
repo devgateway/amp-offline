@@ -2,6 +2,7 @@
 /* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import bootstrap from 'react-bootstrap';
 import classNames from 'classnames';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
@@ -63,13 +64,25 @@ export default class ProjectList extends Component {
     console.log('render');
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#style
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
+    const all = 'All';
+    let paginationOptions = this.props.paginationOptions;
+    let pagination;
+    if (this.props.projects.length > 0) {
+      pagination = true;
+      if (!paginationOptions.sizePerPageList.find(item => item.key === all)) {
+        paginationOptions.sizePerPageList.push({ text: translate(all), key: all, value: this.props.projects.length });
+      }
+    } else {
+      paginationOptions = {};
+      pagination = false;
+    }
     return (
       <div className={style.container}>
         <a onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
           {translate('Clear filters')}
         </a>
         <BootstrapTable
-          data={this.props.projects} striped hover pagination options={this.props.paginationOptions}
+          data={this.props.projects} striped hover pagination={pagination} options={paginationOptions}
           containerClass={style.containerTable} tableHeaderClass={style.header}
         >
           <TableHeaderColumn dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.column_5}/>

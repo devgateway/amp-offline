@@ -1,8 +1,6 @@
 /* eslint "no-nested-ternary": 0 */
 import translate from '../../utils/translate';
 import {
-  ACTIVITY_EDIT,
-  ACTIVITY_VIEW,
   ACTIVITY_STATUS_DRAFT,
   ACTIVITY_STATUS_UNVALIDATED,
   ACTIVITY_STATUS_VALIDATED
@@ -20,10 +18,10 @@ const DesktopManager = {
           this.generateOneTabData(teamId, teamMemberId, this.getActivitiesRejected)
             .then((tab2Data) => (
               resolve({
-                activeProjectsWithLinks: tab1Data,
-                rejectedProjectsWithLinks: tab2Data,
+                activeProjects: tab1Data,
+                rejectedProjects: tab2Data,
                 defaultTabs: this.generateDefaultTabsStructure(tab1Data, tab2Data),
-                paginationOptions: this.getGeneralPaginationOptions() // TODO: split pagination options.
+                paginationOptions: this.getGeneralPaginationOptions()
               })
             )).catch(reject)
         )).catch(reject)
@@ -166,8 +164,6 @@ const DesktopManager = {
         text: '10', value: 10
       }, {
         text: '50', value: 50
-      }, {
-        text: translate('All'), value: 100
       }],
       pageStartIndex: 1,
       paginationSize: 3,
