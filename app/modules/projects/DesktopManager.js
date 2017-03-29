@@ -153,28 +153,37 @@ const DesktopManager = {
     return defaultTabs;
   },
 
-  getGeneralPaginationOptions() {
+  getGeneralPaginationOptions(length) {
     // TODO: this function can be more complex and take data from GS, local preferences, etc.
     /* TODO: also this needs to react to changes in the data, meaning we need to move it to the component or call it
      from there. */
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#pagination
-    const options = {
-      page: 1,
-      sizePerPageList: [{
-        text: '10', value: 10
-      }, {
-        text: '50', value: 50
-      }],
-      pageStartIndex: 1,
-      paginationSize: 3,
-      prePage: translate('Prev'),
-      nextPage: translate('Next'),
-      firstPage: translate('First'),
-      lastPage: translate('Last'),
-      paginationShowsTotal: true,
-      hideSizePerPage: false,
-      noDataText: translate('customTextForEmptyData')
-    };
+    let options = {};
+    if (length > 0) {
+      options = {
+        page: 1,
+        sizePerPageList: [{
+          text: '10', value: 10
+        }, {
+          text: '50', value: 50,
+        }, {
+          text: translate('All'), value: length,
+        }],
+        pageStartIndex: 1,
+        paginationSize: 3,
+        prePage: translate('Prev'),
+        nextPage: translate('Next'),
+        firstPage: translate('First'),
+        lastPage: translate('Last'),
+        paginationShowsTotal: true,
+        hideSizePerPage: false,
+        noDataText: translate('customTextForEmptyData'),
+        paginationPosition: 'bottom',
+        usePagination: true
+      };
+    } else {
+      options.usePagination = false;
+    }
     return options;
   }
 };

@@ -2,7 +2,6 @@
 /* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import bootstrap from 'react-bootstrap';
 import classNames from 'classnames';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
@@ -13,6 +12,7 @@ import {
   ACTIVITY_STATUS_UNVALIDATED,
   ACTIVITY_STATUS_VALIDATED
 } from '../../utils/Constants';
+import { getGeneralPaginationOptions } from '../../modules/projects/DesktopManager'; // TODO: receive as props.
 
 export default class ProjectList extends Component {
 
@@ -64,18 +64,8 @@ export default class ProjectList extends Component {
     console.log('render');
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#style
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
-    const all = 'All';
-    let paginationOptions = this.props.paginationOptions;
-    let pagination;
-    if (this.props.projects.length > 0) {
-      pagination = true;
-      if (!paginationOptions.sizePerPageList.find(item => item.key === all)) {
-        paginationOptions.sizePerPageList.push({ text: translate(all), key: all, value: this.props.projects.length });
-      }
-    } else {
-      paginationOptions = {};
-      pagination = false;
-    }
+    const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
+    const pagination = paginationOptions.usePagination;
     return (
       <div className={style.container}>
         <a onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
