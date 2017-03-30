@@ -3,7 +3,7 @@
 import request from 'request';
 import RequestConfig from './RequestConfig';
 import Notification from '../helpers/NotificationHelper';
-import { MAX_RETRY_ATEMPTS, ERRORS_TO_RETRY } from '../../utils/Constants';
+import { MAX_RETRY_ATEMPTS, ERRORS_TO_RETRY, ERROR_NO_AMP_SERVER } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_API_SECURITY,
   NOTIFICATION_ORIGIN_API_NETWORK
@@ -65,7 +65,7 @@ const ConnectionHelper = {
               return self._doMethod(options_).then((body_) => (
                 resolve(body_)
               )).catch((error_) => {
-                // If we couldnt relogin online automatically we logout completely and forward to login page.
+                // If we couldnt relogin online automatically then we logout completely and forward to login page.
                 reject(this.createNotification({ errorObject: error_, origin: NOTIFICATION_ORIGIN_API_SECURITY }));
                 return store.dispatch(logoutAction());
               });
@@ -77,8 +77,13 @@ const ConnectionHelper = {
               }));
             });
           } else {
+            // Being here means the server might not be accessible.
+            let message = error || body.error || translate('unknownNetworkError');
+            if (error && error.code === ERROR_NO_AMP_SERVER) {
+              message = translate('AMPUnreachableError');
+            }
             reject(this.createNotification({
-              message: error || body.error || translate('unknownNetworkError'),
+              message,
               origin: NOTIFICATION_ORIGIN_API_NETWORK
             }));
           }
