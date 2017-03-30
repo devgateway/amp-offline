@@ -8,8 +8,7 @@ import TabContent from './TabContent';
 export default class TabsContainer extends Component {
 
   static propTypes = {
-    tabsData: PropTypes.array.isRequired,
-    paginationOptions: PropTypes.object.isRequired
+    tabsData: PropTypes.array.isRequired
   };
 
   constructor() {
@@ -38,7 +37,6 @@ export default class TabsContainer extends Component {
         <TabContent
           activeTab={this.state.activeTab}
           data={this.props.tabsData}
-          paginationOptions={this.props.paginationOptions}
         />
       </div >
     );

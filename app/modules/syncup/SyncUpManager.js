@@ -176,7 +176,7 @@ const SyncUpManager = {
               return resolve(log);
             }).catch(reject);
           }).catch(err => {
-            console.log('SyncUp Fail');
+            console.error('SyncUp Fail');
             // Always reject so we can display the error after saving the log.
             return this._saveMainSyncUpLog(SYNCUP_STATUS_FAIL).then(() => (reject(err))).catch(reject);
           });

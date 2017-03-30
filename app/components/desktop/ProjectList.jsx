@@ -12,12 +12,13 @@ import {
   ACTIVITY_STATUS_UNVALIDATED,
   ACTIVITY_STATUS_VALIDATED
 } from '../../utils/Constants';
+import { getGeneralPaginationOptions } from '../../modules/projects/DesktopManager'; // TODO: receive as props.
+import { AMP_ID, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
 
 export default class ProjectList extends Component {
 
   static propTypes = {
-    projects: PropTypes.array.isRequired,
-    paginationOptions: PropTypes.object.isRequired
+    projects: PropTypes.array.isRequired
   };
 
   linkFormatter(cell, row) {
@@ -55,47 +56,46 @@ export default class ProjectList extends Component {
   }
 
   handlerClickCleanFiltered() {
-    this.refs.ampId.cleanFiltered();
-    this.refs.title.cleanFiltered();
+    this.refs[AMP_ID].cleanFiltered();
+    this.refs[PROJECT_TITLE].cleanFiltered();
   }
 
   render() {
     console.log('render');
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#style
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
+    const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
+    const pagination = paginationOptions.usePagination;
     return (
       <div className={style.container}>
         <a onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
           {translate('Clear filters')}
         </a>
         <BootstrapTable
-          data={this.props.projects} striped hover pagination options={this.props.paginationOptions}
+          data={this.props.projects} striped hover pagination={pagination} options={paginationOptions}
           containerClass={style.containerTable} tableHeaderClass={style.header}
         >
+          <TableHeaderColumn dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.column_5}/>
           <TableHeaderColumn
-            dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.empty_column}
-          />
-          <TableHeaderColumn
-            dataField="ampId" isKey dataAlign="center" dataSort ref="ampId"
-            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }}
-          >
+            dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.column_10}
+            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="title" dataFormat={this.projectNameFormatter} dataSort ref="title"
-            filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
-          >
+            dataField={PROJECT_TITLE} dataFormat={this.projectNameFormatter} dataSort ref="project_title"
+            columnClassName={style.column_40}
+            filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}>
             {translate('Project Title')}
           </TableHeaderColumn>
-          <TableHeaderColumn dataField="fundingAgency" dataSort>{translate('Funding Agency')}</TableHeaderColumn>
+          <TableHeaderColumn dataField="donor" dataSort
+                             columnClassName={style.column_15}>{translate('Funding Agency')}
+          </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualCommitments" dataSort
-          >
+            dataField="actualCommitments" dataSort columnClassName={style.column_15}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualDisbursements" dataSort
-          >
+            dataField="actualDisbursements" dataSort columnClassName={style.column_15}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>
