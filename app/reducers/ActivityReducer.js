@@ -34,7 +34,8 @@ const activityReducer = (state = defaultState, action: Object) => {
       return { ...defaultState, errorMessage: action.actionData.errorMessage };
     case STATE_CHANGE_LANGUAGE:
       if (state.activityFieldsManager) {
-        state.activityFieldsManager.currentLanguageCode(action.actionData);
+        // TODO to be handled otherwise to avoid changing state here
+        state.activityFieldsManager.currentLanguageCode = action.actionData;
       }
       return { ...state };
     default:
