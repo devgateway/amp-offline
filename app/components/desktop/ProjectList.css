@@ -9,13 +9,14 @@
 }
 
 .containerTable {
-  color: #014e86;
+  color: #4b4a4b;
   border-top: 1px;
   border-bottom: 0;
   position: relative;
   top: 10px;
   padding-left: 10px;
   padding-right: 10px;
+  font-size: 12px;
 }
 
 .header {
@@ -26,8 +27,32 @@
   border-top: 0;
 }
 
-.empty_column {
-  width: 2%;
+.column_5 {
+  width: 5%;
+}
+
+.column_10 {
+  width: 10%;
+}
+
+.column_15 {
+  width: 15%;
+}
+
+.column_25 {
+  width: 25%;
+}
+
+.column_30 {
+  width: 30%;
+}
+
+.column_40 {
+  width: 40%;
+}
+
+.column_50 {
+  width: 50%;
 }
 
 .status_draft {

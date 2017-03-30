@@ -14,20 +14,18 @@ export default class IconFormatter extends Component {
     // TODO: These links could be dispatch to some action too if needed.
     const editLink = `${ACTIVITY_EDIT_URL}/${this.props.row.id}`;
     const viewLink = `${ACTIVITY_PREVIEW_URL}/${this.props.row.id}`;
+    let edit;
+    let view;
     if (this.props.row.edit) {
-      return (
-        <Link to={editLink} >
-          <img className={styles.edit_icon} alt="edit" title={translate('clickToEditActivity')} />
-        </Link>
-      );
+      edit = (<Link to={editLink} title={translate('clickToEditActivity')}>
+        <img className={styles.edit_icon} alt="edit"/>
+      </Link>);
     }
     if (this.props.row.view) {
-      return (
-        <Link to={viewLink} >
-          <img className={styles.view_icon} alt="view" title={translate('clickToPreviewActivity')} />
-        </Link>
-      );
+      view = (<Link to={viewLink} title={translate('clickToPreviewActivity')}>
+        <img className={styles.view_icon} alt="view"/>
+      </Link>);
     }
-    return <span />;
+    return (edit || view ? (<div>{ edit }{ view }</div>) : <span/>);
   }
 }

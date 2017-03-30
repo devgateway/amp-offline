@@ -37,12 +37,9 @@ const WorkspaceHelper = {
    */
   findAllByUserId(userId) {
     console.log('findAllByUserId');
-    return new Promise((resolve, reject) => {
-      TeamMemberHelper.findWorkspaceIdsByUserId(userId).then((workspacesIds) => {
-        const filter = { id: { $in: workspacesIds } };
-        return this.findAll(filter);
-      }
-      ).catch(reject);
+    return TeamMemberHelper.findWorkspaceIdsByUserId(userId).then((workspacesIds) => {
+      const filter = { id: { $in: workspacesIds } };
+      return this.findAll(filter);
     });
   },
 

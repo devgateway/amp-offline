@@ -25,7 +25,7 @@ export default class Desktop extends Component {
     return (
       <div>
         <TopArea workspace={this.props.workspace.currentWorkspace}/>
-        <TabsContainer tabsData={this.props.desktop.tabsData} paginationOptions={this.props.desktop.paginationOptions}/>
+        <TabsContainer tabsData={this.props.desktop.tabsData}/>
       </div>
     );
   }
