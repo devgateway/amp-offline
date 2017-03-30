@@ -30,11 +30,21 @@ export default class SyncUp extends Component {
     this.selectContentElementToDraw.bind(this);
   }
 
+  componentWillMount() {
+    console.log('componentWillMount');
+    // To avoid the 'no-did-mount-set-state' eslint error.
+    this.setState({
+      firstLoadSyncUp: false,
+      errorMessage: this.props.syncUp.errorMessage || '',
+      loadingSyncHistory: this.props.syncUp.loadingSyncHistory,
+      syncUpInProgress: this.props.syncUp.syncUpInProgress
+    });
+  }
+
   componentDidMount() {
     console.log('componentDidMount');
     // TODO: this might change once we have the final layout for the syncupPage
     this.props.getSyncUpHistory();
-    this.state.firstLoadSyncUp = false;
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
@@ -45,10 +55,10 @@ export default class SyncUp extends Component {
 
   _setForceSyncUpWarnMessage() {
     if (this.props.syncUp.forceSyncUp) {
-      this.state.warnMessage = this.props.syncUp.forceSyncUpMessage;
+      this.setState({ warnMessage: this.props.syncUp.forceSyncUpMessage });
       return true;
     } else {
-      this.state.warnMessage = '';
+      this.setState({ warnMessage: '' });
       return false;
     }
   }
@@ -84,9 +94,6 @@ export default class SyncUp extends Component {
     const { startSyncUp } = this.props;
     const { historyData } = this.props.syncUp;
 
-    this.state.errorMessage = this.props.syncUp.errorMessage || '';
-    this.state.loadingSyncHistory = this.props.syncUp.loadingSyncHistory;
-    this.state.syncUpInProgress = this.props.syncUp.syncUpInProgress;
     this._setForceSyncUpWarnMessage();
     return (
       <div className={styles.container}>

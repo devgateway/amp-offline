@@ -59,7 +59,6 @@ export const SYNCUP_TYPE_POSSIBLE_VALUES = 'possible-values-fields';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
-export const SYNCUP_OLD_DAYS = 999;
 
 export const ACTIVITY_STATUS_DRAFT = 'ACTIVITY_STATUS_DRAFT';
 export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';

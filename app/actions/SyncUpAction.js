@@ -9,7 +9,7 @@ export const STATE_SYNCUP_SEARCH_FAILED = 'STATE_SYNCUP_SEARCH_FAILED';
 export const STATE_SYNCUP_IN_PROCESS = 'STATE_SYNCUP_IN_PROCESS';
 export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
-export const STATE_SYNCUP_IS_FORCE_NEEDED = 'STATE_SYNCUP_IS_FORCE_NEEDED';
+export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 
 export function getSyncUpHistory() {
   console.log('getSyncUpHistory');
@@ -51,7 +51,7 @@ export function isForceSyncUpAction(callback) {
   return (dispatch) => (
     SyncUpManager.isForceSyncUp().then((forceData) => {
       dispatch({
-        type: STATE_SYNCUP_IS_FORCE_NEEDED,
+        type: STATE_SYNCUP_FORCED,
         actionData: { force: forceData.force, message: forceData.message }
       });
       return callback(forceData.force);

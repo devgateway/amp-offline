@@ -22,7 +22,6 @@ import {
   SYNCUP_STATUS_FAIL,
   SYNCUP_DATETIME_FIELD,
   SYNCUP_NO_DATE,
-  SYNCUP_OLD_DAYS,
   SYNCUP_FORCE_DAYS,
   SYNCUP_BEST_BEFORE_DAYS
 } from '../../utils/Constants';
@@ -33,7 +32,6 @@ import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
 import FieldsSyncUpManager from './FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './PossibleValuesSyncUpManager';
-import UserHelper from '../helpers/UserHelper';
 import translate from '../../utils/translate';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
@@ -265,7 +263,7 @@ export default class SyncUpManager {
           const now = new Date();
           return resolve((now - lastSyncDate) / 1000 / 60 / 60 / 24);
         } else {
-          return resolve(SYNCUP_OLD_DAYS);
+          return resolve(undefined);
         }
       }).catch(reject)
     ));
@@ -277,27 +275,26 @@ export default class SyncUpManager {
   static isForceSyncUp() {
     console.log('isForceSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) => {
-      const forceBecauseDays = days > SYNCUP_FORCE_DAYS;
-      return UserHelper.findByEmail(store.getState().user.userData.email).then((user) => {
-        const hasUserData = user['first-name'] ? true : false;
-        const force = forceBecauseDays || !hasUserData;
-        let message = '';
-        if (force) {
-          if (forceBecauseDays) {
-            message = translate('tooOldSyncWarning');
-          } else {
-            message = translate('noUserDataSyncWarning');
-          }
+      const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
+      const user = store.getState().user.userData; // No need to to go the DB in this stage.
+      const hasUserData = !!user['first-name']; // Hint: this is the same as a ternary if :)
+      const force = forceBecauseDays || !hasUserData;
+      let message = '';
+      if (force) {
+        if (forceBecauseDays) {
+          message = translate('tooOldSyncWarning');
+        } else {
+          message = translate('noUserDataSyncWarning');
         }
-        return { force: force, message: message };
-      });
+      }
+      return { force, message };
     });
   }
 
   static isWarnSyncUp() {
     console.log('isWarnSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) =>
-      days > SYNCUP_BEST_BEFORE_DAYS
+      (days === undefined || days > SYNCUP_BEST_BEFORE_DAYS)
     );
   }
 }

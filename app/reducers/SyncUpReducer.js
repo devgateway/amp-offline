@@ -5,7 +5,7 @@ import {
   STATE_SYNCUP_IN_PROCESS,
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED,
-  STATE_SYNCUP_IS_FORCE_NEEDED
+  STATE_SYNCUP_FORCED
 } from '../actions/SyncUpAction';
 
 const defaultState = {
@@ -43,7 +43,7 @@ export default function syncUp(state: Object = defaultState, action: Object) {
       return Object.assign({}, state, {
         syncUpInProgress: false, errorMessage: action.actionData.errorMessage,
       });
-    case STATE_SYNCUP_IS_FORCE_NEEDED:
+    case STATE_SYNCUP_FORCED:
       return Object.assign({}, state, {
         forceSyncUp: action.actionData.force,
         forceSyncUpMessage: action.actionData.message

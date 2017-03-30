@@ -64,7 +64,7 @@ export default class TranslationSyncUpManager {
     if (fs.existsSync(fileName)) {
       const stats = fs.statSync(fileName);
       const fileSize = stats.size;
-      if (fileSize > 10) {
+      if (fileSize > 10) { // Just to test the file has something in it.
         ret = true;
       }
     }

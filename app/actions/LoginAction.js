@@ -21,13 +21,13 @@ export function loginAction(email: string, password: string) {
         dispatch(loginOk({ userData, password, token }));
 
         // Tell react-router to move to another page.
-        return dispatch(isForceSyncUpAction((force) => {
+        return isForceSyncUpAction((force) => {
           if (force) {
             return UrlUtils.forwardTo(SYNCUP_URL);
           } else {
             return UrlUtils.forwardTo(WORKSPACE_URL);
           }
-        }));
+        });
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
