@@ -1,10 +1,9 @@
 import {
   ACTIVITY_LOAD_PENDING,
   ACTIVITY_LOAD_FULFILLED,
-  ACTIVITY_LOAD_ERROR
+  ACTIVITY_LOAD_REJECTED
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
-
 
 const defaultState = {
   isActivityLoading: false,
@@ -25,13 +24,13 @@ const activityReducer = (state = defaultState, action: Object) => {
       return { ...state,
         isActivityPreviewLoading: false,
         isActivityPreviewLoaded: true,
-        activity: action.actionData.activity,
-        activityWorkspace: action.actionData.activityWorkspace,
-        activityFieldsManager: action.actionData.activityFieldsManager,
-        activityFundingTotals: action.actionData.activityFundingTotals
+        activity: action.payload.activity,
+        activityWorkspace: action.payload.activityWorkspace,
+        activityFieldsManager: action.payload.activityFieldsManager,
+        activityFundingTotals: action.payload.activityFundingTotals
       };
-    case ACTIVITY_LOAD_ERROR:
-      return { ...defaultState, errorMessage: action.actionData.errorMessage };
+    case ACTIVITY_LOAD_REJECTED:
+      return { ...defaultState, errorMessage: action.payload };
     case STATE_CHANGE_LANGUAGE:
       if (state.activityFieldsManager) {
         // TODO to be handled otherwise to avoid changing state here

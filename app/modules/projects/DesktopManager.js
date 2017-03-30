@@ -59,7 +59,7 @@ const DesktopManager = {
     return ActivityHydrator.hydrateActivities({
       activities,
       fieldPaths: ['donor_organization~organization'],
-      teamMember: { id: teamMemberId }
+      teamMemberId
     });
   },
 
