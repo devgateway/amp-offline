@@ -8,9 +8,9 @@ export const ERRORS_TO_RETRY = ['ESOCKETTIMEDOUT', 'ETIMEDOUT'];
 
 export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';
-export const ACTIVITY_PREVIEW_URL = '/activityPreview';
-export const ACTIVITY_EDIT_URL = '/editActivity';
 export const SYNCUP_URL = '/syncUp';
+export const ACTIVITY_PREVIEW_URL = '/activity/preview';
+export const ACTIVITY_EDIT_URL = '/activity/edit';
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_WORKPACES = 'workspaces';

@@ -10,8 +10,7 @@ const defaultState = {
   loaded: false,
   activeProjects: [],
   rejectedProjects: [],
-  tabsData: [],
-  paginationOptions: undefined
+  tabsData: []
 };
 
 export default function desktop(state = defaultState, action: Object) {
@@ -23,8 +22,7 @@ export default function desktop(state = defaultState, action: Object) {
         loaded: true,
         activeProjects: action.actionData.activeProjects,
         rejectedProjects: action.actionData.rejectedProjects,
-        tabsData: action.actionData.tabs,
-        paginationOptions: action.actionData.paginationOptions
+        tabsData: action.actionData.tabs
       });
     case STATE_DESKTOP_LOADING:
       return Object.assign({}, defaultState, { isLoadingDesktop: true });

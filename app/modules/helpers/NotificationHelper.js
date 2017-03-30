@@ -45,7 +45,10 @@ export default class NotificationHelper {
      * is shown correctly to the user. */
     let retMessage = null;
     try {
-      if (message instanceof Object) {
+      if (message instanceof Error) {
+        retMessage = message.message;
+        console.error(message.stack);
+      } else if (message instanceof Object) {
         const fields = Object.keys(message);
         if (fields && message[fields[0]] && !isNaN(fields[0])) {
           retMessage = this.processMessageParams(message[fields[0]][0]);

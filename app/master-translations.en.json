@@ -63,5 +63,18 @@
   "Error": "Error",
   "Warning": "Warning",
   "tooOldSyncWarning": "The app has not been synced in 14 days. You may not proceed until data has been synced.",
-  "noUserDataSyncWarning": "Please sync prior to working with the app for the latest data and avoid version conflicts when uploading data."
+  "noUserDataSyncWarning": "Please sync prior to working with the app for the latest data and avoid version conflicts when uploading data.",
+  "activityLoading": "Activity is loading",
+  "activityUnexpectedError": "Unexpected error occurred. Activity could not be loaded.",
+  "total": "Total",
+  "fundingInformation": "Funding Information",
+  "additionalInfo": "Additional info",
+  "activityCreatedBy": "Activity created by",
+  "createdInWorkspace": "Created in workspace",
+  "computation": "Computation",
+  "activityCreatedOn": "Activity created on",
+  "activityUpdatedOn": "Activity updated on",
+  "dataTeamLeader": "Data Team Leader",
+  "yes": "Yes",
+  "no": "No"
 }

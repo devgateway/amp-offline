@@ -1,10 +1,10 @@
-import * as OrgConstants from './OrgConstants';
+import * as ValueConstants from './ValueConstants';
 
 /**
  * @author Nadejda Mandrescu
  */
 
-export const ORG_ROLE_FIELDS = toFieldNames(OrgConstants.ORG_ROLE_NAMES);
+export const ORG_ROLE_FIELDS = toFieldNames(ValueConstants.ORG_ROLE_NAMES);
 
 // Activity fields
 export const ACTIVITY_BUDGET = 'activity_budget';
@@ -61,6 +61,9 @@ export const INTERNAL_ID = 'internal_id';
 export const AMP_ID = 'amp_id';
 export const PROJECT_TITLE = 'project_title';
 export const MODIFIED_BY = 'modified_by';
+export const MODIFIED_ON = 'update_date';
+export const CREATED_BY = 'created_by';
+export const CREATED_ON = 'creation_date';
 export const CLIENT_CHANGE_ID = 'client-change-id';
 
 export function toFieldNames(listOfNames) {
