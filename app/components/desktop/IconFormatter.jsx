@@ -3,7 +3,6 @@ import { Link } from 'react-router';
 import { ACTIVITY_PREVIEW_URL, ACTIVITY_EDIT_URL } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import styles from './IconFormatter.css';
-import { AMP_ID } from '../../utils/constants/ActivityConstants';
 
 export default class IconFormatter extends Component {
 
@@ -13,8 +12,8 @@ export default class IconFormatter extends Component {
 
   render() {
     // TODO: These links could be dispatch to some action too if needed.
-    const editLink = `${ACTIVITY_EDIT_URL}/${this.props.row[AMP_ID]}`;
-    const viewLink = `${ACTIVITY_PREVIEW_URL}/${this.props.row[AMP_ID]}`;
+    const editLink = `${ACTIVITY_EDIT_URL}/${this.props.row.id}`;
+    const viewLink = `${ACTIVITY_PREVIEW_URL}/${this.props.row.id}`;
     let edit;
     let view;
     if (this.props.row.edit) {

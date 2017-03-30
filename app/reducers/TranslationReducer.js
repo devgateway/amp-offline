@@ -7,6 +7,7 @@ import { LANGUAGE_ENGLISH } from '../utils/Constants';
 
 const defaultState = {
   lang: LANGUAGE_ENGLISH,
+  defaultLang: LANGUAGE_ENGLISH,
   languageList: [],
   loadingListOfLanguages: false
 };

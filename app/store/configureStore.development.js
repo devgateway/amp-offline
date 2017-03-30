@@ -8,11 +8,13 @@ import rootReducer from '../reducers';
 import * as loginActions from '../actions/LoginAction';
 import * as workspaceActions from '../actions/WorkspaceAction';
 import * as connectivityActions from '../actions/ConnectivityAction';
+import * as activityActions from '../actions/ActivityAction';
 
 const actionCreators = {
   ...loginActions,
   ...workspaceActions,
   ...connectivityActions,
+  ...activityActions,
   push,
 };
 

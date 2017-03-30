@@ -59,5 +59,18 @@
   "Rejected": "Rejected",
   "noUniqueFieldsTree": "No unique fields tree is found for usage",
   "noWorkspace": "No workspace is selected",
-  "noFieldsDef": "No fields definition found"
+  "noFieldsDef": "No fields definition found",
+  "activityLoading": "Activity is loading",
+  "activityUnexpectedError": "Unexpected error occurred. Activity could not be loaded.",
+  "total": "Total",
+  "fundingInformation": "Funding Information",
+  "additionalInfo": "Additional info",
+  "activityCreatedBy": "Activity created by",
+  "createdInWorkspace": "Created in workspace",
+  "computation": "Computation",
+  "activityCreatedOn": "Activity created on",
+  "activityUpdatedOn": "Activity updated on",
+  "dataTeamLeader": "Data Team Leader",
+  "yes": "Yes",
+  "no": "No"
 }
