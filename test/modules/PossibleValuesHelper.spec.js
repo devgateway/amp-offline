@@ -48,6 +48,23 @@ let ampFormatPVwithTranslations = {
   ]
 };
 
+let idAsStringNumnber = {
+  'fundings~funding_details~transaction_type': [
+    {
+      id: '0',
+      value: 'Commitments'
+    }
+  ]
+};
+let idAsCurrencyCode = {
+  'rpc_amount~currency_code': [
+    {
+      id: 'USD',
+      value: 'USD'
+    }
+  ]
+};
+
 let validPossibleValuesColl = [/* ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations */];
 let invalidPV = { 'invalid-field-name': 'some value' };
 let missingId = { 'possible-options': [{ value: 'aa' }, { id: 2, value: 'bb' }] };
@@ -67,7 +84,10 @@ describe('@@ PossibleValuesHelper @@', () => {
           ampFormatPV1 = actions.transformToClientUsage(Object.entries(ampFormatPV1)[0]);
           ampFormatPV2 = actions.transformToClientUsage(Object.entries(ampFormatPV2)[0]);
           ampFormatPVwithTranslations = actions.transformToClientUsage(Object.entries(ampFormatPVwithTranslations)[0]);
-          validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations];
+          idAsStringNumnber = actions.transformToClientUsage((Object.entries(idAsStringNumnber)[0]));
+          idAsCurrencyCode = actions.transformToClientUsage((Object.entries(idAsCurrencyCode)[0]));
+          validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations, idAsStringNumnber,
+            idAsCurrencyCode];
 
           invalidPV = actions.transformToClientUsage(Object.entries(invalidPV)[0]);
           missingId = actions.transformToClientUsage(Object.entries(missingId)[0]);

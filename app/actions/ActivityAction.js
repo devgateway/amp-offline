@@ -52,7 +52,6 @@ function _loadActivity(activityId, teamMemberId, possibleValuesPaths) {
 
 const _toNotification = (error) => new Notification({ message: error, origin: NOTIFICATION_ORIGIN_ACTIVITY });
 
-// TODO remove teamMemberId once it is set under user during workspace selection
 const _getActivity = (activityId) =>
   ActivityHelper.findNonRejectedById(activityId).then(activity =>
     ActivityHydrator.hydrateActivity({ activity }));

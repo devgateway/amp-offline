@@ -17,10 +17,14 @@ const possibleValuesSchema = {
     'possible-options': {
       type: 'object',
       patternProperties: {
-        '^([1-9]+[0-9]*)$': {
+        // TODO update based on AMP-25785 if we actually should not limit to numbers
+        '^(0|[1-9]+[0-9]*)|[A-Z]{3}$': {
           type: 'object',
           properties: {
-            id: { type: 'integer' },
+            // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
+            id: {
+              anyOf: [{ type: 'integer' }, { type: 'string' }]
+            },
             value: {
               anyOf: [{ type: 'string' }, { type: 'object' }]
             }

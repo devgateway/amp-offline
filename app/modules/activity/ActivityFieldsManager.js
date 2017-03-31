@@ -94,9 +94,6 @@ export default class ActivityFieldsManager {
         }
         cached[origValue] = trnValue;
         this._translationsCache[fieldPath] = cached;
-      } else {
-        // TODO this is a temporary workaround for AMP-25752, remove once AMP-25752 is fixed
-        trnValue = origValue;
       }
     }
     return trnValue;
