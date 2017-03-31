@@ -8,7 +8,7 @@ export default class WorkspaceList extends Component {
   static propTypes = {
     workspaceList: PropTypes.array.isRequired,
     onClickHandler: PropTypes.func.isRequired,
-    workspaceGroup: PropTypes.object.isRequired
+    workspaceGroup: PropTypes.string.isRequired
   };
 
   render() {

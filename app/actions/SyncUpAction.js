@@ -29,6 +29,9 @@ export function getSyncUpHistory() {
 export function startSyncUp(historyData) {
   console.log('startSyncUp');
   return (dispatch, ownProps) => {
+    /* Save current syncup redux state because this might be a "forced" syncup and we dont want
+     the user to be able to leave the page if this syncup fails. */
+    const currentState = ownProps().syncUp;
     if (ownProps().syncUp.syncUpInProgress === false) {
       dispatch(syncUpInProgress());
       return SyncUpManager.syncUpAllTypesOnDemand().then(() => {
@@ -39,8 +42,13 @@ export function startSyncUp(historyData) {
         console.log('syncupSucessfull');
         return dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
       }).catch((err) => {
-        console.log('syncupSucessfailed');
-        return dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage: err } });
+        const actionData = { errorMessage: err };
+        // Check if we need to remain in the force syncup state.
+        if (currentState.forceSyncUp) {
+          actionData.force = true;
+          actionData.warnMessage = currentState.forceSyncUpMessage;
+        }
+        return dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
       });
     }
   };
