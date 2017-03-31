@@ -71,6 +71,8 @@
   "additionalInfo": "Additional info",
   "activityCreatedBy": "Activity created by",
   "createdInWorkspace": "Created in workspace",
+  "team": "Team",
+  "management": "Management",
   "computation": "Computation",
   "activityCreatedOn": "Activity created on",
   "activityUpdatedOn": "Activity updated on",
