@@ -33,7 +33,8 @@ export default class SummaryGroup extends Component {
         if (adjTypeTrn && trnTypeTrn) {
           const value = this.context.activityFundingTotals.getTotals(adjTypeTrn, trnTypeTrn, {});
           const title = `${totalTrn} ${adjTypeTrn} ${trnTypeTrn}`;
-          fundingInfoSummary.push(<SimpleField title={title} value={value} />);
+          const key = `Summary-Total-${adjType}-${trnType}`;
+          fundingInfoSummary.push(<SimpleField key={key} title={title} value={value} />);
         }
       });
     });
@@ -42,36 +43,47 @@ export default class SummaryGroup extends Component {
     // TODO: update with current WS currency
     const currency = 'USD';
     const fundingInfoSummaryTitle = `${(translate(TC.FUNDING_INFORMATION))} ${currency}`;
-    return <SectionGroup title={fundingInfoSummaryTitle} simpleFields={fundingInfoSummary} />;
+    return (
+      <SectionGroup key={TC.FUNDING_INFORMATION} title={fundingInfoSummaryTitle}>
+        {fundingInfoSummary}
+      </SectionGroup>);
   }
 
   _buildAdditionalInfo() {
     const additionalInfo = [];
-    // TODO update once possible values are available for it
-    const createdBy = this.context.activity[AC.CREATED_BY];
-    // TODO update once translations are available for workspace data
+    // TODO once translations available for workspace name AMP-25766
     const teamName = this.context.activityWorkspace.name;
-    const accessType = this.context.activityWorkspace['access-type'];
     const isComputedTeam = this.context.activityWorkspace['is-computed'] === true ? translate('yes') : translate('no');
-    const createdOn = this.context.activity[AC.CREATED_ON];
     const updatedOn = this.context.activity[AC.MODIFIED_ON];
 
-    additionalInfo.push(<SimpleField title={translate('activityCreatedBy')} value={createdBy} />);
-    additionalInfo.push(<SimpleField title={translate('createdInWorkspace')} value={`${teamName} - ${accessType}`} />);
-    additionalInfo.push(<SimpleField title={translate('computation')} value={isComputedTeam} />);
-    additionalInfo.push(<SimpleField title={translate('activityCreatedOn')} value={createdOn} />);
+    // TODO update once possible values are available for it
+    additionalInfo.push(SimpleField.instance('activityCreatedBy', this.context.activity[AC.CREATED_BY]));
+    additionalInfo.push(SimpleField.instance('createdInWorkspace', `${teamName} - ${this._getAccessType()}`));
+    additionalInfo.push(SimpleField.instance('computation', isComputedTeam));
+    additionalInfo.push(SimpleField.instance('activityCreatedOn', this.context.activity[AC.CREATED_ON]));
     // TODO check if updated on can be displayed by ActivityPreview FM
     if (updatedOn) {
-      additionalInfo.push(<SimpleField title={translate('activityUpdatedOn')} value={updatedOn} />);
+      additionalInfo.push(SimpleField.instance('activityUpdatedOn', updatedOn));
     }
-    additionalInfo.push(<SimpleField title={translate('dataTeamLeader')} value={this._getWorkspaceLeadData()} />);
+    additionalInfo.push(SimpleField.instance('dataTeamLeader', this._getWorkspaceLeadData()));
 
-    return <SectionGroup title={translate('additionalInfo')} simpleFields={additionalInfo} />;
+    return SectionGroup.instance('additionalInfo', additionalInfo);
   }
 
   _getWorkspaceLeadData() {
-    // TODO update once full lead data is provided here
+    // TODO update once full lead data is provided here AMP-25766
     return this.context.activityWorkspace['workspace-lead-id'];
+  }
+
+  _getAccessType() {
+    // no need to export repeating translation for the access type through workspaces EP
+    const accessType = this.context.activityWorkspace['access-type'];
+    if (accessType === 'Team') {
+      return translate('team');
+    } else if (accessType === 'Management') {
+      return translate('management');
+    }
+    return accessType;
   }
 
   render() {

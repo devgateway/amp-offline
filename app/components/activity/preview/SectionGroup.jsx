@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import SimpleField from './SimpleField';
 import styles from './ActivityPreview.css';
+import translate from '../../../utils/translate';
 
 /**
  * Section Group for a set of components
@@ -8,9 +9,12 @@ import styles from './ActivityPreview.css';
 export default class SectionGroup extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    simpleFields: PropTypes.arrayOf(SimpleField)
+    children: PropTypes.arrayOf(SimpleField).isRequired
   };
 
+  static instance(trnLabel, children) {
+    return <SectionGroup key={trnLabel} title={translate(trnLabel)}>{children}</SectionGroup>;
+  }
   constructor(props) {
     super(props);
     console.log('constructor');
@@ -19,7 +23,7 @@ export default class SectionGroup extends Component {
   render() {
     return (<div className={styles.section_group}>
       <div className={styles.section_title}>{this.props.title}</div>
-      {this.props.simpleFields}
+      {this.props.children}
     </div>);
   }
 }

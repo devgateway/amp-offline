@@ -138,12 +138,12 @@ export default class ActivityHydrator {
    * Hydrates an activity for the specified fields paths and team member
    * @param activity activities to hydrate with full field values
    * @param fieldPaths the field paths to hydrate
-   * @param teamMember the workspace member for which rules will be applied (or the current one if unspecified)
+   * @param teamMemberId the workspace member id for which rules will be applied (or the current one if unspecified)
    * @return {Promise}
    */
-  static hydrateActivity({ activity, fieldPaths, teamMember }) {
+  static hydrateActivity({ activity, fieldPaths, teamMemberId }) {
     return new Promise((resolve, reject) =>
-      ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, teamMember })
+      ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, teamMemberId })
         .then(activities => resolve(activities[0]))
         .catch(reject)
     );
@@ -153,19 +153,19 @@ export default class ActivityHydrator {
    * Hydrates activities with full value data for the selected field paths (or all if no one specific is slected)
    * @param activities activities to hydrate with full field values
    * @param fieldPaths the field paths to hydrate
-   * @param teamMember the workspace member for which rules will be applied (or the current one if unspecified)
+   * @param teamMemberId the workspace member id for which rules will be applied (or the current one if unspecified)
    * @return {Promise}
    */
-  static hydrateActivities({ activities, fieldPaths, teamMember }) {
+  static hydrateActivities({ activities, fieldPaths, teamMemberId }) {
     // Note: 926 activities are hydrated in 0.2s, where a significant time is consumed by promises
     return new Promise((resolve, reject) => {
-      if (teamMember === undefined) {
-        teamMember = store.getState().user.teamMember;
-        if (teamMember === undefined) {
+      if (teamMemberId === undefined) {
+        teamMemberId = store.getState().user.teamMember ? store.getState().user.teamMember.id : undefined;
+        if (teamMemberId === undefined) {
           reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
         }
       }
-      return FieldsHelper.findByWorkspaceMemberId(teamMember.id).then((fieldsDef) => {
+      return FieldsHelper.findByWorkspaceMemberId(teamMemberId).then((fieldsDef) => {
         if (fieldsDef === null) {
           throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
         } else {
