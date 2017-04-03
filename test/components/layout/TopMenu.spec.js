@@ -13,11 +13,11 @@ import store from '../../../app/index';
 function setup() {
   const menuJson = {
     menu: {
-      DESKTOP: {
+      OPTION1: {
         route: null,
         public: false,
         nodes: {
-          'Change workspace': {
+          option11: {
             public: false,
             route: '/test11',
             params: null
@@ -25,16 +25,6 @@ function setup() {
           option12: {
             public: false,
             route: '/test12'
-          }
-        }
-      },
-      TOOLS: {
-        route: null,
-        public: true,
-        nodes: {
-          'Change Language': {
-            public: true,
-            nodes: {}
           }
         }
       }
@@ -73,25 +63,25 @@ describe('@@ TopMenu @@', () => {
 
   it('should render the menu title', () => {
     const { menu } = setup();
-    expect(menu.html()).to.equal('DESKTOP');
+    expect(menu.html()).to.equal('OPTION1');
   });
 
   it('should render 1st level option', () => {
     const { topMenuComponent } = setup();
     const renderTopMenuComponent = TestUtils.renderIntoDocument(topMenuComponent);
     const numberOfSubMenus = TestUtils.scryRenderedComponentsWithType(renderTopMenuComponent, SubMenu).length;
-    expect(numberOfSubMenus).to.equal(2);
+    expect(numberOfSubMenus).to.equal(1);
   });
 
   it('should render a 1st level option title', () => {
     const { firstLevelOption } = setup();
-    expect(firstLevelOption.html()).to.equal('DESKTOP');
+    expect(firstLevelOption.html()).to.equal('OPTION1');
   });
 
   it('should render 2rd level options', () => {
     // This test is different to detect the rendering of MenuItems.
     const { component } = setup();
     expect(component.debug().toString().indexOf('option12')).to.not.equal(-1);
-    expect(component.debug().toString().indexOf('Change workspace')).to.not.equal(-1);
+    expect(component.debug().toString().indexOf('option11')).to.not.equal(-1);
   });
 });
