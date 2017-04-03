@@ -9,6 +9,7 @@ export const ERROR_NO_AMP_SERVER = 'ECONNREFUSED';
 
 export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';
+export const SYNCUP_URL = '/syncUp';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
 

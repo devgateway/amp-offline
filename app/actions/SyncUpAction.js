@@ -9,6 +9,7 @@ export const STATE_SYNCUP_SEARCH_FAILED = 'STATE_SYNCUP_SEARCH_FAILED';
 export const STATE_SYNCUP_IN_PROCESS = 'STATE_SYNCUP_IN_PROCESS';
 export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
+export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 
 export function getSyncUpHistory() {
   console.log('getSyncUpHistory');
@@ -28,8 +29,12 @@ export function getSyncUpHistory() {
 export function startSyncUp(historyData) {
   console.log('startSyncUp');
   return (dispatch, ownProps) => {
+    /* Save current syncup redux state because this might be a "forced" syncup and we dont want
+     the user to be able to leave the page if this syncup fails. */
+    const currentState = ownProps().syncUp;
     if (ownProps().syncUp.syncUpInProgress === false) {
-      SyncUpManager.syncUpAllTypesOnDemand().then(() => {
+      dispatch(syncUpInProgress());
+      return SyncUpManager.syncUpAllTypesOnDemand().then(() => {
         // TODO probably the way in which we will update the ui will change
         // once we get the final version also it will change the way in which pass
         // the historyData object
@@ -37,13 +42,28 @@ export function startSyncUp(historyData) {
         console.log('syncupSucessfull');
         return dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
       }).catch((err) => {
-        console.log('syncupSucessfailed');
-        return dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage: err } });
+        const actionData = { errorMessage: err };
+        // Check if we need to remain in the force syncup state.
+        if (currentState.forceSyncUp) {
+          actionData.force = true;
+          actionData.warnMessage = currentState.forceSyncUpMessage;
+        }
+        return dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
       });
-      dispatch(syncUpInProgress());
-      console.log('startSyncUp');
     }
   };
+}
+
+export function isForceSyncUpAction(callback) {
+  console.log('isForceSyncUpAction');
+  return (dispatch) => (
+    SyncUpManager.isForceSyncUp().then((forceData) => {
+      dispatch({
+        type: STATE_SYNCUP_FORCED,
+        actionData: { force: forceData.force, message: forceData.message }
+      });
+      return callback(forceData.force);
+    }));
 }
 
 function syncUpSearchHistoryOk(data) {

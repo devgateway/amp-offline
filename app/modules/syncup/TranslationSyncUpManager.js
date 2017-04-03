@@ -19,9 +19,9 @@ import TranslationManager from '../util/TranslationManager';
 const MASTER_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_MASTER_TRANSLATIONS_FILE}.`;
 const LOCAL_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_TRANSLATIONS_FILE}.`;
 
-const TranslationSyncUpManager = {
+export default class TranslationSyncUpManager {
 
-  syncUpLangList() {
+  static syncUpLangList() {
     console.log('syncUpLangList');
     return new Promise((resolve, reject) => (
       ConnectionHelper.doGet({ url: AVAILABLE_LANGUAGES_URL }).then((langs) => (
@@ -36,9 +36,9 @@ const TranslationSyncUpManager = {
         }).catch(reject)
       )).catch(reject)
     ));
-  },
+  }
 
-  removeDisabledLanguageFiles(langs) {
+  static removeDisabledLanguageFiles(langs) {
     console.log('removeDisabledLanguageFiles');
     const restart = false;
     return new Promise((resolve, reject) => (
@@ -50,10 +50,29 @@ const TranslationSyncUpManager = {
         return resolve();
       }).catch(reject)
     ));
-  },
+  }
+
+  /**
+   * Check if we have a valid translations file for a given language.
+   * @param lang
+   * @returns {boolean}
+   */
+  static detectSynchronizedTranslationFile(lang) {
+    console.log('detectSynchronizedTranslationFile');
+    let ret = false;
+    const fileName = `${LOCAL_LANGUAGE_FILE}${lang}.json`;
+    if (fs.existsSync(fileName)) {
+      const stats = fs.statSync(fileName);
+      const fileSize = stats.size;
+      if (fileSize > 10) { // Just to test the file has something in it.
+        ret = true;
+      }
+    }
+    return ret;
+  }
 
   // TODO: use lastSyncDate when calling the EP.
-  syncUpTranslations(langs) {
+  static syncUpTranslations(langs) {
     console.log('syncUpTranslations');
     const masterTrnFileName = `${MASTER_LANGUAGE_FILE}${LANGUAGE_ENGLISH}.json`;
     const originalMasterTrnFile = JSON.parse(fs.readFileSync(masterTrnFileName, 'utf8'));
@@ -70,9 +89,9 @@ const TranslationSyncUpManager = {
       // Do full syncup.
       return this.doFullSyncUp(langIds, originalMasterTrnFile);
     }
-  },
+  }
 
-  doFullSyncUp(langIds, originalMasterTrnFile) {
+  static doFullSyncUp(langIds, originalMasterTrnFile) {
     console.log('doFullSyncUp');
     // Extract text to translate from our master-file.
     const masterTexts = Object.values(originalMasterTrnFile);
@@ -83,9 +102,9 @@ const TranslationSyncUpManager = {
     }).then((newTranslations) => (
       this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
     ));
-  },
+  }
 
-  doIncrementalSyncup(langIds, originalMasterTrnFile) {
+  static doIncrementalSyncup(langIds, originalMasterTrnFile) {
     console.log('doIncrementalSyncup');
     return ConnectionHelper.doGet({
       url: GET_TRANSLATIONS_URL,
@@ -93,9 +112,9 @@ const TranslationSyncUpManager = {
     }).then((newTranslations) => (
       this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
     ));
-  },
+  }
 
-  updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
+  static updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
     console.log('updateTranslationFiles');
     const fn = (lang) => {
       const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
@@ -124,26 +143,5 @@ const TranslationSyncUpManager = {
     // If we have more than one language we make the process in parallel to save time.
     const promises = langIds.map(fn);
     return Promise.all(promises);
-  },
-
-  /**
-   * Check if we have a valid translations file for a given language.
-   * @param lang
-   * @returns {boolean}
-   */
-  detectSynchronizedTranslationFile(lang) {
-    console.log('detectSynchronizedTranslationFile');
-    let ret = false;
-    const fileName = `${LOCAL_LANGUAGE_FILE}${lang}.json`;
-    if (fs.existsSync(fileName)) {
-      const stats = fs.statSync(fileName);
-      const fileSize = stats.size;
-      if (fileSize > 10) {
-        ret = true;
-      }
-    }
-    return ret;
   }
-};
-
-module.exports = TranslationSyncUpManager;
+}
