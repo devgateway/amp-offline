@@ -8,7 +8,7 @@ import { describe, it } from 'mocha';
 // Note the curly braces: grab the named export instead of default export
 import { TopMenu } from '../../../app/components/layout/TopMenu';
 import * as MenuUtils from '../../../app/utils/MenuUtils';
-
+import store from '../../../app/index';
 
 function setup() {
   const menuJson = {
@@ -34,7 +34,11 @@ function setup() {
   const topMenuComponent = (<TopMenu
     builder={MenuUtils.default.prototype.buildMenu}
     onClick={MenuUtils.handleClick}
-    loggedIn={loggedUser} menu={menuJson}
+    loggedIn={loggedUser}
+    menu={menuJson}
+    workspaceList={store.getState().workspace.workspaceList}
+    menuOnClickHandler={store.getState().menuOnClickHandler}
+    languageList={store.getState().translation.languageList}
   />);
   const component = shallow(topMenuComponent);
   // console.log(component.debug());

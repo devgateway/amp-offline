@@ -5,7 +5,10 @@ import * as constants from '../../app/actions/TranslationAction';
 import { TEST_FAKE_STATE, TEST_LANG_EN, TEST_LANG_SP } from '../Constants';
 
 const defaultState = {
-  lang: TEST_LANG_EN
+  lang: TEST_LANG_EN,
+  defaultLang: TEST_LANG_EN,
+  languageList: [],
+  loadingListOfLanguages: false
 };
 
 describe('@@ TranslationReducer @@', () => {

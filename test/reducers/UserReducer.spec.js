@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import * as userReducer from '../../app/reducers/UserReducer';
+import userReducer, { STATE_USER_CLEAR } from '../../app/reducers/UserReducer';
 import { STATE_LOGIN_OK, STATE_LOGOUT } from '../../app/actions/LoginAction';
 import { STATE_SELECT_WORKSPACE } from '../../app/actions/WorkspaceAction';
 import { TEST_FAKE_STATE } from '../Constants';
@@ -13,26 +13,24 @@ const defaultState = {
 describe('@@ UserReducer @@', () => {
   describe('userReducer', () =>
     it('should return default state with empty params.', () =>
-      expect(userReducer.user(undefined, {})).to.deep.equal(defaultState)
+      expect(userReducer(undefined, {})).to.deep.equal(defaultState)
     )
   );
 
   describe('userReducer', () =>
     it('should return default state for an incorrect type', () =>
-      expect(userReducer.user(undefined, { type: TEST_FAKE_STATE })).to.deep.equal(defaultState)
+      expect(userReducer(undefined, { type: TEST_FAKE_STATE })).to.deep.equal(defaultState)
     )
   );
 
   describe('userReducer', () =>
     it('should return the user data without teamMember', () =>
-      expect(userReducer.user(undefined, {
+      expect(userReducer(undefined, {
         type: STATE_LOGIN_OK,
-        actionData: { userData: { id: '123', name: 'test123' }, plainPassword: 'password', token: 'a123456789b' }
+        actionData: { userData: { id: '123', name: 'test123' } }
       })).to.deep.equal({
         userData: { id: '123', name: 'test123' },
-        teamMember: undefined,
-        plainPassword: 'password',
-        token: 'a123456789b'
+        teamMember: undefined
       })
     )
   );
@@ -43,18 +41,16 @@ describe('@@ UserReducer @@', () => {
       const user = { id: '202', name: 'Test' };
       const teamMember = { id: '101202', 'user-id': user.id, 'workspace-id': workspace.id, workspace };
 
-      const state = userReducer.user(undefined, {
+      const state = userReducer(undefined, {
         type: STATE_LOGIN_OK,
-        actionData: { userData: { id: '123', name: 'test123' }, plainPassword: 'password', token: 'a123456789b' }
+        actionData: { userData: { id: '123', name: 'test123' } }
       });
 
-      expect(userReducer.user(state, {
+      expect(userReducer(state, {
         type: STATE_SELECT_WORKSPACE,
         actionData: { teamMember, workspace }
       })).to.deep.equal({
         userData: { id: '123', name: 'test123' },
-        plainPassword: 'password',
-        token: 'a123456789b',
         teamMember
       });
     })
@@ -62,7 +58,7 @@ describe('@@ UserReducer @@', () => {
 
   describe('userReducer', () =>
     it('should return undefined user state', () =>
-      expect(userReducer.user({}, {
+      expect(userReducer({}, {
         type: STATE_LOGOUT,
         actionData: { userData: { id: '123', name: 'test123' }, plainPassword: 'password', token: 'a123456789b' }
       })).to.deep.equal(defaultState)
@@ -71,8 +67,8 @@ describe('@@ UserReducer @@', () => {
 
   describe('userReducer', () =>
     it('should return undefined user state', () =>
-      expect(userReducer.user({}, {
-        type: userReducer.STATE_USER_CLEAR,
+      expect(userReducer({}, {
+        type: STATE_USER_CLEAR,
         actionData: { userData: { id: '123', name: 'test123' }, plainPassword: 'password', token: 'a123456789b' }
       })).to.deep.equal(defaultState)
     )

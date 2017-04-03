@@ -19,7 +19,8 @@ export default function user(state = defaultState, action: Object) {
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {
-        userData: action.actionData.userData
+        userData: action.actionData.userData,
+        teamMember: undefined
       });
     case STATE_SELECT_WORKSPACE:
       return Object.assign({}, state, {
