@@ -1,7 +1,8 @@
-// TODO: this action is not going to be called from a componet, its an initialization action
-import { store } from '../index';
-import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
+// TODO: this action is not going to be called from a component, its an initialization action
+import store from '../index';
 import { connectivityCheck } from './ConnectivityAction';
+import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
+// this is temporal will be stored in settings
 import {
   SERVER_URL,
   BASE_REST_URL,
@@ -10,6 +11,7 @@ import {
   CONNECTION_TIMEOUT,
   CONNECTIVITY_CHECK_INTERVAL
 } from '../utils/Constants';
+
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
 export const STATE_PARAMETERS_FAILED = 'STATE_PARAMETERS_FAILED';
@@ -18,7 +20,7 @@ export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
 export const TIMER_STOP = 'TIMER_STOP';
 // we keep the timer as a variable in case we want to be able to stop it
-export let timer = null;
+let timer;
 
 /**
  * Checks and updates the connectivity status
@@ -38,33 +40,39 @@ export function loadConnectionInformation() {
     store.dispatch(startUpLoaded(connectionInformation));
     //  It is dispatch here so its called righ away. since for default it is
     // Scheduled every 5 minutes, we need to check whether amp is on line or not right away
-    store.dispatch(connectivityCheck());
+    store.dispatch(connectivityCheck);
     resolve();
   });
+}
+// exporting timer from a function since we cannot export let
+export function getTimer() {
+  return timer;
 }
 
 function scheduleConnectivityCheck() {
   return new Promise((resolve, reject) => {
     clearInterval(timer);
-    timer = setInterval(() => store.dispatch(connectivityCheck()), CONNECTIVITY_CHECK_INTERVAL);
+    timer = setInterval(() => store.dispatch(connectivityCheck), CONNECTIVITY_CHECK_INTERVAL);
     store.dispatch({ type: TIMER_START });
     resolve();
   });
-};
+}
 
 
 function startUpLoaded(connectionInformation) {
   return {
     type: STATE_PARAMETERS_LOADED,
-    actionData: {connectionInformation: connectionInformation}
+    actionData: { connectionInformation }
   };
 }
 
+// TODO: Use this function somewhere.
+/* eslint no-unused-vars: 0 */
 function startUpFailed(err) {
-  console.log('Startup Failed: ' + err);
+  console.log('startUpFailed');
   return {
     type: STATE_PARAMETERS_FAILED,
-    actionData: {errorMessage: err}
+    actionData: { errorMessage: err }
   };
 }
 
@@ -72,5 +80,5 @@ function sendingRequest() {
   console.log('sendingRequest');
   return {
     type: STATE_PARAMETERS_LOADING
-  }
+  };
 }

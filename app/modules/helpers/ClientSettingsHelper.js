@@ -1,38 +1,39 @@
-import DatabaseManager from '../database/DatabaseManager';
+import { validate } from 'jsonschema';
+import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
-import { validate } from "jsonschema";
 import Notification from './NotificationHelper';
 
-const INVALID_FORMAT_ERROR = new Notification({message: 'INVALID_FORMAT'});
+const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT' });
 
 /**
- * A simplified helper for "Client Settings" storage for loading, searching /
+ * A simplified helper for 'Client Settings' storage for loading, searching /
  *  filtering and saving client settings.
  *  The structure to fulfill to ensure we can store, use and display settings properly:
  *  {
- *  "id": 1, // setting id
- *  "name": "AMP Offline Client Enabled", // setting name that can be used to display and translate
- *  "description": "Clarifies if the AMP Offline client can still be used, controlled at AMP server", // setting description
- *  "visible": false, // specifies if this option should be displayed in the Client Settings page to be adjusted
- *  "type": "boolean", // a hint for the value type, mainly for free text entry validation
- *  "options": [true, false], // an array of possible value options or null for free text
- *  "value": true, // setting value
- *  "updated-at": "2016-12-22T13:33:15.123Z" // update date in ISO-8601, that will be changed automatically at save/update time
+ *  'id': 1, // setting id
+ *  'name': 'AMP Offline Client Enabled', // setting name that can be used to display and translate
+ *  'description': 'Clarifies if the AMP Offline client can still be used, controlled at AMP server',
+ *  'visible': false, // specifies if this option should be displayed in the Client Settings page to be adjusted
+ *  'type': 'boolean', // a hint for the value type, mainly for free text entry validation
+ *  'options': [true, false], // an array of possible value options or null for free text
+ *  'value': true, // setting value
+ *  // update date in ISO-8601, that will be changed automatically at save/update time
+ *  'updated-at': '2016-12-22T13:33:15.123Z'
  * }
  */
 const settingsSchema = {
-  "id": "/SimpleSettings",
-  "type": "object",
-  "properties": {
-    "id": {"type": "string"},
-    "name": {"type": "string"},
-    "visible": {"type": "boolean"},
-    "type": {"type": "string"},
-    "options": {"type": "array"},
-    "value": {"type": ["boolean", "string", "integer"]},
-    "updated-at": {"type": "Date"}
+  id: '/SimpleSettings',
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    name: { type: 'string' },
+    visible: { type: 'boolean' },
+    type: { type: 'string' },
+    options: { type: 'array' },
+    value: { type: ['boolean', 'string', 'integer'] },
+    'updated-at': { type: 'Date' }
   },
-  "required": ["id", "name", "visible", "type", "value"]
+  required: ['id', 'name', 'visible', 'type', 'value']
 };
 
 
@@ -45,7 +46,7 @@ const ClientSettingsHelper = {
    */
   findSettingById(id) {
     console.log('findSettingById');
-    return this.findSetting({id: id});
+    return this.findSetting({ id });
   },
 
   /**
@@ -55,7 +56,7 @@ const ClientSettingsHelper = {
    */
   findSettingByName(name) {
     console.log('findSettingByName');
-    return this.findSetting({name: name});
+    return this.findSetting({ name });
   },
 
   /**
@@ -65,24 +66,20 @@ const ClientSettingsHelper = {
    */
   findSetting(filter) {
     console.log('findSetting');
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS).then(resolve).catch(reject);
-    });
+    return DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS);
   },
 
   /**
    * Find all visible settings
-   * @returns {*}
+   * @returns {Promise}
    */
   findAllVisibleSettings() {
     console.log('findAllVisibleSettings');
-    return this.findAll({visible: true});
+    return this.findAll({ visible: true });
   },
 
   findAll(filter) {
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.findAll(filter, COLLECTION_CLIENT_SETTINGS).then(resolve).catch(reject);
-    });
+    return DatabaseManager.findAll(filter, COLLECTION_CLIENT_SETTINGS);
   },
 
   /**
@@ -92,16 +89,13 @@ const ClientSettingsHelper = {
    */
   saveOrUpdateSetting(setting) {
     console.log('saveOrUpdateSetting');
-    //console.log(validate(setting, settingsSchema));
-    return new Promise(function (resolve, reject) {
-      if (validate(setting, settingsSchema).valid) {
-        console.log('Valid setting.id = ' + setting.id);
-        setting["updated-at"] = (new Date()).toISOString();
-        DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS, {}).then(resolve).catch(reject);
-      } else {
-        reject(INVALID_FORMAT_ERROR);
-      }
-    });
+    // console.log(validate(setting, settingsSchema));
+    if (validate(setting, settingsSchema).valid) {
+      console.log(`Valid setting.id = ${setting.id}`);
+      setting['updated-at'] = (new Date()).toISOString();
+      return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
+    }
+    return Promise.reject(INVALID_FORMAT_ERROR);
   },
 
   /**
@@ -111,9 +105,7 @@ const ClientSettingsHelper = {
    */
   deleteById(id) {
     console.log('deleteById');
-    return new Promise(function (resolve, reject) {
-      DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS, {}).then(resolve).catch(reject);
-    });
+    return DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS);
   }
 
 };

@@ -1,6 +1,6 @@
+/* eslint no-else-return: 0*/
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
-import Util from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
@@ -10,41 +10,38 @@ import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
 
 const LoginManager = {
 
-  processLogin(email, password,isAMPAvailable) {
+  processLogin(email, password, isAMPAvailable) {
     console.log('processLogin');
     return new Promise((resolve, reject) => {
       // 1) Check if AMPOffline is available.
       const isAMPOfflineAvailable = true; // TODO: read from a redux state (to be done on AMPOFFLINE-100).
       if (isAMPOfflineAvailable) {
         // 2) Find this email in db.
-        UserHelper.findByEmail(email).then((dbUser) => {
+        return UserHelper.findByEmail(email).then((dbUser) => {
           if (dbUser !== null && dbUser.ampOfflinePassword && dbUser.ampOfflinePassword.toString() !== '') {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
-            UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
+            return UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
               if (hash === dbUser.ampOfflinePassword) {
-                resolve({ dbUser });
+                return resolve({ dbUser });
               } else {
-                reject(new Notification({
-                  message: 'login.wrongPassword',
+                return reject(new Notification({
+                  message: 'wrongPassword',
                   origin: NOTIFICATION_ORIGIN_AUTHENTICATION
                 }));
               }
             }).catch(reject);
+          } else if (isAMPAvailable) {
+            return this.processOnlineLogin(email, password).then(resolve).catch(reject);
           } else {
-            // 3.1) First time this user login.
-            if (isAMPAvailable) {
-              this.processOnlineLogin(email, password).then(resolve).catch(reject);
-            } else {
-              reject(new Notification({
-                message: 'login.AMPUnreachableError',
-                origin: NOTIFICATION_ORIGIN_AUTHENTICATION
-              }));
-            }
+            return reject(new Notification({
+              message: 'AMPUnreachableError',
+              origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+            }));
           }
         }).catch(reject);
       } else {
         reject(new Notification({
-          message: 'login.AMPOfflineUnavailableError',
+          message: 'AMPOfflineUnavailableError',
           origin: NOTIFICATION_ORIGIN_AUTHENTICATION
         }));
       }
@@ -53,15 +50,13 @@ const LoginManager = {
 
   clearCredentialsInDB(email) {
     console.log('clearCredentialsInDB');
-    return new Promise((resolve, reject) => {
-      UserHelper.findByEmail(email).then((data) => {
-        if (data) {
-          delete data.ampOfflinePassword;
-          UserHelper.saveOrUpdateUser(data).then(resolve).catch(reject);
-        } else {
-          resolve();
-        }
-      }).catch(reject);
+    return UserHelper.findByEmail(email).then((data) => {
+      if (data) {
+        delete data.ampOfflinePassword;
+        return UserHelper.saveOrUpdateUser(data);
+      } else {
+        return undefined;
+      }
     });
   },
 
@@ -73,21 +68,21 @@ const LoginManager = {
    */
   processOnlineLogin(email, password) {
     console.log('processOnlineLogin');
-    return new Promise((resolve, reject) => {
-      Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => {
-        Auth.onlineLogin(email, passwordDigest).then((data) => {
-          this.saveLoginData(data, email, password).then((dbData) => {
-            resolve({ dbUser: dbData, token: data.token });
-          }).catch(reject);
-        }).catch((error) => {
+    return new Promise((resolve, reject) => (
+      Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => (
+        Auth.onlineLogin(email, passwordDigest).then((data) => (
+          this.saveLoginData(data, email, password).then((dbData) => (
+            resolve({ dbUser: dbData, token: data.token })
+          )).catch(reject)
+        )).catch((error) => {
           // If error was caused because an authentication problem then we clear ampOfflinePassword.
           if (error.origin === NOTIFICATION_ORIGIN_API_SECURITY) {
-            this.clearCredentialsInDB(email);
+            return this.clearCredentialsInDB(email);
           }
           reject(error);
-        });
-      });
-    });
+        })
+      ))
+    ));
   },
 
   /**
@@ -95,22 +90,19 @@ const LoginManager = {
    */
   saveLoginData(userData, email, password) {
     console.log('saveLoginData');
-    return new Promise((resolve, reject) => {
-      UserHelper.findByEmail(email).then((dbData) => {
-        UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
-          if (dbData) {
-            dbData.ampOfflinePassword = hash;
-            UserHelper.saveOrUpdateUser(dbData).then(resolve).catch(reject);
-          } else {
-            // TODO: this is just to generate an id because now we dont have it in the EP, we will remove it later.
-            const id = userData.id || Util.stringToId(email);
-            const dbUserData = { id, email };
-            dbUserData.ampOfflinePassword = hash;
-            UserHelper.saveOrUpdateUser(dbUserData).then(resolve).catch(reject);
-          }
-        }).catch(reject);
-      }).catch(reject);
-    });
+    return UserHelper.findByEmail(email).then((dbData) => (
+      UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
+        if (dbData) {
+          dbData.ampOfflinePassword = hash;
+          return UserHelper.saveOrUpdateUser(dbData);
+        } else {
+          const id = userData['user-id'];
+          const dbUserData = { id, email };
+          dbUserData.ampOfflinePassword = hash;
+          return UserHelper.saveOrUpdateUser(dbUserData);
+        }
+      })
+    ));
   }
 };
 

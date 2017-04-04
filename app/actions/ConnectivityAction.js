@@ -1,12 +1,14 @@
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
 import { URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
+import { VERSION } from '../utils/Constants';
 
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
 
 /**
  * Checks and updates the connectivity status
+@returns ConnectivityStatus
  */
 
 export function connectivityCheck() {
@@ -19,11 +21,11 @@ export function connectivityCheck() {
     const lastConnectivityStatus = ownProps().ampConnectionStatus.status;
     ConnectionHelper.doGet({ url, paramsMap }).then(data => {
       const connectivityData = _processResult(data, lastConnectivityStatus);
-      dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: connectivityData });
+      return dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: connectivityData });
     }).catch(error => {
       console.error(`Couldn't check the connection status. Error: ${error}`);
-      const data = _processResult(null,lastConnectivityStatus);
-      dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: data });
+      const data = _processResult(null, lastConnectivityStatus);
+      return dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: data });
     });
   };
 }

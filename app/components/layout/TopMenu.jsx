@@ -1,6 +1,5 @@
-// @flow
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 // Use named export for unconnected component (for tests)
 export class TopMenu extends Component {
@@ -17,7 +16,12 @@ export class TopMenu extends Component {
 
   render() {
     console.log('render');
-    return this.props.builder(this.props.loggedIn, this.props.menu, this.props.onClick, this.props.workspaceList,this.props.menuOnClickHandler);
+    return this.props.builder(this.props.loggedIn,
+      this.props.menu,
+      this.props.onClick,
+      this.props.workspaceList,
+      this.props.menuOnClickHandler,
+      this.props.languageList);
   }
 }
 

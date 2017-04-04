@@ -1,7 +1,8 @@
-// @flow
+/* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
-import { WORKSPACE_URL, LOGIN_URL } from '../utils/Constants';
+import { WORKSPACE_URL, LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
+import { isForceSyncUpAction } from './SyncUpAction';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -10,15 +11,23 @@ export const STATE_LOGOUT = 'STATE_LOGOUT';
 
 export function loginAction(email: string, password: string) {
   console.log('loginAction');
-  return (dispatch,ownProps) => {
+  return (dispatch, ownProps) => {
     if (ownProps().login.loginProcessing === false) {
-      return LoginManager.processLogin(email, password,ownProps().ampConnectionStatus.status.isAmpAvailable).then((data) => {
+      const isAmpAvailable = ownProps().ampConnectionStatus.status.isAmpAvailable;
+      return LoginManager.processLogin(email, password, isAmpAvailable).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
+
         // Tell react-router to move to another page.
-        return UrlUtils.forwardTo(WORKSPACE_URL);
+        return dispatch(isForceSyncUpAction((force) => {
+          if (force) {
+            return UrlUtils.forwardTo(SYNCUP_URL);
+          } else {
+            return UrlUtils.forwardTo(WORKSPACE_URL);
+          }
+        }));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
@@ -37,7 +46,7 @@ export function logoutAction() {
 
 export function loginAutomaticallyAction() {
   console.log('loginAutomaticallyAction');
-  return (dispatch,ownProps) => new Promise((resolve, reject) => {
+  return (dispatch, ownProps) => new Promise((resolve, reject) => {
     dispatch(sendingRequest());
     const email = ownProps.user.userData.email;
     const password = ownProps.login.plainPassword;
@@ -46,7 +55,11 @@ export function loginAutomaticallyAction() {
       const token = data.token;
       dispatch(loginOk({ userData, password, token }));
       return resolve(data);
-    }).catch(reject);
+    }).catch((err) => {
+      dispatch(loginFailed(err));
+      dispatch(logoutAction());
+      reject(err);
+    });
   });
 }
 

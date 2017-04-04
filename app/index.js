@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
@@ -8,45 +7,46 @@ import configureStore from './store/configureStore';
 import './app.global.css';
 import AppPage from './containers/AppPage';
 import LoginPage from './containers/LoginPage';
-import DesktopPage from './containers/DesktopPage'
+import DesktopPage from './containers/DesktopPage';
+import ActivityPage from './containers/ActivityPage';
 import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './containers/SyncUpPage';
 import auth from './modules/security/Auth';
-import i18next from 'i18next';
-import XHR from 'i18next-xhr-backend';
 import { ampStartUp } from './actions/StartUpAction';
-export const store = configureStore();
+import { loadAllLanguages } from './actions/TranslationAction';
+import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
+
+console.log('index');
+const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
+export default store;
 
 function checkAuth(nextState, replaceState) {
   console.log('checkAuth');
   if (!auth.loggedIn()) {
-    replaceState({nextPathname: nextState.location.pathname}, '/');
+    replaceState({ nextPathname: nextState.location.pathname }, '/');
   }
 }
+initializeLanguageDirectory();
 
-// TODO: Make a Settings.js class for all settings.
-const settingsFile = require('./conf/settings.json');
-// Initialize translations module.
-const i18nOptions = settingsFile.I18N.OPTIONS.development;
-i18next.use(XHR).init(i18nOptions, (err, t) => {
-  if (err) {
-    console.error(err);
-  }
-
-  ampStartUp().then(() => {
+initializeI18Next().then(() => {
+  store.dispatch(loadAllLanguages());
+  return ampStartUp().then(() =>
     render(
       <Provider store={store}>
         <Router history={history} store={store}>
-          <Route path="/" component={AppPage} >
-            <IndexRoute component={LoginPage} dispatch={store.dispatch}/>
-            <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store}/>
-            <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth}/>
-            <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store}/>
+          <Route path="/" component={AppPage}>
+            <IndexRoute component={LoginPage} dispatch={store.dispatch} />
+            <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
+            <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} />
+            <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
+            <Route
+              path="/activity/preview/:activityId" component={ActivityPage} onEnter={checkAuth} store={store}
+            />
           </Route>
         </Router>
       </Provider>,
       document.getElementById('root')
-    );
-  });
-});
+    )
+  ).catch(console.error);
+}).catch(console.error);

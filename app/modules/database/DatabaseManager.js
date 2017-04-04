@@ -34,15 +34,14 @@ const DatabaseManager = {
 
   _getCollection(name) {
     console.log('_getCollection');
-    const self = this;
     return new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: DB_FILE_PREFIX + name
         + DB_FILE_EXTENSION
       });
       if (process.env.NODE_ENV === 'production') {
-       /* newOptions.afterSerialization = self.encryptData;
-        newOptions.beforeDeserialization = self.decryptData;*/
+        /* newOptions.afterSerialization = self.encryptData;
+         newOptions.beforeDeserialization = self.decryptData;*/
       }
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
     });
@@ -316,11 +315,11 @@ const DatabaseManager = {
     });
   },
 
-  _removeById(id, collectionName, options, resolve, reject) {
+  _removeById(id, collectionName, example, resolve, reject) {
     console.log('_removeById');
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       // Look for an object by its id.
-      const exampleObject = { id };
+      const exampleObject = Object.assign({ id }, example);
       collection.findOne(exampleObject, (err, doc) => {
         if (err !== null) {
           reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
@@ -340,17 +339,46 @@ const DatabaseManager = {
     }).catch(reject);
   },
 
-  removeById(id, collectionName, options) {
+  removeById(id, collectionName, example) {
     console.log('removeById');
     const self = this;
     return new Promise((resolve, reject) => {
       const removeByIdFunc = self._removeById.bind(null, id)
         .bind(null, collectionName)
-        .bind(null, options)
+        .bind(null, example)
         .bind(null, resolve)
         .bind(null, reject);
       self.queuePromise(removeByIdFunc, resolve, reject);
     });
+  },
+
+  /**
+   * Removes all entries that match filter criteria
+   * @param filter
+   * @param collectionName
+   */
+  removeAll(filter, collectionName) {
+    console.log('removeAll');
+    return new Promise((resolve, reject) => {
+      const removeByIdFunc = this._removeAll.bind(null, filter)
+        .bind(null, collectionName)
+        .bind(null, resolve)
+        .bind(null, reject);
+      this.queuePromise(removeByIdFunc, resolve, reject);
+    });
+  },
+
+  _removeAll(filter, collectionName, resolve, reject) {
+    console.log('_removeAll');
+    DatabaseManager._getCollection(collectionName, null).then((collection) => {
+      collection.remove(filter, { multi: true }, (err, count) => {
+        if (err === null) {
+          resolve(count);
+        } else {
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+        }
+      });
+    }).catch(reject);
   },
 
   findOne(example, collectionName) {
@@ -367,7 +395,7 @@ const DatabaseManager = {
             break;
           default:
             reject(new Notification({
-              message: 'database.moreThanOneResultFound',
+              message: 'moreThanOneResultFound',
               origin: NOTIFICATION_ORIGIN_DATABASE
             }));
             break;
@@ -383,19 +411,29 @@ const DatabaseManager = {
 
   findAllWithProjections(example, collectionName, projections) {
     console.log('findAllWithProjections');
-    const newProjections = Object.assign({ _id: 0 }, projections);
     return new Promise((resolve, reject) => {
-      DatabaseManager._getCollection(collectionName, null).then((collection) => {
-        collection.find(example, newProjections, (err, docs) => {
-          if (err !== null) {
-            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
-          }
-          if (docs !== null) {
-            resolve(docs);
-          }
-        });
-      }).catch(reject);
+      const findAllWithProjectionsFunc = this._findAllWithProjections.bind(null, example)
+        .bind(null, collectionName)
+        .bind(null, projections)
+        .bind(null, resolve)
+        .bind(null, reject);
+      this.queuePromise(findAllWithProjectionsFunc, resolve, reject);
     });
+  },
+
+  _findAllWithProjections(example, collectionName, projections, resolve, reject) {
+    console.log('findAllWithProjections');
+    const newProjections = Object.assign({ _id: 0 }, projections);
+    DatabaseManager._getCollection(collectionName, null).then((collection) => {
+      collection.find(example, newProjections, (err, docs) => {
+        if (err !== null) {
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+        }
+        if (docs !== null) {
+          resolve(docs);
+        }
+      });
+    }).catch(reject);
   },
 
   encryptData(dataString) {

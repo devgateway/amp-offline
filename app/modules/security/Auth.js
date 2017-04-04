@@ -1,6 +1,6 @@
 import { LOGIN_URL } from '../connectivity/AmpApiConstants';
 import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
-import { store } from '../../index';
+import store from '../../index';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_AUTHENTICATION } from '../../utils/constants/ErrorConstants';
 import { hexBufferToString } from '../../utils/Utils';
@@ -16,10 +16,10 @@ const Auth = {
       password
     };
     return new Promise((resolve, reject) => {
-      ConnectionHelper.doPost({ url, body }).then((data) => {
-        resolve(data);
-        console.log(body);
-      }).catch(reject);
+      const shouldRetry = true;
+      ConnectionHelper.doPost({ url, body, shouldRetry }).then((data) => (
+        resolve(data)
+      )).catch(reject);
     });
   },
 
@@ -57,13 +57,14 @@ const Auth = {
         ['encrypt', 'decrypt']
       )).then((webKey) => crypto.subtle.exportKey('raw', webKey)).then((buffer) => {
         const passwordHash = Buffer.from(buffer).toString('hex');
-        resolve(passwordHash);
-      }).catch((err) => {
-        reject(new Notification({
-          message: `Key derivation failed: ${err.message}`,
-          origin: NOTIFICATION_ORIGIN_AUTHENTICATION
-        }));
-      });
+        return resolve(passwordHash);
+      })
+        .catch((err) => {
+          reject(new Notification({
+            message: `Key derivation failed: ${err.message}`,
+            origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+          }));
+        });
     });
   },
 

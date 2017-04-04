@@ -1,37 +1,34 @@
+/* eslint func-names: 0 */
 import _ from 'underscore';
 import BluebirdQueue from 'bluebird-queue';
 
 // https://addyosmani.com/resources/essentialjsdesignpatterns/book/#singletonpatternjavascript
 const DatabaseCollection = (function () {
-
   // Instance stores a reference to the Singleton
   let instance;
 
   function init() {
-
-    let collections = new Array();
-    let queue = new BluebirdQueue({concurrency: 1});
+    let collections = [];
+    const queue = new BluebirdQueue({ concurrency: 1 });
 
     return {
       // Public methods and variables
-      checkIfCollectionIsOpen: function (name) {
+      checkIfCollectionIsOpen(name) {
         console.log('checkIfCollectionIsOpen');
-        let list = _.find(collections, function (item) {
-          return item.name === name;
-        });
+        const list = _.find(collections, (item) => item.name === name);
         console.log(list);
         return list;
       },
 
-      insertCollection: function (name, datastore) {
+      insertCollection(name, datastore) {
         console.log('insertCollection');
-        collections.push({name: name, nedbDatastore: datastore});
+        collections.push({ name, nedbDatastore: datastore });
         console.log(collections);
       },
 
-      removeCollection: function (name) {
+      removeCollection(name) {
         console.log('removeCollection');
-        collections = _.without(collections, _.findWhere(collections, {name: name}));
+        collections = _.without(collections, _.findWhere(collections, { name }));
         console.log(collections);
       },
 
@@ -41,7 +38,7 @@ const DatabaseCollection = (function () {
        * @param resolve
        * @param reject
        */
-      addPromiseAndProcess: function (task) {
+      addPromiseAndProcess(task) {
         console.log('addPromiseAndProcess');
         queue.addNow(task);
       }
@@ -49,7 +46,7 @@ const DatabaseCollection = (function () {
   }
 
   return {
-    getInstance: function () {
+    getInstance() {
       console.log('getInstance');
       if (!instance) {
         console.log('New instance.');
@@ -60,11 +57,11 @@ const DatabaseCollection = (function () {
       return instance;
     },
 
-    constructor: function () {
+    constructor() {
       console.log('constructor');
       return false;
     }
   };
-})();
+}());
 
 module.exports = DatabaseCollection;

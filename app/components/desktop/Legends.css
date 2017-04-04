@@ -1,0 +1,34 @@
+.container {
+  text-align: left;
+  width: 400px;
+}
+
+.legend_container {
+  text-align: right;
+  margin-top: 4px;
+}
+
+.legend_container hr {
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+.legend {
+  margin-right: 12px;
+  cursor: pointer;
+}
+
+.red {
+  color: #c84545;
+  font-weight: bold;
+}
+
+.green {
+  color: #70a628;
+  font-weight: bold;
+}
+
+.blue {
+  color: #2e6fa1;
+  font-weight: bold;
+}

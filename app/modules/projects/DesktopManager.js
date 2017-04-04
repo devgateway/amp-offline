@@ -1,82 +1,128 @@
+/* eslint "no-nested-ternary": 0 */
 import translate from '../../utils/translate';
-
-// TODO: remove these test data.
-const activeProjects = [{
-  ampId: 1,
-  title: 'Project 1',
-  fundingAgency: 'Japan',
-  actualCommitments: '100.000',
-  actualDisbursements: '157.000'
-}, {
-  ampId: 2,
-  title: 'Project 2',
-  fundingAgency: 'USAID',
-  actualCommitments: '100.000',
-  actualDisbursements: '5.000'
-}, {
-  ampId: 3,
-  title: 'Project 3',
-  fundingAgency: 'USAID',
-  actualCommitments: '100.000',
-  actualDisbursements: '5.000'
-}, {
-  ampId: 4,
-  title: 'Project 4',
-  fundingAgency: 'UNICEF',
-  actualCommitments: '10.000',
-  actualDisbursements: '5.000'
-}, {
-  ampId: 5,
-  title: 'Project 5',
-  fundingAgency: 'USAID',
-  actualCommitments: '100.000',
-  actualDisbursements: '5.000'
-}, {
-  ampId: 6,
-  title: 'Project 6',
-  fundingAgency: 'USAID',
-  actualCommitments: '100.000',
-  actualDisbursements: '5.000'
-}];
-const rejectedProjects = [{
-  ampId: 1,
-  title: 'Project 1a',
-  fundingAgency: 'Japan',
-  actualCommitments: '10.000',
-  actualDisbursements: '157.000'
-}, {
-  ampId: 2,
-  title: 'Project a2',
-  fundingAgency: 'USAID',
-  actualCommitments: '100',
-  actualDisbursements: '5.000'
-}, {
-  ampId: 5,
-  title: 'Project 5a',
-  fundingAgency: 'USAID',
-  actualCommitments: '1.000',
-  actualDisbursements: '5.000'
-}, {
-  ampId: 6,
-  title: 'Project 6a',
-  fundingAgency: 'USAID',
-  actualCommitments: '8.000',
-  actualDisbursements: '5.000'
-}];
+import {
+  ACTIVITY_STATUS_DRAFT,
+  ACTIVITY_STATUS_UNVALIDATED,
+  ACTIVITY_STATUS_VALIDATED
+} from '../../utils/Constants';
+import ActivityHelper from '../../modules/helpers/ActivityHelper';
+import ActivityHydrator from '../helpers/ActivityHydrator';
+import { IS_DRAFT, APPROVAL_STATUS } from '../../utils/constants/ActivityConstants';
 
 const DesktopManager = {
 
-  generateDesktopData(teamId) {
+  generateDesktopData(teamId, teamMemberId) {
     console.log('generateDesktopData');
-    return new Promise((resolve, reject) => {
-      // TODO: go to an EP and load the projects from this WS, then combine with the local projects.
-      resolve({
-        activeProjects,
-        rejectedProjects,
-        defaultTabs: this.generateDefaultTabsStructure(),
-        paginationOptions: this.getGeneralPaginationOptions()
-      });
+    return new Promise((resolve, reject) => (
+      this.generateOneTabData(teamId, teamMemberId, this.getActivitiesNonRejected)
+        .then((tab1Data) => (
+          this.generateOneTabData(teamId, teamMemberId, this.getActivitiesRejected)
+            .then((tab2Data) => (
+              resolve({
+                activeProjects: tab1Data,
+                rejectedProjects: tab2Data,
+                defaultTabs: this.generateDefaultTabsStructure(tab1Data, tab2Data)
+              })
+            )).catch(reject)
+        )).catch(reject)
+    ));
+  },
+
+  generateOneTabData(teamId, teamMemberId, fn) {
+    console.log('generateOneTabData');
+    return new Promise((resolve, reject) => (
+      fn(teamId)
+        .then((activities) => (
+          this.hidrateActivities(activities, teamMemberId)
+            .then((hydratedActivities) => (
+              this.convertActivitiesToGridStructure(hydratedActivities)
+                .then((activitiesForGrid) => (
+                  resolve(activitiesForGrid)
+                )).catch(reject)
+            )).catch(reject))
+        ).catch(reject)
+    ));
+  },
+
+  getActivitiesNonRejected(teamId) {
+    console.log('getActivitiesNonRejected');
+    return ActivityHelper.findAllNonRejected({ team: teamId });
+  },
+
+  getActivitiesRejected(teamId) {
+    console.log('getActivitiesRejected');
+    return ActivityHelper.findAllRejected({ team: teamId });
+  },
+
+  hidrateActivities(activities, teamMemberId) {
+    console.log('hidrateActivities');
+    return ActivityHydrator.hydrateActivities({
+      activities,
+      fieldPaths: ['donor_organization~organization'],
+      teamMemberId
     });
+  },
+
+  convertActivitiesToGridStructure(hydratedActivities) {
+    console.log('convertActivitiesToGridStructure');
+    const forGrid = hydratedActivities.map((item) => (
+      Object.assign({}, item, {
+        key: item.id,
+        status: this.getActivityStatus(item),
+        donor: this.getActivityDonors(item),
+        synced: this.getActivityIsSynced(item),
+        actualDisbursements: this.getActivityAmounts(item),
+        actualCommitments: this.getActivityAmounts(item),
+        view: true,
+        edit: this.getActivityCanEdit(item),
+        new: this.getActivityIsNew(item)
+      })
+    ));
+    return Promise.resolve(forGrid);
+  },
+
+  getActivityIsNew(item) {
+    if (item[IS_DRAFT]) {
+      if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'edited') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (item[APPROVAL_STATUS] === 'started') {
+        return true;
+      }
+      return false;
+    }
+  },
+
+  getActivityCanEdit(/* item */) {
+    return true; // TODO: to be implemented.
+  },
+
+  getActivityAmounts(/* item */) {
+    return (Math.random() * 1000000).toString().substring(0, 9); // TODO: to be implemented.
+  },
+
+  getActivityDonors(item) {
+    return item.donor_organization.map((donor) => (donor.organization.value));
+  },
+
+  getActivityIsSynced(/* item */) {
+    // TODO: to be implemented.
+    return true;
+  },
+
+  getActivityStatus(item) {
+    let status = '';
+    if (item[IS_DRAFT]) {
+      status = ACTIVITY_STATUS_DRAFT;
+    } else if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'startedapproved') {
+      status = ACTIVITY_STATUS_VALIDATED;
+    } else {
+      status = ACTIVITY_STATUS_UNVALIDATED;
+    }
+    return status;
   },
 
   formatNumbers(number) {
@@ -84,22 +130,22 @@ const DesktopManager = {
     return number;
   },
 
-  generateDefaultTabsStructure() {
+  generateDefaultTabsStructure(projectsWithLinks, rejected) {
     // TODO: this function can be more complex and take data from GS, local preferences, etc.
     const defaultTabs = [
       {
         id: 0,
-        name: translate('Activities'),
+        name: 'Activities',
         isActive: true,
-        projects: activeProjects,
+        projects: projectsWithLinks,
         sorting: null,
         page: 0
       },
       {
         id: 1,
-        name: translate('Rejected Activities'),
+        name: 'Rejected Activities',
         isActive: false,
-        projects: rejectedProjects,
+        projects: rejected,
         sorting: null,
         page: 0
       }
@@ -107,27 +153,37 @@ const DesktopManager = {
     return defaultTabs;
   },
 
-  getGeneralPaginationOptions() {
+  getGeneralPaginationOptions(length) {
     // TODO: this function can be more complex and take data from GS, local preferences, etc.
-    const options = {
-      page: 1,
-      sizePerPageList: [{
-        text: '5', value: 5
-      }, {
-        text: '10', value: 10
-      }, {
-        text: translate('All'), value: 100
-      }],
-      sizePerPage: 5,
-      pageStartIndex: 1,
-      paginationSize: 3,
-      prePage: translate('Prev'),
-      nextPage: translate('Next'),
-      firstPage: translate('First'),
-      lastPage: translate('Last'),
-      paginationShowsTotal: false,
-      hideSizePerPage: true
-    };
+    /* TODO: also this needs to react to changes in the data, meaning we need to move it to the component or call it
+     from there. */
+    // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#pagination
+    let options = {};
+    if (length > 0) {
+      options = {
+        page: 1,
+        sizePerPageList: [{
+          text: '10', value: 10
+        }, {
+          text: '50', value: 50,
+        }, {
+          text: translate('All'), value: length,
+        }],
+        pageStartIndex: 1,
+        paginationSize: 3,
+        prePage: translate('Prev'),
+        nextPage: translate('Next'),
+        firstPage: translate('First'),
+        lastPage: translate('Last'),
+        paginationShowsTotal: true,
+        hideSizePerPage: false,
+        noDataText: translate('customTextForEmptyData'),
+        paginationPosition: 'bottom',
+        usePagination: true
+      };
+    } else {
+      options.usePagination = false;
+    }
     return options;
   }
 };

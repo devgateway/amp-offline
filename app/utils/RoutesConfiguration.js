@@ -5,7 +5,15 @@ import {
   GLOBAL_SETTINGS_URL,
   USER_PROFILE_URL,
   WORKSPACE_MEMBER_URL,
-  TEST_URL
+  AVAILABLE_LANGUAGES_URL,
+  POST_TRANSLATIONS_URL,
+  TEST_URL,
+  GET_TRANSLATIONS_URL,
+  ACTIVITY_IMPORT_URL,
+  ACTIVITY_EXPORT_URL,
+  SINGLE_FIELDS_TREE_URL,
+  POSSIBLE_VALUES_PER_FIELD_PATHS,
+  SYNC_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -33,7 +41,39 @@ const routesConfiguration = [{
   method: 'GET',
   requiresToken: true
 }, {
+  url: AVAILABLE_LANGUAGES_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: POST_TRANSLATIONS_URL,
+  method: 'POST',
+  requiresToken: true
+}, {
+  url: GET_TRANSLATIONS_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: ACTIVITY_IMPORT_URL,
+  method: 'POST',
+  requiresToken: true
+}, {
+  url: ACTIVITY_EXPORT_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: SINGLE_FIELDS_TREE_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
+  requiresToken: true
+}, {
   url: TEST_URL,
+  method: 'GET',
+  requiresToken: true
+}, {
+  url: SYNC_URL,
   method: 'GET',
   requiresToken: true
 }];

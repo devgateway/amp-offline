@@ -1,4 +1,3 @@
-// @flow
 import React, { Component, PropTypes } from 'react';
 import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
@@ -40,19 +39,19 @@ export default class Login extends Component {
       <div className={styles.centered_form}>
         <table>
           <tr>
-            <td><Span text="login.user"/></td>
+            <td><Span text="user"/></td>
             <td><input type="text" value={this.state.email} onChange={this.handleEmailChange} className="form-control"/>
             </td>
           </tr>
           <tr>
-            <td><Span text="login.password"/></td>
+            <td><Span text="password"/></td>
             <td><input type="password" value={this.state.password} onChange={this.handlePasswordChange}
                        className="form-control"/></td>
           </tr>
         </table>
         <Button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')} onClick={() => {
             loginAction(this.state.email, this.state.password)
-          }} text="login.login">
+          }} text="login">
         </Button>
         <hr/>
         <ErrorMessage message={this.state.errorMessage}/>

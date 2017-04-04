@@ -1,76 +1,70 @@
-// @flow
-import React, {Component, PropTypes} from 'react';
+/* eslint react/forbid-prop-types: 0 */
+import React, { Component, PropTypes } from 'react';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
+import WarnMessage from '../common/WarnMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
 
 export default class SyncUp extends Component {
+
   static propTypes = {
-    getSyncUpHistory: PropTypes.func.isRequired,
-    startSyncUp: PropTypes.func.isRequired
+    startSyncUp: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired,
+    route: PropTypes.object.isRequired,
+    syncUp: PropTypes.object.isRequired
   };
 
   constructor() {
     super();
     console.log('constructor');
-    this.state = {
-      errorMessage: '',
-      syncUpInProgress: false,
-      loadingSyncHistory: false,
-      firstLoadSyncUp: true
-    };
 
     this.selectContentElementToDraw.bind(this);
+  }
 
-    /*this.handleEmailChange = this.handleEmailChange.bind(this);
-     this.handlePasswordChange = this.handlePasswordChange.bind(this);*/
+  componentWillMount() {
+    console.log('componentWillMount');
+    // To avoid the 'no-did-mount-set-state' eslint error.
+    this.setState({ firstLoadSyncUp: false });
+    this.setState({ loadingSyncHistory: this.props.syncUp.loadingSyncHistory });
   }
 
   componentDidMount() {
     console.log('componentDidMount');
-    //TODO this might change once we have the final layout for the syncupPage
-    this.props.getSyncUpHistory();
-    this.state.firstLoadSyncUp = false;
+    this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
-  render() {
-    console.log('render');
-    console.log(this.props);
-    const {startSyncUp} = this.props;
-    const {historyData}= this.props.syncUp;
+  componentWillReceiveProps(nextProps) {
+    console.log('componentWillReceiveProps');
+    if (this.props.syncUp.loadingSyncHistory !== nextProps.syncUp.loadingSyncHistory) {
+      this.setState({ loadingSyncHistory: this.props.syncUp.loadingSyncHistory });
+    }
+  }
 
-    this.state.errorMessage = this.props.syncUp.errorMessage || '';
-    this.state.loadingSyncHistory = this.props.syncUp.loadingSyncHistory;
-    this.state.syncUpInProgress = this.props.syncUp.syncUpInProgress;
-    return (
-      <div className={styles.container}>
-        <div className={styles.display_inline}>
-          <Button type="button"  text="Start Sync Up" className={'btn btn-success ' + (this.state.loadingSyncHistory ? 'disabled' : '')}
-                  onClick={() => {
-            startSyncUp(historyData)
-          }} >
-          </Button>
-        </div>
-        <div className={styles.display_inline}>
-          <div className={ + this.state.syncUpInProgress? styles.loader : ''}>
-          </div>
-        </div>
-        <hr/>
-        {this.selectContentElementToDraw(historyData)}
-      </div>
-    );
+  routerWillLeave() {
+    console.log('routerWillLeave');
+    // FFR: https://github.com/ReactTraining/react-router/blob/v3/docs/guides/ConfirmingNavigation.md
+    return !this.props.syncUp.forceSyncUp;
   }
 
   selectContentElementToDraw(historyData) {
-
-    if (this.state.loadingSyncHistory !== false || this.state.firstLoadSyncUp === true) {
+    console.log('selectContentElementToDraw');
+    if (this.props.syncUp.loadingSyncHistory === true || this.props.syncUp.syncUpInProgress === true) {
       return <Loading/>;
     } else {
-      if (this.state.errorMessage !== '') {
-        return <ErrorMessage message={this.state.errorMessage}/>;
+      const showErrors = this.props.syncUp.errorMessage !== '' || this.props.syncUp.forceSyncUpMessage !== '';
+      if (showErrors) {
+        let error;
+        let warn;
+        if (this.props.syncUp.errorMessage !== '') {
+          error = <ErrorMessage message={this.props.syncUp.errorMessage}/>;
+        }
+        if (this.props.syncUp.forceSyncUpMessage !== '') {
+          warn = <WarnMessage message={this.props.syncUp.forceSyncUpMessage}/>;
+        }
+        return (<div>{ error }{ warn }</div>);
       } else {
-        return <div className={'container'}>
+        return (<div className={'container'}>
           <div className={'row'}>
             <div className={'col-sm-4'}>
               Requested Date:
@@ -81,17 +75,36 @@ export default class SyncUp extends Component {
             <div className={'col-sm-4'}>status</div>
             <div className={'col-sm-4'}>{historyData.status}</div>
           </div>
-        </div>
+        </div>);
       }
     }
   }
 
-  /*
-   handlePasswordChange(e) {
-   this.setState({password: e.target.value});
-   }
-
-   handleEmailChange(e) {
-   this.setState({email: e.target.value});
-   }*/
+  render() {
+    console.log('render');
+    console.log(this.props);
+    const { startSyncUp } = this.props;
+    const { historyData } = this.props.syncUp;
+    return (
+      <div className={styles.container}>
+        <div className={styles.display_inline}>
+          <Button
+            type="button" text="Start Sync Up"
+            className={`btn btn-success ${(this.props.syncUp.loadingSyncHistory || this.props.syncUp.syncUpInProgress
+              ? 'disabled' : '')}`}
+            onClick={() => {
+              startSyncUp();
+            }}
+          />
+        </div>
+        <div className={styles.display_inline}>
+          <div
+            className={(this.props.syncUp.loadingSyncHistory || this.props.syncUp.syncUpInProgress)
+              ? styles.loader : ''}/>
+        </div>
+        <hr/>
+        {this.selectContentElementToDraw(historyData)}
+      </div>
+    );
+  }
 }

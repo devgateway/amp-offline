@@ -1,4 +1,4 @@
-// @flow
+/* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import styles from './Workspace.css';
@@ -9,6 +9,14 @@ import Span from '../i18n/Span';
 import { WORKSPACES_GROUPS } from '../../utils/constants/WorkspaceGroupsConstants';
 
 export default class WorkspacePage extends Component {
+
+  static propTypes = {
+    workspaceList: PropTypes.array.isRequired,
+    user: PropTypes.object.isRequired,
+    workspace: PropTypes.object.isRequired,
+    loadWorkspaces: PropTypes.func.isRequired,
+    selectWorkspace: PropTypes.func.isRequired
+  };
 
   constructor() {
     console.log('constructor');
@@ -26,23 +34,7 @@ export default class WorkspacePage extends Component {
   componentDidMount() {
     console.log('componentDidMount');
     this.state.firstLoad = false;
-    this.props.loadWorkspaces();
-  }
-
-  render() {
-    console.log('render');
-    this.state.isProcessing = this.props.workspace.workspaceLoading;
-    this.state.errorMessage = this.props.workspace.errorMessage || '';
-
-
-    return (
-      <div className={styles.workspaces_container}>
-        <h2 className={styles.title}><Span text="workspace.title"/></h2>
-        <hr/>
-        {this.selectContentElementToDraw()}
-        <Link to="syncUp">Sync upd</Link>
-      </div>
-    );
+    this.props.loadWorkspaces(this.props.user.userData.id);
   }
 
   selectContentElementToDraw() {
@@ -52,20 +44,20 @@ export default class WorkspacePage extends Component {
       if (this.state.errorMessage !== '') {
         return <ErrorMessage message={this.state.errorMessage}/>;
       } else {
-        return this.splitWorkspaceByGroups().map((workspaceList) => {
-          return this.drawWorkspaceList(workspaceList, this.props.selectWorkspace);
-        });
+        return this.splitWorkspaceByGroups().map((workspaceList) => (
+          this.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
+        ));
       }
     }
   }
 
   splitWorkspaceByGroups() {
-    let workspacesByGroup = [];
+    const workspacesByGroup = [];
     if (this.props.workspace.workspaceList.length > 0) {
       WORKSPACES_GROUPS.forEach((wgValue) => {
-        let wsByGroup = this.props.workspace.workspaceList.filter((wsValue) => {
-          return wsValue['workspace-group'] === wgValue.type;
-        });
+        const wsByGroup = this.props.workspace.workspaceList.filter((wsValue) => (
+          wsValue['workspace-group'] === wgValue.type
+        ));
         workspacesByGroup.push(wsByGroup);
       });
     }
@@ -74,11 +66,27 @@ export default class WorkspacePage extends Component {
 
   drawWorkspaceList(workspaceList, selectWorkspace) {
     if (workspaceList.length > 0) {
-      return <WorkspaceList workspaceList={workspaceList}
-                            workspaceGroup={workspaceList[0]['workspace-group']}
-                            onClickHandler={this.props.selectWorkspace}/>;
+      return (<WorkspaceList
+        workspaceList={workspaceList}
+        workspaceGroup={workspaceList[0]['workspace-group']}
+        onClickHandler={selectWorkspace}/>);
     } else {
       return <br/>
     }
+  }
+
+  render() {
+    console.log('render');
+    this.state.isProcessing = this.props.workspace.workspaceLoading;
+    this.state.errorMessage = this.props.workspace.errorMessage || '';
+
+    return (
+      <div className={styles.workspaces_container}>
+        <h2 className={styles.title}><Span text="workspaceTitle"/></h2>
+        <hr/>
+        {this.selectContentElementToDraw()}
+        <Link to="syncUp">Sync upd</Link>
+      </div>
+    );
   }
 }

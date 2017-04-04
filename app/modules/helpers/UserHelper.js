@@ -1,6 +1,6 @@
-import DatabaseManager from '../database/DatabaseManager';
+import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
-import Auth from '../security/Auth';
+import * as Auth from '../security/Auth';
 
 /**
  * This helper is for User functions only.
@@ -17,7 +17,7 @@ const UserHelper = {
    */
   findByEmail(email) {
     console.log('findByEmail');
-    const example = { email: email };
+    const example = { email };
     return this.findUserByExample(example);
   },
 
@@ -26,9 +26,9 @@ const UserHelper = {
     return DatabaseManager.findOne(example, COLLECTION_USERS);
   },
 
-  findAllUserByExample(example) {
+  findAllUsersByExample(example, projections) {
     console.log('findUserByExample');
-    return DatabaseManager.findAll(example, COLLECTION_USERS);
+    return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
   },
 
   /**
@@ -38,7 +38,7 @@ const UserHelper = {
    */
   saveOrUpdateUser(userData) {
     console.log('saveOrUpdateUser');
-    return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS, {});
+    return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS);
   },
 
   generateAMPOfflineHashFromPassword(password) {
@@ -49,6 +49,21 @@ const UserHelper = {
   saveOrUpdateUserCollection(usersData) {
     console.log('saveOrUpdateUserCollection');
     return DatabaseManager.saveOrUpdateCollection(usersData, COLLECTION_USERS);
+  },
+
+  replaceUsers(users) {
+    console.log('replaceUsers');
+    return DatabaseManager.replaceCollection(users, COLLECTION_USERS, {});
+  },
+
+  /**
+   * Remove the user by id
+   * @param userId
+   * @returns {Promise}
+   */
+  deleteUserById(userId) {
+    console.log('deleteUserById');
+    return DatabaseManager.removeById(userId, COLLECTION_USERS);
   }
 };
 

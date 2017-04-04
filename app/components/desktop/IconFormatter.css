@@ -1,0 +1,13 @@
+.edit_icon {
+  width: 20px;
+  cursor: pointer;
+  content: url('../../assets/images/edit.svg');
+  margin-left: 7px;
+}
+
+.view_icon {
+  width: 20px;
+  cursor: pointer;
+  content: url('../../assets/images/view.svg');
+  margin-left: 7px;
+}

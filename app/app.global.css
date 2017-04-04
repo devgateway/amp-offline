@@ -22,14 +22,6 @@ html, body {
   padding: 5px 0px 5px 0px !important;
 }
 
-.table > thead > tr > th,
-.table > tbody > tr > th,
-.table > tfoot > tr > th,
-.table > thead > tr > td,
-.table > tbody > tr > td,
-.table > tfoot > tr > td {
-  border-top: 0;
-}
 .rc-menu-submenu {
   cursor: pointer;
 }
@@ -53,3 +45,32 @@ html, body {
   background-color: transparent;
 }
 
+/* FOR DESKTOP PAGE */
+.nav-tabs > li > a {
+  line-height: 1.42857143;
+  border-radius: 4px 4px 0 0;
+  background: #f8f9fc;
+  border-bottom: 1px solid #e6eaee;
+  border-right: 1px solid #e6eaee;
+  border-left: 1px solid #e6eaee;
+  border-top: 1px solid #e6eaee;
+  color: #999999;
+  font-size: 15px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+/* BOOTSTRAP GENERAL OVERRIDE */
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  border-top: 0;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th,
+.table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+  padding: 6px;
+}

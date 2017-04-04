@@ -1,18 +1,29 @@
-import {createStore, applyMiddleware, compose} from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import {hashHistory} from 'react-router';
-import {routerMiddleware, push} from 'react-router-redux';
+import { hashHistory } from 'react-router';
+import { routerMiddleware, push } from 'react-router-redux';
+import promiseMiddleware from 'redux-promise-middleware';
 import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
 
 import * as loginActions from '../actions/LoginAction';
 import * as workspaceActions from '../actions/WorkspaceAction';
 import * as connectivityActions from '../actions/ConnectivityAction';
+import * as activityActions from '../actions/ActivityAction';
+import * as syncUpActions from '../actions/SyncUpAction';
+import * as desktopActions from '../actions/DesktopAction';
+import * as translationActions from '../actions/TranslationAction';
+import * as startUpActions from '../actions/StartUpAction';
 
 const actionCreators = {
   ...loginActions,
   ...workspaceActions,
   ...connectivityActions,
+  ...activityActions,
+  ...syncUpActions,
+  ...desktopActions,
+  ...translationActions,
+  ...startUpActions,
   push,
 };
 
@@ -33,7 +44,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
   compose;
 /* eslint-enable no-underscore-dangle */
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk, router, logger)
+  applyMiddleware(promiseMiddleware(), thunk, router, logger)
 );
 
 export default function configureStore(initialState: Object) {

@@ -1,10 +1,10 @@
-import * as OrgConstants from './OrgConstants';
+import * as ValueConstants from './ValueConstants';
 
 /**
  * @author Nadejda Mandrescu
  */
 
-export const ORG_ROLE_FIELDS = toFieldNames(OrgConstants.ORG_ROLE_NAMES);
+export const ORG_ROLE_FIELDS = toFieldNames(ValueConstants.ORG_ROLE_NAMES);
 
 // Activity fields
 export const ACTIVITY_BUDGET = 'activity_budget';
@@ -55,9 +55,16 @@ export const PRIMARY_PROGRAMS = 'primary_programs';
 export const SECONDARY_PROGRAMS = 'secondary_programs';
 export const GOVERNMENT_APPROVAL_PROCEDURES = 'government_approval_procedures';
 export const JOINT_CRITERIA = 'joint_criteria';
-
-// TODO: once activities are imported and team is exported, please update to the correct field name
 export const TEAM = 'team';
+export const REJECTED_ID = 'rejectedId';
+export const INTERNAL_ID = 'internal_id';
+export const AMP_ID = 'amp_id';
+export const PROJECT_TITLE = 'project_title';
+export const MODIFIED_BY = 'modified_by';
+export const MODIFIED_ON = 'update_date';
+export const CREATED_BY = 'created_by';
+export const CREATED_ON = 'creation_date';
+export const CLIENT_CHANGE_ID = 'client-change-id';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

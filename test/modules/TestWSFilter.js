@@ -38,6 +38,6 @@ const Test = {
     ).catch(error => console.log(error));
   }
 
-}
+};
 
 module.exports = Test;

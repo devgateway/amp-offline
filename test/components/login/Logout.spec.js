@@ -26,15 +26,13 @@ function setup(loggedIn) {
 
 
 describe('@@ Logout.jsx @@', () => {
-
-  it('Should display Logout link', () => {
-    const {link} = setup(true);
-    expect(link.text()).to.be.equal(translate('login.logoff'));
+  it('should display Logout link', () => {
+    const { link } = setup(true);
+    expect(link.text()).to.be.equal(`${translate('logoff')} | `);
   });
 
-  it('Should not display Logout link', () => {
-    const {link} = setup(false);
+  it('should not display Logout link', () => {
+    const { link } = setup(false);
     expect(link.length).to.be.equal(0);
   });
-
 });
