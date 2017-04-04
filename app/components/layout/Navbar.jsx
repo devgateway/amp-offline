@@ -14,8 +14,8 @@ export default class Navbar extends Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
     login: PropTypes.object.isRequired,
-    workspaceList: PropTypes.object.isRequired,
-    menuOnClickHandler: PropTypes.object.isRequired,
+    workspaceList: PropTypes.array.isRequired,
+    menuOnClickHandler: PropTypes.func.isRequired,
     translation: PropTypes.object.isRequired,
     workspace: PropTypes.object.isRequired
   };

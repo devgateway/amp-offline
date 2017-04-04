@@ -40,6 +40,9 @@
     "promise/catch-or-return": 2,
     "promise/no-native": 0,
     "react/jsx-no-bind": "off",
+    "react/forbid-prop-types": 0,
+    /* "react/jsx-space-before-closing": 0, */
+    "react/jsx-closing-bracket-location": 0,
     "react/jsx-filename-extension": [
       "error",
       {

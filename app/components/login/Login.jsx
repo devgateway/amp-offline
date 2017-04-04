@@ -10,7 +10,8 @@ export default class Login extends Component {
   static propTypes = {
     // This React component receives the login function to be dispatched as a prop,
     // so it doesnt have to know about the implementation.
-    loginAction: PropTypes.func.isRequired
+    loginAction: PropTypes.func.isRequired,
+    login: PropTypes.object.isRequired
   };
 
   constructor() {
@@ -21,11 +22,19 @@ export default class Login extends Component {
       email: 'testuser@amp.org',
       password: 'password',
       errorMessage: '',
-      isProcessingLogin: false
+      isProcessingLogin: false,
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+  }
+
+  handlePasswordChange(e) {
+    this.setState({ password: e.target.value });
+  }
+
+  handleEmailChange(e) {
+    this.setState({ email: e.target.value });
   }
 
   render() {
@@ -38,32 +47,33 @@ export default class Login extends Component {
     return (
       <div className={styles.centered_form}>
         <table>
-          <tr>
-            <td><Span text="user"/></td>
-            <td><input type="text" value={this.state.email} onChange={this.handleEmailChange} className="form-control"/>
-            </td>
-          </tr>
-          <tr>
-            <td><Span text="password"/></td>
-            <td><input type="password" value={this.state.password} onChange={this.handlePasswordChange}
-                       className="form-control"/></td>
-          </tr>
+          <tbody>
+            <tr>
+              <td><Span text="user" /></td>
+              <td>
+                <input
+                  type="text" value={this.state.email} onChange={this.handleEmailChange}
+                  className="form-control" />
+              </td>
+            </tr>
+            <tr>
+              <td><Span text="password" /></td>
+              <td>
+                <input
+                  type="password" value={this.state.password} onChange={this.handlePasswordChange}
+                  className="form-control" />
+              </td>
+            </tr>
+          </tbody>
         </table>
-        <Button type="button" className={'btn btn-success ' + (this.state.isProcessingLogin ? 'disabled' : '')} onClick={() => {
-            loginAction(this.state.email, this.state.password)
-          }} text="login">
-        </Button>
-        <hr/>
-        <ErrorMessage message={this.state.errorMessage}/>
+        <Button
+          type="button" className={`btn btn-success ${(this.state.isProcessingLogin ? 'disabled' : '')}`}
+          onClick={() => {
+            loginAction(this.state.email, this.state.password);
+          }} text="login" />
+        <hr />
+        <ErrorMessage message={this.state.errorMessage} />
       </div>
     );
-  }
-
-  handlePasswordChange(e) {
-    this.setState({ password: e.target.value });
-  }
-
-  handleEmailChange(e) {
-    this.setState({ email: e.target.value });
   }
 }
