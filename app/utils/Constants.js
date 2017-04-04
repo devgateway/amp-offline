@@ -7,7 +7,7 @@ export const CONNECTION_TIMEOUT = '2500';
 export const MAX_RETRY_ATEMPTS = 5;
 export const ERRORS_TO_RETRY = ['ESOCKETTIMEDOUT', 'ETIMEDOUT'];
 export const ERROR_NO_AMP_SERVER = 'ECONNREFUSED';
-export const CONNECTIVITY_CHECK_INTERVAL = '600'; // 5 minutes
+export const CONNECTIVITY_CHECK_INTERVAL = '60000'; // 1 minutes
 
 export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';

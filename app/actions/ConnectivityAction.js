@@ -19,7 +19,7 @@ export function connectivityCheck() {
     const url = URL_CONNECTIVITY_CHECK_EP;
     const paramsMap = { 'amp-offline-version': VERSION };
     const lastConnectivityStatus = ownProps().ampConnectionStatus.status;
-    ConnectionHelper.doGet({ url, paramsMap }).then(data => {
+    return ConnectionHelper.doGet({ url, paramsMap }).then(data => {
       const connectivityData = _processResult(data, lastConnectivityStatus);
       return dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: connectivityData });
     }).catch(error => {
