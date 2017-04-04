@@ -78,7 +78,7 @@ const ConnectionHelper = {
             });
           } else {
             // Being here means the server might not be accessible.
-            let message = error || body.error || translate('unknownNetworkError');
+            let message = error || (body && body.error) || translate('unknownNetworkError');
             if (error && error.code === ERROR_NO_AMP_SERVER) {
               message = translate('AMPUnreachableError');
             }
