@@ -1,5 +1,6 @@
 import winston from 'winston';
 import ElectronConsole from 'winston-electron';
+import stacktrace from 'stack-trace';
 
 export const logger = new (winston.Logger)({
   transports: [
@@ -28,7 +29,8 @@ const LoggerManager = {
   },
 
   log(message) {
-    logger.info(message);
+    const stack = stacktrace.get();
+    logger.info(stack[1].getLineNumber(), message);
   },
 
   debug(message) {
