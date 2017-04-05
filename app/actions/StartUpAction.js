@@ -40,8 +40,8 @@ export function loadConnectionInformation() {
     store.dispatch(startUpLoaded(connectionInformation));
     //  It is dispatch here so its called righ away. since for default it is
     // Scheduled every 5 minutes, we need to check whether amp is on line or not right away
-    store.dispatch(connectivityCheck);
-    resolve();
+    store.dispatch(connectivityCheck());
+    return resolve();
   });
 }
 // exporting timer from a function since we cannot export let
@@ -52,9 +52,9 @@ export function getTimer() {
 function scheduleConnectivityCheck() {
   return new Promise((resolve, reject) => {
     clearInterval(timer);
-    timer = setInterval(() => store.dispatch(connectivityCheck), CONNECTIVITY_CHECK_INTERVAL);
+    timer = setInterval(() => store.dispatch(connectivityCheck()), CONNECTIVITY_CHECK_INTERVAL);
     store.dispatch({ type: TIMER_START });
-    resolve();
+    return resolve();
   });
 }
 
