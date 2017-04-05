@@ -8,9 +8,24 @@ import express from 'express';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import StringReplacePlugin from 'string-replace-webpack-plugin';
 import { spawn } from 'child_process';
 
 import config from './webpack.config.development';
+
+/* On DEV we want to keep using browser console functions for logging since is the only way
+ to see the origin (file and line) of the log.
+ Note: Dont add it to webpack.config.development because that file might be used not only for DEV.*/
+config.module.loaders.push({
+  test: /\.jsx?$/,
+  loader: StringReplacePlugin.replace({
+    replacements: [{ pattern: /LoggerManager.log/g, replacement: () => ('console.log') },
+      { pattern: /LoggerManager.debug/g, replacement: () => ('console.debug') },
+      { pattern: /LoggerManager.warn/g, replacement: () => ('console.warn') },
+      { pattern: /LoggerManager.error/g, replacement: () => ('console.error') }
+    ],
+  })
+});
 
 const argv = require('minimist')(process.argv.slice(2));
 
