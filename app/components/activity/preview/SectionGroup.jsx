@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import SimpleField from './SimpleField';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
  * Section Group for a set of components
@@ -17,7 +18,7 @@ export default class SectionGroup extends Component {
   }
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   render() {

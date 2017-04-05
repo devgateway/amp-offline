@@ -3,6 +3,7 @@ import {
   STATE_DESKTOP_LOADING,
   STATE_DESKTOP_ERROR
 } from '../actions/DesktopAction';
+import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
   errorMessage: '',
@@ -14,7 +15,7 @@ const defaultState = {
 };
 
 export default function desktop(state = defaultState, action: Object) {
-  console.log('desktop');
+  LoggerManager.log('desktop');
   switch (action.type) {
     case STATE_DESKTOP_LOADED:
       return Object.assign({}, state, {

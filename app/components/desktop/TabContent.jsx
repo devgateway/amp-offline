@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ProjectList from './ProjectList';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class TabsContainer extends Component {
 
@@ -10,13 +11,13 @@ export default class TabsContainer extends Component {
 
   constructor() {
     super();
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     const content = this.props.data.find(item => item.id === this.props.activeTab);
-    // This is to avoid an error in the console when we switch WS while being in the desktop page.
+    // This is to avoid an error in the winston when we switch WS while being in the desktop page.
     if (content) {
       return (
         <ProjectList projects={content.projects}/>

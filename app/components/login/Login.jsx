@@ -3,6 +3,7 @@ import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import Button from '../i18n/Button';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class Login extends Component {
 
@@ -16,7 +17,7 @@ export default class Login extends Component {
 
   constructor() {
     super();
-    console.log('constructor');
+    LoggerManager.log('constructor');
 
     this.state = {
       email: 'testuser@amp.org',
@@ -38,7 +39,7 @@ export default class Login extends Component {
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
 
     const { loginAction } = this.props;
     this.state.errorMessage = this.props.login.errorMessage || '';

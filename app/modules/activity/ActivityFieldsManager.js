@@ -1,11 +1,13 @@
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+import LoggerManager from '../../modules/util/LoggerManager';
+
 /**
  * This is a helper class for checking fields status, getting field options translations and the like.
  * @author Nadejda Mandrescu
  */
 export default class ActivityFieldsManager {
   constructor(fieldsDef, possibleValuesCollection) {
-    console.log('constructor');
+    LoggerManager.log('constructor');
     this._fieldsDef = fieldsDef;
     this._possibleValuesMap = new Map(possibleValuesCollection.map(pv => [pv.id, pv['possible-options']]));
     this._fieldPathsEnabledStatusMap = {};

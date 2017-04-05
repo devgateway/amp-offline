@@ -11,6 +11,7 @@ import {
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 // NeDB API is based on callbacks and not promises. Disabling always-return to avoid encapsulating each into a promise
 /* eslint-disable promise/always-return */
@@ -33,7 +34,7 @@ const DatabaseManager = {
   // VERY IMPORTANT 5: We might need to have a queue of pending operations on each collection to avoid conflicts.
 
   _getCollection(name) {
-    console.log('_getCollection');
+    LoggerManager.log('_getCollection');
     return new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: DB_FILE_PREFIX + name
@@ -48,13 +49,13 @@ const DatabaseManager = {
   },
 
   getCollection(name, options) {
-    console.log('getCollection');
+    LoggerManager.log('getCollection');
     const getCollectionFunc = this._getCollection.bind(null, name).bind(null, options);
     this.queuePromise(getCollectionFunc);
   },
 
   _openOrGetDatastore(name, options) {
-    console.log('_openOrGetDatastore');
+    LoggerManager.log('_openOrGetDatastore');
     const auxDBCollection = DatabaseCollection.getInstance().checkIfCollectionIsOpen(name);
     return new Promise((resolve, reject) => {
       if (auxDBCollection !== undefined) {
@@ -87,7 +88,7 @@ const DatabaseManager = {
    * Dont call this function from outside this class and/or when you need to be sync with other database operations.
    */
   _saveOrUpdate(id, data, collectionName, options, resolve, reject) {
-    console.log('_saveOrUpdate');
+    LoggerManager.log('_saveOrUpdate');
     DatabaseManager._getCollection(collectionName, options).then((collection) => {
       // Look for an object by its id.
       const exampleObject = { id };
@@ -96,7 +97,7 @@ const DatabaseManager = {
           reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
         }
         if (docs.length === 1) {
-          console.log('Update');
+          LoggerManager.log('Update');
           collection.update(exampleObject, data, {}, (err2) => {
             if (err2 === null) {
               resolve(data);
@@ -105,7 +106,7 @@ const DatabaseManager = {
             }
           });
         } else if (docs.length === 0) {
-          console.log('Insert');
+          LoggerManager.log('Insert');
           collection.insert(data, (err3, newDoc) => {
             if (err3 !== null) {
               reject(new Notification({ message: err3.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
@@ -127,7 +128,7 @@ const DatabaseManager = {
    * Wrapper for calling _saveOrUpdate when we need that operation to be sync with other database related functions.
    */
   saveOrUpdate(id, data, collectionName, options) {
-    console.log('saveOrUpdate');
+    LoggerManager.log('saveOrUpdate');
     // This promise will be resolved/rejected inside '_saveOrUpdate', but initiated by the queue manager in
     // DatabaseCollection.js.
     return new Promise((resolve, reject) => {
@@ -150,7 +151,7 @@ const DatabaseManager = {
    * @param collectionName name of the collection to update
    */
   saveOrUpdateCollection(collectionData, collectionName) {
-    console.log('saveOrUpdateCollection');
+    LoggerManager.log('saveOrUpdateCollection');
     return new Promise((resolve, reject) => {
       const saveOrUpdateCollectionFunc = DatabaseManager._saveOrUpdateCollection
         .bind(null, collectionData)
@@ -165,7 +166,7 @@ const DatabaseManager = {
    * Insert all new items in one go and update existing items one by one
    */
   _saveOrUpdateCollection(collectionData, collectionName, resolve, reject) {
-    console.log('_saveOrUpdateCollection');
+    LoggerManager.log('_saveOrUpdateCollection');
     DatabaseManager._saveOrUpdateColl(collectionData, collectionName).then(newData => resolve(newData))
       .catch((saveUpdateError) =>
         // reject as a notification
@@ -187,11 +188,11 @@ const DatabaseManager = {
             const itemsToInsert = [];
             const itemsToUpdate = [];
             this._splitItems(collectionData, itemsToInsert, itemsToUpdate, foundItems, reject);
-            console.log(`Inserting ${itemsToInsert.length} elements`);
+            LoggerManager.log(`Inserting ${itemsToInsert.length} elements`);
             // we cannot chain through return from within a callback
             /* eslint-disable promise/catch-or-return */
             this._bulkInsert(collection, itemsToInsert).then(newDocs => {
-              console.log(`Updating ${itemsToUpdate.length} elements`);
+              LoggerManager.log(`Updating ${itemsToUpdate.length} elements`);
               return Promise.all(itemsToUpdate.map(item => this._collectionItemUpdate(collection, item)))
                 .then(updatedDocs => {
                   const allDocs = newDocs.concat(updatedDocs);
@@ -266,7 +267,7 @@ const DatabaseManager = {
   },
 
   _replaceAll(collectionData, collectionName, options, resolve, reject) {
-    console.log('_replaceAll');
+    LoggerManager.log('_replaceAll');
     DatabaseManager._getCollection(collectionName, options).then((collection) => {
       collection.remove({}, { multi: true }, (err) => {
         if (err === null) {
@@ -285,7 +286,7 @@ const DatabaseManager = {
   },
 
   _insertAll(collectionData, collectionName, options, resolve, reject) {
-    console.log('_insertAll');
+    LoggerManager.log('_insertAll');
     DatabaseManager._getCollection(collectionName, options).then((collection) => {
       collection.insert(collectionData, (err, newDocs) => {
         if (err === null && newDocs.length === collectionData.length) {
@@ -316,7 +317,7 @@ const DatabaseManager = {
   },
 
   _removeById(id, collectionName, example, resolve, reject) {
-    console.log('_removeById');
+    LoggerManager.log('_removeById');
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       // Look for an object by its id.
       const exampleObject = Object.assign({ id }, example);
@@ -340,7 +341,7 @@ const DatabaseManager = {
   },
 
   removeById(id, collectionName, example) {
-    console.log('removeById');
+    LoggerManager.log('removeById');
     const self = this;
     return new Promise((resolve, reject) => {
       const removeByIdFunc = self._removeById.bind(null, id)
@@ -358,7 +359,7 @@ const DatabaseManager = {
    * @param collectionName
    */
   removeAll(filter, collectionName) {
-    console.log('removeAll');
+    LoggerManager.log('removeAll');
     return new Promise((resolve, reject) => {
       const removeByIdFunc = this._removeAll.bind(null, filter)
         .bind(null, collectionName)
@@ -369,7 +370,7 @@ const DatabaseManager = {
   },
 
   _removeAll(filter, collectionName, resolve, reject) {
-    console.log('_removeAll');
+    LoggerManager.log('_removeAll');
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.remove(filter, { multi: true }, (err, count) => {
         if (err === null) {
@@ -382,7 +383,7 @@ const DatabaseManager = {
   },
 
   findOne(example, collectionName) {
-    console.log('findOne');
+    LoggerManager.log('findOne');
     const projections = Object.assign({ _id: 0 });
     return new Promise((resolve, reject) => {
       DatabaseManager.findAll(example, collectionName, projections).then((docs) => {
@@ -405,12 +406,12 @@ const DatabaseManager = {
   },
 
   findAll(example, collectionName, projections) {
-    console.log('findAll');
+    LoggerManager.log('findAll');
     return this.findAllWithProjections(example, collectionName, projections);
   },
 
   findAllWithProjections(example, collectionName, projections) {
-    console.log('findAllWithProjections');
+    LoggerManager.log('findAllWithProjections');
     return new Promise((resolve, reject) => {
       const findAllWithProjectionsFunc = this._findAllWithProjections.bind(null, example)
         .bind(null, collectionName)
@@ -422,7 +423,7 @@ const DatabaseManager = {
   },
 
   _findAllWithProjections(example, collectionName, projections, resolve, reject) {
-    console.log('findAllWithProjections');
+    LoggerManager.log('findAllWithProjections');
     const newProjections = Object.assign({ _id: 0 }, projections);
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.find(example, newProjections, (err, docs) => {
@@ -437,18 +438,18 @@ const DatabaseManager = {
   },
 
   encryptData(dataString) {
-    // console.log('encryptData');
+    // LoggerManager.log('encryptData');
     return Crypto.AES.encrypt(dataString, AKEY);
   },
 
   decryptData(dataString) {
-    // console.log('decryptData');
+    // LoggerManager.log('decryptData');
     const bytes = Crypto.AES.decrypt(dataString, AKEY);
     return bytes.toString(Crypto.enc.Utf8);
   },
 
   createIndex(datastore, options, callback) {
-    console.log('createIndex');
+    LoggerManager.log('createIndex');
     const newOptions = Object.assign({}, options, {
       fieldName: 'id',
       unique: true
@@ -464,7 +465,7 @@ const DatabaseManager = {
    * @param reject Idem for catching an error.
    */
   queuePromise(task) {
-    console.log('queuePromise');
+    LoggerManager.log('queuePromise');
     DatabaseCollection.getInstance().addPromiseAndProcess(task);
   }
 };

@@ -8,11 +8,12 @@ import {
 import ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import { IS_DRAFT, APPROVAL_STATUS } from '../../utils/constants/ActivityConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 const DesktopManager = {
 
   generateDesktopData(teamId, teamMemberId) {
-    console.log('generateDesktopData');
+    LoggerManager.log('generateDesktopData');
     return new Promise((resolve, reject) => (
       this.generateOneTabData(teamId, teamMemberId, this.getActivitiesNonRejected)
         .then((tab1Data) => (
@@ -29,7 +30,7 @@ const DesktopManager = {
   },
 
   generateOneTabData(teamId, teamMemberId, fn) {
-    console.log('generateOneTabData');
+    LoggerManager.log('generateOneTabData');
     return new Promise((resolve, reject) => (
       fn(teamId)
         .then((activities) => (
@@ -45,17 +46,17 @@ const DesktopManager = {
   },
 
   getActivitiesNonRejected(teamId) {
-    console.log('getActivitiesNonRejected');
+    LoggerManager.log('getActivitiesNonRejected');
     return ActivityHelper.findAllNonRejected({ team: teamId });
   },
 
   getActivitiesRejected(teamId) {
-    console.log('getActivitiesRejected');
+    LoggerManager.log('getActivitiesRejected');
     return ActivityHelper.findAllRejected({ team: teamId });
   },
 
   hidrateActivities(activities, teamMemberId) {
-    console.log('hidrateActivities');
+    LoggerManager.log('hidrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
       fieldPaths: ['donor_organization~organization'],
@@ -64,7 +65,7 @@ const DesktopManager = {
   },
 
   convertActivitiesToGridStructure(hydratedActivities) {
-    console.log('convertActivitiesToGridStructure');
+    LoggerManager.log('convertActivitiesToGridStructure');
     const forGrid = hydratedActivities.map((item) => (
       Object.assign({}, item, {
         key: item.id,

@@ -1,6 +1,7 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
 import * as Auth from '../security/Auth';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  * This helper is for User functions only.
@@ -16,18 +17,18 @@ const UserHelper = {
    * @returns {Promise}
    */
   findByEmail(email) {
-    console.log('findByEmail');
+    LoggerManager.log('findByEmail');
     const example = { email };
     return this.findUserByExample(example);
   },
 
   findUserByExample(example) {
-    console.log('findUserByExample');
+    LoggerManager.log('findUserByExample');
     return DatabaseManager.findOne(example, COLLECTION_USERS);
   },
 
   findAllUsersByExample(example, projections) {
-    console.log('findUserByExample');
+    LoggerManager.log('findUserByExample');
     return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
   },
 
@@ -37,22 +38,22 @@ const UserHelper = {
    * @returns {Promise}
    */
   saveOrUpdateUser(userData) {
-    console.log('saveOrUpdateUser');
+    LoggerManager.log('saveOrUpdateUser');
     return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS);
   },
 
   generateAMPOfflineHashFromPassword(password) {
-    console.log('generateAMPOfflineHashFromPassword');
+    LoggerManager.log('generateAMPOfflineHashFromPassword');
     return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
   },
 
   saveOrUpdateUserCollection(usersData) {
-    console.log('saveOrUpdateUserCollection');
+    LoggerManager.log('saveOrUpdateUserCollection');
     return DatabaseManager.saveOrUpdateCollection(usersData, COLLECTION_USERS);
   },
 
   replaceUsers(users) {
-    console.log('replaceUsers');
+    LoggerManager.log('replaceUsers');
     return DatabaseManager.replaceCollection(users, COLLECTION_USERS, {});
   },
 
@@ -62,7 +63,7 @@ const UserHelper = {
    * @returns {Promise}
    */
   deleteUserById(userId) {
-    console.log('deleteUserById');
+    LoggerManager.log('deleteUserById');
     return DatabaseManager.removeById(userId, COLLECTION_USERS);
   }
 };

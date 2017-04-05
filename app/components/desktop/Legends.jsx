@@ -3,11 +3,12 @@ import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
 import style from './Legends.css';
 import translate from '../../utils/translate';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class Legends extends Component {
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     return (<div className={style.legend_container}>
       <span data-tip="legends" className={style.legend}>{translate('Legends')}</span>
       <ReactTooltip

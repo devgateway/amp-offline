@@ -1,8 +1,9 @@
-import React, {Component, PropTypes} from 'react';
+import React, { Component, PropTypes } from 'react';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class SyncUp extends Component {
   static propTypes = {
@@ -12,7 +13,7 @@ export default class SyncUp extends Component {
 
   constructor() {
     super();
-    console.log('constructor');
+    LoggerManager.log('constructor');
     this.state = {
       errorMessage: '',
       syncUpInProgress: false,
@@ -27,17 +28,17 @@ export default class SyncUp extends Component {
   }
 
   componentDidMount() {
-    console.log('componentDidMount');
+    LoggerManager.log('componentDidMount');
     //TODO this might change once we have the final layout for the syncupPage
     this.props.getSyncUpHistory();
     this.state.firstLoadSyncUp = false;
   }
 
   render() {
-    console.log('render');
-    console.log(this.props);
-    const {startSyncUp} = this.props;
-    const {historyData}= this.props.syncUp;
+    LoggerManager.log('render');
+    LoggerManager.log(this.props);
+    const { startSyncUp } = this.props;
+    const { historyData } = this.props.syncUp;
 
     this.state.errorMessage = this.props.syncUp.errorMessage || '';
     this.state.loadingSyncHistory = this.props.syncUp.loadingSyncHistory;
@@ -45,17 +46,18 @@ export default class SyncUp extends Component {
     return (
       <div className={styles.container}>
         <div className={styles.display_inline}>
-          <Button type="button"  text="Start Sync Up" className={'btn btn-success ' + (this.state.loadingSyncHistory ? 'disabled' : '')}
+          <Button type="button" text="Start Sync Up"
+                  className={'btn btn-success ' + (this.state.loadingSyncHistory ? 'disabled' : '')}
                   onClick={() => {
-            startSyncUp(historyData)
-          }} >
+                    startSyncUp(historyData)
+                  }}>
           </Button>
         </div>
         <div className={styles.display_inline}>
-          <div className={ + this.state.syncUpInProgress? styles.loader : ''}>
+          <div className={ +this.state.syncUpInProgress ? styles.loader : ''}>
           </div>
         </div>
-        <hr/>
+        <hr />
         {this.selectContentElementToDraw(historyData)}
       </div>
     );
@@ -64,10 +66,10 @@ export default class SyncUp extends Component {
   selectContentElementToDraw(historyData) {
 
     if (this.state.loadingSyncHistory !== false || this.state.firstLoadSyncUp === true) {
-      return <Loading/>;
+      return <Loading />;
     } else {
       if (this.state.errorMessage !== '') {
-        return <ErrorMessage message={this.state.errorMessage}/>;
+        return <ErrorMessage message={this.state.errorMessage} />;
       } else {
         return <div className={'container'}>
           <div className={'row'}>

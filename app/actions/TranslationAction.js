@@ -1,11 +1,12 @@
 import TranslationManager from '../modules/util/TranslationManager';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const STATE_CHANGE_LANGUAGE = 'STATE_CHANGE_LANGUAGE';
 export const STATE_LOADING_LIST_OF_LANGUAGES = 'STATE_LOADING_LIST_OF_LANGUAGES';
 export const STATE_LIST_OF_LANGUAGES_LOADED = 'STATE_LIST_OF_LANGUAGES_LOADED';
 
 export function setLanguage(lang: string) {
-  console.log('setLanguage');
+  LoggerManager.log('setLanguage');
   return dispatch => new Promise((resolve, reject) => TranslationManager.changeLanguage(lang).then(() => {
     dispatch(language(lang));
     return resolve(lang);
@@ -13,7 +14,7 @@ export function setLanguage(lang: string) {
 }
 
 export function loadAllLanguages(restart = false) {
-  console.log('loadAllLanguages');
+  LoggerManager.log('loadAllLanguages');
   return dispatch => new Promise((resolve, reject) => {
     dispatch(sendingRequest());
     return TranslationManager.getListOfLocalLanguages(restart).then((data) => {
@@ -24,7 +25,7 @@ export function loadAllLanguages(restart = false) {
 }
 
 function language(lang: string) {
-  console.log('language');
+  LoggerManager.log('language');
   return {
     type: STATE_CHANGE_LANGUAGE,
     actionData: lang
@@ -32,14 +33,14 @@ function language(lang: string) {
 }
 
 function sendingRequest() {
-  console.log('sendingRequest');
+  LoggerManager.log('sendingRequest');
   return {
     type: STATE_LOADING_LIST_OF_LANGUAGES
   };
 }
 
 function languagesOk(data) {
-  console.log('languagesOk');
+  LoggerManager.log('languagesOk');
   return {
     type: STATE_LIST_OF_LANGUAGES_LOADED,
     actionData: data

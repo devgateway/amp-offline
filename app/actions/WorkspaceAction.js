@@ -3,6 +3,7 @@ import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
 import WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
 import store from '../index';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_CONFIGURING_WORKSPACE_FILTER = 'STATE_CONFIGURING_WORKSPACE_FILTER';
@@ -14,7 +15,7 @@ export const STATE_WORKSPACE_ERROR = 'STATE_WORKSPACE_ERROR';
 
 // TODO: THIS must be properly integrated through AMPOFFLINE-147
 export function selectWorkspace(wsId) {
-  console.log('selectWorkspace');
+  LoggerManager.log('selectWorkspace');
   // We dont get userId as param because that messes up the onClickHandler used also in main menu.
   const userId = store.getState().user.userData.id;
   return (dispatch) => (
@@ -25,7 +26,7 @@ export function selectWorkspace(wsId) {
         // This is like "chaining actions".
         return dispatch(loadDesktop(wsId, teamMember.id));
       }).catch((err) => {
-        console.error(err);
+        LoggerManager.error(err);
         dispatch({ type: STATE_WORKSPACE_ERROR, actionData: err.toString() });
       })
     ))
@@ -33,13 +34,13 @@ export function selectWorkspace(wsId) {
 }
 
 export function loadWorkspaces(userId) {
-  console.log('loadWorkspaces');
+  LoggerManager.log('loadWorkspaces');
   return (dispatch) => {
     dispatch({ type: STATE_WORKSPACE_LOADING });
     return WorkspaceManager.findAllWorkspacesForUser(userId).then((workspaces) => (
       dispatch({ type: STATE_WORKSPACE_LOADED, actionData: workspaces })
     )).catch((err) => {
-      console.error(err);
+      LoggerManager.error(err);
       return dispatch({ type: STATE_WORKSPACE_ERROR, actionData: err });
     });
   };

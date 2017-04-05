@@ -6,6 +6,7 @@ import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
  * Activity Preview main container
@@ -28,7 +29,7 @@ export default class ActivityPreview extends Component {
     }).isRequired
   };
 
-  static childContextTypes ={
+  static childContextTypes = {
     activity: PropTypes.object,
     activityWorkspace: PropTypes.object,
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
@@ -37,7 +38,7 @@ export default class ActivityPreview extends Component {
 
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   getChildContext() {

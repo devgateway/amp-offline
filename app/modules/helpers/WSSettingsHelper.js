@@ -1,5 +1,6 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_WS_SETTINGS } from '../../utils/Constants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  * A simplified helper for 'Workspace Settings' storage for loading, searching / filtering and saving ws settings.
@@ -12,7 +13,7 @@ const WSSettingsHelper = {
    * @returns {Promise}
    */
   findById(wsSettingId) {
-    console.log('findById');
+    LoggerManager.log('findById');
     const filter = { id: wsSettingId };
     return DatabaseManager.findOne(filter, COLLECTION_WS_SETTINGS);
   },
@@ -23,13 +24,13 @@ const WSSettingsHelper = {
    * @returns {Promise}
    */
   findByWorkspaceId(workspaceId) {
-    console.log('findByWorkspaceId');
+    LoggerManager.log('findByWorkspaceId');
     const filter = { 'workspace-id': workspaceId };
     return DatabaseManager.findOne(filter, COLLECTION_WS_SETTINGS);
   },
 
   findAll(filter) {
-    console.log('findAll');
+    LoggerManager.log('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_WS_SETTINGS);
   },
 
@@ -39,7 +40,7 @@ const WSSettingsHelper = {
    * @returns {Promise}
    */
   saveOrUpdateWSSettings(wsSettings) {
-    console.log('saveOrUpdateWSSettings');
+    LoggerManager.log('saveOrUpdateWSSettings');
     return DatabaseManager.saveOrUpdate(wsSettings.id, wsSettings, COLLECTION_WS_SETTINGS, {});
   },
 
@@ -49,7 +50,7 @@ const WSSettingsHelper = {
    * @returns {Promise}
    */
   saveOrUpdateWSSettingsCollection(wsSettingsCollection) {
-    console.log('saveOrUpdateWSSettingsCollection');
+    LoggerManager.log('saveOrUpdateWSSettingsCollection');
     return DatabaseManager.saveOrUpdateCollection(wsSettingsCollection, COLLECTION_WS_SETTINGS);
   },
 
@@ -59,7 +60,7 @@ const WSSettingsHelper = {
    * @returns {Promise}
    */
   deleteById(wsSettingsId) {
-    console.log('saveOrUpdateWSSettings');
+    LoggerManager.log('saveOrUpdateWSSettings');
     return DatabaseManager.removeById(wsSettingsId, COLLECTION_WS_SETTINGS);
   },
 
@@ -69,7 +70,7 @@ const WSSettingsHelper = {
    * @returns {Promise}
    */
   replaceAllWSSettings(wsSettingsCollection) {
-    console.log('replaceAllWSSettings');
+    LoggerManager.log('replaceAllWSSettings');
     return DatabaseManager.replaceCollection(wsSettingsCollection, COLLECTION_WS_SETTINGS, {});
   }
 };

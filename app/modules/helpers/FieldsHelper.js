@@ -1,6 +1,7 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_FIELDS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  * A simplified helper for 'Workspace Settings' storage for loading, searching / filtering and saving ws settings.
@@ -13,7 +14,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findById(id) {
-    console.log('findById');
+    LoggerManager.log('findById');
     const filter = { id };
     return DatabaseManager.findOne(filter, COLLECTION_FIELDS);
   },
@@ -24,7 +25,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findByWorkspaceMemberId(wsMemberId) {
-    console.log('findByWorkspaceMemberId');
+    LoggerManager.log('findByWorkspaceMemberId');
     const filter = { 'ws-member-ids': { $elemMatch: wsMemberId } };
     return DatabaseManager.findOne(filter, COLLECTION_FIELDS);
   },
@@ -36,7 +37,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findAll(filter, projections) {
-    console.log('findAll');
+    LoggerManager.log('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_FIELDS, projections);
   },
 
@@ -46,7 +47,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   replaceAll(fieldsTrees) {
-    console.log('replaceAll');
+    LoggerManager.log('replaceAll');
     if (this._isValid(fieldsTrees)) {
       fieldsTrees.forEach(this._setIdIfUndefined);
       return DatabaseManager.replaceCollection(fieldsTrees, COLLECTION_FIELDS);
@@ -69,7 +70,7 @@ const FieldsHelper = {
   },
 
   _setIdIfUndefined(fields) {
-    console.log('_setIdIfUndefined');
+    LoggerManager.log('_setIdIfUndefined');
     if (fields.id === undefined) {
       fields.id = Utils.stringToUniqueId('');
     }
@@ -81,7 +82,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   deleteById(id) {
-    console.log('deleteById');
+    LoggerManager.log('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_FIELDS);
   }
 };

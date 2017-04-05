@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
-
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 export default class MainGroup extends Component {
   static contextTypes = {
@@ -12,7 +12,7 @@ export default class MainGroup extends Component {
 
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   render() {

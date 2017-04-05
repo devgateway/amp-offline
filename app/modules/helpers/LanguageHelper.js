@@ -1,5 +1,6 @@
 import DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_LANGS } from '../../utils/Constants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  * We use this class not like a DAO but for having functions that can be reused on several Manager classes.
@@ -8,33 +9,33 @@ import { COLLECTION_LANGS } from '../../utils/Constants';
 const LanguageHelper = {
 
   findById(id) {
-    console.log('findById');
+    LoggerManager.log('findById');
     const example = { id };
     return this.findByExample(example);
   },
 
   findByExample(example) {
-    console.log('findByExample');
+    LoggerManager.log('findByExample');
     return DatabaseManager.findOne(example, COLLECTION_LANGS);
   },
 
   findAllByExample(example) {
-    console.log('findAllByExample');
+    LoggerManager.log('findAllByExample');
     return DatabaseManager.findAll(example, COLLECTION_LANGS);
   },
 
   saveOrUpdate(data) {
-    console.log('saveOrUpdate');
+    LoggerManager.log('saveOrUpdate');
     return DatabaseManager.saveOrUpdate(data.id, data, COLLECTION_LANGS, {});
   },
 
   saveOrUpdateCollection(data) {
-    console.log('saveOrUpdateCollection');
+    LoggerManager.log('saveOrUpdateCollection');
     return DatabaseManager.saveOrUpdateCollection(data, COLLECTION_LANGS);
   },
 
   replaceCollection(langs) {
-    console.log('replaceCollection');
+    LoggerManager.log('replaceCollection');
     return DatabaseManager.replaceCollection(langs, COLLECTION_LANGS);
   }
 };

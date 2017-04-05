@@ -7,6 +7,7 @@ import WorkspaceList from './WorkspaceList';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import { WORKSPACES_GROUPS } from '../../utils/constants/WorkspaceGroupsConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class WorkspacePage extends Component {
 
@@ -19,7 +20,7 @@ export default class WorkspacePage extends Component {
   };
 
   constructor() {
-    console.log('constructor');
+    LoggerManager.log('constructor');
     super();
 
     this.state = {
@@ -32,7 +33,7 @@ export default class WorkspacePage extends Component {
   }
 
   componentDidMount() {
-    console.log('componentDidMount');
+    LoggerManager.log('componentDidMount');
     this.state.firstLoad = false;
     this.props.loadWorkspaces(this.props.user.userData.id);
   }
@@ -76,7 +77,7 @@ export default class WorkspacePage extends Component {
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     this.state.isProcessing = this.props.workspace.workspaceLoading;
     this.state.errorMessage = this.props.workspace.errorMessage || '';
 

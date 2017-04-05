@@ -4,6 +4,7 @@ import {
   ACTIVITY_LOAD_REJECTED
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
+import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
   isActivityLoading: false,
@@ -16,7 +17,7 @@ const defaultState = {
 };
 
 const activityReducer = (state = defaultState, action: Object) => {
-  console.log('activityPreview');
+  LoggerManager.log('activityPreview');
   switch (action.type) {
     case ACTIVITY_LOAD_PENDING:
       return { ...defaultState, isActivityPreviewLoading: true };

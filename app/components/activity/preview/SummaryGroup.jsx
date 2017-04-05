@@ -9,6 +9,7 @@ import * as TC from '../../../utils/constants/TranslationConstants';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../utils/translate';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 export default class SummaryGroup extends Component {
   static contextTypes = {
@@ -20,7 +21,7 @@ export default class SummaryGroup extends Component {
 
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   _buildFundingInformation() {

@@ -1,4 +1,5 @@
 import { STATE_LOGIN_OK, STATE_LOGIN_FAIL, STATE_LOGOUT, STATE_LOGIN_PROCESSING } from '../actions/LoginAction';
+import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
   loggedIn: false,
@@ -13,7 +14,7 @@ const defaultState = {
  * @returns {*}
  */
 export default function login(state: Object = defaultState, action: Object) {
-  console.log('LoginReducer');
+  LoggerManager.log('LoginReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {

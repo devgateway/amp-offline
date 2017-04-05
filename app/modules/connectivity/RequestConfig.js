@@ -6,6 +6,7 @@ import {
   NOTIFICATION_SEVERITY_ERROR
 } from '../../utils/constants/ErrorConstants';
 import { PARAM_AMPOFFLINE_AGENT } from './AmpApiConstants';
+import LoggerManager from '../util/LoggerManager';
 
 const RequestConfig = {
   /**
@@ -65,13 +66,13 @@ const RequestConfig = {
   _getToken(method, url) {
     // We go to check to routes config to see if we need to generate a token
     const routesConfigurationFiltered = routesConfiguration.filter(element =>
-      element.url === url && element.method === method);
+    element.url === url && element.method === method);
     if (routesConfigurationFiltered && routesConfigurationFiltered.length === 1) {
       if (routesConfigurationFiltered[0].requiresToken) {
         if (store.getState().login.token) {
           return store.getState().login.token;
         }
-          // TODO if the token is not present we try to log the user in;
+        // TODO if the token is not present we try to log the user in;
       }
     } else {
       throw new Notification({
@@ -83,7 +84,7 @@ const RequestConfig = {
   },
 
   replaceToken(requestConfig) {
-    console.log('replaceToken');
+    LoggerManager.log('replaceToken');
     requestConfig.headers['X-Auth-Token'] = store.getState().login.token;
     return requestConfig;
   }

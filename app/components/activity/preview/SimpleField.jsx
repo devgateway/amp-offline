@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
  * Simple Field component that consists of a field title and field value
@@ -25,7 +26,7 @@ export default class SimpleField extends Component {
 
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   render() {

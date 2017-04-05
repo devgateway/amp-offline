@@ -1,6 +1,7 @@
 import stringifyObject from 'stringify-object';
 import translate from '../../utils/translate';
 import * as constants from '../../utils/constants/ErrorConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class NotificationHelper {
 
@@ -21,7 +22,7 @@ export default class NotificationHelper {
     message, origin, errorObject,
     severity = constants.NOTIFICATION_SEVERITY_ERROR
   }) {
-    console.log('constructor');
+    LoggerManager.log('constructor');
     if (errorObject) {
       this.message = errorObject.message;
       this.internalCode = errorObject.internalCode;
@@ -37,7 +38,7 @@ export default class NotificationHelper {
       }
     }
     // TODO: If we save the stacktrace here we can have the full info about the error's origin.
-    console.error(`${this.message} - ${this.internalCode} - ${this.origin}`);
+    LoggerManager.error(`${this.message} - ${this.internalCode} - ${this.origin}`);
   }
 
   processMessageParams(message) {
@@ -47,7 +48,7 @@ export default class NotificationHelper {
     try {
       if (message instanceof Error) {
         retMessage = message.message;
-        console.error(message.stack);
+        LoggerManager.error(message.stack);
       } else if (message instanceof Object) {
         const fields = Object.keys(message);
         if (fields && message[fields[0]] && !isNaN(fields[0])) {
@@ -59,7 +60,7 @@ export default class NotificationHelper {
         retMessage = translate(message);
       }
     } catch (err) {
-      console.warn(err);
+      LoggerManager.warn(err);
       retMessage = stringifyObject(message());
     }
     return retMessage;

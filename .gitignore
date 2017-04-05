@@ -45,3 +45,4 @@ main.js.map
 app/locales/translations.??.json
 lang/*
 app/lang/master-translations.en.json
+ampoffline-log.txt

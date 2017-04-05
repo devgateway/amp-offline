@@ -15,6 +15,7 @@ import auth from './modules/security/Auth';
 import { ampStartUp } from './actions/StartUpAction';
 import { loadAllLanguages } from './actions/TranslationAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
+import LoggerManager from './modules/util/LoggerManager';
 
 console.log('index');
 const store = configureStore();
@@ -22,7 +23,7 @@ const history = syncHistoryWithStore(hashHistory, store);
 export default store;
 
 function checkAuth(nextState, replaceState) {
-  console.log('checkAuth');
+  LoggerManager.log('checkAuth');
   if (!auth.loggedIn()) {
     replaceState({ nextPathname: nextState.location.pathname }, '/');
   }
@@ -31,22 +32,23 @@ initializeLanguageDirectory();
 
 initializeI18Next().then(() => {
   store.dispatch(loadAllLanguages());
-  return ampStartUp().then(() =>
-    render(
-      <Provider store={store}>
-        <Router history={history} store={store}>
-          <Route path="/" component={AppPage}>
-            <IndexRoute component={LoginPage} dispatch={store.dispatch} />
-            <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
-            <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} />
-            <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
-            <Route
-              path="/activity/preview/:activityId" component={ActivityPage} onEnter={checkAuth} store={store}
-            />
-          </Route>
-        </Router>
-      </Provider>,
-      document.getElementById('root')
-    )
+  return LoggerManager.initialize().then(ampStartUp().then(() =>
+      render(
+        <Provider store={store}>
+          <Router history={history} store={store}>
+            <Route path="/" component={AppPage}>
+              <IndexRoute component={LoginPage} dispatch={store.dispatch} />
+              <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
+              <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} />
+              <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
+              <Route
+                path="/activity/preview/:activityId" component={ActivityPage} onEnter={checkAuth} store={store}
+              />
+            </Route>
+          </Router>
+        </Provider>,
+        document.getElementById('root')
+      )
+    ).catch(console.error)
   ).catch(console.error);
 }).catch(console.error);

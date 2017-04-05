@@ -4,6 +4,7 @@ import WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
 import * as ActivityConstants from '../../utils/constants/ActivityConstants';
 import ActivityFilter from '../filters/ActivityFilter';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  * Workspace Filter class
@@ -25,7 +26,7 @@ export default class WorkspaceFilterBuilder {
    * @returns {Promise}
    */
   getDBFilter() {
-    console.log('getDBFilter');
+    LoggerManager.log('getDBFilter');
     const self = this;
     return new Promise((resolve, reject) => {
       if (self._workspace && !self._filterBuilt) {
@@ -66,7 +67,7 @@ export default class WorkspaceFilterBuilder {
    * @private
    */
   _generateDBFilter() {
-    console.log('_generateDBFilter');
+    LoggerManager.log('_generateDBFilter');
     // initialise the team filter (no special Management workspaces rules are needed)
     const teamFilter = Utils.toMap(ActivityConstants.TEAM, { $eq: this._workspace.id });
     // non-computed workspace filter
@@ -88,7 +89,7 @@ export default class WorkspaceFilterBuilder {
   }
 
   _getComputedOrgsFilter() {
-    console.log('_getComputedOrgsFilter');
+    LoggerManager.log('_getComputedOrgsFilter');
     let computedOrgsFilter;
     const orgIds = this._workspace.organizations;
     if (orgIds && orgIds.length() > 0) {
@@ -128,7 +129,7 @@ export default class WorkspaceFilterBuilder {
     wsIds.reduce((promise, wsId) =>
       promise.then(() => new Promise(() => {
         if (!processedWsIds.has(wsId)) {
-          console.log(wsId);
+          LoggerManager.log(wsId);
           processedWsIds.add(wsId);
 
           WorkspaceHelper.findAll({ 'parent-workspace-id': wsId }, { id: 1 }).then(childWsIds => {
@@ -139,10 +140,10 @@ export default class WorkspaceFilterBuilder {
         return processedWsIds;
       }),
       Promise.resolve(processedWsIds)).then(() => {
-        console.log('done');
+        LoggerManager.log('done');
         return processedWsIds;
       }, (e) => {
-        console.log(e);
+        LoggerManager.log(e);
         reject(e);
       })
     ));

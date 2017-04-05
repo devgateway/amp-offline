@@ -4,11 +4,12 @@ import classNames from 'classnames';
 import style from './TopArea.css';
 import translate from '../../utils/translate';
 import Legends from './Legends';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class TopArea extends Component {
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     const draftClasses = classNames(style.square_symbol, style.draft);
     const unvalidatedClasses = classNames(style.square_symbol, style.unvalidated);
     const validatedClasses = classNames(style.square_symbol, style.validated);
