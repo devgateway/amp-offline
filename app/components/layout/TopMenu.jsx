@@ -22,7 +22,7 @@ export class TopMenu extends Component {
       this.props.onClick,
       this.props.workspaceList,
       this.props.menuOnClickHandler,
-      this.props.translation.languageList);
+      this.props.languageList);
   }
 }
 

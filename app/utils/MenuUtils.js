@@ -18,22 +18,26 @@ class MenuUtils {
     const newMenu = Object.assign({}, menu);
 
     // Dynamic list of workspaces.
-    const nodes = {};
-    workspaceList.forEach(value => (
-      nodes[value.name] = { objId: value.id, 'translation-type': 'content' }
-    ));
-    newMenu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
+    if (newMenu.menu.DESKTOP) {
+      const nodes = {};
+      workspaceList.forEach(value => (
+        nodes[value.name] = { objId: value.id, 'translation-type': 'content' }
+      ));
+      newMenu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
+    }
 
     // Dynamic list of languages with its own click handler.
-    const langNodes = {};
-    languageList.forEach(value => (langNodes[value] = {
-      objId: value,
-      public: true,
-      onItemClickHandler: ((lang) => {
-        store.dispatch(setLanguage(lang));
-      })
-    }));
-    newMenu.menu.TOOLS.nodes['Change Language'].nodes = langNodes;
+    if (newMenu.menu.TOOLS) {
+      const langNodes = {};
+      languageList.forEach(value => (langNodes[value] = {
+        objId: value,
+        public: true,
+        onItemClickHandler: ((lang) => {
+          store.dispatch(setLanguage(lang));
+        })
+      }));
+      newMenu.menu.TOOLS.nodes['Change Language'].nodes = langNodes;
+    }
 
     if (newMenu.menu !== undefined && newMenu.menu !== null) {
       // Iterate first level items.

@@ -29,6 +29,7 @@ export default class TabsContainer extends Component {
         <ul className="nav nav-tabs">
           {this.props.tabsData.map((tab) => (
             <Tab
+              key={tab.id}
               tabData={tab}
               isActive={tab.id === this.state.activeTab}
               handleClick={this.handleClick.bind(this, tab)}

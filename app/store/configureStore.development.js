@@ -10,12 +10,20 @@ import * as loginActions from '../actions/LoginAction';
 import * as workspaceActions from '../actions/WorkspaceAction';
 import * as connectivityActions from '../actions/ConnectivityAction';
 import * as activityActions from '../actions/ActivityAction';
+import * as syncUpActions from '../actions/SyncUpAction';
+import * as desktopActions from '../actions/DesktopAction';
+import * as translationActions from '../actions/TranslationAction';
+import * as startUpActions from '../actions/StartUpAction';
 
 const actionCreators = {
   ...loginActions,
   ...workspaceActions,
   ...connectivityActions,
   ...activityActions,
+  ...syncUpActions,
+  ...desktopActions,
+  ...translationActions,
+  ...startUpActions,
   push,
 };
 

@@ -9,6 +9,7 @@ export const ERROR_NO_AMP_SERVER = 'ECONNREFUSED';
 
 export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';
+export const SYNCUP_URL = '/syncUp';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
 
@@ -66,4 +67,4 @@ export const ACTIVITY_STATUS_VALIDATED = 'ACTIVITY_STATUS_VALIDATED';
 export const VERSION = '0.0.1';
 
 // TODO this is a temporary limitation of the initial set of activities to export, AMPOFFLINE-273 or AMPOFFLINE-274
-export const FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT = 50;
+export const FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT = 500;

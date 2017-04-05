@@ -53,6 +53,8 @@
       }
     ],
     "react/prefer-stateless-function": "off",
+    "react/jsx-space-before-closing": "off",
+    /* Because WebStorm cant handle it. */
     "flowtype-errors/show-errors": 2,
     "no-else-return": 0,
     "no-param-reassign": 0
