@@ -1,5 +1,4 @@
 /* eslint no-else-return: 0*/
-
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
 import Notification from '../helpers/NotificationHelper';
@@ -12,7 +11,7 @@ import LoggerManager from '../util/LoggerManager';
 
 const LoginManager = {
 
-  processLogin(email, password) {
+  processLogin(email, password, isAMPAvailable) {
     LoggerManager.log('processLogin');
     return new Promise((resolve, reject) => {
       // 1) Check if AMPOffline is available.
@@ -32,18 +31,13 @@ const LoginManager = {
                 }));
               }
             }).catch(reject);
+          } else if (isAMPAvailable) {
+            return this.processOnlineLogin(email, password).then(resolve).catch(reject);
           } else {
-            // 3.1) First time this user login.
-            // TODO: call another function to check if amp is online (to be done on AMPOFFLINE-103).
-            const isAMPAvailable = true;
-            if (isAMPAvailable) {
-              return this.processOnlineLogin(email, password).then(resolve).catch(reject);
-            } else {
-              return reject(new Notification({
-                message: 'AMPUnreachableError',
-                origin: NOTIFICATION_ORIGIN_AUTHENTICATION
-              }));
-            }
+            return reject(new Notification({
+              message: 'AMPUnreachableError',
+              origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+            }));
           }
         }).catch(reject);
       } else {

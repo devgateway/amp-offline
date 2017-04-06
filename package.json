@@ -175,7 +175,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-timor-future-v3-0-tc9.ampsite.net",
+    "ampServerUrl": "amp-niger-future-v3-0-tc9.ampsite.net",
     "ampServerPort": "80",
     "ampServerProtocol": "http"
   }
