@@ -17,7 +17,7 @@ const DatabaseCollection = (function () {
       checkIfCollectionIsOpen(name) {
         LoggerManager.log('checkIfCollectionIsOpen');
         const list = _.find(collections, (item) => item.name === name);
-        LoggerManager.log(list);
+        LoggerManager.debug(list);
         return list;
       },
 

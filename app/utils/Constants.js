@@ -70,3 +70,5 @@ export const VERSION = '0.0.1';
 
 // TODO this is a temporary limitation of the initial set of activities to export, AMPOFFLINE-273 or AMPOFFLINE-274
 export const FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT = 500;
+
+export const LOG_FILE = 'ampoffline.log';

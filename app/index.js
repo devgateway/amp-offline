@@ -32,23 +32,22 @@ initializeLanguageDirectory();
 
 initializeI18Next().then(() => {
   store.dispatch(loadAllLanguages());
-  return LoggerManager.initialize().then(ampStartUp().then(() =>
-      render(
-        <Provider store={store}>
-          <Router history={history} store={store}>
-            <Route path="/" component={AppPage}>
-              <IndexRoute component={LoginPage} dispatch={store.dispatch} />
-              <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
-              <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} />
-              <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
-              <Route
-                path="/activity/preview/:activityId" component={ActivityPage} onEnter={checkAuth} store={store}
-              />
-            </Route>
-          </Router>
-        </Provider>,
-        document.getElementById('root')
-      )
-    ).catch(console.error)
+  return ampStartUp().then(() =>
+    render(
+      <Provider store={store}>
+        <Router history={history} store={store}>
+          <Route path="/" component={AppPage}>
+            <IndexRoute component={LoginPage} dispatch={store.dispatch} />
+            <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
+            <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} />
+            <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
+            <Route
+              path="/activity/preview/:activityId" component={ActivityPage} onEnter={checkAuth} store={store}
+            />
+          </Route>
+        </Router>
+      </Provider>,
+      document.getElementById('root')
+    )
   ).catch(console.error);
 }).catch(console.error);

@@ -16,7 +16,7 @@ import config from './webpack.config.development';
 /* On DEV we want to keep using browser console functions for logging since is the only way
  to see the origin (file and line) of the log.
  Note: Dont add it to webpack.config.development because that file might be used not only for DEV.*/
-if (process.env.FORCE_WINSTON_LOGGER !== 'true') {
+if (process.env.FORCE_LOGGER !== 'true') {
   config.module.loaders.push({
     test: /\.jsx?$/,
     loader: StringReplacePlugin.replace({
