@@ -11,7 +11,6 @@ import {
   CONNECTION_TIMEOUT,
   CONNECTIVITY_CHECK_INTERVAL
 } from '../utils/Constants';
-import { SERVER_URL, BASE_REST_URL, PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT } from '../utils/Constants';
 import LoggerManager from '../modules/util/LoggerManager';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
