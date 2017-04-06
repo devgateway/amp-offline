@@ -2,7 +2,6 @@
 import UrlUtils from '../utils/URLUtils';
 import { WORKSPACE_URL, LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
-import store from '../index';
 import { isForceSyncUpAction } from './SyncUpAction';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
@@ -12,9 +11,10 @@ export const STATE_LOGOUT = 'STATE_LOGOUT';
 
 export function loginAction(email: string, password: string) {
   console.log('loginAction');
-  return (dispatch) => {
-    if (store.getState().login.loginProcessing === false) {
-      return LoginManager.processLogin(email, password).then((data) => {
+  return (dispatch, ownProps) => {
+    if (ownProps().login.loginProcessing === false) {
+      const isAmpAvailable = ownProps().ampConnectionStatus.status.isAmpAvailable;
+      return LoginManager.processLogin(email, password, isAmpAvailable).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
@@ -46,10 +46,10 @@ export function logoutAction() {
 
 export function loginAutomaticallyAction() {
   console.log('loginAutomaticallyAction');
-  return dispatch => new Promise((resolve, reject) => {
+  return (dispatch, ownProps) => new Promise((resolve, reject) => {
     dispatch(sendingRequest());
-    const email = store.getState().user.userData.email;
-    const password = store.getState().login.plainPassword;
+    const email = ownProps.user.userData.email;
+    const password = ownProps.login.plainPassword;
     return LoginManager.processOnlineLogin(email, password).then((data) => {
       const userData = data.dbUser;
       const token = data.token;
