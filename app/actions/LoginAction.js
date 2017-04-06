@@ -49,8 +49,8 @@ export function loginAutomaticallyAction() {
   LoggerManager.log('loginAutomaticallyAction');
   return (dispatch, ownProps) => new Promise((resolve, reject) => {
     dispatch(sendingRequest());
-    const email = ownProps.user.userData.email;
-    const password = ownProps.login.plainPassword;
+    const email = ownProps().user.userData.email;
+    const password = ownProps().login.plainPassword;
     return LoginManager.processOnlineLogin(email, password).then((data) => {
       const userData = data.dbUser;
       const token = data.token;
