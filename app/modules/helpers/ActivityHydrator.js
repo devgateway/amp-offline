@@ -3,6 +3,7 @@ import * as FieldsHelper from './FieldsHelper';
 import store from '../../index';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
+import LoggerManager from '../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 
@@ -73,7 +74,8 @@ export default class ActivityHydrator {
     const fieldName = possibleValues['field-path'][pathIndex];
     const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
     if (fieldDef === undefined) {
-      console.warn(`Field definition not found for: ${possibleValues['field-path'].slice(0, pathIndex + 1).join('~')}`);
+      const warn = `Field definition not found for: ${possibleValues['field-path'].slice(0, pathIndex + 1).join('~')}`;
+      LoggerManager.warn(warn);
       return;
     }
     const isList = fieldDef.field_type === 'list';
@@ -128,7 +130,7 @@ export default class ActivityHydrator {
         const missing = new Map(fieldPaths.map(fieldPath => [fieldPath, 1]));
         possibleValuesCollection.forEach(pv => missing.delete(pv.id));
         // TODO once we have notification system, to flag if some possible values are not found, but not to block usage
-        console.error(`Field paths not found: ${missing}`);
+        LoggerManager.error(`Field paths not found: ${missing}`);
       }
       return possibleValuesCollection;
     });

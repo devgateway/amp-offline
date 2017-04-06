@@ -143,7 +143,7 @@ export default class WorkspaceFilterBuilder {
         LoggerManager.log('done');
         return processedWsIds;
       }, (e) => {
-        LoggerManager.log(e);
+        LoggerManager.error(e);
         reject(e);
       })
     ));

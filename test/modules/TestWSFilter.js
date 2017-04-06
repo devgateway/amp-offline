@@ -23,7 +23,7 @@ const Test = {
   },
 
   selectDummyWorkspace() {
-    WorkspaceHelper.findById(18).then(workspace => selectWorkspace(workspace)).catch(err => LoggerManager.log(err));
+    WorkspaceHelper.findById(18).then(workspace => selectWorkspace(workspace)).catch(err => LoggerManager.error(err));
   },
 
   testWorkspaceFilter() {
@@ -32,11 +32,11 @@ const Test = {
         DatabaseManager.findAll(dbFilter, COLLECTION_ACTIVITIES).then(filteredActivities => {
           LoggerManager.log(filteredActivities);
           return filteredActivities;
-        }).catch((err1) => LoggerManager.log(err1));
+        }).catch((err1) => LoggerManager.error(err1));
         LoggerManager.log(dbFilter);
         return dbFilter;
       }
-    ).catch(error => LoggerManager.log(error));
+    ).catch(error => LoggerManager.error(error));
   }
 
 };

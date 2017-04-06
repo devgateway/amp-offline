@@ -17,7 +17,7 @@ import { loadAllLanguages } from './actions/TranslationAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 import LoggerManager from './modules/util/LoggerManager';
 
-console.log('index');
+LoggerManager.log('index');
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 export default store;
@@ -49,5 +49,5 @@ initializeI18Next().then(() => {
       </Provider>,
       document.getElementById('root')
     )
-  ).catch(console.error);
-}).catch(console.error);
+  ).catch((err) => (LoggerManager.error(err)));
+}).catch((err) => (LoggerManager.error(err)));
