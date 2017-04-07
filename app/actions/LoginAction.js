@@ -13,7 +13,8 @@ export function loginAction(email: string, password: string) {
   console.log('loginAction');
   return (dispatch, ownProps) => {
     if (ownProps().login.loginProcessing === false) {
-      const isAmpAvailable = ownProps().ampConnectionStatus.status.isAmpAvailable;
+      const isAmpAvailable = (ownProps().ampConnectionStatus.status
+      && ownProps().ampConnectionStatus.status.isAmpAvailable);
       return LoginManager.processLogin(email, password, isAmpAvailable).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
