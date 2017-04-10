@@ -66,6 +66,17 @@ const Utils = {
 
   delay(timeout) {
     return new Promise((resolve) => setTimeout(resolve, timeout));
+  },
+  /**
+   * Removes _id from a collection mostly to be used in unit testing
+   * @param collectionToFix a list of objects to remove the _id property
+   * @return collection of modified objectes without _id
+   */
+  removeIdFromCollection(collectionToFix) {
+    return collectionToFix.map((item) => {
+      delete item._id;
+      return item;
+    });
   }
 };
 
