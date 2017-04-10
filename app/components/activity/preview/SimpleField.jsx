@@ -10,7 +10,8 @@ export default class SimpleField extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     value: PropTypes.any.isRequired, // eslint-disable-line react/forbid-prop-types
-    inline: PropTypes.bool
+    inline: PropTypes.bool,
+    useInnerHTML: PropTypes.bool,
   };
 
   /**
@@ -28,13 +29,21 @@ export default class SimpleField extends Component {
     console.log('constructor');
   }
 
+  _getValue() {
+    if (this.props.useInnerHTML) {
+      return <div className={styles.field_value} dangerouslySetInnerHTML={{ __html: this.props.value }} />;
+    } else {
+      return <div className={styles.field_value}>{this.props.value}</div>;
+    }
+  }
+
   render() {
-    const style = {
+    const fieldNameStyle = {
       display: this.props.inline === true ? 'inline' : 'block'
     };
     return (<div>
-      <div className={styles.field_name} style={style}>{this.props.title}</div>
-      <div className={styles.field_value}>{this.props.value}</div>
+      <div className={styles.field_name} style={fieldNameStyle}>{this.props.title}</div>
+      {this._getValue()}
       <hr />
     </div>);
   }

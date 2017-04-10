@@ -20,6 +20,7 @@ export default class ActivityPreview extends Component {
       activity: PropTypes.object,
       activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
+      activityWorkspace: PropTypes.object,
       errorMessage: PropTypes.object
     }).isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
@@ -55,6 +56,9 @@ export default class ActivityPreview extends Component {
 
   _renderData() {
     const activity = this.props.activityReducer.activity;
+    const style = {
+      verticalAlign: 'top'
+    };
 
     // TODO a proper styling will come once we get UI Desing from Llanco
     return (
@@ -65,11 +69,11 @@ export default class ActivityPreview extends Component {
         <div>
           <table>
             <tbody>
-              <tr>
-                <td width="215">
+              <tr className={styles.preview_content}>
+                <td className={styles.preview_summary}>
                   <SummaryGroup />
                 </td>
-                <td width="689">
+                <td className={style.preview_main_data}>
                   <MainGroup />
                 </td>
               </tr>

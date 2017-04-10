@@ -4,6 +4,7 @@ import * as Utils from '../../utils/Utils';
 import { ACTIVITY_EXPORT_URL } from '../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import { FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT } from '../../utils/Constants';
+import store from '../../index';
 
 /* eslint-disable class-methods-use-this */
 /**
@@ -13,6 +14,12 @@ import { FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT } from '../../utils/Constants';
 export default class ActivitiesPullFromAMPManager {
   constructor() {
     this._cancel = false;
+    // TODO update this once AMPOFFLINE-319 is done
+    let translations = store.getState().translation.languageList;
+    if (!translations) {
+      translations = ['en', 'pt', 'tm', 'fr']; // using explicitly Timor and Niger langs until 319 is done
+    }
+    this._translations = translations.join('|');
   }
 
   /**
@@ -60,8 +67,10 @@ export default class ActivitiesPullFromAMPManager {
 
   _pullActivity(ampId) {
     // TODO content translations (iteration 2)
-    return ConnectionHelper.doGet({ url: ACTIVITY_EXPORT_URL, paramsMap: { 'amp-id': ampId } })
-      .catch((error) => this._onPullError(null, error));
+    return ConnectionHelper.doGet({
+      url: ACTIVITY_EXPORT_URL,
+      paramsMap: { 'amp-id': ampId, translations: this._translations }
+    }).catch((error) => this._onPullError(null, error));
   }
 
   _removeExistingNonRejected(activity, error) {

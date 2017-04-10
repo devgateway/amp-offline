@@ -9,6 +9,8 @@ export const ORG_ROLE_FIELDS = toFieldNames(ValueConstants.ORG_ROLE_NAMES);
 // Activity fields
 export const ACTIVITY_BUDGET = 'activity_budget';
 export const ACTIVITY_STATUS = 'activity_status';
+export const STATUS_REASON = 'status_reason';
+export const OBJECTIVE = 'objective';
 export const ACTUAL_APPROVAL_DATE = 'actual_approval_date';
 export const FUNDINGS = 'fundings';
 export const FUNDING_DONOR_ORG_ID = 'donor_organization_id';
@@ -60,11 +62,20 @@ export const REJECTED_ID = 'rejectedId';
 export const INTERNAL_ID = 'internal_id';
 export const AMP_ID = 'amp_id';
 export const PROJECT_TITLE = 'project_title';
+export const DESCRIPTION = 'description';
 export const MODIFIED_BY = 'modified_by';
 export const MODIFIED_ON = 'update_date';
 export const CREATED_BY = 'created_by';
 export const CREATED_ON = 'creation_date';
 export const CLIENT_CHANGE_ID = 'client-change-id';
+export const PROJECT_COMMENTS = 'project_comments';
+export const LESSONS_LEARNED = 'lessons_learned';
+export const PROJECT_IMPACT = 'project_impact';
+export const ACTIVITY_SUMMARY = 'activity_summary';
+export const CONDITIONALITIES = 'conditionalities';
+export const PROJECT_MANAGEMENT = 'project_management';
+export const A_C_CHAPTER = 'a_c_chapter';
+export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

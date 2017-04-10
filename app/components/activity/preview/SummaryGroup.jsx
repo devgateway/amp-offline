@@ -5,11 +5,16 @@ import SimpleField from './SimpleField';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import * as VC from '../../../utils/constants/ValueConstants';
 import * as PC from '../../../utils/constants/FieldPathConstants';
-import * as TC from '../../../utils/constants/TranslationConstants';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../utils/translate';
 
+/* eslint-disable class-methods-use-this */
+
+/**
+ * Activty summary information
+ * @author Nadejda Mandrescu
+ */
 export default class SummaryGroup extends Component {
   static contextTypes = {
     activity: PropTypes.object.isRequired,
@@ -23,43 +28,73 @@ export default class SummaryGroup extends Component {
     console.log('constructor');
   }
 
+  /**
+   * Builds "Funding Information" section by following AMP Activity Preview rules
+   * @return {SectionGroup}
+   * @private
+   */
   _buildFundingInformation() {
-    const fundingInfoSummary = [];
-    const totalTrn = translate(TC.TOTAL);
+    const measuresOrder = [VC.ACTUAL_COMMITMENTS, VC.PLANNED_COMMITMENTS, VC.ACTUAL_DISBURSEMENTS,
+      VC.PLANNED_DISBURSEMENTS, VC.ACTUAL_EXPENDITURES, VC.UNALLOCATED_DISBURSEMENTS, VC.PLANNED_EXPENDITURES];
+    const measuresTotals = {};
+    // TODO update how we detect that a transaction type is enabled once AMP-25787 is done
+    // Commitments, Disbursements, Expenditures
     VC.TRANSACTION_TYPES.forEach(trnType => {
-      const trnTypeTrn = this.context.activityFieldsManager.getTranslation(PC.TRANSACTION_TYPE_PATH, trnType);
+      // checking if this transaction type is provided as an option, through a trick by detecting the translation
+      const trnTypeTrn = this.context.activityFieldsManager.getValueTranslation(PC.TRANSACTION_TYPE_PATH, trnType);
       VC.ADJUSTMENT_TYPES.forEach(adjType => {
-        const adjTypeTrn = this.context.activityFieldsManager.getTranslation(PC.ADJUSTMENT_TYPE_PATH, adjType);
+        const adjTypeTrn = this.context.activityFieldsManager.getValueTranslation(PC.ADJUSTMENT_TYPE_PATH, adjType);
         if (adjTypeTrn && trnTypeTrn) {
           const value = this.context.activityFundingTotals.getTotals(adjTypeTrn, trnTypeTrn, {});
-          const title = `${totalTrn} ${adjTypeTrn} ${trnTypeTrn}`;
-          const key = `Summary-Total-${adjType}-${trnType}`;
-          fundingInfoSummary.push(<SimpleField key={key} title={title} value={value} />);
+          measuresTotals[`${adjType} ${trnType}`] = value;
         }
       });
     });
-    // TODO add all other funding totals
+    // Other measures
+    const adjTypeActualTrn = this.context.activityFieldsManager.getValueTranslation(PC.ADJUSTMENT_TYPE_PATH, VC.ACTUAL);
+    if (adjTypeActualTrn) {
+      const ub = VC.UNALLOCATED_DISBURSEMENTS;
+      measuresTotals[ub] = this.context.activityFundingTotals.getTotals(ub, {});
+    }
 
     // TODO: update with current WS currency
     const currency = 'USD';
-    const fundingInfoSummaryTitle = `${(translate(TC.FUNDING_INFORMATION))} ${currency}`;
+    const fundingInfoSummaryTitle = `${(translate('fundingInformation'))} ${currency}`;
     return (
-      <SectionGroup key={TC.FUNDING_INFORMATION} title={fundingInfoSummaryTitle}>
-        {fundingInfoSummary}
+      <SectionGroup key={'fundingInformation'} title={fundingInfoSummaryTitle}>
+        {this._buildTotalFields(measuresOrder, measuresTotals)}
       </SectionGroup>);
+  }
+
+  _buildTotalFields(measuresOrder, measuresTotals) {
+    const fundingInfoSummary = [];
+    const totalTrn = translate('Total');
+    measuresOrder.forEach(measure => {
+      const value = measuresTotals[measure];
+      if (value !== undefined) {
+        const title = `${totalTrn} ${translate(measure)}`;
+        const key = `Summary-Total-${measure}`;
+        fundingInfoSummary.push(<SimpleField key={key} title={title} value={value} />);
+      }
+    });
+    return fundingInfoSummary;
   }
 
   _buildAdditionalInfo() {
     const additionalInfo = [];
     // TODO once translations available for workspace name AMP-25766
     const teamName = this.context.activityWorkspace.name;
-    const isComputedTeam = this.context.activityWorkspace['is-computed'] === true ? translate('yes') : translate('no');
+    // no need to export repeating translation for the access type through workspaces EP
+    const accessType = translate(this.context.activityWorkspace['access-type']);
+    const isComputedTeam = this.context.activityWorkspace['is-computed'] === true ? translate('Yes') : translate('No');
+    // TODO dates formatting AMPOFFLINE-129
     const updatedOn = this.context.activity[AC.MODIFIED_ON];
 
-    // TODO update once possible values are available for it
+    // TODO update once possible values are available for it AMP-25680
     additionalInfo.push(SimpleField.instance('activityCreatedBy', this.context.activity[AC.CREATED_BY]));
-    additionalInfo.push(SimpleField.instance('createdInWorkspace', `${teamName} - ${this._getAccessType()}`));
+    additionalInfo.push(SimpleField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
     additionalInfo.push(SimpleField.instance('computation', isComputedTeam));
+    // TODO update dates formatting AMPOFFLINE-129
     additionalInfo.push(SimpleField.instance('activityCreatedOn', this.context.activity[AC.CREATED_ON]));
     // TODO check if updated on can be displayed by ActivityPreview FM
     if (updatedOn) {
@@ -71,19 +106,8 @@ export default class SummaryGroup extends Component {
   }
 
   _getWorkspaceLeadData() {
-    // TODO update once full lead data is provided here AMP-25766
+    // TODO update once possible options for team members are available AMP-25680
     return this.context.activityWorkspace['workspace-lead-id'];
-  }
-
-  _getAccessType() {
-    // no need to export repeating translation for the access type through workspaces EP
-    const accessType = this.context.activityWorkspace['access-type'];
-    if (accessType === 'Team') {
-      return translate('team');
-    } else if (accessType === 'Management') {
-      return translate('management');
-    }
-    return accessType;
   }
 
   render() {
