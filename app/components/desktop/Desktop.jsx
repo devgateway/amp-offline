@@ -3,6 +3,7 @@
 import React, { Component, PropTypes } from 'react';
 import TopArea from '../desktop/TopArea';
 import TabsContainer from './TabsContainer';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class Desktop extends Component {
 
@@ -13,15 +14,15 @@ export default class Desktop extends Component {
 
   constructor() {
     super();
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   componentDidMount() {
-    console.log('componentDidMount');
+    LoggerManager.log('componentDidMount');
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     return (
       <div>
         <TopArea workspace={this.props.workspace.currentWorkspace}/>

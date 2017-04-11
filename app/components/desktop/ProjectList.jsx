@@ -14,6 +14,7 @@ import {
 } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/projects/DesktopManager'; // TODO: receive as props.
 import { AMP_ID, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class ProjectList extends Component {
 
@@ -61,7 +62,7 @@ export default class ProjectList extends Component {
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#style
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);

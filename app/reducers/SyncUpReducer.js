@@ -7,6 +7,7 @@ import {
   STATE_SYNCUP_FAILED,
   STATE_SYNCUP_FORCED
 } from '../actions/SyncUpAction';
+import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
   loadingSyncHistory: false,
@@ -18,7 +19,7 @@ const defaultState = {
 };
 
 export default function syncUp(state: Object = defaultState, action: Object) {
-  console.log('SyncUpReducer');
+  LoggerManager.log('SyncUpReducer');
   switch (action.type) {
     case STATE_SYNCUP_SHOW_HISTORY:
       return Object.assign({}, state, { loadingSyncHistory: false, historyData: action.actionData, });

@@ -33,6 +33,7 @@ import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
 import FieldsSyncUpManager from './FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './PossibleValuesSyncUpManager';
 import translate from '../../utils/translate';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
 const syncUpModuleList = [
@@ -86,7 +87,7 @@ export default class SyncUpManager {
    * @private
    */
   static sortByLastSyncDateDesc(a, b) {
-    console.log('_sortByLastSyncDateDesc');
+    LoggerManager.log('_sortByLastSyncDateDesc');
     return (a[SYNCUP_DATETIME_FIELD] > b[SYNCUP_DATETIME_FIELD]
       ? -1
       : a[SYNCUP_DATETIME_FIELD] < b[SYNCUP_DATETIME_FIELD] ? 1 : 0);
@@ -97,7 +98,7 @@ export default class SyncUpManager {
    * @returns {Promise}
    */
   static getLastSuccessfulSyncUp() {
-    console.log('getLastSuccessfulSyncUps');
+    LoggerManager.log('getLastSuccessfulSyncUps');
     return new Promise((resolve, reject) => (
       SyncUpHelper.findAllSyncUpByExample({
         status: SYNCUP_STATUS_SUCCESS,
@@ -115,7 +116,7 @@ export default class SyncUpManager {
   }
 
   static _saveMainSyncUpLog({ status, userId, modules, newTimestamp }) {
-    console.log('_saveMainSyncUpLog');
+    LoggerManager.log('_saveMainSyncUpLog');
     const syncDate = new Date();
     const log = {
       id: Math.random(),
@@ -133,7 +134,7 @@ export default class SyncUpManager {
    * and then call the EPs from the types that need to be synced.
    */
   static syncUpAllTypesOnDemand() {
-    console.log('syncUpAllTypesOnDemand');
+    LoggerManager.log('syncUpAllTypesOnDemand');
     // run sync up with activities import first time, then with activities export
     // TODO a better solution can be done through AMPOFFLINE-209
     this._configureActivitiesImportSyncUp(_activitiesImport);
@@ -149,7 +150,7 @@ export default class SyncUpManager {
   }
 
   static _doSyncUp() {
-    console.log('_doSyncUp');
+    LoggerManager.log('_doSyncUp');
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     return new Promise((resolve, reject) => (
@@ -162,7 +163,7 @@ export default class SyncUpManager {
           const toSyncList = this._filterOutModulesToSync(changes);
           // Call each sync EP in parallel.
           return this._syncUpTypes(toSyncList, changes).then((modules) => {
-            console.log('SyncUp Ok');
+            LoggerManager.log('SyncUp Ok');
             const status = SYNCUP_STATUS_SUCCESS;
             const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
             return this._saveMainSyncUpLog({ status, userId, modules, newTimestamp }).then((log) => {
@@ -171,7 +172,7 @@ export default class SyncUpManager {
               return resolve(log);
             }).catch(reject);
           }).catch((err) => {
-            console.log('SyncUp Fail');
+            LoggerManager.log('SyncUp Fail');
             const status = SYNCUP_STATUS_FAIL;
             // Always reject so we can display the error after saving the log.
             return this._saveMainSyncUpLog({ status, userId }).then(() => reject(err)).catch(reject);
@@ -182,7 +183,7 @@ export default class SyncUpManager {
   }
 
   static _filterOutModulesToSync(changes) {
-    console.log('_filterOutModulesToSync');
+    LoggerManager.log('_filterOutModulesToSync');
     // Filter out syncUpModuleList and keep only what needs to be resynced.
     // TODO: remove this flag once AMP-25568 is done
     changes[SYNCUP_TYPE_FIELDS] = true;
@@ -209,7 +210,7 @@ export default class SyncUpManager {
    * @param changes
    */
   static _syncUpTypes(types, changes) {
-    console.log('_syncUpTypes');
+    LoggerManager.log('_syncUpTypes');
 
     const fnSync = (type) => (
       new Promise((resolve, reject) => {
@@ -235,17 +236,17 @@ export default class SyncUpManager {
    * @returns {*}
    */
   static prepareNetworkForSyncUp() {
-    console.log('prepareNetworkForSyncUp');
+    LoggerManager.log('prepareNetworkForSyncUp');
     return ConnectionHelper.doGet({ url: TEST_URL });
   }
 
   static getSyncUpHistory() {
-    console.log('getSyncUpHistory');
+    LoggerManager.log('getSyncUpHistory');
     return SyncUpHelper.findAllSyncUpByExample({});
   }
 
   static getWhatChangedInAMP(user, time) {
-    console.log('getWhatChangedInAMP');
+    LoggerManager.log('getWhatChangedInAMP');
     const paramsMap = { 'user-ids': user };
     // Dont send the date param at all on first-sync.
     if (time && time !== SYNCUP_NO_DATE) {
@@ -255,7 +256,7 @@ export default class SyncUpManager {
   }
 
   static getLastSyncInDays() {
-    console.log('getLastSyncInDays');
+    LoggerManager.log('getLastSyncInDays');
     return new Promise((resolve, reject) => (
       SyncUpManager.getLastSuccessfulSyncUp().then(lastSync => {
         if (lastSync && lastSync['sync-date']) {
@@ -273,7 +274,7 @@ export default class SyncUpManager {
    * Check if the last syncup is too old or there is not user data in storage, also set the message.
    */
   static isForceSyncUp() {
-    console.log('isForceSyncUp');
+    LoggerManager.log('isForceSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) => {
       const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
       const user = store.getState().user.userData; // No need to to go the DB in this stage.
@@ -292,7 +293,7 @@ export default class SyncUpManager {
   }
 
   static isWarnSyncUp() {
-    console.log('isWarnSyncUp');
+    LoggerManager.log('isWarnSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) =>
       (days === undefined || days > SYNCUP_BEST_BEFORE_DAYS)
     );

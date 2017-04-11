@@ -11,11 +11,12 @@ import {
 import store from '../../index';
 import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
 import translate from '../../utils/translate';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 const ConnectionHelper = {
 
   doGet({ url, paramsMap, shouldRetry, extraUrlParam }) {
-    console.log('doGet');
+    LoggerManager.log('doGet');
     const method = 'GET';
     // Modify the call to use ES6 destructuring
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
@@ -30,7 +31,7 @@ const ConnectionHelper = {
    * @returns {Promise}
    */
   doPost({ url, paramsMap, body, shouldRetry, extraUrlParam }) {
-    console.log('doPost');
+    LoggerManager.log('doPost');
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
@@ -38,8 +39,8 @@ const ConnectionHelper = {
   },
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry) {
-    console.log('_doMethod ');
-    console.log(requestConfig.url);
+    LoggerManager.log('_doMethod ');
+    LoggerManager.log(requestConfig.url);
     const self = this;
     return new Promise((resolve, reject) => (
       request(requestConfig, (error, response, body) => {
@@ -78,7 +79,7 @@ const ConnectionHelper = {
             });
           } else {
             // Being here means the server might not be accessible.
-            let message = error || body.error || translate('unknownNetworkError');
+            let message = error || (body && body.error) || translate('unknownNetworkError');
             if (error && error.code === ERROR_NO_AMP_SERVER) {
               message = translate('AMPUnreachableError');
             }

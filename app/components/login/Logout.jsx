@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import translate from '../../utils/translate';
 import { logoutAction } from '../../actions/LoginAction';
 import style from '../layout/Navbar.css';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 class Logout extends React.Component {
 
@@ -15,12 +16,12 @@ class Logout extends React.Component {
   }
 
   clickLogout() {
-    console.log('clickLogout');
+    LoggerManager.log('clickLogout');
     this.props.onClickLogout();
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     if (this.props.loggedIn) {
       return (
         <div className={style.logout_container}>
@@ -37,12 +38,12 @@ class Logout extends React.Component {
 /* TODO: Check if is possible to move this section with Redux code to a new TranslationContainer. We did it this way
  because we dont have a router on index.js, then we cant load this container automatically. */
 const mapStateToProps = (state, props) => {
-  console.log('mapStateToProps');
+  LoggerManager.log('mapStateToProps');
   return state;
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  console.log('mapDispatchToProps');
+  LoggerManager.log('mapDispatchToProps');
   return {
     onClickLogout: () => {
       dispatch(logoutAction())

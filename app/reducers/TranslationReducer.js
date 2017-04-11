@@ -4,6 +4,7 @@ import {
   STATE_LIST_OF_LANGUAGES_LOADED
 } from '../actions/TranslationAction';
 import { LANGUAGE_ENGLISH } from '../utils/Constants';
+import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
   lang: LANGUAGE_ENGLISH,
@@ -13,7 +14,7 @@ const defaultState = {
 };
 
 export default function translation(state: Object = defaultState, action: Object) {
-  console.log('translation');
+  LoggerManager.log('translation');
   switch (action.type) {
     case STATE_CHANGE_LANGUAGE:
       return Object.assign({}, state, {

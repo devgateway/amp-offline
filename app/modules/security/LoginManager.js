@@ -7,11 +7,12 @@ import {
   NOTIFICATION_ORIGIN_API_SECURITY
 } from '../../utils/constants/ErrorConstants';
 import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
+import LoggerManager from '../util/LoggerManager';
 
 const LoginManager = {
 
   processLogin(email, password, isAMPAvailable) {
-    console.log('processLogin');
+    LoggerManager.log('processLogin');
     return new Promise((resolve, reject) => {
       // 1) Check if AMPOffline is available.
       const isAMPOfflineAvailable = true; // TODO: read from a redux state (to be done on AMPOFFLINE-100).
@@ -49,7 +50,7 @@ const LoginManager = {
   },
 
   clearCredentialsInDB(email) {
-    console.log('clearCredentialsInDB');
+    LoggerManager.log('clearCredentialsInDB');
     return UserHelper.findByEmail(email).then((data) => {
       if (data) {
         delete data.ampOfflinePassword;
@@ -67,7 +68,7 @@ const LoginManager = {
    * @returns {Promise}
    */
   processOnlineLogin(email, password) {
-    console.log('processOnlineLogin');
+    LoggerManager.log('processOnlineLogin');
     return new Promise((resolve, reject) => (
       Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => (
         Auth.onlineLogin(email, passwordDigest).then((data) => (
@@ -89,7 +90,7 @@ const LoginManager = {
    * Transform auth user data to db user data.
    */
   saveLoginData(userData, email, password) {
-    console.log('saveLoginData');
+    LoggerManager.log('saveLoginData');
     return UserHelper.findByEmail(email).then((dbData) => (
       UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
         if (dbData) {

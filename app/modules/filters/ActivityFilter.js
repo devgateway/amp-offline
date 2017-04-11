@@ -2,6 +2,7 @@ import * as AC from '../../utils/constants/ActivityConstants';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  * Activity Filter class
@@ -17,7 +18,7 @@ export default class ActivityFilter {
   }
 
   getDBFilter() {
-    console.log('getDBFilter');
+    LoggerManager.log('getDBFilter');
     const self = this;
     return new Promise((resolve, reject) => {
       if (self._dbFilter === undefined && self._filters) {
@@ -32,7 +33,7 @@ export default class ActivityFilter {
   }
 
   _prepareFilter() {
-    console.log('_prepareFilter');
+    LoggerManager.log('_prepareFilter');
     return Promise.all([this._getWorkspaces()]).then(
       (workspaces) => {
         this._wsIds = workspaces;
@@ -41,7 +42,7 @@ export default class ActivityFilter {
   }
 
   _getWorkspaces() {
-    console.log('_getWorkspaces');
+    LoggerManager.log('_getWorkspaces');
     // TODO: once GS are available, update to check from GS 'Show workspace filter'
     return Promise.resolve(false).then((showWorkspaceFilterInTeamWorkspace) => {
       if (showWorkspaceFilterInTeamWorkspace === true || this._isComputed) {
@@ -57,7 +58,7 @@ export default class ActivityFilter {
    * @private
    */
   _generateFilter() {
-    console.log('_generateFilter');
+    LoggerManager.log('_generateFilter');
     this._tmpFilter = Utils.toMap(AC.TEAM, { $in: this._wsIds });
 
     // note that some filters were not replicated since they are obsolete (AMP-25215)
@@ -85,7 +86,7 @@ export default class ActivityFilter {
   }
 
   _addGeneralFilters() {
-    console.log('_addGeneralFilters');
+    LoggerManager.log('_addGeneralFilters');
     this._addValueFilter(AC.ARCHIVED, getEqOrNe(this._filters.showArchived), 'showArchived', null, true);
     this._addValueFilter(AC.HUMANITARIAN_AID, '$in', 'humanitarianAid', null,
       listToBoolean(this._filters.humanitarianAid));
@@ -102,7 +103,7 @@ export default class ActivityFilter {
   }
 
   _addDateFilters() {
-    console.log('_addDateFilters');
+    LoggerManager.log('_addDateFilters');
     this._addYearFilter(AC.ACTUAL_APPROVAL_DATE, 'actualAppYear');
 
     // both 'toXXX' and filter dates timestamps are zeros, so it should work. But caution if smt changes
@@ -120,7 +121,7 @@ export default class ActivityFilter {
   }
 
   _addSectorFilters() {
-    console.log('_addSectorFilters');
+    LoggerManager.log('_addSectorFilters');
     /* TODO: bug or feature:
      When sector "A" from level 1 is selected, then filter saves all descendants (e.g. A1, A2, etc.) automatically.
      Thus when a new sector, e.g. A101 is added to "A", then it will be filtered out from results.
@@ -133,7 +134,7 @@ export default class ActivityFilter {
   }
 
   _addProgramFilters() {
-    console.log('_addProgramFilters');
+    LoggerManager.log('_addProgramFilters');
     // TODO (noted): expand with descendants program filters once the full programs tree info is available via EP
     this._addListMapValueFilter(AC.NATIONAL_PLAN_OBJECTIVE, AC.PROGRAM, '$in', 'nationalPlanningObjectives');
     this._addListMapValueFilter(AC.PRIMARY_PROGRAMS, AC.PROGRAM, '$in', 'primaryPrograms');
@@ -141,7 +142,7 @@ export default class ActivityFilter {
   }
 
   _addOrgsFilters() {
-    console.log('_addOrgsFilters');
+    LoggerManager.log('_addOrgsFilters');
     /* TODO: add donorTypes, donorGroups and contractingAgencyGroups filters
      once we have an EP providing their options to get the mappings based on activities orgs */
 
@@ -154,7 +155,7 @@ export default class ActivityFilter {
   }
 
   _addFundingsFilter() {
-    console.log('_addFundingsFilter');
+    LoggerManager.log('_addFundingsFilter');
     const fundings = {};
     this._addValueFilter(AC.FINANCING_INSTRUMENT, '$in', 'financingInstruments', fundings);
     this._addValueFilter(AC.FUNDING_STATUS, '$in', 'fundingStatus', fundings);
@@ -178,7 +179,7 @@ export default class ActivityFilter {
   }
 
   _getFundingDetails() {
-    console.log('_getFundingDetails');
+    LoggerManager.log('_getFundingDetails');
     let result;
     const details = {};
     // TODO: use GS with the latest code to detect dateFilterHidesProjects using 'Filter by date hides projects'
@@ -270,7 +271,7 @@ export default class ActivityFilter {
   }
 
   _addApprovalStatusFilter(filterName) {
-    console.log('_addApprovalStatusFilter');
+    LoggerManager.log('_addApprovalStatusFilter');
     if (this._filters[filterName]) {
       const approvalStatuses = this._filters[filterName];
       const approvalStatusFilter = [];
@@ -282,7 +283,7 @@ export default class ActivityFilter {
 }
 
 function getApprovalStatusFilter(id) {
-  console.log('getApprovalStatusFilter');
+  LoggerManager.log('getApprovalStatusFilter');
   // based on AmpARFilter.buildApprovalStatusQuery(int, boolean)
   let options;
   let includeDraft = true;

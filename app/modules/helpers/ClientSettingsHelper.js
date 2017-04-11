@@ -2,6 +2,7 @@ import { validate } from 'jsonschema';
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
 import Notification from './NotificationHelper';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT' });
 
@@ -45,7 +46,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSettingById(id) {
-    console.log('findSettingById');
+    LoggerManager.log('findSettingById');
     return this.findSetting({ id });
   },
 
@@ -55,7 +56,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSettingByName(name) {
-    console.log('findSettingByName');
+    LoggerManager.log('findSettingByName');
     return this.findSetting({ name });
   },
 
@@ -65,7 +66,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSetting(filter) {
-    console.log('findSetting');
+    LoggerManager.log('findSetting');
     return DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS);
   },
 
@@ -74,7 +75,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findAllVisibleSettings() {
-    console.log('findAllVisibleSettings');
+    LoggerManager.log('findAllVisibleSettings');
     return this.findAll({ visible: true });
   },
 
@@ -88,10 +89,10 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   saveOrUpdateSetting(setting) {
-    console.log('saveOrUpdateSetting');
-    // console.log(validate(setting, settingsSchema));
+    LoggerManager.log('saveOrUpdateSetting');
+    // LoggerManager.log(validate(setting, settingsSchema));
     if (validate(setting, settingsSchema).valid) {
-      console.log(`Valid setting.id = ${setting.id}`);
+      LoggerManager.log(`Valid setting.id = ${setting.id}`);
       setting['updated-at'] = (new Date()).toISOString();
       return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
     }
@@ -104,7 +105,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   deleteById(id) {
-    console.log('deleteById');
+    LoggerManager.log('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS);
   }
 

@@ -2,14 +2,15 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Login from '../components/login/Login';
 import * as LoginActions from '../actions/LoginAction';
+import LoggerManager from '../modules/util/LoggerManager';
 
 function mapStateToProps(state) {
-  console.log('mapStateToProps');
+  LoggerManager.log('mapStateToProps');
   return state;
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-  console.log('mapDispatchToProps');
+  LoggerManager.log('mapDispatchToProps');
   return bindActionCreators(LoginActions, dispatch, ownProps);
 }
 

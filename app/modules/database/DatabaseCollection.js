@@ -1,6 +1,7 @@
 /* eslint func-names: 0 */
 import _ from 'underscore';
 import BluebirdQueue from 'bluebird-queue';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 // https://addyosmani.com/resources/essentialjsdesignpatterns/book/#singletonpatternjavascript
 const DatabaseCollection = (function () {
@@ -14,22 +15,22 @@ const DatabaseCollection = (function () {
     return {
       // Public methods and variables
       checkIfCollectionIsOpen(name) {
-        console.log('checkIfCollectionIsOpen');
+        LoggerManager.log('checkIfCollectionIsOpen');
         const list = _.find(collections, (item) => item.name === name);
-        console.log(list);
+        LoggerManager.debug(list);
         return list;
       },
 
       insertCollection(name, datastore) {
-        console.log('insertCollection');
+        LoggerManager.log('insertCollection');
         collections.push({ name, nedbDatastore: datastore });
-        console.log(collections);
+        LoggerManager.debug(collections);
       },
 
       removeCollection(name) {
-        console.log('removeCollection');
+        LoggerManager.log('removeCollection');
         collections = _.without(collections, _.findWhere(collections, { name }));
-        console.log(collections);
+        LoggerManager.debug(collections);
       },
 
       /**
@@ -39,7 +40,7 @@ const DatabaseCollection = (function () {
        * @param reject
        */
       addPromiseAndProcess(task) {
-        console.log('addPromiseAndProcess');
+        LoggerManager.log('addPromiseAndProcess');
         queue.addNow(task);
       }
     };
@@ -47,18 +48,18 @@ const DatabaseCollection = (function () {
 
   return {
     getInstance() {
-      console.log('getInstance');
+      LoggerManager.log('getInstance');
       if (!instance) {
-        console.log('New instance.');
+        LoggerManager.log('New instance.');
         instance = init();
       } else {
-        console.log('Reuse instance.');
+        LoggerManager.log('Reuse instance.');
       }
       return instance;
     },
 
     constructor() {
-      console.log('constructor');
+      LoggerManager.log('constructor');
       return false;
     }
   };

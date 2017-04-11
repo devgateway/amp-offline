@@ -13,6 +13,7 @@ import TranslationSyncUpManager from '../syncup/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_I18NEXT } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 const TranslationManager = {
 
@@ -21,7 +22,7 @@ const TranslationManager = {
    * when we package the app.
    */
   initializeLanguageDirectory() {
-    console.log('initializeLanguageDirectory');
+    LoggerManager.log('initializeLanguageDirectory');
     let langDir = '';
     let rootDir = '';
     if (process.env.NODE_ENV === 'test') {
@@ -54,7 +55,7 @@ const TranslationManager = {
   },
 
   getListOfLocalLanguages(restart: false) {
-    console.log('getListOfLocalLanguages');
+    LoggerManager.log('getListOfLocalLanguages');
     return new Promise((resolve, reject) => {
       const files = fs.readdirSync(FS_LOCALES_DIRECTORY);
       const langs = files.filter((item) =>
@@ -68,7 +69,7 @@ const TranslationManager = {
   },
 
   initializeI18Next() {
-    console.log('initializeI18Next');
+    LoggerManager.log('initializeI18Next');
     return new Promise((resolve, reject) => {
       const settingsFile = LocalizationSettings.getDefaultConfig();
       // Load i18n config file.
@@ -92,7 +93,7 @@ const TranslationManager = {
   },
 
   changeLanguage(lang) {
-    console.log('changeLanguage');
+    LoggerManager.log('changeLanguage');
     return new Promise((resolve, reject) => {
       i18next.changeLanguage(lang, (err) => {
         if (err) {
@@ -105,7 +106,7 @@ const TranslationManager = {
   },
 
   removeLanguageFile(lang) {
-    console.log('removeLanguageFile');
+    LoggerManager.log('removeLanguageFile');
     const file = `${FS_LOCALES_DIRECTORY}${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`;
     fs.unlink(file);
   }

@@ -8,6 +8,7 @@ import * as PC from '../../../utils/constants/FieldPathConstants';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../utils/translate';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 
@@ -25,7 +26,7 @@ export default class SummaryGroup extends Component {
 
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   /**

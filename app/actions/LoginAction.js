@@ -3,6 +3,7 @@ import UrlUtils from '../utils/URLUtils';
 import { WORKSPACE_URL, LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import { isForceSyncUpAction } from './SyncUpAction';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -10,7 +11,7 @@ export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
 export const STATE_LOGOUT = 'STATE_LOGOUT';
 
 export function loginAction(email: string, password: string) {
-  console.log('loginAction');
+  LoggerManager.log('loginAction');
   return (dispatch, ownProps) => {
     if (ownProps().login.loginProcessing === false) {
       const isAmpAvailable = (ownProps().ampConnectionStatus.status
@@ -38,7 +39,7 @@ export function loginAction(email: string, password: string) {
 }
 
 export function logoutAction() {
-  console.log('logoutAction');
+  LoggerManager.log('logoutAction');
   return (dispatch) => {
     dispatch(logout());
     UrlUtils.forwardTo(LOGIN_URL);
@@ -46,7 +47,7 @@ export function logoutAction() {
 }
 
 export function loginAutomaticallyAction() {
-  console.log('loginAutomaticallyAction');
+  LoggerManager.log('loginAutomaticallyAction');
   return (dispatch, ownProps) => new Promise((resolve, reject) => {
     dispatch(sendingRequest());
     const email = ownProps().user.userData.email;
@@ -69,7 +70,7 @@ export function loginAutomaticallyAction() {
  * @returns {{type: string, actionData: {userData: *, plainPassword: *, token: *}}}
  */
 function loginOk({ userData, password, token }) {
-  console.log('loginOk');
+  LoggerManager.log('loginOk');
   const loginData = {
     userData,
     password,
@@ -82,7 +83,7 @@ function loginOk({ userData, password, token }) {
 }
 
 function loginFailed(err) {
-  console.log('loginFailed');
+  LoggerManager.log('loginFailed');
   return {
     type: STATE_LOGIN_FAIL,
     actionData: { errorMessage: err }
@@ -90,14 +91,14 @@ function loginFailed(err) {
 }
 
 function sendingRequest() {
-  console.log('sendingRequest');
+  LoggerManager.log('sendingRequest');
   return {
     type: STATE_LOGIN_PROCESSING
   };
 }
 
 export function logout() {
-  console.log('logoutAction');
+  LoggerManager.log('logoutAction');
   return {
     type: STATE_LOGOUT
   };

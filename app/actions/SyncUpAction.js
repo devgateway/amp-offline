@@ -1,6 +1,7 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
+import LoggerManager from '../modules/util/LoggerManager';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -12,7 +13,7 @@ export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 
 export function getSyncUpHistory() {
-  console.log('getSyncUpHistory');
+  LoggerManager.log('getSyncUpHistory');
   return (dispatch, ownProps) => {
     if (ownProps().syncUp.loadingSyncHistory === false) {
       SyncUpManager.getSyncUpHistory().then((data) => (
@@ -27,7 +28,7 @@ export function getSyncUpHistory() {
 }
 
 export function startSyncUp(historyData) {
-  console.log('startSyncUp');
+  LoggerManager.log('startSyncUp');
   return (dispatch, ownProps) => {
     /* Save current syncup redux state because this might be a "forced" syncup and we dont want
      the user to be able to leave the page if this syncup fails. */
@@ -39,7 +40,7 @@ export function startSyncUp(historyData) {
         // once we get the final version also it will change the way in which pass
         // the historyData object
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
-        console.log('syncupSucessfull');
+        LoggerManager.log('syncupSucessfull');
         return dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
       }).catch((err) => {
         const actionData = { errorMessage: err };
@@ -55,7 +56,7 @@ export function startSyncUp(historyData) {
 }
 
 export function isForceSyncUpAction(callback) {
-  console.log('isForceSyncUpAction');
+  LoggerManager.log('isForceSyncUpAction');
   return (dispatch) => (
     SyncUpManager.isForceSyncUp().then((forceData) => {
       dispatch({
@@ -67,7 +68,7 @@ export function isForceSyncUpAction(callback) {
 }
 
 function syncUpSearchHistoryOk(data) {
-  console.log(`syncUpSearchHistoryOk: ${JSON.stringify(data)}`);
+  LoggerManager.log(`syncUpSearchHistoryOk: ${JSON.stringify(data)}`);
   return {
     type: STATE_SYNCUP_SHOW_HISTORY,
     actionData: data
@@ -75,7 +76,7 @@ function syncUpSearchHistoryOk(data) {
 }
 
 function syncUpSearchHistoryFailed(err) {
-  console.log(`STATE_SYNCUP_SEARCH_FAILED: ${err}`);
+  LoggerManager.log(`STATE_SYNCUP_SEARCH_FAILED: ${err}`);
   return {
     type: STATE_SYNCUP_SEARCH_FAILED,
     actionData: { errorMessage: err }
@@ -83,14 +84,14 @@ function syncUpSearchHistoryFailed(err) {
 }
 
 function sendingRequest() {
-  console.log('sendingRequest');
+  LoggerManager.log('sendingRequest');
   return {
     type: STATE_SYNCUP_LOADING_HISTORY
   };
 }
 
 function syncUpInProgress() {
-  console.log('sendingRequest');
+  LoggerManager.log('sendingRequest');
   return {
     type: STATE_SYNCUP_IN_PROCESS
   };

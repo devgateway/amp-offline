@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import translate from '../../utils/translate';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class Tab extends Component {
 
@@ -11,11 +12,11 @@ export default class Tab extends Component {
 
   constructor() {
     super();
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     return (
       <li onClick={this.props.handleClick} className={this.props.isActive ? 'active' : null}>
         <a>{translate(this.props.tabData.name)}</a>

@@ -1,5 +1,6 @@
 import { STATE_LOGIN_OK, STATE_LOGOUT } from '../actions/LoginAction';
 import { STATE_SELECT_WORKSPACE } from '../actions/WorkspaceAction';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const STATE_USER_CLEAR = 'STATE_USER_CLEAR';
 
@@ -15,7 +16,7 @@ const defaultState = {
  * @returns {*}
  */
 export default function user(state = defaultState, action: Object) {
-  console.log('UserReducer');
+  LoggerManager.log('UserReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {

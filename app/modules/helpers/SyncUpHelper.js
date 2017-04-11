@@ -1,5 +1,6 @@
 import DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_SYNCUP_LOG } from '../../utils/Constants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  data example:
@@ -23,22 +24,22 @@ import { COLLECTION_SYNCUP_LOG } from '../../utils/Constants';
 const SyncUpHelper = {
 
   findSyncUpByExample(example) {
-    console.log('findSyncUpByExample');
+    LoggerManager.log('findSyncUpByExample');
     return DatabaseManager.findOne(example, COLLECTION_SYNCUP_LOG);
   },
 
   findAllSyncUpByExample(example) {
-    console.log('findSyncUpByExample');
+    LoggerManager.log('findSyncUpByExample');
     return DatabaseManager.findAll(example, COLLECTION_SYNCUP_LOG);
   },
 
   saveOrUpdateSyncUp(syncupData) {
-    console.log('saveOrUpdateSyncUp');
+    LoggerManager.log('saveOrUpdateSyncUp');
     return DatabaseManager.saveOrUpdate(syncupData.id, syncupData, COLLECTION_SYNCUP_LOG, {});
   },
 
   saveOrUpdateSyncUpCollection(syncupData) {
-    console.log('saveOrUpdateSyncUpCollection');
+    LoggerManager.log('saveOrUpdateSyncUpCollection');
     return DatabaseManager.saveOrUpdateCollection(syncupData, COLLECTION_SYNCUP_LOG);
   }
 };

@@ -5,6 +5,7 @@ import { ACTIVITY_EXPORT_URL } from '../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import { FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT } from '../../utils/Constants';
 import store from '../../index';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 /**
@@ -37,7 +38,7 @@ export default class ActivitiesPullFromAMPManager {
    * @return {Promise}
    */
   pullActivitiesFromAMP(saved, removed) {
-    console.log('pullActivitiesFromAMP');
+    LoggerManager.log('pullActivitiesFromAMP');
     return Promise.all([this._removeActivities(removed),
       this._getLatestActivities(saved)]);
   }
@@ -91,10 +92,10 @@ export default class ActivitiesPullFromAMPManager {
   }
 
   _onPullError(activity, error) {
-    console.log('_onPullError');
+    LoggerManager.log('_onPullError');
     // TODO the un-synced activity should be remembered and re-synced on next attempt AMPOFFLINE-256
     if (error) {
-      console.error(error);
+      LoggerManager.error(error);
     }
     return Promise.resolve();
   }

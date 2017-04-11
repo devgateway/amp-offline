@@ -1,4 +1,5 @@
 import { STATE_PARAMETERS_LOADING, STATE_PARAMETERS_LOADED, STATE_PARAMETERS_FAILED } from '../actions/StartUpAction';
+import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
   connectionInformation: undefined,
@@ -6,7 +7,7 @@ const defaultState = {
 };
 
 export default function startUp(state = defaultState, action: Object) {
-  console.log('startUpReducer');
+  LoggerManager.log('startUpReducer');
 
   switch (action.type) {
     case STATE_PARAMETERS_LOADED:

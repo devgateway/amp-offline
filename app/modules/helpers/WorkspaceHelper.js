@@ -1,6 +1,7 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as TeamMemberHelper from './TeamMemberHelper';
 import { COLLECTION_WORKPACES } from '../../utils/Constants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  * A simplified helper for "workspaces" storage for loading, searching / filtering and saving workspaces.
@@ -14,7 +15,7 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   findById(id) {
-    console.log('findById');
+    LoggerManager.log('findById');
     const filter = { id };
     return this.findWorkspace(filter);
   },
@@ -25,7 +26,7 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   findByName(name) {
-    console.log('findByName');
+    LoggerManager.log('findByName');
     const filter = { name };
     return this.findWorkspace(filter);
   },
@@ -36,7 +37,7 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   findAllByUserId(userId) {
-    console.log('findAllByUserId');
+    LoggerManager.log('findAllByUserId');
     return TeamMemberHelper.findWorkspaceIdsByUserId(userId).then((workspacesIds) => {
       const filter = { id: { $in: workspacesIds } };
       return this.findAll(filter);
@@ -44,7 +45,7 @@ const WorkspaceHelper = {
   },
 
   findAll(filter, projections) {
-    console.log('findAll');
+    LoggerManager.log('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_WORKPACES, projections);
   },
 
@@ -55,7 +56,7 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   findWorkspace(filter, projections) {
-    console.log('findWorkspace');
+    LoggerManager.log('findWorkspace');
     return DatabaseManager.findOne(filter, COLLECTION_WORKPACES, projections);
   },
 
@@ -65,7 +66,7 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   saveOrUpdateWorkspace(workspace) {
-    console.log('saveOrUpdateWorkspace');
+    LoggerManager.log('saveOrUpdateWorkspace');
     return DatabaseManager.saveOrUpdate(workspace.id, workspace, COLLECTION_WORKPACES);
   },
 
@@ -75,7 +76,7 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   deleteById(id) {
-    console.log('deleteById');
+    LoggerManager.log('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_WORKPACES);
   },
 
@@ -85,7 +86,7 @@ const WorkspaceHelper = {
    * @returns {Promise}
    */
   replaceWorkspaces(workspaces) {
-    console.log('replaceWorkspaces');
+    LoggerManager.log('replaceWorkspaces');
     return DatabaseManager.replaceCollection(workspaces, COLLECTION_WORKPACES);
   },
 
@@ -96,7 +97,7 @@ const WorkspaceHelper = {
    * @see replaceWorkspaces
    */
   saveOrUpdateWorkspaces(workspaces) {
-    console.log('saveOrUpdateWorkspaces');
+    LoggerManager.log('saveOrUpdateWorkspaces');
     return DatabaseManager.saveOrUpdateCollection(workspaces, COLLECTION_WORKPACES);
   }
 

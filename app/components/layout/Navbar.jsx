@@ -6,6 +6,7 @@ import style from './Navbar.css';
 import TopMenu from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -21,7 +22,7 @@ export default class Navbar extends Component {
   };
 
   extractLoggedUser(prepend) {
-    console.log('extractLoggedUser');
+    LoggerManager.log('extractLoggedUser');
     if (this.props.user instanceof Object && this.props.user.userData instanceof Object) {
       return prepend + this.props.user.userData.email;
     }
@@ -29,7 +30,7 @@ export default class Navbar extends Component {
   }
 
   extractWorkSpace(prepend) {
-    console.log('extractWorkSpace');
+    LoggerManager.log('extractWorkSpace');
     if (this.props.workspace && this.props.workspace.currentWorkspace) {
       return prepend + this.props.workspace.currentWorkspace.name;
     }
@@ -37,7 +38,7 @@ export default class Navbar extends Component {
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     return (
       <div className={style.container}>
         <div className={style.navbar}>

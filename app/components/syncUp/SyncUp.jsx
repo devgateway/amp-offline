@@ -5,6 +5,7 @@ import ErrorMessage from '../common/ErrorMessage';
 import WarnMessage from '../common/WarnMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class SyncUp extends Component {
 
@@ -17,38 +18,38 @@ export default class SyncUp extends Component {
 
   constructor() {
     super();
-    console.log('constructor');
+    LoggerManager.log('constructor');
 
     this.selectContentElementToDraw.bind(this);
   }
 
   componentWillMount() {
-    console.log('componentWillMount');
+    LoggerManager.log('componentWillMount');
     // To avoid the 'no-did-mount-set-state' eslint error.
     this.setState({ firstLoadSyncUp: false });
     this.setState({ loadingSyncHistory: this.props.syncUp.loadingSyncHistory });
   }
 
   componentDidMount() {
-    console.log('componentDidMount');
+    LoggerManager.log('componentDidMount');
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps');
+    LoggerManager.log('componentWillReceiveProps');
     if (this.props.syncUp.loadingSyncHistory !== nextProps.syncUp.loadingSyncHistory) {
       this.setState({ loadingSyncHistory: this.props.syncUp.loadingSyncHistory });
     }
   }
 
   routerWillLeave() {
-    console.log('routerWillLeave');
+    LoggerManager.log('routerWillLeave');
     // FFR: https://github.com/ReactTraining/react-router/blob/v3/docs/guides/ConfirmingNavigation.md
     return !this.props.syncUp.forceSyncUp;
   }
 
   selectContentElementToDraw(historyData) {
-    console.log('selectContentElementToDraw');
+    LoggerManager.log('selectContentElementToDraw');
     if (this.props.syncUp.loadingSyncHistory === true || this.props.syncUp.syncUpInProgress === true) {
       return <Loading/>;
     } else {
@@ -81,8 +82,7 @@ export default class SyncUp extends Component {
   }
 
   render() {
-    console.log('render');
-    console.log(this.props);
+    LoggerManager.log('render');
     const { startSyncUp } = this.props;
     const { historyData } = this.props.syncUp;
     return (

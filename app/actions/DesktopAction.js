@@ -1,13 +1,14 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
 import DesktopManager from '../modules/projects/DesktopManager';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const STATE_DESKTOP_LOADING = 'STATE_DESKTOP_LOADING';
 export const STATE_DESKTOP_LOADED = 'STATE_DESKTOP_LOADED';
 export const STATE_DESKTOP_ERROR = 'STATE_DESKTOP_ERROR';
 
 export function loadDesktop(teamId, teamMemberId) {
-  console.log('loadDesktop');
+  LoggerManager.log('loadDesktop');
   return (dispatch, ownProps) => {
     if (ownProps().desktop.isLoadingDesktop === false) {
       dispatch(sendingRequest());
@@ -37,7 +38,7 @@ function errorLoadDesktop(error) {
 }
 
 function sendingRequest() {
-  console.log('sendingRequestLoadingDesktop');
+  LoggerManager.log('sendingRequestLoadingDesktop');
   return {
     type: STATE_DESKTOP_LOADING
   };

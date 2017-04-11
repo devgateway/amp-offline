@@ -15,14 +15,15 @@ import auth from './modules/security/Auth';
 import { ampStartUp } from './actions/StartUpAction';
 import { loadAllLanguages } from './actions/TranslationAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
+import LoggerManager from './modules/util/LoggerManager';
 
-console.log('index');
+LoggerManager.log('index');
 const store = configureStore();
 const history = syncHistoryWithStore(hashHistory, store);
 export default store;
 
 function checkAuth(nextState, replaceState) {
-  console.log('checkAuth');
+  LoggerManager.log('checkAuth');
   if (!auth.loggedIn()) {
     replaceState({ nextPathname: nextState.location.pathname }, '/');
   }
@@ -48,5 +49,5 @@ initializeI18Next().then(() => {
       </Provider>,
       document.getElementById('root')
     )
-  ).catch(console.error);
-}).catch(console.error);
+  ).catch((err) => (LoggerManager.error(err)));
+}).catch((err) => (LoggerManager.error(err)));

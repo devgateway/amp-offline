@@ -9,6 +9,7 @@ import translate from '../../utils/translate';
 import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../utils/constants/ErrorConstants';
 import { ACTIVITY_IMPORT_URL } from '../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 /**
@@ -38,7 +39,7 @@ export default class ActivitiesPushToAMPManager {
    * @return {Promise}
    */
   pushActivitiesToAMP(saved, removed) {
-    console.log('syncUpActivities');
+    LoggerManager.log('syncUpActivities');
     return new Promise((resolve, reject) => {
       // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
       if (store.getState().user.userData.ampOfflinePassword) {
@@ -73,7 +74,7 @@ export default class ActivitiesPushToAMPManager {
   }
 
   _pushSteps(steps) {
-    console.log('_pushSteps');
+    LoggerManager.log('_pushSteps');
     return steps.reduce((currentPromise, promiseFactory) => currentPromise.then(promiseFactory), Promise.resolve());
   }
 
@@ -83,7 +84,7 @@ export default class ActivitiesPushToAMPManager {
    * @return {Promise}
    */
   _getValidUsers() {
-    console.log('_getValidUsers');
+    LoggerManager.log('_getValidUsers');
     const filter = { $and: [{ 'is-banned': { $ne: true } }, { 'is-active': { $ne: true } }] };
     const projections = { id: 1 };
     return UserHelper.findAllUsersByExample(filter, projections);
@@ -101,7 +102,7 @@ export default class ActivitiesPushToAMPManager {
    * @returns {Promise}
    */
   _getActivitiesToPush(workspaceMembers) {
-    console.log('_getActivitiesToPush');
+    LoggerManager.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
     return ActivityHelper.findAllNonRejectedModifiedOnClient(modifiedBySpecificWSMembers);
@@ -114,7 +115,7 @@ export default class ActivitiesPushToAMPManager {
    * @return {Promise}
    */
   _pushActivities(activities) {
-    console.log('_pushActivities');
+    LoggerManager.log('_pushActivities');
     // executing push one by one for now and sequentially to avoid AMP / client overload
     return new Promise((resolve, reject) => {
       if (!activities) {
@@ -132,7 +133,7 @@ export default class ActivitiesPushToAMPManager {
   }
 
   _pushActivity(activity) {
-    console.log('_pushActivity');
+    LoggerManager.log('_pushActivity');
     // TODO remove once invalid fields are ignored by AMP
     activity = Object.assign({}, activity);
     delete activity[AC.CLIENT_CHANGE_ID];
@@ -157,7 +158,7 @@ export default class ActivitiesPushToAMPManager {
    * @private
    */
   _processPushResult({ activity, pushResult, error }) {
-    console.log('_processPushResult');
+    LoggerManager.log('_processPushResult');
     // save the rejection immediately to allow a quicker syncup cancellation
     const errorData = error || (pushResult ? pushResult.error : undefined);
     if (errorData) {
@@ -172,7 +173,7 @@ export default class ActivitiesPushToAMPManager {
   }
 
   _getRejectedId(activity) {
-    console.log('_getRejectedId');
+    LoggerManager.log('_getRejectedId');
     // check if it was already rejected before and increment the maximum rejectedId
     const ampId = activity[AC.AMP_ID];
     const projectTile = activity[AC.PROJECT_TITLE];
@@ -201,7 +202,7 @@ export default class ActivitiesPushToAMPManager {
   }
 
   _saveRejectedActivity(activity, rejectedId, error) {
-    console.log('_saveRejectActivity');
+    LoggerManager.log('_saveRejectActivity');
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;
     rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;

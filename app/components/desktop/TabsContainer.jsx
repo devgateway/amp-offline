@@ -4,6 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import style from './TabsContainer.css';
 import Tab from './Tab';
 import TabContent from './TabContent';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class TabsContainer extends Component {
 
@@ -13,7 +14,7 @@ export default class TabsContainer extends Component {
 
   constructor() {
     super();
-    console.log('constructor');
+    LoggerManager.log('constructor');
     this.state = { activeTab: 0 };
   }
 
@@ -22,7 +23,7 @@ export default class TabsContainer extends Component {
   }
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
     return (
       <div className={style.container}>
         <ul className="nav nav-tabs">

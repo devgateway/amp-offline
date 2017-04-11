@@ -4,15 +4,16 @@ import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
 import store from '../index';
+import LoggerManager from '../modules/util/LoggerManager';
 
 class MenuUtils {
 
   constructor() {
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   buildMenu(loggedIn, menu, onClickHandler, workspaceList, menuOnClickHandler, languageList) {
-    console.log('buildMenu');
+    LoggerManager.log('buildMenu');
     const firstLevelEntries = [];
     const newMenu = Object.assign({}, menu);
 
@@ -61,7 +62,7 @@ class MenuUtils {
 }
 
 export function handleClick(info) {
-  console.log('handleClick');
+  LoggerManager.log('handleClick');
   if (info.item.props.route) { // if it doesn't have a route, we invoke a ClickHandler
     UrlUtils.forwardTo(info.item.props.route);
   } else if (info.item.props.onItemClickHandler) {
@@ -72,7 +73,7 @@ export function handleClick(info) {
 }
 
 function generateTree(object, key, level, node, loggedIn, menuOnClickHandler) {
-  // console.log('generateTree');
+  // LoggerManager.log('generateTree');
   const newNode = Object.assign({}, node);
   if (object.nodes) {
     newNode[level] = [];
@@ -108,7 +109,7 @@ function _getTitle(object, key) {
 
 // Export function so we can access it from outside (ie: from MenuUtil.spec.js).
 export function toShow(isPublic, loggedIn) {
-  // console.log('toShow');
+  // LoggerManager.log('toShow');
   /* Truth table:
    * true, true --> true
    * true, false --> true

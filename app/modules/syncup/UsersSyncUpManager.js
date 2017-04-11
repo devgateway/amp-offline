@@ -1,6 +1,7 @@
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import UserHelper from '../helpers/UserHelper';
 import { USER_PROFILE_URL } from '../connectivity/AmpApiConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
  * Sync detailed data about the users we currently have in the local db.
@@ -8,7 +9,7 @@ import { USER_PROFILE_URL } from '../connectivity/AmpApiConstants';
  * @returns {Promise}
  */
 export default function syncUpUsers() {
-  console.log('syncUpUsers');
+  LoggerManager.log('syncUpUsers');
   return new Promise((resolve, reject) =>
     UserHelper.findAllUsersByExample({}).then((dbUsers) => {
       if (dbUsers) {

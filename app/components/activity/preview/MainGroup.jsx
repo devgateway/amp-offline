@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './ActivityPreview.css';
 import IdentificationSection from './IdentificationSection';
 import InternalIdsSection from './InternalIdsSection';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
  * Main content
@@ -11,7 +12,7 @@ export default class MainGroup extends Component {
 
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   render() {

@@ -3,6 +3,7 @@ import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 const possibleValuesSchema = {
   id: '/PossibleValues',
@@ -49,7 +50,7 @@ const PossibleValuesHelper = {
    * @returns {Promise}
    */
   findById(id) {
-    console.log('findById');
+    LoggerManager.log('findById');
     const filter = { id };
     return this.findOne(filter);
   },
@@ -59,7 +60,7 @@ const PossibleValuesHelper = {
   },
 
   findAll(filter, projections) {
-    console.log('findById');
+    LoggerManager.log('findById');
     return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections);
   },
 
@@ -68,7 +69,7 @@ const PossibleValuesHelper = {
    * @param fieldValues structure that holds id (that is field path) and field-options
    */
   saveOrUpdate(fieldValues) {
-    console.log('saveOrUpdate');
+    LoggerManager.log('saveOrUpdate');
     const validationResult = this._validate(fieldValues);
     if (validationResult.valid) {
       return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, COLLECTION_POSSIBLE_VALUES);
@@ -82,7 +83,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   saveOrUpdateCollection(fieldValuesCollection) {
-    console.log('saveOrUpdateCollection');
+    LoggerManager.log('saveOrUpdateCollection');
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
       return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
@@ -96,7 +97,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   replaceAll(fieldValuesCollection) {
-    console.log('replaceAll');
+    LoggerManager.log('replaceAll');
     // if we are replacing existing collection, then let's just reject the new set if some of its data is invalid
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
@@ -131,7 +132,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   deleteById(id) {
-    console.log('replaceAll');
+    LoggerManager.log('replaceAll');
     return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
   },
 
@@ -163,7 +164,7 @@ const PossibleValuesHelper = {
 
   _getInvalidFormatError(errors) {
     const errorMessage = JSON.stringify(errors).substring(0, 120);
-    console.error(errorMessage);
+    LoggerManager.error(errorMessage);
     return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
   }
 };

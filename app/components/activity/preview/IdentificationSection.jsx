@@ -2,6 +2,7 @@ import React from 'react';
 import Section from './Section';
 import InternalIdsFromIdentificationSection from './InternalIdsFromIdentificationSection';
 import * as AC from '../../../utils/constants/ActivityConstants';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
  * Identification section
@@ -11,7 +12,7 @@ export default class IdentificationSection extends Section {
 
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
     this._sectionName = 'Identification';
   }
 

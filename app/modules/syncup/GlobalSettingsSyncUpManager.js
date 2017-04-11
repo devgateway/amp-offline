@@ -3,6 +3,7 @@ import GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
 import {
   GLOBAL_SETTINGS_URL
 } from '../connectivity/AmpApiConstants';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 const GlobalSettingsSyncUpManager = {
 
@@ -12,7 +13,7 @@ const GlobalSettingsSyncUpManager = {
    * @returns {Promise}
    */
   syncUpGlobalSettings() {
-    console.log('syncUpGlobalSettings');
+    LoggerManager.log('syncUpGlobalSettings');
     return new Promise((resolve, reject) => (
       ConnectionHelper.doGet({ url: GLOBAL_SETTINGS_URL }).then(
         (data) => GlobalSettingsHelper.saveGlobalSettings(data).then(resolve).catch(reject)

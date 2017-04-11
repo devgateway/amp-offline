@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Navbar from './Navbar';
 import styles from './App.css';
-import Footer from './Footer';
+import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class App extends Component {
 
@@ -21,7 +21,7 @@ export default class App extends Component {
   };
 
   render() {
-    console.log('render');
+    LoggerManager.log('render');
 
     return (
       <div className={styles.container}>
