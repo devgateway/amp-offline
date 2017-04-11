@@ -26,6 +26,19 @@ const defaultI18NextConfig = {
         backend: {
           loadPath: './lang/{{ns}}.{{lng}}.json'
         }
+      },
+      test: {
+        lng: 'en',
+        lngs: ['en'],
+        fallbackLng: 'en',
+        ns: [
+          'translations'
+        ],
+        defaultNS: 'translations',
+        fallbackNS: 'common',
+        backend: {
+          loadPath: './lang/{{ns}}.{{lng}}.json'
+        }
       }
     }
   }

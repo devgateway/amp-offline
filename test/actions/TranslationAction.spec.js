@@ -1,21 +1,24 @@
 /* eslint-disable no-unused-expressions */
 import { expect } from 'chai';
-import { spy } from 'sinon';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import { setLanguage, STATE_CHANGE_LANGUAGE } from '../../app/actions/TranslationAction';
 import * as constants from '../Constants';
 
-describe('@@ TranslationAction @@', (/* done */) => {
+const middlewares = [thunk];
+const mockStore = configureMockStore(middlewares);
+
+describe('@@ TranslationAction @@', () => {
   it('should set language to english -> func setLanguage', () => {
-    const fn = setLanguage(constants.TEST_LANG_EN);
-    expect(fn).to.be.a('function');
-    const dispatch = spy();
-    fn(dispatch);
-    /* setTimeout(() => {
-      expect(dispatch.calledWith({
-        type: STATE_CHANGE_LANGUAGE,
-        actionData: constants.TEST_LANG_EN
-      })).to.be.true;
-      done();
-    }, 5); */
+    const state = [{ translation: { lang: '' } }];
+    const store = mockStore(state);
+
+    return store.dispatch(setLanguage(constants.TEST_LANG_EN))
+      .then(() => (
+        expect(store.getActions()).to.be.deep.equal([{
+          type: STATE_CHANGE_LANGUAGE,
+          actionData: constants.TEST_LANG_EN
+        }])
+      ));
   });
 });

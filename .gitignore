@@ -44,3 +44,4 @@ main.js.map
 .idea/
 app/locales/translations.??.json
 lang/*
+app/lang/master-translations.en.json
