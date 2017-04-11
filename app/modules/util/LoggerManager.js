@@ -2,20 +2,22 @@ import log from 'electron-log';
 import stacktrace from 'stack-trace';
 import fs from 'fs';
 import { LOG_FILE_NAME, LOG_DIR, LOG_FILE_EXTENSION } from '../../utils/Constants';
+import LoggerSettings from '../../utils/LoggerSettings';
 
 const LoggerManager = {
 
   initialize() {
     console.log('initialize');
-    log.transports.console.level = 'info';
-    log.transports.console.format = '{h}:{i}:{s}:{ms} {level} {text}';
+    const defaultConfig = LoggerSettings.getDefaultConfig(process.env.NODE_ENV);
+    log.transports.console.level = defaultConfig.level;
+    log.transports.console.format = defaultConfig.format;
 
     // Create directory.
     if (!fs.existsSync(LOG_DIR)) {
       fs.mkdirSync(LOG_DIR);
     }
     const date = new Date();
-    const file = `${LOG_DIR}/${LOG_FILE_NAME}.${date.getTime()}.${LOG_FILE_EXTENSION}`;
+    const file = `${LOG_DIR}/${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
     log.transports.file.level = 'info';
     log.transports.file.format = '{h}:{i}:{s}:{ms} {level} {text}';
     /* Set approximate maximum log size in bytes. When it exceeds,
