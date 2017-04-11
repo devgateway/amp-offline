@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha';
 import * as actions from '../../app/modules/helpers/WSSettingsHelper';
+import { removeIdFromCollection } from '../../app/utils/Utils';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -45,11 +46,20 @@ describe('@@ WSSettingsHelper @@', () => {
     )
   );
 
-  describe('saveOrUpdateWSSettingsCollection', () =>
+/*  describe('saveOrUpdateWSSettingsCollection', () =>
     it('should save entire collection', () =>
       expect(actions.saveOrUpdateWSSettingsCollection(wsSettingsCollection))
         .to.eventually.have.lengthOf(wsSettingsCollection.length)
     )
+  );
+*/
+  describe('saveOrUpdateWSSettingsCollection', () =>
+    it('should save entire collection', (done) => {
+      actions.saveOrUpdateWSSettingsCollection(wsSettingsCollection).then((resultWsSettingsCollection) => {
+        expect(removeIdFromCollection(resultWsSettingsCollection)).to.eql(wsSettingsCollection);
+        return done();
+      }).catch(error => done(error));
+    })
   );
 
   describe('findByWorkspaceId', () =>

@@ -6,6 +6,7 @@ import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
  * Section Group for a set of components
+ * @author Nadejda Mandrescu
  */
 export default class SectionGroup extends Component {
   static propTypes = {
@@ -16,6 +17,7 @@ export default class SectionGroup extends Component {
   static instance(trnLabel, children) {
     return <SectionGroup key={trnLabel} title={translate(trnLabel)}>{children}</SectionGroup>;
   }
+
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');

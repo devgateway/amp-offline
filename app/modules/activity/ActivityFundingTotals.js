@@ -4,40 +4,80 @@
  */
 export default class ActivityFundingTotals {
   constructor(activity, activityFieldsManager) {
+    this._activity = activity;
     this._activityFieldsManager = activityFieldsManager;
     // caches a structure of totals by adj and then trn type for specified filter (that can be empty for global totals)
     this._filteredTotals = {};
   }
 
+  getComputedTotals(measureName, filter) {
+    return this._getTotals(filter, [measureName]);
+  }
+
   getTotals(adjType, trnType, filter) {
-    let value = this._getTotalFromCacheOrInitCache(adjType, trnType, filter);
+    return this._getTotals(filter, [adjType, trnType]);
+  }
+
+  _getTotals(filter, path) {
+    let value = this._getTotalFromCacheOrInitCache(this._filteredTotals, filter, path, 0);
     if (value === undefined) {
-      value = this._buildTotalAndCacheIt(adjType, trnType, filter);
+      value = this._buildTotalAndCacheIt(filter, path);
     }
     return value;
   }
 
-  _getTotalFromCacheOrInitCache(adjType, trnType, filter) {
-    let cached = this._filteredTotals[adjType];
-    if (cached) {
-      cached = cached[trnType];
-      if (cached) {
-        cached = cached[filter];
-      } else {
-        this._filteredTotals[adjType][trnType] = {};
-      }
-    } else {
-      this._filteredTotals[adjType] = { };
-      this._filteredTotals[adjType][trnType] = {};
+  _getTotalFromCacheOrInitCache(cached, filter, path, index) {
+    const part = path[index];
+    let existing = cached[part];
+    if (!existing) {
+      existing = {};
+      cached[part] = existing;
     }
-    return cached;
+    if (path.length === index + 1) {
+      return existing[filter];
+    }
+    return this._getTotalFromCacheOrInitCache(existing, filter, path, index + 1);
   }
 
-  _buildTotalAndCacheIt(adjType, trnType, filter) {
-    const cache = this._filteredTotals[adjType][trnType];
-    // TODO calculate once currency conversion support is available
-    const value = '0 USD';
+  _buildTotalAndCacheIt(filter, path) {
+    let cache = this._filteredTotals;
+    path.forEach(part => { cache = cache[part]; });
+    let value = 0;
+    if (path.length === 2) {
+      value = this._buildStandardMeasureTotal(filter, path[0], path[1]);
+    }
+    // TODO use workspace currency once its support is available
+    // TODO apply number format
+    value = value.toLocaleString('en-EN', { currency: 'USD', currencyDisplay: 'code' });
     cache[filter] = value;
     return value;
+  }
+
+  /**
+   * Builds donor funding totoals
+   * @param filter
+   * @param adjType
+   * @param trnType
+   * @return {number}
+   * @private
+   */
+  _buildStandardMeasureTotal(filter, adjType, trnType) {
+    // TODO apply filter as well
+    const fundingDetails = [];
+    if (this._activity.fundings) {
+      this._activity.fundings.forEach(funding => {
+        if (funding.funding_details) {
+          funding.funding_details.forEach(fd => {
+            if (fd.adjustment_type.value === adjType && fd.transaction_type.value === trnType) {
+              fundingDetails.push(fd);
+            }
+          });
+        }
+      });
+    }
+    let total = 0;
+    // TODO apply currency conversion once its support is available
+    fundingDetails.forEach(fd => { total += fd.transaction_amount; });
+    return total;
   }
 }

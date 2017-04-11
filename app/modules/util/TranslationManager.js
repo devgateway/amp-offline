@@ -11,7 +11,7 @@ import {
 } from '../../utils/Constants';
 import TranslationSyncUpManager from '../syncup/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorConstants';
+import { NOTIFICATION_ORIGIN_I18NEXT } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';
 import LoggerManager from '../../modules/util/LoggerManager';
 
@@ -84,7 +84,7 @@ const TranslationManager = {
       }
       return i18next.use(Backend).init(i18nOptions, (err) => {
         if (err) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }));
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_I18NEXT }));
         } else {
           resolve();
         }
@@ -97,7 +97,7 @@ const TranslationManager = {
     return new Promise((resolve, reject) => {
       i18next.changeLanguage(lang, (err) => {
         if (err) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }));
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_I18NEXT }));
         } else {
           resolve(lang);
         }

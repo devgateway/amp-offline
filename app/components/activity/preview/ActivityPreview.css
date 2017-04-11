@@ -18,6 +18,18 @@
     display: block;
 }
 
+.preview_content {
+    vertical-align: top;
+}
+
+.preview_summary {
+    width: 215px;
+}
+
+.preview_main_data {
+    width: 1100px;
+}
+
 .section_title {
     background-color: #4A687A;
     color: #FFFFFF;

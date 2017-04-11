@@ -19,7 +19,13 @@ export const PLANNED = 'Planned';
 export const COMMITMENTS = 'Commitments';
 export const DISBURSEMENTS = 'Disbursements';
 export const EXPENDITURES = 'Expenditures';
-// export const UNALLOCATED_DISBURSEMENTS ='Unallocated Disbursements';
+export const ACTUAL_COMMITMENTS = 'Actual Commitments';
+export const ACTUAL_DISBURSEMENTS = 'Actual Disbursements';
+export const ACTUAL_EXPENDITURES = 'Actual Expenditures';
+export const PLANNED_COMMITMENTS = 'Planned Commitments';
+export const PLANNED_DISBURSEMENTS = 'Planned Disbursements';
+export const PLANNED_EXPENDITURES = 'Planned Expenditures';
+export const UNALLOCATED_DISBURSEMENTS = 'Unallocated Disbursements';
 
 export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
 export const TRANSACTION_TYPES = [COMMITMENTS, DISBURSEMENTS, EXPENDITURES];
