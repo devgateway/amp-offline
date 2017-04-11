@@ -86,5 +86,6 @@
   "No": "No",
   "Identification": "Identification",
   "Organizations and Project IDs": "Organizations and Project IDs",
-  "Agency Internal IDs": "Agency Internal IDs"
+  "Agency Internal IDs": "Agency Internal IDs",
+  "MoreThanOneRecord":"You cannot save more than one record with this method"
 }
