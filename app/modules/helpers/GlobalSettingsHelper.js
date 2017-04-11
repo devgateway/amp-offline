@@ -1,15 +1,15 @@
 import DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_GLOBAL_SETTINGS } from '../../utils/Constants';
+import { NOTIFICATION_ORIGIN_WRONG_METHOD_USAGE } from '../../utils/constants/ErrorConstants';
+
 import { stringToId } from '../../utils/Utils';
 
 const GlobalSettingsHelper = {
 
   saveGlobalSetting(setting) {
-    console.log('*****saveGlobalSetting*******');
-    // Not throwing a notification error since its the callers responsibility to react to a error in code, using this
-    // method with more than one key is either an error in code or in the database
+    console.log('saveGlobalSetting');
     if (Object.keys(setting).length > 1) {
-      throw new Error('Item should not have more than one key');
+      throw new Notification({ message: 'MoreThanOneRecord', origin: NOTIFICATION_ORIGIN_WRONG_METHOD_USAGE });
     }
     let teamMember;
     Object.keys(setting).forEach((key) => {
