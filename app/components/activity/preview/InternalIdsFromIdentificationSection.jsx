@@ -1,6 +1,7 @@
 import React from 'react';
 import InternalIdsSection from './InternalIdsSection';
 import translate from '../../../utils/translate';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
  * Internal Ids from Identification section
@@ -9,7 +10,7 @@ import translate from '../../../utils/translate';
 export default class InternalIdsFromIdentificationSection extends InternalIdsSection {
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
   }
 
   render() {

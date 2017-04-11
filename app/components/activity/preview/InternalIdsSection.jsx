@@ -2,6 +2,7 @@ import React from 'react';
 import Section from './Section';
 import { ACTIVITY_INTERNAL_IDS } from '../../../utils/constants/ActivityConstants';
 import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../utils/constants/FieldPathConstants';
+import LoggerManager from '../../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 
@@ -12,7 +13,7 @@ import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../utils/constants
 export default class InternalIdsSection extends Section {
   constructor(props) {
     super(props);
-    console.log('constructor');
+    LoggerManager.log('constructor');
     this._sectionName = 'Agency Internal IDs';
   }
 
