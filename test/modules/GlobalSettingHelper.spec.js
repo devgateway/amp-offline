@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 
 const id1 = stringToId('AMP_GLOBAL_SETTING_12');
 const gs1 = { AMP_GLOBAL_SETTING_12: 'AMP_GLOBAL_SETTING_12' };
-const gs1Output = { key: 'AMP_GLOBAL_SETTING_12', value: 'AMP_GLOBAL_SETTING_12', id: id1 }
+const gs1Output = { key: 'AMP_GLOBAL_SETTING_12', value: 'AMP_GLOBAL_SETTING_12', id: id1 };
 
 const gsArrayInput = [{ AMP_GLOBAL_SETTING_1: 'AMP_GLOBAL_SETTING_1' },
   { AMP_GLOBAL_SETTING_2: 'AMP_GLOBAL_SETTING_2' }];
