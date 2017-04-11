@@ -9,7 +9,7 @@ const GlobalSettingsHelper = {
     // Not throwing a notification error since its the callers responsibility to react to a error in code, using this
     // method with more than one key is either an error in code or in the database
     if (Object.keys(setting).length > 1) {
-      throw Error('Item should not have more than one key');
+      throw new Error('Item should not have more than one key');
     }
     let teamMember;
     Object.keys(setting).forEach((key) => {
