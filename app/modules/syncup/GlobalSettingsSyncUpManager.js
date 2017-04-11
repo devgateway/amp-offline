@@ -16,7 +16,7 @@ const GlobalSettingsSyncUpManager = {
     LoggerManager.log('syncUpGlobalSettings');
     return new Promise((resolve, reject) => (
       ConnectionHelper.doGet({ url: GLOBAL_SETTINGS_URL }).then(
-        (data) => GlobalSettingsHelper.saveGlobalSetting(data).then(resolve).catch(reject)
+        (data) => GlobalSettingsHelper.saveGlobalSettings(data).then(resolve).catch(reject)
       ).catch(reject)
     ));
   }
