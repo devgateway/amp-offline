@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha';
 import UserHelper from '../../app/modules/helpers/UserHelper';
+import { removeIdFromCollection } from '../../app/utils/Utils';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -43,9 +44,12 @@ describe('@@ UserHelper @@', () => {
   );
 
   describe('saveOrUpdateUserCollection', () =>
-    it('should save user collection', () =>
-      expect(UserHelper.saveOrUpdateUserCollection(users)).to.eventually.have.lengthOf(users.length)
-    )
+    it('should save the Workspaces data', (done) => {
+      UserHelper.saveOrUpdateUserCollection(users).then((resultUsers) => {
+        expect(removeIdFromCollection(resultUsers)).to.eql(users);
+        return done();
+      }).catch(error => done(error));
+    })
   );
 
   describe('findByEmail', () =>
