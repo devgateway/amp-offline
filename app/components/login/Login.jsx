@@ -21,9 +21,7 @@ export default class Login extends Component {
 
     this.state = {
       email: 'testuser@amp.org',
-      password: 'password',
-      errorMessage: '',
-      isProcessingLogin: false,
+      password: 'password'
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -40,11 +38,7 @@ export default class Login extends Component {
 
   render() {
     LoggerManager.log('render');
-
     const { loginAction } = this.props;
-    this.state.errorMessage = this.props.login.errorMessage || '';
-    this.state.isProcessingLogin = this.props.login.loginProcessing;
-
     return (
       <div className={styles.centered_form}>
         <table>
@@ -68,12 +62,12 @@ export default class Login extends Component {
           </tbody>
         </table>
         <Button
-          type="button" className={`btn btn-success ${(this.state.isProcessingLogin ? 'disabled' : '')}`}
+          type="button" className={`btn btn-success ${(this.props.login.loginProcessing ? 'disabled' : '')}`}
           onClick={() => {
             loginAction(this.state.email, this.state.password);
           }} text="login" />
         <hr />
-        <ErrorMessage message={this.state.errorMessage} />
+        <ErrorMessage message={this.props.login.errorMessage} />
       </div>
     );
   }

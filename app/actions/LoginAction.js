@@ -14,6 +14,7 @@ export function loginAction(email: string, password: string) {
   LoggerManager.log('loginAction');
   return (dispatch, ownProps) => {
     if (ownProps().login.loginProcessing === false) {
+      dispatch(sendingRequest());
       const isAmpAvailable = (ownProps().ampConnectionStatus.status
       && ownProps().ampConnectionStatus.status.isAmpAvailable);
       return LoginManager.processLogin(email, password, isAmpAvailable).then((data) => {
@@ -34,7 +35,6 @@ export function loginAction(email: string, password: string) {
         dispatch(loginFailed(err));
       });
     }
-    dispatch(sendingRequest());
   };
 }
 
