@@ -11,7 +11,7 @@ import LoggerManager from '../../modules/util/LoggerManager';
 export default class WorkspacePage extends Component {
 
   static propTypes = {
-    workspaceList: PropTypes.array.isRequired,
+    workspaceList: PropTypes.array,
     user: PropTypes.object.isRequired,
     workspace: PropTypes.object.isRequired,
     loadWorkspaces: PropTypes.func.isRequired,
