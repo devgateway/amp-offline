@@ -1,6 +1,5 @@
 /* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
 import styles from './Workspace.css';
 import Loading from '../common/Loading';
 import WorkspaceList from './WorkspaceList';
@@ -24,8 +23,6 @@ export default class WorkspacePage extends Component {
     super();
 
     this.state = {
-      errorMessage: '',
-      isProcessing: false,
       firstLoad: true
     };
 
@@ -34,16 +31,17 @@ export default class WorkspacePage extends Component {
 
   componentDidMount() {
     LoggerManager.log('componentDidMount');
-    this.state.firstLoad = false;
     this.props.loadWorkspaces(this.props.user.userData.id);
+    this.setState({ firstLoad: false });
   }
 
   selectContentElementToDraw() {
-    if (this.state.isProcessing !== false || this.state.firstLoad === true) {
-      return <Loading/>;
+    LoggerManager.log('selectContentElementToDraw');
+    if (this.props.workspace.workspaceLoading !== false || this.state.firstLoad === true) {
+      return <Loading />;
     } else {
-      if (this.state.errorMessage !== '') {
-        return <ErrorMessage message={this.state.errorMessage}/>;
+      if (this.props.workspace.errorMessage && this.props.workspace.errorMessage !== '') {
+        return <ErrorMessage message={this.props.workspace.errorMessage} />;
       } else {
         return this.splitWorkspaceByGroups().map((workspaceList) => (
           this.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
@@ -53,6 +51,7 @@ export default class WorkspacePage extends Component {
   }
 
   splitWorkspaceByGroups() {
+    LoggerManager.log('splitWorkspaceByGroups');
     const workspacesByGroup = [];
     if (this.props.workspace.workspaceList.length > 0) {
       WORKSPACES_GROUPS.forEach((wgValue) => {
@@ -66,27 +65,24 @@ export default class WorkspacePage extends Component {
   }
 
   drawWorkspaceList(workspaceList, selectWorkspace) {
+    LoggerManager.log('drawWorkspaceList');
     if (workspaceList.length > 0) {
       return (<WorkspaceList
         workspaceList={workspaceList}
         workspaceGroup={workspaceList[0]['workspace-group']}
-        onClickHandler={selectWorkspace}/>);
+        onClickHandler={selectWorkspace} />);
     } else {
-      return <br/>
+      return <br />;
     }
   }
 
   render() {
     LoggerManager.log('render');
-    this.state.isProcessing = this.props.workspace.workspaceLoading;
-    this.state.errorMessage = this.props.workspace.errorMessage || '';
-
     return (
       <div className={styles.workspaces_container}>
-        <h2 className={styles.title}><Span text="workspaceTitle"/></h2>
-        <hr/>
+        <h2 className={styles.title}><Span text="workspaceTitle" /></h2>
+        <hr />
         {this.selectContentElementToDraw()}
-        <Link to="syncUp">Sync upd</Link>
       </div>
     );
   }
