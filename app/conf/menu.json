@@ -6,7 +6,7 @@
       "public": false,
       "nodes": {
         "My Desktop": {
-          "route": "/desktop",
+          "route": "/desktop/current",
           "params": null
         },
         "Add Activity": {
