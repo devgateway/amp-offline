@@ -23,21 +23,27 @@ export default class WorkspacePage extends Component {
     super();
 
     this.state = {
-      firstLoad: true
+      showWorkspaces: false
     };
 
     this.selectContentElementToDraw.bind(this);
   }
 
-  componentDidMount() {
-    LoggerManager.log('componentDidMount');
+  componentWillMount() {
+    LoggerManager.log('componentWillMount');
     this.props.loadWorkspaces(this.props.user.userData.id);
-    this.setState({ firstLoad: false });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    LoggerManager.log('componentWillReceiveProps');
+    if (!nextProps.workspace.workspaceLoading && !this.state.showWorkspaces) {
+      this.setState({ showWorkspaces: true });
+    }
   }
 
   selectContentElementToDraw() {
     LoggerManager.log('selectContentElementToDraw');
-    if (this.props.workspace.workspaceLoading !== false || this.state.firstLoad === true) {
+    if (this.props.workspace.workspaceLoading !== false || this.state.showWorkspaces === false) {
       return <Loading />;
     } else {
       if (this.props.workspace.errorMessage && this.props.workspace.errorMessage !== '') {
