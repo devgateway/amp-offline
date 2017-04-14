@@ -42,7 +42,7 @@ const ConnectionHelper = {
     LoggerManager.log('_doMethod ');
     LoggerManager.log(requestConfig.url);
     const self = this;
-    return new Promise((resolve, reject) => (
+    return new Promise((resolve, reject) =>
       request(requestConfig, (error, response, body) => {
         if (error || !(response.statusCode >= 200 && response.statusCode < 400) || body.error) {
           const shouldRetryOnError = ERRORS_TO_RETRY.filter((value) => (
@@ -92,7 +92,7 @@ const ConnectionHelper = {
           resolve(body);
         }
       })
-    ));
+    );
   },
 
   createNotification({ message, origin, errorObject }) {

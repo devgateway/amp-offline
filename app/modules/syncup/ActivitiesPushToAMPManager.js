@@ -163,8 +163,7 @@ export default class ActivitiesPushToAMPManager {
     const errorData = error || (pushResult ? pushResult.error : undefined);
     if (errorData) {
       // TODO the unsynced activity should be remembered and resynced on next attempt AMPOFFLINE-256
-      return new Promise((resolve, reject) => ActivityHelper.removeNonRejectedById(activity.id)
-        .then(() => this._getRejectedId(activity))
+      return new Promise((resolve, reject) => this._getRejectedId(activity)
         .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData))
         .then(resolve)
         .catch(reject));
