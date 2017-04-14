@@ -143,7 +143,7 @@ const PossibleValuesHelper = {
    * @return {{id: *, field-path: (Array|*), possible-options: {}}}
    */
   transformToClientUsage([fieldPath, possibleOptionsFromAMP]) {
-    // TODO do recursive when AMP EP will provide the parent-child relationship by having the fields in a tree
+    // TODO do recursive when AMP EP will provide the parent-child relationship by having the fields in a tree AMP-25619
     const fieldPathParts = !fieldPath ? [] : fieldPath.split('~');
     let possibleOptions = {};
     if (Array.isArray(possibleOptionsFromAMP)) {

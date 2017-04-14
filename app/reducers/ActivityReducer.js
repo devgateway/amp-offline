@@ -5,6 +5,7 @@ import {
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
 import LoggerManager from '../modules/util/LoggerManager';
+import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
 
 const defaultState = {
   isActivityLoading: false,
@@ -32,12 +33,15 @@ const activityReducer = (state = defaultState, action: Object) => {
       };
     case ACTIVITY_LOAD_REJECTED:
       return { ...defaultState, errorMessage: action.payload };
-    case STATE_CHANGE_LANGUAGE:
-      if (state.activityFieldsManager) {
-        // TODO to be handled otherwise to avoid changing state here
-        state.activityFieldsManager.currentLanguageCode = action.actionData;
+    case STATE_CHANGE_LANGUAGE: {
+      let activityFieldsManager = state.activityFieldsManager;
+      if (activityFieldsManager) {
+        // we no longer will use the previous activityFieldsManager, thus shallow clone is acceptable
+        activityFieldsManager = ActivityFieldsManager.clone(activityFieldsManager);
+        activityFieldsManager.currentLanguageCode = action.actionData;
       }
-      return { ...state };
+      return { ...state, activityFieldsManager };
+    }
     default:
       return state;
   }

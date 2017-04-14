@@ -97,7 +97,7 @@ export default class SummaryGroup extends Component {
     additionalInfo.push(SimpleField.instance('computation', isComputedTeam));
     // TODO update dates formatting AMPOFFLINE-129
     additionalInfo.push(SimpleField.instance('activityCreatedOn', this.context.activity[AC.CREATED_ON]));
-    // TODO check if updated on can be displayed by ActivityPreview FM
+    // TODO check if updated on can be displayed by ActivityPreview FM once AMPOFFLINE-309 is done
     if (updatedOn) {
       additionalInfo.push(SimpleField.instance('activityUpdatedOn', updatedOn));
     }

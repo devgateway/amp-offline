@@ -40,8 +40,9 @@ function _loadActivity(activityId, teamMemberId, possibleValuesPaths) {
       FieldsHelper.findByWorkspaceMemberId(teamMemberId),
       PossibleValuesHelper.findAll(pvFilter)
     ])
-      .then(([activity, fieldDefs, possibleOptionsCollection]) => {
-        const activityFieldsManager = new ActivityFieldsManager(fieldDefs.fields, possibleOptionsCollection);
+      .then(([activity, fieldsDef, possibleValuesCollection]) => {
+        fieldsDef = fieldsDef.fields;
+        const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager);
         return WorkspaceHelper.findById(activity[TEAM]).then(activityWorkspace =>
           resolve({ activity, activityWorkspace, activityFieldsManager, activityFundingTotals })
