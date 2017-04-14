@@ -1,0 +1,93 @@
+.form_content {
+    box-sizing: border-box;
+    color: #333;
+    display: block;
+    font-family: Arial;
+    font-size: 14px;
+    line-height: 20px;
+    min-height: 436px;
+    width: 1000px;
+    -webkit-text-size-adjust: 100%;
+}
+
+.form_main_content {
+    width: 768px;
+    vertical-align: top;
+}
+
+.general_header {
+    background-image: url('../../../assets/images/step_head.gif');
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    word-wrap: break-word;
+    word-break: break-all;
+    -webkit-text-size-adjust: 100%;
+}
+
+.section_title {
+    background-color: #4A687A;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: block;
+}
+
+.section_group {
+    background-color: #FFFFFF;
+    border-top: 1px solid #DADAD6;
+    border-left: 1px solid #DADAD6;
+    border-right: 2px solid #C2C1BA;
+    border-bottom: 2px solid #C2C1BA;
+    padding: 10px;
+    margin-top: 15px;
+}
+
+.actions {
+    width: 232px;
+    padding-left: 15px;
+    padding-right: 10px;
+    vertical-align: top;
+    -webkit-text-size-adjust: 100%;
+}
+
+.quick_links_toggle {
+    width: 232px;
+    border: 0px;
+    padding: 0px;
+    text-align: left;
+    -webkit-text-size-adjust: 100%;
+}
+
+.quick_links {
+    background: #fff;
+    border-left: 1px solid #D0D0D0;
+    border-right: 1px solid #D0D0D0;
+    border-bottom: 1px solid #D0D0D0;
+    margin-top: 0px;
+    width: 160px !important;
+    -webkit-text-size-adjust: 100%;
+}
+
+.quick_links_highlight {
+    border-bottom: 1px solid lightgray !important;
+    border-right: 1px solid lightgray !important;
+    color: white;
+}
+
+.required {
+    color: red;
+}
+
+.full_width {
+    width: 100%;
+}
+
+.table td {
+    padding: 5px;
+}

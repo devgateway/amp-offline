@@ -9,6 +9,7 @@ import LoggerManager from '../util/LoggerManager';
 
 /**
  * This is a helper class that replaces id-only objects with the matching full object data.
+ * This class will also provide the reverse dehydration mechanism.
  * Sample unhydrated field:
  * {
  *  "donor_organization": [
@@ -49,7 +50,7 @@ export default class ActivityHydrator {
    * @param fieldPaths
    * @return {Object} the modified activity
    */
-  hydrateActivity(activity, fieldPaths: []) {
+  hydrateActivity(activity, fieldPaths = []) {
     return this.hydrateActivities(...activity, fieldPaths).then(activities => activities[0]);
   }
 
@@ -65,12 +66,24 @@ export default class ActivityHydrator {
         this._hydrateActivitiesWithFullObjects(activities, possibleValuesCollection)).then(resolve).catch(reject));
   }
 
-  _hydrateActivitiesWithFullObjects(activities, possibleValuesCollection) {
-    possibleValuesCollection.forEach(pv => this._hydrateFieldPath(activities, pv, 0, this._fieldsDef.fields));
+  /**
+   * Replaces each related object full data with it's id
+   * @param activity
+   * @param fieldPaths
+   * @return {Promise.<activity>}
+   */
+  dehydrateActivity(activity, fieldPaths = []) {
+    return this._getPossibleValues(fieldPaths).then(possibleValuesCollection =>
+      this._hydrateActivitiesWithFullObjects([activity], possibleValuesCollection, false))
+      .then(activities => activities[0]);
+  }
+
+  _hydrateActivitiesWithFullObjects(activities, possibleValuesCollection, hydrate = true) {
+    possibleValuesCollection.forEach(pv => this._hydrateFieldPath(activities, pv, 0, this._fieldsDef, hydrate));
     return activities;
   }
 
-  _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs) {
+  _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs, hydrate = true) {
     const fieldName = possibleValues['field-path'][pathIndex];
     const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
     if (fieldDef === undefined) {
@@ -88,11 +101,11 @@ export default class ActivityHydrator {
         if (fieldValue !== undefined && fieldValue !== null) {
           if (isList) {
             for (let index = 0; index < fieldValue.length; index++) {
-              const id = fieldValue[index];
-              fieldValue[index] = options[id];
+              const currValue = fieldValue[index];
+              fieldValue[index] = hydrate ? options[currValue] : currValue.id;
             }
           } else {
-            obj[fieldName] = options[fieldValue];
+            obj[fieldName] = hydrate ? options[fieldValue] : fieldValue.id;
           }
         }
       });
@@ -109,7 +122,7 @@ export default class ActivityHydrator {
         }
       });
       if (nextLevelObjects.length > 0) {
-        this._hydrateFieldPath(nextLevelObjects, possibleValues, pathIndex + 1, fieldDef.children);
+        this._hydrateFieldPath(nextLevelObjects, possibleValues, pathIndex + 1, fieldDef.children, hydrate);
       }
     }
   }
@@ -130,7 +143,9 @@ export default class ActivityHydrator {
         const missing = new Map(fieldPaths.map(fieldPath => [fieldPath, 1]));
         possibleValuesCollection.forEach(pv => missing.delete(pv.id));
         // TODO once we have notification system, to flag if some possible values are not found, but not to block usage
-        LoggerManager.error(`Field paths not found: ${missing}`);
+        if (missing.size > 0) {
+          LoggerManager.error(`Field paths not found: ${missing.toJSON()}`);
+        }
       }
       return possibleValuesCollection;
     });
@@ -171,7 +186,7 @@ export default class ActivityHydrator {
         if (fieldsDef === null) {
           throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
         } else {
-          const hydrator = new ActivityHydrator(fieldsDef);
+          const hydrator = new ActivityHydrator(fieldsDef.fields);
           return hydrator.hydrateActivities(activities, fieldPaths).then(resolve).catch(reject);
         }
       }).catch(reject);
