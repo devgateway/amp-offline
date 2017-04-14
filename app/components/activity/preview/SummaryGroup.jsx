@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import styles from './ActivityPreview.css';
-import SectionGroup from './SectionGroup';
-import SimpleField from './SimpleField';
+import SectionGroup from './sections/SectionGroup';
+import APField from './components/APField';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import * as VC from '../../../utils/constants/ValueConstants';
 import * as PC from '../../../utils/constants/FieldPathConstants';
@@ -75,7 +75,7 @@ export default class SummaryGroup extends Component {
       if (value !== undefined) {
         const title = `${totalTrn} ${translate(measure)}`;
         const key = `Summary-Total-${measure}`;
-        fundingInfoSummary.push(<SimpleField key={key} title={title} value={value} />);
+        fundingInfoSummary.push(<APField key={key} title={title} value={value} />);
       }
     });
     return fundingInfoSummary;
@@ -92,16 +92,16 @@ export default class SummaryGroup extends Component {
     const updatedOn = this.context.activity[AC.MODIFIED_ON];
 
     // TODO update once possible values are available for it AMP-25680
-    additionalInfo.push(SimpleField.instance('activityCreatedBy', this.context.activity[AC.CREATED_BY]));
-    additionalInfo.push(SimpleField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
-    additionalInfo.push(SimpleField.instance('computation', isComputedTeam));
+    additionalInfo.push(APField.instance('activityCreatedBy', this.context.activity[AC.CREATED_BY]));
+    additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
+    additionalInfo.push(APField.instance('computation', isComputedTeam));
     // TODO update dates formatting AMPOFFLINE-129
-    additionalInfo.push(SimpleField.instance('activityCreatedOn', this.context.activity[AC.CREATED_ON]));
+    additionalInfo.push(APField.instance('activityCreatedOn', this.context.activity[AC.CREATED_ON]));
     // TODO check if updated on can be displayed by ActivityPreview FM once AMPOFFLINE-309 is done
     if (updatedOn) {
-      additionalInfo.push(SimpleField.instance('activityUpdatedOn', updatedOn));
+      additionalInfo.push(APField.instance('activityUpdatedOn', updatedOn));
     }
-    additionalInfo.push(SimpleField.instance('dataTeamLeader', this._getWorkspaceLeadData()));
+    additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData()));
 
     return SectionGroup.instance('additionalInfo', additionalInfo);
   }

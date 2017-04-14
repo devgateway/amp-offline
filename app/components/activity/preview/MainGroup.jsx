@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './ActivityPreview.css';
-import IdentificationSection from './IdentificationSection';
-import InternalIdsSection from './InternalIdsSection';
+import APIdentification from './sections/APIdentification';
+import APInternalIds from './sections/APInternalIds';
 import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
@@ -17,8 +17,8 @@ export default class MainGroup extends Component {
 
   render() {
     return (<div className={styles.section_group}>
-      <IdentificationSection />
-      <InternalIdsSection />
+      <APIdentification />
+      <APInternalIds />
     </div>);
   }
 }

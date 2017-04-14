@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import SimpleField from './SimpleField';
-import styles from './ActivityPreview.css';
-import translate from '../../../utils/translate';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import APField from '../components/APField';
+import styles from '../ActivityPreview.css';
+import translate from '../../../../utils/translate';
+import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
  * Section Group for a set of components
@@ -11,7 +11,7 @@ import LoggerManager from '../../../modules/util/LoggerManager';
 export default class SectionGroup extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    children: PropTypes.arrayOf(SimpleField).isRequired
+    children: PropTypes.arrayOf(APField).isRequired
   };
 
   static instance(trnLabel, children) {

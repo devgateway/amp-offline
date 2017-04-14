@@ -1,14 +1,14 @@
 import React from 'react';
 import Section from './Section';
-import InternalIdsFromIdentificationSection from './InternalIdsFromIdentificationSection';
-import * as AC from '../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import APInternalIdsFromIdentification from './APInternalIdsFromIdentification';
+import * as AC from '../../../../utils/constants/ActivityConstants';
+import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
  * Identification section
  * @author Nadejda Mandrescu
  */
-export default class IdentificationSection extends Section {
+export default class APIdentification extends Section {
 
   constructor(props) {
     super(props);
@@ -28,7 +28,7 @@ export default class IdentificationSection extends Section {
     const showIfNotAvailable = new Set([AC.PROJECT_TITLE, AC.AMP_ID, AC.ACTIVITY_STATUS]);
     const content = fieldPaths.map(fieldPath => this.buildSimpleField(fieldPath, showIfNotAvailable.has(fieldPath)))
       .filter(data => data !== undefined);
-    content.push(<InternalIdsFromIdentificationSection key="InternalIdsFromIdentificationSection" />);
+    content.push(<APInternalIdsFromIdentification key="InternalIdsFromIdentificationSection" />);
     return content;
   }
 

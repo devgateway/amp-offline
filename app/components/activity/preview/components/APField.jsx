@@ -1,13 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import styles from './ActivityPreview.css';
-import translate from '../../../utils/translate';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import styles from '../ActivityPreview.css';
+import translate from '../../../../utils/translate';
+import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
  * Simple Field component that consists of a field title and field value
  * @author Nadejda Mandrescu
  */
-export default class SimpleField extends Component {
+export default class APField extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     value: PropTypes.any.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -22,7 +22,7 @@ export default class SimpleField extends Component {
    * @return {SimpleField}
    */
   static instance(trnLabel, value) {
-    return <SimpleField key={trnLabel} title={translate(trnLabel)} value={value} />;
+    return <APField key={trnLabel} title={translate(trnLabel)} value={value} />;
   }
 
   constructor(props) {

@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import SimpleField from './SimpleField';
+import APField from '../components/APField';
 import SectionGroup from './SectionGroup';
-import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
-import { RICH_TEXT_FIELDS } from '../../../utils/constants/FieldPathConstants';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import { RICH_TEXT_FIELDS } from '../../../../utils/constants/FieldPathConstants';
 
 /**
  * Generic activity preview section class
@@ -38,7 +38,7 @@ export default class Section extends Component {
       const value = this.context.activityFieldsManager.getValue(this.context.activity, path);
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
-        return <SimpleField key={path} title={title} value={value} useInnerHTML={useInnerHTML} />;
+        return <APField key={path} title={title} value={value} useInnerHTML={useInnerHTML} />;
       }
     }
   }

@@ -1,13 +1,13 @@
 import React from 'react';
-import InternalIdsSection from './InternalIdsSection';
-import translate from '../../../utils/translate';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import APInternalIds from './APInternalIds';
+import translate from '../../../../utils/translate';
+import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
  * Internal Ids from Identification section
  * @author Nadejda Mandrescu
  */
-export default class InternalIdsFromIdentificationSection extends InternalIdsSection {
+export default class APInternalIdsFromIdentification extends APInternalIds {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');

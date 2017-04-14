@@ -1,8 +1,8 @@
 import React from 'react';
 import Section from './Section';
-import { ACTIVITY_INTERNAL_IDS } from '../../../utils/constants/ActivityConstants';
-import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../utils/constants/FieldPathConstants';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import { ACTIVITY_INTERNAL_IDS } from '../../../../utils/constants/ActivityConstants';
+import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
+import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 
@@ -10,7 +10,7 @@ import LoggerManager from '../../../modules/util/LoggerManager';
  * Organizations and project ids section
  * @author Nadejda Mandrescu
  */
-export default class InternalIdsSection extends Section {
+export default class APInternalIds extends Section {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
