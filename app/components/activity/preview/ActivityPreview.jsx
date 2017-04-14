@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { Grid, Row, Col } from 'react-bootstrap';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
@@ -63,23 +64,21 @@ export default class ActivityPreview extends Component {
 
     // TODO a proper styling will come once we get UI Desing from Llanco
     return (
-      <div className={styles.preview_container}>
-        <div className={styles.preview_header}>
-          <span className={styles.preview_title}>{activity[AC.PROJECT_TITLE]}</span>
+      <div className={styles.preview_container} >
+        <div className={styles.preview_header} >
+          <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
         </div>
         <div>
-          <table>
-            <tbody>
-              <tr className={styles.preview_content}>
-                <td className={styles.preview_summary}>
-                  <SummaryGroup />
-                </td>
-                <td className={style.preview_main_data}>
-                  <MainGroup />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <Grid fluid>
+            <Row className={styles.preview_content}>
+              <Col xs={8} md={6} className={styles.preview_summary} >
+                <SummaryGroup />
+              </Col>
+              <Col xs={16} md={8} className={style.preview_main_data} >
+                <MainGroup />
+              </Col>
+            </Row>
+          </Grid>
         </div>
       </div>
     );
