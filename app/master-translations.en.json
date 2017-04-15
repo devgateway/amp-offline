@@ -87,5 +87,6 @@
   "Identification": "Identification",
   "Organizations and Project IDs": "Organizations and Project IDs",
   "Agency Internal IDs": "Agency Internal IDs",
-  "MoreThanOneRecord":"You cannot save more than one record with this method"
+  "MoreThanOneRecord": "You cannot save more than one record with this method",
+  "dontStopSyncWarning": "Data is currently being synced with AMP. Please do not close the page to avoid an incomplete sync."
 }
