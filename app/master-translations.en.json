@@ -113,6 +113,6 @@
   "AFwhereToGoOnSave": "Where would you like to navigate after save action?",
   "Go to the desktop": "Go to the desktop",
   "Stay on the activity page": "Stay on the activity page",
-  "Cancel": "Cancel"
+  "Cancel": "Cancel",
   "dontStopSyncWarning": "Data is currently being synced with AMP. Please do not close the page to avoid an incomplete sync."
 }
