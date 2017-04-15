@@ -69,6 +69,7 @@ const _noActivitiesImport = { type: SYNCUP_TYPE_ACTIVITIES, fn: () => Promise.re
 
 const _activitiesImport = {
   type: SYNCUP_TYPE_ACTIVITIES,
+  isForced: true,
   fn: (saved, removed) => {
     // passing importer as a context doesn't work (this is undefined, even though in debug it is set)
     const importer = new ActivitiesPushToAMPManager();
@@ -188,6 +189,9 @@ export default class SyncUpManager {
     // TODO: remove this flag once AMP-25568 is done
     changes[SYNCUP_TYPE_FIELDS] = true;
     return syncUpModuleList.filter((item) => {
+      if (item.isForced === true) {
+        return item;
+      }
       const changeItem = changes[item.type];
       if (changeItem instanceof Object) {
         // Activities, users, etc.
