@@ -28,10 +28,19 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
     LoggerManager.log('constructor');
   }
 
-  buildSimpleField(path, showIfNotAvailable) {
+  /**
+   * Renders field data if it is enabled in FM. If renabled, but value is not available, then it will not be rendered,
+   * unless it is requested via showIfNotAvailable flag.
+   * @param path field path
+   * @param showIfNotAvailable flag to forcibly display the field when no value is provided
+   * @param NAOptions optional set of values that should be treated as undefined
+   * @return {null|APField}
+   */
+  buildSimpleField(path, showIfNotAvailable, NAOptions: Set) {
     if (this.context.activityFieldsManager.isFieldPathEnabled(path)) {
       const title = this.context.activityFieldsManager.getFieldLabelTranslation(path);
-      const value = this.context.activityFieldsManager.getValue(this.context.activity, path);
+      let value = this.context.activityFieldsManager.getValue(this.context.activity, path);
+      value = NAOptions && NAOptions.has(value) ? null : value;
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
         return <APField key={path} title={title} value={value} useInnerHTML={useInnerHTML} />;

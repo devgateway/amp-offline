@@ -19,7 +19,6 @@ class APIdentification extends Component {
   }
 
   render() {
-    // [field path, (optional, default true) display if empty]
     const fieldPaths = [AC.PROJECT_TITLE, AC.AMP_ID, AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.OBJECTIVE, AC.DESCRIPTION,
       AC.PROJECT_COMMENTS, AC.LESSONS_LEARNED, AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES,
       AC.PROJECT_MANAGEMENT, AC.A_C_CHAPTER];
