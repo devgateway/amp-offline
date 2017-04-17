@@ -1,3 +1,4 @@
+import encoding from 'text-encoding';
 import { LOGIN_URL } from '../connectivity/AmpApiConstants';
 import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
 import store from '../../index';
@@ -78,8 +79,8 @@ const Auth = {
   sha(password, algorithm) {
     LoggerManager.log('sha');
     // Transform the string into an arraybuffer.
-    const buffer = new TextEncoder('utf-8').encode(password);
-    return crypto.subtle.digest(algorithm, buffer).then((hash) => hexBufferToString(hash));
+    const buffer = new encoding.TextEncoder('utf-8').encode(password);
+    return window.crypto.subtle.digest(algorithm, buffer).then((hash) => hexBufferToString(hash));
   }
 };
 
