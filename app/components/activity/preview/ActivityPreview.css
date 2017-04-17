@@ -69,3 +69,7 @@ hr {
 .block {
     display: block;
 }
+
+.alignRight {
+    text-align: right;
+}

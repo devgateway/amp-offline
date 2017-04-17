@@ -27,6 +27,9 @@ export const LINE_MINISTRY_RANK = 'line_ministry_rank';
 export const FUNDING_STATUS = 'funding_status';
 export const LOCATIONS = 'locations';
 export const LOCATION = 'location';
+export const LOCATION_PERCENTAGE = 'location_percentage';
+export const IMPLEMENTATION_LOCATION = 'implementation_location';
+export const IMPLEMENTATION_LEVEL = 'implementation_level';
 export const APPROVAL_STATUS = 'approval_status';
 export const TYPE_OF_ASSISTANCE = 'type_of_assistance';
 export const EXPENDITURE_CLASS = 'expenditure_class';
@@ -79,6 +82,7 @@ export const CONDITIONALITIES = 'conditionalities';
 export const PROJECT_MANAGEMENT = 'project_management';
 export const A_C_CHAPTER = 'a_c_chapter';
 export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
+export const FULL_NAME = 'full_name';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

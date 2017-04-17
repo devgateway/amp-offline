@@ -13,7 +13,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  */
 const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = true) => class extends Component {
   static propTypes = {
-    titleDetails: PropTypes.arrayOf(PropTypes.string, PropTypes.object)
+    titleDetails: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
   };
 
   static contextTypes = {

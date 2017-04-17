@@ -3,6 +3,7 @@ import styles from './ActivityPreview.css';
 import APIdentification from './sections/APIdentification';
 import { APInternalIds } from './sections/APInternalIds';
 import APPlanning from './sections/APPlanning';
+import APLocation from './sections/APLocation';
 import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
@@ -17,11 +18,12 @@ export default class MainGroup extends Component {
   }
 
   render() {
-    // TODO (iteration 2+) hide planning section if it is disabled
+    // TODO (iteration 2+) hide sections when disabled (e.g. planning, location)
     return (<div className={styles.section_group}>
       <APIdentification />
       <APInternalIds />
       <APPlanning />
+      <APLocation />
     </div>);
   }
 }

@@ -9,8 +9,8 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  */
 export default class APField extends Component {
   static propTypes = {
-    title: PropTypes.string.isRequired,
-    value: PropTypes.any.isRequired, // eslint-disable-line react/forbid-prop-types
+    title: PropTypes.string,
+    value: PropTypes.any,
     inline: PropTypes.bool,
     useInnerHTML: PropTypes.bool,
   };

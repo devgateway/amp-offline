@@ -3,6 +3,8 @@ import * as FieldsHelper from './FieldsHelper';
 import store from '../../index';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
+import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
+import { FULL_NAME } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -82,17 +84,16 @@ export default class ActivityHydrator {
 
     if (possibleValues['field-path'].length === pathIndex + 1) {
       // this is the last level
-      const options = possibleValues['possible-options'];
       objects.forEach(obj => {
         const fieldValue = obj[fieldName];
         if (fieldValue !== undefined && fieldValue !== null) {
           if (isList) {
             for (let index = 0; index < fieldValue.length; index++) {
               const id = fieldValue[index];
-              fieldValue[index] = options[id];
+              fieldValue[index] = this._fillSelectedOption(possibleValues, id);
             }
           } else {
-            obj[fieldName] = options[fieldValue];
+            obj[fieldName] = this._fillSelectedOption(possibleValues, fieldValue);
           }
         }
       });
@@ -112,6 +113,33 @@ export default class ActivityHydrator {
         this._hydrateFieldPath(nextLevelObjects, possibleValues, pathIndex + 1, fieldDef.children);
       }
     }
+  }
+
+  _fillSelectedOption(possibleValues, selectedId) {
+    const option = Object.assign({}, possibleValues['possible-options'][selectedId]);
+    option[FULL_NAME] = this._getFullName(possibleValues, selectedId);
+    return option;
+  }
+
+  _getFullName(possibleValues, selectedId) {
+    const fieldPath = possibleValues['field-path'].join('~');
+    const options = possibleValues['possible-options'];
+    if (fieldPath === LOCATION_PATH) {
+      return this._getLocationFullName(options, selectedId);
+    }
+    return null;
+  }
+
+  // TODO update with latest approach on extra info for possible values
+  _getLocationFullName(options, selectedId) {
+    const nameParts = [];
+    let option = options[selectedId];
+    while (option) {
+      // TODO translated valud
+      nameParts.push(option.value);
+      option = option.extra_info ? options[option.extra_info.parent_location_id] : null;
+    }
+    return `[${nameParts.reverse().join('][')}]`;
   }
 
   /**
