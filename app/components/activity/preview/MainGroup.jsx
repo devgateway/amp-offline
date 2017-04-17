@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './ActivityPreview.css';
 import APIdentification from './sections/APIdentification';
-import APInternalIds from './sections/APInternalIds';
+import { APInternalIds } from './sections/APInternalIds';
 import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
