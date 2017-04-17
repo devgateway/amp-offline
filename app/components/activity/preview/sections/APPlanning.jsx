@@ -19,13 +19,14 @@ class APPlanning extends Component {
 
   render() {
     let content = [];
-    content.push(this.props.buildSimpleField(AC.LINE_MINISTRY_RANK, true, new Set([-1])));
+    content.push(this.props.buildSimpleField(AC.LINE_MINISTRY_RANK, true, new Set([-1]), true));
     const fieldPaths = [AC.PROPOSED_APPROVAL_DATE, AC.ACTUAL_APPROVAL_DATE, AC.PROPOSED_START_DATE,
       AC.ACTUAL_START_DATE, AC.ORIGINAL_COMPLETION_DATE, AC.PROPOSED_COMPLETION_DATE, AC.ACTUAL_COMPLETION_DATE];
     const showIfNotAvailable = new Set([AC.PROPOSED_APPROVAL_DATE, AC.ACTUAL_APPROVAL_DATE, AC.PROPOSED_START_DATE,
       AC.ACTUAL_START_DATE, AC.ORIGINAL_COMPLETION_DATE, AC.PROPOSED_COMPLETION_DATE, AC.ACTUAL_COMPLETION_DATE]);
     content = content.concat(fieldPaths.map(fieldPath =>
-      this.props.buildSimpleField(fieldPath, showIfNotAvailable.has(fieldPath))).filter(data => data !== undefined));
+      this.props.buildSimpleField(fieldPath, showIfNotAvailable.has(fieldPath), null, true)
+    ).filter(data => data !== undefined));
     return <div>{content}</div>;
   }
 

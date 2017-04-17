@@ -34,16 +34,17 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
    * @param path field path
    * @param showIfNotAvailable flag to forcibly display the field when no value is provided
    * @param NAOptions optional set of values that should be treated as undefined
+   * @param inline optional flag to render name and values on the same line
    * @return {null|APField}
    */
-  buildSimpleField(path, showIfNotAvailable, NAOptions: Set) {
+  buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false) {
     if (this.context.activityFieldsManager.isFieldPathEnabled(path)) {
       const title = this.context.activityFieldsManager.getFieldLabelTranslation(path);
       let value = this.context.activityFieldsManager.getValue(this.context.activity, path);
       value = NAOptions && NAOptions.has(value) ? null : value;
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
-        return <APField key={path} title={title} value={value} useInnerHTML={useInnerHTML} />;
+        return <APField key={path} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline} />;
       }
     }
   }
@@ -54,6 +55,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
     if (useEncapsulateHeader === false) {
       return composedSection;
     }
+    // TODO iteration 2+ section toggle (TDC based on desgin + VG)
     return (<div key={SectionTitle} className={styles.section_group}>
       <div className={styles.section_title}>
         <span>{translate(SectionTitle)} </span><span>{this.props.titleDetails}</span>

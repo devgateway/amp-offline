@@ -28,23 +28,22 @@ export default class APField extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
+    this.displayClass = this.props.inline === true ? styles.inline : styles.block;
   }
 
   _getValue() {
+    const classNames = `${styles.field_value} ${this.displayClass}`;
     if (this.props.useInnerHTML) {
-      return <div className={styles.field_value} dangerouslySetInnerHTML={{ __html: this.props.value }} />;
+      return <div className={classNames} dangerouslySetInnerHTML={{ __html: this.props.value }} />;
     } else {
-      return <div className={styles.field_value}>{this.props.value}</div>;
+      return <div className={classNames}>{this.props.value}</div>;
     }
   }
 
   render() {
-    const fieldNameStyle = {
-      display: this.props.inline === true ? 'inline' : 'block'
-    };
+    const classNames = `${styles.field_name} ${this.displayClass}`;
     return (<div>
-      <div className={styles.field_name} style={fieldNameStyle}>{this.props.title}</div>
-      {this._getValue()}
+      <div className={classNames}>{this.props.title}</div> {this._getValue()}
       <hr />
     </div>);
   }
