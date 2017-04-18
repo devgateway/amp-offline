@@ -29,7 +29,12 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
         return <APField key={hierarchicalValue} value={fieldValue} inline />;
       });
     }
-    return <APField key={listTitle} title={translate(listTitle)} value={content}/>;
+    if (listTitle) {
+      content = <APField key={listTitle} title={translate(listTitle)} value={content}/>;
+    } else if (content) {
+      content = <div>{content}</div>;
+    }
+    return content;
   }
 
 };
