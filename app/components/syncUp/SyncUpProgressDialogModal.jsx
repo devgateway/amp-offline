@@ -1,14 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import { Modal } from 'react-bootstrap';
-import Button from '../i18n/Button';
+// import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
 
 export default class SyncUpProgressDialogModal extends Component {
 
   static propTypes = {
-    show: PropTypes.bool.isRequired,
-    onClick: PropTypes.func.isRequired
+    show: PropTypes.bool.isRequired
+    /* onClick: PropTypes.func.isRequired */
   };
 
   render() {
