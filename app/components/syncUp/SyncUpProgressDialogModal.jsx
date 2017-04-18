@@ -4,7 +4,7 @@ import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
 
-export default class SyncUp extends Component {
+export default class SyncUpProgressDialogModal extends Component {
 
   static propTypes = {
     show: PropTypes.bool.isRequired,
@@ -24,12 +24,12 @@ export default class SyncUp extends Component {
             {translate('dontStopSyncWarning')}
           </Modal.Body>
 
-          <Modal.Footer>
-            <Button
-              className="btn btn-primary"
-              text={translate('Cancel')}
-              onClick={() => (this.props.onClick())}/>
-          </Modal.Footer>
+          {/* <Modal.Footer>
+           <Button
+           className="btn btn-primary"
+           text={translate('Cancel')}
+           onClick={() => (this.props.onClick())} />
+           </Modal.Footer> */}
         </Modal>
       </div>
     );

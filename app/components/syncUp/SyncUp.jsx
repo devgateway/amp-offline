@@ -6,7 +6,7 @@ import WarnMessage from '../common/WarnMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
-import ModalLoading from './ModalLoading';
+import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 
 export default class SyncUp extends Component {
 
@@ -111,7 +111,7 @@ export default class SyncUp extends Component {
         <hr/>
         {this.selectContentElementToDraw(historyData)}
 
-        <ModalLoading show={this.props.syncUp.syncUpInProgress} onClick={this.cancelSync}/>
+        <SyncUpProgressDialogModal show={this.props.syncUp.syncUpInProgress} onClick={this.cancelSync}/>
       </div>
     );
   }
