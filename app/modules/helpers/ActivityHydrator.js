@@ -3,8 +3,8 @@ import * as FieldsHelper from './FieldsHelper';
 import store from '../../index';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
-import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
-import { FULL_NAME } from '../../utils/constants/ActivityConstants';
+import { PATHS_WITH_FULL_VALUE } from '../../utils/constants/FieldPathConstants';
+import { HIERARCHICAL_VALUE } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -130,21 +130,19 @@ export default class ActivityHydrator {
 
   _fillSelectedOption(possibleValues, selectedId) {
     const option = Object.assign({}, possibleValues['possible-options'][selectedId]);
-    option[FULL_NAME] = this._getFullName(possibleValues, selectedId);
+    option[HIERARCHICAL_VALUE] = this._getFullName(possibleValues, selectedId);
     return option;
   }
 
   _getFullName(possibleValues, selectedId) {
-    const fieldPath = possibleValues['field-path'].join('~');
-    const options = possibleValues['possible-options'];
-    if (fieldPath === LOCATION_PATH) {
-      return this._getLocationFullName(options, selectedId);
+    if (PATHS_WITH_FULL_VALUE.has(possibleValues.id)) {
+      return this._buildFullName(possibleValues['possible-options'], selectedId);
     }
     return null;
   }
 
   // TODO update with latest approach on extra info for possible values
-  _getLocationFullName(options, selectedId) {
+  _buildFullName(options, selectedId) {
     const nameParts = [];
     let option = options[selectedId];
     while (option) {

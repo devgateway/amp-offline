@@ -58,6 +58,7 @@ export const FUNDING_CLOSING_DATE = 'funding_closing_date';
 export const HUMANITARIAN_AID = 'humanitarian_aid';
 export const DISASTER_RESPONSE = 'disaster_response';
 export const PROGRAM = 'program';
+export const PROGRAM_PERCENTAGE = 'program_percentage';
 export const NATIONAL_PLAN_OBJECTIVE = 'national_plan_objective';
 export const PRIMARY_PROGRAMS = 'primary_programs';
 export const SECONDARY_PROGRAMS = 'secondary_programs';
@@ -82,7 +83,7 @@ export const CONDITIONALITIES = 'conditionalities';
 export const PROJECT_MANAGEMENT = 'project_management';
 export const A_C_CHAPTER = 'a_c_chapter';
 export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
-export const FULL_NAME = 'full_name';
+export const HIERARCHICAL_VALUE = 'hierarchical_name';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

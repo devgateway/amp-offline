@@ -1,9 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
-import APField from '../components/APField';
-import APPercentageField from '../components/APPercentageField';
-import * as AC from '../../../../utils/constants/ActivityConstants';
+import APPercentageList from '../components/APPercentageList';
+import {
+  LOCATIONS,
+  LOCATION,
+  LOCATION_PERCENTAGE,
+  IMPLEMENTATION_LEVEL,
+  IMPLEMENTATION_LOCATION
+} from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+
+const APLocationsList = APPercentageList(LOCATIONS, LOCATION, LOCATION_PERCENTAGE);
 
 /**
  * Activity Preview Locations section
@@ -11,7 +18,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  */
 class APLocation extends Component {
   static propTypes = {
-    activity: PropTypes.object.isRequired,
+    activity: PropTypes.object.isRequired, // eslint-disable-line
     buildSimpleField: PropTypes.func.isRequired
   };
 
@@ -21,17 +28,9 @@ class APLocation extends Component {
   }
 
   render() {
-    let content = [];
-    const locations = this.props.activity[AC.LOCATIONS];
-    if (locations && locations.length) {
-      content = locations.map(loc => {
-        const locFullName = loc[AC.LOCATION][AC.FULL_NAME];
-        const fieldValue = <APPercentageField title={locFullName} value={loc[AC.LOCATION_PERCENTAGE]} />;
-        return <APField key={locFullName} value={fieldValue} inline />;
-      });
-    }
-    content.push(this.props.buildSimpleField(AC.IMPLEMENTATION_LEVEL, true, new Set([0])));
-    content.push(this.props.buildSimpleField(AC.IMPLEMENTATION_LOCATION, true, new Set([0])));
+    let content = [<APLocationsList {...this.pros}/>];
+    content.push(this.props.buildSimpleField(IMPLEMENTATION_LEVEL, true, new Set([0])));
+    content.push(this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0])));
     content = content.filter(el => el !== undefined);
     return <div>{content}</div>;
   }

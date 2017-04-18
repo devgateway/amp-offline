@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha';
 import ActivityHydrator from '../../app/modules/helpers/ActivityHydrator';
+import { HIERARCHICAL_VALUE } from '../../app/utils/constants/ActivityConstants';
 
 const chai = require('chai');
 // const chaiAsPromised = require('chai-as-promised');
@@ -27,8 +28,11 @@ const fieldsDef = [
   }
 ];
 
-const org1 = Object.assign({}, { id: 1, value: 'UNDP', full_name: null });
-const org2 = Object.assign({}, { id: 2, value: 'AfDB', full_name: null });
+// due to HIERARCHICAL_VALUE, the content may vary
+const org1 = Object.assign({}, { id: 1, value: 'UNDP' });
+org1[HIERARCHICAL_VALUE] = null;
+const org2 = Object.assign({}, { id: 2, value: 'AfDB' });
+org2[HIERARCHICAL_VALUE] = null;
 // TODO add full name unit tests once a more definite solution for extra info is available
 
 const possibleValuesCollection = [

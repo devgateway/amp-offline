@@ -1,0 +1,8 @@
+import Section from './Section';
+import APPercentageList from '../components/APPercentageList';
+import { NATIONAL_PLAN_OBJECTIVE, PROGRAM, PROGRAM_PERCENTAGE } from '../../../../utils/constants/ActivityConstants';
+
+const APProgram = Section(APPercentageList(NATIONAL_PLAN_OBJECTIVE, PROGRAM, PROGRAM_PERCENTAGE), 'National Plan');
+
+export default APProgram;
+
