@@ -29,3 +29,5 @@ export const UNALLOCATED_DISBURSEMENTS = 'Unallocated Disbursements';
 
 export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
 export const TRANSACTION_TYPES = [COMMITMENTS, DISBURSEMENTS, EXPENDITURES];
+
+export const NEW_ACTIVITY_ID = '0';

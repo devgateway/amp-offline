@@ -20,12 +20,14 @@ export default class ActivityPreview extends Component {
       isActivityLoading: PropTypes.bool,
       isActivityLoaded: PropTypes.bool,
       activity: PropTypes.object,
+      activityWorkspace: PropTypes.object,
       activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       activityWorkspace: PropTypes.object,
       errorMessage: PropTypes.object
     }).isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
+    unloadActivity: PropTypes.func.isRequired,
     params: PropTypes.shape({
       activityId: PropTypes.string.isRequired
     }).isRequired
@@ -54,6 +56,10 @@ export default class ActivityPreview extends Component {
 
   componentWillMount() {
     this.props.loadActivityForActivityPreview(this.props.params.activityId);
+  }
+
+  componentWillUnmount() {
+    this.props.unloadActivity();
   }
 
   _renderData() {

@@ -122,20 +122,25 @@ export default class ActivityFieldsManager {
     let trnLabel = cached.label;
     if (trnLabel === undefined) {
       trnLabel = null;
-      let fieldsDef = this._fieldsDef;
-      fieldPath.split('~').some(part => {
-        if (!(fieldsDef instanceof Array)) {
-          fieldsDef = fieldsDef.children;
-        }
-        fieldsDef = fieldsDef.find(fd => fd.field_name === part);
-        return fieldsDef === undefined;
-      });
+      const fieldsDef = this.getFieldDef(fieldPath);
       if (fieldsDef !== undefined) {
         trnLabel = fieldsDef.field_label[this._lang] || fieldsDef.field_label[this._defaultLang] || null;
       }
       cached.label = trnLabel;
     }
     return trnLabel;
+  }
+
+  getFieldDef(fieldPath) {
+    let fieldsDef = this._fieldsDef;
+    fieldPath.split('~').some(part => {
+      if (!(fieldsDef instanceof Array)) {
+        fieldsDef = fieldsDef.children;
+      }
+      fieldsDef = fieldsDef.find(fd => fd.field_name === part);
+      return fieldsDef === undefined;
+    });
+    return fieldsDef;
   }
 
   getValue(object, fieldPath, fallbackDefaultLang: true) {
@@ -170,4 +175,34 @@ export default class ActivityFieldsManager {
     return value;
   }
 
+  areRequiredFieldsSpecified(activity, asDraft, fieldPathsToSkipSet, invalidFieldPathsSet) {
+    return !this._hasRequiredFieldsUnspecified([activity], this.fieldsDef, asDraft, undefined, fieldPathsToSkipSet,
+      invalidFieldPathsSet);
+  }
+
+  _hasRequiredFieldsUnspecified(objects, fieldsDef, asDraft, currentPath, fieldPathsToSkipSet, invalidFieldPathsSet) {
+    return fieldsDef.some(fd => {
+      const fieldPath = `${currentPath ? `${currentPath}~` : ''}${fd.field_name}`;
+      if ((fd.required === 'Y' || (fd.required === 'ND' && !asDraft)) && !fieldPathsToSkipSet.has(fieldPath)) {
+        const isList = fd.field_type === 'list';
+        const children = [];
+        let hasObjectsWithoutValue = objects.some(obj => {
+          const value = obj[fd.field_name];
+          const invalidValue = value === undefined || value === null || value === '' || (isList && value.length === 0);
+          if (!invalidValue && isList) {
+            children.concat(value);
+          }
+          return invalidValue; // array.some will stop when first invalid value is found
+        });
+        if (hasObjectsWithoutValue) {
+          invalidFieldPathsSet.add(fieldPath);
+        } else if (children.length > 0) {
+          hasObjectsWithoutValue = this._hasRequiredFieldsUnspecified(children, fd.children, asDraft, fieldPath,
+            fieldPathsToSkipSet, invalidFieldPathsSet);
+        }
+        return hasObjectsWithoutValue;
+      }
+      return false;
+    });
+  }
 }
