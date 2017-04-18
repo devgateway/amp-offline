@@ -6,6 +6,7 @@ import WarnMessage from '../common/WarnMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
+import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 
 export default class SyncUp extends Component {
 
@@ -81,6 +82,11 @@ export default class SyncUp extends Component {
     }
   }
 
+  cancelSync() {
+    LoggerManager.log('cancelSync');
+    alert('To be implemented on AMPOFFLINE-208');
+  }
+
   render() {
     LoggerManager.log('render');
     const { startSyncUp } = this.props;
@@ -104,6 +110,8 @@ export default class SyncUp extends Component {
         </div>
         <hr/>
         {this.selectContentElementToDraw(historyData)}
+
+        <SyncUpProgressDialogModal show={this.props.syncUp.syncUpInProgress} onClick={this.cancelSync}/>
       </div>
     );
   }
