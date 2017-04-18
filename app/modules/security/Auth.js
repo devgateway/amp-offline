@@ -8,9 +8,9 @@ import { hexBufferToString } from '../../utils/Utils';
 import { DIGEST_ALGORITHM_SHA256 } from '../../utils/Constants';
 import LoggerManager from '../../modules/util/LoggerManager';
 
-const Auth = {
+export default class Auth {
 
-  onlineLogin(email, password) {
+  static onlineLogin(email, password) {
     LoggerManager.log('login');
     const url = LOGIN_URL;
     const body = {
@@ -23,18 +23,18 @@ const Auth = {
         resolve(data)
       )).catch(reject);
     });
-  },
+  }
 
-  loggedIn() {
+  static loggedIn() {
     // TODO: Implement more complex token validation scheme with expiration time, multiple users, etc.
     return (store.getState().login && store.getState().login.loggedIn);
-  },
+  }
 
-  logout() {
+  static logout() {
     // TODO: Implement this logic.
-  },
+  }
 
-  secureHash(password, salt, iterations) {
+  static secureHash(password, salt, iterations) {
     return new Promise((resolve, reject) => {
       LoggerManager.log('secureHash');
       // https://blog.engelke.com/2015/02/14/deriving-keys-from-passwords-with-webcrypto/
@@ -68,7 +68,7 @@ const Auth = {
           }));
         });
     });
-  },
+  }
 
   /**
    * Generate SHA digest from string.
@@ -76,12 +76,10 @@ const Auth = {
    * @param algorithm can be DIGEST_ALGORITHM_SHA256 or DIGEST_ALGORITHM_SHA1
    * @returns {Promise.<TResult>|*}
    */
-  sha(password, algorithm) {
+  static sha(password, algorithm) {
     LoggerManager.log('sha');
     // Transform the string into an arraybuffer.
     const buffer = new encoding.TextEncoder('utf-8').encode(password);
     return window.crypto.subtle.digest(algorithm, buffer).then((hash) => hexBufferToString(hash));
   }
-};
-
-module.exports = Auth;
+}
