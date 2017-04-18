@@ -4,7 +4,7 @@ import APIdentification from './sections/APIdentification';
 import { APInternalIds } from './sections/APInternalIds';
 import APPlanning from './sections/APPlanning';
 import APLocation from './sections/APLocation';
-import APProgram from './sections/APProgram';
+import APNationalPlanObjective from './sections/APNationalPlanObjective';
 import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
@@ -25,7 +25,7 @@ export default class MainGroup extends Component {
       <APInternalIds />
       <APPlanning />
       <APLocation />
-      <APProgram />
+      <APNationalPlanObjective />
     </div>);
   }
 }
