@@ -39,5 +39,12 @@ describe('@@ LoginManager @@', () => {
       expect(LoginManager.processLogin(userName, password, false))
         .to.eventually.deep.equal({ dbUser: user })
     );
+
+    it('should clear credentials', () => {
+      const user2 = user;
+      delete user2.ampOfflinePassword;
+      return expect(LoginManager.clearCredentialsInDB(userName))
+        .to.eventually.deep.equal(user2);
+    });
   });
 });
