@@ -1,6 +1,5 @@
 .container {
   text-align: left;
-  width: 400px;
 }
 
 .legend_container {
@@ -31,4 +30,10 @@
 .blue {
   color: #2e6fa1;
   font-weight: bold;
+}
+
+.unsynced {
+  color: black;
+  font-weight: bold;
+  font-style: italic;
 }
