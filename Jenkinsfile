@@ -48,7 +48,7 @@ stage('UnitTest') {
 	node{
 		try{
 			//run test
-			sh 'npm run test'
+			sh 'npm run test-mocha'
 		}catch(e){
 			//eslint failed
 			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
