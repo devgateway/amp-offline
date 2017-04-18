@@ -27,8 +27,9 @@ const fieldsDef = [
   }
 ];
 
-const org1 = { id: 1, value: 'UNDP' };
-const org2 = { id: 2, value: 'AfDB' };
+const org1 = Object.assign({}, { id: 1, value: 'UNDP', full_name: null });
+const org2 = Object.assign({}, { id: 2, value: 'AfDB', full_name: null });
+// TODO add full name unit tests once a more definite solution for extra info is available
 
 const possibleValuesCollection = [
   {
@@ -74,12 +75,12 @@ describe('@@ ActivityHydrator @@', () => {
         it('should hydrate the activity with all possible values', () => {
           expect(newActivities).to.have.length(2);
           // activity1
-          expect(newActivities).to.have.deep.property('[0].donor_organization[0].organization', org1);
-          expect(newActivities).to.have.deep.property('[0].donor_organization[1].organization', org2);
-          expect(newActivities).to.have.deep.property('[0].final_list[0]', org1);
+          expect(newActivities).to.have.deep.property('[0].donor_organization[0].organization').that.deep.equals(org1);
+          expect(newActivities).to.have.deep.property('[0].donor_organization[1].organization').that.deep.equals(org2);
+          expect(newActivities).to.have.deep.property('[0].final_list[0]').that.deep.equals(org1);
           // activity2
-          expect(newActivities).to.have.deep.property('[1].final_list[0]', org1);
-          expect(newActivities).to.have.deep.property('[1].final_list[1]', org2);
+          expect(newActivities).to.have.deep.property('[1].final_list[0]').that.deep.equals(org1);
+          expect(newActivities).to.have.deep.property('[1].final_list[1]').that.deep.equals(org2);
         })
       );
     }

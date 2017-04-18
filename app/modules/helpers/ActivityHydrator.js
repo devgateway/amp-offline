@@ -106,7 +106,7 @@ export default class ActivityHydrator {
               fieldValue[index] = hydrate ? this._fillSelectedOption(possibleValues, currValue) : currValue.id;
             }
           } else {
-            obj[fieldName] =  hydrate ? this._fillSelectedOption(possibleValues, fieldValue) : fieldValue.id;
+            obj[fieldName] = hydrate ? this._fillSelectedOption(possibleValues, fieldValue) : fieldValue.id;
           }
         }
       });
