@@ -13,7 +13,7 @@
   border-top: 1px;
   border-bottom: 0;
   position: relative;
-  top: 10px;
+  top: 0px;
   padding-left: 10px;
   padding-right: 10px;
   font-size: 12px;
@@ -30,6 +30,8 @@
 .thClassName {
   border-right: none !important;
   border-left: none !important;
+  color: #7f8fa4;
+  font-weight: normal;
 }
 
 .column_5 {
@@ -109,6 +111,6 @@
   font-size: 12px;
   font-weight: bold;
   right: 13px;
-  top: 7px;
   position: relative;
+  top: -30px;
 }

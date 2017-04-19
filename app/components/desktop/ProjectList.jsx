@@ -70,7 +70,7 @@ export default class ProjectList extends Component {
     return (
       <div className={style.container}>
         <a onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
-          {translate('Clear filters')}
+          {translate('Reset All')}
         </a>
         <BootstrapTable
           data={this.props.projects} striped hover pagination={pagination} options={paginationOptions}
