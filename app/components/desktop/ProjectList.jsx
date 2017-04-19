@@ -24,13 +24,13 @@ export default class ProjectList extends Component {
 
   linkFormatter(cell, row) {
     return (
-      <LinkFormatter cell={cell} row={row}/>
+      <LinkFormatter cell={cell} row={row} />
     );
   }
 
   iconFormatter(cell, row) {
     return (
-      <IconFormatter cell={cell} row={row}/>
+      <IconFormatter cell={cell} row={row} />
     );
   }
 
@@ -74,29 +74,33 @@ export default class ProjectList extends Component {
         </a>
         <BootstrapTable
           data={this.props.projects} striped hover pagination={pagination} options={paginationOptions}
-          containerClass={style.containerTable} tableHeaderClass={style.header}
+          containerClass={style.containerTable} tableHeaderClass={style.header} thClassName={style.thClassName}
         >
-          <TableHeaderColumn dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.column_5}/>
           <TableHeaderColumn
-            dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.column_10}
-            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }}>
+            dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.column_7}
+            className={style.thClassName} />
+          <TableHeaderColumn
+            dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.column_8}
+            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField={PROJECT_TITLE} dataFormat={this.projectNameFormatter} dataSort ref="project_title"
             columnClassName={style.column_40}
-            filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}>
+            filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
+            className={style.thClassName}>
             {translate('Project Title')}
           </TableHeaderColumn>
-          <TableHeaderColumn dataField="donor" dataSort
-                             columnClassName={style.column_15}>{translate('Funding Agency')}
+          <TableHeaderColumn
+            dataField="donor" dataSort columnClassName={style.column_15}
+            className={style.thClassName}>{translate('Funding Agency')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualCommitments" dataSort columnClassName={style.column_15}>
+            dataField="actualCommitments" dataSort columnClassName={style.column_15} className={style.thClassName}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualDisbursements" dataSort columnClassName={style.column_15}>
+            dataField="actualDisbursements" dataSort columnClassName={style.column_15} className={style.thClassName}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>

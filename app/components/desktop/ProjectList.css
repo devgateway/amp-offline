@@ -27,8 +27,25 @@
   border-top: 0;
 }
 
+.thClassName {
+  border-right: none !important;
+  border-left: none !important;
+}
+
 .column_5 {
   width: 5%;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.column_7 {
+  width: 7%;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.column_8 {
+  width: 8%;
   border-right: none !important;
   border-left: none !important;
 }

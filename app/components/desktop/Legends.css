@@ -13,7 +13,7 @@
 }
 
 .legend {
-  margin-right: 12px;
+  margin-right: 2px;
   cursor: pointer;
 }
 
@@ -43,4 +43,5 @@
   display: inline-block;
   margin-left: 5px;
   padding-right: 5px;
+  top: 2px;
 }
