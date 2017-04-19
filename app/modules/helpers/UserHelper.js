@@ -1,6 +1,6 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
-import * as Auth from '../security/Auth';
+import Auth from '../security/Auth';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
