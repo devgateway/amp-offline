@@ -37,3 +37,10 @@
   font-weight: bold;
   font-style: italic;
 }
+
+.info_icon {
+  color: #90c845;
+  display: inline-block;
+  margin-left: 5px;
+  padding-right: 5px;
+}

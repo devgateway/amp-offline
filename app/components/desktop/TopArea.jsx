@@ -16,7 +16,6 @@ export default class TopArea extends Component {
     const unsynced = classNames(style.letter_symbol, style.unsynced);
     const currencyP = classNames('navbar-text', 'pull-right', style.currency);
     const currencyLabel = classNames(style.currency_label);
-    // const legendSpan = classNames('glyphicon', 'glyphicon-info-sign', style.info_icon);
     const ul = classNames('nav', 'navbar-nav', style.ul_var);
 
     return (
