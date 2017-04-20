@@ -15,8 +15,20 @@ export default class ConnectionInformation {
     this._timeout = timeout;
   }
 
+  /**
+   * Returns the full REST url to call amp api enpdoints
+   * @returns {string}
+   */
   getFullRestUrl() {
-    return `${this.protocol}://${this.serverUrl}${this.getPort()}${this.baseRestUrl}`;
+    return `${this.getFullUrl()}${this.baseRestUrl}`;
+  }
+
+  /**
+   * Returns full AMP ROOT url
+   * @returns {string}
+   */
+  getFullUrl() {
+    return `${this.protocol}://${this.serverUrl}${this.getPort()}`;
   }
 
   get baseRestUrl() {

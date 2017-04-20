@@ -4,6 +4,24 @@
 }
 
 .footer {
-  background: #3d5166;
+  background-color: #8B8B8B;
   color: white;
+  padding-top: 7px !important;
+
+}
+
+.footerContainer {
+  height: 145px;
+  margin-top: -145px;
+  text-align: center;
+}
+
+.footerText {
+  padding: 0;
+  font-family: arial;
+  font-size: 11px;
+  border: 0px;
+}
+.footerImage{
+  padding-top: 10px;
 }

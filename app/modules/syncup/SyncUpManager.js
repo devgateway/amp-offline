@@ -1,10 +1,7 @@
 /* eslint "no-nested-ternary": 0 */
 import syncUpUsers from './UsersSyncUpManager';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
-import {
-  TEST_URL,
-  SYNC_URL
-} from '../connectivity/AmpApiConstants';
+import { TEST_URL, SYNC_URL } from '../connectivity/AmpApiConstants';
 import SyncUpHelper from '../helpers/SyncUpHelper';
 import TranslationSyncUpManager from './TranslationSyncUpManager';
 import { loadAllLanguages } from '../../actions/TranslationAction';
@@ -23,11 +20,13 @@ import {
   SYNCUP_DATETIME_FIELD,
   SYNCUP_NO_DATE,
   SYNCUP_FORCE_DAYS,
-  SYNCUP_BEST_BEFORE_DAYS
+  SYNCUP_BEST_BEFORE_DAYS,
+  SYNCUP_TYPE_ASSETS
 } from '../../utils/Constants';
 import WorkspaceSyncUpManager from './WorkspaceSyncUpManager';
 import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
 import WorkspaceMemberSyncUpManager from './WorkspaceMemberSyncUpManager';
+import AmpAssetManager from './AmpAssetManager';
 import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import ActivitiesPullFromAMPManager from './ActivitiesPullFromAMPManager';
 import FieldsSyncUpManager from './FieldsSyncUpManager';
@@ -37,6 +36,7 @@ import LoggerManager from '../../modules/util/LoggerManager';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
 const syncUpModuleList = [
+  { type: SYNCUP_TYPE_ASSETS, fn: AmpAssetManager.syncUpAmpAssets },
   { type: SYNCUP_TYPE_USERS, fn: syncUpUsers },
   {
     type: SYNCUP_TYPE_WORKSPACE_MEMBERS,
@@ -188,6 +188,7 @@ export default class SyncUpManager {
     // Filter out syncUpModuleList and keep only what needs to be resynced.
     // TODO: remove this flag once AMP-25568 is done
     changes[SYNCUP_TYPE_FIELDS] = true;
+    changes[SYNCUP_TYPE_ASSETS] = true;
     return syncUpModuleList.filter((item) => {
       if (item.isForced === true) {
         return item;

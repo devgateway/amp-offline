@@ -4,39 +4,58 @@
 
 * {
   margin: 0;
+  padding: 0;
 }
 
 html, body {
   height: 100%;
 }
 
-#root {
+.outerContainer {
   height: 100%;
+  min-height: 680px;
 }
 
 .rc-menu-submenu-title {
-  padding: 5px 15px !important;
+  /*padding: 5px 15px !important;*/
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  padding-right: 15px !important;
+  padding-left: 15px !important;
+  white-space: nowrap;
+  text-rendering: optimizeLegibility;
+}
+
+.rc-menu-vertical > .rc-menu-item, .rc-menu-inline > .rc-menu-item,
+.rc-menu-vertical > .rc-menu-submenu > .rc-menu-submenu-title,
+.rc-menu-inline > .rc-menu-submenu > .rc-menu-submenu-title {
+  padding:5px 5px !important;
 }
 
 .rc-menu-vertical > .rc-menu-item {
-  padding: 5px 0px 5px 0px !important;
+  /*padding: 5px 0px 5px 0px !important;*/
 }
 
 .rc-menu-submenu {
   cursor: pointer;
 }
 
-.rc-menu-item {
+.rc-menu-item { /* sub items without childs*/
   cursor: pointer;
+  text-align: left;
 }
 
 .rc-menu-vertical.rc-menu-sub {
   padding: 0;
-  padding-left: 10px;
+  padding-left: 5px;
   padding-right: 10px;
   min-width: 0px;
+  text-align: left;
 }
 
+.rc-menu-root {
+  color: #3E6C94;
+}
 .rc-menu-item-selected {
   background-color: #ffffff;
 }

@@ -1,12 +1,16 @@
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/jsx-space-before-closing: 0 */
 import React, { Component, PropTypes } from 'react';
+import fs from 'fs';
 import Switcher from '../../components/i18n/Switcher';
+import translate from '../../utils/translate';
 import style from './Navbar.css';
 import TopMenu from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
 import LoggerManager from '../../modules/util/LoggerManager';
+import UrlUtils from '../../utils/URLUtils';
+import { TRANSPARENT_FLAG, BASE_64_PNG_PREFIX, WORKSPACE_URL, DESKTOP_URL } from '../../utils/Constants';
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -20,6 +24,43 @@ export default class Navbar extends Component {
     translation: PropTypes.object.isRequired,
     workspace: PropTypes.object.isRequired
   };
+
+  static loadImage(img) {
+    // read binary data
+    if (fs.existsSync(img)) {
+      const bitmap = fs.readFileSync(img);
+      return BASE_64_PNG_PREFIX + new Buffer(bitmap).toString('base64');
+    } else {
+      return BASE_64_PNG_PREFIX + TRANSPARENT_FLAG;
+    }
+  }
+
+  constructor() {
+    super();
+    LoggerManager.log('constructor');
+
+    this.handleNavigation = this.handleNavigation.bind(this);
+  }
+
+  handleNavigation() {
+    if (this.props.login.loggedIn) {
+      console.log('esta logeado');
+      console.log(this.props);
+      debugger;
+      const { currentWorkspace } = this.props.workspace;
+
+      if (currentWorkspace && currentWorkspace.id) {
+        // we have a team selected we go to the desktop
+        return UrlUtils.forwardTo(`${DESKTOP_URL}/${currentWorkspace.id}`);
+      } else {
+        // no team selected we go to choose one
+        UrlUtils.forwardTo(WORKSPACE_URL);
+      }
+    } else {
+      // UrlUtils.forwardTo(LOGIN_URL);
+    }
+  }
+
 
   extractLoggedUser(prepend) {
     LoggerManager.log('extractLoggedUser');
@@ -42,11 +83,21 @@ export default class Navbar extends Component {
     return (
       <div className={style.container}>
         <div className={style.navbar}>
-          <a className={style.navbar_left_side} href="#">{VERSION}</a>
-          <a className={style.navbar_left_side} href="#">{this.extractLoggedUser('')}</a>
-          <a className={style.navbar_left_side} href="#">{this.extractWorkSpace('')}</a>
-          <Switcher languages={this.props.translation.languageList}/>
+          <img src={Navbar.loadImage('./assets/ampCountryFlag.png')}
+               className={[style.countryFlag, style.navbar_left_side ].join(' ')} onClick={this.handleNavigation}/>
+          {/* requirements dont mention verions I leave it incase we want to restore
+           <a className={style.navbar_left_side} href="#">{VERSION}</a>*/}
+          <a className={style.navbar_left_side} onClick={this.handleNavigation}
+             style={{cursor: 'pointer'}}>{translate('amp-title')}</a>
+
           <Logout loggedIn={this.props.login.loggedIn}/>
+          <Switcher languages={this.props.translation.languageList}/>
+          <div className={style.userInfo}>
+            <a className={style.navbar_left_side} >{this.extractLoggedUser('')}</a>
+            <a className={style.navbar_left_side} >{this.extractWorkSpace('')}</a>
+          </div>
+
+
         </div>
         <div className={style.main_menu}>
           <TopMenu
