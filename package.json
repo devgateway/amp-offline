@@ -5,7 +5,9 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
+    "test-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
+    "test-electron-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.electron-mocha.js",
+    "test": "npm run test-mocha && npm run test-electron-mocha",
     "test-watch": "npm test -- --watch",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --retries 2 --compilers js:babel-register --require ./test/setup.js ./test/e2e.js",
     "lint": "eslint --ignore-path .gitignore --format=node_modules/eslint-formatter-pretty app test *.js",
@@ -145,6 +147,7 @@
     "crypto-js": "^3.1.8",
     "electron-debug": "^1.0.1",
     "electron-log": "^2.0.2",
+    "electron-mocha": "^3.4.0",
     "font-awesome": "^4.7.0",
     "fs-extra": "^2.0.0",
     "i18next": "^4.1.1",
@@ -160,13 +163,13 @@
     "react-redux": "^4.4.5",
     "react-router": "^3.0.0",
     "react-router-redux": "^4.0.6",
-    "react-tooltip": "^3.2.7",
     "redux": "^3.6.0",
     "redux-promise-middleware": "^4.2.0",
     "redux-thunk": "^2.1.0",
     "source-map-support": "^0.4.6",
     "stack-trace": "0.0.9",
     "stringify-object": "^3.1.0",
+    "text-encoding": "^0.6.4",
     "underscore": "^1.8.3"
   },
   "devEngines": {

@@ -33,6 +33,7 @@
   "validatedActivitiesLegend": "Validated activities",
   "existingDraftsLegend": "Existing Drafts. These are activities that have been saved once and edited and saved as drafts.",
   "existingUnvalidatedLegend": "Existing Un-validated. These are activities that have been approved at least once by the workspace manager. These are edited activities that are not approved.",
+  "unsyncedLegend": "Unsynced. These are activities created on AMPOffline not yet synchronized with AMP.",
   "moreThanOneResultFound": "Query returned more than one result.",
   "unknownNetworkError": "Unknown network error",
   "Donor": "Donor",
@@ -87,7 +88,7 @@
   "Identification": "Identification",
   "Organizations and Project IDs": "Organizations and Project IDs",
   "Agency Internal IDs": "Agency Internal IDs",
-  "MoreThanOneRecord":"You cannot save more than one record with this method",
+  "MoreThanOneRecord": "You cannot save more than one record with this method",
   "Planning": "Planning",
   "Location": "Location",
   "Program": "Program",
@@ -114,5 +115,6 @@
   "AFwhereToGoOnSave": "Where would you like to navigate after save action?",
   "Go to the desktop": "Go to the desktop",
   "Stay on the activity page": "Stay on the activity page",
-  "Cancel": "Cancel"
+  "Cancel": "Cancel",
+  "dontStopSyncWarning": "Data is currently being synced with AMP. Please do not close the page to avoid an incomplete sync."
 }
