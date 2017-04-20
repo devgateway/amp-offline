@@ -11,6 +11,8 @@ export const CONNECTIVITY_CHECK_INTERVAL = '60000'; // 1 minutes
 
 export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';
+export const DESKTOP_URL = '/desktop';
+export const DESKTOP_CURRENT_URL = '/desktop/current';
 export const SYNCUP_URL = '/syncUp';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
@@ -52,6 +54,7 @@ export const SYNCUP_BEST_BEFORE_DAYS = 7;
 export const SYNCUP_NO_DATE = '1900-01-01T00:00:00.000+0000';
 export const SYNCUP_TYPE_TRANSLATIONS = 'translations';
 export const SYNCUP_TYPE_USERS = 'users';
+export const SYNCUP_TYPE_ASSETS = 'assets';
 export const SYNCUP_TYPE_WORKSPACES = 'workspaces';
 export const SYNCUP_TYPE_GS = 'global-settings';
 export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
@@ -67,9 +70,18 @@ export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';
 export const ACTIVITY_STATUS_VALIDATED = 'ACTIVITY_STATUS_VALIDATED';
 
 export const VERSION = '0.0.1';
-
+export const AMP_COUNTRY_LOGO = './assets/ampCountryFlag.png';
+export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
+// Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
+export const
+  TRANSPARENT_FLAG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=';
 // TODO this is a temporary limitation of the initial set of activities to export, AMPOFFLINE-273 or AMPOFFLINE-274
 export const FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT = 500;
+
+export const DG_COMPANY_NAME = 'Development Gateway';
+export const DG_ADDRESS_1 = '1110 Vermont Ave, NW, Suite 500';
+export const DG_ADDRESS_2 = 'Washington, DC 20005 USA';
+export const DG_CONTACT_INFO = 'info@developmentgateway.org, Tel: +1.202.572.9200, Fax: +1 202.572.9290';
 
 export const LOG_DIR = 'logs';
 export const LOG_FILE_NAME = 'ampoffline';
