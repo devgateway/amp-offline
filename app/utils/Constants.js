@@ -77,6 +77,11 @@ export const
 // TODO this is a temporary limitation of the initial set of activities to export, AMPOFFLINE-273 or AMPOFFLINE-274
 export const FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT = 500;
 
+export const DG_COMPANY_NAME = 'Development Gateway';
+export const DG_ADDRESS_1 = '1110 Vermont Ave, NW, Suite 500';
+export const DG_ADDRESS_2 = 'Washington, DC 20005 USA';
+export const DG_CONTACT_INFO = 'info@developmentgateway.org, Tel: +1.202.572.9200, Fax: +1 202.572.9290';
+
 export const LOG_DIR = 'logs';
 export const LOG_FILE_NAME = 'ampoffline';
 export const LOG_FILE_EXTENSION = 'log';

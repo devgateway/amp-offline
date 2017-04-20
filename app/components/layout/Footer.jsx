@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import translate from '../../utils/translate';
 import styles from './Footer.css';
+import {
+  DG_COMPANY_NAME,
+  DG_ADDRESS_1,
+  DG_ADDRESS_2,
+  DG_CONTACT_INFO
+} from '../../utils/Constants';
 
 export default class Home extends Component {
   render() {
@@ -12,13 +18,13 @@ export default class Home extends Component {
         <div className={[styles.footerText, styles.footerImage].join(' ')}>
           <img src="./assets/images/dgf_logo_bottom.gif" />
           <br/>
-          Development Gateway
+          {DG_COMPANY_NAME}
           <br/>
-          1110 Vermont Ave, NW, Suite 500
+          {DG_ADDRESS_1}
           <br/>
-          Washington, DC 20005 USA
+          {DG_ADDRESS_2}
           <br/>
-          info@developmentgateway.org, Tel: +1.202.572.9200, Fax: +1 202.572.9290
+          {DG_CONTACT_INFO}
         </div>
       </div>
     );
