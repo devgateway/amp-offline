@@ -19,7 +19,6 @@ export function loadDesktop(teamId, teamMemberId) {
           rejectedProjects: data.rejectedProjects,
           tabs: data.defaultTabs
         }));
-        debugger;
         return UrlUtils.forwardTo(`${DESKTOP_URL}/${teamId}`);
       }).catch((error) => {
         dispatch(errorLoadDesktop(error));
