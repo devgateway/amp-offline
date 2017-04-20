@@ -13,7 +13,8 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  */
 const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = true) => class extends Component {
   static propTypes = {
-    titleDetails: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+    titleDetails: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    sectionPath: PropTypes.string
   };
 
   static contextTypes = {
@@ -50,6 +51,9 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
   }
 
   render() {
+    if (this.props.sectionPath && !this.context.activityFieldsManager.isFieldPathEnabled(this.props.sectionPath)) {
+      return null;
+    }
     const composedSection = (<ComposedSection
       {...this.props} {...this.state} {...this.context} buildSimpleField={this.buildSimpleField.bind(this)} />);
     if (useEncapsulateHeader === false) {

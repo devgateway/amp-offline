@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import styles from './ActivityPreview.css';
+import * as AC from '../../../utils/constants/ActivityConstants';
 import APIdentification from './sections/APIdentification';
 import { APInternalIds } from './sections/APInternalIds';
 import APPlanning from './sections/APPlanning';
 import APLocation from './sections/APLocation';
 import APNationalPlanObjective from './sections/APNationalPlanObjective';
 import APProgram from './sections/APProgram';
+import APSector from './sections/APSector';
+import { APProposedProjectCost, APRevisedProjectCost } from './sections/APProjectCost';
 import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
@@ -20,14 +23,17 @@ export default class MainGroup extends Component {
   }
 
   render() {
-    // TODO (iteration 2+) hide sections when disabled (e.g. planning, location)
+    // TODO (iteration 2+) hide sections that are not directly connected to a single field (e.g. planning, program)
     return (<div className={styles.section_group}>
       <APIdentification />
-      <APInternalIds />
+      <APInternalIds sectionPath={AC.ACTIVITY_INTERNAL_IDS} />
       <APPlanning />
-      <APLocation />
-      <APNationalPlanObjective />
+      <APLocation sectionPath={AC.LOCATIONS} />
+      <APNationalPlanObjective sectionPath={AC.NATIONAL_PLAN_OBJECTIVE} />
       <APProgram />
+      <APSector />
+      <APProposedProjectCost sectionPath={AC.PPC_AMOUNT} />
+      <APRevisedProjectCost sectionPath={AC.RPC_AMOUNT} />
     </div>);
   }
 }

@@ -2,7 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import APField from '../components/APField';
 import APPercentageField from '../components/APPercentageField';
 import { HIERARCHICAL_VALUE } from '../../../../utils/constants/ActivityConstants';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../utils/translate';
+import Utils from '../../../../utils/Utils';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
@@ -11,7 +13,8 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  */
 const APPercentageList = (listField, valueField, percentageField, listTitle = null) => class extends Component {
   static propTypes = {
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
   };
 
   constructor(props) {
@@ -21,18 +24,16 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
 
   render() {
     let content = null;
+    const isListEnabled = this.props.activityFieldsManager.isFieldPathEnabled(listField) === true;
+    const title = listTitle ? translate(listTitle) : null;
     const items = this.props.activity[listField];
-    if (items && items.length) {
+    if (isListEnabled && items && items.length) {
       content = items.map(item => {
         const hierarchicalValue = item[valueField][HIERARCHICAL_VALUE];
-        const fieldValue = <APPercentageField title={hierarchicalValue} value={item[percentageField]} />;
-        return <APField key={hierarchicalValue} value={fieldValue} inline />;
+        const key = Utils.stringToUniqueId(hierarchicalValue);
+        return <APPercentageField key={key} title={hierarchicalValue} value={item[percentageField]} />;
       });
-    }
-    if (listTitle) {
-      content = <APField key={listTitle} title={translate(listTitle)} value={content}/>;
-    } else if (content) {
-      content = <div>{content}</div>;
+      content = <APField key={listField} title={title} value={content}/>;
     }
     return content;
   }

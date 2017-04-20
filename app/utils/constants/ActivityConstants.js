@@ -21,6 +21,7 @@ export const SECONDARY_SECTORS = 'secondary_sectors';
 export const TERTIARY_SECTORS = 'tertiary_sectors';
 export const TAG_SECTORS = 'tag_sectors';
 export const SECTOR_ID = 'sector_id';
+export const SECTOR_PERCENTAGE = 'sector_percentage';
 export const FINANCING_INSTRUMENT = 'financing_instrument';
 export const MODALITIES = 'modalities';
 export const LINE_MINISTRY_RANK = 'line_ministry_rank';
@@ -84,6 +85,11 @@ export const PROJECT_MANAGEMENT = 'project_management';
 export const A_C_CHAPTER = 'a_c_chapter';
 export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
 export const HIERARCHICAL_VALUE = 'hierarchical_name';
+export const PPC_AMOUNT = 'ppc_amount';
+export const RPC_AMOUNT = 'rpc_amount';
+export const AMOUNT = 'amount';
+export const CURRENCY_CODE = 'currency_code';
+export const FUNDING_DATE = 'funding_date';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
