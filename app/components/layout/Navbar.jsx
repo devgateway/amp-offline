@@ -1,7 +1,6 @@
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/jsx-space-before-closing: 0 */
 import React, { Component, PropTypes } from 'react';
-import fs from 'fs';
 import Switcher from '../../components/i18n/Switcher';
 import translate from '../../utils/translate';
 import style from './Navbar.css';
@@ -10,7 +9,8 @@ import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
 import LoggerManager from '../../modules/util/LoggerManager';
 import UrlUtils from '../../utils/URLUtils';
-import { TRANSPARENT_FLAG, BASE_64_PNG_PREFIX, WORKSPACE_URL, DESKTOP_URL } from '../../utils/Constants';
+import { WORKSPACE_URL, DESKTOP_URL,AMP_COUNTRY_LOGO } from '../../utils/Constants';
+import AssetsUtils from '../../utils/AssetsUtils';
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -24,16 +24,6 @@ export default class Navbar extends Component {
     translation: PropTypes.object.isRequired,
     workspace: PropTypes.object.isRequired
   };
-
-  static loadImage(img) {
-    // read binary data
-    if (fs.existsSync(img)) {
-      const bitmap = fs.readFileSync(img);
-      return BASE_64_PNG_PREFIX + new Buffer(bitmap).toString('base64');
-    } else {
-      return BASE_64_PNG_PREFIX + TRANSPARENT_FLAG;
-    }
-  }
 
   constructor() {
     super();
@@ -83,7 +73,7 @@ export default class Navbar extends Component {
     return (
       <div className={style.container}>
         <div className={style.navbar}>
-          <img src={Navbar.loadImage('./assets/ampCountryFlag.png')}
+          <img src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
                className={[style.countryFlag, style.navbar_left_side ].join(' ')} onClick={this.handleNavigation}/>
           {/* requirements dont mention verions I leave it incase we want to restore
            <a className={style.navbar_left_side} href="#">{VERSION}</a>*/}
