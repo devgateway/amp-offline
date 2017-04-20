@@ -52,7 +52,7 @@ export default class Navbar extends Component {
         <div className={style.navbar}>
           <Link to={DESKTOP_CURRENT_URL}> <img src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
                                                className={[style.countryFlag, style.navbar_left_side ].join(' ')}
-                                               onClick={this.handleNavigation}/></Link>
+          /></Link>
           <Link className={style.navbar_left_side}
                 style={{cursor: 'pointer'}}>{translate('amp-title')}</Link>
 
