@@ -1,7 +1,6 @@
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/jsx-space-before-closing: 0 */
 import React, { Component, PropTypes } from 'react';
-import Switcher from '../../components/i18n/Switcher';
 import translate from '../../utils/translate';
 import style from './Navbar.css';
 import TopMenu from './TopMenu';
@@ -9,7 +8,7 @@ import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
 import LoggerManager from '../../modules/util/LoggerManager';
 import UrlUtils from '../../utils/URLUtils';
-import { WORKSPACE_URL, DESKTOP_URL,AMP_COUNTRY_LOGO } from '../../utils/Constants';
+import { WORKSPACE_URL, DESKTOP_URL, AMP_COUNTRY_LOGO } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
 
 const defaultMenu = require('../../conf/menu.json');
@@ -81,7 +80,6 @@ export default class Navbar extends Component {
              style={{cursor: 'pointer'}}>{translate('amp-title')}</a>
 
           <Logout loggedIn={this.props.login.loggedIn}/>
-          <Switcher languages={this.props.translation.languageList}/>
           <div className={style.userInfo}>
             <a className={style.navbar_left_side} >{this.extractLoggedUser('')}</a>
             <a className={style.navbar_left_side} >{this.extractWorkSpace('')}</a>
