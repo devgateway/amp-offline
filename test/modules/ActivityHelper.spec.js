@@ -16,7 +16,6 @@ const updatedOfflineActivity = Object.assign({ id: '100' },
   Utils.toMap(AC.AMP_ID, 'amp1'),
   Utils.toMap(AC.INTERNAL_ID, '123'),
   Utils.toMap(AC.PROJECT_TITLE, title2));
-// TODO update with AMPOFFLINE-121
 const rejectedActivity1 = Object.assign({}, updatedOfflineActivity,
   { id: Utils.stringToUniqueId(title2) }, Utils.toMap(AC.REJECTED_ID, 1));
 const rejectedActivity2 = Object.assign({}, updatedOfflineActivity,
