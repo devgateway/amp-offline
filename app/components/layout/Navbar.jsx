@@ -7,9 +7,9 @@ import TopMenu from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
 import LoggerManager from '../../modules/util/LoggerManager';
-import UrlUtils from '../../utils/URLUtils';
-import { WORKSPACE_URL, DESKTOP_URL, AMP_COUNTRY_LOGO } from '../../utils/Constants';
+import { AMP_COUNTRY_LOGO, DESKTOP_CURRENT_URL } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
+import { Link } from 'react-router';
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -27,29 +27,7 @@ export default class Navbar extends Component {
   constructor() {
     super();
     LoggerManager.log('constructor');
-
-    this.handleNavigation = this.handleNavigation.bind(this);
   }
-
-  handleNavigation() {
-    if (this.props.login.loggedIn) {
-      console.log('esta logeado');
-      console.log(this.props);
-      debugger;
-      const { currentWorkspace } = this.props.workspace;
-
-      if (currentWorkspace && currentWorkspace.id) {
-        // we have a team selected we go to the desktop
-        return UrlUtils.forwardTo(`${DESKTOP_URL}/${currentWorkspace.id}`);
-      } else {
-        // no team selected we go to choose one
-        UrlUtils.forwardTo(WORKSPACE_URL);
-      }
-    } else {
-      // UrlUtils.forwardTo(LOGIN_URL);
-    }
-  }
-
 
   extractLoggedUser(prepend) {
     LoggerManager.log('extractLoggedUser');
@@ -72,12 +50,11 @@ export default class Navbar extends Component {
     return (
       <div className={style.container}>
         <div className={style.navbar}>
-          <img src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
-               className={[style.countryFlag, style.navbar_left_side ].join(' ')} onClick={this.handleNavigation}/>
-          {/* requirements dont mention verions I leave it incase we want to restore
-           <a className={style.navbar_left_side} href="#">{VERSION}</a>*/}
-          <a className={style.navbar_left_side} onClick={this.handleNavigation}
-             style={{cursor: 'pointer'}}>{translate('amp-title')}</a>
+          <Link to={DESKTOP_CURRENT_URL}> <img src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
+                                               className={[style.countryFlag, style.navbar_left_side ].join(' ')}
+                                               onClick={this.handleNavigation}/></Link>
+          <Link className={style.navbar_left_side}
+                style={{cursor: 'pointer'}}>{translate('amp-title')}</Link>
 
           <Logout loggedIn={this.props.login.loggedIn}/>
           <div className={style.userInfo}>

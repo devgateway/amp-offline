@@ -13,7 +13,7 @@ export default class Home extends Component {
     return (
       <div className={styles.footerContainer}>
         <footer className={[styles.footer, styles.footerText].join(' ')}>
-          <p>AMP {VERSION}  {translate('amp-footer')}</p>
+          <p>{translate('amp-offline')} {VERSION} {translate('amp-footer')}</p>
         </footer>
         <div className={[styles.footerText, styles.footerImage].join(' ')}>
           <img src="./assets/images/dgf_logo_bottom.gif" />
