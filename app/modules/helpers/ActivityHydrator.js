@@ -3,6 +3,8 @@ import * as FieldsHelper from './FieldsHelper';
 import store from '../../index';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
+import { PATHS_WITH_FULL_VALUE } from '../../utils/constants/FieldPathConstants';
+import { HIERARCHICAL_VALUE } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -95,17 +97,16 @@ export default class ActivityHydrator {
 
     if (possibleValues['field-path'].length === pathIndex + 1) {
       // this is the last level
-      const options = possibleValues['possible-options'];
       objects.forEach(obj => {
         const fieldValue = obj[fieldName];
         if (fieldValue !== undefined && fieldValue !== null) {
           if (isList) {
             for (let index = 0; index < fieldValue.length; index++) {
               const currValue = fieldValue[index];
-              fieldValue[index] = hydrate ? options[currValue] : currValue.id;
+              fieldValue[index] = hydrate ? this._fillSelectedOption(possibleValues, currValue) : currValue.id;
             }
           } else {
-            obj[fieldName] = hydrate ? options[fieldValue] : fieldValue.id;
+            obj[fieldName] = hydrate ? this._fillSelectedOption(possibleValues, fieldValue) : fieldValue.id;
           }
         }
       });
@@ -125,6 +126,31 @@ export default class ActivityHydrator {
         this._hydrateFieldPath(nextLevelObjects, possibleValues, pathIndex + 1, fieldDef.children, hydrate);
       }
     }
+  }
+
+  _fillSelectedOption(possibleValues, selectedId) {
+    const option = Object.assign({}, possibleValues['possible-options'][selectedId]);
+    option[HIERARCHICAL_VALUE] = this._getFullName(possibleValues, selectedId);
+    return option;
+  }
+
+  _getFullName(possibleValues, selectedId) {
+    if (PATHS_WITH_FULL_VALUE.has(possibleValues.id)) {
+      return this._buildFullName(possibleValues['possible-options'], selectedId);
+    }
+    return null;
+  }
+
+  // TODO update with latest approach on extra info for possible values
+  _buildFullName(options, selectedId) {
+    const nameParts = [];
+    let option = options[selectedId];
+    while (option) {
+      // TODO translated valud
+      nameParts.push(option.value);
+      option = option.extra_info ? options[option.extra_info.parent_location_id] : null;
+    }
+    return `[${nameParts.reverse().join('][')}]`;
   }
 
   /**

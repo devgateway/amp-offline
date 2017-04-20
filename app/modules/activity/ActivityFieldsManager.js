@@ -7,6 +7,17 @@ import LoggerManager from '../../modules/util/LoggerManager';
  * @author Nadejda Mandrescu
  */
 export default class ActivityFieldsManager {
+  /**
+   * Shallow clone of another activityFieldsManager
+   * @param activityFieldsManager
+   * @return {ActivityFieldsManager}
+   */
+  static clone(activityFieldsManager: ActivityFieldsManager) {
+    const newActivityFieldsManager = new ActivityFieldsManager([], []);
+    Object.assign(newActivityFieldsManager, activityFieldsManager);
+    return newActivityFieldsManager;
+  }
+
   constructor(fieldsDef, possibleValuesCollection) {
     LoggerManager.log('constructor');
     this._fieldsDef = fieldsDef;

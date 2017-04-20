@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import styles from './ActivityPreview.css';
-import IdentificationSection from './IdentificationSection';
-import InternalIdsSection from './InternalIdsSection';
+import APIdentification from './sections/APIdentification';
+import { APInternalIds } from './sections/APInternalIds';
+import APPlanning from './sections/APPlanning';
+import APLocation from './sections/APLocation';
+import APNationalPlanObjective from './sections/APNationalPlanObjective';
+import APProgram from './sections/APProgram';
 import LoggerManager from '../../../modules/util/LoggerManager';
 
 /**
@@ -16,9 +20,14 @@ export default class MainGroup extends Component {
   }
 
   render() {
+    // TODO (iteration 2+) hide sections when disabled (e.g. planning, location)
     return (<div className={styles.section_group}>
-      <IdentificationSection />
-      <InternalIdsSection />
+      <APIdentification />
+      <APInternalIds />
+      <APPlanning />
+      <APLocation />
+      <APNationalPlanObjective />
+      <APProgram />
     </div>);
   }
 }
