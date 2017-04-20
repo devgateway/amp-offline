@@ -13,10 +13,13 @@ export const LOCATION_PATH = 'locations~location';
 export const NATIONAL_PLAN_OBJECTIVE_PATH = 'national_plan_objective~program';
 export const PRIMARY_PROGRAM_PATH = 'primary_programs~program';
 export const SECONDARY_PROGRAM_PATH = 'secondary_programs~program';
+export const PRIMARY_SECTOR_PATH = 'primary_sectors~sector_id';
+export const SECONDARY_SECTOR_PATH = 'secondary_sectors~sector_id';
+export const TERTIARY_SECTOR_PATH = 'tertiary_sectors~sector_id';
 
 export const RICH_TEXT_FIELDS = new Set([AC.STATUS_REASON, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS,
   AC.LESSONS_LEARNED, AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT,
 ]);
 
 export const PATHS_WITH_FULL_VALUE = new Set([LOCATION_PATH, NATIONAL_PLAN_OBJECTIVE_PATH, PRIMARY_PROGRAM_PATH,
-  SECONDARY_PROGRAM_PATH]);
+  SECONDARY_PROGRAM_PATH, PRIMARY_SECTOR_PATH, SECONDARY_SECTOR_PATH, TERTIARY_SECTOR_PATH]);

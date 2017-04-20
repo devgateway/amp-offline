@@ -2,22 +2,22 @@ import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import APPercentageList from '../components/APPercentageList';
 import {
-  PRIMARY_PROGRAMS,
-  SECONDARY_PROGRAMS,
-  PROGRAM,
-  PROGRAM_PERCENTAGE
+  PRIMARY_SECTORS,
+  SECONDARY_SECTORS,
+  SECTOR_ID,
+  SECTOR_PERCENTAGE
 } from '../../../../utils/constants/ActivityConstants';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
-const PrimaryProgramList = APPercentageList(PRIMARY_PROGRAMS, PROGRAM, PROGRAM_PERCENTAGE, 'Primary Program');
-const SecondaryProgramList = APPercentageList(SECONDARY_PROGRAMS, PROGRAM, PROGRAM_PERCENTAGE, 'Secondary Program');
+const PrimarySectorList = APPercentageList(PRIMARY_SECTORS, SECTOR_ID, SECTOR_PERCENTAGE, 'Primary Sector');
+const SecondarySectorList = APPercentageList(SECONDARY_SECTORS, SECTOR_ID, SECTOR_PERCENTAGE, 'Secondary Sector');
 
 /**
- * Activity Preview Program section
+ * Activity Preview Sector section
  * @author Nadejda Mandrescu
  */
-class APProgram extends Component {
+class APSector extends Component {
   /* eslint-disable react/no-unused-prop-types */
   static propTypes = {
     activity: PropTypes.object.isRequired,
@@ -32,11 +32,10 @@ class APProgram extends Component {
 
   render() {
     return (<div>
-      <PrimaryProgramList key="primary-programs-list" {...this.props} />
-      <SecondaryProgramList key="secondary-programs-list" {...this.props} />
+      <PrimarySectorList key="primary-programs-list" {...this.props} />
+      <SecondarySectorList key="secondary-programs-list" {...this.props} />
     </div>);
   }
-
 }
 
-export default Section(APProgram, 'Program');
+export default Section(APSector, 'Sectors');
