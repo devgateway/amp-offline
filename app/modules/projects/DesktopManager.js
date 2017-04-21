@@ -136,7 +136,7 @@ const DesktopManager = {
     const defaultTabs = [
       {
         id: 0,
-        name: 'Active Projects',
+        name: 'Activities',
         isActive: true,
         projects: projectsWithLinks,
         sorting: null,
@@ -144,7 +144,7 @@ const DesktopManager = {
       },
       {
         id: 1,
-        name: 'Rejected Projects',
+        name: 'Rejected Sync',
         isActive: false,
         projects: rejected,
         sorting: null,
