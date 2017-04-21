@@ -15,8 +15,8 @@ export default class Home extends Component {
         <footer className={[styles.footer, styles.footerText].join(' ')}>
           <p>{translate('amp-offline')} {VERSION} {translate('amp-footer')}</p>
         </footer>
-        <div className={[styles.footerText, styles.footerImage].join(' ')}>
-          <img src="./assets/images/dgf_logo_bottom.gif" />
+        <div className={[styles.footerText, styles.footerImageContainer].join(' ')}>
+          <img className={styles.footerImage} />
           <br/>
           {DG_COMPANY_NAME}
           <br/>
