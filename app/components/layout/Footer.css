@@ -22,6 +22,12 @@
   font-size: 11px;
   border: 0px;
 }
-.footerImage{
+.footerImageContainer{
   padding-top: 10px;
+}
+.footerImage{
+  content: url('../../assets/images/dgf_logo_bottom.gif');
+  width: 118px;
+  height: 43px;
+  cursor: pointer;
 }
