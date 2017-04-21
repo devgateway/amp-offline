@@ -144,7 +144,7 @@ const DesktopManager = {
       },
       {
         id: 1,
-        name: 'Rejected Activities',
+        name: 'Rejected Sync',
         isActive: false,
         projects: rejected,
         sorting: null,

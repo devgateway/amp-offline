@@ -92,3 +92,7 @@ html, body {
 .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
   padding: 6px;
 }
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+  color: #000000;
+}

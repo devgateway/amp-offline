@@ -12,7 +12,7 @@
   border-top: 1px;
   border-bottom: 0;
   position: relative;
-  top: 10px;
+  top: 0px;
   padding-left: 10px;
   padding-right: 10px;
   font-size: 12px;
@@ -26,32 +26,65 @@
   border-top: 0;
 }
 
+.thClassName {
+  border-right: none !important;
+  border-left: none !important;
+  color: #7f8fa4;
+  font-weight: normal;
+}
+
 .column_5 {
   width: 5%;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.column_7 {
+  width: 7%;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.column_8 {
+  width: 8%;
+  border-right: none !important;
+  border-left: none !important;
 }
 
 .column_10 {
   width: 10%;
+  border-right: none !important;
+  border-left: none !important;
 }
 
 .column_15 {
   width: 15%;
+  border-right: none !important;
+  border-left: none !important;
 }
 
 .column_25 {
   width: 25%;
+  border-right: none !important;
+  border-left: none !important;
 }
 
 .column_30 {
   width: 30%;
+  border-right: none !important;
+  border-left: none !important;
 }
 
 .column_40 {
   width: 40%;
+  border-right: none !important;
+  border-left: none !important;
 }
 
 .column_50 {
   width: 50%;
+  border-right: none !important;
+  border-left: none !important;
 }
 
 .status_draft {
@@ -77,6 +110,6 @@
   font-size: 12px;
   font-weight: bold;
   right: 13px;
-  top: 7px;
   position: relative;
+  top: -30px;
 }

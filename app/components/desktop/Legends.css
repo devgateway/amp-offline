@@ -13,7 +13,7 @@
 }
 
 .legend {
-  margin-right: 12px;
+  margin-right: 2px;
   cursor: pointer;
 }
 
@@ -36,4 +36,12 @@
   color: black;
   font-weight: bold;
   font-style: italic;
+}
+
+.info_icon {
+  color: #90c845;
+  display: inline-block;
+  margin-left: 5px;
+  padding-right: 5px;
+  top: 2px;
 }
