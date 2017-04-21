@@ -71,6 +71,7 @@ export const ACTIVITY_STATUS_VALIDATED = 'ACTIVITY_STATUS_VALIDATED';
 
 export const VERSION = '0.0.1';
 export const AMP_COUNTRY_LOGO = './assets/ampCountryFlag.png';
+export const ASSEST_DIRECTORY = './assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
 // Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
 export const
