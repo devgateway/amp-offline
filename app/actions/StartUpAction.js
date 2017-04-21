@@ -12,6 +12,7 @@ import {
   CONNECTIVITY_CHECK_INTERVAL
 } from '../utils/Constants';
 import LoggerManager from '../modules/util/LoggerManager';
+import NumberUtils from '../utils/NumberUtils';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -23,12 +24,14 @@ export const TIMER_STOP = 'TIMER_STOP';
 // we keep the timer as a variable in case we want to be able to stop it
 let timer;
 
+export const STATE_GS_NUMBERS_LOADED = 'STATE_GS_NUMBERS_LOADED';
+
 /**
  * Checks and updates the connectivity status
  * @returns ConnectivityStatus
  */
 export function ampStartUp() {
-  return loadConnectionInformation().then(scheduleConnectivityCheck);
+  return loadConnectionInformation().then(scheduleConnectivityCheck).then(loadNumberSettings);
 }
 
 export function loadConnectionInformation() {
@@ -59,6 +62,15 @@ function scheduleConnectivityCheck() {
   });
 }
 
+function loadNumberSettings() {
+  LoggerManager.log('loadNumberSettings');
+  return new Promise((resolve, reject) => (
+    NumberUtils.getConfigFromDB().then((data) => {
+      store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: data });
+      return resolve();
+    }).catch(reject)
+  ));
+}
 
 function startUpLoaded(connectionInformation) {
   return {
