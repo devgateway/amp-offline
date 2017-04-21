@@ -2,6 +2,7 @@
 import UrlUtils from '../utils/URLUtils';
 import DesktopManager from '../modules/projects/DesktopManager';
 import LoggerManager from '../modules/util/LoggerManager';
+import { DESKTOP_URL } from '../utils/Constants';
 
 export const STATE_DESKTOP_LOADING = 'STATE_DESKTOP_LOADING';
 export const STATE_DESKTOP_LOADED = 'STATE_DESKTOP_LOADED';
@@ -18,7 +19,7 @@ export function loadDesktop(teamId, teamMemberId) {
           rejectedProjects: data.rejectedProjects,
           tabs: data.defaultTabs
         }));
-        return UrlUtils.forwardTo(`/desktop/${teamId}`);
+        return UrlUtils.forwardTo(`${DESKTOP_URL}/${teamId}`);
       }).catch((error) => {
         dispatch(errorLoadDesktop(error));
       });

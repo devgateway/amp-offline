@@ -13,7 +13,8 @@ import {
   ACTIVITY_EXPORT_URL,
   SINGLE_FIELDS_TREE_URL,
   POSSIBLE_VALUES_PER_FIELD_PATHS,
-  SYNC_URL
+  SYNC_URL,
+  AMP_COUNTRY_FLAG
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -76,6 +77,13 @@ const routesConfiguration = [{
   url: SYNC_URL,
   method: 'GET',
   requiresToken: true
-}];
+}, {
+  url: AMP_COUNTRY_FLAG,
+  method: 'GET',
+  requiresToken: true,
+  regularAmpUrl: true,
+  isBinary: true
+}
+];
 
 module.exports = routesConfiguration;

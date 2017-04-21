@@ -1,8 +1,8 @@
 .container {
   text-align: center;
   width: 99%;
-  float: left;
   margin-top: 10px;
+  margin-bottom: 150px;
 }
 
 .nav-tabs > li.active > a {

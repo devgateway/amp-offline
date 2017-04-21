@@ -1,13 +1,32 @@
 import React, { Component } from 'react';
-import style from './Footer.css';
 import translate from '../../utils/translate';
+import styles from './Footer.css';
+import {
+  DG_COMPANY_NAME,
+  DG_ADDRESS_1,
+  DG_ADDRESS_2,
+  DG_CONTACT_INFO
+} from '../../utils/Constants';
 
 export default class Home extends Component {
   render() {
     return (
-      <footer className={style.footer}>
-        <p>{translate('Development Gateway')}</p>
-      </footer>
+      <div className={styles.footerContainer}>
+        <footer className={[styles.footer, styles.footerText].join(' ')}>
+          <p>{translate('amp-offline')} {VERSION} {translate('amp-footer')}</p>
+        </footer>
+        <div className={[styles.footerText, styles.footerImage].join(' ')}>
+          <img src="./assets/images/dgf_logo_bottom.gif" />
+          <br/>
+          {DG_COMPANY_NAME}
+          <br/>
+          {DG_ADDRESS_1}
+          <br/>
+          {DG_ADDRESS_2}
+          <br/>
+          {DG_CONTACT_INFO}
+        </div>
+      </div>
     );
   }
 }

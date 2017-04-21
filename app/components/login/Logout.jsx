@@ -26,7 +26,7 @@ class Logout extends React.Component {
       return (
         <div className={style.logout_container}>
           <a className={style.navbar_right_side} href="#"
-             onClick={this.clickLogout.bind(this)}>{translate('logoff')} | </a>
+             onClick={this.clickLogout.bind(this)}>{translate('logoff')}</a>
         </div>
       );
     } else {

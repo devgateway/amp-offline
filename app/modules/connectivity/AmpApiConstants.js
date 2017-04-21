@@ -21,3 +21,4 @@ export const POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
 export const PARAM_AMPOFFLINE_AGENT = 'AMPOffline';
 
+export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
