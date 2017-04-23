@@ -8,7 +8,8 @@ import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
   connectionInformation: undefined,
-  loadingInProgress: false
+  loadingInProgress: false,
+  gsNumberData: undefined
 };
 
 export default function startUp(state = defaultState, action: Object) {
