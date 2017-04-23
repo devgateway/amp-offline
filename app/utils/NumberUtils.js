@@ -49,7 +49,8 @@ export default class NumberUtils {
   static createLanguage() {
     LoggerManager.log('buildLocale');
     const data = store.getState().startUp.gsNumberData;
-    numeral.register('locale', 'offline', {
+    const localeName = `locale_${Math.random() * 100}`.substring(0, 9);
+    numeral.register('locale', localeName, {
       delimiters: {
         thousands: data.groupSeparator,
         decimal: data.decimalSeparator
@@ -77,7 +78,7 @@ export default class NumberUtils {
       }
     });
     // switch between locales
-    numeral.locale('offline');
+    numeral.locale(localeName);
   }
 
   static rawNumberToFormattedString(number) {
