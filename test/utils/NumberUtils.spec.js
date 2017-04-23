@@ -6,7 +6,6 @@ import thunk from 'redux-thunk';
 import { expect } from 'chai';
 import NumberUtils from '../../app/utils/NumberUtils';
 import { GS_AMOUNT_OPTION_IN_UNITS } from '../../app/utils/constants/GlobalSettingConstants';
-import { STATE_GS_NUMBERS_LOADED } from '../../app/actions/StartUpAction';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -20,11 +19,11 @@ const noDecimalConfig = {
 describe('@@ Numbertils @@', () => {
   it('should return a config', () => {
     expect(NumberUtils.getConfigFromDB())
-      .to.have.property('decimalSeparator', 'groupSeparator', 'format', 'amountsInThousands');
+      .to.eventually.have.property('decimalSeparator', 'groupSeparator', 'format', 'amountsInThousands');
   });
 
   it('should convert numbers', () => {
-    mockStore.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: noDecimalConfig });
+    const store = mockStore([{ syncUp: { gsNumberData: noDecimalConfig } }]);
     NumberUtils.createLanguage();
     expect(NumberUtils.rawNumberToFormattedString(1)).to.equal('1');
     expect(NumberUtils.rawNumberToFormattedString(10)).to.equal('10');

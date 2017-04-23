@@ -122,7 +122,6 @@
     "json-loader": "^0.5.4",
     "minimist": "^1.2.0",
     "mocha": "^3.1.2",
-    "react-addons-test-utils": "^15.3.2",
     "react-bootstrap-table": "^3.1.2",
     "redux-logger": "^2.7.4",
     "redux-mock-store": "^1.2.1",
