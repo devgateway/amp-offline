@@ -155,6 +155,7 @@
     "i18next-xhr-backend": "^1.2.1",
     "jsonschema": "^1.1.1",
     "nedb": "^1.8.0",
+    "numeral": "^2.0.6",
     "rc-menu": "^5.0.7",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.4.2",
