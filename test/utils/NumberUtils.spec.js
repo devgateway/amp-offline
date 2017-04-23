@@ -23,7 +23,7 @@ describe('@@ Numbertils @@', () => {
   });
 
   it('should convert numbers', () => {
-    const store = mockStore([{ syncUp: { gsNumberData: noDecimalConfig } }]);
+    mockStore([{ syncUp: { gsNumberData: noDecimalConfig } }]);
     NumberUtils.createLanguage();
     expect(NumberUtils.rawNumberToFormattedString(1)).to.equal('1');
     expect(NumberUtils.rawNumberToFormattedString(10)).to.equal('10');
