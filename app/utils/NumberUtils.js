@@ -1,7 +1,7 @@
 /**
  * Created by Gabriel on 20/04/2017.
  */
-import Numeral from 'numeral';
+import numeral from 'numeral';
 import LoggerManager from '../modules/util/LoggerManager';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import {
@@ -35,11 +35,49 @@ export default class NumberUtils {
     ));
   }
 
+  static createLanguage() {
+    LoggerManager.log('buildLocale');
+    const data = store.getState().startUp.gsNumberData;
+    numeral.register('locale', 'offline', {
+      delimiters: {
+        thousands: data.groupSeparator,
+        decimal: data.decimalSeparator
+      },
+      abbreviations: {
+        thousand: 'k',
+        million: 'm',
+        billion: 'b',
+        trillion: 't'
+      },
+      ordinal: (number) => {
+        switch (number) {
+          case 1:
+            return 'st';
+          case 2:
+            return 'nd';
+          case 3:
+            return 'trd';
+          default:
+            return 'th';
+        }
+      },
+      currency: {
+        symbol: '$'
+      }
+    });
+    // switch between locales
+    numeral.locale('offline');
+  }
+
   static rawNumberToFormattedString(number) {
     LoggerManager.log('rawNumberToFormattedString');
     if (store.getState().startUp.gsNumberData) {
-      // todo: format number.
+      const format = store.getState().startUp.gsNumberData.format;
+      LoggerManager.log(number);
+      LoggerManager.log(numeral(number).format(format));
+      return numeral(number).format(format);
     }
+    LoggerManager.warn('Can´t format number');
     return number;
   }
 }

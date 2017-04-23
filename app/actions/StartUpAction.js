@@ -31,7 +31,9 @@ export const STATE_GS_NUMBERS_LOADED = 'STATE_GS_NUMBERS_LOADED';
  * @returns ConnectivityStatus
  */
 export function ampStartUp() {
-  return loadConnectionInformation().then(scheduleConnectivityCheck).then(loadNumberSettings);
+  return loadConnectionInformation()
+    .then(scheduleConnectivityCheck)
+    .then(loadNumberSettings);
 }
 
 export function loadConnectionInformation() {
@@ -48,6 +50,7 @@ export function loadConnectionInformation() {
     return resolve();
   });
 }
+
 // exporting timer from a function since we cannot export let
 export function getTimer() {
   return timer;
@@ -67,6 +70,7 @@ function loadNumberSettings() {
   return new Promise((resolve, reject) => (
     NumberUtils.getConfigFromDB().then((data) => {
       store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: data });
+      NumberUtils.createLanguage();
       return resolve();
     }).catch(reject)
   ));
