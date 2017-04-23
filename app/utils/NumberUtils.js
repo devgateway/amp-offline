@@ -8,7 +8,11 @@ import {
   GS_DEFAULT_DECIMAL_SEPARATOR,
   GS_AMOUNTS_IN_THOUSANDS,
   GS_DEFAULT_GROUPING_SEPARATOR,
-  GS_DEFAULT_NUMBER_FORMAT
+  GS_DEFAULT_NUMBER_FORMAT,
+  GS_AMOUNT_OPTION_IN_UNITS,
+  GS_AMOUNT_OPTION_IN_THOUSANDS,
+  GS_AMOUNT_OPTION_IN_MILLIONS,
+  GS_AMOUNT_OPTION_IN_BILLIONS
 } from './constants/GlobalSettingConstants';
 import store from '../index';
 
@@ -71,13 +75,22 @@ export default class NumberUtils {
 
   static rawNumberToFormattedString(number) {
     LoggerManager.log('rawNumberToFormattedString');
-    if (store.getState().startUp.gsNumberData) {
-      const format = store.getState().startUp.gsNumberData.format;
-      LoggerManager.log(number);
-      LoggerManager.log(numeral(number).format(format));
-      return numeral(number).format(format);
+    return numeral(NumberUtils.calculateInThousands(number)).format(store.getState().startUp.gsNumberData.format);
+  }
+
+  static calculateInThousands(number) {
+    LoggerManager.log('calculateInThousands');
+    switch (store.getState().startUp.gsNumberData.amountsInThousands) {
+      case GS_AMOUNT_OPTION_IN_UNITS:
+        return number;
+      case GS_AMOUNT_OPTION_IN_THOUSANDS:
+        return number / 1000;
+      case GS_AMOUNT_OPTION_IN_MILLIONS:
+        return number / 1000 / 1000;
+      case GS_AMOUNT_OPTION_IN_BILLIONS:
+        return number / 1000 / 1000 / 1000;
+      default:
+        return number;
     }
-    LoggerManager.warn('Can´t format number');
-    return number;
   }
 }
