@@ -20,7 +20,12 @@ export default class NumberUtils {
 
   static getConfigFromDB() {
     LoggerManager.log('getConfigFromDB');
-    const data = { decimalSeparator: '', groupSeparator: '', format: '', amountsInThousands: '' };
+    const data = {
+      decimalSeparator: '.',
+      groupSeparator: ',',
+      format: '###.###',
+      amountsInThousands: GS_AMOUNT_OPTION_IN_UNITS
+    };
     return new Promise((resolve, reject) => (
       GlobalSettingsHelper.findAll({
         key: {
@@ -30,10 +35,12 @@ export default class NumberUtils {
             GS_AMOUNTS_IN_THOUSANDS]
         }
       }).then((db) => {
-        data.decimalSeparator = db.find((item) => (item.key === GS_DEFAULT_DECIMAL_SEPARATOR)).value;
-        data.groupSeparator = db.find((item) => (item.key === GS_DEFAULT_GROUPING_SEPARATOR)).value;
-        data.format = db.find((item) => (item.key === GS_DEFAULT_NUMBER_FORMAT)).value;
-        data.amountsInThousands = db.find((item) => (item.key === GS_AMOUNTS_IN_THOUSANDS)).value;
+        if (db.length > 0) {
+          data.decimalSeparator = db.find((item) => (item.key === GS_DEFAULT_DECIMAL_SEPARATOR)).value;
+          data.groupSeparator = db.find((item) => (item.key === GS_DEFAULT_GROUPING_SEPARATOR)).value;
+          data.format = db.find((item) => (item.key === GS_DEFAULT_NUMBER_FORMAT)).value;
+          data.amountsInThousands = db.find((item) => (item.key === GS_AMOUNTS_IN_THOUSANDS)).value;
+        }
         return resolve(data);
       }).catch(reject)
     ));
