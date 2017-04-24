@@ -65,7 +65,7 @@ function scheduleConnectivityCheck() {
   });
 }
 
-function loadNumberSettings() {
+export function loadNumberSettings() {
   LoggerManager.log('loadNumberSettings');
   return new Promise((resolve, reject) => (
     NumberUtils.getConfigFromDB().then((data) => {
