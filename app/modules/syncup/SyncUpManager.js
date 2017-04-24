@@ -33,6 +33,7 @@ import FieldsSyncUpManager from './FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './PossibleValuesSyncUpManager';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
+import { loadNumberSettings } from '../../actions/StartUpAction';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
 const syncUpModuleList = [
@@ -168,9 +169,11 @@ export default class SyncUpManager {
             const status = SYNCUP_STATUS_SUCCESS;
             const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
             return this._saveMainSyncUpLog({ status, userId, modules, newTimestamp }).then((log) => {
+              // Update translations.
               const restart = true;
               store.dispatch(loadAllLanguages(restart));
-              return resolve(log);
+              // Update number format settings.
+              return loadNumberSettings().then(() => (resolve(log))).catch(reject);
             }).catch(reject);
           }).catch((err) => {
             LoggerManager.log('SyncUp Fail');

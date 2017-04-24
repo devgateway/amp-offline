@@ -102,7 +102,7 @@ const DesktopManager = {
   },
 
   getActivityAmounts(/* item */) {
-    return (Math.random() * 1000000).toString().substring(0, 9); // TODO: to be implemented.
+    return (Math.random() * 100000000).toString().substring(0, 12); // TODO: to be implemented.
   },
 
   getActivityDonors(item) {
