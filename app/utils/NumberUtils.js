@@ -68,7 +68,7 @@ export default class NumberUtils {
           case 2:
             return 'nd';
           case 3:
-            return 'trd';
+            return 'rd';
           default:
             return 'th';
         }
