@@ -7,7 +7,14 @@ import {
 } from '../../utils/Constants';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
-import { IS_DRAFT, APPROVAL_STATUS } from '../../utils/constants/ActivityConstants';
+import {
+  IS_DRAFT,
+  APPROVAL_STATUS,
+  FUNDINGS,
+  FUNDING_DETAILS,
+  TRANSACTION_TYPE,
+  TRANSACTION_AMOUNT
+} from '../../utils/constants/ActivityConstants';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import LoggerManager from '../../modules/util/LoggerManager';
 
@@ -94,8 +101,16 @@ const DesktopManager = {
     return true; // TODO: to be implemented.
   },
 
-  getActivityAmounts(/* item */) {
-    return (Math.random() * 100000000).toString().substring(0, 12); // TODO: to be implemented.
+  getActivityAmounts(item) {
+    let amount = 0;
+    item[FUNDINGS].forEach((funding) => (
+      funding[FUNDING_DETAILS].forEach((fd) => {
+        if (fd[TRANSACTION_TYPE] === 0) {
+          amount += fd[TRANSACTION_AMOUNT];
+        }
+      })
+    ));
+    return amount;
   },
 
   getActivityDonors(item) {
