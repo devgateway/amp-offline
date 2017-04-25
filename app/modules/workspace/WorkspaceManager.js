@@ -1,4 +1,4 @@
-import WorkspaceFilterBuilder from './WorkspaceFilter';
+import WorkspaceFilterBuilder from '../filters/WorkspaceFilter';
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import LoggerManager from '../../modules/util/LoggerManager';
 
@@ -6,9 +6,9 @@ const WorkspaceManager = {
   /**
    * @returns {Promise}
    */
-  getWorkspaceFilter() {
+  getWorkspaceFilter(workspace) {
     LoggerManager.log('getWorkspaceFilter');
-    const wsFilterBuilder = new WorkspaceFilterBuilder();
+    const wsFilterBuilder = new WorkspaceFilterBuilder(workspace);
     return wsFilterBuilder.getDBFilter();
   },
 
