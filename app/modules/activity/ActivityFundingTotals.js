@@ -1,3 +1,5 @@
+import NumberUtils from '../../utils/NumberUtils';
+
 /**
  * Activity funding totals helper
  * @author Nadejda Mandrescu
@@ -41,13 +43,15 @@ export default class ActivityFundingTotals {
 
   _buildTotalAndCacheIt(filter, path) {
     let cache = this._filteredTotals;
-    path.forEach(part => { cache = cache[part]; });
+    path.forEach(part => {
+      cache = cache[part];
+    });
     let value = 0;
     if (path.length === 2) {
       value = this._buildStandardMeasureTotal(filter, path[0], path[1]);
     }
     // TODO use workspace currency once its support is available
-    // TODO apply number format
+    value = NumberUtils.rawNumberToFormattedString(value);
     value = value.toLocaleString('en-EN', { currency: 'USD', currencyDisplay: 'code' });
     cache[filter] = value;
     return value;
@@ -77,7 +81,9 @@ export default class ActivityFundingTotals {
     }
     let total = 0;
     // TODO apply currency conversion once its support is available
-    fundingDetails.forEach(fd => { total += fd.transaction_amount; });
+    fundingDetails.forEach(fd => {
+      total += fd.transaction_amount;
+    });
     return total;
   }
 }

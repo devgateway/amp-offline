@@ -8,18 +8,18 @@ export const STATE_DESKTOP_LOADING = 'STATE_DESKTOP_LOADING';
 export const STATE_DESKTOP_LOADED = 'STATE_DESKTOP_LOADED';
 export const STATE_DESKTOP_ERROR = 'STATE_DESKTOP_ERROR';
 
-export function loadDesktop(teamId, teamMemberId) {
+export function loadDesktop(workspace, teamMemberId) {
   LoggerManager.log('loadDesktop');
   return (dispatch, ownProps) => {
     if (ownProps().desktop.isLoadingDesktop === false) {
       dispatch(sendingRequest());
-      DesktopManager.generateDesktopData(teamId, teamMemberId).then((data) => {
+      DesktopManager.generateDesktopData(workspace, teamMemberId).then((data) => {
         dispatch(_loadDesktop({
           activeProjects: data.activeProjects,
           rejectedProjects: data.rejectedProjects,
           tabs: data.defaultTabs
         }));
-        return UrlUtils.forwardTo(`${DESKTOP_URL}/${teamId}`);
+        return UrlUtils.forwardTo(`${DESKTOP_URL}/${workspace.id}`);
       }).catch((error) => {
         dispatch(errorLoadDesktop(error));
       });

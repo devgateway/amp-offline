@@ -72,7 +72,12 @@ const GlobalSettingsHelper = {
   deleteById(gsSettingsId) {
     LoggerManager.log('deleteByIdWSSettings');
     return DatabaseManager.removeById(gsSettingsId, COLLECTION_GLOBAL_SETTINGS);
-  }
+  },
+
+  findAll(filter, projections) {
+    LoggerManager.log('findAll');
+    return DatabaseManager.findAll(filter, COLLECTION_GLOBAL_SETTINGS, projections);
+  },
 };
 
 module.exports = GlobalSettingsHelper;

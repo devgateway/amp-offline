@@ -15,6 +15,7 @@ import {
 import { getGeneralPaginationOptions } from '../../modules/projects/DesktopManager'; // TODO: receive as props.
 import { AMP_ID, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
+import NumberUtils from '../../utils/NumberUtils';
 
 export default class ProjectList extends Component {
 
@@ -54,6 +55,11 @@ export default class ProjectList extends Component {
     }
     const classes = classNames(nameStyles.toString()).replace(',', ' ');
     return `<span class='${classes}'>${row.new ? '* ' : ''}${cell}</span>`;
+  }
+
+  numberFormatter(cell) {
+    const number = Number(cell);
+    return NumberUtils.rawNumberToFormattedString(number);
   }
 
   handlerClickCleanFiltered() {
@@ -96,11 +102,13 @@ export default class ProjectList extends Component {
             className={style.thClassName}>{translate('Funding Agency')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualCommitments" dataSort columnClassName={style.column_15} className={style.thClassName}>
+            dataField="actualCommitments" dataSort columnClassName={style.column_15} className={style.thClassName}
+            dataFormat={this.numberFormatter}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualDisbursements" dataSort columnClassName={style.column_15} className={style.thClassName}>
+            dataField="actualDisbursements" dataSort columnClassName={style.column_15} className={style.thClassName}
+            dataFormat={this.numberFormatter}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>

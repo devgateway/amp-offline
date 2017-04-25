@@ -24,7 +24,7 @@ export function selectWorkspace(wsId) {
         const actionData = { teamMember, workspace };
         dispatch({ type: STATE_SELECT_WORKSPACE, actionData });
         // This is like "chaining actions".
-        return dispatch(loadDesktop(wsId, teamMember.id));
+        return dispatch(loadDesktop(workspace, teamMember.id));
       }).catch((err) => {
         LoggerManager.error(err);
         dispatch({ type: STATE_WORKSPACE_ERROR, actionData: err.toString() });
