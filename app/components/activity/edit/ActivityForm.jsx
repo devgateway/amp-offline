@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import { Button, Panel } from 'react-bootstrap';
+import { Button, Panel, Grid, Row, Col } from 'react-bootstrap';
 import Loading from '../../common/Loading';
 import * as styles from './ActivityForm.css';
-import { SECTIONS, IDENTIFICATION } from './sections/AFSectionConstants';
+import { SECTIONS, IDENTIFICATION, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
 import ErrorMessage from '../../common/ErrorMessage';
@@ -77,6 +77,15 @@ export default class ActivityForm extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.activityReducer.activityFieldsManager) {
+      this.sections = SECTIONS.map(name => {
+        const fmPath = SECTIONS_FM_PATH[name];
+        if (!fmPath || nextProps.activityReducer.activityFieldsManager.isFieldPathEnabled(fmPath)) {
+          return name;
+        }
+        return null;
+      }).filter(name => name);
+    }
     if ((!this.activity && nextProps.activityReducer.activity) || nextProps.activityReducer.savedActivity) {
       if (nextProps.activityReducer.savedActivity) {
         this.activity = undefined;
@@ -109,9 +118,9 @@ export default class ActivityForm extends Component {
   }
 
   _renderQuickLinks() {
-    const sectionLinks = SECTIONS.map(sectionName =>
-      <Button key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block>
-        {translate(sectionName)}
+    const sectionLinks = this.sections.map(sectionName =>
+      <Button key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block >
+        <div className={styles.quick_links}>{translate(sectionName)}</div>
       </Button>);
     return (
       <div>
@@ -119,7 +128,9 @@ export default class ActivityForm extends Component {
           <div className={styles.general_header} >{this._getQuickLinksHeader()}</div>
         </Button>
         <Panel collapsible defaultExpanded expanded={this.state.quickLinksExpanded} >
-          {sectionLinks}
+          <div >
+            {sectionLinks}
+          </div>
         </Panel>
       </div>
     );
@@ -176,25 +187,29 @@ export default class ActivityForm extends Component {
     const errorMessage = this.state.validationError ? <ErrorMessage message={this.state.validationError} /> : null;
     // TODO saved successful when staying on page
     return (
-      <div>
+      <div className={styles.form_content} >
         {errorMessage}
-        <table className={styles.form_content}>
-          <tbody className={styles.table}>
-            <tr><td>{this._renderSaveDialog()}</td></tr>
-            <tr>
-              <td className={styles.form_main_content}>
-                <div className={styles.general_header}>
+        <Grid fluid >
+          <Row >
+            <Col>{this._renderSaveDialog()}</Col>
+          </Row>
+          <Row>
+            <Col md={10}>
+              <div className={styles.form_main_content} >
+                <div className={styles.general_header} >
                   {translate('Edit Activity Form')}({ projectTitle })
                 </div>
                 <div>{AFSectionLoader(this.state.currentSection)}</div>
-              </td>
-              <td className={styles.actions}>
+              </div>
+            </Col>
+            <Col mdOffset={10}>
+              <div className={styles.actions} >
                 {this._renderQuickLinks()}
                 {this._renderActions()}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </Col>
+          </Row>
+        </Grid>
       </div>
     );
   }

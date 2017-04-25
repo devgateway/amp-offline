@@ -90,6 +90,7 @@ export const RPC_AMOUNT = 'rpc_amount';
 export const AMOUNT = 'amount';
 export const CURRENCY_CODE = 'currency_code';
 export const FUNDING_DATE = 'funding_date';
+export const COMPONENTS = 'components';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

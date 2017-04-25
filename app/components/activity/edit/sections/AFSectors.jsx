@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { Component } from 'react';
 import AFSection from './AFSection';
+import { SECTORS } from './AFSectionConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
- * Planning Section
+ * Sectors Section
  * @author Nadejda Mandrescu
  */
-export default class Planning extends AFSection {
+class AFSectors extends Component {
 
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
   }
 
-  renderContent() {
+  render() {
     return <div>TODO</div>;
   }
 }
+
+export default AFSection(AFSectors, SECTORS);
