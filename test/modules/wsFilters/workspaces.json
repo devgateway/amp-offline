@@ -315,5 +315,141 @@
         15
       ]
     }
+  },
+  {
+    "id": 20,
+    "name": "Equipe DGP",
+    "workspace-group": "Government",
+    "workspace-lead-id": 177,
+    "add-activity": true,
+    "is-computed": true,
+    "hide-draft": false,
+    "is-cross-team-validation": true,
+    "parent-workspace-id": 6,
+    "access-type": "Team",
+    "is-private": false,
+    "permission-strategy": "No Access",
+    "organizations": [
+      105
+    ]
+  },
+  {
+    "id": 21,
+    "name": {
+      "en": "WS Filter by status",
+      "fr": "WS Filter by status"
+    },
+    "description": {
+      "en": " ",
+      "fr": " "
+    },
+    "workspace-group": "Government",
+    "add-activity": false,
+    "is-computed": true,
+    "hide-draft": false,
+    "is-cross-team-validation": false,
+    "use-filter": true,
+    "access-type": "Team",
+    "permission-strategy": "Full Access",
+    "workspace-filters": {
+      "statuses": [
+        169
+      ]
+    }
+  },
+  {
+    "id": 22,
+    "name": {
+      "en": "WS Filter by donor agency",
+      "fr": "WS Filter by donor agency"
+    },
+    "description": {
+      "en": " ",
+      "fr": " "
+    },
+    "workspace-group": "Government",
+    "add-activity": false,
+    "is-computed": true,
+    "hide-draft": false,
+    "is-cross-team-validation": false,
+    "use-filter": true,
+    "access-type": "Team",
+    "permission-strategy": "Full Access",
+    "workspace-filters": {
+      "donnorgAgency": [
+        105
+      ]
+    }
+  },
+  {
+    "id": 23,
+    "name": {
+      "en": "WS Filter by location",
+      "fr": "WS Filter by location"
+    },
+    "description": {
+      "en": " ",
+      "fr": " "
+    },
+    "workspace-group": "Government",
+    "add-activity": false,
+    "is-computed": true,
+    "hide-draft": false,
+    "is-cross-team-validation": false,
+    "use-filter": true,
+    "access-type": "Team",
+    "permission-strategy": "Full Access",
+    "workspace-filters": {
+      "locationSelected": [
+        14,
+        26
+      ]
+    }
+  },
+  {
+    "id": 24,
+    "name": {
+      "en": "WS Filter by program",
+      "fr": "WS Filter by program"
+    },
+    "description": {
+      "en": " ",
+      "fr": " "
+    },
+    "workspace-group": "Government",
+    "add-activity": false,
+    "is-computed": true,
+    "hide-draft": false,
+    "is-cross-team-validation": false,
+    "use-filter": true,
+    "access-type": "Team",
+    "permission-strategy": "Full Access",
+    "workspace-filters": {
+      "primaryPrograms": [
+        30
+      ]
+    }
+  },
+  {
+    "id": 25,
+    "name": {
+      "en": "WS Filter by start date",
+      "fr": "WS Filter by start date"
+    },
+    "description": {
+      "en": " ",
+      "fr": " "
+    },
+    "workspace-group": "Government",
+    "add-activity": false,
+    "is-computed": true,
+    "hide-draft": false,
+    "is-cross-team-validation": false,
+    "use-filter": true,
+    "access-type": "Team",
+    "permission-strategy": "Full Access",
+    "workspace-filters": {
+      "fromActivityStartDate": "2010-01-01T00:00:00.000+0200"
+    }
   }
 ]
