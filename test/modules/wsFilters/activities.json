@@ -245,7 +245,7 @@
     "fr": null
   },
   "proposed_start_date": null,
-  "actual_start_date": null,
+  "actual_start_date": "2013-01-01T00:00:00.000+0200",
   "actual_completion_date": null,
   "proposed_completion_date": null,
   "created_by": 39,
@@ -269,6 +269,7 @@
   "primary_programs": [],
   "secondary_programs": [],
   "modified_by": 177,
+  "team": 2,
   "total_number_of_funding_sources": null
 },
 {
@@ -974,7 +975,7 @@
     "fr": null
   },
   "proposed_start_date": "2009-01-01T00:00:00.000+0200",
-  "actual_start_date": null,
+  "actual_start_date": "2009-01-01T00:00:00.000+0200",
   "actual_completion_date": null,
   "proposed_completion_date": "2012-12-31T00:00:00.000+0200",
   "created_by": 38,
@@ -1016,6 +1017,7 @@
     }
   ],
   "modified_by": 190,
-  "total_number_of_funding_sources": null
+  "total_number_of_funding_sources": null,
+  "team": 1
 }
 ]
