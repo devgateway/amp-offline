@@ -13,7 +13,7 @@ import {
   GS_AMOUNT_OPTION_IN_THOUSANDS,
   GS_AMOUNT_OPTION_IN_MILLIONS,
   GS_AMOUNT_OPTION_IN_BILLIONS
-} from './constants/GlobalSettingConstants';
+} from './constants/GlobalSettingsConstants';
 import store from '../index';
 
 export default class NumberUtils {
