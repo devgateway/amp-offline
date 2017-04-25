@@ -49,6 +49,7 @@ export const ARCHIVED = 'archived';
 export const TRANSACTION_DATE = 'transaction_date';
 export const TRANSACTION_TYPE = 'transaction_type';
 export const TRANSACTION_AMOUNT = 'transaction_amount';
+export const ADJUSTMENT_TYPE = 'adjustment_type';
 export const ACTUAL_START_DATE = 'actual_start_date';
 export const PROPOSED_START_DATE = 'proposed_start_date';
 export const ACTUAL_COMPLETION_DATE = 'actual_completion_date';
