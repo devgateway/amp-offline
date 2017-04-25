@@ -11,7 +11,7 @@ export default class Legends extends Component {
   render() {
     LoggerManager.log('render');
     const legendSpan = classNames('glyphicon', 'glyphicon-info-sign', style.info_icon);
-    const overlayPopover = (<Popover>
+    const overlayPopover = (<Popover id="legendPopover">
       <div className={style.container}>
         <span className={style.red}>*</span><span className={style.red}>{translate('red')}</span>
         <span> - {translate('newDraftLegend')}</span>
@@ -34,10 +34,10 @@ export default class Legends extends Component {
     </Popover>);
 
     return (
-      <OverlayTrigger trigger="hover" rootClose placement="right" overlay={overlayPopover}>
+      <OverlayTrigger trigger={['hover', 'focus']} rootClose placement="right" overlay={overlayPopover}>
         <div className={style.legend_container}>
           <span data-tip="legends" className={style.legend}>{translate('Legends')}</span>
-          <span className={legendSpan}/>
+          <span className={legendSpan} />
         </div>
       </OverlayTrigger>
     );
