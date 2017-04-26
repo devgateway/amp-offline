@@ -8,6 +8,7 @@ export const WORKSPACE_MEMBER_URL = '/security/workspace-member';
 export const AVAILABLE_LANGUAGES_URL = '/translations/languages';
 export const POST_TRANSLATIONS_URL = '/translations/translate';
 export const GET_TRANSLATIONS_URL = '/sync/translations';
+export const WORKSPACE_SETTINGS_URL = '/security/workspace-settings';
 export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
 export const ACTIVITY_IMPORT_URL = '/activity';
