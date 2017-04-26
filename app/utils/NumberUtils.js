@@ -15,6 +15,7 @@ import {
   GS_AMOUNT_OPTION_IN_BILLIONS
 } from './constants/GlobalSettingConstants';
 import store from '../index';
+import Utils from './Utils';
 
 export default class NumberUtils {
 
@@ -49,7 +50,7 @@ export default class NumberUtils {
   static createLanguage() {
     LoggerManager.log('buildLocale');
     const data = store.getState().startUp.gsNumberData;
-    const localeName = `locale_${Math.random() * 100000}`.substring(0, 12);
+    const localeName = `locale_${Utils.stringToUniqueId('')}`;
     numeral.register('locale', localeName, {
       delimiters: {
         thousands: data.groupSeparator,
