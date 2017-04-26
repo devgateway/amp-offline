@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { Component } from 'react';
 import AFSection from './AFSection';
+import { FUNDING } from './AFSectionConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
- * Organizations Section
+ * Funding Section
  * @author Nadejda Mandrescu
  */
-export default class Organizations extends AFSection {
+class AFFunding extends Component {
 
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
   }
 
-  renderContent() {
+  render() {
     return <div>TODO</div>;
   }
 }
+
+export default AFSection(AFFunding, FUNDING);

@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { Component } from 'react';
 import AFSection from './AFSection';
+import { PROGRAM } from './AFSectionConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
- * Activity Internal IDs section
+ * Programs Section
  * @author Nadejda Mandrescu
  */
-export default class ActivityInternalIds extends AFSection {
+class AFPrograms extends Component {
 
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
   }
 
-  renderContent() {
+  render() {
     return <div>TODO</div>;
   }
 }
+
+export default AFSection(AFPrograms, PROGRAM);

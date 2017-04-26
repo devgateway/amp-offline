@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { Component } from 'react';
 import AFSection from './AFSection';
+import { ORGANIZATIONS } from './AFSectionConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
- * Location Section
+ * Organizations Section
  * @author Nadejda Mandrescu
  */
-export default class Location extends AFSection {
+class AFOrganizations extends Component {
 
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
   }
 
-  renderContent() {
+  render() {
     return <div>TODO</div>;
   }
 }
+
+export default AFSection(AFOrganizations, ORGANIZATIONS);
