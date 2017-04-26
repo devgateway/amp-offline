@@ -6,7 +6,14 @@ import ActivityHydrator from '../modules/helpers/ActivityHydrator';
 import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
-import { TEAM, MODIFIED_BY, MODIFIED_ON, CREATED_BY, CREATED_ON } from '../utils/constants/ActivityConstants';
+import {
+  CLIENT_CREATED_ON,
+  CLIENT_UPDATED_ON,
+  CREATED_BY,
+  CREATED_ON,
+  MODIFIED_BY,
+  TEAM
+} from '../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
@@ -68,7 +75,7 @@ function _loadActivity(activityId, teamMemberId, possibleValuesPaths) {
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager);
         return WorkspaceHelper.findById(activity[TEAM]).then(activityWorkspace =>
           resolve({ activity, activityWorkspace, activityFieldsManager, activityFundingTotals })
-          ).catch(error => reject(_toNotification(error)));
+        ).catch(error => reject(_toNotification(error)));
       }).catch(error => reject(_toNotification(error)));
   });
 }
@@ -94,11 +101,11 @@ function _saveActivity(activity, teamMember, fieldDefs) {
     if (!dehydratedActivity[CREATED_BY]) {
       dehydratedActivity[CREATED_BY] = teamMember.id;
     }
-    if (!dehydratedActivity[CREATED_ON]) {
-      dehydratedActivity[CREATED_ON] = modifiedOn;
+    if (!dehydratedActivity[CREATED_ON] && !dehydratedActivity[CLIENT_CREATED_ON]) {
+      dehydratedActivity[CLIENT_CREATED_ON] = modifiedOn;
     }
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
-    dehydratedActivity[MODIFIED_ON] = modifiedOn;
+    dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
     return ActivityHelper.saveOrUpdate(dehydratedActivity);
   });
 }
