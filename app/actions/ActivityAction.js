@@ -66,9 +66,9 @@ function _loadActivity(activityId, teamMemberId, possibleValuesPaths) {
         fieldsDef = fieldsDef.fields;
         const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager);
-        return WorkspaceHelper.findById(activity[TEAM]).then(activityWorkspace =>
+        return WorkspaceHelper.findById(activity[TEAM].id).then(activityWorkspace =>
           resolve({ activity, activityWorkspace, activityFieldsManager, activityFundingTotals })
-          ).catch(error => reject(_toNotification(error)));
+        ).catch(error => reject(_toNotification(error)));
       }).catch(error => reject(_toNotification(error)));
   });
 }
