@@ -49,7 +49,7 @@ export default class NumberUtils {
   static createLanguage() {
     LoggerManager.log('buildLocale');
     const data = store.getState().startUp.gsNumberData;
-    const localeName = `locale_${Math.random() * 100}`.substring(0, 9);
+    const localeName = `locale_${Math.random() * 100000}`.substring(0, 12);
     numeral.register('locale', localeName, {
       delimiters: {
         thousands: data.groupSeparator,
