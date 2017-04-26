@@ -21,7 +21,8 @@ import {
   SYNCUP_NO_DATE,
   SYNCUP_FORCE_DAYS,
   SYNCUP_BEST_BEFORE_DAYS,
-  SYNCUP_TYPE_ASSETS
+  SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_WORKSPACE_SETTINGS
 } from '../../utils/Constants';
 import WorkspaceSyncUpManager from './WorkspaceSyncUpManager';
 import GlobalSettingsSyncUpManager from './GlobalSettingsSyncUpManager';
@@ -34,6 +35,7 @@ import PossibleValuesSyncUpManager from './PossibleValuesSyncUpManager';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
 import { loadNumberSettings } from '../../actions/StartUpAction';
+import WorkspaceSettingsSyncUpManager from './WorkspaceSettingsSyncUpManager';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
 const syncUpModuleList = [
@@ -63,7 +65,8 @@ const syncUpModuleList = [
   { type: SYNCUP_TYPE_POSSIBLE_VALUES, fn: PossibleValuesSyncUpManager.syncUp },
   { type: SYNCUP_TYPE_TRANSLATIONS, fn: TranslationSyncUpManager.syncUpLangList.bind(TranslationSyncUpManager) },
   { type: SYNCUP_TYPE_WORKSPACES, fn: WorkspaceSyncUpManager.syncUpWorkspaces },
-  { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings }
+  { type: SYNCUP_TYPE_GS, fn: GlobalSettingsSyncUpManager.syncUpGlobalSettings },
+  { type: SYNCUP_TYPE_WORKSPACE_SETTINGS, fn: WorkspaceSettingsSyncUpManager.syncUpWorkspaceSettings }
 ];
 
 const _noActivitiesImport = { type: SYNCUP_TYPE_ACTIVITIES, fn: () => Promise.resolve() };
