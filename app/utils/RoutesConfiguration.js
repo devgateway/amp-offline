@@ -14,7 +14,8 @@ import {
   SINGLE_FIELDS_TREE_URL,
   POSSIBLE_VALUES_PER_FIELD_PATHS,
   SYNC_URL,
-  AMP_COUNTRY_FLAG
+  AMP_COUNTRY_FLAG,
+  WORKSPACE_SETTINGS_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -83,6 +84,10 @@ const routesConfiguration = [{
   requiresToken: true,
   regularAmpUrl: true,
   isBinary: true
+}, {
+  url: WORKSPACE_SETTINGS_URL,
+  method: 'GET',
+  requiresToken: true
 }
 ];
 
