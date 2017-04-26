@@ -13,6 +13,7 @@ import {
 } from '../utils/Constants';
 import LoggerManager from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
+import DateUtils from '../utils/DateUtils';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -25,6 +26,7 @@ export const TIMER_STOP = 'TIMER_STOP';
 let timer;
 
 export const STATE_GS_NUMBERS_LOADED = 'STATE_GS_NUMBERS_LOADED';
+export const STATE_GS_DATE_LOADED = 'STATE_GS_DATE_LOADED';
 
 /**
  * Checks and updates the connectivity status
@@ -67,10 +69,21 @@ function scheduleConnectivityCheck() {
 
 export function loadNumberSettings() {
   LoggerManager.log('loadNumberSettings');
+
   return new Promise((resolve, reject) => (
     NumberUtils.getConfigFromDB().then((data) => {
       store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: data });
       NumberUtils.createLanguage();
+      return resolve();
+    }).catch(reject)
+  ));
+}
+
+export function loadDateSettings() {
+  LoggerManager.log('loadDateSettings');
+  return new Promise((resolve, reject) => (
+    DateUtils.getConfigFromDB().then((data) => {
+      store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: data});
       return resolve();
     }).catch(reject)
   ));
