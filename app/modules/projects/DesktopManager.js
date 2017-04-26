@@ -5,36 +5,39 @@ import {
   ACTIVITY_STATUS_UNVALIDATED,
   ACTIVITY_STATUS_VALIDATED
 } from '../../utils/Constants';
-import ActivityHelper from '../../modules/helpers/ActivityHelper';
+import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import { IS_DRAFT, APPROVAL_STATUS } from '../../utils/constants/ActivityConstants';
+import WorkspaceFilter from '../filters/WorkspaceFilter';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 const DesktopManager = {
 
-  generateDesktopData(teamId, teamMemberId) {
+  generateDesktopData(workspace, teamMemberId) {
     LoggerManager.log('generateDesktopData');
-    return new Promise((resolve, reject) => (
-      this.generateOneTabData(teamId, teamMemberId, this.getActivitiesNonRejected)
-        .then((tab1Data) => (
-          this.generateOneTabData(teamId, teamMemberId, this.getActivitiesRejected)
-            .then((tab2Data) => (
-              resolve({
-                activeProjects: tab1Data,
-                rejectedProjects: tab2Data,
-                defaultTabs: this.generateDefaultTabsStructure(tab1Data, tab2Data)
-              })
-            )).catch(reject)
-        )).catch(reject)
-    ));
+    return new Promise((resolve, reject) =>
+      WorkspaceFilter.getDBFilter(workspace).then(wsFilter =>
+        this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected)
+          .then((tab1Data) =>
+            this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllRejected)
+              .then((tab2Data) =>
+                resolve({
+                  activeProjects: tab1Data,
+                  rejectedProjects: tab2Data,
+                  defaultTabs: this.generateDefaultTabsStructure(tab1Data, tab2Data)
+                })
+              ).catch(reject)
+          ).catch(reject)
+      ).catch(reject)
+    );
   },
 
-  generateOneTabData(teamId, teamMemberId, fn) {
+  generateOneTabData(wsFilter, teamMemberId, fn) {
     LoggerManager.log('generateOneTabData');
     return new Promise((resolve, reject) => (
-      fn(teamId)
+      fn.call(ActivityHelper, wsFilter)
         .then((activities) => (
-          this.hidrateActivities(activities, teamMemberId)
+          this.hydrateActivities(activities, teamMemberId)
             .then((hydratedActivities) => (
               this.convertActivitiesToGridStructure(hydratedActivities)
                 .then((activitiesForGrid) => (
@@ -45,18 +48,8 @@ const DesktopManager = {
     ));
   },
 
-  getActivitiesNonRejected(teamId) {
-    LoggerManager.log('getActivitiesNonRejected');
-    return ActivityHelper.findAllNonRejected({ team: teamId });
-  },
-
-  getActivitiesRejected(teamId) {
-    LoggerManager.log('getActivitiesRejected');
-    return ActivityHelper.findAllRejected({ team: teamId });
-  },
-
-  hidrateActivities(activities, teamMemberId) {
-    LoggerManager.log('hidrateActivities');
+  hydrateActivities(activities, teamMemberId) {
+    LoggerManager.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
       fieldPaths: ['donor_organization~organization'],

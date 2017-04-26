@@ -77,10 +77,10 @@ export default class ActivityPreview extends Component {
         <div>
           <Grid fluid>
             <Row className={styles.preview_content}>
-              <Col xs={8} md={6} className={styles.preview_summary} >
+              <Col md={3} className={styles.preview_summary} >
                 <SummaryGroup />
               </Col>
-              <Col xs={16} md={8} className={style.preview_main_data} >
+              <Col mdOffset={3} className={style.preview_main_data} >
                 <MainGroup />
               </Col>
             </Row>

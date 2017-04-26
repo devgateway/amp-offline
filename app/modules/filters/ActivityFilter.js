@@ -1,6 +1,11 @@
 import * as AC from '../../utils/constants/ActivityConstants';
+import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
+import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
+import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
+import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
+// import PossibleValuesManager from '../activity/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 
@@ -14,6 +19,8 @@ export default class ActivityFilter {
   constructor(filters) {
     this._filters = filters;
     this._dbFilter = undefined;
+    this._dateFilterHidesProjects = undefined;
+    this._locationOptions = undefined;
     this._isComputed = filters && filters['is-computed'] === true;
   }
 
@@ -34,22 +41,30 @@ export default class ActivityFilter {
 
   _prepareFilter() {
     LoggerManager.log('_prepareFilter');
-    return Promise.all([this._getWorkspaces()]).then(
-      (workspaces) => {
+    return Promise.all([
+      this._getWorkspaces(),
+      GlobalSettingsHelper.findByKey(FILTER_BY_DATE_HIDE_PROJECTS),
+      PossibleValuesHelper.findById(LOCATION_PATH)
+    ])
+      .then(([workspaces, dateFilterHidesProjects, locationOptions]) => {
         this._wsIds = workspaces;
+        this._dateFilterHidesProjects = dateFilterHidesProjects.value === 'true';
+        if (locationOptions && locationOptions['possible-options']) {
+          this._locationOptions = locationOptions['possible-options'];
+        } else {
+          this._locationOptions = [];
+        }
         return this._wsIds;
       });
   }
 
   _getWorkspaces() {
     LoggerManager.log('_getWorkspaces');
-    // TODO: once GS are available, update to check from GS 'Show workspace filter'
-    return Promise.resolve(false).then((showWorkspaceFilterInTeamWorkspace) => {
-      if (showWorkspaceFilterInTeamWorkspace === true || this._isComputed) {
-        const workspaces = this._filters.workspaces ? this._filters.workspaces : [];
-        return workspaces;
+    return GlobalSettingsHelper.findByKey(SHOW_WORKSPACE_FILTER_KEY).then((showWSFilterInTeamWS) => {
+      if ((showWSFilterInTeamWS && showWSFilterInTeamWS.value === 'true') || this._isComputed) {
+        return this._filters.workspaces;
       }
-      return [];
+      return null;
     });
   }
 
@@ -59,12 +74,13 @@ export default class ActivityFilter {
    */
   _generateFilter() {
     LoggerManager.log('_generateFilter');
-    this._tmpFilter = Utils.toMap(AC.TEAM, { $in: this._wsIds });
+    this._tmpFilter = (this._wsIds && this._wsIds.length > 0) ? Utils.toMap(AC.TEAM, { $in: this._wsIds }) : {};
 
     // note that some filters were not replicated since they are obsolete (AMP-25215)
     // or either irrelevant (pledges)
 
-    /* TODO: rebuild  all date filters based on dynamic filter. To confirm with Vanessa, since NA in new filters.
+    /* Note: we won't rebuild  all date filters based on dynamic filter per clarification with Vanessa G.
+     Once New Filter Widget will replace legacy filer widget in Admin, this feature will be gone.
      It can be tricky due to timstamp mistmatch between server and client when building the dynamic filter.
      But if needed, build this._updateDynamicFilters(); + reset filters at midnight
      */
@@ -72,15 +88,19 @@ export default class ActivityFilter {
     this._addGeneralFilters();
     this._addDateFilters();
     this._addSectorFilters();
-    // TODO (noted): change locationSelected once possible values EP for locations includes also parent info
+    /*
+    // TODO turns out locations are saved in expanded mode, iteration 2+, AMPOFFLINE-180
+    this._filters.locationSelected =
+      PossibleValuesManager.expandParentWithChildren(this._locationOptions, this._filters.locationSelected);
+      */
     this._addListMapValueFilter(AC.LOCATIONS, AC.LOCATION, '$in', 'locationSelected');
     this._addProgramFilters();
     this._addOrgsFilters();
     this._addApprovalStatusFilter('approvalStatusSelected');
     this._addFundingsFilter();
 
-    // TODO add indexText search (also where 'text' filter comes from?)
-    // TODO add 'risks' filter once it ME is implemented in Activities API
+    // TODO add indexText search (also where 'text' filter comes from?), iteration2+, AMPOFFLINE-377
+    // TODO add 'risks' filter once it ME is implemented in Activities API, iteration 2+, AMPOFFLINE-376
 
     return this._tmpFilter;
   }
@@ -122,7 +142,7 @@ export default class ActivityFilter {
 
   _addSectorFilters() {
     LoggerManager.log('_addSectorFilters');
-    /* TODO: bug or feature:
+    /* TODO: this is a bug, but for consistency keeping the same filters. Iteration 2+, AMPOFFLINE-180
      When sector "A" from level 1 is selected, then filter saves all descendants (e.g. A1, A2, etc.) automatically.
      Thus when a new sector, e.g. A101 is added to "A", then it will be filtered out from results.
      On the other hand, locations and programs descendants are built at filtering time, not saved.
@@ -135,7 +155,7 @@ export default class ActivityFilter {
 
   _addProgramFilters() {
     LoggerManager.log('_addProgramFilters');
-    // TODO (noted): expand with descendants program filters once the full programs tree info is available via EP
+    // TODO: expand with descendants program filters once the full programs tree is available, AMPOFFLINE-378
     this._addListMapValueFilter(AC.NATIONAL_PLAN_OBJECTIVE, AC.PROGRAM, '$in', 'nationalPlanningObjectives');
     this._addListMapValueFilter(AC.PRIMARY_PROGRAMS, AC.PROGRAM, '$in', 'primaryPrograms');
     this._addListMapValueFilter(AC.SECONDARY_PROGRAMS, AC.PROGRAM, '$in', 'secondaryPrograms');
@@ -143,7 +163,7 @@ export default class ActivityFilter {
 
   _addOrgsFilters() {
     LoggerManager.log('_addOrgsFilters');
-    /* TODO: add donorTypes, donorGroups and contractingAgencyGroups filters
+    /* TODO: add donorTypes, donorGroups and contractingAgencyGroups filters, iteration 2+, AMPOFFLINE-380
      once we have an EP providing their options to get the mappings based on activities orgs */
 
     this._addListMapValueFilter(AC.EXECUTING_AGENCY, AC.ORGANIZATION, '$in', 'executingAgency');
@@ -182,9 +202,7 @@ export default class ActivityFilter {
     LoggerManager.log('_getFundingDetails');
     let result;
     const details = {};
-    // TODO: use GS with the latest code to detect dateFilterHidesProjects using 'Filter by date hides projects'
-    const dateFilterHidesProjects = true;
-    if (dateFilterHidesProjects) {
+    if (this._dateFilterHidesProjects) {
       this._addValueFilter(AC.TRANSACTION_DATE, '$gte', 'fromDate', details);
       // both 'toDate' and transaction date timestamps are zeros, so it should work. But caution if smt changes
       this._addValueFilter(AC.TRANSACTION_DATE, '$lte', 'toDate', details);
@@ -203,7 +221,10 @@ export default class ActivityFilter {
 
   _addValueFilter(dbField, filterRule, filterName, resultMap, replaceFilterValue) {
     if (this._filters[filterName] !== undefined) {
-      const filterValue = Utils.toMap(filterRule, replaceFilterValue || this._filters[filterName]);
+      let filterValue = replaceFilterValue || this._filters[filterName];
+      if (filterRule !== '$eq') {
+        filterValue = Utils.toMap(filterRule, filterValue);
+      }
       const result = resultMap || this._tmpFilter;
       result[dbField] = filterValue;
     }
@@ -286,13 +307,13 @@ function getApprovalStatusFilter(id) {
   LoggerManager.log('getApprovalStatusFilter');
   // based on AmpARFilter.buildApprovalStatusQuery(int, boolean)
   let options;
-  let includeDraft = true;
+  let isDraft = true;
   switch (id) {
     case 0:// Existing Un-validated - This will show all the activities that
       // have been approved at least once and have since been edited
       // and not validated.
       options = ['edited', 'not_approved', 'rejected'];
-      includeDraft = false;
+      isDraft = false;
       break;
 
     case 1:// New Draft - This will show all the activities that have never
@@ -303,7 +324,7 @@ function getApprovalStatusFilter(id) {
     case 2:// New Un-validated - This will show all activities that are new
       // and have never been approved by the workspace manager.
       options = ['started'];
-      includeDraft = false;
+      isDraft = false;
       break;
 
     case 3:// existing draft. This is because when you filter by Existing
@@ -314,7 +335,7 @@ function getApprovalStatusFilter(id) {
 
     case 4:// Validated Activities
       options = ['approved', 'startedapproved'];
-      includeDraft = false;
+      isDraft = false;
       break;
     default:
       break;
@@ -327,7 +348,7 @@ function getApprovalStatusFilter(id) {
   }
   const approvalStatusOptions = Utils.toMap('$in', options);
   const approvalStatusfilter = Utils.toMap(AC.APPROVAL_STATUS, approvalStatusOptions);
-  const includeDraftFilter = Utils.toMap(AC.IS_DRAFT, Utils.toMap(getEqOrNe(includeDraft), true));
+  const includeDraftFilter = Utils.toMap(AC.IS_DRAFT, Utils.toMap(getEqOrNe(isDraft), true));
   const filter = Utils.toMap('$and', [approvalStatusfilter, includeDraftFilter]);
 
   return filter;
