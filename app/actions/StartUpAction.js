@@ -83,7 +83,7 @@ export function loadDateSettings() {
   LoggerManager.log('loadDateSettings');
   return new Promise((resolve, reject) => (
     DateUtils.getConfigFromDB().then((data) => {
-      store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: data});
+      store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: data });
       return resolve();
     }).catch(reject)
   ));
