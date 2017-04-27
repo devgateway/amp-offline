@@ -4,6 +4,7 @@
 import LoggerManager from '../modules/util/LoggerManager';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import store from '../index';
+const moment = require('moment');
 
 export default class DateUtils {
 
@@ -16,14 +17,18 @@ export default class DateUtils {
     return new Promise((resolve, reject) => (
       GlobalSettingsHelper.findByKey("Default Date Format")
       ).then( (db) => { 
-      	return resolve(db.value);
+      	if (db.length > 0) {
+          data.dateFormat = db.value;
+        }
+      	return resolve(data);
       }).catch(reject)
     );
   }
 
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
-    return numeral(NumberUtils.calculateInThousands(number)).format(store.getState().startUp.gsNumberData.format);
+    let formattedDate = moment(date).isValid() ? moment(date).format(store.getState().startUp.gsDateData.dateFormat.toUpperCase()) : date;
+    return formattedDate;
   }
 
 }

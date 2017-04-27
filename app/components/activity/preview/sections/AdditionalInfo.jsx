@@ -4,6 +4,7 @@ import APField from '../components/APField';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import DateUtils from '../../../../utils/DateUtils';
 
 /**
  * Additional Info summary section
@@ -40,10 +41,10 @@ class AdditionalInfo extends Component {
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
     additionalInfo.push(APField.instance('computation', isComputedTeam));
     // TODO update dates formatting AMPOFFLINE-129
-    additionalInfo.push(APField.instance('activityCreatedOn', this.props.activity[AC.CREATED_ON]));
+    additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(this.props.activity[AC.CREATED_ON])));
     // TODO check if updated on can be displayed by ActivityPreview FM once AMPOFFLINE-309 is done
     if (updatedOn) {
-      additionalInfo.push(APField.instance('activityUpdatedOn', updatedOn));
+      additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn)));
     }
     additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData()));
 

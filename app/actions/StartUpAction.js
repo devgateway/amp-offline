@@ -35,7 +35,8 @@ export const STATE_GS_DATE_LOADED = 'STATE_GS_DATE_LOADED';
 export function ampStartUp() {
   return loadConnectionInformation()
     .then(scheduleConnectivityCheck)
-    .then(loadNumberSettings);
+    .then(loadNumberSettings)
+    .then(loadDateSettings);
 }
 
 export function loadConnectionInformation() {
@@ -69,7 +70,6 @@ function scheduleConnectivityCheck() {
 
 export function loadNumberSettings() {
   LoggerManager.log('loadNumberSettings');
-
   return new Promise((resolve, reject) => (
     NumberUtils.getConfigFromDB().then((data) => {
       store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: data });
