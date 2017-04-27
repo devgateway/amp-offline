@@ -47,6 +47,7 @@
     "files": [
       "dist/",
       "node_modules/",
+      "libs/",
       "app.html",
       "main.js",
       "main.js.map",

@@ -52,6 +52,7 @@
     width: 232px;
     vertical-align: top;
     -webkit-text-size-adjust: 100%;
+    display: inline-block;
 }
 
 .quick_links_toggle {
