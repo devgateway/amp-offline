@@ -36,7 +36,7 @@ class AdditionalInfo extends Component {
     const updatedOn = this.props.activity[AC.CLIENT_UPDATED_ON] || this.props.activity[AC.MODIFIED_ON];
 
     // TODO update once possible values are available for it AMP-25680
-    additionalInfo.push(APField.instance('activityCreatedBy', this.props.activity[AC.CREATED_BY]));
+    additionalInfo.push(APField.instance('activityCreatedBy', this.props.activity[AC.CREATED_BY]).value);
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
     additionalInfo.push(APField.instance('computation', isComputedTeam));
     // TODO update dates formatting AMPOFFLINE-129
