@@ -41,7 +41,7 @@ class AdditionalInfo extends Component {
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
     additionalInfo.push(APField.instance('computation', isComputedTeam));
     // TODO update dates formatting AMPOFFLINE-129
-    additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(this.props.activity[AC.CREATED_ON])));
+    additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(this.props.activity[AC.CLIENT_CREATED_ON])));
     // TODO check if updated on can be displayed by ActivityPreview FM once AMPOFFLINE-309 is done
     if (updatedOn) {
       additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn)));
