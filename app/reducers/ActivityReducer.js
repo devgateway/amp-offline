@@ -25,7 +25,7 @@ const defaultState = {
 };
 
 const activityReducer = (state = defaultState, action: Object) => {
-  LoggerManager.log('activityPreview');
+  LoggerManager.log('activityReducer');
   switch (action.type) {
     case ACTIVITY_UNLOADED:
       return { ...defaultState };
