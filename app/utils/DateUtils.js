@@ -1,11 +1,12 @@
 /**
  * Created by Anya on 24/04/2017.
  */
+
+import Moment from 'moment';
 import LoggerManager from '../modules/util/LoggerManager';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import store from '../index';
-
-const moment = require('moment');
+import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 
 export default class DateUtils {
 
@@ -16,10 +17,10 @@ export default class DateUtils {
     };
 
     return new Promise((resolve, reject) => (
-      GlobalSettingsHelper.findByKey('Default Date Format')
-      ).then((db) => {
-        if (db.length > 0) {
-          data.dateFormat = db.value;
+      GlobalSettingsHelper.findByKey(DEFAULT_DATE_FORMAT))
+      .then((dbDateFormat) => {
+        if (dbDateFormat != null && dbDateFormat.length > 0) {
+          data.dateFormat = dbDateFormat.value;
         }
         return resolve(data);
       }).catch(reject)
@@ -28,8 +29,8 @@ export default class DateUtils {
 
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
-    const formattedDate = moment(date).isValid() ?
-        moment(date).format(store.getState().startUp.gsDateData.dateFormat.toUpperCase()) : date;
+    const formattedDate = Moment(date).isValid() ?
+        Moment(date).format(store.getState().startUp.gsDateData.dateFormat.toUpperCase()) : date;
     return formattedDate;
   }
 

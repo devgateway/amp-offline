@@ -42,9 +42,11 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
   buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false) {
     if (this.context.activityFieldsManager.isFieldPathEnabled(path)) {
       const title = this.context.activityFieldsManager.getFieldLabelTranslation(path);
-      /* Pass all values through the Date Formatter, all valid dates will be reformatted, everything else will be ignored.
-       * ~AEM 2017-04-27 */
-      let value = DateUtils.createFormattedDate(this.context.activityFieldsManager.getValue(this.context.activity, path));
+      let value = this.context.activityFieldsManager.getValue(this.context.activity, path);
+      const fieldDef = this.context.activityFieldsManager.getFieldDef(path);
+      if (fieldDef.field_type === 'date') {
+        value = DateUtils.createFormattedDate(value);
+      }
       value = NAOptions && NAOptions.has(value) ? null : value;
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
