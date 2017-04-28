@@ -1,45 +1,59 @@
-import * as UserHelper from '../helpers/UserHelper';
-import * as TeamMemberHelper from '../helpers/TeamMemberHelper';
-import * as ActivityHelper from '../helpers/ActivityHelper';
-import store from '../../index';
-import Notification from '../helpers/NotificationHelper';
-import * as AC from '../../utils/constants/ActivityConstants';
-import * as Utils from '../../utils/Utils';
-import translate from '../../utils/translate';
-import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../utils/constants/ErrorConstants';
-import { ACTIVITY_IMPORT_URL } from '../connectivity/AmpApiConstants';
-import * as ConnectionHelper from '../connectivity/ConnectionHelper';
-import LoggerManager from '../../modules/util/LoggerManager';
+import * as UserHelper from '../../helpers/UserHelper';
+import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
+import * as ActivityHelper from '../../helpers/ActivityHelper';
+import store from '../../../index';
+import Notification from '../../helpers/NotificationHelper';
+import * as AC from '../../../utils/constants/ActivityConstants';
+import * as Utils from '../../../utils/Utils';
+import translate from '../../../utils/translate';
+import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorConstants';
+import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
+import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
+import SyncUpManagerInterface from './SyncUpManagerInterface';
+import LoggerManager from '../../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 /**
  * Activities push to AMP Manager
  * @author Nadejda Mandrescu
  */
-export default class ActivitiesPushToAMPManager {
+export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   constructor() {
+    super();
+    LoggerManager.log('ActivitiesPushToAMPManager');
     this._cancel = false;
   }
 
   /**
    * Interrupt activities sync up gracefully
-   * @param cancel
    */
-  set cancel(cancel) {
+  cancel() {
     /*
-    TODO cancel handling is planned for later AMPOFFLINE-208
-    This 'cancel' flag may not be used or if used, then it will have to be checked between smallest steps.
+     TODO cancel handling is planned for later AMPOFFLINE-208
+     This 'cancel' flag may not be used or if used, then it will have to be checked between smallest steps.
      */
-    this._cancel = cancel;
+    this._cancel = true;
   }
+
   /**
    * Pushes activities to AMP
    * @param saved the activities saved as new or update on AMP
    * @param removed deleted activities on AMP
    * @return {Promise}
    */
-  pushActivitiesToAMP(saved, removed) {
-    LoggerManager.log('syncUpActivities');
+  doSyncUp({ saved, removed }) {
+    this.diff = { toPush: [] };
+    this.pushed = new Set();
+    return this._pushActivitiesToAMP(saved, removed);
+  }
+
+  getDiffLeftover() {
+    this.diff.toPush = this.diff.toPush.filter(ampId => !this.pushed.has(ampId));
+    return this.diff;
+  }
+
+  _pushActivitiesToAMP(saved, removed) {
+    LoggerManager.log('_pushActivitiesToAMP');
     return new Promise((resolve, reject) => {
       // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
       if (store.getState().user.userData.ampOfflinePassword) {
@@ -116,6 +130,7 @@ export default class ActivitiesPushToAMPManager {
    */
   _pushActivities(activities) {
     LoggerManager.log('_pushActivities');
+    this.toPush = activities.map(activity => activity.id);
     // executing push one by one for now and sequentially to avoid AMP / client overload
     return new Promise((resolve, reject) => {
       if (!activities) {
@@ -162,11 +177,12 @@ export default class ActivitiesPushToAMPManager {
     // save the rejection immediately to allow a quicker syncup cancellation
     const errorData = error || (pushResult ? pushResult.error : undefined);
     if (errorData) {
-      // TODO the unsynced activity should be remembered and resynced on next attempt AMPOFFLINE-256
       return new Promise((resolve, reject) => this._getRejectedId(activity)
         .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData))
         .then(resolve)
         .catch(reject));
+    } else {
+      this.pushed.add(activity.id);
     }
     return Promise.resolve();
   }
