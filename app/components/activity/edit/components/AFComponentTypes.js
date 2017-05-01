@@ -1,5 +1,5 @@
 
 export const TEXT_AREA = 'TEXT_AREA';
-export const TEXT_INPUT = 'TEXT_INPUT';
+export const RICH_TEXT_AREA = 'RICH_TEXT_AREA';
 export const DROPDOWN = 'DROPDOWN';
 

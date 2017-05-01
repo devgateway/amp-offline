@@ -4,6 +4,7 @@ import AFLabel from './AFLabel';
 import AFTextArea from './AFTextArea';
 import AFDropDown from './AFDropDown';
 import AFOption from './AFOption';
+import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../utils/translate';
@@ -38,6 +39,7 @@ export default class AFField extends Component {
     this.fieldName = fieldPathParts[fieldPathParts.length - 1];
     this.fieldDef = this.context.activityFieldsManager.getFieldDef(this.props.fieldPath);
     this.forcedType = !!this.props.type;
+    this.requiredND = this.fieldDef.required === 'ND';
     this.alwaysRequired = this.fieldDef.required === 'Y';
     this.setState({
       value: this.props.parent[this.fieldName]
@@ -55,17 +57,20 @@ export default class AFField extends Component {
       return null;
     }
     const label = this.context.activityFieldsManager.getFieldLabelTranslation(this.props.fieldPath);
-    return <AFLabel value={label} required={this.alwaysRequired}/>;
+    return <AFLabel value={label} required={this.requiredND || this.alwaysRequired}/>;
   }
 
   getFieldContent() {
-    if (this.type === Types.TEXT_AREA || (!this.forcedType && this.fieldDef.field_type === 'string')) {
+    if (this.props.type === Types.TEXT_AREA || (!this.forcedType && this.fieldDef.field_type === 'string')) {
+      // TODO known limitation AMP-25950, so until then limiting to text area to allow imports, unless type is explicit
       if (this.fieldDef.field_length) {
-        return (<AFTextArea
-          value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired.bind(this)}
-        />);
+        return this._getTextArea();
+      } else {
+        return this._getRichTextEditor();
       }
-    } {
+    } else if (this.props.type === Types.RICH_TEXT_AREA) {
+      return this._getRichTextEditor();
+    } else {
       let options = this.context.activityFieldsManager.possibleValuesMap[this.props.fieldPath];
       options = options ? Object.entries(options) : null;
       if (this.type === Types.DROPDOWN || (!this.forcedType && options && options.length > 0)) {
@@ -75,6 +80,17 @@ export default class AFField extends Component {
       }
     }
     return 'Not Implemented';
+  }
+
+  _getRichTextEditor() {
+    return (<AFRichTextEditor
+      id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired.bind(this)} />);
+  }
+
+  _getTextArea() {
+    return (<AFTextArea
+      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired.bind(this)}
+    />);
   }
 
   validate() {
