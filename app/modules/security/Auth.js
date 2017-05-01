@@ -27,7 +27,7 @@ export default class Auth {
 
   static loggedIn() {
     // TODO: Implement more complex token validation scheme with expiration time, multiple users, etc.
-    return (store.getState().login && store.getState().login.loggedIn);
+    return (store.getState().loginReducer && store.getState().loginReducer.loggedIn);
   }
 
   static logout() {

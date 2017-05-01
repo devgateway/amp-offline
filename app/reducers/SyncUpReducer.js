@@ -18,7 +18,7 @@ const defaultState = {
   forceSyncUpMessage: ''
 };
 
-export default function syncUp(state: Object = defaultState, action: Object) {
+export default function syncUpReducer(state: Object = defaultState, action: Object) {
   LoggerManager.log('SyncUpReducer');
   switch (action.type) {
     case STATE_SYNCUP_SHOW_HISTORY:

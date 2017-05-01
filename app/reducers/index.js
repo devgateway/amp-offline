@@ -1,26 +1,26 @@
 import { combineReducers } from 'redux';
 import { routerReducer as routing } from 'react-router-redux';
-import login from './LoginReducer';
-import workspace from './WorkspaceReducer';
-import translation from './TranslationReducer';
-import syncUp from './SyncUpReducer';
-import user from './UserReducer';
-import desktop from './DesktopReducer';
+import loginReducer from './LoginReducer';
+import workspaceReducer from './WorkspaceReducer';
+import translationReducer from './TranslationReducer';
+import syncUpReducer from './SyncUpReducer';
+import userReducer from './UserReducer';
+import desktopReducer from './DesktopReducer';
 import activityReducer from './ActivityReducer';
-import ampConnectionStatus from './AmpConnectionStatusReducer';
-import startUp from './StartUpReducer';
+import ampConnectionStatusReducer from './AmpConnectionStatusReducer';
+import startUpReducer from './StartUpReducer';
 
 const rootReducer = combineReducers({
-  login,
-  workspace,
+  loginReducer,
+  workspaceReducer,
   routing,
-  translation,
-  syncUp,
-  user,
-  desktop,
+  translationReducer,
+  syncUpReducer,
+  userReducer,
+  desktopReducer,
   activityReducer,
-  ampConnectionStatus,
-  startUp
+  ampConnectionStatusReducer,
+  startUpReducer
 });
 
 export default rootReducer;
