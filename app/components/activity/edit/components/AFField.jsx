@@ -9,6 +9,7 @@ import * as Types from './AFComponentTypes';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import store from '../../../../index';
 
 /**
  * Activity Form generic field representation
@@ -57,7 +58,7 @@ export default class AFField extends Component {
       return null;
     }
     const label = this.context.activityFieldsManager.getFieldLabelTranslation(this.props.fieldPath);
-    return <AFLabel value={label} required={this.requiredND || this.alwaysRequired}/>;
+    return <AFLabel value={label} required={this.requiredND || this.alwaysRequired} />;
   }
 
   getFieldContent() {
@@ -76,7 +77,7 @@ export default class AFField extends Component {
       if (this.type === Types.DROPDOWN || (!this.forcedType && options && options.length > 0)) {
         const selectedId = this.state.value ? this.state.value.id : null;
         const afOptions = options.map(option => new AFOption(option[1]));
-        return <AFDropDown options={afOptions} onChange={this.validateIfRequired.bind(this)} selectedId={selectedId}/>;
+        return <AFDropDown options={afOptions} onChange={this.validateIfRequired.bind(this)} selectedId={selectedId} />;
       }
     }
     return 'Not Implemented';
@@ -84,7 +85,8 @@ export default class AFField extends Component {
 
   _getRichTextEditor() {
     return (<AFRichTextEditor
-      id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired.bind(this)} />);
+      id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired.bind(this)}
+      language={store.getState().translation.lang || store.getState().translation.defaultLang} />);
   }
 
   _getTextArea() {
@@ -113,7 +115,7 @@ export default class AFField extends Component {
 
   render() {
     return (
-      <FormGroup controlId={this.props.fieldPath} validationState={this.validate()} >
+      <FormGroup controlId={this.props.fieldPath} validationState={this.validate()}>
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />

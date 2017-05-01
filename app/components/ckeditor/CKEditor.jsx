@@ -23,7 +23,8 @@ export default class CKEditor extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     value: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    language: PropTypes.string.isRequired
   };
 
   constructor(props) {
@@ -45,6 +46,7 @@ export default class CKEditor extends Component {
   }
 
   componentDidUpdate() {
+    this._updateConfig();
     this._toogleEditor();
   }
 
@@ -58,12 +60,7 @@ export default class CKEditor extends Component {
     }
   }
 
-  _show() {
-    if (!CKEDITOR) {
-      LoggerManager.error('CKEditor not found');
-      return;
-    }
-
+  _updateConfig() {
     const configuration = {
       toolbar: [
         ['Bold', 'Italic'],
@@ -72,10 +69,16 @@ export default class CKEditor extends Component {
         ['FontSize']
       ],
       extraPlugins: 'richcombo',
-      // TODO update language
-      language: 'en'
+      language: this.props.language
     };
     this.editorName = CKEDITOR.replace(this.placeholder, configuration).name;
+  }
+
+  _show() {
+    if (!CKEDITOR) {
+      LoggerManager.error('CKEditor not found');
+      return;
+    }
     this.toggle = false;
   }
 
@@ -99,13 +102,13 @@ export default class CKEditor extends Component {
   render() {
     return (
       <div>
-        <div name={this.placeholder} >
-          <Panel onClick={this.toggleEditor.bind(this)} className={styles.viewMode} >
+        <div name={this.placeholder}>
+          <Panel onClick={this.toggleEditor.bind(this)} className={styles.viewMode}>
             <div dangerouslySetInnerHTML={{ __html: this.props.value }} />
           </Panel>
         </div>
-        <div hidden={!this.state.show} >
-          <Button bsStyle="link" onClick={this.toggleEditor.bind(this)} >{translate('close editor')}</Button>
+        <div hidden={!this.state.show}>
+          <Button bsStyle="link" onClick={this.toggleEditor.bind(this)}>{translate('close editor')}</Button>
         </div>
       </div>
     );

@@ -10,7 +10,8 @@ export default class AFRichTextEditor extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     value: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    language: PropTypes.string.isRequired
   };
 
   constructor(props) {
@@ -43,7 +44,9 @@ export default class AFRichTextEditor extends Component {
   render() {
     return (
       <div>
-        <CKEditor id={this.props.id} value={this.state.value} onChange={this.handleChange.bind(this)} />
+        <CKEditor
+          id={this.props.id} value={this.state.value} onChange={this.handleChange.bind(this)}
+          language={this.props.language} />
       </div>);
   }
 }

@@ -23,7 +23,6 @@ export default class ActivityPreview extends Component {
       activityWorkspace: PropTypes.object,
       activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
-      activityWorkspace: PropTypes.object,
       errorMessage: PropTypes.object
     }).isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
