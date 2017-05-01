@@ -3,6 +3,7 @@ import { Button, Panel } from 'react-bootstrap';
 import styles from './CKEditor.css';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
+import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 
 /**
  * TODO (iteration 2+) check if we can download full version via npm or the right customization to include unde libs.
@@ -45,8 +46,14 @@ export default class CKEditor extends Component {
     this._toogleEditor();
   }
 
-  componentDidUpdate() {
-    this._updateConfig();
+  componentDidUpdate(prevProps) {
+    // Only update config if the editor is open and language has changed.
+    if (prevProps.language !== this.props.language) {
+      if (this.state.show) {
+        this._hide();
+        this._show();
+      }
+    }
     this._toogleEditor();
   }
 
@@ -60,7 +67,12 @@ export default class CKEditor extends Component {
     }
   }
 
-  _updateConfig() {
+  _show() {
+    if (!CKEDITOR) {
+      LoggerManager.error('CKEditor not found');
+      return;
+    }
+
     const configuration = {
       toolbar: [
         ['Bold', 'Italic'],
@@ -69,16 +81,9 @@ export default class CKEditor extends Component {
         ['FontSize']
       ],
       extraPlugins: 'richcombo',
-      language: this.props.language
+      language: this.props.language || LANGUAGE_ENGLISH
     };
     this.editorName = CKEDITOR.replace(this.placeholder, configuration).name;
-  }
-
-  _show() {
-    if (!CKEDITOR) {
-      LoggerManager.error('CKEditor not found');
-      return;
-    }
     this.toggle = false;
   }
 
@@ -104,7 +109,7 @@ export default class CKEditor extends Component {
       <div>
         <div name={this.placeholder}>
           <Panel onClick={this.toggleEditor.bind(this)} className={styles.viewMode}>
-            <div dangerouslySetInnerHTML={{ __html: this.props.value }} />
+            <div dangerouslySetInnerHTML={{ __html: this.props.value }}/>
           </Panel>
         </div>
         <div hidden={!this.state.show}>
