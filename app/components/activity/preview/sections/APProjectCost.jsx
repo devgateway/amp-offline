@@ -5,6 +5,7 @@ import * as AC from '../../../../utils/constants/ActivityConstants';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import NumberUtils from '../../../../utils/NumberUtils';
 
 /**
  * Activity Preview Proposed Project Cost section
@@ -32,8 +33,7 @@ const APProjectCost = (fieldName) => class extends Component {
   render() {
     let content = null;
     if (this.props.activityFieldsManager.isFieldPathEnabled(fieldName) === true) {
-      // TODO number formatting
-      const amount = this.getFieldValue(`${fieldName}~${AC.AMOUNT}`);
+      const amount = NumberUtils.rawNumberToFormattedString(this.getFieldValue(`${fieldName}~${AC.AMOUNT}`));
       // TODO currency conversion
       const currency = this.getFieldValue(`${fieldName}~${AC.CURRENCY_CODE}`);
       // TODO date formatting AMPOFFLINE-129
