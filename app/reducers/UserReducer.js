@@ -15,7 +15,7 @@ const defaultState = {
  * @param action
  * @returns {*}
  */
-export default function user(state = defaultState, action: Object) {
+export default function userReducer(state = defaultState, action: Object) {
   LoggerManager.log('UserReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:

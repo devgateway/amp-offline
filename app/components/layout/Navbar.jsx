@@ -16,12 +16,12 @@ const defaultMenu = require('../../conf/menu.json');
 export default class Navbar extends Component {
 
   static propTypes = {
-    user: PropTypes.object.isRequired,
-    login: PropTypes.object.isRequired,
+    userReducer: PropTypes.object.isRequired,
+    loginReducer: PropTypes.object.isRequired,
     workspaceList: PropTypes.array.isRequired,
     menuOnClickHandler: PropTypes.func.isRequired,
-    translation: PropTypes.object.isRequired,
-    workspace: PropTypes.object.isRequired
+    translationReducer: PropTypes.object.isRequired,
+    workspaceReducer: PropTypes.object.isRequired
   };
 
   constructor() {
@@ -31,16 +31,16 @@ export default class Navbar extends Component {
 
   extractLoggedUser(prepend) {
     LoggerManager.log('extractLoggedUser');
-    if (this.props.user instanceof Object && this.props.user.userData instanceof Object) {
-      return prepend + this.props.user.userData.email;
+    if (this.props.userReducer instanceof Object && this.props.userReducer.userData instanceof Object) {
+      return prepend + this.props.userReducer.userData.email;
     }
     return '';
   }
 
   extractWorkSpace(prepend) {
     LoggerManager.log('extractWorkSpace');
-    if (this.props.workspace && this.props.workspace.currentWorkspace) {
-      return prepend + this.props.workspace.currentWorkspace.name;
+    if (this.props.workspaceReducer && this.props.workspaceReducer.currentWorkspace) {
+      return prepend + this.props.workspaceReducer.currentWorkspace.name;
     }
     return '';
   }
@@ -56,7 +56,7 @@ export default class Navbar extends Component {
           <Link className={style.navbar_left_side}
                 style={{cursor: 'pointer'}}>{translate('amp-title')}</Link>
 
-          <Logout loggedIn={this.props.login.loggedIn}/>
+          <Logout loggedIn={this.props.loginReducer.loggedIn}/>
           <div className={style.userInfo}>
             <a className={style.navbar_left_side} >{this.extractLoggedUser('')}</a>
             <a className={style.navbar_left_side} >{this.extractWorkSpace('')}</a>
@@ -68,11 +68,11 @@ export default class Navbar extends Component {
           <TopMenu
             builder={MenuUtils.default.prototype.buildMenu}
             onClick={MenuUtils.handleClick}
-            loggedIn={this.props.login.loggedIn}
+            loggedIn={this.props.loginReducer.loggedIn}
             workspaceList={this.props.workspaceList}
             menu={defaultMenu}
             menuOnClickHandler={this.props.menuOnClickHandler}
-            languageList={this.props.translation.languageList}
+            languageList={this.props.translationReducer.languageList}
           />
         </div>
       </div>

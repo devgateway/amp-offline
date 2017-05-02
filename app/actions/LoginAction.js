@@ -13,10 +13,10 @@ export const STATE_LOGOUT = 'STATE_LOGOUT';
 export function loginAction(email: string, password: string) {
   LoggerManager.log('loginAction');
   return (dispatch, ownProps) => {
-    if (ownProps().login.loginProcessing === false) {
+    if (ownProps().loginReducer.loginProcessing === false) {
       dispatch(sendingRequest());
-      const isAmpAvailable = (ownProps().ampConnectionStatus.status
-      && ownProps().ampConnectionStatus.status.isAmpAvailable);
+      const isAmpAvailable = (ownProps().ampConnectionStatusReducer.status
+      && ownProps().ampConnectionStatusReducer.status.isAmpAvailable);
       return LoginManager.processLogin(email, password, isAmpAvailable).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
@@ -50,8 +50,8 @@ export function loginAutomaticallyAction() {
   LoggerManager.log('loginAutomaticallyAction');
   return (dispatch, ownProps) => new Promise((resolve, reject) => {
     dispatch(sendingRequest());
-    const email = ownProps().user.userData.email;
-    const password = ownProps().login.plainPassword;
+    const email = ownProps().userReducer.userData.email;
+    const password = ownProps().loginReducer.plainPassword;
     return LoginManager.processOnlineLogin(email, password).then((data) => {
       const userData = data.dbUser;
       const token = data.token;

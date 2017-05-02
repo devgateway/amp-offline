@@ -12,8 +12,8 @@ export default class WorkspacePage extends Component {
 
   static propTypes = {
     workspaceList: PropTypes.array,
-    user: PropTypes.object.isRequired,
-    workspace: PropTypes.object.isRequired,
+    userReducer: PropTypes.object.isRequired,
+    workspaceReducer: PropTypes.object.isRequired,
     loadWorkspaces: PropTypes.func.isRequired,
     selectWorkspace: PropTypes.func.isRequired
   };
@@ -31,23 +31,23 @@ export default class WorkspacePage extends Component {
 
   componentWillMount() {
     LoggerManager.log('componentWillMount');
-    this.props.loadWorkspaces(this.props.user.userData.id);
+    this.props.loadWorkspaces(this.props.userReducer.userData.id);
   }
 
   componentWillReceiveProps(nextProps) {
     LoggerManager.log('componentWillReceiveProps');
-    if (!nextProps.workspace.workspaceLoading && !this.state.showWorkspaces) {
+    if (!nextProps.workspaceReducer.workspaceLoading && !this.state.showWorkspaces) {
       this.setState({ showWorkspaces: true });
     }
   }
 
   selectContentElementToDraw() {
     LoggerManager.log('selectContentElementToDraw');
-    if (this.props.workspace.workspaceLoading !== false || this.state.showWorkspaces === false) {
+    if (this.props.workspaceReducer.workspaceLoading !== false || this.state.showWorkspaces === false) {
       return <Loading />;
     } else {
-      if (this.props.workspace.errorMessage && this.props.workspace.errorMessage !== '') {
-        return <ErrorMessage message={this.props.workspace.errorMessage} />;
+      if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
+        return <ErrorMessage message={this.props.workspaceReducer.errorMessage} />;
       } else {
         return this.splitWorkspaceByGroups().map((workspaceList) => (
           this.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
@@ -59,9 +59,9 @@ export default class WorkspacePage extends Component {
   splitWorkspaceByGroups() {
     LoggerManager.log('splitWorkspaceByGroups');
     const workspacesByGroup = [];
-    if (this.props.workspace.workspaceList.length > 0) {
+    if (this.props.workspaceReducer.workspaceList.length > 0) {
       WORKSPACES_GROUPS.forEach((wgValue) => {
-        const wsByGroup = this.props.workspace.workspaceList.filter((wsValue) => (
+        const wsByGroup = this.props.workspaceReducer.workspaceList.filter((wsValue) => (
           wsValue['workspace-group'] === wgValue.type
         ));
         workspacesByGroup.push(wsByGroup);

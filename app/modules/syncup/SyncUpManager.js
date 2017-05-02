@@ -161,7 +161,7 @@ export default class SyncUpManager {
     return new Promise((resolve, reject) => (
       Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSuccessfulSyncUp()]).then((promises) => {
         const lastSuccessfulSyncUp = promises[1];
-        const userId = store.getState().user.userData.id;
+        const userId = store.getState().userReducer.userData.id;
         const oldTimestamp = lastSuccessfulSyncUp[SYNCUP_DATETIME_FIELD];
         return this.getWhatChangedInAMP(userId, oldTimestamp).then((changes) => {
           // Get list of types that need to be synced.
@@ -289,7 +289,7 @@ export default class SyncUpManager {
     LoggerManager.log('isForceSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) => {
       const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
-      const user = store.getState().user.userData; // No need to to go the DB in this stage.
+      const user = store.getState().userReducer.userData; // No need to to go the DB in this stage.
       const hasUserData = !!user['first-name']; // Hint: this is the same as a ternary if :)
       const force = forceBecauseDays || !hasUserData;
       let message = '';

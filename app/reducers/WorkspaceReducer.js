@@ -15,7 +15,7 @@ const defaultState = {
   workspaceFilter: undefined
 };
 
-export default function workspace(state = defaultState, action: Object) {
+export default function workspaceReducer(state = defaultState, action: Object) {
   LoggerManager.log('WorkspaceReducer');
   switch (action.type) {
     case STATE_WORKSPACE_LOADED:
