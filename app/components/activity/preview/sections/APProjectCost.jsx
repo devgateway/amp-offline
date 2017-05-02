@@ -36,7 +36,7 @@ const APProjectCost = (fieldName) => class extends Component {
       const amount = NumberUtils.rawNumberToFormattedString(this.getFieldValue(`${fieldName}~${AC.AMOUNT}`));
       // TODO currency conversion
       const currency = this.getFieldValue(`${fieldName}~${AC.CURRENCY_CODE}`);
-      // TODO date formatting AMPOFFLINE-129
+      // TODO date formatting AMPOFFLINE-308
       const date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
       content = (<div>
         <div>
