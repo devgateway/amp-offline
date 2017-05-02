@@ -7,7 +7,7 @@ const defaultState = {
   updateInProgress: true
 };
 
-export default function ampConnectionStatus(state = defaultState, action: Object) {
+export default function ampConnectionStatusReducer(state = defaultState, action: Object) {
   LoggerManager.log('AmpConnectionStatusReducer');
 
   switch (action.type) {

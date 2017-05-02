@@ -9,13 +9,13 @@ import LoggerManager from '../../modules/util/LoggerManager';
 export default class Desktop extends Component {
 
   static propTypes = {
-    desktop: PropTypes.object.isRequired,
-    workspace: PropTypes.object.isRequired
+    desktopReducer: PropTypes.object.isRequired,
+    workspaceReducer: PropTypes.object.isRequired
   };
 
   componentDidMount() {
     LoggerManager.log('componentDidMount');
-    if (!this.props.workspace.currentWorkspace) {
+    if (!this.props.workspaceReducer.currentWorkspace) {
       UrlUtils.forwardTo('/workspace');
     }
   }
@@ -24,8 +24,8 @@ export default class Desktop extends Component {
     LoggerManager.log('render');
     return (
       <div>
-        <TopArea workspace={this.props.workspace.currentWorkspace} />
-        <TabsContainer tabsData={this.props.desktop.tabsData} />
+        <TopArea workspaceReducer={this.props.workspaceReducer.currentWorkspace} />
+        <TabsContainer tabsData={this.props.desktopReducer.tabsData} />
       </div>
     );
   }

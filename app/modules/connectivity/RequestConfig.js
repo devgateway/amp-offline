@@ -42,8 +42,8 @@ const RequestConfig = {
       requestConfig.encoding = null;
     }
 
-    if (store.getState().startUp.connectionInformation.timeOut) {
-      requestConfig.timeout = store.getState().startUp.connectionInformation.timeOut;
+    if (store.getState().startUpReducer.connectionInformation.timeOut) {
+      requestConfig.timeout = store.getState().startUpReducer.connectionInformation.timeOut;
     }
     const token = this._getToken(method, url);
     if (token) {
@@ -73,8 +73,8 @@ const RequestConfig = {
     // if the route is regularAMPUrl we fetch the ROOT for amp
     // if not we get the REST url
     return routeConfiguration[0].regularAmpUrl ?
-      store.getState().startUp.connectionInformation.getFullUrl() + url :
-      store.getState().startUp.connectionInformation.getFullRestUrl() + url;
+      store.getState().startUpReducer.connectionInformation.getFullUrl() + url :
+      store.getState().startUpReducer.connectionInformation.getFullRestUrl() + url;
   },
 
   _getRouteConfiguration(method, url) {
@@ -93,8 +93,8 @@ const RequestConfig = {
   _getToken(method, url) {
     // We go to check to routes config to see if we need to generate a token
     if (this._getRouteConfiguration(method, url)[0].requiresToken) {
-      if (store.getState().login.token) {
-        return store.getState().login.token;
+      if (store.getState().loginReducer.token) {
+        return store.getState().loginReducer.token;
       }
       // TODO if the token is not present we try to log the user in;
     }
@@ -102,7 +102,7 @@ const RequestConfig = {
 
   replaceToken(requestConfig) {
     LoggerManager.log('replaceToken');
-    requestConfig.headers['X-Auth-Token'] = store.getState().login.token;
+    requestConfig.headers['X-Auth-Token'] = store.getState().loginReducer.token;
     return requestConfig;
   }
 };
