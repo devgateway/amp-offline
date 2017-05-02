@@ -86,7 +86,7 @@ export default class AFField extends Component {
   _getRichTextEditor() {
     return (<AFRichTextEditor
       id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired.bind(this)}
-      language={store.getState().translation.lang || store.getState().translation.defaultLang} />);
+      language={store.getState().translationReducer.lang || store.getState().translationReducer.defaultLang} />);
   }
 
   _getTextArea() {
