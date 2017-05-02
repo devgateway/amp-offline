@@ -14,8 +14,8 @@ const defaultState = {
   tabsData: []
 };
 
-export default function desktop(state = defaultState, action: Object) {
-  LoggerManager.log('desktop');
+export default function desktopReducer(state = defaultState, action: Object) {
+  LoggerManager.log('desktopReducer');
   switch (action.type) {
     case STATE_DESKTOP_LOADED:
       return Object.assign({}, state, {

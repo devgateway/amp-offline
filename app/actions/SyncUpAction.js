@@ -15,7 +15,7 @@ export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 export function getSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');
   return (dispatch, ownProps) => {
-    if (ownProps().syncUp.loadingSyncHistory === false) {
+    if (ownProps().syncUpReducer.loadingSyncHistory === false) {
       SyncUpManager.getSyncUpHistory().then((data) => (
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(syncUpSearchHistoryOk(data))
@@ -32,8 +32,8 @@ export function startSyncUp(historyData) {
   return (dispatch, ownProps) => {
     /* Save current syncup redux state because this might be a "forced" syncup and we dont want
      the user to be able to leave the page if this syncup fails. */
-    const currentState = ownProps().syncUp;
-    if (ownProps().syncUp.syncUpInProgress === false) {
+    const currentState = ownProps().syncUpReducer;
+    if (ownProps().syncUpReducer.syncUpInProgress === false) {
       dispatch(syncUpInProgress());
       return SyncUpManager.syncUpAllTypesOnDemand().then(() => {
         // TODO probably the way in which we will update the ui will change

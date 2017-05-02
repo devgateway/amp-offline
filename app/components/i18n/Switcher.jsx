@@ -12,7 +12,7 @@ class Switcher extends React.Component {
   }
 
   renderListOfLanguages() {
-    return this.props.translation.languageList.map((lang) => {
+    return this.props.translationReducer.languageList.map((lang) => {
       return <span key={lang} onClick={this.changeLanguage.bind(this, lang)}> {lang} |</span>;
     });
   }

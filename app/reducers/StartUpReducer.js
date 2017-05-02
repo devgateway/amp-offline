@@ -12,7 +12,7 @@ const defaultState = {
   gsNumberData: undefined
 };
 
-export default function startUp(state = defaultState, action: Object) {
+export default function startUpReducer(state = defaultState, action: Object) {
   LoggerManager.log('startUpReducer');
 
   switch (action.type) {

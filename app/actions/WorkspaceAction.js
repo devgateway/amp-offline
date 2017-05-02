@@ -17,7 +17,7 @@ export const STATE_WORKSPACE_ERROR = 'STATE_WORKSPACE_ERROR';
 export function selectWorkspace(wsId) {
   LoggerManager.log('selectWorkspace');
   // We dont get userId as param because that messes up the onClickHandler used also in main menu.
-  const userId = store.getState().user.userData.id;
+  const userId = store.getState().userReducer.userData.id;
   return (dispatch) => (
     WorkspaceHelper.findById(wsId).then((workspace) => (
       TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId).then((teamMember) => {
@@ -45,4 +45,3 @@ export function loadWorkspaces(userId) {
     });
   };
 }
-

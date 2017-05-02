@@ -16,7 +16,7 @@ export default class ActivitiesPullFromAMPManager {
   constructor() {
     this._cancel = false;
     // TODO update this once AMPOFFLINE-319 is done
-    let translations = store.getState().translation.languageList;
+    let translations = store.getState().translationReducer.languageList;
     if (!translations) {
       translations = ['en', 'pt', 'tm', 'fr']; // using explicitly Timor and Niger langs until 319 is done
     }

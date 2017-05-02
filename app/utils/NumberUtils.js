@@ -49,7 +49,7 @@ export default class NumberUtils {
 
   static createLanguage() {
     LoggerManager.log('buildLocale');
-    const data = store.getState().startUp.gsNumberData;
+    const data = store.getState().startUpReducer.gsNumberData;
     const localeName = `locale_${Utils.stringToUniqueId('')}`;
     numeral.register('locale', localeName, {
       delimiters: {
@@ -84,12 +84,13 @@ export default class NumberUtils {
 
   static rawNumberToFormattedString(number) {
     LoggerManager.log('rawNumberToFormattedString');
-    return numeral(NumberUtils.calculateInThousands(number)).format(store.getState().startUp.gsNumberData.format);
+    return numeral(NumberUtils.calculateInThousands(number))
+      .format(store.getState().startUpReducer.gsNumberData.format);
   }
 
   static calculateInThousands(number) {
     LoggerManager.log('calculateInThousands');
-    switch (store.getState().startUp.gsNumberData.amountsInThousands) {
+    switch (store.getState().startUpReducer.gsNumberData.amountsInThousands) {
       case GS_AMOUNT_OPTION_IN_UNITS:
         return number;
       case GS_AMOUNT_OPTION_IN_THOUSANDS:
