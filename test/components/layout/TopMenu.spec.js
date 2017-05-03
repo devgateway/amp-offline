@@ -36,9 +36,9 @@ function setup() {
     onClick={MenuUtils.handleClick}
     loggedIn={loggedUser}
     menu={menuJson}
-    workspaceList={store.getState().workspace.workspaceList}
+    workspaceList={store.getState().workspaceReducer.workspaceList}
     menuOnClickHandler={store.getState().menuOnClickHandler}
-    languageList={store.getState().translation.languageList}
+    languageList={store.getState().translationReducer.languageList}
   />);
   const component = shallow(topMenuComponent);
   // console.log(component.debug());

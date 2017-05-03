@@ -10,10 +10,10 @@ export default class App extends Component {
     children: PropTypes.element.isRequired,
     selectWorkspace: PropTypes.func.isRequired,
     /* eslint-disable react/forbid-prop-types */
-    workspace: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    login: PropTypes.object.isRequired,
-    translation: PropTypes.object.isRequired
+    workspaceReducer: PropTypes.object.isRequired,
+    userReducer: PropTypes.object.isRequired,
+    loginReducer: PropTypes.object.isRequired,
+    translationReducer: PropTypes.object.isRequired
     /* eslint-enable react/forbid-prop-types */
   };
 
@@ -29,9 +29,11 @@ export default class App extends Component {
       <div className={'outerContainer'}>
         <div className={styles.wrap}>
           <div className={styles.header}><Navbar
-            user={this.props.user} login={this.props.login} workspace={this.props.workspace}
-            workspaceList={this.props.workspace.workspaceList} menuOnClickHandler={this.props.selectWorkspace}
-            translation={this.props.translation}
+            userReducer={this.props.userReducer}
+            loginReducer={this.props.loginReducer}
+            workspaceReducer={this.props.workspaceReducer}
+            workspaceList={this.props.workspaceReducer.workspaceList} menuOnClickHandler={this.props.selectWorkspace}
+            translationReducer={this.props.translationReducer}
           />
           </div>
           <div className={styles.content}>

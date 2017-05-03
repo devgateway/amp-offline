@@ -13,7 +13,7 @@ const defaultState = {
   loadingListOfLanguages: false
 };
 
-export default function translation(state: Object = defaultState, action: Object) {
+export default function translationReducer(state: Object = defaultState, action: Object) {
   LoggerManager.log('translation');
   switch (action.type) {
     case STATE_CHANGE_LANGUAGE:

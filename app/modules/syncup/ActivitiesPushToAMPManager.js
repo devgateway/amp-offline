@@ -42,7 +42,7 @@ export default class ActivitiesPushToAMPManager {
     LoggerManager.log('syncUpActivities');
     return new Promise((resolve, reject) => {
       // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
-      if (store.getState().user.userData.ampOfflinePassword) {
+      if (store.getState().userReducer.userData.ampOfflinePassword) {
         return this._rejectActivitiesClientSide(saved, removed)
           .then(() => {
             const steps = [
@@ -209,4 +209,3 @@ export default class ActivitiesPushToAMPManager {
     return ActivityHelper.saveOrUpdate(rejectedActivity);
   }
 }
-

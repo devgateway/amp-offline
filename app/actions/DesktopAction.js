@@ -11,7 +11,7 @@ export const STATE_DESKTOP_ERROR = 'STATE_DESKTOP_ERROR';
 export function loadDesktop(workspace, teamMemberId) {
   LoggerManager.log('loadDesktop');
   return (dispatch, ownProps) => {
-    if (ownProps().desktop.isLoadingDesktop === false) {
+    if (ownProps().desktopReducer.isLoadingDesktop === false) {
       dispatch(sendingRequest());
       DesktopManager.generateDesktopData(workspace, teamMemberId).then((data) => {
         dispatch(_loadDesktop({

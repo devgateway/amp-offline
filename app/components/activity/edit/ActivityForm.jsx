@@ -31,7 +31,7 @@ export default class ActivityForm extends Component {
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       errorMessage: PropTypes.object
     }).isRequired,
-    user: PropTypes.object.isRequired,
+    userReducer: PropTypes.object.isRequired,
     loadActivityForActivityForm: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     saveActivity: PropTypes.func.isRequired,
@@ -158,7 +158,7 @@ export default class ActivityForm extends Component {
     const actionTitle = this.state.isSaveAndSubmit ? translate('Save and Submit') : translate('Save as draft');
     return (<AFSaveDialog
       activity={this.activity} actionTitle={actionTitle} saveActivity={this.props.saveActivity}
-      teamMemberId={this.props.user.teamMember.id}
+      teamMemberId={this.props.userReducer.teamMember.id}
     />);
   }
 
