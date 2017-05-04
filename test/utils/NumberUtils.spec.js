@@ -6,7 +6,7 @@ import NumberUtils from '../../app/utils/NumberUtils';
 import {
   GS_AMOUNT_OPTION_IN_UNITS,
   GS_AMOUNT_OPTION_IN_MILLIONS
-} from '../../app/utils/constants/GlobalSettingConstants';
+} from '../../app/utils/constants/GlobalSettingsConstants';
 import { STATE_GS_NUMBERS_LOADED } from '../../app/actions/StartUpAction';
 import store from '../../app/index';
 
