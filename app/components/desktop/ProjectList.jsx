@@ -12,7 +12,7 @@ import {
   ACTIVITY_STATUS_UNVALIDATED,
   ACTIVITY_STATUS_VALIDATED
 } from '../../utils/Constants';
-import { getGeneralPaginationOptions } from '../../modules/projects/DesktopManager'; // TODO: receive as props.
+import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
 import { AMP_ID, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';

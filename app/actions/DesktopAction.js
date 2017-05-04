@@ -1,6 +1,6 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
-import DesktopManager from '../modules/projects/DesktopManager';
+import DesktopManager from '../modules/desktop/DesktopManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { DESKTOP_URL } from '../utils/Constants';
 
