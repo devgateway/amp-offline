@@ -13,7 +13,7 @@ const defaultDateConfig = {
 describe('@@ DateUtils @@', () => {
   it('should return a config', () => {
     expect(DateUtils.getConfigFromDB())
-      .to.have.property('dateFormat');
+      .to.eventually.have.property('dateFormat');
   });
 
   it('should convert a timestamp to a simple formatted date', () => {

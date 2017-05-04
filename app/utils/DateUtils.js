@@ -30,7 +30,7 @@ export default class DateUtils {
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
     const formattedDate = Moment(date).isValid() ?
-        Moment(date).format(store.getState().startUp.gsDateData.dateFormat.toUpperCase()) : date;
+        Moment(date).format(store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase()) : date;
     return formattedDate;
   }
 
