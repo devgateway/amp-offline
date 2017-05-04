@@ -7,7 +7,22 @@ import {
 } from '../../utils/Constants';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
-import { IS_DRAFT, APPROVAL_STATUS } from '../../utils/constants/ActivityConstants';
+import {
+  IS_DRAFT,
+  APPROVAL_STATUS,
+  FUNDINGS,
+  FUNDING_DETAILS,
+  TRANSACTION_TYPE,
+  TRANSACTION_AMOUNT,
+  ADJUSTMENT_TYPE
+} from '../../utils/constants/ActivityConstants';
+import {
+  TRANSACTION_TYPE_PATH,
+  ADJUSTMENT_TYPE_PATH,
+  DONOR_ORGANIZATIONS_PATH
+} from '../../utils/constants/FieldPathConstants';
+import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
+
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import LoggerManager from '../../modules/util/LoggerManager';
 
@@ -52,7 +67,7 @@ const DesktopManager = {
     LoggerManager.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
-      fieldPaths: ['donor_organization~organization'],
+      fieldPaths: [DONOR_ORGANIZATIONS_PATH, ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH],
       teamMemberId
     });
   },
@@ -65,8 +80,8 @@ const DesktopManager = {
         status: this.getActivityStatus(item),
         donor: this.getActivityDonors(item),
         synced: this.getActivityIsSynced(item),
-        actualDisbursements: this.getActivityAmounts(item),
-        actualCommitments: this.getActivityAmounts(item),
+        actualDisbursements: this.getActivityAmounts(item, DISBURSEMENTS),
+        actualCommitments: this.getActivityAmounts(item, COMMITMENTS),
         view: true,
         edit: this.getActivityCanEdit(item),
         new: this.getActivityIsNew(item)
@@ -94,8 +109,16 @@ const DesktopManager = {
     return true; // TODO: to be implemented.
   },
 
-  getActivityAmounts(/* item */) {
-    return (Math.random() * 100000000).toString().substring(0, 12); // TODO: to be implemented.
+  getActivityAmounts(item, trnType) {
+    let amount = 0;
+    item[FUNDINGS].forEach((funding) => (
+      funding[FUNDING_DETAILS].forEach((fd) => {
+        if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
+          amount += fd[TRANSACTION_AMOUNT];
+        }
+      })
+    ));
+    return amount;
   },
 
   getActivityDonors(item) {
