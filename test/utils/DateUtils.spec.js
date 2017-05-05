@@ -7,7 +7,19 @@ import { STATE_GS_DATE_LOADED } from '../../app/actions/StartUpAction';
 import store from '../../app/index';
 
 const defaultDateConfig = {
-  dateFormat: 'DD/MM/YYYY'
+  dateFormat: 'dd/MM/yyyy'
+};
+
+const altDateConfig1 = {
+  dateFormat: 'dd/MMM/yyyy'
+};
+
+const altDateConfig2 = {
+  dateFormat: 'MM/dd/yyyy'
+};
+
+const altDateConfig3 = {
+  dateFormat: 'MMM/dd/yyyy'
 };
 
 describe('@@ DateUtils @@', () => {
@@ -16,9 +28,24 @@ describe('@@ DateUtils @@', () => {
       .to.eventually.have.property('dateFormat');
   });
 
-  it('should convert a timestamp to a simple formatted date', () => {
+  it('should convert a timestamp to the config DD/MM/YYYY', () => {
     store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: defaultDateConfig });
     expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('04/02/2015');
+  });
+
+  it('should convert a timestamp to the config DD/MMM/YYYY', () => {
+    store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: altDateConfig1 });
+    expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('04/Feb/2015');
+  });
+
+  it('should convert a timestamp to the config MM/DD/YYYY', () => {
+    store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: altDateConfig2 });
+    expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('02/04/2015');
+  });
+
+  it('should convert a timestamp to the  config MMM/DD/YYYY', () => {
+    store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: altDateConfig3 });
+    expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('Feb/04/2015');
   });
 
   it('should do nothing with an invalid date', () => {
