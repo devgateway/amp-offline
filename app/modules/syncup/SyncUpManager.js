@@ -173,7 +173,7 @@ export default class SyncUpManager {
 
   static _runSyncUp(userId, changes, syncUpDiffLeftOver) {
     // Get list of types that need to be synced.
-    const toSyncList = this._filterOutModulesToSync(changes);
+    const toSyncList = this._filterOutModulesToSync(changes, syncUpDiffLeftOver);
     const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
     const syncUpUnits = new SyncUpUnits();
     // TODO: add dependency lists, but so far simply run sync EPs in parallel
@@ -196,7 +196,7 @@ export default class SyncUpManager {
     );
   }
 
-  static _filterOutModulesToSync(changes) {
+  static _filterOutModulesToSync(changes, syncUpDiffLeftOver: SyncUpDiff) {
     LoggerManager.log('_filterOutModulesToSync');
     // Filter out syncUpModuleList and keep only what needs to be resynced.
     // TODO: remove this flag once AMP-25568 is done
@@ -217,8 +217,10 @@ export default class SyncUpManager {
           (Object.prototype.hasOwnProperty.call(changeItem, 'saved') && changeItem.saved.length > 0)) {
           return item;
         }
-        return undefined;
       } else if (changeItem === true) { // Workspaces, translations, etc.
+        return item;
+      }
+      if (syncUpDiffLeftOver.syncUpDiff[item.type]) {
         return item;
       }
       return undefined;

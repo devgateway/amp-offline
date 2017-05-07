@@ -48,7 +48,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   getDiffLeftover() {
-    this.diff.saved = this.diff.saved.filter(ampId => this.pulled.has(ampId));
+    this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
     return this.diff;
   }
 
@@ -71,14 +71,13 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _getLatestActivities() {
-    let ampIds = this.diff.saved;
     // TODO remove as part of AMPOFFLINE-273 or AMPOFFLINE-274 (or other dervided tasks)
-    ampIds = ampIds.slice(0, FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT);
+    this.diff.saved = this.diff.saved.slice(0, FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT);
     return new Promise(
       (resolve, reject) => {
         // we need to ensure we run chain promises execution in order: get, remove existing, save, process error
         const pFactories = [];
-        ampIds.forEach(ampId => {
+        this.diff.saved.forEach(ampId => {
           const fnPull = this._pullActivity.bind(this, ampId);
           pFactories.push(...[fnPull, this._removeExistingNonRejected, this._saveNewActivity, this._onPullError]);
         });
@@ -97,7 +96,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _removeExistingNonRejected(activity, error) {
-    if (error) {
+    if (error || !activity) {
       return Promise.resolve(activity, error);
     }
     return ActivityHelper.removeNonRejectedByAmpId(activity[AC.AMP_ID])
@@ -105,19 +104,19 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _saveNewActivity(activity, error) {
-    if (error) {
+    if (error || !activity) {
       return Promise.resolve(activity, error);
     }
     return ActivityHelper.saveOrUpdate(activity)
-      .then(() => activity)
-      .catch((err) => this._onPullError(activity[AC.AMP_ID], err));
+      .then(() => activity[AC.AMP_ID])
+      .catch((err) => this._onPullError(activity ? activity[AC.AMP_ID] : null, err));
   }
 
   _onPullError(ampId, error) {
     LoggerManager.log('_onPullError');
     if (error) {
       LoggerManager.error(error);
-    } else {
+    } else if (ampId) {
       this.pulled.add(ampId);
     }
     return Promise.resolve();
