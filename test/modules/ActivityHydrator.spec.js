@@ -1,6 +1,7 @@
 import { describe, it } from 'mocha';
 import ActivityHydrator from '../../app/modules/helpers/ActivityHydrator';
 import { HIERARCHICAL_VALUE } from '../../app/utils/constants/ActivityConstants';
+import { DONOR_ORGANIZATIONS_PATH } from '../../app/utils/constants/FieldPathConstants';
 
 const chai = require('chai');
 // const chaiAsPromised = require('chai-as-promised');
@@ -37,7 +38,7 @@ org2[HIERARCHICAL_VALUE] = null;
 
 const possibleValuesCollection = [
   {
-    id: 'donor_organization~organization',
+    id: DONOR_ORGANIZATIONS_PATH,
     'field-path': ['donor_organization', 'organization'],
     'possible-options': { 1: org1, 2: org2 }
   },

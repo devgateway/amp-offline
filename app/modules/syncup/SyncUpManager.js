@@ -38,7 +38,7 @@ import FieldsSyncUpManager from './syncupManagers/FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './syncupManagers/PossibleValuesSyncUpManager';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
-import { loadNumberSettings } from '../../actions/StartUpAction';
+import { loadNumberSettings, loadDateSettings } from '../../actions/StartUpAction';
 import WorkspaceSettingsSyncUpManager from './syncupManagers/WorkspaceSettingsSyncUpManager';
 import SyncUpManagerInterface from './syncupManagers/SyncUpManagerInterface';
 
@@ -161,7 +161,7 @@ export default class SyncUpManager {
     return new Promise((resolve, reject) =>
       Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSyncUpLog()]
       ).then(([, lastSyncUpLog]) => {
-        const userId = store.getState().user.userData.id;
+        const userId = store.getState().userReducer.userData.id;
         const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
         const syncUpDiffLeftOver = new SyncUpDiff(lastSyncUpLog[SYNCUP_DIFF_LEFTOVER]);
         return this.getWhatChangedInAMP(userId, oldTimestamp)
@@ -296,6 +296,7 @@ export default class SyncUpManager {
     const restart = true;
     store.dispatch(loadAllLanguages(restart));
     // Update number format settings.
+    loadDateSettings();
     return loadNumberSettings();
   }
 
@@ -326,7 +327,7 @@ export default class SyncUpManager {
     LoggerManager.log('isForceSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) => {
       const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
-      const user = store.getState().user.userData; // No need to to go the DB in this stage.
+      const user = store.getState().userReducer.userData; // No need to to go the DB in this stage.
       const hasUserData = !!user['first-name']; // Hint: this is the same as a ternary if :)
       const force = forceBecauseDays || !hasUserData;
       let message = '';

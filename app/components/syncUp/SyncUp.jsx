@@ -14,7 +14,7 @@ export default class SyncUp extends Component {
     startSyncUp: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired,
-    syncUp: PropTypes.object.isRequired
+    syncUpReducer: PropTypes.object.isRequired
   };
 
   constructor() {
@@ -28,7 +28,7 @@ export default class SyncUp extends Component {
     LoggerManager.log('componentWillMount');
     // To avoid the 'no-did-mount-set-state' eslint error.
     this.setState({ firstLoadSyncUp: false });
-    this.setState({ loadingSyncHistory: this.props.syncUp.loadingSyncHistory });
+    this.setState({ loadingSyncHistory: this.props.syncUpReducer.loadingSyncHistory });
   }
 
   componentDidMount() {
@@ -38,31 +38,31 @@ export default class SyncUp extends Component {
 
   componentWillReceiveProps(nextProps) {
     LoggerManager.log('componentWillReceiveProps');
-    if (this.props.syncUp.loadingSyncHistory !== nextProps.syncUp.loadingSyncHistory) {
-      this.setState({ loadingSyncHistory: this.props.syncUp.loadingSyncHistory });
+    if (this.props.syncUpReducer.loadingSyncHistory !== nextProps.syncUpReducer.loadingSyncHistory) {
+      this.setState({ loadingSyncHistory: this.props.syncUpReducer.loadingSyncHistory });
     }
   }
 
   routerWillLeave() {
     LoggerManager.log('routerWillLeave');
     // FFR: https://github.com/ReactTraining/react-router/blob/v3/docs/guides/ConfirmingNavigation.md
-    return !this.props.syncUp.forceSyncUp;
+    return !this.props.syncUpReducer.forceSyncUp;
   }
 
   selectContentElementToDraw(historyData) {
     LoggerManager.log('selectContentElementToDraw');
-    if (this.props.syncUp.loadingSyncHistory === true || this.props.syncUp.syncUpInProgress === true) {
+    if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
       return <Loading/>;
     } else {
-      const showErrors = this.props.syncUp.errorMessage !== '' || this.props.syncUp.forceSyncUpMessage !== '';
+      const showErrors = this.props.syncUpReducer.errorMessage !== '' || this.props.syncUpReducer.forceSyncUpMessage !== '';
       if (showErrors) {
         let error;
         let warn;
-        if (this.props.syncUp.errorMessage !== '') {
-          error = <ErrorMessage message={this.props.syncUp.errorMessage}/>;
+        if (this.props.syncUpReducer.errorMessage !== '') {
+          error = <ErrorMessage message={this.props.syncUpReducer.errorMessage}/>;
         }
-        if (this.props.syncUp.forceSyncUpMessage !== '') {
-          warn = <WarnMessage message={this.props.syncUp.forceSyncUpMessage}/>;
+        if (this.props.syncUpReducer.forceSyncUpMessage !== '') {
+          warn = <WarnMessage message={this.props.syncUpReducer.forceSyncUpMessage}/>;
         }
         return (<div>{ error }{ warn }</div>);
       } else {
@@ -90,13 +90,13 @@ export default class SyncUp extends Component {
   render() {
     LoggerManager.log('render');
     const { startSyncUp } = this.props;
-    const { historyData } = this.props.syncUp;
+    const { historyData } = this.props.syncUpReducer;
     return (
       <div className={styles.container}>
         <div className={styles.display_inline}>
           <Button
             type="button" text="Start Sync Up"
-            className={`btn btn-success ${(this.props.syncUp.loadingSyncHistory || this.props.syncUp.syncUpInProgress
+            className={`btn btn-success ${(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress
               ? 'disabled' : '')}`}
             onClick={() => {
               startSyncUp();
@@ -105,13 +105,13 @@ export default class SyncUp extends Component {
         </div>
         <div className={styles.display_inline}>
           <div
-            className={(this.props.syncUp.loadingSyncHistory || this.props.syncUp.syncUpInProgress)
+            className={(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress)
               ? styles.loader : ''}/>
         </div>
         <hr/>
         {this.selectContentElementToDraw(historyData)}
 
-        <SyncUpProgressDialogModal show={this.props.syncUp.syncUpInProgress} onClick={this.cancelSync}/>
+        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={this.cancelSync}/>
       </div>
     );
   }

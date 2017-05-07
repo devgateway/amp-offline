@@ -12,7 +12,7 @@ export default class Login extends Component {
     // This React component receives the login function to be dispatched as a prop,
     // so it doesnt have to know about the implementation.
     loginAction: PropTypes.func.isRequired,
-    login: PropTypes.object.isRequired
+    loginReducer: PropTypes.object.isRequired
   };
 
   constructor() {
@@ -62,12 +62,12 @@ export default class Login extends Component {
           </tbody>
         </table>
         <Button
-          type="button" className={`btn btn-success ${(this.props.login.loginProcessing ? 'disabled' : '')}`}
+          type="button" className={`btn btn-success ${(this.props.loginReducer.loginProcessing ? 'disabled' : '')}`}
           onClick={() => {
             loginAction(this.state.email, this.state.password);
           }} text="login" />
         <hr />
-        <ErrorMessage message={this.props.login.errorMessage} />
+        <ErrorMessage message={this.props.loginReducer.errorMessage} />
       </div>
     );
   }

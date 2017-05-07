@@ -21,8 +21,9 @@
     "postinstall": "concurrently \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "dev": "npm run hot-server -- --start-hot",
     "package": "npm run build && build --publish never",
-    "package-win": "npm run build && build --win --x64",
+    "package-win": "npm run build && build --win --x64 --ia32",
     "package-linux": "npm run build && build --linux",
+    "package-mac": "npm run build && build -m",
     "package-all": "npm run build && build -mwl",
     "cleanup": "mop -v"
   },
@@ -155,6 +156,7 @@
     "i18next-sync-fs-backend": "^0.1.0",
     "i18next-xhr-backend": "^1.2.1",
     "jsonschema": "^1.1.1",
+    "moment": "^2.18.1",
     "nedb": "^1.8.0",
     "numeral": "^2.0.6",
     "rc-menu": "^5.0.7",

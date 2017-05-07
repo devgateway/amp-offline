@@ -6,6 +6,7 @@ import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingT
 import { RICH_TEXT_FIELDS } from '../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import DateUtils from '../../../../utils/DateUtils';
 
 /**
  * Generic activity preview section class
@@ -42,6 +43,10 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
     if (this.context.activityFieldsManager.isFieldPathEnabled(path)) {
       const title = this.context.activityFieldsManager.getFieldLabelTranslation(path);
       let value = this.context.activityFieldsManager.getValue(this.context.activity, path);
+      const fieldDef = this.context.activityFieldsManager.getFieldDef(path);
+      if (fieldDef.field_type === 'date') {
+        value = DateUtils.createFormattedDate(value);
+      }
       value = NAOptions && NAOptions.has(value) ? null : value;
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);

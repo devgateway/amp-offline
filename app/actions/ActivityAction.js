@@ -33,7 +33,7 @@ export function loadActivityForActivityPreview(activityId) {
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
-      payload: _loadActivity(activityId, ownProps().user.teamMember.id, paths)
+      payload: _loadActivity(activityId, ownProps().userReducer.teamMember.id, paths)
     });
 }
 
@@ -41,7 +41,7 @@ export function loadActivityForActivityForm(activityId) {
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
-      payload: _loadActivity(activityId, ownProps().user.teamMember.id)
+      payload: _loadActivity(activityId, ownProps().userReducer.teamMember.id)
     });
 }
 
@@ -56,7 +56,7 @@ export function saveActivity(activity) {
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_SAVE,
-      payload: _saveActivity(activity, ownProps().user.teamMember,
+      payload: _saveActivity(activity, ownProps().userReducer.teamMember,
         ownProps().activityReducer.activityFieldsManager.fieldsDef)
     });
 }
