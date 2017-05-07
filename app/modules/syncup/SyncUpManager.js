@@ -34,7 +34,7 @@ import FieldsSyncUpManager from './FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './PossibleValuesSyncUpManager';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
-import { loadNumberSettings } from '../../actions/StartUpAction';
+import { loadNumberSettings, loadDateSettings } from '../../actions/StartUpAction';
 import WorkspaceSettingsSyncUpManager from './WorkspaceSettingsSyncUpManager';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
@@ -175,8 +175,9 @@ export default class SyncUpManager {
               // Update translations.
               const restart = true;
               store.dispatch(loadAllLanguages(restart));
-              // Update number format settings.
-              return loadNumberSettings().then(() => (resolve(log))).catch(reject);
+              // Update number and date format settings.
+              return loadNumberSettings().then(() => (resolve(log))).catch(reject)
+                     .then(loadDateSettings().then(() => (resolve(log))).catch(reject));
             }).catch(reject);
           }).catch((err) => {
             LoggerManager.log('SyncUp Fail');
