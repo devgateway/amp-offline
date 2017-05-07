@@ -1,6 +1,7 @@
 /* eslint "no-nested-ternary": 0 */
 import UsersSyncUpManager from './syncupManagers/UsersSyncUpManager';
 import SyncUpDiff from './SyncUpDiff';
+import SyncUpUnits from './SyncUpUnits';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { SYNC_URL, TEST_URL } from '../connectivity/AmpApiConstants';
 import SyncUpHelper from '../helpers/SyncUpHelper';
@@ -15,7 +16,8 @@ import {
   SYNCUP_NO_DATE,
   SYNCUP_STATUS_FAIL,
   SYNCUP_STATUS_SUCCESS,
-  SYNCUP_TYPE_ACTIVITIES,
+  SYNCUP_TYPE_ACTIVITIES_PULL,
+  SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_GS,
@@ -46,8 +48,8 @@ const syncUpModuleList = [
   { type: SYNCUP_TYPE_USERS, SyncUpClass: UsersSyncUpManager },
   { type: SYNCUP_TYPE_WORKSPACE_MEMBERS, SyncUpClass: WorkspaceMemberSyncUpManager },
   // keep import placeholder first or, if needed, change _configureActivitiesImportSyncUp, or AMPOFFLINE-209
-  { type: SYNCUP_TYPE_ACTIVITIES },
-  { type: SYNCUP_TYPE_ACTIVITIES, SyncUpClass: ActivitiesPullFromAMPManager },
+  { type: SYNCUP_TYPE_ACTIVITIES_PUSH },
+  { type: SYNCUP_TYPE_ACTIVITIES_PULL, SyncUpClass: ActivitiesPullFromAMPManager },
   { type: SYNCUP_TYPE_FIELDS, SyncUpClass: FieldsSyncUpManager },
   { type: SYNCUP_TYPE_POSSIBLE_VALUES, SyncUpClass: PossibleValuesSyncUpManager },
   { type: SYNCUP_TYPE_TRANSLATIONS, SyncUpClass: TranslationSyncUpManager },
@@ -56,9 +58,9 @@ const syncUpModuleList = [
   { type: SYNCUP_TYPE_WORKSPACE_SETTINGS, SyncUpClass: WorkspaceSettingsSyncUpManager }
 ];
 
-const _noActivitiesImport = { type: SYNCUP_TYPE_ACTIVITIES, SyncUpClass: null };
+const _noActivitiesPush = { type: SYNCUP_TYPE_ACTIVITIES_PUSH, SyncUpClass: null };
 
-const _activitiesImport = { type: SYNCUP_TYPE_ACTIVITIES, isForced: true, SyncUpClass: ActivitiesPushToAMPManager };
+const _activitiesPush = { type: SYNCUP_TYPE_ACTIVITIES_PUSH, isForced: true, SyncUpClass: ActivitiesPushToAMPManager };
 
 // TODO: Evaluate in the future whats best: to have static functions or to create instances of SyncUpManager.
 export default class SyncUpManager {
@@ -82,7 +84,7 @@ export default class SyncUpManager {
    * @returns {Promise}
    */
   static getLastSuccessfulSyncUp() {
-    LoggerManager.log('getLastSuccessfulSyncUps');
+    LoggerManager.log('getLastSuccessfulSyncUp');
     return new Promise((resolve, reject) => (
       SyncUpHelper.findAllSyncUpByExample({
         status: SYNCUP_STATUS_SUCCESS,
@@ -99,31 +101,16 @@ export default class SyncUpManager {
     ));
   }
 
-  static getSyncUpDiffLeftOver() {
-    LoggerManager.log('getSyncUpDiffLeftOver');
+  /**
+   * Retrieves the latest sync up log
+   */
+  static getLastSyncUpLog() {
+    LoggerManager.log('getLastSyncUpLog');
     return SyncUpHelper.getLatestId().then(id => {
       if (id === 0) {
-        return new SyncUpDiff();
+        return {};
       }
-      return SyncUpHelper.findSyncUpByExample({ id }).then(lastSyncUpLog =>
-        new SyncUpDiff(lastSyncUpLog ? lastSyncUpLog[SYNCUP_DIFF_LEFTOVER] : null)
-      );
-    });
-  }
-
-  static _saveMainSyncUpLog({ status, userId, modules, newTimestamp }) {
-    LoggerManager.log('_saveMainSyncUpLog');
-    const syncDate = new Date();
-    const log = {
-      status,
-      'requested-by': userId,
-      modules,
-      'sync-date': syncDate.toISOString()
-    };
-    log[SYNCUP_DATETIME_FIELD] = newTimestamp;
-    return SyncUpHelper.getLatestId().then(id => {
-      log.id = id + 1;
-      return SyncUpHelper.saveOrUpdateSyncUp(log);
+      return SyncUpHelper.findSyncUpByExample({ id });
     });
   }
 
@@ -135,59 +122,77 @@ export default class SyncUpManager {
     LoggerManager.log('syncUpAllTypesOnDemand');
     // run sync up with activities import first time, then with activities export
     // TODO a better solution can be done through AMPOFFLINE-209
-    this._configureActivitiesImportSyncUp(_activitiesImport);
-    return this._doSyncUp().then(() => {
-      this._configureActivitiesImportSyncUp(_noActivitiesImport);
-      return this._doSyncUp();
-    });
+    this._configureActivitiesImportSyncUp(_activitiesPush);
+    return this._startSyncUp().then(() => {
+      this._configureActivitiesImportSyncUp(_noActivitiesPush);
+      return this._startSyncUp();
+    }).then(() => this._postSyncUp());
   }
 
   static _configureActivitiesImportSyncUp(activitiesImport) {
-    const activitiesStep = syncUpModuleList.findIndex(el => el.type === SYNCUP_TYPE_ACTIVITIES);
+    const activitiesStep = syncUpModuleList.findIndex(el => el.type === SYNCUP_TYPE_ACTIVITIES_PUSH);
     syncUpModuleList[activitiesStep] = activitiesImport;
   }
 
-  static _doSyncUp() {
-    LoggerManager.log('_doSyncUp');
+  /**
+   * This function is used to call a testing EP that will force the online login (just one time) if needed.
+   * This way we avoid having multiple concurrent online logins for each sync call.
+   * @returns {*}
+   */
+  static prepareNetworkForSyncUp() {
+    LoggerManager.log('prepareNetworkForSyncUp');
+    return ConnectionHelper.doGet({ url: TEST_URL });
+  }
+
+  static getWhatChangedInAMP(user, time) {
+    LoggerManager.log('getWhatChangedInAMP');
+    const paramsMap = { 'user-ids': user };
+    // Dont send the date param at all on first-sync.
+    if (time && time !== SYNCUP_NO_DATE) {
+      paramsMap['last-sync-time'] = encodeURIComponent(time);
+    }
+    return ConnectionHelper.doGet({ url: SYNC_URL, paramsMap });
+  }
+
+  static _startSyncUp() {
+    LoggerManager.log('_startSyncUp');
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     return new Promise((resolve, reject) =>
-      Promise.all([
-        this.prepareNetworkForSyncUp(TEST_URL), this.getLastSuccessfulSyncUp(), this.getSyncUpDiffLeftOver()]
-      ).then(([, lastSuccessfulSyncUp, syncUpDiffFromDB]) => {
+      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSyncUpLog()]
+      ).then(([, lastSyncUpLog]) => {
         const userId = store.getState().user.userData.id;
-        const oldTimestamp = lastSuccessfulSyncUp[SYNCUP_DATETIME_FIELD];
-        const syncUpDiffLeftOver = new SyncUpDiff(syncUpDiffFromDB);
-        return this.getWhatChangedInAMP(userId, oldTimestamp).then((changes) => {
-          // Get list of types that need to be synced.
-          const toSyncList = this._filterOutModulesToSync(changes);
-          // Call each sync EP in parallel.
-          return this._syncUpItems(toSyncList, changes, syncUpDiffLeftOver).then((modules) => {
-            const successful = Object.keys(syncUpDiffLeftOver.syncUpDiff).length === 1;
-            LoggerManager.log(`SyncUp ${successful ? 'OK' : 'Fail'}`);
-            const status = successful ? SYNCUP_STATUS_SUCCESS : SYNCUP_STATUS_FAIL;
-            const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
-            const statusLog = { status, userId, modules, newTimestamp };
-            if (!successful) {
-              statusLog[SYNCUP_DIFF_LEFTOVER] = syncUpDiffLeftOver.syncUpDiff;
-            }
-            return this._saveMainSyncUpLog(statusLog).then((log) => {
-              // Update translations.
-              const restart = true;
-              store.dispatch(loadAllLanguages(restart));
-              // Update number format settings.
-              return loadNumberSettings().then(() => (resolve(log))).catch(reject);
-            }).catch(reject);
-          }).catch((err) => {
-            // this._syncUpItems must always resolve now, no rejection. This branch is an abnormal case.
-            // TODO report to the app errors log to be addressed? or try to save partial sync up?
-            LoggerManager.error(`Unexpected sync up error: ${err}`);
-            const status = SYNCUP_STATUS_FAIL;
-            // Always reject so we can display the error after saving the log.
-            return this._saveMainSyncUpLog({ status, userId }).then(() => reject(err)).catch(reject);
-          });
-        }).catch(reject);
+        const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
+        const syncUpDiffLeftOver = new SyncUpDiff(lastSyncUpLog[SYNCUP_DIFF_LEFTOVER]);
+        return this.getWhatChangedInAMP(userId, oldTimestamp)
+          .then((changes) => resolve(this._runSyncUp(userId, changes, syncUpDiffLeftOver)))
+          .catch(reject);
       }).catch(reject)
+    );
+  }
+
+  static _runSyncUp(userId, changes, syncUpDiffLeftOver) {
+    // Get list of types that need to be synced.
+    const toSyncList = this._filterOutModulesToSync(changes);
+    const newTimestamp = changes[SYNCUP_DATETIME_FIELD];
+    const syncUpUnits = new SyncUpUnits();
+    // TODO: add dependency lists, but so far simply run sync EPs in parallel
+    return new Promise((resolve, reject) =>
+      this._syncUpItems(toSyncList, changes, syncUpDiffLeftOver, syncUpUnits)
+        .then((modules) =>
+          resolve(this._saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver, modules })))
+        .catch((err) => {
+          // partial sync up was done, some unexpected problem occurred
+          LoggerManager.error(`Unexpected sync up error: ${err}`);
+          return syncUpUnits.wait().then(errors => {
+            errors.push(err);
+            return this._saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver })
+              .then(() => reject(errors.join(';'))).catch((err2) => {
+                errors.add(err2);
+                return reject(errors.join(';'));
+              });
+          });
+        })
     );
   }
 
@@ -225,12 +230,13 @@ export default class SyncUpManager {
    * @param syncUpItems
    * @param changes
    * @param syncUpDiffLeftOver
+   * @param syncUpUnits
    */
-  static _syncUpItems(syncUpItems, changes, syncUpDiffLeftOver: SyncUpDiff) {
+  static _syncUpItems(syncUpItems, changes, syncUpDiffLeftOver: SyncUpDiff, syncUpUnits: SyncUpUnits) {
     LoggerManager.log('_syncUpItems');
 
-    const fnSync = (syncUpItem) => (
-      new Promise((resolve) => {
+    const fnSync = (syncUpItem) => {
+      const syncUpUnitPromise = new Promise((resolve) => {
         const type = syncUpItem.type;
         syncUpDiffLeftOver.merge(type, changes[type]);
         const itemDiff = syncUpDiffLeftOver.syncUpDiff[type];
@@ -245,10 +251,12 @@ export default class SyncUpManager {
            Also we do not expect to interrupt the sync up for all failed syncup, but based on dependencies.
            TODO AMPOFFLINE-209
            */
-          resolve(this._processResultStatus(type, itemSyncUpManager, syncUpDiffLeftOver));
+          return resolve(this._processResultStatus(type, itemSyncUpManager, syncUpDiffLeftOver));
         });
-      })
-    );
+      });
+      syncUpUnits.add(syncUpUnitPromise);
+      return syncUpUnitPromise;
+    };
 
     const promises = syncUpItems.map(fnSync);
     return Promise.all(promises);
@@ -260,29 +268,40 @@ export default class SyncUpManager {
     return { type, status };
   }
 
-  /**
-   * This function is used to call a testing EP that will force the online login (just one time) if needed.
-   * This way we avoid having multiple concurrent online logins for each sync call.
-   * @returns {*}
-   */
-  static prepareNetworkForSyncUp() {
-    LoggerManager.log('prepareNetworkForSyncUp');
-    return ConnectionHelper.doGet({ url: TEST_URL });
+  static _saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver, modules }) {
+    LoggerManager.log('_saveMainSyncUpLog');
+    const successful = Object.keys(syncUpDiffLeftOver.syncUpDiff).length === 0;
+    LoggerManager.log(`SyncUp ${successful ? 'OK' : 'Fail'}`);
+    const status = successful ? SYNCUP_STATUS_SUCCESS : SYNCUP_STATUS_FAIL;
+    const syncUpDiff = successful ? null : syncUpDiffLeftOver.syncUpDiff;
+    const syncDate = new Date();
+    const log = {
+      status,
+      'requested-by': userId,
+      modules,
+      'sync-date': syncDate.toISOString()
+    };
+    log[SYNCUP_DATETIME_FIELD] = newTimestamp;
+    if (syncUpDiff) {
+      log[SYNCUP_DIFF_LEFTOVER] = syncUpDiff;
+    }
+    return SyncUpHelper.getLatestId().then(id => {
+      log.id = id + 1;
+      return SyncUpHelper.saveOrUpdateSyncUp(log);
+    });
+  }
+
+  static _postSyncUp() {
+    // Update translations.
+    const restart = true;
+    store.dispatch(loadAllLanguages(restart));
+    // Update number format settings.
+    return loadNumberSettings();
   }
 
   static getSyncUpHistory() {
     LoggerManager.log('getSyncUpHistory');
     return SyncUpHelper.findAllSyncUpByExample({});
-  }
-
-  static getWhatChangedInAMP(user, time) {
-    LoggerManager.log('getWhatChangedInAMP');
-    const paramsMap = { 'user-ids': user };
-    // Dont send the date param at all on first-sync.
-    if (time && time !== SYNCUP_NO_DATE) {
-      paramsMap['last-sync-time'] = encodeURIComponent(time);
-    }
-    return ConnectionHelper.doGet({ url: SYNC_URL, paramsMap });
   }
 
   static getLastSyncInDays() {

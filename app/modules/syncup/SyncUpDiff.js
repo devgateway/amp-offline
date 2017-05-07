@@ -1,5 +1,6 @@
 import {
-  SYNCUP_TYPE_ACTIVITIES,
+  SYNCUP_TYPE_ACTIVITIES_PULL,
+  SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_GS,
@@ -42,11 +43,12 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_WORKSPACE_SETTINGS:
       case SYNCUP_TYPE_ASSETS:
       case SYNCUP_TYPE_FIELDS: // TODO update once AMP-25568 is also done, as part of AMPOFFLINE-270
-        diff = diff || this._syncUpDiff[type];
+      case SYNCUP_TYPE_ACTIVITIES_PUSH:
+        diff = diff || this._syncUpDiff[type] || [];
         break;
       case SYNCUP_TYPE_USERS:
       case SYNCUP_TYPE_WORKSPACE_MEMBERS:
-      case SYNCUP_TYPE_ACTIVITIES:
+      case SYNCUP_TYPE_ACTIVITIES_PULL:
         diff.removed = (this._syncUpDiff[type] ? (this._syncUpDiff[type].removed || []) : []).concat(diff.removed);
         diff.saved = (this._syncUpDiff[type] ? (this._syncUpDiff[type].saved || []) : []).concat(diff.saved);
         break;
@@ -73,8 +75,7 @@ export default class SyncUpDiff {
   _nullifyIfNoDiff(diff) {
     if (diff === undefined || diff === false || (diff.length && diff.length === 0)) {
       return null;
-    } else if ((diff.saved && diff.saved.length === 0 && diff.removed.length === 0 &&
-      (!diff.toPush || diff.toPush.length === 0))) {
+    } else if (diff.saved && diff.saved.length === 0 && diff.removed.length === 0) {
       return null;
     } else if (diff instanceof Object && Object.keys(diff).length === 0) {
       return null;

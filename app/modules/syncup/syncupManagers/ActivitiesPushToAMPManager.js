@@ -37,27 +37,26 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   /**
    * Pushes activities to AMP
-   * @param saved the activities saved as new or update on AMP
-   * @param removed deleted activities on AMP
+   * @param diff the activities difference from AMP, with saved and removed activities (if any)
    * @return {Promise}
    */
-  doSyncUp({ saved, removed }) {
-    this.diff = { toPush: [] };
+  doSyncUp(diff) {
+    this.diff = [];
     this.pushed = new Set();
-    return this._pushActivitiesToAMP(saved, removed);
+    return this._pushActivitiesToAMP(diff);
   }
 
   getDiffLeftover() {
-    this.diff.toPush = this.diff.toPush.filter(ampId => !this.pushed.has(ampId));
+    this.diff = this.diff.filter(id => !this.pushed.has(id));
     return this.diff;
   }
 
-  _pushActivitiesToAMP(saved, removed) {
+  _pushActivitiesToAMP(diff) {
     LoggerManager.log('_pushActivitiesToAMP');
     return new Promise((resolve, reject) => {
       // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
       if (store.getState().user.userData.ampOfflinePassword) {
-        return this._rejectActivitiesClientSide(saved, removed)
+        return this._rejectActivitiesClientSide(diff)
           .then(() => {
             const steps = [
               this._getValidUsers, this._getWSMembers, this._getActivitiesToPush, this._pushActivities.bind(this)];
@@ -71,13 +70,12 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   /**
    * Rejects activities on the client side using activities diff
-   * @param saved the activities saved as new or update on AMP
-   * @param removed deleted activities on AMP
+   * @param diff the activities difference with saved and removed activities (if any)
    * @return {Promise.<Array>}
    * @private
    */
   /* eslint-disable no-unused-vars */
-  _rejectActivitiesClientSide(saved, removed) {
+  _rejectActivitiesClientSide(diff) {
     /* eslint-enable no-unused-vars */
     /*
      TODO client side reject of some activities (iteration 2+):
@@ -130,7 +128,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    */
   _pushActivities(activities) {
     LoggerManager.log('_pushActivities');
-    this.toPush = activities.map(activity => activity.id);
+    this.diff = activities.map(activity => activity.id);
     // executing push one by one for now and sequentially to avoid AMP / client overload
     return new Promise((resolve, reject) => {
       if (!activities) {
