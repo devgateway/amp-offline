@@ -292,12 +292,11 @@ export default class SyncUpManager {
   }
 
   static _postSyncUp() {
-    // Update translations.
     const restart = true;
-    store.dispatch(loadAllLanguages(restart));
-    // Update number format settings.
-    loadDateSettings();
-    return loadNumberSettings();
+    return Promise.all([
+      loadAllLanguages(restart),
+      loadDateSettings(),
+      loadNumberSettings()]);
   }
 
   static getSyncUpHistory() {
