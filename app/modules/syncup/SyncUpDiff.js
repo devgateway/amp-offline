@@ -51,6 +51,7 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_ACTIVITIES_PULL:
         diff.removed = (this._syncUpDiff[type] ? (this._syncUpDiff[type].removed || []) : []).concat(diff.removed);
         diff.saved = (this._syncUpDiff[type] ? (this._syncUpDiff[type].saved || []) : []).concat(diff.saved);
+        diff.saved = diff.saved.filter(item => !diff.removed.includes(item));
         break;
       // a list of elements to sync up
       case SYNCUP_TYPE_POSSIBLE_VALUES:
