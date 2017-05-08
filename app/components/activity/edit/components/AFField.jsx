@@ -57,7 +57,7 @@ export default class AFField extends Component {
       return null;
     }
     const label = this.context.activityFieldsManager.getFieldLabelTranslation(this.props.fieldPath);
-    return <AFLabel value={label} required={this.requiredND || this.alwaysRequired} />;
+    return <AFLabel value={label} required={this.requiredND || this.alwaysRequired}/>;
   }
 
   getFieldContent() {
@@ -76,7 +76,7 @@ export default class AFField extends Component {
       if (this.type === Types.DROPDOWN || (!this.forcedType && options && options.length > 0)) {
         const selectedId = this.state.value ? this.state.value.id : null;
         const afOptions = options.map(option => new AFOption(option[1]));
-        return <AFDropDown options={afOptions} onChange={this.validateIfRequired.bind(this)} selectedId={selectedId} />;
+        return <AFDropDown options={afOptions} onChange={this.validateIfRequired.bind(this)} selectedId={selectedId}/>;
       }
     }
     return 'Not Implemented';
@@ -114,7 +114,7 @@ export default class AFField extends Component {
 
   render() {
     return (
-      <FormGroup controlId={this.props.fieldPath} validationState={this.validate()}>
+      <FormGroup controlId={this.props.fieldPath} validationState={this.validate()} >
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />
