@@ -107,13 +107,13 @@ export default class CKEditor extends Component {
   render() {
     return (
       <div>
-        <div name={this.placeholder}>
-          <Panel onClick={this.toggleEditor.bind(this)} className={styles.viewMode}>
-            <div dangerouslySetInnerHTML={{ __html: this.props.value }}/>
+        <div name={this.placeholder} >
+          <Panel onClick={this.toggleEditor.bind(this)} className={styles.viewMode} >
+            <div dangerouslySetInnerHTML={{ __html: this.props.value }} />
           </Panel>
         </div>
-        <div hidden={!this.state.show}>
-          <Button bsStyle="link" onClick={this.toggleEditor.bind(this)}>{translate('close editor')}</Button>
+        <div hidden={!this.state.show} >
+          <Button bsStyle="link" onClick={this.toggleEditor.bind(this)} >{translate('close editor')}</Button>
         </div>
       </div>
     );
