@@ -9,7 +9,6 @@ import * as Types from './AFComponentTypes';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-import store from '../../../../index';
 
 /**
  * Activity Form generic field representation
@@ -86,7 +85,7 @@ export default class AFField extends Component {
   _getRichTextEditor() {
     return (<AFRichTextEditor
       id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired.bind(this)}
-      language={store.getState().translationReducer.lang || store.getState().translationReducer.defaultLang} />);
+      language={this.context.activityFieldsManager._lang || this.context.activityFieldsManager._defaultLang} />);
   }
 
   _getTextArea() {
