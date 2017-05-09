@@ -36,7 +36,6 @@ export default class ProjectList extends Component {
   }
 
   projectNameFormatter(cell, row) {
-    console.log(row);
     const nameStyles = [];
     switch (row.status) {
       case ACTIVITY_STATUS_DRAFT:
