@@ -25,7 +25,7 @@ export const COLLECTION_GLOBAL_SETTINGS = 'global-settings';
 export const COLLECTION_ACTIVITIES = 'activities';
 export const COLLECTION_FIELDS = 'fields';
 export const COLLECTION_POSSIBLE_VALUES = 'possible-values';
-export const COLLECTION_SYNCUP_LOG = 'syncup_log';
+export const COLLECTION_SYNCUP_LOG = 'syncup-log';
 export const COLLECTION_LANGS = 'languages';
 export const COLLECTION_WS_SETTINGS = 'workspace-settings';
 
@@ -58,13 +58,15 @@ export const SYNCUP_TYPE_ASSETS = 'assets';
 export const SYNCUP_TYPE_WORKSPACES = 'workspaces';
 export const SYNCUP_TYPE_GS = 'global-settings';
 export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
-export const SYNCUP_TYPE_ACTIVITIES = 'activities';
+export const SYNCUP_TYPE_ACTIVITIES_PULL = 'activities';
+export const SYNCUP_TYPE_ACTIVITIES_PUSH = 'activities-push';
 export const SYNCUP_TYPE_FIELDS = 'fields';
 export const SYNCUP_TYPE_POSSIBLE_VALUES = 'possible-values-fields';
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
+export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
 
 export const ACTIVITY_STATUS_DRAFT = 'ACTIVITY_STATUS_DRAFT';
 export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';
