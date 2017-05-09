@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import styles from '../ActivityPreview.css';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import NumberUtils from '../../../../utils/NumberUtils';
 
 /**
  * Percentage Field component
@@ -18,8 +19,9 @@ export default class APPercentageField extends Component {
   }
 
   render() {
-    // TODO number formatting
-    const percentage = this.props.value !== undefined && this.props.value !== null ? `${this.props.value}%` : null;
+    const percentage = this.props.value !== undefined && this.props.value !== null
+      ? `${NumberUtils.rawNumberToFormattedString(this.props.value)}%`
+      : null;
     return (<div>
       <span>{this.props.title} </span>
       <span className={styles.alignRight}>{percentage}</span>

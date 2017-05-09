@@ -3,6 +3,7 @@ import { Button, Panel } from 'react-bootstrap';
 import styles from './CKEditor.css';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
+import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 
 /**
  * TODO (iteration 2+) check if we can download full version via npm or the right customization to include unde libs.
@@ -23,7 +24,8 @@ export default class CKEditor extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     value: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    language: PropTypes.string.isRequired
   };
 
   constructor(props) {
@@ -44,7 +46,14 @@ export default class CKEditor extends Component {
     this._toogleEditor();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    // Only update config if the editor is open and language has changed.
+    if (prevProps.language !== this.props.language) {
+      if (this.state.show) {
+        this._hide();
+        this._show();
+      }
+    }
     this._toogleEditor();
   }
 
@@ -72,8 +81,7 @@ export default class CKEditor extends Component {
         ['FontSize']
       ],
       extraPlugins: 'richcombo',
-      // TODO update language
-      language: 'en'
+      language: this.props.language || LANGUAGE_ENGLISH
     };
     this.editorName = CKEDITOR.replace(this.placeholder, configuration).name;
     this.toggle = false;
