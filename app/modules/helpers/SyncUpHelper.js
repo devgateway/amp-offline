@@ -38,6 +38,12 @@ const SyncUpHelper = {
     return DatabaseManager.saveOrUpdate(syncupData.id, syncupData, COLLECTION_SYNCUP_LOG, {});
   },
 
+  getLatestId() {
+    LoggerManager.log('saveOrUpdateSyncUp');
+    return DatabaseManager.findAll({}, COLLECTION_SYNCUP_LOG, { id: 1 }).then(ids =>
+      Math.max(...[0].concat(ids.map(idObj => idObj.id))));
+  },
+
   saveOrUpdateSyncUpCollection(syncupData) {
     LoggerManager.log('saveOrUpdateSyncUpCollection');
     return DatabaseManager.saveOrUpdateCollection(syncupData, COLLECTION_SYNCUP_LOG);

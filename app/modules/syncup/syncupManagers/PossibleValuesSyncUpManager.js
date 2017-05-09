@@ -1,14 +1,19 @@
-import { POSSIBLE_VALUES_PER_FIELD_PATHS } from '../connectivity/AmpApiConstants';
-import * as ConnectionHelper from '../connectivity/ConnectionHelper';
-import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
+import { POSSIBLE_VALUES_PER_FIELD_PATHS } from '../../connectivity/AmpApiConstants';
+import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
+import PossibleValuesHelper from '../../helpers/PossibleValuesHelper';
+import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
+import LoggerManager from '../../util/LoggerManager';
+
+/* eslint-disable class-methods-use-this */
 
 /**
  * Activity possible values Sync Up Manager
  * @author Nadejda Mandrescu
  */
-const PossibleValuesSyncUpManager = {
+export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpManager {
 
-  syncUp(fieldPaths) {
+  doAtomicSyncUp(fieldPaths) {
+    LoggerManager.log('doAtomicSyncUp');
     return new Promise((resolve, reject) =>
       ConnectionHelper.doPost({ url: POSSIBLE_VALUES_PER_FIELD_PATHS, body: fieldPaths, shouldRetry: true })
         .then(possibleValuesCollection => {
@@ -18,7 +23,4 @@ const PossibleValuesSyncUpManager = {
           return PossibleValuesHelper.saveOrUpdateCollection(newPossibleValues);
         }).then(resolve).catch(reject));
   }
-
-};
-
-export default PossibleValuesSyncUpManager;
+}
