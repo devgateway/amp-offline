@@ -36,6 +36,7 @@ export default class ProjectList extends Component {
   }
 
   projectNameFormatter(cell, row) {
+    console.log(row);
     const nameStyles = [];
     switch (row.status) {
       case ACTIVITY_STATUS_DRAFT:
@@ -50,8 +51,10 @@ export default class ProjectList extends Component {
       default:
         break;
     }
-    if (!row.synced) {
-      nameStyles.push(style.uncynced);
+    if (row['client-change-id'] && !row.rejectedId) {
+      nameStyles.push(style.unsynced);
+    } else if (row.rejectedId) {
+      nameStyles.push(style.rejected);
     }
     const classes = classNames(nameStyles.toString()).replace(',', ' ');
     return `<span class='${classes}'>${row.new ? '* ' : ''}${cell}</span>`;
@@ -83,31 +86,31 @@ export default class ProjectList extends Component {
           containerClass={style.containerTable} tableHeaderClass={style.header} thClassName={style.thClassName}
         >
           <TableHeaderColumn
-            dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.column_7}
+            dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.width_7}
             className={style.thClassName} />
           <TableHeaderColumn
-            dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.column_8}
+            dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.width_8}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField={PROJECT_TITLE} dataFormat={this.projectNameFormatter} dataSort ref="project_title"
-            columnClassName={style.column_40}
+            columnClassName={style.width_40}
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
             className={style.thClassName}>
             {translate('Project Title')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="donor" dataSort columnClassName={style.column_15}
+            dataField="donor" dataSort columnClassName={style.width_15}
             className={style.thClassName}>{translate('Funding Agency')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualCommitments" dataSort columnClassName={style.column_15} className={style.thClassName}
+            dataField="actualCommitments" dataSort columnClassName={style.width_15} className={style.thClassName}
             dataFormat={this.numberFormatter}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="actualDisbursements" dataSort columnClassName={style.column_15} className={style.thClassName}
+            dataField="actualDisbursements" dataSort columnClassName={style.width_15} className={style.thClassName}
             dataFormat={this.numberFormatter}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
