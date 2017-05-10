@@ -430,9 +430,30 @@ const DatabaseManager = {
         if (err !== null) {
           reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
         }
-        if (docs !== null) {
-          resolve(docs);
+        resolve(docs);
+      });
+    }).catch(reject);
+  },
+
+  count(example, collectionName) {
+    LoggerManager.log('count');
+    return new Promise((resolve, reject) => {
+      const countFunc = this._count.bind(null, example)
+        .bind(null, collectionName)
+        .bind(null, resolve)
+        .bind(null, reject);
+      this.queuePromise(countFunc, resolve, reject);
+    });
+  },
+
+  _count(example, collectionName, resolve, reject) {
+    LoggerManager.log('_count');
+    DatabaseManager._getCollection(collectionName, null).then((collection) => {
+      collection.count(example, (err, count) => {
+        if (err !== null) {
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
         }
+        resolve(count);
       });
     }).catch(reject);
   },

@@ -83,9 +83,13 @@ const ConnectionHelper = {
             if (error && error.code === ERROR_NO_AMP_SERVER) {
               message = translate('AMPUnreachableError');
             }
+            // We need to detect statusCode 403 to throw a security error.
+            const origin = (response && response.statusCode === 403)
+              ? NOTIFICATION_ORIGIN_API_SECURITY
+              : NOTIFICATION_ORIGIN_API_NETWORK;
             reject(this.createNotification({
               message,
-              origin: NOTIFICATION_ORIGIN_API_NETWORK
+              origin
             }));
           }
         } else {

@@ -1,14 +1,17 @@
 import fs from 'fs';
-import ConnectionHelper from '../connectivity/ConnectionHelper';
-import { AMP_COUNTRY_FLAG } from '../connectivity/AmpApiConstants';
-import { AMP_COUNTRY_LOGO, ASSEST_DIRECTORY } from '../../utils/Constants';
+import ConnectionHelper from '../../connectivity/ConnectionHelper';
+import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
+import { AMP_COUNTRY_FLAG } from '../../connectivity/AmpApiConstants';
+import { AMP_COUNTRY_LOGO, ASSEST_DIRECTORY } from '../../../utils/Constants';
+
+/* eslint-disable class-methods-use-this */
 
 /**
  * Class to hold sync mechanism for amp assets
  */
-export default class AmpAssetManager {
+export default class AmpAssetManager extends AbstractAtomicSyncUpManager {
 
-  static syncUpAmpAssets() {
+  doAtomicSyncUp() {
     // For now we are only saving AMP countryFlag as an image
     return new Promise((resolve, reject) => {
       ConnectionHelper.doGet({ url: AMP_COUNTRY_FLAG, shouldRetry: true }).then((image) => {

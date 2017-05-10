@@ -1,28 +1,50 @@
 import fs from 'fs';
-import ConnectionHelper from '../connectivity/ConnectionHelper';
-import LanguageHelper from '../helpers/LanguageHelper';
+import ConnectionHelper from '../../connectivity/ConnectionHelper';
+import LanguageHelper from '../../helpers/LanguageHelper';
 import {
   AVAILABLE_LANGUAGES_URL,
-  POST_TRANSLATIONS_URL,
-  GET_TRANSLATIONS_URL
-} from '../connectivity/AmpApiConstants';
+  GET_TRANSLATIONS_URL,
+  POST_TRANSLATIONS_URL
+} from '../../connectivity/AmpApiConstants';
 import {
-  LANGUAGE_ENGLISH,
   FS_LOCALES_DIRECTORY,
+  LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
   LANGUAGE_TRANSLATIONS_FILE
-} from '../../utils/Constants';
-import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorConstants';
-import TranslationManager from '../util/TranslationManager';
-import LoggerManager from '../../modules/util/LoggerManager';
+} from '../../../utils/Constants';
+import Notification from '../../helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../../utils/constants/ErrorConstants';
+import TranslationManager from '../../util/TranslationManager';
+import SyncUpManagerInterface from './SyncUpManagerInterface';
+import LoggerManager from '../../util/LoggerManager';
 
 const MASTER_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_MASTER_TRANSLATIONS_FILE}.`;
 const LOCAL_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_TRANSLATIONS_FILE}.`;
 
-export default class TranslationSyncUpManager {
+/* eslint-disable class-methods-use-this */
 
-  static syncUpLangList() {
+export default class TranslationSyncUpManager extends SyncUpManagerInterface {
+
+  // TODO partial sync up once partial sync up is possible for translations. For now it will be as an atomic one.
+  done: false;
+
+  doSyncUp() {
+    this.done = false;
+    return this.syncUpLangList().then((result) => {
+      this.done = true;
+      return result;
+    });
+  }
+
+  getDiffLeftover() {
+    return this.done !== true;
+  }
+
+  cancel() {
+    // TODO
+  }
+
+  syncUpLangList() {
     LoggerManager.log('syncUpLangList');
     return new Promise((resolve, reject) => (
       ConnectionHelper.doGet({ url: AVAILABLE_LANGUAGES_URL }).then((langs) => (
@@ -39,7 +61,7 @@ export default class TranslationSyncUpManager {
     ));
   }
 
-  static removeDisabledLanguageFiles(langs) {
+  removeDisabledLanguageFiles(langs) {
     LoggerManager.log('removeDisabledLanguageFiles');
     const restart = false;
     return new Promise((resolve, reject) => (
@@ -73,7 +95,7 @@ export default class TranslationSyncUpManager {
   }
 
   // TODO: use lastSyncDate when calling the EP.
-  static syncUpTranslations(langs) {
+  syncUpTranslations(langs) {
     LoggerManager.log('syncUpTranslations');
     const masterTrnFileName = `${MASTER_LANGUAGE_FILE}${LANGUAGE_ENGLISH}.json`;
     const originalMasterTrnFile = JSON.parse(fs.readFileSync(masterTrnFileName, 'utf8'));
@@ -82,7 +104,7 @@ export default class TranslationSyncUpManager {
      the GET endpoint. In both cases we will match the response with the "original text" from the master-file,
      not with the "key". */
     const everyLangHasSync = langIds.reduce((prev, current) =>
-      (prev && this.detectSynchronizedTranslationFile(current)), true);
+      (prev && TranslationSyncUpManager.detectSynchronizedTranslationFile(current)), true);
     if (everyLangHasSync) {
       // Do incremental syncup.
       return this.doIncrementalSyncup(langIds, originalMasterTrnFile);
@@ -92,7 +114,7 @@ export default class TranslationSyncUpManager {
     }
   }
 
-  static doFullSyncUp(langIds, originalMasterTrnFile) {
+  doFullSyncUp(langIds, originalMasterTrnFile) {
     LoggerManager.log('doFullSyncUp');
     // Extract text to translate from our master-file.
     const masterTexts = Object.values(originalMasterTrnFile);
@@ -105,7 +127,7 @@ export default class TranslationSyncUpManager {
     ));
   }
 
-  static doIncrementalSyncup(langIds, originalMasterTrnFile) {
+  doIncrementalSyncup(langIds, originalMasterTrnFile) {
     LoggerManager.log('doIncrementalSyncup');
     return ConnectionHelper.doGet({
       url: GET_TRANSLATIONS_URL,
@@ -115,7 +137,7 @@ export default class TranslationSyncUpManager {
     ));
   }
 
-  static updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
+  updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
     LoggerManager.log('updateTranslationFiles');
     const fn = (lang) => {
       const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);

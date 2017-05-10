@@ -56,7 +56,7 @@ const LoginManager = {
         delete data.ampOfflinePassword;
         return UserHelper.saveOrUpdateUser(data);
       } else {
-        return undefined;
+        return Promise.resolve();
       }
     });
   },
@@ -78,7 +78,7 @@ const LoginManager = {
         )).catch((error) => {
           // If error was caused because an authentication problem then we clear ampOfflinePassword.
           if (error.origin === NOTIFICATION_ORIGIN_API_SECURITY) {
-            return this.clearCredentialsInDB(email);
+            return this.clearCredentialsInDB(email).then(() => reject(error)).catch(() => reject(error));
           }
           reject(error);
         })
