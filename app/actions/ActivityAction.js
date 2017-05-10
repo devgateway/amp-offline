@@ -17,7 +17,7 @@ import {
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
-import { STATE_DESKTOP_RESET } from '../actions/DesktopAction';
+import { resetDesktop } from '../actions/DesktopAction';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -108,6 +108,6 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
     }
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
-    return ActivityHelper.saveOrUpdate(dehydratedActivity).then(() => (dispatch({ type: STATE_DESKTOP_RESET })));
+    return ActivityHelper.saveOrUpdate(dehydratedActivity).then(() => (dispatch(resetDesktop())));
   });
 }

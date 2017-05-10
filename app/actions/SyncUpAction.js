@@ -2,7 +2,7 @@
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
-import { STATE_DESKTOP_RESET } from '../actions/DesktopAction';
+import { resetDesktop } from '../actions/DesktopAction';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -35,7 +35,7 @@ export function startSyncUp(historyData) {
      the user to be able to leave the page if this syncup fails. */
     const currentState = ownProps().syncUpReducer;
     if (ownProps().syncUpReducer.syncUpInProgress === false) {
-      dispatch({ type: STATE_DESKTOP_RESET }); // Mark the desktop for reset the next time we open it.
+      dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
       dispatch(syncUpInProgress());
       return SyncUpManager.syncUpAllTypesOnDemand().then(() => {
         // TODO probably the way in which we will update the ui will change

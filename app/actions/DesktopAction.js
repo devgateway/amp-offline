@@ -28,8 +28,8 @@ export function loadDesktop(workspace, teamMemberId) {
   };
 }
 
-export function setToReload() {
-  LoggerManager.log('setToReload');
+export function resetDesktop() {
+  LoggerManager.log('resetDesktop');
   return (dispatch) => {
     dispatch({ type: STATE_DESKTOP_RESET });
   };
