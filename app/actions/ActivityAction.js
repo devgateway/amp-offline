@@ -17,6 +17,7 @@ import {
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
+import { STATE_DESKTOP_RESET } from '../actions/DesktopAction';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -53,12 +54,13 @@ export function unloadActivity() {
 }
 
 export function saveActivity(activity) {
-  return (dispatch, ownProps) =>
+  return (dispatch, ownProps) => {
     dispatch({
       type: ACTIVITY_SAVE,
       payload: _saveActivity(activity, ownProps().userReducer.teamMember,
-        ownProps().activityReducer.activityFieldsManager.fieldsDef)
+        ownProps().activityReducer.activityFieldsManager.fieldsDef, dispatch)
     });
+  };
 }
 
 function _loadActivity(activityId, teamMemberId, possibleValuesPaths) {
@@ -91,7 +93,7 @@ const _getActivity = (activityId) => {
     ActivityHydrator.hydrateActivity({ activity }));
 };
 
-function _saveActivity(activity, teamMember, fieldDefs) {
+function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
   return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
     const modifiedOn = (new Date()).toISOString();
@@ -106,6 +108,6 @@ function _saveActivity(activity, teamMember, fieldDefs) {
     }
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
-    return ActivityHelper.saveOrUpdate(dehydratedActivity);
+    return ActivityHelper.saveOrUpdate(dehydratedActivity).then(() => (dispatch({ type: STATE_DESKTOP_RESET })));
   });
 }
