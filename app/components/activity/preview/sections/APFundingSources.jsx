@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-import NumberUtils from '../../../../utils/NumberUtils';
-import translate from '../../../../utils/translate';
+import * as AC from '../../../../utils/constants/ActivityConstants';
 
 /**
  * Total Number of Funding Sources section
@@ -10,7 +9,7 @@ import translate from '../../../../utils/translate';
  */
 class APFundingSources extends Component {
   static propTypes = {
-    activity: PropTypes.object.isRequired
+    buildSimpleField: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -19,11 +18,9 @@ class APFundingSources extends Component {
   }
 
   render() {
-    const numberOfFundingSources = this.props.activity.total_number_of_funding_sources
-      ? NumberUtils.rawNumberToFormattedString(this.props.activity.total_number_of_funding_sources)
-      : '';
-    return <div>{translate('Funding Sources')} <b>{numberOfFundingSources}</b></div>;
+    const content = this.props.buildSimpleField(AC.TOTAL_NUMBER_OF_FUNDING_SOURCES, true, null, true);
+    return (<div>{content}</div>);
   }
 }
 
-export default Section(APFundingSources, 'Total Number of Funding Sources');
+export default Section(APFundingSources, 'Funding Sources');
