@@ -7,6 +7,7 @@ import { DESKTOP_URL } from '../utils/Constants';
 export const STATE_DESKTOP_LOADING = 'STATE_DESKTOP_LOADING';
 export const STATE_DESKTOP_LOADED = 'STATE_DESKTOP_LOADED';
 export const STATE_DESKTOP_ERROR = 'STATE_DESKTOP_ERROR';
+export const STATE_DESKTOP_RESET = 'STATE_DESKTOP_RESET';
 
 export function loadDesktop(workspace, teamMemberId) {
   LoggerManager.log('loadDesktop');
@@ -24,6 +25,13 @@ export function loadDesktop(workspace, teamMemberId) {
         dispatch(errorLoadDesktop(error));
       });
     }
+  };
+}
+
+export function resetDesktop() {
+  LoggerManager.log('resetDesktop');
+  return (dispatch) => {
+    dispatch({ type: STATE_DESKTOP_RESET });
   };
 }
 
