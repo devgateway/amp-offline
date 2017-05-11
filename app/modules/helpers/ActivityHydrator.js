@@ -4,7 +4,10 @@ import store from '../../index';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import { PATHS_WITH_FULL_VALUE } from '../../utils/constants/FieldPathConstants';
-import { HIERARCHICAL_VALUE } from '../../utils/constants/ActivityConstants';
+import {
+  HIERARCHICAL_VALUE,
+  HIERARCHICAL_VALUE_DEPTH
+} from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -130,19 +133,22 @@ export default class ActivityHydrator {
 
   _fillSelectedOption(possibleValues, selectedId) {
     const option = Object.assign({}, possibleValues['possible-options'][selectedId]);
-    option[HIERARCHICAL_VALUE] = this._getFullName(possibleValues, selectedId);
+    const valueParts = this._getdHierchicalValueParts(possibleValues, selectedId);
+    option[HIERARCHICAL_VALUE] = this._formatValueParts(valueParts);
+    option[HIERARCHICAL_VALUE_DEPTH] = (valueParts && valueParts instanceof Array) ? valueParts.length : 0;
+    // option[HIERARCHICAL_VALUE_PARTS] = valueParts;
     return option;
   }
 
-  _getFullName(possibleValues, selectedId) {
+  _getdHierchicalValueParts(possibleValues, selectedId) {
     if (PATHS_WITH_FULL_VALUE.has(possibleValues.id)) {
-      return this._buildFullName(possibleValues['possible-options'], selectedId);
+      return this._buildHierchicalValueParts(possibleValues['possible-options'], selectedId);
     }
     return null;
   }
 
   // TODO update with latest approach on extra info for possible values
-  _buildFullName(options, selectedId) {
+  _buildHierchicalValueParts(options, selectedId) {
     const nameParts = [];
     let option = options[selectedId];
     while (option) {
@@ -150,7 +156,11 @@ export default class ActivityHydrator {
       nameParts.push(option.value);
       option = option.extra_info ? options[option.extra_info.parent_location_id] : null;
     }
-    return `[${nameParts.reverse().join('][')}]`;
+    return nameParts;
+  }
+
+  _formatValueParts(valueParts) {
+    return (valueParts && valueParts instanceof Array) ? `[${valueParts.reverse().join('][')}]` : valueParts;
   }
 
   /**

@@ -1,7 +1,8 @@
 import {
   STATE_DESKTOP_LOADED,
   STATE_DESKTOP_LOADING,
-  STATE_DESKTOP_ERROR
+  STATE_DESKTOP_ERROR,
+  STATE_DESKTOP_RESET
 } from '../actions/DesktopAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -31,6 +32,8 @@ export default function desktopReducer(state = defaultState, action: Object) {
       return Object.assign({}, defaultState, {
         errorMessage: action.errorMessage
       });
+    case STATE_DESKTOP_RESET:
+      return Object.assign({}, defaultState);
     default:
       return state;
   }

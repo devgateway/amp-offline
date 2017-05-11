@@ -1,3 +1,5 @@
+import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../../../utils/constants/ActivityConstants';
+
 /**
  * A simple option
  * @author Nadejda Mandrescu
@@ -18,4 +20,13 @@ export default class AFOption {
   get value() {
     return this._value;
   }
+
+  get hierarchicalValue() {
+    return this[HIERARCHICAL_VALUE];
+  }
+
+  get hierarchicalDepth() {
+    return this[HIERARCHICAL_VALUE_DEPTH];
+  }
+
 }

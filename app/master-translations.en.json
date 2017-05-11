@@ -128,5 +128,7 @@
   "Stay on the activity page": "Stay on the activity page",
   "Cancel": "Cancel",
   "close editor": "close editor",
-  "dontStopSyncWarning": "Data is currently being synced with AMP. Please do not close the page to avoid an incomplete sync."
+  "dontStopSyncWarning": "Data is currently being synced with AMP. Please do not close the page to avoid an incomplete sync.",
+  "Search": "Search",
+  "Divide Percentage": "Divide Percentage"
 }
