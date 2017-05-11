@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { FormGroup, FormControl, HelpBlock } from 'react-bootstrap';
+import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import AFLabel from './AFLabel';
 import AFTextArea from './AFTextArea';
 import AFDropDown from './AFDropDown';
@@ -7,8 +7,12 @@ import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import AFListSelector from './AFListSelector';
+
+/* eslint-disable class-methods-use-this */
 
 /**
  * Activity Form generic field representation
@@ -32,15 +36,18 @@ export default class AFField extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
+    this.fieldExists = false;
   }
 
   componentWillMount() {
     const fieldPathParts = this.props.fieldPath.split('~');
     this.fieldName = fieldPathParts[fieldPathParts.length - 1];
     this.fieldDef = this.context.activityFieldsManager.getFieldDef(this.props.fieldPath);
+    this.fieldExists = !!this.fieldDef;
     this.forcedType = !!this.props.type;
-    this.requiredND = this.fieldDef.required === 'ND';
-    this.alwaysRequired = this.fieldDef.required === 'Y';
+    this.requiredND = this.fieldExists ? this.fieldDef.required === 'ND' : undefined;
+    this.alwaysRequired = this.fieldExists ? this.fieldDef.required === 'Y' : undefined;
+    this.validateIfRequired = this.validateIfRequired.bind(this);
     this.setState({
       value: this.props.parent[this.fieldName]
     });
@@ -57,7 +64,7 @@ export default class AFField extends Component {
       return null;
     }
     const label = this.context.activityFieldsManager.getFieldLabelTranslation(this.props.fieldPath);
-    return <AFLabel value={label} required={this.requiredND || this.alwaysRequired}/>;
+    return <AFLabel value={label} required={this.requiredND || this.alwaysRequired} />;
   }
 
   getFieldContent() {
@@ -70,27 +77,54 @@ export default class AFField extends Component {
       }
     } else if (this.props.type === Types.RICH_TEXT_AREA) {
       return this._getRichTextEditor();
-    } else {
-      let options = this.context.activityFieldsManager.possibleValuesMap[this.props.fieldPath];
-      options = options ? Object.entries(options) : null;
-      if (this.type === Types.DROPDOWN || (!this.forcedType && options && options.length > 0)) {
-        const selectedId = this.state.value ? this.state.value.id : null;
-        const afOptions = options.map(option => new AFOption(option[1]));
-        return <AFDropDown options={afOptions} onChange={this.validateIfRequired.bind(this)} selectedId={selectedId}/>;
-      }
+    } else if (this.type === Types.DROPDOWN || (!this.forcedType && this.fieldDef.id_only === true)) {
+      return this._getDropDown();
+    } else if (this.type === Types.LIST_SELECTOR || (!this.forcedType && this.fieldDef.field_type === 'list')) {
+      return this._getListSelector();
     }
     return 'Not Implemented';
   }
 
+  _getDropDown() {
+    const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath));
+    const selectedId = this.state.value ? this.state.value.id : null;
+    return <AFDropDown options={afOptions} onChange={this.validateIfRequired} selectedId={selectedId} />;
+  }
+
+  _getListSelector() {
+    const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
+    const options = this._getOptions(`${this.props.fieldPath}~${optionsFieldName}`);
+    const afOptions = this._toAFOptions(PossibleValuesManager.fillHierarchicalDepth(options));
+    const selectedOptions = this.state.value;
+    return (<AFListSelector
+      options={afOptions} selectedOptions={selectedOptions} activityFieldsManager={this.context.activityFieldsManager}
+      listPath={this.props.fieldPath} onChange={this.validateIfRequired} />);
+  }
+
+  _getOptions(fieldPath) {
+    let options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
+    options = options ? Object.values(options) : null;
+    if (options === null) {
+      // TODO throw error but continue to render (?)
+      LoggerManager.error(`Options not found for ${this.props.fieldPath}`);
+      return [];
+    }
+    return options;
+  }
+
+  _toAFOptions(options) {
+    return options.map(option => new AFOption(option));
+  }
+
   _getRichTextEditor() {
     return (<AFRichTextEditor
-      id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired.bind(this)}
+      id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired}
       language={this.context.activityFieldsManager._lang || this.context.activityFieldsManager._defaultLang} />);
   }
 
   _getTextArea() {
     return (<AFTextArea
-      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired.bind(this)}
+      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired}
     />);
   }
 
@@ -113,6 +147,9 @@ export default class AFField extends Component {
   }
 
   render() {
+    if (this.fieldExists === false) {
+      return null;
+    }
     return (
       <FormGroup controlId={this.props.fieldPath} validationState={this.validate()} >
         {this.getLabel()}
