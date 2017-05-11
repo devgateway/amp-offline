@@ -1,7 +1,7 @@
 {
-  "amp-title":"Aid Management Platform",
-  "amp-footer":"Developed in partnership with OECD, UNDP, WB, Government of Ethiopia and DGF",
-  "amp-offline":"AMP Offline",
+  "amp-title": "Aid Management Platform",
+  "amp-footer": "Developed in partnership with OECD, UNDP, WB, Government of Ethiopia and DGF",
+  "amp-offline": "AMP Offline",
   "user": "User",
   "password": "Password",
   "login": "Log In",
@@ -130,5 +130,7 @@
   "close editor": "close editor",
   "dontStopSyncWarning": "Data is currently being synced with AMP. Please do not close the page to avoid an incomplete sync.",
   "Search": "Search",
-  "Divide Percentage": "Divide Percentage"
+  "Divide Percentage": "Divide Percentage",
+  "Total Number of Funding Sources": "Total Number of Funding Sources",
+  "Funding Sources": "Funding Sources"
 }
