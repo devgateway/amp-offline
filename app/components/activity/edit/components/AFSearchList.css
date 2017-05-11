@@ -1,0 +1,28 @@
+.searchContainer {
+    margin-right: 10px;
+    width: 370px;
+}
+
+.searchPanel {
+    display: inline-block;
+    padding: 0;
+    border-radius: 4px;
+    border-width: 0 0 0 1px;
+    border-color: #cccccc;
+    border-style: solid;
+    width: 370px;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.item {
+    text-align: left;
+    display: block;
+    border-width: 0 1px 1px 0;
+    border-color: #cccccc;
+    border-style: solid;
+    padding: 5px;
+    width: 100%;
+    background-color: inherit;
+    white-space: pre;
+}

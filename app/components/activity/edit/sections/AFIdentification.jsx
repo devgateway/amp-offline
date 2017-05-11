@@ -26,14 +26,14 @@ class AFIdentification extends Component {
     // TODO update the layout per Llanoc design. If not available, adjust to work. For now grouping fields as in AMP.
     return (
       <div className={afStyles.full_width} >
-        <Grid className={afStyles.full_width}>
+        <Grid className={afStyles.full_width} >
           <Row>
-            <Col md={9} lg={7} >
+            <Col md={12} lg={12} >
               <AFField parent={this.props.activity} fieldPath={AC.PROJECT_TITLE} />
             </Col>
           </Row>
           <Row>
-            <Col md={4} lg={5} >
+            <Col md={5} lg={5} >
               <div>
                 <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_STATUS} />
               </div>
@@ -53,7 +53,7 @@ class AFIdentification extends Component {
                 <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_SUMMARY} />
               </div>
             </Col>
-            <Col mdOffset={1} md={4} lg={5} >
+            <Col md={5} lg={5} >
               <div>
                 <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} />
               </div>

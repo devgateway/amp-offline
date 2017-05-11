@@ -19,6 +19,7 @@ export default class ActivityFieldsManager {
   }
 
   constructor(fieldsDef, possibleValuesCollection) {
+    // TODO remove cache
     LoggerManager.log('constructor');
     this._fieldsDef = fieldsDef;
     this._possibleValuesMap = {};
@@ -28,6 +29,19 @@ export default class ActivityFieldsManager {
     this._defaultLang = LANGUAGE_ENGLISH;
     this._translationsCache = {};
     this._translationsCache[this._lang] = {};
+    this.cleanup(fieldsDef);
+  }
+
+  cleanup(fieldsDef) {
+    // TODO decide either to keep cleanup (here or anywhere else) or check if we need to standardize API
+    fieldsDef.forEach(fd => {
+      if (fd.children) {
+        this.cleanup(fd.children);
+      }
+      if (fd.field_label) {
+        Object.keys(fd.field_label).forEach(lang => { fd.field_label[lang.toLowerCase()] = fd.field_label[lang]; });
+      }
+    });
   }
 
   set currentLanguageCode(lang) {
@@ -118,15 +132,10 @@ export default class ActivityFieldsManager {
   }
 
   getFieldLabelTranslation(fieldPath) {
-    const cached = this._getOrInitCache(fieldPath);
-    let trnLabel = cached.label;
-    if (trnLabel === undefined) {
-      trnLabel = null;
-      const fieldsDef = this.getFieldDef(fieldPath);
-      if (fieldsDef !== undefined) {
-        trnLabel = fieldsDef.field_label[this._lang] || fieldsDef.field_label[this._defaultLang] || null;
-      }
-      cached.label = trnLabel;
+    let trnLabel = null;
+    const fieldsDef = this.getFieldDef(fieldPath);
+    if (fieldsDef !== undefined) {
+      trnLabel = fieldsDef.field_label[this._lang] || fieldsDef.field_label[this._defaultLang] || null;
     }
     return trnLabel;
   }
