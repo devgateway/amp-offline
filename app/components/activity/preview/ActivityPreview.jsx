@@ -76,11 +76,12 @@ export default class ActivityPreview extends Component {
     const categories = categoryArray.map((category) =>
       <li>{category}</li>
     );
-    const editTooltip = (<Tooltip id="editTooltip">Edit</Tooltip>);
-    const versionTooltip = (<Tooltip id="versionTooltip">Version History</Tooltip>);
-    const pdfTooltip = (<Tooltip id="pdfTooltip">Save as PDF</Tooltip>);
-    const wordTooltip = (<Tooltip id="wordTooltip">Save as Word Doc</Tooltip>);
-    const printTooltip = (<Tooltip id="printTooltip">Print</Tooltip>);
+    const editTooltip = (<Tooltip bsClass={styles.preview_icons_tooltip} id="editTooltip">Edit</Tooltip>);
+    const versionTooltip =
+      (<Tooltip bsClass={styles.preview_icons_tooltip} id="versionTooltip">Version History</Tooltip>);
+    const pdfTooltip = (<Tooltip bsClass={styles.preview_icons_tooltip} id="pdfTooltip">Save as PDF</Tooltip>);
+    const wordTooltip = (<Tooltip bsClass={styles.preview_icons_tooltip} id="wordTooltip">Save as Word Doc</Tooltip>);
+    const printTooltip = (<Tooltip bsClass={styles.preview_icons_tooltip} id="printTooltip">Print</Tooltip>);
 
     console.log(this.props);
     return (
@@ -91,12 +92,12 @@ export default class ActivityPreview extends Component {
             <ul>
               <li>
                 <OverlayTrigger placement="top" overlay={editTooltip}>
-                  <object type={'image/svg+xml'} data={edit} className={styles.edit}> Edit </object>
+                  <object type={'image/svg+xml'} data={edit}> Edit </object>
                 </OverlayTrigger>
               </li>
               <li>
                 <OverlayTrigger placement="top" overlay={versionTooltip}>
-                  <img src={version} alt="Version History"/>
+                  <object type={'image/svg+xml'} data={version}> Version History </object>
                 </OverlayTrigger>
               </li>
               <li>
@@ -111,7 +112,7 @@ export default class ActivityPreview extends Component {
               </li>
               <li>
                 <OverlayTrigger placement="top" overlay={printTooltip}>
-                  <img className={styles.print} src={print} alt="Print"/>
+                  <object type={'image/svg+xml'} data={print}> Print </object>
                 </OverlayTrigger>
               </li>
             </ul>
