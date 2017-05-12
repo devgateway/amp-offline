@@ -3,7 +3,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 72 72" style="enable-background:new 0 0 72 72;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#778293;}
+	.st0{fill:#778293;cursor:pointer;}
 </style>
 <path class="st0" d="M30.1,14.2H4.4c-1.9,0-3.4,1.5-3.4,3.4v46.9c0,1.9,1.5,3.4,3.4,3.4h32.9c1.9,0,3.4-1.5,3.4-3.4V24.2h-9.1
 	L30.1,14.2z M69.6,14.5l-1.3-1.2l0,0L59,4.4h-5.2l0,0H32.7c-2.2,0-4,1.8-4,4v2.9l13.9,12v35.9l22.9,0c2.2,0,4-1.8,4-4l0-40.1l0,0

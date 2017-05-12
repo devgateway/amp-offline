@@ -1,5 +1,5 @@
 .preview_container {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'open_sansregular', sans-serif;
 }
 
 .preview_header {
@@ -42,12 +42,6 @@
   margin-left: 10px;
   margin-right: 10px;
   cursor: pointer;
-}
-
-.preview_icons_tooltip {
-  border-radius: 5px;
-  color: #ffffff;
-  background-color: #778293;
 }
 
 .preview_status {
