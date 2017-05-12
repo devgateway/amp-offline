@@ -8,11 +8,11 @@ import MainGroup from './MainGroup';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
-import edit from '../../../../assets/AMP_ProjectIcon1.svg';
-import version from '../../../../assets/AMP_ProjectIcon3.svg';
-import print from '../../../../assets/AMP_ProjectIcon2.svg';
-import pdf from '../../../../assets/pdf_icon.svg';
-import word from '../../../../assets/word_icon.svg';
+import edit from '../../../../assets/images/AMP_ProjectIcon1.svg';
+import version from '../../../../assets/images/AMP_ProjectIcon3.svg';
+import print from '../../../../assets/images/AMP_ProjectIcon2.svg';
+import pdf from '../../../../assets/images/pdf_icon.svg';
+import word from '../../../../assets/images/word_icon.svg';
 
 /**
  * Activity Preview main container

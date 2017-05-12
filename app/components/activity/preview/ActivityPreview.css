@@ -78,13 +78,24 @@
     font-weight: bold;
     color: #778293;
     margin-left: 20px;
-    padding-left: 10px;
+    padding-left: 4px;
     cursor: pointer;
 }
 
 .preview_categories ul li:hover {
     color: #1d2531;
     background-color: #f8f8f8;
+    position: relative;
+}
+
+.preview_categories ul li:hover:after {
+    content: url('../../../../assets/images/arrow.svg');
+    height: 14px;
+    width: 14px;
+    display: block;
+    position: absolute;
+    left: -13px;
+    top: 2px;
 }
 
 .preview_content {
