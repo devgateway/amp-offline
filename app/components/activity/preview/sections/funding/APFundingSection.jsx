@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Section from '../Section';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import APFundingOrganizationSection from './APFundingOrganizationSection';
+import APFundingTotalsSection from './APFundingTotalsSection';
 
 /**
  * Total Number of Fundings section
@@ -24,7 +25,10 @@ class APFundingSection extends Component {
       const item = <APFundingOrganizationSection funding={funding} />;
       fundingList.push(item);
     });
-    return <div>{fundingList}</div>; // TODO: Add the totals section here.
+    return (<div>
+      <div>{fundingList}</div>
+      <div><APFundingTotalsSection /></div>
+    </div>);
   }
 }
 

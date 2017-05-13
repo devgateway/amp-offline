@@ -3,6 +3,7 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
+import styles from './APFundingTransactionTypeItem.css';
 
 /**
  * @author Gabriel Inchauspe
@@ -20,7 +21,9 @@ class APFundingTransactionTypeItem extends Component {
   }
 
   _drawHeader() {
-    return <div>{translate(this.props.group.adjType.value)} {translate(this.props.group.trnType.value)}</div>;
+    return (<div className={styles.header}>
+      {translate(this.props.group.adjType.value)} {translate(this.props.group.trnType.value)}
+    </div>);
   }
 
   _drawDetail() {
