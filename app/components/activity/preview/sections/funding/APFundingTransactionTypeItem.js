@@ -21,6 +21,7 @@ class APFundingTransactionTypeItem extends Component {
   }
 
   _drawHeader() {
+    // TODO: Create an APLabel with translation and tooltip.
     return (<div className={styles.header}>
       {translate(this.props.group.adjType.value)} {translate(this.props.group.trnType.value)}
     </div>);
@@ -29,11 +30,12 @@ class APFundingTransactionTypeItem extends Component {
   _drawDetail() {
     const filteredFD = this.props.fundingDetails.filter(o => o[AC.TRANSACTION_TYPE].id === this.props.group.trnType.id
     && o[AC.ADJUSTMENT_TYPE].id === this.props.group.adjType.id);
+    // TODO: Question, is it worth it the effort to use <BootstrapTable> here? (lots of changes in styles).
     const content = [];
     filteredFD.forEach((item) => {
       content.push(<APFundingItem item={item} />);
     });
-    return content;
+    return <table className={styles.funding_table}>{content}</table>;
   }
 
   render() {

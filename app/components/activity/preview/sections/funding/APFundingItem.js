@@ -4,6 +4,7 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import translate from '../../../../../utils/translate';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
+import styles from './APFundingItem.css';
 
 /**
  * @author Gabriel Inchauspe
@@ -21,10 +22,12 @@ class APFundingItem extends Component {
 
   render() {
     return (
-      <div>{translate(this.props.item[AC.ADJUSTMENT_TYPE].value)}
-        - {createFormattedDate(this.props.item[AC.TRANSACTION_DATE])}
-        - {rawNumberToFormattedString(this.props.item[AC.TRANSACTION_AMOUNT])}
-        {translate(this.props.item[AC.CURRENCY].value)}</div>);
+      <tr>
+        <td>{translate(this.props.item[AC.ADJUSTMENT_TYPE].value)}</td>
+        <td className={styles.right_text}>{createFormattedDate(this.props.item[AC.TRANSACTION_DATE])}</td>
+        <td className={styles.right_text}>{rawNumberToFormattedString(this.props.item[AC.TRANSACTION_AMOUNT])}
+          {translate(this.props.item[AC.CURRENCY].value)}</td>
+      </tr>);
   }
 }
 
