@@ -24,7 +24,7 @@ class APFundingSection extends Component {
       const item = <APFundingOrganizationSection funding={funding} />;
       fundingList.push(item);
     });
-    return <div>{fundingList}</div>;
+    return <div>{fundingList}</div>; // TODO: Add the totals section here.
   }
 }
 

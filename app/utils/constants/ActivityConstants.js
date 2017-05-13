@@ -99,6 +99,7 @@ export const PPC_AMOUNT = 'ppc_amount';
 export const RPC_AMOUNT = 'rpc_amount';
 export const AMOUNT = 'amount';
 export const CURRENCY_CODE = 'currency_code';
+export const CURRENCY = 'currency';
 export const FUNDING_DATE = 'funding_date';
 export const COMPONENTS = 'components';
 export const TOTAL_NUMBER_OF_FUNDING_SOURCES = 'total_number_of_funding_sources';
