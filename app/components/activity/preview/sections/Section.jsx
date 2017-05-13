@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import APField from '../components/APField';
-import styles from '../ActivityPreview.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import { RICH_TEXT_FIELDS } from '../../../../utils/constants/FieldPathConstants';
@@ -15,7 +14,11 @@ import DateUtils from '../../../../utils/DateUtils';
 const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = true) => class extends Component {
   static propTypes = {
     titleDetails: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-    sectionPath: PropTypes.string
+    sectionPath: PropTypes.string,
+    titleClass: PropTypes.string,
+    groupClass: PropTypes.string,
+    fieldNameClass: PropTypes.string,
+    fieldValueClass: PropTypes.string
   };
 
   static contextTypes = {
@@ -50,7 +53,9 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       value = NAOptions && NAOptions.has(value) ? null : value;
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
-        return <APField key={path} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline} />;
+        return (<APField
+          key={path} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline}
+          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
       }
     }
   }
@@ -65,8 +70,8 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       return composedSection;
     }
     // TODO iteration 2+ section toggle (TDC based on desgin + VG)
-    return (<div key={SectionTitle} className={styles.section_group}>
-      <div className={styles.section_title}>
+    return (<div key={SectionTitle} className={this.props.groupClass}>
+      <div className={this.props.titleClass}>
         <span>{translate(SectionTitle)} </span><span>{this.props.titleDetails}</span>
       </div>
       {composedSection}
