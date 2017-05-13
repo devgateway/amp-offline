@@ -13,21 +13,25 @@ export default class APField extends Component {
     value: PropTypes.any,
     inline: PropTypes.bool,
     useInnerHTML: PropTypes.bool,
+    separator: PropTypes.bool
   };
 
   /**
    * Gets an instance of Simple Field
    * @param trnLabel the label to translate and use as a title. This label is also used as the component key.
    * @param value the field value
+   * @param inline show title and value in the same row.
+   * @param separator add or not an <hr> tag.
    * @return {SimpleField}
    */
-  static instance(trnLabel, value) {
-    return <APField key={trnLabel} title={translate(trnLabel)} value={value} />;
+  static instance(trnLabel, value, inline = false, separator = true) {
+    return <APField key={trnLabel} title={translate(trnLabel)} value={value} inline={inline} separator={separator} />;
   }
 
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
+    this.useSeparator = this.props.separator !== false;
     this.displayClass = this.props.inline === true ? styles.inline : styles.block;
   }
 
@@ -44,7 +48,7 @@ export default class APField extends Component {
     const classNames = `${styles.field_name} ${this.displayClass}`;
     return (<div>
       <div className={classNames}>{this.props.title}</div> {this._getValue()}
-      <hr />
+      {this.useSeparator ? <hr /> : ''}
     </div>);
   }
 }
