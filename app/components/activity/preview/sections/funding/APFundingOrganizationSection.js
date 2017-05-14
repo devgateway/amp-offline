@@ -36,19 +36,20 @@ class APFundingOrganizationSection extends Component {
     const fd = this.props.funding[AC.FUNDING_DETAILS];
     const groups = [];
     fd.forEach((item) => {
-      const auxFd = { adjType: item[AC.ADJUSTMENT_TYPE], trnType: item[AC.TRANSACTION_TYPE] };
+      const auxFd = { adjType: item[AC.ADJUSTMENT_TYPE], trnType: item[AC.TRANSACTION_TYPE], key: item.id };
       if (!groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id)) {
         groups.push(auxFd);
       }
     });
     // TODO: Sort the groups.
     groups.forEach((group) => {
-      content.push(<APFundingTransactionTypeItem fundingDetails={fd} group={group} />);
+      content.push(<APFundingTransactionTypeItem fundingDetails={fd} group={group} key={group.key} />);
     });
     return content;
   }
 
   render() {
+    LoggerManager.log('render');
     return (<div>
       <div>{this._buildDonorInfo()}</div>
       <div>{this._buildFundingDetailSection()}</div>

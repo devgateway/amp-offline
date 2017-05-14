@@ -33,12 +33,13 @@ class APFundingTransactionTypeItem extends Component {
     // TODO: Question, is it worth it the effort to use <BootstrapTable> here? (lots of changes in styles).
     const content = [];
     filteredFD.forEach((item) => {
-      content.push(<APFundingItem item={item} />);
+      content.push(<APFundingItem item={item} key={item.id} />);
     });
     return <table className={styles.funding_table}>{content}</table>;
   }
 
   render() {
+    LoggerManager.log('render');
     return (<div>
       <div>{this._drawHeader()}</div>
       <div>{this._drawDetail()}</div>

@@ -104,6 +104,7 @@ export const FUNDING_DATE = 'funding_date';
 export const COMPONENTS = 'components';
 export const TOTAL_NUMBER_OF_FUNDING_SOURCES = 'total_number_of_funding_sources';
 export const SOURCE_ROLE = 'source_role';
+export const AMP_FUNDING_ID = 'amp_funding_id';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
