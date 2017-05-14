@@ -36,7 +36,12 @@ class APFundingOrganizationSection extends Component {
     const fd = this.props.funding[AC.FUNDING_DETAILS];
     const groups = [];
     fd.forEach((item) => {
-      const auxFd = { adjType: item[AC.ADJUSTMENT_TYPE], trnType: item[AC.TRANSACTION_TYPE], key: item.id };
+      const auxFd = {
+        adjType: item[AC.ADJUSTMENT_TYPE],
+        trnType: item[AC.TRANSACTION_TYPE],
+        key: item.id,
+        currency: item[AC.CURRENCY]
+      };
       if (!groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id)) {
         groups.push(auxFd);
       }
