@@ -1,9 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
 import APField from '../../components/APField';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
+import APFundingTotalItem from './APFundingTotalItem';
+import translate from '../../../../../utils/translate';
 
 /**
  * @author Gabriel Inchauspe
@@ -54,11 +57,34 @@ class APFundingOrganizationSection extends Component {
     return content;
   }
 
+  _buildUndisbursedBalanceSection() {
+    let totalActualDisbursements = 0;
+    let totalActualCommitments = 0;
+    let currency = '';
+    const fd = this.props.funding[AC.FUNDING_DETAILS];
+    fd.forEach((item) => {
+      if (item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS) {
+        totalActualCommitments += item[AC.TRANSACTION_AMOUNT];
+      } else if (item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) {
+        totalActualDisbursements += item[AC.TRANSACTION_AMOUNT];
+      }
+      // TODO: Currency should be the one in use now?
+      currency = item[AC.CURRENCY].value;
+    });
+    return (<div>
+      <hr />
+      <APFundingTotalItem
+        label={translate('Undisbursed Balance')} value={totalActualCommitments - totalActualDisbursements}
+        currency={translate(currency)} />
+    </div>);
+  }
+
   render() {
     LoggerManager.log('render');
     return (<div>
       <div>{this._buildDonorInfo()}</div>
       <div className={styles.container}>{this._buildFundingDetailSection()}</div>
+      <div className={styles.container}>{this._buildUndisbursedBalanceSection()}</div>
       <div className={styles.hr}>
         <hr />
       </div>

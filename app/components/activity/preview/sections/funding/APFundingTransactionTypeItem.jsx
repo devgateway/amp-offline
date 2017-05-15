@@ -4,7 +4,7 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
 import styles from './APFundingTransactionTypeItem.css';
-import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
+import APFundingTotalItem from './APFundingTotalItem';
 
 /**
  * @author Gabriel Inchauspe
@@ -47,15 +47,11 @@ class APFundingTransactionTypeItem extends Component {
     let subtotal = 0;
     this._filterFundingDetails().map(item => (subtotal += item[AC.TRANSACTION_AMOUNT]));
     return (<div>
-      <div className={styles.subtotal_footer_legend}>
-        {`${translate('Subtotal')}
-        ${translate(this.props.group.adjType.value)}
-        ${translate(this.props.group.trnType.value)}:`}
-      </div>
-      <div className={styles.subtotal_footer_number}>
-        {`${rawNumberToFormattedString(subtotal)}
-        ${translate(this.props.group.currency.value)}`}
-      </div>
+      <APFundingTotalItem
+        value={subtotal}
+        label={`${translate('Subtotal')} ${translate(this.props.group.adjType.value)}
+        ${translate(this.props.group.trnType.value)}`}
+        currency={translate(this.props.group.currency.value)} />
     </div>);
   }
 
