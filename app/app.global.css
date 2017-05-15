@@ -1,6 +1,8 @@
 @import "../resources/css/bootstrap.css";
 @import "../resources/css/bootstrap-theme.css";
 @import "../node_modules/rc-menu/assets/index.css";
+@import '../node_modules/react-bootstrap-table/css/react-bootstrap-table.css';
+@import '../node_modules/react-bootstrap-table/css/toastr.css';
 
 * {
   margin: 0;
