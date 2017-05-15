@@ -20,8 +20,7 @@ export default function userReducer(state = defaultState, action: Object) {
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {
-        userData: action.actionData.userData,
-        teamMember: undefined
+        userData: action.actionData.userData
       });
     case STATE_SELECT_WORKSPACE:
       return Object.assign({}, state, {

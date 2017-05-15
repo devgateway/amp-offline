@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha';
 import ActivityHydrator from '../../app/modules/helpers/ActivityHydrator';
-import { HIERARCHICAL_VALUE } from '../../app/utils/constants/ActivityConstants';
+import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../app/utils/constants/ActivityConstants';
 import { DONOR_ORGANIZATIONS_PATH } from '../../app/utils/constants/FieldPathConstants';
 
 const chai = require('chai');
@@ -32,8 +32,10 @@ const fieldsDef = [
 // due to HIERARCHICAL_VALUE, the content may vary
 const org1 = Object.assign({}, { id: 1, value: 'UNDP' });
 org1[HIERARCHICAL_VALUE] = null;
+org1[HIERARCHICAL_VALUE_DEPTH] = 0;
 const org2 = Object.assign({}, { id: 2, value: 'AfDB' });
 org2[HIERARCHICAL_VALUE] = null;
+org2[HIERARCHICAL_VALUE_DEPTH] = 0;
 // TODO add full name unit tests once a more definite solution for extra info is available
 
 const possibleValuesCollection = [

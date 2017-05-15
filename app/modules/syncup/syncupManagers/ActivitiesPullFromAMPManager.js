@@ -1,18 +1,21 @@
-import * as ActivityHelper from '../helpers/ActivityHelper';
-import * as AC from '../../utils/constants/ActivityConstants';
-import * as Utils from '../../utils/Utils';
-import { ACTIVITY_EXPORT_URL } from '../connectivity/AmpApiConstants';
-import * as ConnectionHelper from '../connectivity/ConnectionHelper';
-import store from '../../index';
-import LoggerManager from '../../modules/util/LoggerManager';
+import * as ActivityHelper from '../../helpers/ActivityHelper';
+import * as AC from '../../../utils/constants/ActivityConstants';
+import * as Utils from '../../../utils/Utils';
+import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
+import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
+import SyncUpManagerInterface from './SyncUpManagerInterface';
+import store from '../../../index';
+import LoggerManager from '../../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 /**
  * Pulls the latest activities state from AMP
  * @author Nadejda Mandrescu
  */
-export default class ActivitiesPullFromAMPManager {
+export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface {
+
   constructor() {
+    super();
     this._cancel = false;
     // TODO update this once AMPOFFLINE-319 is done
     let translations = store.getState().translationReducer.languageList;
@@ -20,6 +23,7 @@ export default class ActivitiesPullFromAMPManager {
       translations = ['en', 'pt', 'tm', 'fr']; // using explicitly Timor and Niger langs until 319 is done
     }
     this._translations = translations.join('|');
+    this._onPullError = this._onPullError.bind(this);
   }
 
   /**
@@ -36,30 +40,47 @@ export default class ActivitiesPullFromAMPManager {
    * }
    * @return {Promise}
    */
-  pullActivitiesFromAMP(saved, removed) {
-    LoggerManager.log('pullActivitiesFromAMP');
-    return Promise.all([this._removeActivities(removed),
-      this._getLatestActivities(saved)]);
+  doSyncUp({ saved, removed }) {
+    this.diff = { saved, removed };
+    this.pulled = new Set();
+    return this._pullActivitiesFromAMP();
   }
 
-  _removeActivities(ampIds) {
-    const ampIdsFilter = Utils.toMap(AC.AMP_ID, { $in: ampIds });
+  getDiffLeftover() {
+    this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
+    return this.diff;
+  }
+
+  cancel() {
+    this._cancel = true;
+  }
+
+  _pullActivitiesFromAMP() {
+    LoggerManager.log('_pullActivitiesFromAMP');
+    return Promise.all([this._removeActivities(), this._getLatestActivities()]);
+  }
+
+  _removeActivities() {
+    const ampIdsFilter = Utils.toMap(AC.AMP_ID, { $in: this.diff.removed });
     // remove both rejected and non rejected if the activity is removed
-    return ActivityHelper.removeAll(ampIdsFilter);
+    return ActivityHelper.removeAll(ampIdsFilter).then((result) => {
+      this.diff.removed = [];
+      return result;
+    });
   }
 
-  _getLatestActivities(ampIds) {
+  _getLatestActivities() {
     return new Promise(
       (resolve, reject) => {
         // we need to ensure we run chain promises execution in order: get, remove existing, save, process error
         const pFactories = [];
-        ampIds.forEach(ampId => {
+        this.diff.saved.forEach(ampId => {
           const fnPull = this._pullActivity.bind(this, ampId);
           pFactories.push(...[fnPull, this._removeExistingNonRejected, this._saveNewActivity, this._onPullError]);
         });
 
         return pFactories.reduce((currentPromise, pFactory) =>
-            currentPromise.then(pFactory), Promise.resolve()).then(resolve).catch(reject);
+          currentPromise.then(pFactory), Promise.resolve()).then(resolve).catch(reject);
       });
   }
 
@@ -68,11 +89,11 @@ export default class ActivitiesPullFromAMPManager {
     return ConnectionHelper.doGet({
       url: ACTIVITY_EXPORT_URL,
       paramsMap: { 'amp-id': ampId, translations: this._translations }
-    }).catch((error) => this._onPullError(null, error));
+    }).catch((error) => this._onPullError(ampId, error));
   }
 
   _removeExistingNonRejected(activity, error) {
-    if (error) {
+    if (error || !activity) {
       return Promise.resolve(activity, error);
     }
     return ActivityHelper.removeNonRejectedByAmpId(activity[AC.AMP_ID])
@@ -80,19 +101,20 @@ export default class ActivitiesPullFromAMPManager {
   }
 
   _saveNewActivity(activity, error) {
-    if (error) {
+    if (error || !activity) {
       return Promise.resolve(activity, error);
     }
     return ActivityHelper.saveOrUpdate(activity)
-      .then(() => activity)
-      .catch((err) => this._onPullError(null, err));
+      .then(() => activity[AC.AMP_ID])
+      .catch((err) => this._onPullError(activity ? activity[AC.AMP_ID] : null, err));
   }
 
-  _onPullError(activity, error) {
+  _onPullError(ampId, error) {
     LoggerManager.log('_onPullError');
-    // TODO the un-synced activity should be remembered and re-synced on next attempt AMPOFFLINE-256
     if (error) {
       LoggerManager.error(error);
+    } else if (ampId) {
+      this.pulled.add(ampId);
     }
     return Promise.resolve();
   }

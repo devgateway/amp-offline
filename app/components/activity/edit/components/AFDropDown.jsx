@@ -12,6 +12,7 @@ export default class AFDropDown extends Component {
 
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
+    // TODO change it to be only number once we fix possible values to provide ids only as numbers
     selectedId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func.isRequired
   };

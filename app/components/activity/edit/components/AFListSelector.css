@@ -1,0 +1,11 @@
+.inline {
+    display: inline-flex;
+}
+
+.searchContainer {
+    margin: 10px 10px 10px 0;
+}
+
+.dividePercentage {
+    height: 35px;
+}

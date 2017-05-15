@@ -3,13 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import i18next from 'i18next';
 import {
+  APP_DIRECTORY,
   FS_LOCALES_DIRECTORY,
   LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
-  LANGUAGE_TRANSLATIONS_FILE,
-  APP_DIRECTORY
+  LANGUAGE_TRANSLATIONS_FILE
 } from '../../utils/Constants';
-import TranslationSyncUpManager from '../syncup/TranslationSyncUpManager';
+import TranslationSyncUpManager from '../syncup/syncupManagers/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_I18NEXT } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';

@@ -1,10 +1,11 @@
-import { SINGLE_FIELDS_TREE_URL, FIELDS_PER_WORKSPACE_MEMBER_URL } from '../connectivity/AmpApiConstants';
-import * as ConnectionHelper from '../connectivity/ConnectionHelper';
-import * as FieldsHelper from '../helpers/FieldsHelper';
-import * as TeamMemberHelper from '../helpers/TeamMemberHelper';
-import Notification from '../helpers/NotificationHelper';
-import * as Utils from '../../utils/Utils';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
+import { FIELDS_PER_WORKSPACE_MEMBER_URL, SINGLE_FIELDS_TREE_URL } from '../../connectivity/AmpApiConstants';
+import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
+import * as FieldsHelper from '../../helpers/FieldsHelper';
+import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
+import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
+import Notification from '../../helpers/NotificationHelper';
+import * as Utils from '../../../utils/Utils';
+import { NOTIFICATION_ORIGIN_DATABASE } from '../../../utils/constants/ErrorConstants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -13,8 +14,9 @@ import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstan
  * Fields definition syncup Manager
  * @author Nadejda Mandrescu
  */
-export default class FieldsSyncUpManager {
+export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
   constructor() {
+    super();
     // TODO remove once AMP-25568 is done, as part of AMPOFFLINE-270
     this._useSingleTreeEP = true;
     this._doUpdate = true;
@@ -24,7 +26,7 @@ export default class FieldsSyncUpManager {
    * Syncs fields definition tree
    * @return {Promise}
    */
-  syncUp() {
+  doAtomicSyncUp() {
     if (this._doUpdate) {
       if (this._useSingleTreeEP) {
         return this._syncUpSingleFieldsTree();
@@ -35,6 +37,10 @@ export default class FieldsSyncUpManager {
       return this._getSingleFieldsDef().then(this._linkAllWSMembersToSingleFieldsTree);
     }
     return Promise.resolve();
+  }
+
+  cancel() {
+    // TODO implement once AMP-25568 is done, as part of AMPOFFLINE-270
   }
 
   _syncUpSingleFieldsTree() {
