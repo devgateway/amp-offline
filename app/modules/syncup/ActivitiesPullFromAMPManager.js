@@ -3,7 +3,6 @@ import * as AC from '../../utils/constants/ActivityConstants';
 import * as Utils from '../../utils/Utils';
 import { ACTIVITY_EXPORT_URL } from '../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
-import { FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT } from '../../utils/Constants';
 import store from '../../index';
 import LoggerManager from '../../modules/util/LoggerManager';
 
@@ -50,8 +49,6 @@ export default class ActivitiesPullFromAMPManager {
   }
 
   _getLatestActivities(ampIds) {
-    // TODO remove as part of AMPOFFLINE-273 or AMPOFFLINE-274 (or other dervided tasks)
-    ampIds = ampIds.slice(0, FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT);
     return new Promise(
       (resolve, reject) => {
         // we need to ensure we run chain promises execution in order: get, remove existing, save, process error

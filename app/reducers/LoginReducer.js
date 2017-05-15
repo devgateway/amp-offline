@@ -19,7 +19,6 @@ export default function loginReducer(state: Object = defaultState, action: Objec
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {
         loggedIn: true,
-        token: action.actionData.token,
         plainPassword: action.actionData.password,
         loginProcessing: false
       });
