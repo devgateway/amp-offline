@@ -4,6 +4,7 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import APFundingOrganizationSection from './APFundingOrganizationSection';
 import APFundingTotalsSection from './APFundingTotalsSection';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import styles from './APFundingSection.css';
 
 /**
  * Total Number of Fundings section
@@ -27,9 +28,9 @@ class APFundingSection extends Component {
       const item = <APFundingOrganizationSection funding={funding} key={funding[AC.AMP_FUNDING_ID]} />;
       fundingList.push(item);
     });
-    return (<div>
+    return (<div className={styles.container}>
       <div>{fundingList}</div>
-      <div><APFundingTotalsSection /></div>
+      <div><APFundingTotalsSection fundings={this.props.activity.fundings} /></div>
     </div>);
   }
 }

@@ -83,8 +83,8 @@ class APFundingOrganizationSection extends Component {
     LoggerManager.log('render');
     return (<div>
       <div>{this._buildDonorInfo()}</div>
-      <div className={styles.container}>{this._buildFundingDetailSection()}</div>
-      <div className={styles.container}>{this._buildUndisbursedBalanceSection()}</div>
+      <div>{this._buildFundingDetailSection()}</div>
+      <div>{this._buildUndisbursedBalanceSection()}</div>
       <div className={styles.hr}>
         <hr />
       </div>
