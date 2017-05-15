@@ -3,6 +3,7 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APField from '../../components/APField';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
+import styles from './APFundingOrganizationSection.css';
 
 /**
  * @author Gabriel Inchauspe
@@ -57,8 +58,10 @@ class APFundingOrganizationSection extends Component {
     LoggerManager.log('render');
     return (<div>
       <div>{this._buildDonorInfo()}</div>
-      <div>{this._buildFundingDetailSection()}</div>
-      <hr />
+      <div className={styles.container}>{this._buildFundingDetailSection()}</div>
+      <div className={styles.hr}>
+        <hr />
+      </div>
     </div>);
   }
 }

@@ -49,10 +49,12 @@ class APFundingTransactionTypeItem extends Component {
     return (<div>
       <div className={styles.subtotal_footer_legend}>
         {`${translate('Subtotal')}
-      ${translate(this.props.group.adjType.value)}
-      ${translate(this.props.group.trnType.value)}:
-      ${rawNumberToFormattedString(subtotal)}
-      ${translate(this.props.group.currency.value)}`}
+        ${translate(this.props.group.adjType.value)}
+        ${translate(this.props.group.trnType.value)}:`}
+      </div>
+      <div className={styles.subtotal_footer_number}>
+        {`${rawNumberToFormattedString(subtotal)}
+        ${translate(this.props.group.currency.value)}`}
       </div>
     </div>);
   }
