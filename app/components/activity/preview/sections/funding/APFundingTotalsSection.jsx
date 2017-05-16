@@ -23,6 +23,7 @@ class APFundingTotalsSection extends Component {
     const content = [];
     const groups = [];
     let sumOfActualDisbursements = 0;
+    let sumOfActualCommitments = 0;
     let sumOfPlannedDisbursements = 0;
     let currency = '';
     this.props.fundings.forEach((item) => {
@@ -48,6 +49,9 @@ class APFundingTotalsSection extends Component {
         if (item2[AC.ADJUSTMENT_TYPE].value === VC.PLANNED && item2[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) {
           sumOfPlannedDisbursements += item2[AC.TRANSACTION_AMOUNT];
         }
+        if (item2[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item2[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS) {
+          sumOfActualCommitments += item2[AC.TRANSACTION_AMOUNT];
+        }
       });
     });
     groups.forEach(g => {
@@ -56,7 +60,11 @@ class APFundingTotalsSection extends Component {
         currency={translate(g.currency.value)} value={g.amount}
         label={`${translate('Total')} ${translate(g.adjType.value)} ${translate(g.trnType.value)}`} />);
     });
-    // Execution Rate = Sum Of Actual Disb (Dependent on Filter) / Sum Of Planned Disb (Dependent on Filter) * 100
+    if (sumOfActualDisbursements !== 0 && sumOfPlannedDisbursements !== 0) {
+      content.push(<APFundingTotalItem
+        label={translate('Undisbursed Balance')} value={sumOfActualCommitments - sumOfActualDisbursements}
+        currency={translate(currency)} />);
+    }
     if (sumOfActualDisbursements !== 0 && sumOfPlannedDisbursements !== 0) {
       content.push(<APFundingTotalItem
         currency={translate(currency)} value={parseInt(sumOfPlannedDisbursements / sumOfActualDisbursements * 100, 10)}
