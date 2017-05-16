@@ -31,6 +31,7 @@ class APFundingSection extends Component {
     return (<div className={styles.container}>
       <div>{fundingList}</div>
       <div><APFundingTotalsSection fundings={this.props.activity.fundings} /></div>
+      <div className={styles.clear}></div>
     </div>);
   }
 }
