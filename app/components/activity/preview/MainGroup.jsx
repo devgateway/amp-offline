@@ -12,6 +12,7 @@ import { APProposedProjectCost, APRevisedProjectCost } from './sections/APProjec
 import APFundingSources from './sections/APFundingSources';
 import LoggerManager from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
+import APRelatedOrganizations from './sections/APRelatedOrganizations';
 
 /**
  * Main content
@@ -39,6 +40,7 @@ export default class MainGroup extends Component {
       <APRevisedProjectCost sectionPath={AC.RPC_AMOUNT} />
       <APFundingSources />
       <APFundingSection />
+      <APRelatedOrganizations />
     </div>);
   }
 }

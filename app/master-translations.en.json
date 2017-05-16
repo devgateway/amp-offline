@@ -140,5 +140,11 @@
   "Funding Status": "Funding Status",
   "Subtotal": "Subtotal",
   "Undisbursed Balance": "Undisbursed Balance",
-  "Delivery Rate": "Delivery Rate"
+  "Delivery Rate": "Delivery Rate",
+  "Related Organizations": "Related Organizations",
+  "executing_agency": "Executing Agency",
+  "contracting_agency": "Contracting Agency",
+  "beneficiary_agency": "Beneficiary Agency",
+  "implementing_agency": "Implementing Agency",
+  "responsible_organization": "Responsible Organization"
 }
