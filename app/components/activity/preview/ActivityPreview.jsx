@@ -117,12 +117,6 @@ export default class ActivityPreview extends Component {
           </span>
         </div>
         <div className={styles.preview_status} >
-          <span className={styles.preview_status_title} > AMP ID: </span>
-          <span className={styles.preview_status_detail} >{activity.amp_id} </span>
-          <span className={styles.preview_status_title} > Status: </span>
-          <span className={styles.preview_status_detail} > Ongoing </span>
-          <span className={styles.preview_status_title} > On/Off Budget: </span>
-          <span className={styles.preview_status_detail} > On Treasury </span>
         </div>
         <div className={styles.preview_categories} >
           <ul>
