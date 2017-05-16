@@ -68,7 +68,7 @@ class APFundingOrganizationSection extends Component {
       } else if (item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) {
         totalActualDisbursements += item[AC.TRANSACTION_AMOUNT];
       }
-      // TODO: Currency should be the one in use now?
+      // TODO: Currency should be the one in use at this moment?
       currency = item[AC.CURRENCY].value;
     });
     return (<div>

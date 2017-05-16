@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
 import translate from '../../../../../utils/translate';
 import APFundingTotalItem from './APFundingTotalItem';
 
@@ -21,6 +22,9 @@ class APFundingTotalsSection extends Component {
   _buildTotals() {
     const content = [];
     const groups = [];
+    let sumOfActualDisbursements = 0;
+    let sumOfPlannedDisbursements = 0;
+    let currency = '';
     this.props.fundings.forEach((item) => {
       item[AC.FUNDING_DETAILS].forEach(item2 => {
         const auxFd = {
@@ -30,11 +34,19 @@ class APFundingTotalsSection extends Component {
           currency: item2[AC.CURRENCY],
           amount: item2[AC.TRANSACTION_AMOUNT]
         };
+        currency = auxFd.currency.value;
         const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id);
         if (!group) {
           groups.push(auxFd);
         } else {
           group.amount += auxFd.amount;
+        }
+
+        if (item2[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item2[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) {
+          sumOfActualDisbursements += item2[AC.TRANSACTION_AMOUNT];
+        }
+        if (item2[AC.ADJUSTMENT_TYPE].value === VC.PLANNED && item2[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) {
+          sumOfPlannedDisbursements += item2[AC.TRANSACTION_AMOUNT];
         }
       });
     });
@@ -44,6 +56,12 @@ class APFundingTotalsSection extends Component {
         currency={translate(g.currency.value)} value={g.amount}
         label={`${translate('Total')} ${translate(g.adjType.value)} ${translate(g.trnType.value)}`} />);
     });
+    // Execution Rate = Sum Of Actual Disb (Dependent on Filter) / Sum Of Planned Disb (Dependent on Filter) * 100
+    if (sumOfActualDisbursements !== 0 && sumOfPlannedDisbursements !== 0) {
+      content.push(<APFundingTotalItem
+        currency={translate(currency)} value={parseInt(sumOfPlannedDisbursements / sumOfActualDisbursements * 100, 10)}
+        label={translate('Delivery Rate')} dontFormatNumber={false} isPercentage />);
+    }
     return content;
   }
 
