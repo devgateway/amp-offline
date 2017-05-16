@@ -46,7 +46,7 @@ export default class APField extends Component {
 
   render() {
     const classNames = `${this.props.fieldNameClass} ${this.displayClass}`;
-    return (<div>
+    return (<div className={styles.inline_div}>
       <div className={classNames}>{this.props.title}</div> {this._getValue()}
     </div>);
   }

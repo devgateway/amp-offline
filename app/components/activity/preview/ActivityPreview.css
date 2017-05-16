@@ -44,7 +44,7 @@
   cursor: pointer;
 }
 
-.preview_status {
+.preview_status_container {
     margin-left: 40px;
     margin-right: 30px;
     margin-top: 20px;
@@ -52,13 +52,20 @@
     background-color: #f5faff;
 }
 
+.inline_div {
+  display: inline;
+}
+
 .preview_status_title {
+    display: inline-block !important;
     margin-left: 10px;
+    margin-right: 5px;
 }
 
 .preview_status_detail {
+    display: inline-block !important;
     font-weight: bold;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 .preview_categories {

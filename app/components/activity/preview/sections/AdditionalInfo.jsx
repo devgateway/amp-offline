@@ -54,8 +54,6 @@ class AdditionalInfo extends Component {
     additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData(),
       this.props.fieldNameClass, this.props.fieldValueClass));
 
-    console.log(additionalInfo);
-
     return additionalInfo;
   }
 

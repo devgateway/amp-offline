@@ -5,6 +5,7 @@ import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
+import APField from './components/APField';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
@@ -81,6 +82,14 @@ export default class ActivityPreview extends Component {
     const pdfTooltip = (<Tooltip id="pdfTooltip">Save as PDF</Tooltip>);
     const wordTooltip = (<Tooltip id="wordTooltip">Save as Word Doc</Tooltip>);
     const printTooltip = (<Tooltip id="printTooltip">Print</Tooltip>);
+    const previewStatus = [];
+    previewStatus.push(APField.instance('AMP ID', activity.amp_id,
+      styles.preview_status_title, styles.preview_status_detail));
+    previewStatus.push(APField.instance('Status', 'Ongoing',
+      styles.preview_status_title, styles.preview_status_detail));
+    previewStatus.push(APField.instance('On/Off Budget', 'On Treasury',
+      styles.preview_status_title, styles.preview_status_detail));
+
 
     return (
       <div className={styles.preview_container} >
@@ -116,13 +125,8 @@ export default class ActivityPreview extends Component {
             </ul>
           </span>
         </div>
-        <div className={styles.preview_status} >
-          <span className={styles.preview_status_title} > AMP ID: </span>
-          <span className={styles.preview_status_detail} >{activity.amp_id} </span>
-          <span className={styles.preview_status_title} > Status: </span>
-          <span className={styles.preview_status_detail} > Ongoing </span>
-          <span className={styles.preview_status_title} > On/Off Budget: </span>
-          <span className={styles.preview_status_detail} > On Treasury </span>
+        <div className={styles.preview_status_container} >
+          {previewStatus}
         </div>
         <div className={styles.preview_categories} >
           <ul>
