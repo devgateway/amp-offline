@@ -161,7 +161,7 @@ export default class ActivityFieldsManager {
         value.forEach(current => {
           const newElement = current[part];
           if (newElement !== undefined && newElement !== null) {
-            newList.concat(newElement);
+            newList.push(newElement);
           }
         });
         value = newList;
