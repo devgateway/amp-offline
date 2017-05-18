@@ -46,7 +46,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
         actIntIds.forEach(actIntId => orgIds.push(this._getActInternalIdContent(actIntId, showInternalId)));
       }
     }
-    return orgIds && orgIds.lenght > 0 ? orgIds : null;
+    return orgIds && orgIds.length > 0 ? orgIds : null;
   }
 
   render() {
