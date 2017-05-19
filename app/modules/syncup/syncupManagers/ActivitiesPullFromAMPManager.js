@@ -9,6 +9,10 @@ import store from '../../../index';
 import LoggerManager from '../../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
+
+const PULL_END = 'PULL_END';
+const CHECK_INTERVAL = 50;
+
 /**
  * Pulls the latest activities state from AMP
  * @author Nadejda Mandrescu
@@ -24,6 +28,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
       translations = ['en', 'pt', 'tm', 'fr']; // using explicitly Timor and Niger langs until 319 is done
     }
     this._translations = translations.join('|');
+    this.resultStack = [];
     this._onPullError = this._onPullError.bind(this);
   }
 
@@ -73,26 +78,55 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   _getLatestActivities() {
     // TODO remove as part of AMPOFFLINE-273 or AMPOFFLINE-274 (or other dervided tasks)
     this.diff.saved = this.diff.saved.slice(0, FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT);
-    return new Promise(
+    const pullActivitiesPromise = new Promise(
       (resolve, reject) => {
-        // we need to ensure we run chain promises execution in order: get, remove existing, save, process error
-        const pFactories = [];
-        this.diff.saved.forEach(ampId => {
-          const fnPull = this._pullActivity.bind(this, ampId);
-          pFactories.push(...[fnPull, this._removeExistingNonRejected, this._saveNewActivity, this._onPullError]);
-        });
-
+        const pFactories = this.diff.saved.map(ampId => this._pullActivity.bind(this, ampId));
         return pFactories.reduce((currentPromise, pFactory) =>
-          currentPromise.then(pFactory), Promise.resolve()).then(resolve).catch(reject);
+          currentPromise.then(pFactory), Promise.resolve())
+          .then((result) => {
+            this.resultStack.push(PULL_END);
+            return resolve(result);
+          }).catch(reject);
       });
+    return Promise.all([pullActivitiesPromise, this._processResult()]);
+  }
+
+  _isPullDenied() {
+    return this.resultStack.length > 4;
   }
 
   _pullActivity(ampId) {
     // TODO content translations (iteration 2)
-    return ConnectionHelper.doGet({
+    return Utils.waitWhile(this._isPullDenied.bind(this), CHECK_INTERVAL).then(() => ConnectionHelper.doGet({
       url: ACTIVITY_EXPORT_URL,
       paramsMap: { 'amp-id': ampId, translations: this._translations }
-    }).catch((error) => this._onPullError(ampId, error));
+    }).then(this._pushResultToProcess)
+      .catch((error) => this._onPullError(ampId, error)));
+  }
+
+  _pushResultToProcess(activity, error) {
+    this.resultStack.push([activity, error]);
+  }
+
+  _isNoResultToProcess() {
+    return this.resultStack.length === 0;
+  }
+
+  _processResult() {
+    return new Promise((resolve, reject) =>
+      Utils.waitWhile(this._isNoResultToProcess.bind(this), CHECK_INTERVAL).then(() => {
+        if (this.resultStack[0] === PULL_END) {
+          return resolve();
+        }
+        const pFactories = this.resultStack.map(([activity, error]) =>
+          this._removeExistingNonRejected(activity, error).then(this._saveNewActivity).then(this._onPullError));
+        return pFactories.reduce((currentPromise, pFactory) =>
+          currentPromise.then(pFactory), Promise.resolve())
+          .then(this._processResult)
+          // TODO continue sync up of other activities if the error is not a connection issue
+          .catch(reject);
+      })
+    );
   }
 
   _removeExistingNonRejected(activity, error) {

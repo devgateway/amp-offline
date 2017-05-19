@@ -67,6 +67,20 @@ const Utils = {
   delay(timeout) {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   },
+
+  /**
+   * Wait until condition is true
+   * @param conditionFunc the function that executes some condition and returns true or false
+   * @param checkInterval the ms to wait until rechecking the condition
+   * @return {Promise.<T>}
+   */
+  waitWhile(conditionFunc, checkInterval) {
+    if (conditionFunc() === true) {
+      return Utils.delay(checkInterval).then(() => this.waitWhile(conditionFunc, checkInterval));
+    }
+    return Promise.resolve();
+  },
+
   /**
    * Removes _id from a collection mostly to be used in unit testing
    * @param collectionToFix a list of objects to remove the _id property
