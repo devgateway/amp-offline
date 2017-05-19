@@ -3,7 +3,6 @@ import * as AC from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
-import { FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT } from '../../../utils/Constants';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import store from '../../../index';
 import LoggerManager from '../../util/LoggerManager';
@@ -76,8 +75,6 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _getLatestActivities() {
-    // TODO remove as part of AMPOFFLINE-273 or AMPOFFLINE-274 (or other dervided tasks)
-    this.diff.saved = this.diff.saved.slice(0, FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT);
     const pullActivitiesPromise = new Promise(
       (resolve, reject) => {
         const pFactories = this.diff.saved.map(ampId => this._pullActivity.bind(this, ampId));
