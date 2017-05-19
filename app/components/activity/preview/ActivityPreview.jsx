@@ -8,9 +8,9 @@ import MainGroup from './MainGroup';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
-import edit from '../../../../assets/images/AMP_ProjectIcon1.svg';
-import version from '../../../../assets/images/AMP_ProjectIcon3.svg';
-import print from '../../../../assets/images/AMP_ProjectIcon2.svg';
+import edit from '../../../../assets/images/edit_icon.svg';
+import version from '../../../../assets/images/version_icon.svg';
+import print from '../../../../assets/images/print_icon.svg';
 import pdf from '../../../../assets/images/pdf_icon.svg';
 import word from '../../../../assets/images/word_icon.svg';
 
@@ -116,8 +116,7 @@ export default class ActivityPreview extends Component {
             </ul>
           </span>
         </div>
-        <div className={styles.preview_status} >
-        </div>
+        <div className={styles.preview_status} />
         <div className={styles.preview_categories} >
           <ul>
             {categories}
