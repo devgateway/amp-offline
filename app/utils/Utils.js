@@ -80,7 +80,7 @@ const Utils = {
     if (conditionFunc() === true) {
       if (abortInterval !== undefined) {
         if (abortInterval < 0) {
-          return Promise.reject();
+          return Promise.reject('Condition wait aborted');
         }
         abortInterval -= checkInterval;
       }

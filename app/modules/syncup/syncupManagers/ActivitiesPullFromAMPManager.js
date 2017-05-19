@@ -1,6 +1,8 @@
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
+import DateUtils from '../../../utils/DateUtils';
+import { CONNECTION_TIMEOUT } from '../../../utils/Constants';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
@@ -13,11 +15,14 @@ const PULL_END = 'PULL_END';
 /*
 On my local, with the current solution, there was no significant difference if using 4 or 100 queue limit,
 or if using 10 or 100 check interval. I will stick to 4 queue limit (for pull requests mainly), to avoid AMP server
-overload in case multiple clients will run simultaniously.
+overload in case multiple clients will run simultaneously.
+
+On remove there was no difference between check interval. While with a queue limit of 100, results processing was
+taking more than requests and sometime pull wait was aborted over the current 5sec timeout.
  */
-const CHECK_INTERVAL = 20;
-const ABORT_INTERVAL = 1000;
+const CHECK_INTERVAL = 100;
 const QUEUE_LIMIT = 4;
+const ABORT_INTERVAL = CONNECTION_TIMEOUT;
 
 /**
  * Pulls the latest activities state from AMP
@@ -57,11 +62,16 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   doSyncUp({ saved, removed }) {
     this.diff = { saved, removed };
     this.pulled = new Set();
+    this.syncStartedAt = new Date();
     return this._pullActivitiesFromAMP();
   }
 
   getDiffLeftover() {
+    const duration = DateUtils.duration(this.syncStartedAt, new Date());
+    LoggerManager.log(`duration = ${duration}`);
+    LoggerManager.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
     this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
+    LoggerManager.log(`unsynced = ${this.diff.saved.length}`);
     return this.diff;
   }
 
