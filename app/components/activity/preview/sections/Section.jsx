@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import styles from '../ActivityPreview.css';
 import APField from '../components/APField';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
@@ -26,6 +27,13 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
     activityWorkspace: PropTypes.object.isRequired
+  };
+
+  static defaultProps = {
+    titleClass: styles.section_title_class,
+    groupClass: styles.section_group_class,
+    fieldNameClass: styles.section_field_name,
+    fieldValueClass: styles.section_field_value
   };
 
   constructor(props) {
