@@ -3,7 +3,6 @@ import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
 import { PARAM_AMPOFFLINE_AGENT } from './AmpApiConstants';
-import LoggerManager from '../util/LoggerManager';
 
 const RequestConfig = {
   /**
@@ -31,7 +30,9 @@ const RequestConfig = {
       url: fullUrl,
       json: true,
       headers,
-      method
+      method,
+      gzip: true,
+      jar: true // enables cookies to be saved
     };
     if (routeConfiguration[0].isBinary) {
       // in case its binary we need to set json to false
@@ -44,10 +45,6 @@ const RequestConfig = {
 
     if (store.getState().startUpReducer.connectionInformation.timeOut) {
       requestConfig.timeout = store.getState().startUpReducer.connectionInformation.timeOut;
-    }
-    const token = this._getToken(method, url);
-    if (token) {
-      requestConfig.headers['X-Auth-Token'] = token;
     }
 
     if (body !== undefined) {
@@ -90,21 +87,6 @@ const RequestConfig = {
     }
     return routesConfigurationFiltered;
   },
-  _getToken(method, url) {
-    // We go to check to routes config to see if we need to generate a token
-    if (this._getRouteConfiguration(method, url)[0].requiresToken) {
-      if (store.getState().loginReducer.token) {
-        return store.getState().loginReducer.token;
-      }
-      // TODO if the token is not present we try to log the user in;
-    }
-  },
-
-  replaceToken(requestConfig) {
-    LoggerManager.log('replaceToken');
-    requestConfig.headers['X-Auth-Token'] = store.getState().loginReducer.token;
-    return requestConfig;
-  }
 };
 
 module.exports = RequestConfig;
