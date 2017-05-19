@@ -21,73 +21,73 @@ import {
 const routesConfiguration = [{
   url: GET_WORKSPACES_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: URL_CONNECTIVITY_CHECK_EP,
   method: 'GET',
-  requiresToken: false
+  requiresAuth: false
 }, {
   url: LOGIN_URL,
   method: 'POST',
-  requiresToken: false
+  requiresAuth: false
 }, {
   url: GLOBAL_SETTINGS_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: USER_PROFILE_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: WORKSPACE_MEMBER_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: AVAILABLE_LANGUAGES_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: POST_TRANSLATIONS_URL,
   method: 'POST',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: GET_TRANSLATIONS_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: ACTIVITY_IMPORT_URL,
   method: 'POST',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: ACTIVITY_EXPORT_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: SINGLE_FIELDS_TREE_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: TEST_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: SYNC_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }, {
   url: AMP_COUNTRY_FLAG,
   method: 'GET',
-  requiresToken: true,
+  requiresAuth: true,
   regularAmpUrl: true,
   isBinary: true
 }, {
   url: WORKSPACE_SETTINGS_URL,
   method: 'GET',
-  requiresToken: true
+  requiresAuth: true
 }
 ];
 
