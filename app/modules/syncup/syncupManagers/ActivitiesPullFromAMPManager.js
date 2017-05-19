@@ -10,7 +10,14 @@ import LoggerManager from '../../util/LoggerManager';
 /* eslint-disable class-methods-use-this */
 
 const PULL_END = 'PULL_END';
-const CHECK_INTERVAL = 50;
+/*
+On my local, with the current solution, there was no significant difference if using 4 or 100 queue limit,
+or if using 10 or 100 check interval. I will stick to 4 queue limit (for pull requests mainly), to avoid AMP server
+overload in case multiple clients will run simultaniously.
+ */
+const CHECK_INTERVAL = 20;
+const ABORT_INTERVAL = 1000;
+const QUEUE_LIMIT = 4;
 
 /**
  * Pulls the latest activities state from AMP
@@ -29,6 +36,8 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     this._translations = translations.join('|');
     this.resultStack = [];
     this._onPullError = this._onPullError.bind(this);
+    this._isNoResultToProcess = this._isNoResultToProcess.bind(this);
+    this._processResult = this._processResult.bind(this);
   }
 
   /**
@@ -89,20 +98,17 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _isPullDenied() {
-    return this.resultStack.length > 4;
+    return this.resultStack.length > QUEUE_LIMIT;
   }
 
   _pullActivity(ampId) {
     // TODO content translations (iteration 2)
-    return Utils.waitWhile(this._isPullDenied.bind(this), CHECK_INTERVAL).then(() => ConnectionHelper.doGet({
-      url: ACTIVITY_EXPORT_URL,
-      paramsMap: { 'amp-id': ampId, translations: this._translations }
-    }).then(this._pushResultToProcess)
-      .catch((error) => this._onPullError(ampId, error)));
-  }
-
-  _pushResultToProcess(activity, error) {
-    this.resultStack.push([activity, error]);
+    return Utils.waitWhile(this._isPullDenied.bind(this), CHECK_INTERVAL, ABORT_INTERVAL).then(() =>
+      ConnectionHelper.doGet({
+        url: ACTIVITY_EXPORT_URL,
+        paramsMap: { 'amp-id': ampId, translations: this._translations }
+      }).then((activity, error) => this.resultStack.push([activity, error]))
+        .catch((error) => this._onPullError(ampId, error)));
   }
 
   _isNoResultToProcess() {
@@ -110,20 +116,25 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _processResult() {
-    return new Promise((resolve, reject) =>
-      Utils.waitWhile(this._isNoResultToProcess.bind(this), CHECK_INTERVAL).then(() => {
-        if (this.resultStack[0] === PULL_END) {
-          return resolve();
+    return Utils.waitWhile(this._isNoResultToProcess, CHECK_INTERVAL, ABORT_INTERVAL).then(() => {
+      const pFactories = [];
+      let next = this._processResult;
+      while (this.resultStack.length > 0) {
+        const entry = this.resultStack.pop();
+        if (entry === PULL_END) {
+          next = () => Promise.resolve();
+        } else {
+          const [activity, error] = entry;
+          pFactories.push(
+            this._removeExistingNonRejected(activity, error).then(this._saveNewActivity).then(this._onPullError));
         }
-        const pFactories = this.resultStack.map(([activity, error]) =>
-          this._removeExistingNonRejected(activity, error).then(this._saveNewActivity).then(this._onPullError));
-        return pFactories.reduce((currentPromise, pFactory) =>
-          currentPromise.then(pFactory), Promise.resolve())
-          .then(this._processResult)
-          // TODO continue sync up of other activities if the error is not a connection issue
-          .catch(reject);
-      })
-    );
+      }
+      return pFactories.reduce((currentPromise, pFactory) =>
+        currentPromise.then(pFactory), Promise.resolve())
+        .then(next)
+        // TODO continue sync up of other activities if the error is not a connection issue
+        .catch(error => Promise.reject(error));
+    });
   }
 
   _removeExistingNonRejected(activity, error) {
