@@ -1,0 +1,36 @@
+.header {
+  text-transform: uppercase;
+  background-color: #FFFFCC;
+  font-weight: bold;
+  margin-top: 2.5em;
+}
+
+.subtotal_footer_legend {
+  text-transform: uppercase;
+  background-color: #eeeeee;
+  font-weight: bold;
+  border-top: 1px solid #000000;
+  float: left;
+  width: 50%;
+}
+
+.subtotal_footer_number {
+  background-color: #eeeeee;
+  font-weight: bold;
+  border-top: 1px solid #000000;
+  float: right;
+  width: 50%;
+  text-align: right;
+}
+
+.subtotal_footer_number {
+  background-color: #eeeeee;
+  font-weight: bold;
+  border-top: 1px solid #000000;
+  float: right;
+}
+
+.funding_table {
+  width: 100%;
+  font-weight: bold;
+}

@@ -1,0 +1,8 @@
+.container {
+  max-width: 675px;
+  min-width: 675px;
+}
+
+.clear {
+  clear: both;
+}
