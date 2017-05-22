@@ -79,8 +79,6 @@ export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
 // Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
 export const
   TRANSPARENT_FLAG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=';
-// TODO this is a temporary limitation of the initial set of activities to export, AMPOFFLINE-273 or AMPOFFLINE-274
-export const FIRST_ACTIVITIES_PULL_FROM_AMP_LIMIT = 50;
 
 export const DG_COMPANY_NAME = 'Development Gateway';
 export const DG_ADDRESS_1 = '1110 Vermont Ave, NW, Suite 500';

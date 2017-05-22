@@ -61,16 +61,15 @@ const ConnectionHelper = {
             }
           } else if (response && response.statusCode === 401) {
             // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
-            return store.dispatch(loginAutomaticallyAction()).then(() => {
-              const options_ = RequestConfig.replaceToken(requestConfig);
-              return self._doMethod(options_).then((body_) => (
+            return store.dispatch(loginAutomaticallyAction()).then(() =>
+              self._doMethod(requestConfig).then((body_) =>
                 resolve(body_)
-              )).catch((error_) => {
+              ).catch((error_) => {
                 // If we couldnt relogin online automatically then we logout completely and forward to login page.
                 reject(this.createNotification({ errorObject: error_, origin: NOTIFICATION_ORIGIN_API_SECURITY }));
                 return store.dispatch(logoutAction());
-              });
-            }).catch((error2) => {
+              })
+            ).catch((error2) => {
               reject(this.createNotification({
                 errorObject: error2,
                 message: body.error || translate('unknownNetworkError'),
