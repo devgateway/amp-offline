@@ -16,7 +16,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
-    showIfEmpty: PropTypes.bool/*only makes sense if isSeparateSection is true, will render
+    showIfEmpty: PropTypes.bool/* only makes sense if isSeparateSection is true, will render
                                   if there are no org ids*/
   };
 

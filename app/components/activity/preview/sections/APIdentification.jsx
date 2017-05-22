@@ -19,12 +19,14 @@ class APIdentification extends Component {
   }
 
   render() {
-    const {buildSimpleField} = this.props;
-    const fieldPaths = [AC.PROJECT_TITLE, AC.AMP_ID, AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.TYPE_OF_IMPLEMENTATION, AC.MODALITIES, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS, AC.LESSONS_LEARNED, AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.ACTIVITY_BUDGET, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.A_C_CHAPTER];
+    const { buildSimpleField } = this.props;
+    const fieldPaths = [AC.PROJECT_TITLE, AC.AMP_ID, AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.TYPE_OF_IMPLEMENTATION,
+      AC.MODALITIES, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS, AC.LESSONS_LEARNED, AC.PROJECT_IMPACT,
+      AC.ACTIVITY_SUMMARY, AC.ACTIVITY_BUDGET, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.A_C_CHAPTER];
     return (
       <div>
         {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true))}
-        <APInternalIdsFromIdentification key="APInternalIdsFromIdentification" showIfEmpty={true}/>
+        <APInternalIdsFromIdentification key="APInternalIdsFromIdentification" showIfEmpty/>
       </div>
     );
   }
