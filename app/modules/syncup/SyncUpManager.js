@@ -123,9 +123,10 @@ export default class SyncUpManager {
     // run sync up with activities import first time, then with activities export
     // TODO a better solution can be done through AMPOFFLINE-209
     this._configureActivitiesImportSyncUp(_activitiesPush);
-    return this._startSyncUp().then(() => {
+    const promise = this._startSyncUp();
+    return promise.then(() => {
       this._configureActivitiesImportSyncUp(_noActivitiesPush);
-      return this._startSyncUp();
+      return promise;
     }).then(() => this._postSyncUp());
   }
 
