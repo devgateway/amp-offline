@@ -62,7 +62,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
         return (<APField
-          key={path} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline}
+          key={path} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline} separator={false}
           fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
       }
     }

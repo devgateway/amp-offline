@@ -76,11 +76,11 @@ export default class ActivityPreview extends Component {
     const editTooltip = (<Tooltip id="editTooltip">Edit</Tooltip>);
     const previewStatus = [];
     previewStatus.push(APField.instance('AMP ID', activity.amp_id,
-      styles.preview_status_title, styles.preview_status_detail));
+      false, false, styles.preview_status_title, styles.preview_status_detail));
     previewStatus.push(APField.instance('Status', 'Ongoing',
-      styles.preview_status_title, styles.preview_status_detail));
+      false, false, styles.preview_status_title, styles.preview_status_detail));
     previewStatus.push(APField.instance('On/Off Budget', 'On Treasury',
-      styles.preview_status_title, styles.preview_status_detail));
+      false, false, styles.preview_status_title, styles.preview_status_detail));
 
 
     return (

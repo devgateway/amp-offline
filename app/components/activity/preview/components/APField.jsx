@@ -26,7 +26,7 @@ export default class APField extends Component {
    * @param separator add or not an <hr> tag.
    * @return {SimpleField}
    */
-  static instance(trnLabel, value, inline = false, separator = true, nameClass, valueClass) {
+  static instance(trnLabel, value, inline = false, separator = false, nameClass, valueClass) {
     return (<APField
       key={trnLabel} title={translate(trnLabel)} value={value} inline={inline} separator={separator}
       fieldNameClass={nameClass} fieldValueClass={valueClass}/>);

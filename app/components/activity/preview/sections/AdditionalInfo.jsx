@@ -37,22 +37,22 @@ class AdditionalInfo extends Component {
     const isComputedTeam = this.props.activityWorkspace['is-computed'] === true ? translate('Yes') : translate('No');
     const updatedOn = this.props.activity[AC.CLIENT_UPDATED_ON] || this.props.activity[AC.MODIFIED_ON];
     additionalInfo.push(APField.instance('activityCreatedBy', this.props.activity[AC.CREATED_BY].value,
-      this.props.fieldNameClass, this.props.fieldValueClass));
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`,
-      this.props.fieldNameClass, this.props.fieldValueClass));
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     additionalInfo.push(APField.instance('computation', isComputedTeam,
-      this.props.fieldNameClass, this.props.fieldValueClass));
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     const createdOn = this.props.activity[AC.CREATED_ON] || this.props.activity[AC.CLIENT_CREATED_ON];
     additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn),
-      this.props.fieldNameClass, this.props.fieldValueClass));
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
     // TODO check if updated on can be displayed by ActivityPreview FM once AMPOFFLINE-309 is done
     if (updatedOn) {
       additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn),
-        this.props.fieldNameClass, this.props.fieldValueClass));
+        false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     }
     additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData(),
-      this.props.fieldNameClass, this.props.fieldValueClass));
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
     return additionalInfo;
   }
