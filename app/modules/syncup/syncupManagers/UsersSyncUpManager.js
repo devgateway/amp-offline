@@ -55,7 +55,7 @@ export default class UsersSyncUpManager extends AbstractAtomicSyncUpManager {
   _getUser(userEP, usersDB) {
     const userDB = usersDB.find(user => user.id === userEP.id);
     // if the user was already synced before, then we can check if the password was changed or the user was banned
-    if (userDB['first-name']) {
+    if (userDB && userDB['first-name']) {
       const pwdChange = userEP['password-changed-at'] !== userDB['password-changed-at'];
       const userBanned = userEP['is-banned'] === true;
       if (pwdChange || userBanned) {
