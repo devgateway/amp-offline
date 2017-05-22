@@ -9,10 +9,6 @@ import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManag
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
 import edit from '../../../../assets/images/edit_icon.svg';
-import version from '../../../../assets/images/version_icon.svg';
-import print from '../../../../assets/images/print_icon.svg';
-import pdf from '../../../../assets/images/pdf_icon.svg';
-import word from '../../../../assets/images/word_icon.svg';
 
 /**
  * Activity Preview main container
@@ -77,10 +73,6 @@ export default class ActivityPreview extends Component {
       <li>{category}</li>
     );
     const editTooltip = (<Tooltip id="editTooltip">Edit</Tooltip>);
-    const versionTooltip = (<Tooltip id="versionTooltip">Version History</Tooltip>);
-    const pdfTooltip = (<Tooltip id="pdfTooltip">Save as PDF</Tooltip>);
-    const wordTooltip = (<Tooltip id="wordTooltip">Save as Word Doc</Tooltip>);
-    const printTooltip = (<Tooltip id="printTooltip">Print</Tooltip>);
 
     return (
       <div className={styles.preview_container} >
@@ -91,26 +83,6 @@ export default class ActivityPreview extends Component {
               <li>
                 <OverlayTrigger placement="top" overlay={editTooltip}>
                   <object type={'image/svg+xml'} data={edit}> Edit </object>
-                </OverlayTrigger>
-              </li>
-              <li>
-                <OverlayTrigger placement="top" overlay={versionTooltip}>
-                  <object type={'image/svg+xml'} data={version}> Version History </object>
-                </OverlayTrigger>
-              </li>
-              <li>
-                <OverlayTrigger placement="top" overlay={pdfTooltip}>
-                  <object type={'image/svg+xml'} data={pdf}> Save as PDF </object>
-                </OverlayTrigger>
-              </li>
-              <li>
-                <OverlayTrigger placement="top" overlay={wordTooltip}>
-                  <object type={'image/svg+xml'} data={word}> Save as Word Doc </object>
-                </OverlayTrigger>
-              </li>
-              <li>
-                <OverlayTrigger placement="top" overlay={printTooltip}>
-                  <object type={'image/svg+xml'} data={print}> Print </object>
                 </OverlayTrigger>
               </li>
             </ul>
