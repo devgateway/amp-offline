@@ -8,7 +8,7 @@ import MainGroup from './MainGroup';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
-import edit from '../../../../assets/images/edit_icon.svg';
+import edit from '../../../assets/images/edit_icon.svg';
 
 /**
  * Activity Preview main container
