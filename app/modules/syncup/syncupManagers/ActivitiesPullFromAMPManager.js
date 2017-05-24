@@ -40,6 +40,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     }
     this._translations = translations.join('|');
     this.resultStack = [];
+    this.requestsToProcess = 0;
     this._onPullError = this._onPullError.bind(this);
     this._isNoResultToProcess = this._isNoResultToProcess.bind(this);
     this._processResult = this._processResult.bind(this);
@@ -68,7 +69,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
 
   getDiffLeftover() {
     const duration = DateUtils.duration(this.syncStartedAt, new Date());
-    LoggerManager.log(`duration = ${duration}`);
+    LoggerManager.log(`Activities pull duration = ${duration}`);
     LoggerManager.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
     this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
     LoggerManager.log(`unsynced = ${this.diff.saved.length}`);
@@ -108,17 +109,34 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _isPullDenied() {
-    return this.resultStack.length > QUEUE_LIMIT;
+    return this.requestsToProcess > QUEUE_LIMIT;
+  }
+
+  _incRequestsToProcess() {
+    this.requestsToProcess += 1;
+  }
+
+  _decRequestsToProcess() {
+    this.requestsToProcess -= 1;
   }
 
   _pullActivity(ampId) {
     // TODO content translations (iteration 2)
-    return Utils.waitWhile(this._isPullDenied.bind(this), CHECK_INTERVAL, ABORT_INTERVAL).then(() =>
+    return Utils.waitWhile(this._isPullDenied.bind(this), CHECK_INTERVAL, ABORT_INTERVAL).then(() => {
       ConnectionHelper.doGet({
         url: ACTIVITY_EXPORT_URL,
         paramsMap: { 'amp-id': ampId, translations: this._translations }
-      }).then((activity, error) => this.resultStack.push([activity, error]))
-        .catch((error) => this._onPullError(ampId, error)));
+      }).then((activity, error) => {
+        this.resultStack.push([activity, error]);
+        return this._decRequestsToProcess();
+      }).catch((error) => {
+        this._decRequestsToProcess();
+        this._onPullError(ampId, error);
+      });
+      // increase the count immediately it sent and decrease immediately the reply is received
+      this._incRequestsToProcess();
+      return Promise.resolve();
+    });
   }
 
   _isNoResultToProcess() {
@@ -130,7 +148,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
       const pFactories = [];
       let next = this._processResult;
       while (this.resultStack.length > 0) {
-        const entry = this.resultStack.pop();
+        const entry = this.resultStack.shift();
         if (entry === PULL_END) {
           next = () => Promise.resolve();
         } else {
