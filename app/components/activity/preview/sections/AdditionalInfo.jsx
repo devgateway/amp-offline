@@ -36,12 +36,14 @@ class AdditionalInfo extends Component {
     const accessType = translate(this.props.activityWorkspace['access-type']);
     const isComputedTeam = this.props.activityWorkspace['is-computed'] === true ? translate('Yes') : translate('No');
     const updatedOn = this.props.activity[AC.CLIENT_UPDATED_ON] || this.props.activity[AC.MODIFIED_ON];
+
     additionalInfo.push(APField.instance('activityCreatedBy', this.props.activity[AC.CREATED_BY].value,
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`,
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     additionalInfo.push(APField.instance('computation', isComputedTeam,
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
+
     const createdOn = this.props.activity[AC.CREATED_ON] || this.props.activity[AC.CLIENT_CREATED_ON];
     additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn),
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));

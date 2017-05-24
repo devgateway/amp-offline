@@ -94,7 +94,7 @@
 }
 
 .preview_categories ul li:hover:after {
-    content: url('../../../../assets/images/arrow.svg');
+    content: url('../../../assets/images/arrow.svg');
     height: 14px;
     width: 14px;
     display: block;

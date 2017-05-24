@@ -3,6 +3,7 @@
 @import "../node_modules/rc-menu/assets/index.css";
 @import '../node_modules/react-bootstrap-table/css/react-bootstrap-table.css';
 @import '../node_modules/react-bootstrap-table/css/toastr.css';
+@import './assets/fonts/opensans_regular_macroman/stylesheet.css';
 
 * {
   margin: 0;

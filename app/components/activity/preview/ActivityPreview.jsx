@@ -9,7 +9,7 @@ import APField from './components/APField';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
-import edit from '../../../../assets/images/AMP_ProjectIcon1.svg';
+import edit from '../../../assets/images/edit_icon.svg';
 
 /**
  * Activity Preview main container
@@ -81,7 +81,6 @@ export default class ActivityPreview extends Component {
       false, false, styles.preview_status_title, styles.preview_status_detail));
     previewStatus.push(APField.instance('On/Off Budget', 'On Treasury',
       false, false, styles.preview_status_title, styles.preview_status_detail));
-
 
     return (
       <div className={styles.preview_container} >
