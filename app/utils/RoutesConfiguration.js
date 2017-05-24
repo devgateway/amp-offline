@@ -76,7 +76,7 @@ const routesConfiguration = [{
   requiresAuth: true
 }, {
   url: SYNC_URL,
-  method: 'GET',
+  method: 'POST',
   requiresAuth: true
 }, {
   url: AMP_COUNTRY_FLAG,

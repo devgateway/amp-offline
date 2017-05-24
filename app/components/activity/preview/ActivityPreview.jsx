@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Grid, Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
@@ -8,6 +8,7 @@ import MainGroup from './MainGroup';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
+import edit from '../../../assets/images/edit_icon.svg';
 
 /**
  * Activity Preview main container
@@ -66,12 +67,32 @@ export default class ActivityPreview extends Component {
     const style = {
       verticalAlign: 'top'
     };
+    const categoryArray = ['Identification', 'Agency Internal IDs', 'Planning',
+      'Location', 'National Plan', 'Program', 'Sectors'];
+    const categories = categoryArray.map((category) =>
+      <li>{category}</li>
+    );
+    const editTooltip = (<Tooltip id="editTooltip">Edit</Tooltip>);
 
-    // TODO a proper styling will come once we get UI Desing from Llanco
     return (
       <div className={styles.preview_container} >
         <div className={styles.preview_header} >
           <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
+          <span className={styles.preview_icons} >
+            <ul>
+              <li>
+                <OverlayTrigger placement="top" overlay={editTooltip}>
+                  <object type={'image/svg+xml'} data={edit}> Edit </object>
+                </OverlayTrigger>
+              </li>
+            </ul>
+          </span>
+        </div>
+        <div className={styles.preview_status} />
+        <div className={styles.preview_categories} >
+          <ul>
+            {categories}
+          </ul>
         </div>
         <div>
           <Grid fluid>
