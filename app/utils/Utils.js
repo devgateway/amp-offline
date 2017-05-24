@@ -51,9 +51,7 @@ const Utils = {
   },
 
   toDefinedNotNullRule(key) {
-    const result = {};
-    result[key] = { $and: [{ $exists: true }, { $ne: null }] };
-    return result;
+    return { $and: [this.toMap(key, { $exists: true }), this.toMap(key, { $ne: null })] };
   },
 
   /**
