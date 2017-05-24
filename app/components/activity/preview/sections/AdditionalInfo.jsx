@@ -40,7 +40,7 @@ class AdditionalInfo extends Component {
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
     additionalInfo.push(APField.instance('computation', isComputedTeam));
     // TODO update dates formatting AMPOFFLINE-308
-    
+
     const createdOn = this.props.activity[AC.CREATED_ON] || this.props.activity[AC.CLIENT_CREATED_ON];
     additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn)));
 
