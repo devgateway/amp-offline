@@ -15,7 +15,9 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 const APInternalIdsSection = (isSeparateSection) => class extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    showIfEmpty: PropTypes.bool/* only makes sense if isSeparateSection is true, will render
+                                  if there are no org ids*/
   };
 
   constructor(props) {
@@ -53,13 +55,12 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     let content = this.buildContent();
     if (isSeparateSection === true) {
       content = <div>{content}</div>;
-    } else if (content) {
-      content = content.map(orgData => (<li key={orgData.key}>{orgData}</li>));
-      content = (
+    } else if (content || this.props.showIfEmpty) {
+      return (
         <div key="InternalIdsFromIdentificationSection">
           <span>{ translate('Organizations and Project IDs') }</span>
           <ul>
-            { content }
+            {content && content.map(orgData => (<li key={orgData.key}>{orgData}</li>))}
           </ul>
         </div>
       );
