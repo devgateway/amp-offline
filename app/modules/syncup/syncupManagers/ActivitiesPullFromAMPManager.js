@@ -98,6 +98,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     const pullActivitiesPromise = new Promise(
       (resolve, reject) => {
         const pFactories = this.diff.saved.map(ampId => this._pullActivity.bind(this, ampId));
+        // this is a sequential execution of promises through reduce (e.g. https://goo.gl/g44HvG)
         return pFactories.reduce((currentPromise, pFactory) =>
           currentPromise.then(pFactory), Promise.resolve())
           .then((result) => {
