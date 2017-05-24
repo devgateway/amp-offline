@@ -1,21 +1,101 @@
 .preview_container {
+  font-family: 'open_sansregular', sans-serif;
 }
 
 .preview_header {
-    border-top: 5px solid #4A687A;
-    background-color: #F0F0F0;
+  margin-left: 30px;
 }
 
 .preview_title {
-    background-color: #4A687A;
-    color: #FFFFFF;
-    font-size: 16px;
+    margin-left: 10px;
+    background-color: #FFFFFF;
+    color: #000000;
+    font-size: 1.2em;
     font-weight: bold;
     padding: 5px;
-    margin-left: 10px;
-    margin-right: 10px;
     height: auto;
+    display: inline-block;
+}
+
+.preview_icons {
+  display: inline-block;
+}
+
+.preview_icons img {
+  height: 20px;
+  width: 20px;
+}
+
+.preview_icons object {
+  height: 20px;
+  width: 20px;
+}
+
+.preview_icons ul {
+  margin-left: 50px;
+  columns: 5;
+  column-rule: 1px solid #778293;
+}
+
+.preview_icons ul li {
+  list-style-type: none;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.preview_status {
+    margin-left: 40px;
+    margin-right: 30px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f5faff;
+}
+
+.preview_status_title {
+    margin-left: 10px;
+}
+
+.preview_status_detail {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.preview_categories {
+  margin-top: 20px;
+  margin-left: 30px;
+}
+
+.preview_categories ul {
+    columns: 5;
+    column-rule: 1px solid #778293;
+    line-height: 150%;
+}
+
+.preview_categories ul li {
+    list-style-type: none;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #778293;
+    margin-left: 20px;
+    padding-left: 4px;
+    cursor: pointer;
+}
+
+.preview_categories ul li:hover {
+    color: #1d2531;
+    background-color: #f8f8f8;
+    position: relative;
+}
+
+.preview_categories ul li:hover:after {
+    content: url('../../../assets/images/arrow.svg');
+    height: 14px;
+    width: 14px;
     display: block;
+    position: absolute;
+    left: -13px;
+    top: 2px;
 }
 
 .preview_content {
