@@ -2,8 +2,11 @@
 import UsersSyncUpManager from './syncupManagers/UsersSyncUpManager';
 import SyncUpDiff from './SyncUpDiff';
 import SyncUpUnits from './SyncUpUnits';
+import * as Utils from '../../utils/Utils';
+import { AMP_ID } from '../../utils/constants/ActivityConstants';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { SYNC_URL, TEST_URL } from '../connectivity/AmpApiConstants';
+import * as ActivityHelper from '../helpers/ActivityHelper';
 import SyncUpHelper from '../helpers/SyncUpHelper';
 import TranslationSyncUpManager from './syncupManagers/TranslationSyncUpManager';
 import { loadAllLanguages } from '../../actions/TranslationAction';
@@ -144,14 +147,25 @@ export default class SyncUpManager {
     return ConnectionHelper.doGet({ url: TEST_URL });
   }
 
-  static getWhatChangedInAMP(user, time) {
+  /**
+   * Get all unique existing amp-ids
+   * @return {Promise.<Set>|*}
+   */
+  static getAmpIds() {
+    return ActivityHelper.findAll(Utils.toDefinedNotNullRule(AMP_ID), Utils.toMap(AMP_ID, 1)).then(ampIds =>
+      new Set(Utils.flattenToListByKey(ampIds, AMP_ID)));
+  }
+
+  static getWhatChangedInAMP(user, time, ampIds) {
     LoggerManager.log('getWhatChangedInAMP');
-    const paramsMap = { 'user-ids': user };
+    const body = { 'user-ids': [user] };
     // Dont send the date param at all on first-sync.
     if (time && time !== SYNCUP_NO_DATE) {
-      paramsMap['last-sync-time'] = encodeURIComponent(time);
+      body['last-sync-time'] = encodeURIComponent(time);
     }
-    return ConnectionHelper.doGet({ url: SYNC_URL, paramsMap });
+    // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
+    body['amp-ids'] = ampIds;
+    return ConnectionHelper.doPost({ url: SYNC_URL, body });
   }
 
   static _startSyncUp() {
@@ -159,12 +173,12 @@ export default class SyncUpManager {
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     return new Promise((resolve, reject) =>
-      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSyncUpLog()]
-      ).then(([, lastSyncUpLog]) => {
+      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSyncUpLog(), this.getAmpIds()]
+      ).then(([, lastSyncUpLog, ampIds]) => {
         const userId = store.getState().userReducer.userData.id;
         const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
         const syncUpDiffLeftOver = new SyncUpDiff(lastSyncUpLog[SYNCUP_DIFF_LEFTOVER]);
-        return this.getWhatChangedInAMP(userId, oldTimestamp)
+        return this.getWhatChangedInAMP(userId, oldTimestamp, ampIds)
           .then((changes) => resolve(this._runSyncUp(userId, changes, syncUpDiffLeftOver)))
           .catch(reject);
       }).catch(reject)
