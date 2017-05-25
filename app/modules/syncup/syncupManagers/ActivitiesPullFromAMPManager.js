@@ -95,16 +95,13 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _getLatestActivities() {
-    const pullActivitiesPromise = new Promise(
-      (resolve, reject) => {
-        const pFactories = this.diff.saved.map(ampId => this._pullActivity.bind(this, ampId));
-        // this is a sequential execution of promises through reduce (e.g. https://goo.gl/g44HvG)
-        return pFactories.reduce((currentPromise, pFactory) =>
-          currentPromise.then(pFactory), Promise.resolve())
-          .then((result) => {
-            this.resultStack.push(PULL_END);
-            return resolve(result);
-          }).catch(reject);
+    const pFactories = this.diff.saved.map(ampId => this._pullActivity.bind(this, ampId));
+    // this is a sequential execution of promises through reduce (e.g. https://goo.gl/g44HvG)
+    const pullActivitiesPromise = pFactories.reduce((currentPromise, pFactory) => currentPromise
+      .then(pFactory), Promise.resolve())
+      .then((result) => {
+        this.resultStack.push(PULL_END);
+        return result;
       });
     return Promise.all([pullActivitiesPromise, this._processResult()]);
   }
