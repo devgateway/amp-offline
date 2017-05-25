@@ -146,7 +146,7 @@ export default class ActivityForm extends Component {
       // TODO either do not display field paths or map them to user friendly message
       validationError = `${translate('Please provide all required fields')}: ${invalidFieldPaths.toJSON()}`;
     }
-    this.showSaveDialog = !validationError;
+    this.showSaveDialog = asDraft;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
   }
 
