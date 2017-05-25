@@ -1,6 +1,7 @@
 const Utils = {
 
   stringToId(string: string) {
+    string = string || '';
     let hash = 5381;
     for (let i = string.length - 1; i >= 0; i--) {
       /* eslint-disable no-bitwise */
@@ -65,6 +66,27 @@ const Utils = {
   delay(timeout) {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   },
+
+  /**
+   * Wait until condition is true
+   * @param conditionFunc the function that executes some condition and returns true or false
+   * @param checkInterval the ms to wait until rechecking the condition
+   * @param abortInterval the total interval to wait until aborting the wait
+   * @return {Promise.<T>}
+   */
+  waitWhile(conditionFunc, checkInterval, abortInterval = undefined) {
+    if (conditionFunc() === true) {
+      if (abortInterval !== undefined) {
+        if (abortInterval < 0) {
+          return Promise.reject('Condition wait aborted');
+        }
+        abortInterval -= checkInterval;
+      }
+      return Utils.delay(checkInterval).then(() => this.waitWhile(conditionFunc, checkInterval, abortInterval));
+    }
+    return Promise.resolve();
+  },
+
   /**
    * Removes _id from a collection mostly to be used in unit testing
    * @param collectionToFix a list of objects to remove the _id property
