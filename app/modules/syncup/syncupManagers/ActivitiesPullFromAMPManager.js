@@ -1,6 +1,8 @@
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
+import DateUtils from '../../../utils/DateUtils';
+import { CONNECTION_TIMEOUT } from '../../../utils/Constants';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
@@ -8,6 +10,20 @@ import store from '../../../index';
 import LoggerManager from '../../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
+
+const PULL_END = 'PULL_END';
+/*
+On my local, with the current solution, there was no significant difference if using 4 or 100 queue limit,
+or if using 10 or 100 check interval. I will stick to 4 queue limit (for pull requests mainly), to avoid AMP server
+overload in case multiple clients will run simultaneously.
+
+On remove there was no difference between check interval. While with a queue limit of 100, results processing was
+taking more than requests and sometime pull wait was aborted over the current 5sec timeout.
+ */
+const CHECK_INTERVAL = 100;
+const QUEUE_LIMIT = 4;
+const ABORT_INTERVAL = CONNECTION_TIMEOUT;
+
 /**
  * Pulls the latest activities state from AMP
  * @author Nadejda Mandrescu
@@ -23,7 +39,11 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
       translations = ['en', 'pt', 'tm', 'fr']; // using explicitly Timor and Niger langs until 319 is done
     }
     this._translations = translations.join('|');
+    this.resultStack = [];
+    this.requestsToProcess = 0;
     this._onPullError = this._onPullError.bind(this);
+    this._isNoResultToProcess = this._isNoResultToProcess.bind(this);
+    this._processResult = this._processResult.bind(this);
   }
 
   /**
@@ -43,11 +63,16 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   doSyncUp({ saved, removed }) {
     this.diff = { saved, removed };
     this.pulled = new Set();
+    this.syncStartedAt = new Date();
     return this._pullActivitiesFromAMP();
   }
 
   getDiffLeftover() {
+    const duration = DateUtils.duration(this.syncStartedAt, new Date());
+    LoggerManager.log(`Activities pull duration = ${duration}`);
+    LoggerManager.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
     this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
+    LoggerManager.log(`unsynced = ${this.diff.saved.length}`);
     return this.diff;
   }
 
@@ -70,26 +95,72 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _getLatestActivities() {
-    return new Promise(
-      (resolve, reject) => {
-        // we need to ensure we run chain promises execution in order: get, remove existing, save, process error
-        const pFactories = [];
-        this.diff.saved.forEach(ampId => {
-          const fnPull = this._pullActivity.bind(this, ampId);
-          pFactories.push(...[fnPull, this._removeExistingNonRejected, this._saveNewActivity, this._onPullError]);
-        });
-
-        return pFactories.reduce((currentPromise, pFactory) =>
-          currentPromise.then(pFactory), Promise.resolve()).then(resolve).catch(reject);
+    const pFactories = this.diff.saved.map(ampId => this._pullActivity.bind(this, ampId));
+    // this is a sequential execution of promises through reduce (e.g. https://goo.gl/g44HvG)
+    const pullActivitiesPromise = pFactories.reduce((currentPromise, pFactory) => currentPromise
+      .then(pFactory), Promise.resolve())
+      .then((result) => {
+        this.resultStack.push(PULL_END);
+        return result;
       });
+    return Promise.all([pullActivitiesPromise, this._processResult()]);
+  }
+
+  _isPullDenied() {
+    return this.requestsToProcess > QUEUE_LIMIT;
+  }
+
+  _incRequestsToProcess() {
+    this.requestsToProcess += 1;
+  }
+
+  _decRequestsToProcess() {
+    this.requestsToProcess -= 1;
   }
 
   _pullActivity(ampId) {
     // TODO content translations (iteration 2)
-    return ConnectionHelper.doGet({
-      url: ACTIVITY_EXPORT_URL,
-      paramsMap: { 'amp-id': ampId, translations: this._translations }
-    }).catch((error) => this._onPullError(ampId, error));
+    return Utils.waitWhile(this._isPullDenied.bind(this), CHECK_INTERVAL, ABORT_INTERVAL).then(() => {
+      ConnectionHelper.doGet({
+        url: ACTIVITY_EXPORT_URL,
+        paramsMap: { 'amp-id': ampId, translations: this._translations }
+      }).then((activity, error) => {
+        this.resultStack.push([activity, error]);
+        return this._decRequestsToProcess();
+      }).catch((error) => {
+        this._decRequestsToProcess();
+        this._onPullError(ampId, error);
+      });
+      // increase the count immediately it sent and decrease immediately the reply is received
+      this._incRequestsToProcess();
+      return Promise.resolve();
+    });
+  }
+
+  _isNoResultToProcess() {
+    return this.resultStack.length === 0;
+  }
+
+  _processResult() {
+    return Utils.waitWhile(this._isNoResultToProcess, CHECK_INTERVAL, ABORT_INTERVAL).then(() => {
+      const pFactories = [];
+      let next = this._processResult;
+      while (this.resultStack.length > 0) {
+        const entry = this.resultStack.shift();
+        if (entry === PULL_END) {
+          next = () => Promise.resolve();
+        } else {
+          const [activity, error] = entry;
+          pFactories.push(
+            this._removeExistingNonRejected(activity, error).then(this._saveNewActivity).then(this._onPullError));
+        }
+      }
+      return pFactories.reduce((currentPromise, pFactory) =>
+        currentPromise.then(pFactory), Promise.resolve())
+        .then(next)
+        // TODO continue sync up of other activities if the error is not a connection issue
+        .catch(error => Promise.reject(error));
+    });
   }
 
   _removeExistingNonRejected(activity, error) {
