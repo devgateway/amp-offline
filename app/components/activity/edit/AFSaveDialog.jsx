@@ -4,6 +4,21 @@ import { Link } from 'react-router';
 import translate from '../../../utils/translate';
 import LoggerManager from '../../../modules/util/LoggerManager';
 
+/*
+   Takes a function and a delay(in ms) and returns a debouncing function that will only
+   call the original function if the specified amount of time has passed since
+   its(debouncing function's) last call.
+   Useful for things such as window resize.
+*/
+
+function debounce(cb, delay = 200) {
+  let timeout = null;
+  return () => {
+    if (timeout !== null) clearTimeout(timeout);
+    timeout = setTimeout(cb, delay);
+  };
+}
+
 /**
  * Activity Form Save Dialog
  * @author Nadejda Mandrescu
@@ -20,7 +35,11 @@ export default class AFSaveDialog extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
-    this.state = { showDialog: false, goToDesktop: true };
+    this.state = {
+      showDialog: false,
+      goToDesktop: true,
+      paddingTop: 0
+    };
   }
 
   componentWillMount() {
@@ -31,6 +50,12 @@ export default class AFSaveDialog extends Component {
     this.open();
   }
 
+  onShow() {
+    this.recalcPaddingTop();
+    this.windowResizeListener = debounce(this.recalcPaddingTop.bind(this));
+    window.addEventListener('resize', this.windowResizeListener);
+  }
+
   getProceedContent() {
     if (this.state.goToDesktop === true) {
       const desktopURL = `/desktop/${this.props.teamMemberId}`;
@@ -38,6 +63,15 @@ export default class AFSaveDialog extends Component {
     } else {
       return this.props.actionTitle;
     }
+  }
+
+  recalcPaddingTop() {
+    const el = document.querySelector('.modal-content');
+    if (!el) return;
+    const MARGINS = 60;
+    this.setState({
+      paddingTop: (window.innerHeight - el.parentElement.offsetHeight - MARGINS) / 2
+    });
   }
 
   handleChange(e) {
@@ -57,19 +91,25 @@ export default class AFSaveDialog extends Component {
 
   close() {
     this.setState({ showDialog: false });
+    window.removeEventListener('resize', this.windowResizeListener);
   }
 
   render() {
-    const option1 = this.state.goToDesktop;
+    const { goToDesktop, paddingTop, showDialog } = this.state;
 
     return (
-      <Modal show={this.state.showDialog} onHide={this.close.bind(this)}>
+      <Modal
+        show={showDialog}
+        onShow={this.onShow.bind(this)}
+        onHide={this.close.bind(this)}
+        style={{ paddingTop }}
+      >
         <Modal.Header><Modal.Title>{this.props.actionTitle}</Modal.Title></Modal.Header>
         <Modal.Body>
           <div>{translate('AFwhereToGoOnSave')}</div>
           <FormGroup onChange={this.handleChange.bind(this)} defaultValue>
-            <Radio name="goTo" key defaultChecked={option1} value>{translate('Go to the desktop')}</Radio>
-            <Radio name="goTo" key={false} defaultChecked={!option1} value={false}>
+            <Radio name="goTo" key defaultChecked={goToDesktop} value>{translate('Go to the desktop')}</Radio>
+            <Radio name="goTo" key={false} defaultChecked={!goToDesktop} value={false}>
               {translate('Stay on the activity page')}
             </Radio>
           </FormGroup>
