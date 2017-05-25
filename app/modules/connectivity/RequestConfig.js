@@ -19,7 +19,9 @@ const RequestConfig = {
     const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
     const urlParams = this._paramsMapToString(paramsMap);
     const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
-    const headers = { 'User-Agent': PARAM_AMPOFFLINE_AGENT };
+    const headers = {
+      'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${navigator.userAgent}`
+    };
     if (!routeConfiguration[0].isBinary) {
       // If it is not binary we assume its JSON if we need to handle
       // more types we can adjust accordingly
