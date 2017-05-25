@@ -3,6 +3,7 @@ import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
 import { PARAM_AMPOFFLINE_AGENT } from './AmpApiConstants';
+import { VERSION } from '../../utils/Constants';
 
 const RequestConfig = {
   /**
