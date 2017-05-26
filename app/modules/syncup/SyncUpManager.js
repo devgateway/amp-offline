@@ -123,12 +123,25 @@ export default class SyncUpManager {
   static syncUpAllTypesOnDemand() {
     LoggerManager.log('syncUpAllTypesOnDemand');
     // run sync up with activities import first time, then with activities export
+    // an interim storage for errors, until AMPOFFLINE-209 and/or AMPOFFLINE-470
+    const errors = [];
     // TODO a better solution can be done through AMPOFFLINE-209
     this._configureActivitiesImportSyncUp(_activitiesPush);
-    return this._startSyncUp().then(() => {
+    return this._startSyncUp().then((result) => {
+      if (result.errors) {
+        errors.push(...result.errors);
+      }
       this._configureActivitiesImportSyncUp(_noActivitiesPush);
       return this._startSyncUp();
-    }).then(() => this._postSyncUp());
+    }).then((result) => this._postSyncUp().then(() => {
+      if (result.errors) {
+        errors.push(...result.errors);
+      }
+      if (errors.length) {
+        return Promise.reject(errors.join('. '));
+      }
+      return result;
+    }));
   }
 
   static _configureActivitiesImportSyncUp(activitiesImport) {
@@ -199,7 +212,7 @@ export default class SyncUpManager {
           LoggerManager.error(`Unexpected sync up error: ${err}`);
           return syncUpUnits.wait().then(errors => {
             errors.push(err);
-            return this._saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver })
+            return this._saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver, errors })
               .then(() => reject(errors.join(';'))).catch((err2) => {
                 errors.add(err2);
                 return reject(errors.join(';'));
@@ -266,7 +279,7 @@ export default class SyncUpManager {
            Also we do not expect to interrupt the sync up for all failed syncup, but based on dependencies.
            TODO AMPOFFLINE-209
            */
-          return resolve(this._processResultStatus(type, itemSyncUpManager, syncUpDiffLeftOver));
+          return resolve(this._processResultStatus(type, itemSyncUpManager, syncUpDiffLeftOver, error));
         });
       });
       syncUpUnits.add(syncUpUnitPromise);
@@ -277,23 +290,27 @@ export default class SyncUpManager {
     return Promise.all(promises);
   }
 
-  static _processResultStatus(type, itemSyncUpManager: SyncUpManagerInterface, syncUpDiffLeftOver: SyncUpDiff) {
+  static _processResultStatus(type, itemSyncUpManager: SyncUpManagerInterface, syncUpDiffLeftOver: SyncUpDiff, error) {
     syncUpDiffLeftOver.setDiff(type, itemSyncUpManager.getDiffLeftover());
     const status = syncUpDiffLeftOver.syncUpDiff[type] ? SYNCUP_STATUS_FAIL : SYNCUP_STATUS_SUCCESS;
-    return { type, status };
+    return { type, status, error };
   }
 
-  static _saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver, modules }) {
+  static _saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver, modules, errors }) {
     LoggerManager.log('_saveMainSyncUpLog');
     const successful = Object.keys(syncUpDiffLeftOver.syncUpDiff).length === 0;
     LoggerManager.log(`SyncUp ${successful ? 'OK' : 'Fail'}`);
     const status = successful ? SYNCUP_STATUS_SUCCESS : SYNCUP_STATUS_FAIL;
     const syncUpDiff = successful ? null : syncUpDiffLeftOver.syncUpDiff;
+    if (!successful && modules) {
+      errors = this._collectErrors(modules, errors);
+    }
     const syncDate = new Date();
     const log = {
       status,
       'requested-by': userId,
       modules,
+      errors,
       'sync-date': syncDate.toISOString()
     };
     log[SYNCUP_DATETIME_FIELD] = newTimestamp;
@@ -304,6 +321,15 @@ export default class SyncUpManager {
       log.id = id + 1;
       return SyncUpHelper.saveOrUpdateSyncUp(log);
     });
+  }
+
+  static _collectErrors(modules, errors) {
+    return modules.reduce((errorsList, module) => {
+      if (module.error) {
+        errorsList.push(module.error);
+      }
+      return errorsList;
+    }, errors || []);
   }
 
   static _postSyncUp() {
