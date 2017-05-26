@@ -2,7 +2,6 @@ import * as ActivityHelper from '../../helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
 import DateUtils from '../../../utils/DateUtils';
-import { CONNECTION_TIMEOUT } from '../../../utils/Constants';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
@@ -22,7 +21,7 @@ taking more than requests and sometime pull wait was aborted over the current 5s
  */
 const CHECK_INTERVAL = 100;
 const QUEUE_LIMIT = 4;
-const ABORT_INTERVAL = CONNECTION_TIMEOUT;
+const ABORT_INTERVAL = 60000; // milliseconds
 
 /**
  * Pulls the latest activities state from AMP
