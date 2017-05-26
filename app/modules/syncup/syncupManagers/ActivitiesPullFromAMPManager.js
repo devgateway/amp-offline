@@ -151,7 +151,9 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
         } else {
           const [activity, error] = entry;
           pFactories.push(
-            this._removeExistingNonRejected(activity, error).then(this._saveNewActivity).then(this._onPullError));
+            this._removeExistingNonRejected(activity, error)
+              .then(this._saveNewActivity.bind(this))
+              .then(this._onPullError.bind(this)));
         }
       }
       return pFactories.reduce((currentPromise, pFactory) =>
