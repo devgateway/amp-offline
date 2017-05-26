@@ -90,8 +90,7 @@ export default class SyncUpManager {
     LoggerManager.log('getLastSuccessfulSyncUp');
     return new Promise((resolve, reject) => (
       SyncUpHelper.findAllSyncUpByExample({
-        status: SYNCUP_STATUS_SUCCESS,
-        $not: { timestamp: null }
+        status: SYNCUP_STATUS_SUCCESS
       }).then(data => {
         const sortedData = data.sort(SyncUpManager.sortByLastSyncDateDesc);
         if (sortedData.length > 0) {
