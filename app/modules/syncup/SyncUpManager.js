@@ -173,7 +173,7 @@ export default class SyncUpManager {
     const body = { 'user-ids': [user] };
     // Dont send the date param at all on first-sync.
     if (time && time !== SYNCUP_NO_DATE) {
-      body['last-sync-time'] = encodeURIComponent(time);
+      body['last-sync-time'] = time;
     }
     // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
     body['amp-ids'] = ampIds;
