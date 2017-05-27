@@ -9,6 +9,10 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  */
 class AFOrganizations extends Component {
 
+  static propTypes = {
+    activity: PropTypes.object.isRequired
+  };
+
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
