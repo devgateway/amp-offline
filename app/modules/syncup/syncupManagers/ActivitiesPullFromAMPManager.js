@@ -41,8 +41,8 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     this.resultStack = [];
     this.requestsToProcess = 0;
     this._onPullError = this._onPullError.bind(this);
-    this._isNoResultToProcess = this._isNoResultToProcess.bind(this);
     this._processResult = this._processResult.bind(this);
+    this._waitWhile = this._waitWhile.bind(this);
   }
 
   /**
@@ -98,11 +98,15 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     // this is a sequential execution of promises through reduce (e.g. https://goo.gl/g44HvG)
     const pullActivitiesPromise = pFactories.reduce((currentPromise, pFactory) => currentPromise
       .then(pFactory), Promise.resolve())
-      .then((result) => {
+      .then((result) => this._waitWhile(this._hasPendingRequests).then(() => {
         this.resultStack.push(PULL_END);
         return result;
-      });
+      }));
     return Promise.all([pullActivitiesPromise, this._processResult()]);
+  }
+
+  _hasPendingRequests() {
+    return this.requestsToProcess > 0;
   }
 
   _isPullDenied() {
@@ -119,7 +123,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
 
   _pullActivity(ampId) {
     // TODO content translations (iteration 2)
-    return Utils.waitWhile(this._isPullDenied.bind(this), CHECK_INTERVAL, ABORT_INTERVAL).then(() => {
+    return this._waitWhile(this._isPullDenied).then(() => {
       ConnectionHelper.doGet({
         url: ACTIVITY_EXPORT_URL,
         paramsMap: { 'amp-id': ampId, translations: this._translations }
@@ -141,7 +145,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   _processResult() {
-    return Utils.waitWhile(this._isNoResultToProcess, CHECK_INTERVAL, ABORT_INTERVAL).then(() => {
+    return this._waitWhile(this._isNoResultToProcess).then(() => {
       const pFactories = [];
       let next = this._processResult;
       while (this.resultStack.length > 0) {
@@ -189,5 +193,9 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
       this.pulled.add(ampId);
     }
     return Promise.resolve();
+  }
+
+  _waitWhile(conditionFunc) {
+    return Utils.waitWhile(conditionFunc.bind(this), CHECK_INTERVAL, ABORT_INTERVAL);
   }
 }

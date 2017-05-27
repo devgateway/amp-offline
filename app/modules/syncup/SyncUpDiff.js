@@ -50,12 +50,14 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_WORKSPACE_MEMBERS:
       case SYNCUP_TYPE_ACTIVITIES_PULL:
         diff.removed = (this._syncUpDiff[type] ? (this._syncUpDiff[type].removed || []) : []).concat(diff.removed);
+        diff.removed = Array.from(new Set(diff.removed)); // get unique entries; keep array as it is expected everywhere
         diff.saved = (this._syncUpDiff[type] ? (this._syncUpDiff[type].saved || []) : []).concat(diff.saved);
         diff.saved = diff.saved.filter(item => !diff.removed.includes(item));
+        diff.saved = Array.from(new Set(diff.saved));
         break;
       // a list of elements to sync up
       case SYNCUP_TYPE_POSSIBLE_VALUES:
-        diff = (this._syncUpDiff[type] || []).concat(diff);
+        diff = Array.from(new Set((this._syncUpDiff[type] || []).concat(diff)));
         break;
       default:
         throwSyncUpError(`SyncUpDiff merge not implemented for type = ${type}`);
