@@ -5,7 +5,7 @@ import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
-import APField from './components/APField';
+import Status from './sections/APStatusBar';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
@@ -74,13 +74,6 @@ export default class ActivityPreview extends Component {
       <li>{category}</li>
     );
     const editTooltip = (<Tooltip id="editTooltip">Edit</Tooltip>);
-    const previewStatus = [];
-    previewStatus.push(APField.instance('AMP ID', activity.amp_id,
-      false, false, styles.preview_status_title, styles.preview_status_detail));
-    previewStatus.push(APField.instance('Status', 'Ongoing',
-      false, false, styles.preview_status_title, styles.preview_status_detail));
-    previewStatus.push(APField.instance('On/Off Budget', 'On Treasury',
-      false, false, styles.preview_status_title, styles.preview_status_detail));
 
     return (
       <div className={styles.preview_container} >
@@ -97,7 +90,7 @@ export default class ActivityPreview extends Component {
           </span>
         </div>
         <div className={styles.preview_status_container} >
-          {previewStatus}
+          <Status />
         </div>
         <div className={styles.preview_categories} >
           <ul>
