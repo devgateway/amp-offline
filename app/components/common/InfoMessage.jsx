@@ -10,7 +10,8 @@ export default class InfoMessage extends Component {
 
   static propTypes = {
     message: PropTypes.string.isRequired,
-    type: PropTypes.oneOf('success', 'info')
+    type: PropTypes.oneOf('success', 'info'),
+    timeout: PropTypes.number
   };
 
   constructor(props) {
@@ -22,9 +23,10 @@ export default class InfoMessage extends Component {
   }
 
   componentWillMount() {
-    this.setSate({ show: true });
+    const timeout = this.props.timeout || 10000;
+    this.setState({ show: true });
     // TODO in alerts & notifications ticket more behavior, styles, etc
-    setTimeout(() => this.setState({ show: false }), 10000);
+    setTimeout(() => this.setState({ show: false }), timeout);
   }
 
   close() {

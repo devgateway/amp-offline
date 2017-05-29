@@ -34,4 +34,12 @@ export default class DateUtils {
     return formattedDate;
   }
 
+  static duration(from, to) {
+    // not using 'fromNow' since it doesn't provide exact difference
+    let seconds = Moment(to).diff(from, 'seconds');
+    const minutes = Math.floor(seconds / 60);
+    seconds %= 60;
+    return `${minutes} min ${seconds} sec`;
+  }
+
 }

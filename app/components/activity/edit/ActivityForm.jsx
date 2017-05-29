@@ -7,6 +7,7 @@ import { SECTIONS, IDENTIFICATION, SECTIONS_FM_PATH } from './sections/AFSection
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
 import ErrorMessage from '../../common/ErrorMessage';
+import InfoMessage from '../../common/InfoMessage';
 import { PROJECT_TITLE, IS_DRAFT, AMP_ID, INTERNAL_ID } from '../../../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
@@ -29,7 +30,8 @@ export default class ActivityForm extends Component {
       savedActivity: PropTypes.object,
       activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
-      errorMessage: PropTypes.object
+      errorMessage: PropTypes.object,
+      isActivitySaved: PropTypes.bool
     }).isRequired,
     userReducer: PropTypes.object.isRequired,
     loadActivityForActivityForm: PropTypes.func.isRequired,
@@ -143,8 +145,11 @@ export default class ActivityForm extends Component {
     this.activity[IS_DRAFT] = asDraft;
     if (!this.props.activityReducer.activityFieldsManager.areRequiredFieldsSpecified(this.activity, asDraft,
         fieldPathsToSkipSet, invalidFieldPaths)) {
-      // TODO either do not display field paths or map them to user friendly message
-      validationError = `${translate('Please provide all required fields')}: ${invalidFieldPaths.toJSON()}`;
+      // Show a simple list of failing fields using the user-friendly name of them.
+      const errorsToLabel = invalidFieldPaths.toJSON()
+        .map(item => (this.props.activityReducer.activityFieldsManager.getFieldLabelTranslation(item)))
+        .join(', ');
+      validationError = `${translate('Please provide all required fields')}: ${errorsToLabel}`;
     }
     this.showSaveDialog = asDraft;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
@@ -185,10 +190,12 @@ export default class ActivityForm extends Component {
   _renderActivity() {
     const projectTitle = this.props.activityReducer.activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
     const errorMessage = this.state.validationError ? <ErrorMessage message={this.state.validationError} /> : null;
-    // TODO saved successful when staying on page
+    const sucessfulSaveMessage = this.props.activityReducer.isActivitySaved
+      ? <InfoMessage message={translate('Activity saved successfully')} timeout={5000} /> : null;
     return (
       <div className={styles.form_content} >
         {errorMessage}
+        {sucessfulSaveMessage}
         <Grid fluid >
           <Row >
             <Col>{this._renderSaveDialog()}</Col>

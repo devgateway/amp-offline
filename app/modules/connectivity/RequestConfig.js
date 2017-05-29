@@ -3,6 +3,7 @@ import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
 import { PARAM_AMPOFFLINE_AGENT } from './AmpApiConstants';
+import { VERSION } from '../../utils/Constants';
 
 const RequestConfig = {
   /**
@@ -19,7 +20,9 @@ const RequestConfig = {
     const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
     const urlParams = this._paramsMapToString(paramsMap);
     const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
-    const headers = { 'User-Agent': PARAM_AMPOFFLINE_AGENT };
+    const headers = {
+      'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${navigator.userAgent}`
+    };
     if (!routeConfiguration[0].isBinary) {
       // If it is not binary we assume its JSON if we need to handle
       // more types we can adjust accordingly
