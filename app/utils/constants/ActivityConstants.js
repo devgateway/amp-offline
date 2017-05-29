@@ -106,6 +106,15 @@ export const COMPONENTS = 'components';
 export const TOTAL_NUMBER_OF_FUNDING_SOURCES = 'total_number_of_funding_sources';
 export const SOURCE_ROLE = 'source_role';
 export const AMP_FUNDING_ID = 'amp_funding_id';
+export const ISSUES = 'issues';
+export const ISSUE_DATE = 'issue_date';
+export const MEASURES = 'measures';
+export const MEASURE_DATE = 'measure_date';
+export const ACTORS = 'actors';
+export const COMPONENT_TYPE = 'component_type';
+export const COMPONENT_TITLE = 'component_title';
+export const COMPONENT_FUNDING = 'funding';
+export const COMPONENT_DESCRIPTION = 'description';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
