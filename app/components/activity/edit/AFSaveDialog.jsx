@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import translate from '../../../utils/translate';
 import LoggerManager from '../../../modules/util/LoggerManager';
 import * as styles from "./AFSaveDialog.css";
+
 /*
    Takes a function and a delay(in ms) and returns a debouncing function that will only
    call the original function if the specified amount of time has passed since
@@ -66,11 +67,10 @@ export default class AFSaveDialog extends Component {
   }
 
   recalcPaddingTop() {
-    const el = document.querySelector('.modal-content');
+    const el = document.querySelector('.modal-dialog');
     if (!el) return;
-    const MARGINS = 60;
     this.setState({
-      paddingTop: (window.innerHeight - el.parentElement.offsetHeight - MARGINS) / 2
+      paddingTop: (window.innerHeight - el.clientHeight) / 2
     });
   }
 
