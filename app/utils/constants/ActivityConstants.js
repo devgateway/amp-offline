@@ -82,6 +82,7 @@ export const MODIFIED_BY = 'modified_by';
 export const MODIFIED_ON = 'update_date';
 export const CREATED_BY = 'created_by';
 export const CREATED_ON = 'creation_date';
+export const LAST_IMPORTED_BY = 'last_imported_by';
 export const CLIENT_CHANGE_ID = 'client-change-id';
 export const CLIENT_CREATED_ON = 'client-created-on';
 export const CLIENT_UPDATED_ON = 'client-updated-on';
