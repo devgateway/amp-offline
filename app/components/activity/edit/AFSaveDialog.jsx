@@ -3,7 +3,7 @@ import { Modal, FormGroup, Radio, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import translate from '../../../utils/translate';
 import LoggerManager from '../../../modules/util/LoggerManager';
-import * as styles from "./AFSaveDialog.css";
+import * as styles from './AFSaveDialog.css';
 
 /*
    Takes a function and a delay(in ms) and returns a debouncing function that will only
@@ -60,7 +60,11 @@ export default class AFSaveDialog extends Component {
   getProceedContent() {
     if (this.state.goToDesktop === true) {
       const desktopURL = `/desktop/${this.props.teamMemberId}`;
-      return <Link to={desktopURL}>{this.props.actionTitle}</Link>;
+      return (
+        <Link to={desktopURL} className={styles.save_as_draft_footer_proceed}>
+          {this.props.actionTitle}
+        </Link>
+      );
     } else {
       return this.props.actionTitle;
     }
@@ -97,6 +101,12 @@ export default class AFSaveDialog extends Component {
   render() {
     const { goToDesktop, paddingTop, showDialog } = this.state;
 
+    const buttonProps = {
+      bsSize: 'xsmall',
+      bsStyle: 'primary',
+      block: true
+    };
+
     return (
       <Modal
         show={showDialog}
@@ -104,9 +114,12 @@ export default class AFSaveDialog extends Component {
         onHide={this.close.bind(this)}
         style={{ paddingTop }}
         bsClass={`${styles.save_as_draft} modal`}
+        bsSize="small"
       >
-        <Modal.Header closeButton>
-          <Modal.Title>{this.props.actionTitle}</Modal.Title>
+        <Modal.Header closeButton className={styles.save_as_draft_header}>
+          <Modal.Title className={styles.save_as_draft_header_title}>
+            {this.props.actionTitle}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div>{translate('AFwhereToGoOnSave')}</div>
@@ -117,9 +130,13 @@ export default class AFSaveDialog extends Component {
             </Radio>
           </FormGroup>
         </Modal.Body>
-        <Modal.Footer>
-          <Button key="proceed" onClick={this.proceed.bind(this)}>{this.getProceedContent()}</Button>
-          <Button key="cancel" onClick={this.close.bind(this)}>{translate('Cancel')}</Button>
+        <Modal.Footer className={styles.save_as_draft_footer}>
+          <Button onClick={this.proceed.bind(this)} {...buttonProps}>
+            {this.getProceedContent()}
+          </Button>
+          <Button onClick={this.close.bind(this)} {...buttonProps}>
+            {translate('Cancel')}
+          </Button>
         </Modal.Footer>
       </Modal>
     );
