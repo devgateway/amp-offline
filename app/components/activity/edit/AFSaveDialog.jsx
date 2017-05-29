@@ -3,7 +3,7 @@ import { Modal, FormGroup, Radio, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import translate from '../../../utils/translate';
 import LoggerManager from '../../../modules/util/LoggerManager';
-
+import * as styles from "./AFSaveDialog.css";
 /*
    Takes a function and a delay(in ms) and returns a debouncing function that will only
    call the original function if the specified amount of time has passed since
@@ -103,8 +103,11 @@ export default class AFSaveDialog extends Component {
         onShow={this.onShow.bind(this)}
         onHide={this.close.bind(this)}
         style={{ paddingTop }}
+        bsClass={`${styles.save_as_draft} modal`}
       >
-        <Modal.Header><Modal.Title>{this.props.actionTitle}</Modal.Title></Modal.Header>
+        <Modal.Header closeButton>
+          <Modal.Title>{this.props.actionTitle}</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <div>{translate('AFwhereToGoOnSave')}</div>
           <FormGroup onChange={this.handleChange.bind(this)} defaultValue>
