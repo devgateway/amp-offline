@@ -27,6 +27,11 @@ class AFOrganizations extends Component {
       <Grid className={afStyles.full_width}>
         <Row>
           <Col md={12} lg={12}>
+            <AFField parent={this.props.activity} fieldPath={AC.DONOR_ORGANIZATION} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12} lg={12}>
             <AFField parent={this.props.activity} fieldPath={AC.RESPONSIBLE_ORGANIZATION} />
           </Col>
         </Row>
