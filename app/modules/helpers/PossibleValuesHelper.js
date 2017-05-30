@@ -1,10 +1,36 @@
-import { validate } from 'jsonschema';
+import { Validator } from 'jsonschema';
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 
+const optionSchema = {
+  id: '/OptionSchema',
+  $schema: 'http://json-schema.org/draft-04/schema#',
+  type: 'object',
+  patternProperties: {
+    // TODO update based on AMP-25785 if we actually should not limit to numbers
+    '^(0|[1-9]+[0-9]*)|[A-Z]{3}$': {
+      type: 'object',
+      properties: {
+        // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
+        id: {
+          anyOf: [{ type: 'integer' }, { type: 'string' }]
+        },
+        value: {
+          anyOf: [{ type: 'string' }]
+        },
+        'translated-value': { type: 'object' },
+        children: {
+          type: 'array',
+          items: { type: { $ref: '#/OptionSchemae' } }
+        }
+      },
+      required: ['id', 'value']
+    }
+  }
+};
 const possibleValuesSchema = {
   id: '/PossibleValues',
   $schema: 'http://json-schema.org/draft-04/schema#',
@@ -15,30 +41,16 @@ const possibleValuesSchema = {
       type: 'array',
       items: { type: 'string' }
     },
-    'possible-options': {
-      type: 'object',
-      patternProperties: {
-        // TODO update based on AMP-25785 if we actually should not limit to numbers
-        '^(0|[1-9]+[0-9]*)|[A-Z]{3}$': {
-          type: 'object',
-          properties: {
-            // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
-            id: {
-              anyOf: [{ type: 'integer' }, { type: 'string' }]
-            },
-            value: {
-              anyOf: [{ type: 'string' }]
-            },
-            'translated-value': { type: 'object' }
-          },
-          required: ['id', 'value']
-        },
-      },
-      additionalProperties: false
-    }
+    'possible-options': { $ref: '/OptionSchema' },
+    additionalProperties: false
   },
   required: ['id', 'field-path', 'possible-options']
 };
+
+const validator = new Validator();
+validator.addSchema(optionSchema);
+validator.addSchema(possibleValuesSchema);
+const validate = validator.validate;
 
 /**
  * A simplified helper for possible values storage for loading, searching / filtering and saving possible values.
@@ -51,7 +63,7 @@ const PossibleValuesHelper = {
    * @returns {Promise}
    */
   findById(id) {
-    LoggerManager.log('findById');
+    console.log('findById');
     const filter = { id };
     return this.findOne(filter);
   },
@@ -61,7 +73,7 @@ const PossibleValuesHelper = {
   },
 
   findAll(filter, projections) {
-    LoggerManager.log('findById');
+    console.log('findById');
     return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections);
   },
 
@@ -70,7 +82,7 @@ const PossibleValuesHelper = {
    * @param fieldValues structure that holds id (that is field path) and field-options
    */
   saveOrUpdate(fieldValues) {
-    LoggerManager.log('saveOrUpdate');
+    console.log('saveOrUpdate');
     const validationResult = this._validate(fieldValues);
     if (validationResult.valid) {
       return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, COLLECTION_POSSIBLE_VALUES);
@@ -84,7 +96,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   saveOrUpdateCollection(fieldValuesCollection) {
-    LoggerManager.log('saveOrUpdateCollection');
+    console.log('saveOrUpdateCollection');
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
       return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
@@ -98,7 +110,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   replaceAll(fieldValuesCollection) {
-    LoggerManager.log('replaceAll');
+    console.log('replaceAll');
     // if we are replacing existing collection, then let's just reject the new set if some of its data is invalid
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
@@ -133,7 +145,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   deleteById(id) {
-    LoggerManager.log('replaceAll');
+    console.log('replaceAll');
     return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
   },
 
@@ -165,9 +177,14 @@ const PossibleValuesHelper = {
 
   _getInvalidFormatError(errors) {
     const errorMessage = JSON.stringify(errors).substring(0, 120);
-    LoggerManager.error(errorMessage);
+    console.error(errorMessage);
     return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
   }
 };
 
 export default PossibleValuesHelper;
+
+
+
+// WEBPACK FOOTER //
+// ./app/modules/helpers/PossibleValuesHelper.js

@@ -36,8 +36,7 @@ class AdditionalInfo extends Component {
 
   _buildAdditionalInfo() {
     const additionalInfo = [];
-    // TODO once translations available for workspace name AMP-25766
-    const teamName = this.props.activityWorkspace.name;
+    const teamName = this.props.activityFieldsManager.getValue(this.props.activity, AC.TEAM);
     // no need to export repeating translation for the access type through workspaces EP
     const accessType = translate(this.props.activityWorkspace['access-type']);
     const isComputedTeam = this.props.activityWorkspace['is-computed'] === true ? translate('Yes') : translate('No');
