@@ -173,7 +173,7 @@ export default class SyncUpManager {
     const body = { 'user-ids': [user] };
     // Dont send the date param at all on first-sync.
     if (time && time !== SYNCUP_NO_DATE) {
-      body['last-sync-time'] = encodeURIComponent(time);
+      body['last-sync-time'] = time;
     }
     // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
     body['amp-ids'] = ampIds;
@@ -210,14 +210,15 @@ export default class SyncUpManager {
         .catch((err) => {
           // partial sync up was done, some unexpected problem occurred
           LoggerManager.error(`Unexpected sync up error: ${err}`);
-          return syncUpUnits.wait().then(errors => {
-            errors.push(err);
-            return this._saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver, errors })
-              .then(() => reject(errors.join(';'))).catch((err2) => {
+          return syncUpUnits.wait().then(errors =>
+            // the above err is already included into errors, caught by syncUpUnits
+            this._saveMainSyncUpLog({ userId, newTimestamp, syncUpDiffLeftOver, errors })
+              .then(() => reject(errors.join('. ')))
+              .catch((err2) => {
                 errors.add(err2);
-                return reject(errors.join(';'));
-              });
-          });
+                return reject(errors.join('. '));
+              })
+          );
         })
     );
   }
