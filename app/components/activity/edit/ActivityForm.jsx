@@ -160,11 +160,14 @@ export default class ActivityForm extends Component {
       return null;
     }
     this.showSaveDialog = false;
-    const actionTitle = this.state.isSaveAndSubmit ? translate('Save and Submit') : translate('Save as draft');
-    return (<AFSaveDialog
-      activity={this.activity} actionTitle={actionTitle} saveActivity={this.props.saveActivity}
-      teamMemberId={this.props.userReducer.teamMember.id}
-    />);
+    return (
+      <AFSaveDialog
+        activity={this.activity}
+        actionTitle={translate('Save as draft')}
+        saveActivity={this.props.saveActivity}
+        teamMemberId={this.props.userReducer.teamMember.id}
+      />
+    );
   }
 
   _renderActions() {
