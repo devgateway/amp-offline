@@ -36,25 +36,22 @@ class AdditionalInfo extends Component {
 
   _buildAdditionalInfo() {
     const additionalInfo = [];
-    // TODO once translations available for workspace name AMP-25766
-    const teamName = this.props.activityWorkspace.name;
+    const teamName = this.props.activityFieldsManager.getValueTranslation(AC.TEAM, this.props.activityWorkspace.name);
     // no need to export repeating translation for the access type through workspaces EP
     const accessType = translate(this.props.activityWorkspace['access-type']);
     const isComputedTeam = this.props.activityWorkspace['is-computed'] === true ? translate('Yes') : translate('No');
-    // TODO dates formatting AMPOFFLINE-308
     const updatedOn = this.props.activity[AC.CLIENT_UPDATED_ON] || this.props.activity[AC.MODIFIED_ON];
     const createdBy = this.props.activity[AC.CREATED_BY];
 
     additionalInfo.push(APField.instance('activityCreatedBy', createdBy ? createdBy.value : null));
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
     additionalInfo.push(APField.instance('computation', isComputedTeam));
-    // TODO update dates formatting AMPOFFLINE-308
 
     const createdOn = this.props.activity[AC.CREATED_ON] || this.props.activity[AC.CLIENT_CREATED_ON];
     additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn)));
 
-    // TODO check if updated on can be displayed by ActivityPreview FM once AMPOFFLINE-309 is done
-    if (updatedOn) {
+    if (updatedOn && (this.props.activityFieldsManager.isFieldPathEnabled(AC.CLIENT_UPDATED_ON)
+      || this.props.activityFieldsManager.isFieldPathEnabled(AC.MODIFIED_ON))) {
       additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn)));
     }
     additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData()));
