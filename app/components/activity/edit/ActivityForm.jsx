@@ -151,7 +151,7 @@ export default class ActivityForm extends Component {
         .join(', ');
       validationError = `${translate('Please provide all required fields')}: ${errorsToLabel}`;
     }
-    this.showSaveDialog = asDraft;
+    this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
   }
 
