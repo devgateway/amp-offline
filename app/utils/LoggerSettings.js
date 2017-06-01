@@ -1,16 +1,13 @@
 const defaultLoggerConfig = {
   Logger: {
     development: {
-      level: 'debug',
-      format: '{h}:{i}:{s}:{ms} {level} {text}'
+      level: 'debug'
     },
     production: {
-      level: 'info',
-      format: '{h}:{i}:{s}:{ms} {level} {text}'
+      level: 'info'
     },
     test: {
-      level: 'info',
-      format: '{h}:{i}:{s}:{ms} {level} {text}'
+      level: 'info'
     }
   }
 };
