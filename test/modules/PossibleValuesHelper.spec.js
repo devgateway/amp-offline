@@ -37,13 +37,15 @@ let ampFormatPVwithTranslations = {
   'beneficiary_agency~organization': [
     {
       id: 3,
-      value: {
+      value: 'Agence Française de Développement',
+      'translated-value': {
         en: 'Agence Française de Développement'
       }
     },
     {
       id: 4,
-      value: {
+      value: 'Agence internationale de l\'Energie Atomique',
+      'translated-value': {
         en: 'Agence internationale de l\'Energie Atomique'
       }
     }

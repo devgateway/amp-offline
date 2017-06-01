@@ -117,12 +117,14 @@ export default class ActivityFieldsManager {
       trnValue = null; // set to null to cache null and avoid the outer "if" test later
       const options = this._possibleValuesMap[fieldPath];
       if (options) {
-        // TODO update based on latest AMP API AMP-25621 solution, set to default lang value if requested lang not found
-        // const option = options.find(opt => opt['orig-value'] === origValue);
         const option = Object.values(options).find(opt => opt.value === origValue);
         if (option !== undefined) {
-          // TODO remove option.value once AMP-25621 is done
-          trnValue = option.value[this._lang] || option.value[this._defaultLang] || option.value || origValue;
+          const translations = option['translated-value'];
+          if (translations) {
+            trnValue = translations[this._lang] || translations[this._defaultLang];
+          }
+          // fallback to original untranslated value
+          trnValue = trnValue || origValue;
         }
       }
       // cache result
@@ -173,11 +175,17 @@ export default class ActivityFieldsManager {
     if (value !== undefined && value !== null && value.length !== 0) {
       let values = [].concat(value);
       values = values.map(val => {
-        if (val.value !== undefined) {
-          val = value.value;
+        let resVal = val.value !== undefined ? val.value : val;
+        const translations = val['translated-value'];
+        if (translations !== undefined) {
+          resVal = translations[this._lang];
+          if (resVal === undefined && fallbackDefaultLang) {
+            resVal = translations[this._defaultLang];
+          }
+          // fallback to untranslated value
+          resVal = resVal || val.value;
         }
-        val = val[this._lang] || (fallbackDefaultLang ? val[this._defaultLang] : val) || val;
-        return val;
+        return resVal;
       });
       value = value instanceof Array ? values : values[0];
     }
