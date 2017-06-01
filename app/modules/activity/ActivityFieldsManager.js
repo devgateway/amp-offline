@@ -23,7 +23,9 @@ export default class ActivityFieldsManager {
     LoggerManager.log('constructor');
     this._fieldsDef = fieldsDef;
     this._possibleValuesMap = {};
-    possibleValuesCollection.forEach(pv => { this._possibleValuesMap[pv.id] = pv['possible-options']; });
+    possibleValuesCollection.forEach(pv => {
+      this._possibleValuesMap[pv.id] = pv['possible-options'];
+    });
     this._fieldPathsEnabledStatusMap = {};
     this._lang = LANGUAGE_ENGLISH;
     this._defaultLang = LANGUAGE_ENGLISH;
@@ -39,7 +41,9 @@ export default class ActivityFieldsManager {
         this.cleanup(fd.children);
       }
       if (fd.field_label) {
-        Object.keys(fd.field_label).forEach(lang => { fd.field_label[lang.toLowerCase()] = fd.field_label[lang]; });
+        Object.keys(fd.field_label).forEach(lang => {
+          fd.field_label[lang.toLowerCase()] = fd.field_label[lang];
+        });
       }
     });
   }

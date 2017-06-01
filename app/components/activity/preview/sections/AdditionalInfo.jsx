@@ -16,6 +16,8 @@ class AdditionalInfo extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
     activityWorkspace: PropTypes.object.isRequired,
+    fieldNameClass: PropTypes.string,
+    fieldValueClass: PropTypes.string,
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
   };
 
@@ -43,18 +45,24 @@ class AdditionalInfo extends Component {
     const updatedOn = this.props.activity[AC.CLIENT_UPDATED_ON] || this.props.activity[AC.MODIFIED_ON];
     const createdBy = this.props.activity[AC.CREATED_BY];
 
-    additionalInfo.push(APField.instance('activityCreatedBy', createdBy ? createdBy.value : null));
-    additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
-    additionalInfo.push(APField.instance('computation', isComputedTeam));
+    additionalInfo.push(APField.instance('activityCreatedBy', createdBy ? createdBy.value : null,
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
+    additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`,
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
+    additionalInfo.push(APField.instance('computation', isComputedTeam,
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
     const createdOn = this.props.activity[AC.CREATED_ON] || this.props.activity[AC.CLIENT_CREATED_ON];
-    additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn)));
+    additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn),
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
     if (updatedOn && (this.props.activityFieldsManager.isFieldPathEnabled(AC.CLIENT_UPDATED_ON)
       || this.props.activityFieldsManager.isFieldPathEnabled(AC.MODIFIED_ON))) {
-      additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn)));
+      additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn),
+        false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     }
-    additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData()));
+    additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData(),
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
     return additionalInfo;
   }

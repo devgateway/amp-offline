@@ -28,7 +28,7 @@ export default class MainGroup extends Component {
 
   render() {
     // TODO (iteration 2+) hide sections that are not directly connected to a single field (e.g. planning, program)
-    return (<div className={styles.section_group}>
+    return (<div className={styles.main_group_container}>
       <APIdentification />
       <APInternalIds sectionPath={AC.ACTIVITY_INTERNAL_IDS} />
       <APPlanning />
