@@ -16,6 +16,8 @@ class AdditionalInfo extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
     activityWorkspace: PropTypes.object.isRequired,
+    fieldNameClass: PropTypes.string,
+    fieldValueClass: PropTypes.string,
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
   };
 
@@ -41,23 +43,27 @@ class AdditionalInfo extends Component {
     // no need to export repeating translation for the access type through workspaces EP
     const accessType = translate(this.props.activityWorkspace['access-type']);
     const isComputedTeam = this.props.activityWorkspace['is-computed'] === true ? translate('Yes') : translate('No');
-    // TODO dates formatting AMPOFFLINE-308
     const updatedOn = this.props.activity[AC.CLIENT_UPDATED_ON] || this.props.activity[AC.MODIFIED_ON];
     const createdBy = this.props.activity[AC.CREATED_BY];
 
-    additionalInfo.push(APField.instance('activityCreatedBy', createdBy ? createdBy.value : null));
-    additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`));
-    additionalInfo.push(APField.instance('computation', isComputedTeam));
-    // TODO update dates formatting AMPOFFLINE-308
+    additionalInfo.push(APField.instance('activityCreatedBy', createdBy ? createdBy.value : null,
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
+    additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`,
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
+    additionalInfo.push(APField.instance('computation', isComputedTeam,
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
     const createdOn = this.props.activity[AC.CREATED_ON] || this.props.activity[AC.CLIENT_CREATED_ON];
-    additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn)));
+    additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn),
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
     // TODO check if updated on can be displayed by ActivityPreview FM once AMPOFFLINE-309 is done
     if (updatedOn) {
-      additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn)));
+      additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn),
+        false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     }
-    additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData()));
+    additionalInfo.push(APField.instance('dataTeamLeader', this._getWorkspaceLeadData(),
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
     return additionalInfo;
   }
