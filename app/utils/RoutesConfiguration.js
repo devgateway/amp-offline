@@ -15,7 +15,9 @@ import {
   POSSIBLE_VALUES_PER_FIELD_PATHS,
   SYNC_URL,
   AMP_COUNTRY_FLAG,
-  WORKSPACE_SETTINGS_URL
+  WORKSPACE_SETTINGS_URL,
+  GET_FULL_EXCHANGE_RATES,
+  GET_INCREMENTAL_EXCHANGE_RATES
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -88,6 +90,14 @@ const routesConfiguration = [{
   url: WORKSPACE_SETTINGS_URL,
   method: 'GET',
   requiresAuth: true
+}, {
+  url: GET_FULL_EXCHANGE_RATES,
+  method: 'GET',
+  requiredAuth: true
+}, {
+  url: GET_INCREMENTAL_EXCHANGE_RATES,
+  method: 'GET',
+  requiredAuth: true
 }
 ];
 

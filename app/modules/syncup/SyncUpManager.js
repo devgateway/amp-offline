@@ -22,6 +22,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_GS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
@@ -43,6 +44,8 @@ import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
 import { loadNumberSettings, loadDateSettings } from '../../actions/StartUpAction';
 import WorkspaceSettingsSyncUpManager from './syncupManagers/WorkspaceSettingsSyncUpManager';
+import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
+
 import SyncUpManagerInterface from './syncupManagers/SyncUpManagerInterface';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
@@ -58,7 +61,8 @@ const syncUpModuleList = [
   { type: SYNCUP_TYPE_TRANSLATIONS, SyncUpClass: TranslationSyncUpManager },
   { type: SYNCUP_TYPE_WORKSPACES, SyncUpClass: WorkspaceSyncUpManager },
   { type: SYNCUP_TYPE_GS, SyncUpClass: GlobalSettingsSyncUpManager },
-  { type: SYNCUP_TYPE_WORKSPACE_SETTINGS, SyncUpClass: WorkspaceSettingsSyncUpManager }
+  { type: SYNCUP_TYPE_WORKSPACE_SETTINGS, SyncUpClass: WorkspaceSettingsSyncUpManager },
+  { type: SYNCUP_TYPE_EXCHANGE_RATES, SyncUpClass: CurrencyRatesSyncUpManager }
 ];
 
 const _noActivitiesPush = { type: SYNCUP_TYPE_ACTIVITIES_PUSH, SyncUpClass: null };
@@ -103,18 +107,6 @@ export default class SyncUpManager {
     ));
   }
 
-  /**
-   * Retrieves the latest sync up log
-   */
-  static getLastSyncUpLog() {
-    LoggerManager.log('getLastSyncUpLog');
-    return SyncUpHelper.getLatestId().then(id => {
-      if (id === 0) {
-        return {};
-      }
-      return SyncUpHelper.findSyncUpByExample({ id });
-    });
-  }
 
   /**
    * Get the timestamp (comes from server) from the newest successful syncup, use that date to query what changed
@@ -185,7 +177,7 @@ export default class SyncUpManager {
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     return new Promise((resolve, reject) =>
-      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSyncUpLog(), this.getAmpIds()]
+      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), SyncUpHelper.getLastSyncUpLog(), this.getAmpIds()]
       ).then(([, lastSyncUpLog, ampIds]) => {
         const userId = store.getState().userReducer.userData.id;
         const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
