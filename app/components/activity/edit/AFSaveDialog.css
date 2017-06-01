@@ -1,0 +1,28 @@
+.save_as_draft{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.save_as_draft_header{
+  padding: 5px;
+  margin: 0;
+  background: #c7d4db;
+}
+
+.save_as_draft_header_title{
+  font-size: 14px;
+}
+
+.save_as_draft_footer{
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
+.save_as_draft_footer_proceed{
+  color: white;
+}
+
+.save_as_draft_footer_proceed:hover{
+  color: white;
+  text-decoration: none;
+}

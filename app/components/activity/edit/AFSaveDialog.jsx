@@ -3,6 +3,22 @@ import { Modal, FormGroup, Radio, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import translate from '../../../utils/translate';
 import LoggerManager from '../../../modules/util/LoggerManager';
+import * as styles from './AFSaveDialog.css';
+
+/*
+   Takes a function and a delay(in ms) and returns a debouncing function that will only
+   call the original function if the specified amount of time has passed since
+   its(debouncing function's) last call.
+   Useful for things such as window resize.
+*/
+
+function debounce(cb, delay = 200) {
+  let timeout = null;
+  return () => {
+    if (timeout !== null) clearTimeout(timeout);
+    timeout = setTimeout(cb, delay);
+  };
+}
 
 /**
  * Activity Form Save Dialog
@@ -20,7 +36,11 @@ export default class AFSaveDialog extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
-    this.state = { showDialog: false, goToDesktop: true };
+    this.state = {
+      showDialog: false,
+      goToDesktop: true,
+      paddingTop: 0
+    };
   }
 
   componentWillMount() {
@@ -31,13 +51,31 @@ export default class AFSaveDialog extends Component {
     this.open();
   }
 
+  onShow() {
+    this.recalcPaddingTop();
+    this.windowResizeListener = debounce(this.recalcPaddingTop.bind(this));
+    window.addEventListener('resize', this.windowResizeListener);
+  }
+
   getProceedContent() {
     if (this.state.goToDesktop === true) {
       const desktopURL = `/desktop/${this.props.teamMemberId}`;
-      return <Link to={desktopURL}>{this.props.actionTitle}</Link>;
+      return (
+        <Link to={desktopURL} className={styles.save_as_draft_footer_proceed}>
+          {this.props.actionTitle}
+        </Link>
+      );
     } else {
       return this.props.actionTitle;
     }
+  }
+
+  recalcPaddingTop() {
+    const el = document.querySelector('.modal-dialog');
+    if (!el) return;
+    this.setState({
+      paddingTop: (window.innerHeight - el.clientHeight) / 2
+    });
   }
 
   handleChange(e) {
@@ -57,26 +95,48 @@ export default class AFSaveDialog extends Component {
 
   close() {
     this.setState({ showDialog: false });
+    window.removeEventListener('resize', this.windowResizeListener);
   }
 
   render() {
-    const option1 = this.state.goToDesktop;
+    const { goToDesktop, paddingTop, showDialog } = this.state;
+
+    const buttonProps = {
+      bsSize: 'xsmall',
+      bsStyle: 'primary',
+      block: true
+    };
 
     return (
-      <Modal show={this.state.showDialog} onHide={this.close.bind(this)}>
-        <Modal.Header><Modal.Title>{this.props.actionTitle}</Modal.Title></Modal.Header>
+      <Modal
+        show={showDialog}
+        onShow={this.onShow.bind(this)}
+        onHide={this.close.bind(this)}
+        style={{ paddingTop }}
+        bsClass={`${styles.save_as_draft} modal`}
+        bsSize="small"
+      >
+        <Modal.Header closeButton className={styles.save_as_draft_header}>
+          <Modal.Title className={styles.save_as_draft_header_title}>
+            {this.props.actionTitle}
+          </Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <div>{translate('AFwhereToGoOnSave')}</div>
           <FormGroup onChange={this.handleChange.bind(this)} defaultValue>
-            <Radio name="goTo" key defaultChecked={option1} value>{translate('Go to the desktop')}</Radio>
-            <Radio name="goTo" key={false} defaultChecked={!option1} value={false}>
+            <Radio name="goTo" key defaultChecked={goToDesktop} value>{translate('Go to the desktop')}</Radio>
+            <Radio name="goTo" key={false} defaultChecked={!goToDesktop} value={false}>
               {translate('Stay on the activity page')}
             </Radio>
           </FormGroup>
         </Modal.Body>
-        <Modal.Footer>
-          <Button key="proceed" onClick={this.proceed.bind(this)}>{this.getProceedContent()}</Button>
-          <Button key="cancel" onClick={this.close.bind(this)}>{translate('Cancel')}</Button>
+        <Modal.Footer className={styles.save_as_draft_footer}>
+          <Button onClick={this.proceed.bind(this)} {...buttonProps}>
+            {this.getProceedContent()}
+          </Button>
+          <Button onClick={this.close.bind(this)} {...buttonProps}>
+            {translate('Cancel')}
+          </Button>
         </Modal.Footer>
       </Modal>
     );

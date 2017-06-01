@@ -5,6 +5,8 @@ import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
 
 /**
  * Additional Info summary section
@@ -15,7 +17,8 @@ class AdditionalInfo extends Component {
     activity: PropTypes.object.isRequired,
     activityWorkspace: PropTypes.object.isRequired,
     fieldNameClass: PropTypes.string,
-    fieldValueClass: PropTypes.string
+    fieldValueClass: PropTypes.string,
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
   };
 
   constructor(props) {
@@ -24,8 +27,13 @@ class AdditionalInfo extends Component {
   }
 
   _getWorkspaceLeadData() {
-    // TODO update once possible options for team members are available AMP-25680
-    return this.props.activityWorkspace['workspace-lead-id'];
+    let wsLead = this.props.activityWorkspace['workspace-lead-id'];
+    if (wsLead) {
+      const options = this.props.activityFieldsManager.possibleValuesMap[AC.CREATED_BY];
+      const option = PossibleValuesManager.findOption(options, wsLead);
+      wsLead = option ? option.value : wsLead;
+    }
+    return wsLead;
   }
 
   _buildAdditionalInfo() {
@@ -36,8 +44,9 @@ class AdditionalInfo extends Component {
     const accessType = translate(this.props.activityWorkspace['access-type']);
     const isComputedTeam = this.props.activityWorkspace['is-computed'] === true ? translate('Yes') : translate('No');
     const updatedOn = this.props.activity[AC.CLIENT_UPDATED_ON] || this.props.activity[AC.MODIFIED_ON];
+    const createdBy = this.props.activity[AC.CREATED_BY];
 
-    additionalInfo.push(APField.instance('activityCreatedBy', this.props.activity[AC.CREATED_BY].value,
+    additionalInfo.push(APField.instance('activityCreatedBy', createdBy ? createdBy.value : null,
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`,
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
