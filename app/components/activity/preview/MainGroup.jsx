@@ -13,6 +13,7 @@ import APFundingSources from './sections/APFundingSources';
 import LoggerManager from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
 import APRelatedOrganizations from './sections/APRelatedOrganizations';
+import APIssues from './sections/issues/APIssues';
 
 /**
  * Main content
@@ -41,6 +42,7 @@ export default class MainGroup extends Component {
       <APFundingSources />
       <APFundingSection />
       <APRelatedOrganizations />
+      <APIssues sectionPath={AC.ISSUES} />
     </div>);
   }
 }
