@@ -56,8 +56,7 @@ class AdditionalInfo extends Component {
     additionalInfo.push(APField.instance('activityCreatedOn', DateUtils.createFormattedDate(createdOn),
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
-    if (updatedOn && (this.props.activityFieldsManager.isFieldPathEnabled(AC.CLIENT_UPDATED_ON)
-      || this.props.activityFieldsManager.isFieldPathEnabled(AC.MODIFIED_ON))) {
+    if (updatedOn && this.props.activityFieldsManager.isFieldPathEnabled(AC.MODIFIED_ON)) {
       additionalInfo.push(APField.instance('activityUpdatedOn', DateUtils.createFormattedDate(updatedOn),
         false, false, this.props.fieldNameClass, this.props.fieldValueClass));
     }
