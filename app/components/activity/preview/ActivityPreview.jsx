@@ -5,7 +5,7 @@ import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
-import Status from './sections/APStatusBar';
+import APStatusBar from './sections/APStatusBar';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import LoggerManager from '../../../modules/util/LoggerManager';
@@ -90,7 +90,7 @@ export default class ActivityPreview extends Component {
           </span>
         </div>
         <div className={styles.preview_status_container} >
-          <Status />
+          <APStatusBar fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail}/>
         </div>
         <div className={styles.preview_categories} >
           <ul>
