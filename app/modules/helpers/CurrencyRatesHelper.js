@@ -9,12 +9,12 @@ const CurrencyRatesHelper = {
 
   /**
    * Find rates by pair settings by workspace setting id
-   * @param currecnyFrom
-   * @param currecnyTo
+   * @param currencyFrom
+   * @param currencyTo
    * @returns {Promise}
    */
   findByFromAndTo(currencyFrom, currencyTo) {
-    LoggerManager.log('findById');
+    LoggerManager.log('findByFromAndTo');
     const filter = { 'currency-pair': { to: currencyTo, from: currencyFrom } };
 
     return DatabaseManager.findOne(filter, COLLECTION_CURRENCY_RATES);

@@ -2,7 +2,7 @@
 
 import request from 'request';
 import RequestConfig from './RequestConfig';
-import ErrorsNotificationHelper from '../helpers/ErrorNotificationHelper';
+import ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import { MAX_RETRY_ATEMPTS, ERRORS_TO_RETRY, ERROR_NO_AMP_SERVER } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_API_SECURITY,
@@ -53,7 +53,7 @@ const ConnectionHelper = {
               maxRetryAttempts -= 1;
               return this._doMethod(requestConfig, maxRetryAttempts, shouldRetry).then(resolve).catch(reject);
             } else {
-              const notifErrorTimeout = ErrorsNotificationHelper.createNotification({
+              const notifErrorTimeout = ErrorNotificationHelper.createNotification({
                 message: translate('timeoutError'),
                 origin: NOTIFICATION_ORIGIN_API_NETWORK
               });
@@ -66,14 +66,14 @@ const ConnectionHelper = {
                 resolve(body_)
               ).catch((error_) => {
                 // If we couldnt relogin online automatically then we logout completely and forward to login page.
-                reject(ErrorsNotificationHelper.createNotification({
+                reject(ErrorNotificationHelper.createNotification({
                   errorObject: error_,
                   origin: NOTIFICATION_ORIGIN_API_SECURITY
                 }));
                 return store.dispatch(logoutAction());
               })
             ).catch((error2) => {
-              reject(ErrorsNotificationHelper.createNotification({
+              reject(ErrorNotificationHelper.createNotification({
                 errorObject: error2,
                 message: body.error || translate('unknownNetworkError'),
                 origin: NOTIFICATION_ORIGIN_API_SECURITY
@@ -89,7 +89,7 @@ const ConnectionHelper = {
             const origin = (response && response.statusCode === 403)
               ? NOTIFICATION_ORIGIN_API_SECURITY
               : NOTIFICATION_ORIGIN_API_NETWORK;
-            reject(ErrorsNotificationHelper.createNotification({
+            reject(ErrorNotificationHelper.createNotification({
               message,
               origin
             }));
