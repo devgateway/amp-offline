@@ -45,6 +45,7 @@ class AdditionalInfo extends Component {
     const updatedOn = this.props.activity[AC.CLIENT_UPDATED_ON] || this.props.activity[AC.MODIFIED_ON];
     const createdBy = this.props.activity[AC.CREATED_BY];
 
+    // TODO: the right value as defined in AMP-25403 will be shown after AMP-26295.
     additionalInfo.push(APField.instance('activityCreatedBy', createdBy ? createdBy.value : null,
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
@@ -64,6 +65,7 @@ class AdditionalInfo extends Component {
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`,
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
+    // TODO: the right value as defined in AMP-25403 will be shown after AMP-26295.
     additionalInfo.push(APField.instance('workspaceManager', this._getWorkspaceLeadData(),
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 
