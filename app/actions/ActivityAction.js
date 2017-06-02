@@ -30,7 +30,7 @@ const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 
 export function loadActivityForActivityPreview(activityId) {
-  const paths = [ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, CREATED_BY];
+  const paths = [ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, CREATED_BY, TEAM, MODIFIED_BY];
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
