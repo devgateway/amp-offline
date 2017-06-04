@@ -9,6 +9,7 @@ import {
 } from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import styles from './APRelatedOrganizations.css';
+import APLabel from '../components/APLabel';
 
 /**
  * @author Gabriel Inchauspe
@@ -35,7 +36,7 @@ class APRelatedOrganizations extends Component {
       if (this.props.activity[orgType] && this.props.activity[orgType].length > 0) {
         content.push(<div>{orgType}</div>);
         this.props.activity[orgType].forEach(org => {
-          content.push(<div className={styles.organization}>{org.organization.value}</div>);
+          content.push(<APLabel label={org.organization.value} labelClass={styles.organization}/>);
         });
         content.push(<hr />);
       }
