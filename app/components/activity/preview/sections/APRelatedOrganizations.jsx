@@ -8,7 +8,6 @@ import {
   RESPONSIBLE_ORGANIZATION
 } from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-import translate from '../../../../utils/translate';
 import styles from './APRelatedOrganizations.css';
 
 /**
@@ -30,10 +29,11 @@ class APRelatedOrganizations extends Component {
   }
 
   _build() {
+    // TODO: translate the organization type (AMPOFFLINE-477).
     const content = [<br />];
     this.orgTypes.forEach(orgType => {
       if (this.props.activity[orgType] && this.props.activity[orgType].length > 0) {
-        content.push(<div>{translate(orgType)}</div>);
+        content.push(<div>{orgType}</div>);
         this.props.activity[orgType].forEach(org => {
           content.push(<div className={styles.organization}>{org.organization.value}</div>);
         });
