@@ -2,8 +2,9 @@ import * as PossibleValuesHelper from './PossibleValuesHelper';
 import * as FieldsHelper from './FieldsHelper';
 import store from '../../index';
 import Notification from './NotificationHelper';
+import PossibleValuesManager from '../activity/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
-import { PATHS_WITH_FULL_VALUE } from '../../utils/constants/FieldPathConstants';
+import { PATHS_WITH_TREE_STRUCTURE, LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import {
   HIERARCHICAL_VALUE,
   HIERARCHICAL_VALUE_DEPTH
@@ -141,26 +142,46 @@ export default class ActivityHydrator {
   }
 
   _getdHierchicalValueParts(possibleValues, selectedId) {
-    if (PATHS_WITH_FULL_VALUE.has(possibleValues.id)) {
-      return this._buildHierchicalValueParts(possibleValues['possible-options'], selectedId);
+    if (LOCATION_PATH === possibleValues.id) {
+      return this._buildTreeHierarchicalValueParts(possibleValues['possible-options'], selectedId);
+    } else if (PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
+      return this._buildTreeHierarchicalValueParts(possibleValues['possible-options'], selectedId);
     }
     return null;
   }
 
-  // TODO update with latest approach on extra info for possible values
-  _buildHierchicalValueParts(options, selectedId) {
+  // old mechanism, using v1 API
+  _buildLocationHierchicalValueParts(options, selectedId) {
     const nameParts = [];
     let option = options[selectedId];
     while (option) {
-      // TODO translated valud
-      nameParts.push(option.value);
+      nameParts.push(PossibleValuesManager.getOptionTranslation(option));
       option = option.extra_info ? options[option.extra_info.parent_location_id] : null;
     }
     return nameParts;
   }
 
+  _buildTreeHierarchicalValueParts(options, selectedId) {
+    const nameParts = [];
+    let last = options[selectedId];
+    while (!last) {
+      const next = Object.values(options).find(o => o.children && o['children-ids'].includes(selectedId));
+      if (next) {
+        nameParts.push(PossibleValuesManager.getOptionTranslation(next));
+        options = next.children;
+        last = options[selectedId];
+      } else {
+        last = true;
+      }
+    }
+    if (last !== true) {
+      nameParts.push(PossibleValuesManager.getOptionTranslation(last));
+    }
+    return nameParts;
+  }
+
   _formatValueParts(valueParts) {
-    return (valueParts && valueParts instanceof Array) ? `[${valueParts.reverse().join('][')}]` : valueParts;
+    return (valueParts && valueParts instanceof Array) ? `[${valueParts.join('][')}]` : valueParts;
   }
 
   /**

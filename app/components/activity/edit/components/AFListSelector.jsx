@@ -50,7 +50,7 @@ export default class AFListSelector extends Component {
     return this.state.values.map(value => {
       const simplifiedValue = {};
       Object.keys(value).forEach(field => {
-        const optionValue = value[field] ? (value[field][HIERARCHICAL_VALUE] || value[field].value) : null;
+        const optionValue = value[field] ? (value[field][HIERARCHICAL_VALUE] || value[field].translatedValue) : null;
         if (optionValue) {
           simplifiedValue[field] = optionValue;
           simplifiedValue.id = value[field].id;

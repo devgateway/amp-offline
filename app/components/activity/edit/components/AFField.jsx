@@ -113,7 +113,11 @@ export default class AFField extends Component {
   }
 
   _toAFOptions(options) {
-    return options.map(option => new AFOption(option));
+    return options.map(option => {
+      const afOption = new AFOption(option);
+      afOption.value = PossibleValuesManager.getOptionTranslation(option);
+      return afOption;
+    });
   }
 
   _getRichTextEditor() {

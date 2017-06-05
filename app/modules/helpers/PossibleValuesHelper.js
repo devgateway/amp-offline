@@ -23,13 +23,14 @@ const optionSchema = {
         },
         'translated-value': { type: 'object' },
         children: {
-          type: 'array',
-          items: { type: { $ref: '#/OptionSchemae' } }
-        }
+          type: { $ref: '/OptionSchema' }
+        },
+        'children-ids': { type: 'array' }
       },
       required: ['id', 'value']
     }
-  }
+  },
+  additionalProperties: false
 };
 const possibleValuesSchema = {
   id: '/PossibleValues',
@@ -41,16 +42,14 @@ const possibleValuesSchema = {
       type: 'array',
       items: { type: 'string' }
     },
-    'possible-options': { $ref: '/OptionSchema' },
-    additionalProperties: false
+    'possible-options': { $ref: '/OptionSchema' }
   },
   required: ['id', 'field-path', 'possible-options']
 };
 
 const validator = new Validator();
-validator.addSchema(optionSchema);
-validator.addSchema(possibleValuesSchema);
-const validate = validator.validate;
+validator.addSchema(optionSchema, '/OptionSchema');
+validator.addSchema(possibleValuesSchema, '/PossibleValues');
 
 /**
  * A simplified helper for possible values storage for loading, searching / filtering and saving possible values.
@@ -63,7 +62,7 @@ const PossibleValuesHelper = {
    * @returns {Promise}
    */
   findById(id) {
-    console.log('findById');
+    LoggerManager.log('findById');
     const filter = { id };
     return this.findOne(filter);
   },
@@ -73,7 +72,7 @@ const PossibleValuesHelper = {
   },
 
   findAll(filter, projections) {
-    console.log('findById');
+    LoggerManager.log('findById');
     return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections);
   },
 
@@ -82,7 +81,7 @@ const PossibleValuesHelper = {
    * @param fieldValues structure that holds id (that is field path) and field-options
    */
   saveOrUpdate(fieldValues) {
-    console.log('saveOrUpdate');
+    LoggerManager.log('saveOrUpdate');
     const validationResult = this._validate(fieldValues);
     if (validationResult.valid) {
       return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, COLLECTION_POSSIBLE_VALUES);
@@ -96,7 +95,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   saveOrUpdateCollection(fieldValuesCollection) {
-    console.log('saveOrUpdateCollection');
+    LoggerManager.log('saveOrUpdateCollection');
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
       return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
@@ -110,7 +109,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   replaceAll(fieldValuesCollection) {
-    console.log('replaceAll');
+    LoggerManager.log('replaceAll');
     // if we are replacing existing collection, then let's just reject the new set if some of its data is invalid
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
@@ -132,7 +131,7 @@ const PossibleValuesHelper = {
   },
 
   _validate(fieldValues) {
-    const result = validate(fieldValues, possibleValuesSchema);
+    const result = validator.validate(fieldValues, possibleValuesSchema);
     if (!result.valid) {
       result.id = fieldValues.id;
     }
@@ -145,7 +144,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   deleteById(id) {
-    console.log('replaceAll');
+    LoggerManager.log('replaceAll');
     return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
   },
 
@@ -153,20 +152,11 @@ const PossibleValuesHelper = {
    * Transforms data from AMP format to local format
    * @param fieldPath
    * @param possibleOptionsFromAMP
-   * @return {{id: *, field-path: (Array|*), possible-options: {}}}
+   * @return {{id: String, field-path: (Array|*), possible-options: { id: (String|Integer) }}}
    */
   transformToClientUsage([fieldPath, possibleOptionsFromAMP]) {
-    // TODO do recursive when AMP EP will provide the parent-child relationship by having the fields in a tree AMP-25619
     const fieldPathParts = !fieldPath ? [] : fieldPath.split('~');
-    let possibleOptions = {};
-    if (Array.isArray(possibleOptionsFromAMP)) {
-      possibleOptionsFromAMP.forEach(option => {
-        possibleOptions[option.id] = option;
-      });
-    } else {
-      // delegating data structure validation to the point it will be saved to DB, now keeping options as is
-      possibleOptions = possibleOptionsFromAMP;
-    }
+    const possibleOptions = this._transformOptionAsTreeStructure(possibleOptionsFromAMP);
     const possibleValuesForLocalUsage = {
       id: fieldPath,
       'field-path': fieldPathParts,
@@ -175,16 +165,31 @@ const PossibleValuesHelper = {
     return possibleValuesForLocalUsage;
   },
 
+  _transformOptionAsTreeStructure(possibleOptionsFromAMP) {
+    let possibleOptions = { };
+    if (Array.isArray(possibleOptionsFromAMP)) {
+      possibleOptionsFromAMP.forEach(option => {
+        possibleOptions[option.id] = option;
+        if (option.children) {
+          option.children = this._transformOptionAsTreeStructure(option.children);
+          const childrenValues = Object.values(option.children);
+          const grandChildren = childrenValues.map(c => (c.children ? c['children-ids'] : []));
+          // keeping the original children ids data type
+          option['children-ids'] = childrenValues.map(c => c.id).concat(...grandChildren);
+        }
+      });
+    } else {
+      // delegating data structure validation to the point it will be saved to DB, now keeping options as is
+      possibleOptions = possibleOptionsFromAMP;
+    }
+    return possibleOptions;
+  },
+
   _getInvalidFormatError(errors) {
-    const errorMessage = JSON.stringify(errors).substring(0, 120);
-    console.error(errorMessage);
+    const errorMessage = JSON.stringify(errors).substring(0, 1000);
+    LoggerManager.error(errorMessage);
     return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
   }
 };
 
 export default PossibleValuesHelper;
-
-
-
-// WEBPACK FOOTER //
-// ./app/modules/helpers/PossibleValuesHelper.js

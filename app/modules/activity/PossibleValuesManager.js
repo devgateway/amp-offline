@@ -1,6 +1,7 @@
 import {
   HIERARCHICAL_VALUE_DEPTH
 } from '../../utils/constants/ActivityConstants';
+import store from '../../index';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
@@ -11,7 +12,6 @@ const PossibleValuesManager = {
   /**
    * Builds tree set of ids from the parentId
    * This implementation is based on the current locations extra info approach and can change.
-   * // TODO update if needed based on latest approach from AMP-25619
    */
   expandParentWithChildren(options, parentId) {
     LoggerManager.log('expandParentWithChildren');
@@ -66,6 +66,16 @@ const PossibleValuesManager = {
 
   findOption(options, id) {
     return Object.values(options).find(o => o.id === id);
+  },
+
+  getOptionTranslation(option) {
+    let resVal = option.value;
+    const translations = option['translated-value'];
+    if (translations !== undefined) {
+      const langState = store.getState().translationReducer;
+      resVal = translations[langState.lang] || translations[langState.defaultLang] || resVal;
+    }
+    return resVal;
   }
 
 };
