@@ -1,7 +1,6 @@
-import { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-import style from './APLabel.css';
 
 export default class APLabel extends Component {
 
@@ -9,7 +8,8 @@ export default class APLabel extends Component {
     label: PropTypes.string.isRequired,
     dontTranslate: PropTypes.bool,
     labelClass: PropTypes.string,
-    decorator: PropTypes.func // TODO: To be implemented.
+    decorator: PropTypes.func, // TODO: To be implemented.
+    separator: PropTypes.bool
   };
 
   constructor(props) {
@@ -20,7 +20,7 @@ export default class APLabel extends Component {
   render() {
     const label = (this.props.dontTranslate === true ? this.props.label : translate(this.props.label));
     const labelClass = (this.props.labelClass ? this.props.labelClass : '');
-    const component = (`<div class='${labelClass}'><span className=${style.label}>${label}</span></div>`);
+    const component = (<div className={labelClass}><span>{label}</span>{this.props.separator ? <hr /> : ''}</div>);
     return component;
   }
 }
