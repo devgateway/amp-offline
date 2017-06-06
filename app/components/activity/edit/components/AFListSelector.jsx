@@ -79,6 +79,7 @@ export default class AFListSelector extends Component {
     });
     const values = this.state.values.concat(newSelectedOption);
     this.setState({ values });
+    this.props.onChange(values);
   }
 
   handleRemoveValues(ids) {

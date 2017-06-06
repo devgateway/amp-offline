@@ -33,13 +33,12 @@ const PossibleValuesManager = {
     return ids;
   },
 
-  // TODO update with AMPOFFLINE-303
   /**
    * Fills hierarchical depth of each option
    * @param options
    */
   fillHierarchicalDepth(options) {
-    options.forEach(option => {
+    Object.values(options).forEach(option => {
       this._fillHierarchicalDepth(options, option);
     });
     return options;
@@ -53,8 +52,8 @@ const PossibleValuesManager = {
     let depth = option[HIERARCHICAL_VALUE_DEPTH];
     if (depth === undefined) {
       // So far it is based on the current locations extra info approach
-      if (option.extra_info && option.extra_info.parent_location_id) {
-        const parent = options.find(o => o.id === option.extra_info.parent_location_id);
+      if (option.parentId) {
+        const parent = options[option.parentId];
         depth = 1 + this._fillHierarchicalDepth(options, parent);
       } else {
         depth = 0;

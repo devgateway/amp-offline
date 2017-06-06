@@ -22,10 +22,7 @@ const optionSchema = {
           anyOf: [{ type: 'string' }]
         },
         'translated-value': { type: 'object' },
-        children: {
-          type: { $ref: '/OptionSchema' }
-        },
-        'children-ids': { type: 'array' }
+        parentId: { anyOf: [{ type: 'integer' }, { type: 'string' }] }
       },
       required: ['id', 'value']
     }
@@ -156,7 +153,7 @@ const PossibleValuesHelper = {
    */
   transformToClientUsage([fieldPath, possibleOptionsFromAMP]) {
     const fieldPathParts = !fieldPath ? [] : fieldPath.split('~');
-    const possibleOptions = this._transformOptionAsTreeStructure(possibleOptionsFromAMP);
+    const possibleOptions = this._transformOptions(possibleOptionsFromAMP);
     const possibleValuesForLocalUsage = {
       id: fieldPath,
       'field-path': fieldPathParts,
@@ -165,17 +162,14 @@ const PossibleValuesHelper = {
     return possibleValuesForLocalUsage;
   },
 
-  _transformOptionAsTreeStructure(possibleOptionsFromAMP) {
-    let possibleOptions = { };
+  _transformOptions(possibleOptionsFromAMP, parentId, possibleOptions = { }) {
     if (Array.isArray(possibleOptionsFromAMP)) {
       possibleOptionsFromAMP.forEach(option => {
         possibleOptions[option.id] = option;
+        option.parentId = parentId;
         if (option.children) {
-          option.children = this._transformOptionAsTreeStructure(option.children);
-          const childrenValues = Object.values(option.children);
-          const grandChildren = childrenValues.map(c => (c.children ? c['children-ids'] : []));
-          // keeping the original children ids data type
-          option['children-ids'] = childrenValues.map(c => c.id).concat(...grandChildren);
+          this._transformOptions(option.children, option.id, possibleOptions);
+          delete option.children;
         }
       });
     } else {

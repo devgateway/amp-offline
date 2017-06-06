@@ -143,14 +143,14 @@ export default class ActivityHydrator {
 
   _getdHierchicalValueParts(possibleValues, selectedId) {
     if (LOCATION_PATH === possibleValues.id) {
-      return this._buildTreeHierarchicalValueParts(possibleValues['possible-options'], selectedId);
+      return this._buildHierarchicalValueParts(possibleValues['possible-options'], selectedId);
     } else if (PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
-      return this._buildTreeHierarchicalValueParts(possibleValues['possible-options'], selectedId);
+      return this._buildHierarchicalValueParts(possibleValues['possible-options'], selectedId);
     }
     return null;
   }
 
-  // old mechanism, using v1 API
+  // old mechanism for locations, using v1 API
   _buildLocationHierchicalValueParts(options, selectedId) {
     const nameParts = [];
     let option = options[selectedId];
@@ -161,27 +161,18 @@ export default class ActivityHydrator {
     return nameParts;
   }
 
-  _buildTreeHierarchicalValueParts(options, selectedId) {
+  _buildHierarchicalValueParts(options, selectedId) {
     const nameParts = [];
-    let last = options[selectedId];
-    while (!last) {
-      const next = Object.values(options).find(o => o.children && o['children-ids'].includes(selectedId));
-      if (next) {
-        nameParts.push(PossibleValuesManager.getOptionTranslation(next));
-        options = next.children;
-        last = options[selectedId];
-      } else {
-        last = true;
-      }
-    }
-    if (last !== true) {
-      nameParts.push(PossibleValuesManager.getOptionTranslation(last));
+    let current = options[selectedId];
+    while (current) {
+      nameParts.push(PossibleValuesManager.getOptionTranslation(current));
+      current = options[current.parentId];
     }
     return nameParts;
   }
 
   _formatValueParts(valueParts) {
-    return (valueParts && valueParts instanceof Array) ? `[${valueParts.join('][')}]` : valueParts;
+    return (valueParts && valueParts instanceof Array) ? `[${valueParts.reverse().join('][')}]` : valueParts;
   }
 
   /**
