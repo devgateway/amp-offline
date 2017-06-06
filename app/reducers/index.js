@@ -9,6 +9,7 @@ import desktopReducer from './DesktopReducer';
 import activityReducer from './ActivityReducer';
 import ampConnectionStatusReducer from './AmpConnectionStatusReducer';
 import startUpReducer from './StartUpReducer';
+import notificationReducer from './NotificationReducer';
 
 const rootReducer = combineReducers({
   loginReducer,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   desktopReducer,
   activityReducer,
   ampConnectionStatusReducer,
-  startUpReducer
+  startUpReducer,
+  notificationReducer
 });
 
 export default rootReducer;
