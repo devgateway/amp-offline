@@ -2,18 +2,18 @@ export const FULLSCREEN_ALERT_ADDED = 'FULLSCREEN_ALERT_ADDED';
 export const FULLSCREEN_ALERT_DISMISSED = 'FULLSCREEN_ALERT_DISMISSED';
 export const FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED = 'FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED';
 export const FULLSCREEN_ALERT_WITH_FOLLOWUP_DISMISSED = 'FULLSCREEN_ALERT_WITH_FOLLOWUP_DISMISSED';
-export const TEST = 'TEST';
+export const CONFIRMATION_ALERT_ADDED = 'CONFIRMATION_ALERT';
 
 // notification is expected to be an instance of ../modules/helpers/NotificationHelper
 export const addFullscreenAlert = notification => ({
   type: FULLSCREEN_ALERT_ADDED,
-  notification
+  payload: notification
 });
 
 // one argument - the notification to be dismissed
 export const dismissFullscreenAlert = notification => ({
   type: FULLSCREEN_ALERT_DISMISSED,
-  notification
+  payload: notification
 });
 
 // notification is expected to be an instance of ../modules/helpers/NotificationHelper
@@ -21,8 +21,10 @@ export const dismissFullscreenAlert = notification => ({
 
 export const addFullscreenAlertWithFollowup = (notification, nextAction) => ({
   type: FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED,
-  notification,
-  nextAction
+  payload: {
+    notification,
+    nextAction
+  }
 });
 
 
@@ -30,10 +32,23 @@ export const addFullscreenAlertWithFollowup = (notification, nextAction) => ({
 export const dismissFullscreenAlertWithFollowup = alert => dispatch => {
   dispatch({
     type: FULLSCREEN_ALERT_WITH_FOLLOWUP_DISMISSED,
-    alert
+    payload: alert
   });
 
   dispatch(alert.nextAction);
 
   return null;
 };
+
+// notification is expected to be an instance of ../modules/helpers/NotificationHelper
+// yesAction is the action to be dispatched is the user clicks 'Yes' on the modal. Optional
+// noAction is the action to be dispatched is the user clicks 'Yes' on the modal. Optional
+
+export const addConfirmationAlert = (notification, yesAction, noAction) => ({
+  type: CONFIRMATION_ALERT_ADDED,
+  payload: {
+    notification,
+    yesAction,
+    noAction
+  }
+});
