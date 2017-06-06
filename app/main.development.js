@@ -1,11 +1,8 @@
 import { app, BrowserWindow, Menu, shell } from 'electron';
-import LoggerManager from './modules/util/LoggerManager';
 
 let menu;
 let template;
 let mainWindow = null;
-
-LoggerManager.initialize();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line

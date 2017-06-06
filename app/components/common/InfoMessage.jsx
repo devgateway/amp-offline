@@ -10,7 +10,7 @@ export default class InfoMessage extends Component {
 
   static propTypes = {
     message: PropTypes.string.isRequired,
-    type: PropTypes.oneOf('success', 'info'),
+    type: PropTypes.oneOf(['success', 'info']),
     timeout: PropTypes.number
   };
 
