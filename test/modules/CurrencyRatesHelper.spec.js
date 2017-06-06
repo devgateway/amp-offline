@@ -20,12 +20,12 @@ const xofToArs = {
 };
 describe('@@ CurrencyRatesHelper @@', () => {
   describe('saveCurrencyRate', () =>
-    it('should save Global Setting data', () =>
+    it('should save currency rate data', () =>
       expect(helper.saveCurrencyRate(xofToArs)).to.eventually.deep.equal(xofToArs)
     )
   );
   describe('findByFromAndTo', () =>
-    it('should find Global Setting data', () =>
+    it('should find currency rate data', () =>
       expect(helper.findByFromAndTo('ARS', 'XOF')).to.eventually.deep.equal(xofToArs)
     )
   );

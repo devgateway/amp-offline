@@ -5,29 +5,32 @@ import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/Erro
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
 
 const CurrencyRatesManager = {
+  /**
+   * Currency conversion utility. If we have the direct rate it will convert from currencyFrom to currencyTo in the
+   * given date. If we don't have the said currency it will try to search the inverse rate and use 1/x. If the inverse
+   * rate is also not Available an error will be thrown
+   * @param currencyFrom currency code from the currency we are converting from
+   * @param currencyTo currency code from the currency we are converting to
+   * @param dateToFind date for which we are doing the conversion. It is expected in yyyy-mm-dd
+   * @returns {*|Promise.<TResult>}
+   */
   convertCurrency(currencyFrom, currencyTo, dateToFind) {
     const timeDateToFind = (new Date(`${dateToFind} ${CURRENCY_HOUR}`)).getTime();
     return CurrencyRatesHelper.findByFromAndTo(currencyFrom, currencyTo).then((currenciesToSearchDirect) => {
       if (currenciesToSearchDirect) {
-        // we found the direct convesion
-        return new Promise((resolve) => {
-          resolve(this.getExchangeRate(currenciesToSearchDirect, timeDateToFind));
-        });
+        return this.getExchangeRate(currenciesToSearchDirect, timeDateToFind);
       } else {
-        // we go to fetch the inverse
-        return CurrencyRatesHelper.findByFromAndTo(currencyTo, currencyFrom).then(currenciesToSearchInverse =>
-          new Promise((resolve, reject) => {
-            if (currenciesToSearchInverse) {
-              resolve(1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind));
-            } else {
-              const notifErrorNoCurrency = ErrorNotificationHelper.createNotification({
-                message: translate('timeoutError'),
-                origin: NOTIFICATION_ORIGIN_CURRENCY_MANAGER
-              });
-              reject(notifErrorNoCurrency);
-            }
-          })
-        );
+        return CurrencyRatesHelper.findByFromAndTo(currencyTo, currencyFrom).then((currenciesToSearchInverse) => {
+          if (currenciesToSearchInverse) {
+            return 1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind);
+          } else {
+            const notifErrorNoCurrency = ErrorNotificationHelper.createNotification({
+              message: translate('Currency rate not found'),
+              origin: NOTIFICATION_ORIGIN_CURRENCY_MANAGER
+            });
+            return Promise.reject(notifErrorNoCurrency);
+          }
+        });
       }
     });
   },
