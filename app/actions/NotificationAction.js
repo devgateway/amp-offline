@@ -15,9 +15,10 @@ export const dismissFullscreenAlert = notification => ({
 });
 
 // notification is expected to be an instance of ../modules/helpers/NotificationHelper
-// nextAction is the action to be dispatched
-export const addFullscreenAlertWithFollowup = (notification, nextAction) => ({
+// callback is a function that will be called after the user dismisses the alert
+// callback will be called with dispatch as its first argument
+export const addFullscreenAlertWithFollowup = (notification, callback) => ({
   type: FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED,
   notification,
-  nextAction
+  callback
 });
