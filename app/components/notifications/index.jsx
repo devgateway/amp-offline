@@ -14,7 +14,12 @@ class Notifications extends PureComponent {
     fullscreenAlerts: PropTypes.arrayOf(Notification).isRequired,
     fullscreenAlertsWithFollowup: PropTypes.arrayOf(PropTypes.shape({
       notification: PropTypes.instanceOf(Notification).isRequired,
-      callback: PropTypes.func.isRequired
+      nextAction: PropTypes.object.isRequired
+    })).isRequired,
+    confirmationAlerts: PropTypes.arrayOf(PropTypes.shape({
+      notification: PropTypes.instanceOf(Notification).isRequired,
+      yesAction: PropTypes.object,
+      noAction: PropTypes.object
     })).isRequired,
     onDismissFullscreenAlert: PropTypes.func.isRequired,
     onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired
@@ -58,10 +63,39 @@ class Notifications extends PureComponent {
     );
   }
 
+  maybeGetConfirmationAlerts() {
+    const { confirmationAlerts } = this.props;
+
+    if (!confirmationAlerts[0]) return null;
+
+    const alert = confirmationAlerts[0];
+
+    return (
+      <Modal show>
+        <Modal.Header>
+          <Modal.Title>
+            {translate('Confirmation required')}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {alert.notification.message}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={null}>
+            {translate('Yes')}
+          </Button>
+          <Button onClick={null}>
+            {translate('No')}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+
   render() {
     return (
       <div>
-        {this.maybeGetFullscreenAlert()}
+        {this.maybeGetFullscreenAlert() || this.maybeGetConfirmationAlerts()}
       </div>
     );
   }
@@ -70,7 +104,8 @@ class Notifications extends PureComponent {
 export default connect(
   state => ({
     fullscreenAlerts: state.notificationReducer.fullscreenAlerts,
-    fullscreenAlertsWithFollowup: state.notificationReducer.fullscreenAlertsWithFollowup
+    fullscreenAlertsWithFollowup: state.notificationReducer.fullscreenAlertsWithFollowup,
+    confirmationAlerts: state.notificationReducer.confirmationAlerts
   }),
 
   dispatch => ({
