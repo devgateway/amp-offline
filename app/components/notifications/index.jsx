@@ -4,7 +4,8 @@ import { Modal, Button } from 'react-bootstrap';
 import { PropTypes } from 'prop-types';
 import {
   dismissFullscreenAlert,
-  dismissFullscreenAlertWithFollowup
+  dismissFullscreenAlertWithFollowup,
+  dismissConfirmationAlert
 } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import translate from '../../utils/translate';
@@ -22,7 +23,8 @@ class Notifications extends PureComponent {
       noAction: PropTypes.object
     })).isRequired,
     onDismissFullscreenAlert: PropTypes.func.isRequired,
-    onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired
+    onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired,
+    onDismissConfirmationAlert: PropTypes.func.isRequired,
   };
 
   maybeGetFullscreenAlert() {
@@ -64,7 +66,7 @@ class Notifications extends PureComponent {
   }
 
   maybeGetConfirmationAlerts() {
-    const { confirmationAlerts } = this.props;
+    const { confirmationAlerts, onDismissConfirmationAlert } = this.props;
 
     if (!confirmationAlerts[0]) return null;
 
@@ -81,10 +83,10 @@ class Notifications extends PureComponent {
           {alert.notification.message}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={null}>
+          <Button onClick={onDismissConfirmationAlert.bind(null, alert, true)}>
             {translate('Yes')}
           </Button>
-          <Button onClick={null}>
+          <Button onClick={onDismissConfirmationAlert.bind(null, alert, false)}>
             {translate('No')}
           </Button>
         </Modal.Footer>
@@ -110,6 +112,7 @@ export default connect(
 
   dispatch => ({
     onDismissFullscreenAlert: notification => dispatch(dismissFullscreenAlert(notification)),
-    onDismissFullscreenAlertWithFollowup: alert => dispatch(dismissFullscreenAlertWithFollowup(alert))
+    onDismissFullscreenAlertWithFollowup: alert => dispatch(dismissFullscreenAlertWithFollowup(alert)),
+    onDismissConfirmationAlert: (alert, yesOrNo) => dispatch(dismissConfirmationAlert(alert, yesOrNo))
   })
 )(Notifications);

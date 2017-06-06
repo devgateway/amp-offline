@@ -3,7 +3,8 @@ import {
   FULLSCREEN_ALERT_DISMISSED,
   FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED,
   FULLSCREEN_ALERT_WITH_FOLLOWUP_DISMISSED,
-  CONFIRMATION_ALERT_ADDED
+  CONFIRMATION_ALERT_ADDED,
+  CONFIRMATION_ALERT_DISMISSED
 } from '../actions/NotificationAction';
 
 const initialState = {
@@ -44,6 +45,12 @@ export default (state = initialState, action) => {
     case CONFIRMATION_ALERT_ADDED: {
       const newState = Object.assign({}, state);
       newState.confirmationAlerts = state.confirmationAlerts.concat(action.payload);
+      return newState;
+    }
+
+    case CONFIRMATION_ALERT_DISMISSED: {
+      const newState = Object.assign({}, state);
+      newState.confirmationAlerts = state.confirmationAlerts.filter(notEqual(action.payload));
       return newState;
     }
 
