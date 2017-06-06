@@ -146,5 +146,9 @@
   "Issues": "Issues",
   "Activity saved successfully": "Activity saved successfully",
   "workspaceManager": "Workspace manager",
-  "activityLastUpdatedBy": "Activity last updated by"
+  "activityLastUpdatedBy": "Activity last updated by",
+  "Mode of Payment": "Mode of Payment",
+  "Agreement Title": "Agreement Title",
+  "Agreement Code": "Agreement Code",
+  "Funding Classification Date": "Funding Classification Date"
 }

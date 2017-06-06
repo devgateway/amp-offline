@@ -7,6 +7,8 @@ import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import translate from '../../../../../utils/translate';
+import commonStyles from '../../ActivityPreview.css';
+import { createFormattedDate } from '../../../../../utils/DateUtils';
 
 /**
  * @author Gabriel Inchauspe
@@ -14,7 +16,8 @@ import translate from '../../../../../utils/translate';
 class APFundingOrganizationSection extends Component {
 
   static propTypes = {
-    funding: PropTypes.object.isRequired
+    funding: PropTypes.object.isRequired,
+    comparator: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -24,14 +27,30 @@ class APFundingOrganizationSection extends Component {
 
   _buildDonorInfo() {
     const content = [];
-    content.push(APField.instance('Organization Name', this.props.funding[AC.FUNDING_DONOR_ORG_ID].value, true, false));
-    content.push(APField.instance('Organization Role', this.props.funding[AC.SOURCE_ROLE].value, true, false));
-    content.push(APField.instance('Type of Assistance', this.props.funding[AC.TYPE_OF_ASSISTANCE].value, true, false));
+    content.push(APField.instance('Organization Name', this.props.funding[AC.FUNDING_DONOR_ORG_ID].value, false, false,
+      commonStyles.section_field_name, commonStyles.section_field_value));
+    content.push(APField.instance('Organization Role', this.props.funding[AC.SOURCE_ROLE].value, false, false,
+      commonStyles.section_field_name, commonStyles.section_field_value));
+    content.push(APField.instance('Type of Assistance', this.props.funding[AC.TYPE_OF_ASSISTANCE].value, false, false,
+      commonStyles.section_field_name, commonStyles.section_field_value));
     content.push(APField.instance('Financing Instrument',
-      this.props.funding[AC.FINANCING_INSTRUMENT].value, true, false));
+      this.props.funding[AC.FINANCING_INSTRUMENT].value, false, false, commonStyles.section_field_name,
+      commonStyles.section_field_value));
     const fundingStatus = this.props.funding[AC.FUNDING_STATUS] ? this.props.funding[AC.FUNDING_STATUS].value : '';
-    content.push(APField.instance('Funding Status', fundingStatus, true, false));
-    // TODO: Add 'agreement title' and 'agreement code' fields.
+    content.push(APField.instance('Funding Status', fundingStatus, false, false, commonStyles.section_field_name,
+      commonStyles.section_field_value));
+    content.push(APField.instance('Mode of Payment',
+      this.props.funding[AC.MODE_OF_PAYMENT] ? this.props.funding[AC.MODE_OF_PAYMENT].value : '', false, false,
+      commonStyles.section_field_name, commonStyles.section_field_value));
+    content.push(APField.instance('Agreement Title',
+      this.props.funding[AC.AGREEMENT] ? this.props.funding[AC.AGREEMENT][AC.AGREEMENT_TITLE] : '', false, false,
+      commonStyles.section_field_name, commonStyles.section_field_value));
+    content.push(APField.instance('Agreement Code',
+      this.props.funding[AC.AGREEMENT] ? this.props.funding[AC.AGREEMENT][AC.AGREEMENT_CODE] : '', false, false,
+      commonStyles.section_field_name, commonStyles.section_field_value));
+    content.push(APField.instance('Funding Classification Date',
+      createFormattedDate(this.props.funding[AC.FUNDING_CLASSIFICATION_DATE]), false, false,
+      commonStyles.section_field_name, commonStyles.section_field_value));
     return content;
   }
 
@@ -51,8 +70,8 @@ class APFundingOrganizationSection extends Component {
         groups.push(auxFd);
       }
     });
-    // TODO: Sort the groups.
-    groups.forEach((group) => {
+    const sortedGroups = groups.sort(this.props.comparator);
+    sortedGroups.forEach((group) => {
       content.push(<APFundingTransactionTypeItem fundingDetails={fd} group={group} key={group.key} />);
     });
     return content;
