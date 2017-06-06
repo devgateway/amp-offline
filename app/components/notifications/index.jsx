@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';
 import { PropTypes } from 'prop-types';
 import {
-  dismissFullscreenAlert
+  dismissFullscreenAlert,
+  dismissFullscreenAlertWithFollowup
 } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import translate from '../../utils/translate';
@@ -15,20 +16,29 @@ class Notifications extends PureComponent {
       notification: PropTypes.instanceOf(Notification).isRequired,
       callback: PropTypes.func.isRequired
     })).isRequired,
-    onDismissFullscreenAlert: PropTypes.func.isRequired
+    onDismissFullscreenAlert: PropTypes.func.isRequired,
+    onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired
   };
 
   maybeGetFullscreenAlert() {
-    const { fullscreenAlerts, fullscreenAlertsWithFollowup, onDismissFullscreenAlert } = this.props;
+    const {
+      fullscreenAlerts,
+      fullscreenAlertsWithFollowup,
+      onDismissFullscreenAlert,
+      onDismissFullscreenAlertWithFollowup
+    } = this.props;
+
     let notification;
     let onDismiss;
+
     if (fullscreenAlerts[0]) {
       notification = fullscreenAlerts[0];
       onDismiss = () => onDismissFullscreenAlert(notification);
     } else if (fullscreenAlertsWithFollowup[0]) {
       notification = fullscreenAlertsWithFollowup[0].notification;
-      onDismiss = () => null;
+      onDismiss = () => onDismissFullscreenAlertWithFollowup(fullscreenAlertsWithFollowup[0]);
     } else return null;
+
     return (
       <Modal show>
         <Modal.Header>
@@ -65,5 +75,6 @@ export default connect(
 
   dispatch => ({
     onDismissFullscreenAlert: notification => dispatch(dismissFullscreenAlert(notification)),
+    onDismissFullscreenAlertWithFollowup: alert => dispatch(dismissFullscreenAlertWithFollowup(alert))
   })
 )(Notifications);
