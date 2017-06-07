@@ -39,8 +39,8 @@ const UserHelper = {
     return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
   },
 
-  getRegisteredUserIds() {
-    return this.findAllClientRegisteredUsersByExample({}, { id: 1 }).then(users =>
+  getNonBannedRegisteredUserIds() {
+    return this.findAllClientRegisteredUsersByExample({ 'is-banned': false }, { id: 1 }).then(users =>
       Utils.flattenToListByKey(users, 'id'));
   },
 

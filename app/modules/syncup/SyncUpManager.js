@@ -187,7 +187,7 @@ export default class SyncUpManager {
      and the other the local database. */
     return new Promise((resolve, reject) =>
       Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSyncUpLog(), this.getAmpIds(),
-        UserHelper.getRegisteredUserIds()]
+        UserHelper.getNonBannedRegisteredUserIds()]
       ).then(([, lastSyncUpLog, ampIds, registeredUsersIds]) => {
         const userId = store.getState().userReducer.userData.id;
         const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
