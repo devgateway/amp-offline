@@ -1,6 +1,7 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
+import * as Utils from '../../utils/Utils';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
@@ -39,7 +40,8 @@ const UserHelper = {
   },
 
   getRegisteredUserIds() {
-    return this.findAllClientRegisteredUsersByExample({}, { id: 1 });
+    return this.findAllClientRegisteredUsersByExample({}, { id: 1 }).then(users =>
+      Utils.flattenToListByKey(users, 'id'));
   },
 
   /**

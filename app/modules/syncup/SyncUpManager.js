@@ -171,7 +171,6 @@ export default class SyncUpManager {
 
   static getWhatChangedInAMP(userIds, time, ampIds) {
     LoggerManager.log('getWhatChangedInAMP');
-    userIds = Utils.flattenToListByKey(userIds, 'id');
     const body = { 'user-ids': userIds };
     // Dont send the date param at all on first-sync.
     if (time && time !== SYNCUP_NO_DATE) {

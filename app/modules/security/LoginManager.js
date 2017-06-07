@@ -3,8 +3,8 @@ import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
 import Notification from '../helpers/NotificationHelper';
 import {
-  NOTIFICATION_ORIGIN_AUTHENTICATION,
-  NOTIFICATION_ORIGIN_API_SECURITY
+  NOTIFICATION_ORIGIN_API_SECURITY,
+  NOTIFICATION_ORIGIN_AUTHENTICATION
 } from '../../utils/constants/ErrorConstants';
 import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
 import LoggerManager from '../util/LoggerManager';
@@ -93,16 +93,14 @@ const LoginManager = {
     LoggerManager.log('saveLoginData');
     return UserHelper.findByEmail(email).then((dbData) => (
       UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
-        if (dbData) {
-          dbData.ampOfflinePassword = hash;
-          return UserHelper.saveOrUpdateUser(dbData);
-        } else {
-          const id = userData['user-id'];
-          const registeredOnClient = new Date().toISOString();
-          const dbUserData = { id, email, registeredOnClient };
-          dbUserData.ampOfflinePassword = hash;
-          return UserHelper.saveOrUpdateUser(dbUserData);
+        if (!dbData) {
+          dbData = { id: userData['user-id'], email };
         }
+        if (!dbData.registeredOnClient) {
+          dbData.registeredOnClient = new Date().toISOString();
+        }
+        dbData.ampOfflinePassword = hash;
+        return UserHelper.saveOrUpdateUser(dbData);
       })
     ));
   }
