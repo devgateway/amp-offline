@@ -15,7 +15,7 @@ import Message from './message';
 
 class Notifications extends PureComponent {
   static propTypes = {
-    fullscreenAlerts: PropTypes.arrayOf(Notification).isRequired,
+    fullscreenAlerts: PropTypes.arrayOf(PropTypes.instanceOf(Notification)).isRequired,
     fullscreenAlertsWithFollowup: PropTypes.arrayOf(PropTypes.shape({
       notification: PropTypes.instanceOf(Notification).isRequired,
       nextAction: PropTypes.object.isRequired
@@ -25,7 +25,7 @@ class Notifications extends PureComponent {
       yesAction: PropTypes.object,
       noAction: PropTypes.object
     })).isRequired,
-    messages: PropTypes.arrayOf(Notification).isRequired,
+    messages: PropTypes.arrayOf(PropTypes.instanceOf(Notification)).isRequired,
     onDismissFullscreenAlert: PropTypes.func.isRequired,
     onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired,
     onDismissConfirmationAlert: PropTypes.func.isRequired,
