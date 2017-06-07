@@ -3,11 +3,38 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Notification from '../../modules/helpers/NotificationHelper';
 
+const TIMEOUT = 10 * 1000;
+const CHECK_INTERVAL = 100;
+
 class Message extends PureComponent {
   static propTypes = {
-    notification: PropTypes.instanceOf(Notification),
+    notification: PropTypes.instanceOf(Notification).isRequired,
     onDismiss: PropTypes.func.isRequired
   };
+
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      timeLeft: TIMEOUT
+    };
+  }
+
+  componentDidMount() {
+    const { onDismiss } = this.props;
+    this.removalInterval = setInterval(() => {
+      const { timeLeft } = this.state;
+      const newTimeLeft = timeLeft - CHECK_INTERVAL;
+      if (newTimeLeft <= 0) {
+        onDismiss();
+      } else {
+        this.setState({ timeLeft: newTimeLeft });
+      }
+    }, CHECK_INTERVAL);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.removalInterval);
+  }
 
   render() {
     const { notification, onDismiss } = this.props;

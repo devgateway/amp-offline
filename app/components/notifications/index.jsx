@@ -106,9 +106,9 @@ class Notifications extends PureComponent {
 
     return (
       <div className={styles.message_container}>
-        {messages.map((notification, index) =>
+        {messages.map(notification =>
           <Message
-            key={index}
+            key={notification}
             notification={notification}
             onDismiss={onDismissMessage.bind(null, notification)}
           />
