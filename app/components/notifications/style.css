@@ -2,15 +2,25 @@
   position: fixed;
   right: 10px;
   top: 10px;
-  bottom: 10px;
+  max-height: 90vh;
   width: 300px;
   z-index: 1051;
 }
 
 .alert_wrapper{
-  transition: height 1s;
-  height: 75px;/* magic number, feel free to change */
+  transition: height .5s cubic-bezier(0.19, 1, 0.22, 1),
+  transform .5s cubic-bezier(0.19, 1, 0.22, 1);
+  height: 60px;/* magic number, feel free to change */
   overflow: hidden;
+  transform: translateX(350px);
+}
+
+.alert_wrapper.mounted{
+  transform: translateX(0);
+}
+
+.alert_wrapper.mounted.user_dismissed{
+  transform: translateX(350px);
 }
 
 .alert_wrapper.unmounting{
