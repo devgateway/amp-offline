@@ -98,7 +98,8 @@ const LoginManager = {
           return UserHelper.saveOrUpdateUser(dbData);
         } else {
           const id = userData['user-id'];
-          const dbUserData = { id, email };
+          const registeredOnClient = new Date().toISOString();
+          const dbUserData = { id, email, registeredOnClient };
           dbUserData.ampOfflinePassword = hash;
           return UserHelper.saveOrUpdateUser(dbUserData);
         }

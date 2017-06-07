@@ -32,6 +32,16 @@ const UserHelper = {
     return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
   },
 
+  findAllClientRegisteredUsersByExample(example, projections) {
+    LoggerManager.log('findUserByExample');
+    example.registeredOnClient = { $exists: true };
+    return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
+  },
+
+  getRegisteredUserIds() {
+    return this.findAllClientRegisteredUsersByExample({}, { id: 1 });
+  },
+
   /**
    * Save the User without the original password, with an ID and with the hash of the online password.
    * @param userData
