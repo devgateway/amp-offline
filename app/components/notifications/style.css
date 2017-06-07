@@ -6,3 +6,14 @@
   width: 300px;
   z-index: 1051;
 }
+
+.alert_wrapper{
+  transition: height 1s;
+  height: 75px;/* magic number, feel free to change */
+  overflow: hidden;
+}
+
+.alert_wrapper.unmounting{
+  height: 0px;
+  pointer-events: none;
+}
