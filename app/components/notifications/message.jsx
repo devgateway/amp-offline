@@ -15,18 +15,19 @@ class Message extends PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
-      timeLeft: TIMEOUT
+      timeLeft: TIMEOUT,
+      isHovered: false
     };
   }
 
   componentDidMount() {
     const { onDismiss } = this.props;
     this.removalInterval = setInterval(() => {
-      const { timeLeft } = this.state;
+      const { timeLeft, isHovered } = this.state;
       const newTimeLeft = timeLeft - CHECK_INTERVAL;
       if (newTimeLeft <= 0) {
         onDismiss();
-      } else {
+      } else if (!isHovered) {
         this.setState({ timeLeft: newTimeLeft });
       }
     }, CHECK_INTERVAL);
@@ -39,7 +40,12 @@ class Message extends PureComponent {
   render() {
     const { notification, onDismiss } = this.props;
     return (
-      <Alert onDismiss={onDismiss}>
+      <Alert
+        onDismiss={onDismiss}
+        onMouseEnter={() => this.setState({isHovered: true})}
+        onMouseLeave={() => this.setState({isHovered: false})}
+        onClick={() => clearTimeout(this.removalInterval)}
+      >
         {notification.message}
       </Alert>
     );
