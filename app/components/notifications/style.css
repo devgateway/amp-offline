@@ -8,11 +8,13 @@
 }
 
 .alert_wrapper{
-  transition: height .5s cubic-bezier(0.19, 1, 0.22, 1),
-  transform .5s cubic-bezier(0.19, 1, 0.22, 1);
-  height: 60px;/* magic number, feel free to change */
+  transition: max-height .5s cubic-bezier(0.19, 1, 0.22, 1),
+              transform .5s cubic-bezier(0.19, 1, 0.22, 1),
+              opacity .1s;
   overflow: hidden;
+  max-height: 300px;
   transform: translateX(350px);
+  text-align: left;
 }
 
 .alert_wrapper.mounted{
@@ -24,6 +26,7 @@
 }
 
 .alert_wrapper.unmounting{
-  height: 0px;
+  max-height: 0;
   pointer-events: none;
 }
+
