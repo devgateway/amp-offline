@@ -1,0 +1,9 @@
+.message_container{
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  width: 300px;
+  background: red;
+  z-index: 1051;
+}

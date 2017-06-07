@@ -4,6 +4,7 @@ export const FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED = 'FULLSCREEN_ALERT_WITH_FOLLO
 export const FULLSCREEN_ALERT_WITH_FOLLOWUP_DISMISSED = 'FULLSCREEN_ALERT_WITH_FOLLOWUP_DISMISSED';
 export const CONFIRMATION_ALERT_ADDED = 'CONFIRMATION_ALERT_ADDED';
 export const CONFIRMATION_ALERT_DISMISSED = 'CONFIRMATION_ALERT_DISMISSED';
+export const MESSAGE_ADDED = 'MESSAGE_ADDED';
 
 // notification is expected to be an instance of ../modules/helpers/NotificationHelper
 export const addFullscreenAlert = notification => ({
@@ -65,3 +66,8 @@ export const dismissConfirmationAlert = (alert, yesOrNo) => dispatch => {
     dispatch(noAction);
   }
 };
+
+export const addMessage = notification => ({
+  type: MESSAGE_ADDED,
+  payload: notification
+});

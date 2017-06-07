@@ -9,6 +9,8 @@ import {
 } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import translate from '../../utils/translate';
+import styles from './style.css';
+import Message from './message';
 
 class Notifications extends PureComponent {
   static propTypes = {
@@ -22,6 +24,7 @@ class Notifications extends PureComponent {
       yesAction: PropTypes.object,
       noAction: PropTypes.object
     })).isRequired,
+    messages: PropTypes.arrayOf(Notification).isRequired,
     onDismissFullscreenAlert: PropTypes.func.isRequired,
     onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired,
     onDismissConfirmationAlert: PropTypes.func.isRequired,
@@ -94,10 +97,24 @@ class Notifications extends PureComponent {
     );
   }
 
+  maybeGetMessages() {
+    const { messages } = this.props;
+
+    if (!messages.length) return null;
+    return (
+      <div className={styles.message_container}>
+        {messages.map((notification, index) =>
+          <Message notification={notification} key={index}/>
+        )}
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
         {this.maybeGetFullscreenAlert() || this.maybeGetConfirmationAlerts()}
+        {this.maybeGetMessages()}
       </div>
     );
   }
@@ -107,7 +124,8 @@ export default connect(
   state => ({
     fullscreenAlerts: state.notificationReducer.fullscreenAlerts,
     fullscreenAlertsWithFollowup: state.notificationReducer.fullscreenAlertsWithFollowup,
-    confirmationAlerts: state.notificationReducer.confirmationAlerts
+    confirmationAlerts: state.notificationReducer.confirmationAlerts,
+    messages: state.notificationReducer.messages
   }),
 
   dispatch => ({

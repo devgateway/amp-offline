@@ -4,13 +4,15 @@ import {
   FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED,
   FULLSCREEN_ALERT_WITH_FOLLOWUP_DISMISSED,
   CONFIRMATION_ALERT_ADDED,
-  CONFIRMATION_ALERT_DISMISSED
+  CONFIRMATION_ALERT_DISMISSED,
+  MESSAGE_ADDED
 } from '../actions/NotificationAction';
 
 const initialState = {
   fullscreenAlerts: [],
   fullscreenAlertsWithFollowup: [],
-  confirmationAlerts: []
+  confirmationAlerts: [],
+  messages: []
 };
 
 // curryable function for non equality
@@ -51,6 +53,12 @@ export default (state = initialState, action) => {
     case CONFIRMATION_ALERT_DISMISSED: {
       const newState = Object.assign({}, state);
       newState.confirmationAlerts = state.confirmationAlerts.filter(notEqual(action.payload));
+      return newState;
+    }
+
+    case MESSAGE_ADDED: {
+      const newState = Object.assign({}, state);
+      newState.messages = state.messages.concat(action.payload);
       return newState;
     }
 
