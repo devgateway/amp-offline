@@ -5,7 +5,8 @@ import { PropTypes } from 'prop-types';
 import {
   dismissFullscreenAlert,
   dismissFullscreenAlertWithFollowup,
-  dismissConfirmationAlert
+  dismissConfirmationAlert,
+  dismissMessage
 } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import translate from '../../utils/translate';
@@ -28,6 +29,7 @@ class Notifications extends PureComponent {
     onDismissFullscreenAlert: PropTypes.func.isRequired,
     onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired,
     onDismissConfirmationAlert: PropTypes.func.isRequired,
+    onDismissMessage: PropTypes.func.isRequired,
   };
 
   maybeGetFullscreenAlert() {
@@ -98,13 +100,18 @@ class Notifications extends PureComponent {
   }
 
   maybeGetMessages() {
-    const { messages } = this.props;
+    const { messages, onDismissMessage } = this.props;
 
     if (!messages.length) return null;
+
     return (
       <div className={styles.message_container}>
         {messages.map((notification, index) =>
-          <Message notification={notification} key={index}/>
+          <Message
+            key={index}
+            notification={notification}
+            onDismiss={onDismissMessage.bind(null, notification)}
+          />
         )}
       </div>
     );
@@ -131,6 +138,7 @@ export default connect(
   dispatch => ({
     onDismissFullscreenAlert: notification => dispatch(dismissFullscreenAlert(notification)),
     onDismissFullscreenAlertWithFollowup: alert => dispatch(dismissFullscreenAlertWithFollowup(alert)),
-    onDismissConfirmationAlert: (alert, yesOrNo) => dispatch(dismissConfirmationAlert(alert, yesOrNo))
+    onDismissConfirmationAlert: (alert, yesOrNo) => dispatch(dismissConfirmationAlert(alert, yesOrNo)),
+    onDismissMessage: notification => dispatch(dismissMessage(notification))
   })
 )(Notifications);

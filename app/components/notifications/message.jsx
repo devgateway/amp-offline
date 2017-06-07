@@ -5,13 +5,14 @@ import Notification from '../../modules/helpers/NotificationHelper';
 
 class Message extends PureComponent {
   static propTypes = {
-    notification: PropTypes.instanceOf(Notification)
+    notification: PropTypes.instanceOf(Notification),
+    onDismiss: PropTypes.func.isRequired
   };
 
   render() {
-    const { notification } = this.props;
+    const { notification, onDismiss } = this.props;
     return (
-      <Alert>
+      <Alert onDismiss={onDismiss}>
         {notification.message}
       </Alert>
     );
