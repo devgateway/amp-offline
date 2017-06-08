@@ -62,6 +62,10 @@ const PossibleValuesManager = {
       option[HIERARCHICAL_VALUE_DEPTH] = depth;
     }
     return depth;
+  },
+
+  findOption(options, id) {
+    return Object.values(options).find(o => o.id === id);
   }
 
 };
