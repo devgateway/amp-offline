@@ -58,7 +58,7 @@ class Notifications extends PureComponent {
       notification = fullscreenAlertsWithFollowup[0].notification;
       onDismiss = () => onDismissFullscreenAlertWithFollowup(fullscreenAlertsWithFollowup[0]);
       title = translate('Confirmation required');
-      buttonLabel = translate('Proceed')
+      buttonLabel = translate('Proceed');
     } else return null;
 
     return (
