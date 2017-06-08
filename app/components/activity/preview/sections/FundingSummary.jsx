@@ -17,7 +17,9 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 class FundingSummary extends Component {
   static propTypes = {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
-    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
+    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
+    fieldNameClass: PropTypes.string,
+    fieldValueClass: PropTypes.string
   };
 
   constructor(props) {
@@ -65,7 +67,9 @@ class FundingSummary extends Component {
       if (value !== undefined) {
         const title = `${totalTrn} ${translate(measure)}`;
         const key = `Summary-Total-${measure}`;
-        fundingInfoSummary.push(<APField key={key} title={title} value={value} />);
+        fundingInfoSummary.push(<APField
+          key={key} title={title} value={value}
+          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
       }
     });
     return fundingInfoSummary;
