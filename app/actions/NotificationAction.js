@@ -1,3 +1,23 @@
+/*
+  Fullscreen alert = a message that covers all of the page preventing the user from interacting with the app until he
+  dismisses it.
+
+  We have 3 types of alerts:
+  1. One that just informs the user of something, but after it's dismissed nothing happens(addFullscreenAlert)
+  2. One that informs the user about something, but after it's dismissed another action is dispatched
+     (addFullscreenAlertWithFollowup)
+  3. One that asks user to accept or refuse something, it has 2 actions, one for 'yes' and one for 'no'
+     (both are optional), that are dispatched depending on what the user chooses(addConfirmationAlert)
+
+  Message = a timing out small notification that appears in the top-right corner of the screen, doesn't prevent
+  the user from interacting with the app, can't have an attached action to be dispatched after(addMessage).
+  Depending on Notification instance's severity the message will have different styles.
+  See the component for more information.
+
+  Related reducer: reducers/NotificationReducer
+  Related components: components/notifications
+ */
+
 export const FULLSCREEN_ALERT_ADDED = 'FULLSCREEN_ALERT_ADDED';
 export const FULLSCREEN_ALERT_DISMISSED = 'FULLSCREEN_ALERT_DISMISSED';
 export const FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED = 'FULLSCREEN_ALERT_WITH_FOLLOWUP_ADDED';

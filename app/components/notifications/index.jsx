@@ -1,3 +1,7 @@
+/*
+ Related action creators and more info: actions/NotificationAction
+ Related reducer: reducers/NotificationReducer
+ */
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';

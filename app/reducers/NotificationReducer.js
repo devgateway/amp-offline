@@ -1,3 +1,8 @@
+/*
+ Related action creators and more info: actions/NotificationAction
+ Related components: components/notifications
+ */
+
 import {
   FULLSCREEN_ALERT_ADDED,
   FULLSCREEN_ALERT_DISMISSED,
