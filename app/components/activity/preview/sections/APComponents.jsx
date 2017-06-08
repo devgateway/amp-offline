@@ -18,6 +18,10 @@ class APComponents extends Component {
   };
   /* eslint-enable react/no-unused-prop-types */
 
+  static _extractYear(dateString) {
+    return new Date(Date.parse(dateString)).getFullYear();
+  }
+
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
@@ -85,10 +89,6 @@ class APComponents extends Component {
       group.amount += auxFd.amount;
     }
     return groups;
-  }
-
-  _extractYear(dateString) {
-    return new Date(Date.parse(dateString)).getFullYear();
   }
 
   render() {

@@ -5,7 +5,8 @@ import {
   DG_COMPANY_NAME,
   DG_ADDRESS_1,
   DG_ADDRESS_2,
-  DG_CONTACT_INFO
+  DG_CONTACT_INFO,
+  VERSION
 } from '../../utils/Constants';
 
 export default class Home extends Component {
@@ -16,7 +17,7 @@ export default class Home extends Component {
           <p>{translate('amp-offline')} {VERSION} {translate('amp-footer')}</p>
         </footer>
         <div className={[styles.footerText, styles.footerImageContainer].join(' ')}>
-          <img className={styles.footerImage} />
+          <img className={styles.footerImage} alt={'footer'}/>
           <br/>
           {DG_COMPANY_NAME}
           <br/>

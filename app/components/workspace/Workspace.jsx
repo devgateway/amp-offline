@@ -18,6 +18,18 @@ export default class WorkspacePage extends Component {
     selectWorkspace: PropTypes.func.isRequired
   };
 
+  static drawWorkspaceList(workspaceList, selectWorkspace) {
+    LoggerManager.log('drawWorkspaceList');
+    if (workspaceList.length > 0) {
+      return (<WorkspaceList
+        workspaceList={workspaceList}
+        workspaceGroup={workspaceList[0]['workspace-group']}
+        onClickHandler={selectWorkspace} />);
+    } else {
+      return <br />;
+    }
+  }
+
   constructor() {
     LoggerManager.log('constructor');
     super();
@@ -45,14 +57,12 @@ export default class WorkspacePage extends Component {
     LoggerManager.log('selectContentElementToDraw');
     if (this.props.workspaceReducer.workspaceLoading !== false || this.state.showWorkspaces === false) {
       return <Loading />;
+    } else if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
+      return <ErrorMessage message={this.props.workspaceReducer.errorMessage} />;
     } else {
-      if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
-        return <ErrorMessage message={this.props.workspaceReducer.errorMessage} />;
-      } else {
-        return this.splitWorkspaceByGroups().map((workspaceList) => (
-          this.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
+      return this.splitWorkspaceByGroups().map((workspaceList) => (
+        this.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
         ));
-      }
     }
   }
 
@@ -68,18 +78,6 @@ export default class WorkspacePage extends Component {
       });
     }
     return workspacesByGroup;
-  }
-
-  drawWorkspaceList(workspaceList, selectWorkspace) {
-    LoggerManager.log('drawWorkspaceList');
-    if (workspaceList.length > 0) {
-      return (<WorkspaceList
-        workspaceList={workspaceList}
-        workspaceGroup={workspaceList[0]['workspace-group']}
-        onClickHandler={selectWorkspace} />);
-    } else {
-      return <br />;
-    }
   }
 
   render() {

@@ -17,6 +17,11 @@ export default class SyncUp extends Component {
     syncUpReducer: PropTypes.object.isRequired
   };
 
+  static cancelSync() {
+    LoggerManager.log('cancelSync');
+    alert('To be implemented on AMPOFFLINE-208');
+  }
+
   constructor() {
     super();
     LoggerManager.log('constructor');
@@ -54,7 +59,8 @@ export default class SyncUp extends Component {
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
       return <Loading/>;
     } else {
-      const showErrors = this.props.syncUpReducer.errorMessage !== '' || this.props.syncUpReducer.forceSyncUpMessage !== '';
+      const showErrors = this.props.syncUpReducer.errorMessage !== ''
+        || this.props.syncUpReducer.forceSyncUpMessage !== '';
       if (showErrors) {
         let error;
         let warn;
@@ -82,11 +88,6 @@ export default class SyncUp extends Component {
     }
   }
 
-  cancelSync() {
-    LoggerManager.log('cancelSync');
-    alert('To be implemented on AMPOFFLINE-208');
-  }
-
   render() {
     LoggerManager.log('render');
     const { startSyncUp } = this.props;
@@ -96,7 +97,8 @@ export default class SyncUp extends Component {
         <div className={styles.display_inline}>
           <Button
             type="button" text="Start Sync Up"
-            className={`btn btn-success ${(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress
+            className={`btn btn-success ${(this.props.syncUpReducer.loadingSyncHistory
+                || this.props.syncUpReducer.syncUpInProgress
               ? 'disabled' : '')}`}
             onClick={() => {
               startSyncUp();
