@@ -9,6 +9,11 @@
   3. One that asks user to accept or refuse something, it has 2 actions, one for 'yes' and one for 'no'
      (both are optional), that are dispatched depending on what the user chooses(addConfirmationAlert)
 
+  All alerts are `first came first served`, meaning if there's more of them they'll be displayed chronologically.
+  Alerts are prioritized in this way: fullscreen alert with no follup > fullscreen alerts with followup > confirmations,
+  meaning that if we have multiple alerts of every time, first the user will have to go through all the alerts with no
+  followup, then through alerts with followup and only finally through confirmation alerts.
+
   Message = a timing out small notification that appears in the top-right corner of the screen, doesn't prevent
   the user from interacting with the app, can't have an attached action to be dispatched after(addMessage).
   Depending on Notification instance's severity the message will have different styles.
