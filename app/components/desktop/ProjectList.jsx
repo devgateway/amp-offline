@@ -85,7 +85,7 @@ export default class ProjectList extends Component {
           containerClass={style.containerTable} tableHeaderClass={style.header} thClassName={style.thClassName}
         >
           <TableHeaderColumn
-            dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.width_7}
+            dataField="icon" dataFormat={ProjectList.iconFormatter} columnClassName={style.width_7}
             className={style.thClassName} />
           <TableHeaderColumn
             dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.width_8}
@@ -93,7 +93,7 @@ export default class ProjectList extends Component {
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField={PROJECT_TITLE} dataFormat={this.projectNameFormatter} dataSort ref={PROJECT_TITLE}
+            dataField={PROJECT_TITLE} dataFormat={ProjectList.projectNameFormatter} dataSort ref={PROJECT_TITLE}
             columnClassName={style.width_40}
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
             className={style.thClassName}>
@@ -105,12 +105,12 @@ export default class ProjectList extends Component {
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualCommitments" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={this.numberFormatter}>
+            dataFormat={ProjectList.numberFormatter}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualDisbursements" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={this.numberFormatter}>
+            dataFormat={ProjectList.numberFormatter}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>

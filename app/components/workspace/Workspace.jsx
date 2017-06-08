@@ -57,12 +57,13 @@ export default class WorkspacePage extends Component {
     LoggerManager.log('selectContentElementToDraw');
     if (this.props.workspaceReducer.workspaceLoading !== false || this.state.showWorkspaces === false) {
       return <Loading />;
-    } else if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
+    }
+    if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
       return <ErrorMessage message={this.props.workspaceReducer.errorMessage} />;
     } else {
       return this.splitWorkspaceByGroups().map((workspaceList) => (
-        this.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
-        ));
+        WorkspacePage.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
+      ));
     }
   }
 

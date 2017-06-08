@@ -113,7 +113,7 @@ export default class SyncUp extends Component {
         <hr/>
         {this.selectContentElementToDraw(historyData)}
 
-        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={this.cancelSync}/>
+        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync}/>
       </div>
     );
   }
