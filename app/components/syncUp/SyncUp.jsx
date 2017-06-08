@@ -19,7 +19,7 @@ export default class SyncUp extends Component {
 
   static cancelSync() {
     LoggerManager.log('cancelSync');
-    alert('To be implemented on AMPOFFLINE-208');
+    LoggerManager.log('To be implemented on AMPOFFLINE-208');
   }
 
   constructor() {
