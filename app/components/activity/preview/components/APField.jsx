@@ -13,6 +13,8 @@ export default class APField extends Component {
     value: PropTypes.any,
     inline: PropTypes.bool,
     useInnerHTML: PropTypes.bool,
+    fieldNameClass: PropTypes.string,
+    fieldValueClass: PropTypes.string,
     separator: PropTypes.bool
   };
 
@@ -24,8 +26,10 @@ export default class APField extends Component {
    * @param separator add or not an <hr> tag.
    * @return {SimpleField}
    */
-  static instance(trnLabel, value, inline = false, separator = true) {
-    return <APField key={trnLabel} title={translate(trnLabel)} value={value} inline={inline} separator={separator} />;
+  static instance(trnLabel, value, inline = false, separator = false, nameClass, valueClass) {
+    return (<APField
+      key={trnLabel} title={translate(trnLabel)} value={value} inline={inline} separator={separator}
+      fieldNameClass={nameClass} fieldValueClass={valueClass}/>);
   }
 
   constructor(props) {
@@ -36,7 +40,7 @@ export default class APField extends Component {
   }
 
   _getValue() {
-    const classNames = `${styles.field_value} ${this.displayClass}`;
+    const classNames = `${this.props.fieldValueClass} ${this.displayClass}`;
     if (this.props.useInnerHTML) {
       return <div className={classNames} dangerouslySetInnerHTML={{ __html: this.props.value }} />;
     } else {
@@ -45,8 +49,8 @@ export default class APField extends Component {
   }
 
   render() {
-    const classNames = `${styles.field_name} ${this.displayClass}`;
-    return (<div>
+    const classNames = `${this.props.fieldNameClass} ${this.displayClass}`;
+    return (<div className={styles.inline}>
       <div className={classNames}>{this.props.title}</div> {this._getValue()}
       {this.useSeparator ? <hr /> : ''}
     </div>);

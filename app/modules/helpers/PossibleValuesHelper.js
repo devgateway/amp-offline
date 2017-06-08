@@ -27,8 +27,9 @@ const possibleValuesSchema = {
               anyOf: [{ type: 'integer' }, { type: 'string' }]
             },
             value: {
-              anyOf: [{ type: 'string' }, { type: 'object' }]
-            }
+              anyOf: [{ type: 'string' }]
+            },
+            'translated-value': { type: 'object' }
           },
           required: ['id', 'value']
         },
