@@ -42,20 +42,26 @@ class Notifications extends PureComponent {
 
     let notification;
     let onDismiss;
+    let title;
+    let buttonLabel;
 
     if (fullscreenAlerts[0]) {
       notification = fullscreenAlerts[0];
       onDismiss = () => onDismissFullscreenAlert(notification);
+      title = translate('AMP Offline Message');
+      buttonLabel = translate('OK');
     } else if (fullscreenAlertsWithFollowup[0]) {
       notification = fullscreenAlertsWithFollowup[0].notification;
       onDismiss = () => onDismissFullscreenAlertWithFollowup(fullscreenAlertsWithFollowup[0]);
+      title = translate('Confirmation required');
+      buttonLabel = translate('Proceed')
     } else return null;
 
     return (
       <Modal show>
         <Modal.Header>
           <Modal.Title>
-            {translate('AMP Offline Message')}
+            {title}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -63,7 +69,7 @@ class Notifications extends PureComponent {
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={onDismiss}>
-            {translate('OK')}
+            {buttonLabel}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -81,7 +87,7 @@ class Notifications extends PureComponent {
       <Modal show>
         <Modal.Header>
           <Modal.Title>
-            {translate('Confirmation required')}
+            {translate('Action required')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -89,10 +95,10 @@ class Notifications extends PureComponent {
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={onDismissConfirmationAlert.bind(null, alert, true)}>
-            {translate('Yes')}
+            {translate('Proceed')}
           </Button>
           <Button onClick={onDismissConfirmationAlert.bind(null, alert, false)}>
-            {translate('No')}
+            {translate('Cancel')}
           </Button>
         </Modal.Footer>
       </Modal>
