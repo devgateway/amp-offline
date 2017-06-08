@@ -58,7 +58,8 @@
     /* Because WebStorm cant handle it. */
     "flowtype-errors/show-errors": 2,
     "no-else-return": 0,
-    "no-param-reassign": 0
+    "no-param-reassign": 0,
+    'jsx-a11y/no-static-element-interactions': off
   },
   "plugins": [
     "flowtype-errors",
