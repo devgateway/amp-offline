@@ -8,6 +8,7 @@ import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { SYNC_URL, TEST_URL } from '../connectivity/AmpApiConstants';
 import * as ActivityHelper from '../helpers/ActivityHelper';
 import SyncUpHelper from '../helpers/SyncUpHelper';
+import * as UserHelper from '../helpers/UserHelper';
 import TranslationSyncUpManager from './syncupManagers/TranslationSyncUpManager';
 import { loadAllLanguages } from '../../actions/TranslationAction';
 import store from '../../index';
@@ -168,9 +169,9 @@ export default class SyncUpManager {
       new Set(Utils.flattenToListByKey(ampIds, AMP_ID)));
   }
 
-  static getWhatChangedInAMP(user, time, ampIds) {
+  static getWhatChangedInAMP(userIds, time, ampIds) {
     LoggerManager.log('getWhatChangedInAMP');
-    const body = { 'user-ids': [user] };
+    const body = { 'user-ids': userIds };
     // Dont send the date param at all on first-sync.
     if (time && time !== SYNCUP_NO_DATE) {
       body['last-sync-time'] = time;
@@ -185,12 +186,13 @@ export default class SyncUpManager {
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     return new Promise((resolve, reject) =>
-      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSyncUpLog(), this.getAmpIds()]
-      ).then(([, lastSyncUpLog, ampIds]) => {
+      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), this.getLastSyncUpLog(), this.getAmpIds(),
+        UserHelper.getNonBannedRegisteredUserIds()]
+      ).then(([, lastSyncUpLog, ampIds, registeredUsersIds]) => {
         const userId = store.getState().userReducer.userData.id;
         const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
         const syncUpDiffLeftOver = new SyncUpDiff(lastSyncUpLog[SYNCUP_DIFF_LEFTOVER]);
-        return this.getWhatChangedInAMP(userId, oldTimestamp, ampIds)
+        return this.getWhatChangedInAMP(registeredUsersIds, oldTimestamp, ampIds)
           .then((changes) => resolve(this._runSyncUp(userId, changes, syncUpDiffLeftOver)))
           .catch(reject);
       }).catch(reject)

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { Component } from 'react';
 import translate from '../../utils/translate';
 import styles from './Footer.css';
@@ -25,6 +26,8 @@ export default class Home extends Component {
           {DG_ADDRESS_2}
           <br/>
           {DG_CONTACT_INFO}
+          <br/>
+          {__COMMIT_HASH__}
         </div>
       </div>
     );
