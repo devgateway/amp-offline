@@ -1,6 +1,7 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
+import * as Utils from '../../utils/Utils';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
@@ -30,6 +31,17 @@ const UserHelper = {
   findAllUsersByExample(example, projections) {
     LoggerManager.log('findUserByExample');
     return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
+  },
+
+  findAllClientRegisteredUsersByExample(example, projections) {
+    LoggerManager.log('findAllClientRegisteredUsersByExample');
+    example.registeredOnClient = { $exists: true };
+    return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
+  },
+
+  getNonBannedRegisteredUserIds() {
+    return this.findAllClientRegisteredUsersByExample({ 'is-banned': { $ne: true } }, { id: 1 }).then(users =>
+      Utils.flattenToListByKey(users, 'id'));
   },
 
   /**

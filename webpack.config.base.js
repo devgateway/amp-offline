@@ -7,6 +7,7 @@ import StringReplacePlugin from 'string-replace-webpack-plugin';
 import path from 'path';
 import validate from 'webpack-validator';
 import webpack from 'webpack';
+import { execSync } from 'child_process';
 import {
   dependencies as externals
 } from './app/package.json';
@@ -80,7 +81,8 @@ export default validate({
 
   plugins: [
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(packageJson.version)
+      VERSION: JSON.stringify(packageJson.version),
+      __COMMIT_HASH__: JSON.stringify(execSync('git rev-parse --short HEAD').toString())
     }), new StringReplacePlugin(),
   ],
 

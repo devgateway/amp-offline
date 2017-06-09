@@ -28,7 +28,11 @@ const init = {
     'TRN'
   ]
 };
-const users = [init, { id: 1 }, { id: 2 }];
+const registeredUser1 = { id: 3, registeredOnClient: new Date().toISOString() };
+const registeredUser2 = { id: 4, registeredOnClient: new Date().toISOString() };
+const registeredUsers = [registeredUser1, registeredUser2];
+const unregisteredUser = { id: 5 };
+const users = [init, { id: 1 }, { id: 2 }, ...registeredUsers, unregisteredUser];
 
 describe('@@ UserHelper @@', () => {
   describe('replaceUsers', () =>
@@ -39,17 +43,18 @@ describe('@@ UserHelper @@', () => {
 
   describe('saveOrUpdateUser', () =>
     it('should save initial data', () =>
-      expect(UserHelper.saveOrUpdateUser(init)).to.eventually.deep.equal(init)
+      expect(UserHelper.saveOrUpdateUser(init).then(dbUser => {
+        delete dbUser._id;
+        return dbUser;
+      })).to.eventually.deep.equal(init)
     )
   );
 
   describe('saveOrUpdateUserCollection', () =>
-    it('should save the Workspaces data', (done) => {
-      UserHelper.saveOrUpdateUserCollection(users).then((resultUsers) => {
-        expect(removeIdFromCollection(resultUsers)).to.eql(users);
-        return done();
-      }).catch(error => done(error));
-    })
+    it('should save the Workspaces data', () =>
+      expect(UserHelper.saveOrUpdateUserCollection(users).then((resultUsers) => removeIdFromCollection(resultUsers)))
+        .to.eventually.deep.have.same.members(users)
+    )
   );
 
   describe('findByEmail', () =>
@@ -67,6 +72,12 @@ describe('@@ UserHelper @@', () => {
   describe('findAllUserByExample', () =>
     it('should find user by email', () =>
       expect(UserHelper.findAllUsersByExample({ 'group-keys': { $in: ['EDT'] } })).to.eventually.deep.equal([init])
+    )
+  );
+
+  describe('findAllClientRegisteredUsersByExample', () =>
+    it('should find only registered users', () =>
+      expect(UserHelper.findAllClientRegisteredUsersByExample({})).to.eventually.deep.have.same.members(registeredUsers)
     )
   );
 
