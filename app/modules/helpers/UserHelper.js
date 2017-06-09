@@ -34,7 +34,7 @@ const UserHelper = {
   },
 
   findAllClientRegisteredUsersByExample(example, projections) {
-    LoggerManager.log('findUserByExample');
+    LoggerManager.log('findAllClientRegisteredUsersByExample');
     example.registeredOnClient = { $exists: true };
     return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
   },
