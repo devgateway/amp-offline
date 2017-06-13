@@ -146,5 +146,7 @@
   "Issues": "Issues",
   "Activity saved successfully": "Activity saved successfully",
   "workspaceManager": "Workspace manager",
-  "activityLastUpdatedBy": "Activity last updated by"
+  "activityLastUpdatedBy": "Activity last updated by",
+  "Amount": "Amount",
+  "Currency": "Currency"
 }

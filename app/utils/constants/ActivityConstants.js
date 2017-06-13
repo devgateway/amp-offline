@@ -116,6 +116,7 @@ export const COMPONENT_TYPE = 'component_type';
 export const COMPONENT_TITLE = 'component_title';
 export const COMPONENT_FUNDING = 'funding';
 export const COMPONENT_DESCRIPTION = 'description';
+export const FUNDING_AMOUNT_ID = 'amp_funding_amount_id';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
