@@ -7,7 +7,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
 
-// TODO remove this filter once these extra fields are no longer required at import (automatically handled by AMP)
+// TODO remove this filter once these extra fields are no longer required at import (automatically handled by AMP-26331)
 const FIELDS_TO_IGNORE = new Set([AC.PROGRAM_SETTINGS, AC.AMP_ORGANIZATION_ROLE_ID, AC.ROLE]);
 
 /**

@@ -23,11 +23,11 @@ const RequestConfig = {
     const headers = {
       'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${navigator.userAgent}`
     };
-    if (!routeConfiguration[0].isBinary) {
+    if (!routeConfiguration.isBinary) {
       // If it is not binary we assume its JSON if we need to handle
       // more types we can adjust accordingly
       headers['content-type'] = 'application/json';
-      headers.Accept = 'application/json';
+      headers.Accept = routeConfiguration.accept || 'application/json';
     }
     const requestConfig = {
       url: fullUrl,
@@ -37,7 +37,7 @@ const RequestConfig = {
       gzip: true,
       jar: true // enables cookies to be saved
     };
-    if (routeConfiguration[0].isBinary) {
+    if (routeConfiguration.isBinary) {
       // in case its binary we need to set json to false
       // and encoding to null in order to be able to receive
       // the binary as an array of bytes
@@ -72,7 +72,7 @@ const RequestConfig = {
   _getFullBaseUrl(url, routeConfiguration) {
     // if the route is regularAMPUrl we fetch the ROOT for amp
     // if not we get the REST url
-    return routeConfiguration[0].regularAmpUrl ?
+    return routeConfiguration.regularAmpUrl ?
       store.getState().startUpReducer.connectionInformation.getFullUrl() + url :
       store.getState().startUpReducer.connectionInformation.getFullRestUrl() + url;
   },
@@ -88,7 +88,8 @@ const RequestConfig = {
         severity: NOTIFICATION_SEVERITY_ERROR
       });
     }
-    return routesConfigurationFiltered;
+    // above we ensure we have only one route
+    return routesConfigurationFiltered[0];
   },
 };
 

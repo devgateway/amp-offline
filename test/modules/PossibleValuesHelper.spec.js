@@ -1,7 +1,6 @@
 import { describe, it } from 'mocha';
 import actions from '../../app/modules/helpers/PossibleValuesHelper';
 import LoggerManager from '../../app/modules/util/LoggerManager';
-import { DONOR_ORGANIZATIONS_PATH } from '../../app/utils/constants/FieldPathConstants';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -10,7 +9,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 let ampFormatPV1 = {
-  [DONOR_ORGANIZATIONS_PATH]: [
+  'donor_organization~organization': [
     {
       id: 1,
       value: 'African Capacity Building Foundation'
@@ -69,10 +68,28 @@ let idAsCurrencyCode = {
   ]
 };
 
+let treeOptions = {
+  'national_plan_objective~program': [
+    {
+      id: 26,
+      value: 'Programmes Sectoriels',
+      children: [
+        {
+          id: 27,
+          value: "PDDE - Programme décennal de développement de l'éducation - 2003",
+          'translated-value': {
+            fr: "PDDE - Programme décennal de développement de l'éducation - 2003"
+          }
+        }
+      ]
+    }
+  ]
+};
+
 let validPossibleValuesColl = [/* ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations */];
 let invalidPV = { 'invalid-field-name': 'some value' };
 let missingId = { 'possible-options': [{ value: 'aa' }, { id: 2, value: 'bb' }] };
-let mixedValidInvalid = [/* ampFormatPV1, invalidPV*/];
+let mixedValidInvalid = [/* ampFormatPV1, invalidPV */];
 
 describe('@@ PossibleValuesHelper @@', () => {
   describe('replaceAll', () =>
@@ -82,23 +99,22 @@ describe('@@ PossibleValuesHelper @@', () => {
   );
 
   describe('transformToClientUsage', () =>
-    it('should successfully transform data',
-      () => {
-        expect(() => {
-          ampFormatPV1 = actions.transformToClientUsage(Object.entries(ampFormatPV1)[0]);
-          ampFormatPV2 = actions.transformToClientUsage(Object.entries(ampFormatPV2)[0]);
-          ampFormatPVwithTranslations = actions.transformToClientUsage(Object.entries(ampFormatPVwithTranslations)[0]);
-          idAsStringNumnber = actions.transformToClientUsage((Object.entries(idAsStringNumnber)[0]));
-          idAsCurrencyCode = actions.transformToClientUsage((Object.entries(idAsCurrencyCode)[0]));
-          validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations, idAsStringNumnber,
-            idAsCurrencyCode];
+    it('should successfully transform data', () =>
+      expect(() => {
+        ampFormatPV1 = actions.transformToClientUsage(Object.entries(ampFormatPV1)[0]);
+        ampFormatPV2 = actions.transformToClientUsage(Object.entries(ampFormatPV2)[0]);
+        ampFormatPVwithTranslations = actions.transformToClientUsage(Object.entries(ampFormatPVwithTranslations)[0]);
+        idAsStringNumnber = actions.transformToClientUsage((Object.entries(idAsStringNumnber)[0]));
+        idAsCurrencyCode = actions.transformToClientUsage((Object.entries(idAsCurrencyCode)[0]));
+        treeOptions = actions.transformToClientUsage((Object.entries(treeOptions)[0]));
+        validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations, idAsStringNumnber,
+          idAsCurrencyCode];
 
-          invalidPV = actions.transformToClientUsage(Object.entries(invalidPV)[0]);
-          missingId = actions.transformToClientUsage(Object.entries(missingId)[0]);
-          mixedValidInvalid = [invalidPV, missingId];
-          LoggerManager.log(ampFormatPV1);
-        }).to.not.throw(Error);
-      }
+        invalidPV = actions.transformToClientUsage(Object.entries(invalidPV)[0]);
+        missingId = actions.transformToClientUsage(Object.entries(missingId)[0]);
+        mixedValidInvalid = [invalidPV, missingId];
+        LoggerManager.log(JSON.stringify(treeOptions));
+      }).to.not.throw(Error)
     )
   );
 
@@ -118,6 +134,12 @@ describe('@@ PossibleValuesHelper @@', () => {
   describe('saveOrUpdate', () =>
     it('should successfully save valid possible values', () =>
       expect(actions.saveOrUpdate(ampFormatPV2)).to.eventually.deep.equal(ampFormatPV2)
+    )
+  );
+
+  describe('saveOrUpdate', () =>
+    it('should successfully save valid possible values with children', () =>
+      expect(actions.saveOrUpdate(treeOptions)).to.eventually.deep.equal(treeOptions)
     )
   );
 
