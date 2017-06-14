@@ -3,8 +3,9 @@ import { Tab, Tabs } from 'react-bootstrap';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
+import * as VC from '../../../../utils/constants/ValueConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-import AFProposedProjectCost from './funding/AFProposedProjectCost';
+import AFProjectCost from './funding/AFProjectCost';
 
 /**
  * Funding Section
@@ -24,7 +25,9 @@ class AFFunding extends Component {
   addFundingTabs() {
     if (this.props.activity.fundings) {
       return this.props.activity.fundings.map((funding) => (
-        <Tab eventKey={funding[AC.AMP_FUNDING_ID]} title={funding[AC.FUNDING_DONOR_ORG_ID].value}>Tab 2
+        <Tab
+          eventKey={funding[AC.AMP_FUNDING_ID]}
+          title={funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]}>Tab 2
           content</Tab>
       ));
     }
@@ -32,7 +35,10 @@ class AFFunding extends Component {
   }
 
   generateOverviewTabContent() {
-    return <AFProposedProjectCost activity={this.props.activity} />;
+    return (<div>
+      <AFProjectCost activity={this.props.activity} type={VC.PROPOSED_PROJECT_COST} />
+      <AFProjectCost activity={this.props.activity} type={VC.REVISED_PROJECT_COST} />
+    </div>);
   }
 
   render() {
