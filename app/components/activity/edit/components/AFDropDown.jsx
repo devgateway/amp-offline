@@ -41,13 +41,14 @@ export default class AFDropDown extends Component {
     if (!this.state.propsRecieved) {
       return null;
     }
-    const defaultOption = <option key={-1} value={-1}>{translate('Choose One')}</option>;
-    const options = this.props.options.map(option => <option key={option.id} value={option.id}>{option.value}</option>);
+    const defaultOption = <option key={-1} value={-1} >{translate('Choose One')}</option>;
+    const options = this.props.options.map(option =>
+      <option key={option.id} value={option.id} >{option.translatedValue}</option>);
 
     return (
       <FormControl
         componentClass="select" defaultValue={this.state.value} onChange={this.handleChange.bind(this)}
-        placeholder={-1}>
+        placeholder={-1} >
         {[defaultOption].concat(options)}
       </FormControl>
     );
