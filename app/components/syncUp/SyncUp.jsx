@@ -57,7 +57,7 @@ export default class SyncUp extends Component {
   selectContentElementToDraw(historyData) {
     LoggerManager.log('selectContentElementToDraw');
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
-      return <Loading/>;
+      return <Loading />;
     } else {
       const showErrors = this.props.syncUpReducer.errorMessage !== ''
         || this.props.syncUpReducer.forceSyncUpMessage !== '';
@@ -65,10 +65,10 @@ export default class SyncUp extends Component {
         let error;
         let warn;
         if (this.props.syncUpReducer.errorMessage !== '') {
-          error = <ErrorMessage message={this.props.syncUpReducer.errorMessage}/>;
+          error = <ErrorMessage message={this.props.syncUpReducer.errorMessage} />;
         }
         if (this.props.syncUpReducer.forceSyncUpMessage !== '') {
-          warn = <WarnMessage message={this.props.syncUpReducer.forceSyncUpMessage}/>;
+          warn = <WarnMessage message={this.props.syncUpReducer.forceSyncUpMessage} />;
         }
         return (<div>{ error }{ warn }</div>);
       } else {
@@ -108,12 +108,12 @@ export default class SyncUp extends Component {
         <div className={styles.display_inline}>
           <div
             className={(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress)
-              ? styles.loader : ''}/>
+              ? styles.loader : ''} />
         </div>
-        <hr/>
+        <hr />
         {this.selectContentElementToDraw(historyData)}
 
-        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync}/>
+        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync} />
       </div>
     );
   }

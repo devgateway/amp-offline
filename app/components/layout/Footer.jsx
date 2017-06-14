@@ -18,16 +18,16 @@ export default class Home extends Component {
           <p>{translate('amp-offline')} {VERSION} {translate('amp-footer')}</p>
         </footer>
         <div className={[styles.footerText, styles.footerImageContainer].join(' ')}>
-          <img className={styles.footerImage} alt={'footer'}/>
-          <br/>
+          <img className={styles.footerImage} alt={'footer'} />
+          <br />
           {DG_COMPANY_NAME}
-          <br/>
+          <br />
           {DG_ADDRESS_1}
-          <br/>
+          <br />
           {DG_ADDRESS_2}
-          <br/>
+          <br />
           {DG_CONTACT_INFO}
-          <br/>
+          <br />
           {__COMMIT_HASH__}
         </div>
       </div>

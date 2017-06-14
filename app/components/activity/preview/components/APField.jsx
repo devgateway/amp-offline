@@ -29,7 +29,7 @@ export default class APField extends Component {
   static instance(trnLabel, value, inline = false, separator = false, nameClass, valueClass) {
     return (<APField
       key={trnLabel} title={translate(trnLabel)} value={value} inline={inline} separator={separator}
-      fieldNameClass={nameClass} fieldValueClass={valueClass}/>);
+      fieldNameClass={nameClass} fieldValueClass={valueClass} />);
   }
 
   constructor(props) {

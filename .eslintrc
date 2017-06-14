@@ -58,6 +58,7 @@
     "no-param-reassign": 0,
     "jsx-a11y/no-static-element-interactions": off,
     "react/no-danger": off,
+    "react/jsx-space-before-closing": "off", /* replaced by react/jsx-tag-spacing */
     "react/jsx-tag-spacing": [
       "error",
         {

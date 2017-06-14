@@ -53,12 +53,12 @@ export default class Navbar extends Component {
           <Link to={DESKTOP_CURRENT_URL}>
             <img
               src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)} alt="logo"
-              className={[style.countryFlag, style.navbar_left_side].join(' ')}/></Link>
+              className={[style.countryFlag, style.navbar_left_side].join(' ')} /></Link>
           <Link
             className={style.navbar_left_side}
             style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
 
-          <Logout loggedIn={this.props.loginReducer.loggedIn}/>
+          <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
             <a className={style.navbar_left_side} >{this.extractLoggedUser('')}</a>
             <a className={style.navbar_left_side} >{this.extractWorkSpace('')}</a>
