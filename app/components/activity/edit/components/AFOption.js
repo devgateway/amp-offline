@@ -1,4 +1,5 @@
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../../../utils/constants/ActivityConstants';
+import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
 
 /**
  * A simple option
@@ -17,8 +18,8 @@ export default class AFOption {
     return this._id;
   }
 
-  get value() {
-    return this._value;
+  get translatedValue() {
+    return PossibleValuesManager.getOptionTranslation(this);
   }
 
   get hierarchicalValue() {

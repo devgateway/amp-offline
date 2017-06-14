@@ -102,8 +102,7 @@ export default class AFField extends Component {
   }
 
   _getOptions(fieldPath) {
-    let options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
-    options = options ? Object.values(options) : null;
+    const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
     if (options === null) {
       // TODO throw error but continue to render (?)
       LoggerManager.error(`Options not found for ${this.props.fieldPath}`);
@@ -113,7 +112,11 @@ export default class AFField extends Component {
   }
 
   _toAFOptions(options) {
-    return options.map(option => new AFOption(option));
+    return Object.values(options).map(option => {
+      const afOption = new AFOption(option);
+      afOption.value = PossibleValuesManager.getOptionTranslation(option);
+      return afOption;
+    });
   }
 
   _getRichTextEditor() {

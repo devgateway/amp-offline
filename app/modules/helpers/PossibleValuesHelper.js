@@ -1,10 +1,34 @@
-import { validate } from 'jsonschema';
+import { Validator } from 'jsonschema';
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 
+const optionSchema = {
+  id: '/OptionSchema',
+  $schema: 'http://json-schema.org/draft-04/schema#',
+  type: 'object',
+  patternProperties: {
+    // TODO update based on AMP-25785 if we actually should not limit to numbers
+    '^(0|[1-9]+[0-9]*)|[A-Z]{3}$': {
+      type: 'object',
+      properties: {
+        // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
+        id: {
+          anyOf: [{ type: 'integer' }, { type: 'string' }]
+        },
+        value: {
+          anyOf: [{ type: 'string' }]
+        },
+        'translated-value': { type: 'object' },
+        parentId: { anyOf: [{ type: 'integer' }, { type: 'string' }] }
+      },
+      required: ['id', 'value']
+    }
+  },
+  additionalProperties: false
+};
 const possibleValuesSchema = {
   id: '/PossibleValues',
   $schema: 'http://json-schema.org/draft-04/schema#',
@@ -15,30 +39,14 @@ const possibleValuesSchema = {
       type: 'array',
       items: { type: 'string' }
     },
-    'possible-options': {
-      type: 'object',
-      patternProperties: {
-        // TODO update based on AMP-25785 if we actually should not limit to numbers
-        '^(0|[1-9]+[0-9]*)|[A-Z]{3}$': {
-          type: 'object',
-          properties: {
-            // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
-            id: {
-              anyOf: [{ type: 'integer' }, { type: 'string' }]
-            },
-            value: {
-              anyOf: [{ type: 'string' }]
-            },
-            'translated-value': { type: 'object' }
-          },
-          required: ['id', 'value']
-        },
-      },
-      additionalProperties: false
-    }
+    'possible-options': { $ref: '/OptionSchema' }
   },
   required: ['id', 'field-path', 'possible-options']
 };
+
+const validator = new Validator();
+validator.addSchema(optionSchema, '/OptionSchema');
+validator.addSchema(possibleValuesSchema, '/PossibleValues');
 
 /**
  * A simplified helper for possible values storage for loading, searching / filtering and saving possible values.
@@ -120,7 +128,7 @@ const PossibleValuesHelper = {
   },
 
   _validate(fieldValues) {
-    const result = validate(fieldValues, possibleValuesSchema);
+    const result = validator.validate(fieldValues, possibleValuesSchema);
     if (!result.valid) {
       result.id = fieldValues.id;
     }
@@ -141,20 +149,11 @@ const PossibleValuesHelper = {
    * Transforms data from AMP format to local format
    * @param fieldPath
    * @param possibleOptionsFromAMP
-   * @return {{id: *, field-path: (Array|*), possible-options: {}}}
+   * @return {{id: String, field-path: (Array|*), possible-options: { id: (String|Integer) }}}
    */
   transformToClientUsage([fieldPath, possibleOptionsFromAMP]) {
-    // TODO do recursive when AMP EP will provide the parent-child relationship by having the fields in a tree AMP-25619
     const fieldPathParts = !fieldPath ? [] : fieldPath.split('~');
-    let possibleOptions = {};
-    if (Array.isArray(possibleOptionsFromAMP)) {
-      possibleOptionsFromAMP.forEach(option => {
-        possibleOptions[option.id] = option;
-      });
-    } else {
-      // delegating data structure validation to the point it will be saved to DB, now keeping options as is
-      possibleOptions = possibleOptionsFromAMP;
-    }
+    const possibleOptions = this._transformOptions(possibleOptionsFromAMP);
     const possibleValuesForLocalUsage = {
       id: fieldPath,
       'field-path': fieldPathParts,
@@ -163,8 +162,25 @@ const PossibleValuesHelper = {
     return possibleValuesForLocalUsage;
   },
 
+  _transformOptions(possibleOptionsFromAMP, parentId, possibleOptions = { }) {
+    if (Array.isArray(possibleOptionsFromAMP)) {
+      possibleOptionsFromAMP.forEach(option => {
+        possibleOptions[option.id] = option;
+        option.parentId = parentId;
+        if (option.children) {
+          this._transformOptions(option.children, option.id, possibleOptions);
+          delete option.children;
+        }
+      });
+    } else {
+      // delegating data structure validation to the point it will be saved to DB, now keeping options as is
+      possibleOptions = possibleOptionsFromAMP;
+    }
+    return possibleOptions;
+  },
+
   _getInvalidFormatError(errors) {
-    const errorMessage = JSON.stringify(errors).substring(0, 120);
+    const errorMessage = JSON.stringify(errors).substring(0, 1000);
     LoggerManager.error(errorMessage);
     return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
   }
