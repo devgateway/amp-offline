@@ -37,7 +37,7 @@ class AFLocation extends Component {
             <AFField parent={this.props.activity} fieldPath={AC.LOCATIONS} />
           </Col>
         </Row>
-        <Row/>
+        <Row />
       </Grid>
     </div>);
   }
