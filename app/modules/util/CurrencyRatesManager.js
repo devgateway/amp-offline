@@ -3,6 +3,8 @@ import { CURRENCY_HOUR } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/ErrorConstants';
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
+import { BASE_CURRENCY_KEY } from '../../utils/constants/GlobalSettingsConstants';
+import GlobalSettingsHelper from '../../modules/helpers/GlobalSettingsHelper';
 
 const CurrencyRatesManager = {
   /**
@@ -24,11 +26,9 @@ const CurrencyRatesManager = {
           if (currenciesToSearchInverse) {
             return 1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind);
           } else {
-            const notifErrorNoCurrency = ErrorNotificationHelper.createNotification({
-              message: translate('Currency rate not found'),
-              origin: NOTIFICATION_ORIGIN_CURRENCY_MANAGER
-            });
-            return Promise.reject(notifErrorNoCurrency);
+            // if the inverse and direct rate where not found we try to
+            // transition from currencyFrom to currencyTo via baseCurrency
+            return this.convertViaBaseCurrency(currencyFrom, currencyTo, timeDateToFind);
           }
         });
       }
@@ -50,6 +50,55 @@ const CurrencyRatesManager = {
       }
     }
     return currenciesToSearch.rates[higherEnd].rate;
+  },
+  _getNoCurrencyError() {
+    const notifErrorNoCurrency = ErrorNotificationHelper.createNotification({
+      message: translate('Currency rate not found'),
+      origin: NOTIFICATION_ORIGIN_CURRENCY_MANAGER
+    });
+    return notifErrorNoCurrency;
+  },
+  convertViaBaseCurrency(currencyFrom, currencyTo, timeDateToFind) {
+    return GlobalSettingsHelper.findByKey(BASE_CURRENCY_KEY).then((gsBaseCurrency) => {
+      const baseCurrency = gsBaseCurrency.value;
+      return Promise.all([
+        CurrencyRatesHelper.findByFromAndTo(currencyFrom, baseCurrency),
+        CurrencyRatesHelper.findByFromAndTo(baseCurrency, currencyTo)
+      ])
+        .then((rates) => {
+          const rateFromToBase = rates[0];
+          const rateBaseToTo = rates[1];
+          if (rateFromToBase && rateBaseToTo) {
+            // if we have both currencies we just return the product of ech rate
+            return this.getExchangeRate(rateFromToBase, timeDateToFind)
+              * this.getExchangeRate(rateBaseToTo, timeDateToFind);
+          } else if (rateFromToBase) {
+            // if either of them is not found we try to find the inverse
+            // we get the inverse of rateBaseToTo
+            return CurrencyRatesHelper.findByFromAndTo(baseCurrency, currencyTo).then((rateToToBase) => {
+              if (rateToToBase) {
+                return this.getExchangeRate(rateFromToBase, timeDateToFind)
+                  * (1 / this.getExchangeRate(rateToToBase, timeDateToFind));
+              } else {
+                return Promise.reject(this._getNoCurrencyError());
+              }
+            });
+          } else if (rateBaseToTo) {
+            // we try to get the inverse of rateFromToBase
+            return CurrencyRatesHelper.findByFromAndTo(baseCurrency, currencyFrom)
+              .then((rateBaseToFrom) => {
+                if (rateBaseToFrom) {
+                  return (1 / this.getExchangeRate(rateBaseToFrom, timeDateToFind))
+                    * this.getExchangeRate(rateBaseToTo, timeDateToFind);
+                } else {
+                  return Promise.reject(this._getNoCurrencyError());
+                }
+              });
+          } else {
+            return Promise.reject(this._getNoCurrencyError());
+          }
+        });
+    });
   }
 };
 export default CurrencyRatesManager;
