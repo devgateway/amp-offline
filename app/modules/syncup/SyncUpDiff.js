@@ -9,7 +9,8 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
-  SYNCUP_TYPE_WORKSPACES
+  SYNCUP_TYPE_WORKSPACES,
+  SYNCUP_TYPE_EXCHANGE_RATES
 } from '../../utils/Constants';
 import { throwSyncUpError } from './syncupManagers/SyncUpManagerInterface';
 import LoggerManager from '../../modules/util/LoggerManager';
@@ -42,6 +43,7 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_WORKSPACES:
       case SYNCUP_TYPE_WORKSPACE_SETTINGS:
       case SYNCUP_TYPE_ASSETS:
+      case SYNCUP_TYPE_EXCHANGE_RATES:
       case SYNCUP_TYPE_FIELDS: // TODO update once AMP-25568 is also done, as part of AMPOFFLINE-270
       case SYNCUP_TYPE_ACTIVITIES_PUSH:
         diff = diff || this._syncUpDiff[type] || [];
