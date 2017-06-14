@@ -26,7 +26,15 @@ export default class InfoMessage extends Component {
     const timeout = this.props.timeout || 10000;
     this.setState({ show: true });
     // TODO in alerts & notifications ticket more behavior, styles, etc
-    setTimeout(() => this.setState({ show: false }), timeout);
+    setTimeout(() => {
+      if (this.unmounted !== true) {
+        this.setState({ show: false });
+      }
+    }, timeout);
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   close() {

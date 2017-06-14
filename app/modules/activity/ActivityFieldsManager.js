@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+import PossibleValuesManager from './PossibleValuesManager';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
@@ -29,8 +30,6 @@ export default class ActivityFieldsManager {
     this._fieldPathsEnabledStatusMap = {};
     this._lang = LANGUAGE_ENGLISH;
     this._defaultLang = LANGUAGE_ENGLISH;
-    this._translationsCache = {};
-    this._translationsCache[this._lang] = {};
     this.cleanup(fieldsDef);
   }
 
@@ -50,9 +49,6 @@ export default class ActivityFieldsManager {
 
   set currentLanguageCode(lang) {
     this._lang = lang;
-    if (!this._translationsCache[this._lang]) {
-      this._translationsCache[this._lang] = {};
-    }
   }
 
   set defaultLanguageCode(lang) {
@@ -95,18 +91,6 @@ export default class ActivityFieldsManager {
     this._fieldPathsEnabledStatusMap[fieldPath] = !isDisabled;
   }
 
-  _getOrInitCache(fieldPath) {
-    let cached = this._translationsCache[this._lang][fieldPath];
-    if (cached === undefined) {
-      cached = {};
-      this._translationsCache[this._lang][fieldPath] = cached;
-    }
-    if (cached.value === undefined) {
-      cached.value = {};
-    }
-    return cached;
-  }
-
   /**
    * Find the translation for the original value for the given field path, if found, otherwise returns null
    * @param fieldPath
@@ -114,25 +98,17 @@ export default class ActivityFieldsManager {
    * @return {string|null}
    */
   getValueTranslation(fieldPath, origValue) {
-    const cached = this._getOrInitCache(fieldPath);
-    let trnValue = cached.value[origValue];
-
-    if (trnValue === undefined) {
-      trnValue = null; // set to null to cache null and avoid the outer "if" test later
-      const options = this._possibleValuesMap[fieldPath];
-      if (options) {
-        const option = Object.values(options).find(opt => opt.value === origValue);
-        if (option !== undefined) {
-          const translations = option['translated-value'];
-          if (translations) {
-            trnValue = translations[this._lang] || translations[this._defaultLang];
-          }
-          // fallback to original untranslated value
-          trnValue = trnValue || origValue;
+    // fallback to original untranslated value
+    let trnValue = origValue;
+    const options = this._possibleValuesMap[fieldPath];
+    if (options) {
+      const option = Object.values(options).find(opt => opt.value === origValue);
+      if (option !== undefined) {
+        const translations = option['translated-value'];
+        if (translations) {
+          trnValue = translations[this._lang] || translations[this._defaultLang] || trnValue;
         }
       }
-      // cache result
-      cached.value[origValue] = trnValue;
     }
     return trnValue;
   }
@@ -158,8 +134,8 @@ export default class ActivityFieldsManager {
     return fieldsDef;
   }
 
-  getValue(object, fieldPath, fallbackDefaultLang: true) {
-    const parts = fieldPath.split('~');
+  getValue(object, fieldPath) {
+    const parts = fieldPath ? fieldPath.split('~') : [];
     let value = object;
     parts.some(part => {
       if (value instanceof Array) {
@@ -179,17 +155,10 @@ export default class ActivityFieldsManager {
     if (value !== undefined && value !== null && value.length !== 0) {
       let values = [].concat(value);
       values = values.map(val => {
-        let resVal = val.value !== undefined ? val.value : val;
-        const translations = val['translated-value'];
-        if (translations !== undefined) {
-          resVal = translations[this._lang];
-          if (resVal === undefined && fallbackDefaultLang) {
-            resVal = translations[this._defaultLang];
-          }
-          // fallback to untranslated value
-          resVal = resVal || val.value;
+        if (val.value === undefined) {
+          return val;
         }
-        return resVal;
+        return PossibleValuesManager.getOptionTranslation(val, this._lang, this._defaultLang);
       });
       value = value instanceof Array ? values : values[0];
     }
