@@ -40,7 +40,7 @@ const UserHelper = {
   },
 
   getNonBannedRegisteredUserIds() {
-    return this.findAllClientRegisteredUsersByExample({ 'is-banned': false }, { id: 1 }).then(users =>
+    return this.findAllClientRegisteredUsersByExample({ 'is-banned': { $ne: true } }, { id: 1 }).then(users =>
       Utils.flattenToListByKey(users, 'id'));
   },
 
