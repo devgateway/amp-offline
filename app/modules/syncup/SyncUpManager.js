@@ -23,6 +23,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_GS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
@@ -44,6 +45,8 @@ import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
 import { loadNumberSettings, loadDateSettings } from '../../actions/StartUpAction';
 import WorkspaceSettingsSyncUpManager from './syncupManagers/WorkspaceSettingsSyncUpManager';
+import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
+
 import SyncUpManagerInterface from './syncupManagers/SyncUpManagerInterface';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
@@ -59,7 +62,8 @@ const syncUpModuleList = [
   { type: SYNCUP_TYPE_TRANSLATIONS, SyncUpClass: TranslationSyncUpManager },
   { type: SYNCUP_TYPE_WORKSPACES, SyncUpClass: WorkspaceSyncUpManager },
   { type: SYNCUP_TYPE_GS, SyncUpClass: GlobalSettingsSyncUpManager },
-  { type: SYNCUP_TYPE_WORKSPACE_SETTINGS, SyncUpClass: WorkspaceSettingsSyncUpManager }
+  { type: SYNCUP_TYPE_WORKSPACE_SETTINGS, SyncUpClass: WorkspaceSettingsSyncUpManager },
+  { type: SYNCUP_TYPE_EXCHANGE_RATES, SyncUpClass: CurrencyRatesSyncUpManager }
 ];
 
 const _noActivitiesPush = { type: SYNCUP_TYPE_ACTIVITIES_PUSH, SyncUpClass: null };
