@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import Section from '../Section';
 import LoggerManager from '../../../../../modules/util/LoggerManager';

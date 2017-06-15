@@ -8,7 +8,7 @@ export default class APLabel extends Component {
     label: PropTypes.string.isRequired,
     dontTranslate: PropTypes.bool,
     labelClass: PropTypes.string,
-    decorator: PropTypes.func, // TODO: To be implemented.
+    /* decorator: PropTypes.func, // TODO: To be implemented. */
     separator: PropTypes.bool
   };
 
