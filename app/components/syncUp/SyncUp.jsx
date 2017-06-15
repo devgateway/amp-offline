@@ -8,8 +8,14 @@ import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 
-export default class SyncUp extends Component {
+// opposite of `pluck`, provided an object, returns a function that accepts a string
+// and returns the corresponding field of that object
+const valuesOf = obj => field => obj[field];
 
+// accepts a string:boolean map and concats the keys with truthy values into a string that can be passed to `classNames`
+const classes = rules => Object.keys(rules).filter(valuesOf(rules)).join(' ');
+
+export default class SyncUp extends Component {
   static propTypes = {
     startSyncUp: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
@@ -81,22 +87,23 @@ export default class SyncUp extends Component {
     LoggerManager.log('render');
     const { startSyncUp, syncUpReducer } = this.props;
     const { historyData, loadingSyncHistory, syncUpInProgress } = syncUpReducer;
-    const buttonClasses = ['btn', 'btn-success'];
-    if (loadingSyncHistory || syncUpInProgress) buttonClasses.push('disabled');
     return (
       <div className={styles.container}>
         <div className={styles.display_inline}>
           <Button
             type="button"
             text="Start Sync Up"
-            className={buttonClasses.join(' ')}
+            className={classes({
+                'btn btn-success': true,
+                disabled: loadingSyncHistory || syncUpInProgress
+            })}
             onClick={() => startSyncUp()}
           />
         </div>
         <div className={styles.display_inline}>
-          <div
-            className={(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress)
-              ? styles.loader : ''}/>
+          <div className={classes({
+              [styles.loader]: loadingSyncHistory || syncUpInProgress})
+          }/>
         </div>
         <hr/>
         {this.selectContentElementToDraw(historyData)}
