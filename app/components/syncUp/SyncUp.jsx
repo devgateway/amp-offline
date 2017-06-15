@@ -20,7 +20,8 @@ export default class SyncUp extends Component {
     startSyncUp: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired,
-    syncUpReducer: PropTypes.object.isRequired
+    syncUpReducer: PropTypes.object.isRequired,
+    getSyncUpHistory: PropTypes.func.isRequired
   };
 
   constructor() {
@@ -30,6 +31,7 @@ export default class SyncUp extends Component {
 
   componentWillMount() {
     LoggerManager.log('componentWillMount');
+    this.props.getSyncUpHistory();
   }
 
   componentDidMount() {
@@ -62,23 +64,28 @@ export default class SyncUp extends Component {
           </div>
         );
       } else {
-        return (<div className={'container'}>
-          <div className={'row'}>
-            <div className={'col-sm-4'}>
-              Requested Date:
+        return (
+          <div className="container">
+            <div className="row">
+              <div className="col-sm-4">
+                Requested Date:
+              </div>
+              <div className="col-sm-4">
+                {new Date(historyData['sync-date']).toLocaleString()}
+              </div>
             </div>
-            <div className={'col-sm-4'}>{historyData['requested-date']}</div>
+            <div className="row">
+              <div className="col-sm-4">status</div>
+              <div className="col-sm-4">{historyData.status}</div>
+            </div>
           </div>
-          <div className={'row'}>
-            <div className={'col-sm-4'}>status</div>
-            <div className={'col-sm-4'}>{historyData.status}</div>
-          </div>
-        </div>);
+        );
       }
     }
   }
 
-  cancelSync () {
+// eslint-disable-next-line class-methods-use-this
+  cancelSync() {
     LoggerManager.log('cancelSync');
     alert('To be implemented on AMPOFFLINE-208');
   }
@@ -94,21 +101,19 @@ export default class SyncUp extends Component {
             type="button"
             text="Start Sync Up"
             className={classes({
-                'btn btn-success': true,
-                disabled: loadingSyncHistory || syncUpInProgress
+              'btn btn-success': true,
+              disabled: loadingSyncHistory || syncUpInProgress
             })}
-            onClick={() => startSyncUp()}
+            onClick={startSyncUp}
           />
         </div>
         <div className={styles.display_inline}>
-          <div className={classes({
-              [styles.loader]: loadingSyncHistory || syncUpInProgress})
-          }/>
+          <div className={classes({ [styles.loader]: loadingSyncHistory || syncUpInProgress })}/>
         </div>
         <hr/>
-        {this.selectContentElementToDraw(historyData)}
+        {this.selectContentElementToDraw(historyData[0])}
 
-        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={this.cancelSync}/>
+        <SyncUpProgressDialogModal show={syncUpInProgress} onClick={this.cancelSync.bind(this)}/>
       </div>
     );
   }
