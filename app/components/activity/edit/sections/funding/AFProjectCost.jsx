@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -34,11 +35,11 @@ export default class AFProjectCost extends Component {
   }
 
   getDate(cell) {
-    return (<span className={styles.editable}>{createFormattedDate(cell)}</span>);
+    return (<span className={styles.editable}>{cell}</span>);
   }
 
   getAmount(cell) {
-    return (<span className={styles.editable}>{NumberUtils.rawNumberToFormattedString(cell)}</span>);
+    return (<span className={styles.editable}>{NumberUtils.rawNumberToFormattedString(cell, true)}</span>);
   }
 
   generateProposedProjectCost() {
@@ -47,7 +48,14 @@ export default class AFProjectCost extends Component {
         mode: 'click',
         blurToSave: true
       };
-
+      const data = [];
+      this.props.activity[AC.PPC_AMOUNT].forEach((item) => (
+        data.push({
+          [AC.AMOUNT]: NumberUtils.rawNumberToFormattedString(item[AC.AMOUNT], true),
+          [AC.CURRENCY_CODE]: item[AC.CURRENCY_CODE],
+          [AC.FUNDING_DATE]: createFormattedDate(item[AC.FUNDING_DATE])
+        })
+      ));
       const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
       // TODO: check FM.
       if (true) {
@@ -72,7 +80,7 @@ export default class AFProjectCost extends Component {
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
           thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={this.props.activity[AC.PPC_AMOUNT]}>
+          data={data}>
           {columns}
         </BootstrapTable>
       </div>);
@@ -86,7 +94,14 @@ export default class AFProjectCost extends Component {
         mode: 'click',
         blurToSave: true
       };
-
+      const data = [];
+      this.props.activity[AC.RPC_AMOUNT].forEach((item) => (
+        data.push({
+          [AC.AMOUNT]: NumberUtils.rawNumberToFormattedString(item[AC.AMOUNT], true),
+          [AC.CURRENCY_CODE]: item[AC.CURRENCY_CODE],
+          [AC.FUNDING_DATE]: createFormattedDate(item[AC.FUNDING_DATE])
+        })
+      ));
       const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
       // TODO: check FM.
       if (true) {
@@ -111,7 +126,7 @@ export default class AFProjectCost extends Component {
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
           thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={this.props.activity[AC.RPC_AMOUNT]}>
+          data={data}>
           {columns}
         </BootstrapTable>
       </div>);
