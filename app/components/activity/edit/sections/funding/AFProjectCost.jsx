@@ -11,6 +11,9 @@ import styles from '../../components/AFList.css';
 import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
 
+/**
+ * @author Gabriel Inchauspe
+ */
 export default class AFProjectCost extends Component {
 
   static propTypes = {

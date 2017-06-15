@@ -149,5 +149,6 @@
   "activityLastUpdatedBy": "Activity last updated by",
   "Amount": "Amount",
   "Currency": "Currency",
-  "Currency rate not found": "Currency rate not found"
+  "Currency rate not found": "Currency rate not found",
+  "Overall Funding Totals ": "Overall Funding Totals "
 }
