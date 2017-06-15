@@ -20,15 +20,10 @@ export default class SyncUp extends Component {
   constructor() {
     super();
     LoggerManager.log('constructor');
-
-    this.selectContentElementToDraw.bind(this);
   }
 
   componentWillMount() {
     LoggerManager.log('componentWillMount');
-    // To avoid the 'no-did-mount-set-state' eslint error.
-    this.setState({ firstLoadSyncUp: false });
-    this.setState({ loadingSyncHistory: this.props.syncUpReducer.loadingSyncHistory });
   }
 
   componentDidMount() {
@@ -36,11 +31,8 @@ export default class SyncUp extends Component {
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps() {
     LoggerManager.log('componentWillReceiveProps');
-    if (this.props.syncUpReducer.loadingSyncHistory !== nextProps.syncUpReducer.loadingSyncHistory) {
-      this.setState({ loadingSyncHistory: this.props.syncUpReducer.loadingSyncHistory });
-    }
   }
 
   routerWillLeave() {
@@ -51,20 +43,18 @@ export default class SyncUp extends Component {
 
   selectContentElementToDraw(historyData) {
     LoggerManager.log('selectContentElementToDraw');
+    const { syncUpReducer } = this.props;
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
       return <Loading/>;
     } else {
-      const showErrors = this.props.syncUpReducer.errorMessage !== '' || this.props.syncUpReducer.forceSyncUpMessage !== '';
-      if (showErrors) {
-        let error;
-        let warn;
-        if (this.props.syncUpReducer.errorMessage !== '') {
-          error = <ErrorMessage message={this.props.syncUpReducer.errorMessage}/>;
-        }
-        if (this.props.syncUpReducer.forceSyncUpMessage !== '') {
-          warn = <WarnMessage message={this.props.syncUpReducer.forceSyncUpMessage}/>;
-        }
-        return (<div>{ error }{ warn }</div>);
+      const { errorMessage, forceSyncUpMessage } = syncUpReducer;
+      if (errorMessage || forceSyncUpMessage) {
+        return (
+          <div>
+            {errorMessage && <ErrorMessage message={errorMessage}/>}
+            {forceSyncUpMessage && <WarnMessage message={forceSyncUpMessage}/>}
+          </div>
+        );
       } else {
         return (<div className={'container'}>
           <div className={'row'}>
@@ -82,25 +72,25 @@ export default class SyncUp extends Component {
     }
   }
 
-  cancelSync() {
+  cancelSync () {
     LoggerManager.log('cancelSync');
     alert('To be implemented on AMPOFFLINE-208');
   }
 
   render() {
     LoggerManager.log('render');
-    const { startSyncUp } = this.props;
-    const { historyData } = this.props.syncUpReducer;
+    const { startSyncUp, syncUpReducer } = this.props;
+    const { historyData, loadingSyncHistory, syncUpInProgress } = syncUpReducer;
+    const buttonClasses = ['btn', 'btn-success'];
+    if (loadingSyncHistory || syncUpInProgress) buttonClasses.push('disabled');
     return (
       <div className={styles.container}>
         <div className={styles.display_inline}>
           <Button
-            type="button" text="Start Sync Up"
-            className={`btn btn-success ${(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress
-              ? 'disabled' : '')}`}
-            onClick={() => {
-              startSyncUp();
-            }}
+            type="button"
+            text="Start Sync Up"
+            className={buttonClasses.join(' ')}
+            onClick={() => startSyncUp()}
           />
         </div>
         <div className={styles.display_inline}>
