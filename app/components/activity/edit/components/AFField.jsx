@@ -82,6 +82,7 @@ export default class AFField extends Component {
     } else if (this.type === Types.LIST_SELECTOR || (!this.forcedType && this.fieldDef.field_type === 'list')) {
       return this._getListSelector();
     }
+    debugger
     return 'Not Implemented';
   }
 

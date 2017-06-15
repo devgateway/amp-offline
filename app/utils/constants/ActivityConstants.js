@@ -119,6 +119,7 @@ export const COMPONENT_DESCRIPTION = 'description';
 export const FUNDING_AMOUNT_ID = 'amp_funding_amount_id';
 export const EXTRA_INFO = 'extra_info';
 export const ACRONYM = 'acronym';
+export const TYPE_OF_COOPERATION = 'type_of_cooperation';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

@@ -3,7 +3,6 @@ import { Tab, Tabs } from 'react-bootstrap';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../utils/constants/ValueConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 
@@ -36,8 +35,7 @@ class AFFunding extends Component {
 
   generateOverviewTabContent() {
     return (<div>
-      <AFProjectCost activity={this.props.activity} type={VC.PROPOSED_PROJECT_COST} />
-      <AFProjectCost activity={this.props.activity} type={VC.REVISED_PROJECT_COST} />
+      <AFProjectCost activity={this.props.activity} />
     </div>);
   }
 
