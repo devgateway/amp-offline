@@ -150,5 +150,6 @@
   "Mode of Payment": "Mode of Payment",
   "Agreement Title": "Agreement Title",
   "Agreement Code": "Agreement Code",
-  "Funding Classification Date": "Funding Classification Date"
+  "Funding Classification Date": "Funding Classification Date",
+  "Currency rate not found": "Currency rate not found"
 }

@@ -18,14 +18,14 @@ export default class IconFormatter extends Component {
     let view;
     if (this.props.row.edit) {
       edit = (<Link to={editLink} title={translate('clickToEditActivity')}>
-        <img className={styles.edit_icon} alt="edit"/>
+        <img className={styles.edit_icon} alt="edit" />
       </Link>);
     }
     if (this.props.row.view) {
       view = (<Link to={viewLink} title={translate('clickToPreviewActivity')}>
-        <img className={styles.view_icon} alt="view"/>
+        <img className={styles.view_icon} alt="view" />
       </Link>);
     }
-    return (edit || view ? (<div>{ edit }{ view }</div>) : <span/>);
+    return (edit || view ? (<div>{ edit }{ view }</div>) : <span />);
   }
 }

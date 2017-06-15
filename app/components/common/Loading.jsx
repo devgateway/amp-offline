@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, { Component } from 'react';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class Loading extends Component {

@@ -90,7 +90,7 @@ export default class ActivityPreview extends Component {
           </span>
         </div>
         <div className={styles.preview_status_container} >
-          <APStatusBar fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail}/>
+          <APStatusBar fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail} />
         </div>
         <div className={styles.preview_categories} >
           <ul>

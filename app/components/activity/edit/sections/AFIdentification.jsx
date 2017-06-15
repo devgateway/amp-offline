@@ -60,7 +60,7 @@ class AFIdentification extends Component {
             </Col>
           </Row>
         </Grid>
-      </ div >);
+      </div>);
   }
 }
 

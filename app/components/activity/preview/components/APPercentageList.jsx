@@ -33,7 +33,7 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
         const key = Utils.stringToUniqueId(hierarchicalValue);
         return <APPercentageField key={key} title={hierarchicalValue} value={item[percentageField]} />;
       });
-      content = <APField key={listField} title={title} value={content}/>;
+      content = <APField key={listField} title={title} value={content} />;
     }
     return content;
   }
