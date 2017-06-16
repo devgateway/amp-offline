@@ -2,6 +2,7 @@ import { POSSIBLE_VALUES_PER_FIELD_PATHS } from '../../connectivity/AmpApiConsta
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import PossibleValuesHelper from '../../helpers/PossibleValuesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
+import { SYNCUP_TYPE_POSSIBLE_VALUES } from '../../../utils/Constants';
 import LoggerManager from '../../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -11,6 +12,10 @@ import LoggerManager from '../../util/LoggerManager';
  * @author Nadejda Mandrescu
  */
 export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpManager {
+
+  constructor() {
+    super(SYNCUP_TYPE_POSSIBLE_VALUES);
+  }
 
   doAtomicSyncUp(fieldPaths) {
     LoggerManager.log('doAtomicSyncUp');

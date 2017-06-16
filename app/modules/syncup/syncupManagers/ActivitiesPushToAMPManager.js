@@ -4,6 +4,7 @@ import * as ActivityHelper from '../../helpers/ActivityHelper';
 import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
+import { SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
 import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorConstants';
@@ -19,7 +20,7 @@ import LoggerManager from '../../util/LoggerManager';
  */
 export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   constructor() {
-    super();
+    super(SYNCUP_TYPE_ACTIVITIES_PUSH);
     LoggerManager.log('ActivitiesPushToAMPManager');
     this._cancel = false;
   }

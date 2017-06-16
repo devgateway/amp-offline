@@ -10,7 +10,8 @@ import {
   FS_LOCALES_DIRECTORY,
   LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
-  LANGUAGE_TRANSLATIONS_FILE
+  LANGUAGE_TRANSLATIONS_FILE,
+  SYNCUP_TYPE_TRANSLATIONS
 } from '../../../utils/Constants';
 import Notification from '../../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../../utils/constants/ErrorConstants';
@@ -26,7 +27,10 @@ const LOCAL_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_TRANSLATIONS_FILE
 export default class TranslationSyncUpManager extends SyncUpManagerInterface {
 
   // TODO partial sync up once partial sync up is possible for translations. For now it will be as an atomic one.
-  done: false;
+  constructor() {
+    super(SYNCUP_TYPE_TRANSLATIONS);
+    this.done = false;
+  }
 
   doSyncUp() {
     this.done = false;

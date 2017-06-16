@@ -9,7 +9,8 @@ import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorCo
  */
 export default class SyncUpManagerInterface {
 
-  constructor() {
+  constructor(type) {
+    this._type = type;
     if (this.doSyncUp === undefined) {
       throwSyncUpError('SyncUpManagerInterface.doSyncUp not implemented');
     }
@@ -19,6 +20,10 @@ export default class SyncUpManagerInterface {
     if (this.cancel === undefined) {
       throwSyncUpError('SyncUpManagerInterface.cancel not implemented');
     }
+  }
+
+  get type() {
+    return this._type;
   }
 
   /**
@@ -41,7 +46,6 @@ export default class SyncUpManagerInterface {
   // cancel() {}
 
 }
-
 
 export const throwSyncUpError = (message) => {
   throw new Notification({
