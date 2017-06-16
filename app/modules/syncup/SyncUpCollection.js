@@ -10,6 +10,7 @@ import PossibleValuesSyncUpManager from './syncupManagers/PossibleValuesSyncUpMa
 import AmpAssetManager from './syncupManagers/AmpAssetManager';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';
+import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
 import * as Utils from '../../utils/Utils';
 import * as SS from './SyncUpUnitState';
@@ -17,6 +18,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_GS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
@@ -37,7 +39,7 @@ export default class SyncUpCollection {
   static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, FieldsSyncUpManager,
     PossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
-    GlobalSettingsSyncUpManager];
+    GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpCollection._initCollection();
 
   static _initCollection() {
@@ -59,6 +61,7 @@ export default class SyncUpCollection {
       ...SyncUpCollection._COMMON_DEP,
       ...Utils.toMap(SYNCUP_TYPE_ACTIVITIES_PUSH, SS.STATES_FINISH)
     };
+    dependencies[SYNCUP_TYPE_EXCHANGE_RATES] = SyncUpCollection._COMMON_DEP;
   }
 
   constructor() {
