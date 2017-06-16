@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import translate from '../../utils/translate';
 import style from './Navbar.css';
-import topMenu from './TopMenu';
+import TopMenuContainer from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
 import LoggerManager from '../../modules/util/LoggerManager';
@@ -67,7 +67,7 @@ export default class Navbar extends Component {
 
         </div>
         <div className={style.main_menu}>
-          <topMenu
+          <TopMenuContainer
             builder={MenuUtils.default.prototype.buildMenu}
             onClick={MenuUtils.handleClick}
             loggedIn={this.props.loginReducer.loggedIn}
