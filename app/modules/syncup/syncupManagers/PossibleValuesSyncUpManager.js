@@ -19,13 +19,17 @@ export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpMan
 
   doAtomicSyncUp(fieldPaths) {
     LoggerManager.log('doAtomicSyncUp');
-    return new Promise((resolve, reject) =>
-      ConnectionHelper.doPost({ url: POSSIBLE_VALUES_PER_FIELD_PATHS, body: fieldPaths, shouldRetry: true })
-        .then(possibleValuesCollection => {
-          const newPossibleValues = [];
-          Object.entries(possibleValuesCollection).forEach(entry =>
-            newPossibleValues.push(PossibleValuesHelper.transformToClientUsage(entry)));
-          return PossibleValuesHelper.saveOrUpdateCollection(newPossibleValues);
-        }).then(resolve).catch(reject));
+    return ConnectionHelper.doPost({ url: POSSIBLE_VALUES_PER_FIELD_PATHS, body: fieldPaths, shouldRetry: true })
+      .then(possibleValuesCollection => {
+        const newPossibleValues = [];
+        Object.entries(possibleValuesCollection).forEach(entry =>
+          newPossibleValues.push(PossibleValuesHelper.transformToClientUsage(entry)));
+        return PossibleValuesHelper.saveOrUpdateCollection(newPossibleValues);
+      }).then((result) => {
+        this.done = true;
+        return result;
+      }).catch(() => {
+        this.diff = fieldPaths;
+      });
   }
 }

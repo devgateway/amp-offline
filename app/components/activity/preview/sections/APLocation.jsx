@@ -28,7 +28,7 @@ class APLocation extends Component {
   }
 
   render() {
-    let content = [<APLocationsList key="locations-list" {...this.props}/>];
+    let content = [<APLocationsList key="locations-list" {...this.props} />];
     content.push(this.props.buildSimpleField(IMPLEMENTATION_LEVEL, true, new Set([0])));
     content.push(this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0])));
     content = content.filter(el => el !== undefined);

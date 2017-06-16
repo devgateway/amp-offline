@@ -17,6 +17,11 @@ export default class SyncUp extends Component {
     syncUpReducer: PropTypes.object.isRequired
   };
 
+  static cancelSync() {
+    LoggerManager.log('cancelSync');
+    LoggerManager.log('To be implemented on AMPOFFLINE-208');
+  }
+
   constructor() {
     super();
     LoggerManager.log('constructor');
@@ -52,17 +57,18 @@ export default class SyncUp extends Component {
   selectContentElementToDraw(historyData) {
     LoggerManager.log('selectContentElementToDraw');
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
-      return <Loading/>;
+      return <Loading />;
     } else {
-      const showErrors = this.props.syncUpReducer.errorMessage !== '' || this.props.syncUpReducer.forceSyncUpMessage !== '';
+      const showErrors = this.props.syncUpReducer.errorMessage !== ''
+        || this.props.syncUpReducer.forceSyncUpMessage !== '';
       if (showErrors) {
         let error;
         let warn;
         if (this.props.syncUpReducer.errorMessage !== '') {
-          error = <ErrorMessage message={this.props.syncUpReducer.errorMessage}/>;
+          error = <ErrorMessage message={this.props.syncUpReducer.errorMessage} />;
         }
         if (this.props.syncUpReducer.forceSyncUpMessage !== '') {
-          warn = <WarnMessage message={this.props.syncUpReducer.forceSyncUpMessage}/>;
+          warn = <WarnMessage message={this.props.syncUpReducer.forceSyncUpMessage} />;
         }
         return (<div>{ error }{ warn }</div>);
       } else {
@@ -82,11 +88,6 @@ export default class SyncUp extends Component {
     }
   }
 
-  cancelSync() {
-    LoggerManager.log('cancelSync');
-    alert('To be implemented on AMPOFFLINE-208');
-  }
-
   render() {
     LoggerManager.log('render');
     const { startSyncUp } = this.props;
@@ -96,7 +97,8 @@ export default class SyncUp extends Component {
         <div className={styles.display_inline}>
           <Button
             type="button" text="Start Sync Up"
-            className={`btn btn-success ${(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress
+            className={`btn btn-success ${(this.props.syncUpReducer.loadingSyncHistory
+                || this.props.syncUpReducer.syncUpInProgress
               ? 'disabled' : '')}`}
             onClick={() => {
               startSyncUp();
@@ -106,12 +108,12 @@ export default class SyncUp extends Component {
         <div className={styles.display_inline}>
           <div
             className={(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress)
-              ? styles.loader : ''}/>
+              ? styles.loader : ''} />
         </div>
-        <hr/>
+        <hr />
         {this.selectContentElementToDraw(historyData)}
 
-        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={this.cancelSync}/>
+        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync} />
       </div>
     );
   }

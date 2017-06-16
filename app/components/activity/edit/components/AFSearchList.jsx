@@ -36,7 +36,7 @@ export default class AFSearchList extends Component {
 
   componentWillMount() {
     this.props.options.forEach(option => {
-      option.upperCaseValue = option.value.toLocaleUpperCase();
+      option.upperCaseValue = option.translatedValue.toLocaleUpperCase();
     });
     this.resetState();
   }
@@ -72,7 +72,7 @@ export default class AFSearchList extends Component {
   _getPaddedValue(option: AFOption) {
     if (!option.paddedValue) {
       const repeatCount = HIERARCHY_LEVEL_PADDING_SIZE * (option[HIERARCHICAL_VALUE_DEPTH] || 0);
-      option.paddedValue = HIERARCHY_LEVEL_PADDING_CHAR.repeat(repeatCount).concat(option.value);
+      option.paddedValue = HIERARCHY_LEVEL_PADDING_CHAR.repeat(repeatCount).concat(option.translatedValue);
     }
     return option.paddedValue;
   }
