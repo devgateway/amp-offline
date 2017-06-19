@@ -103,7 +103,7 @@ export default class SyncUp extends Component {
             <div className="row">
               <div className="col-sm-12">
                 <ErrorMessage
-                  message={translate('firstTimeSyncupMsg')}
+                  message={translate('noUserDataSyncWarning')}
                 />
               </div>
             </div>
@@ -124,8 +124,8 @@ export default class SyncUp extends Component {
             type="button"
             text="Start Sync Up"
             className={classes({
-                'btn btn-success': true,
-                disabled: loadingSyncHistory || syncUpInProgress
+              'btn btn-success': true,
+              disabled: loadingSyncHistory || syncUpInProgress
             })}
             onClick={startSyncUp}
           />

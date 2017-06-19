@@ -53,7 +53,7 @@
   "Planned Expenditures": "Planned Expenditures",
   "Unallocated Disbursements": "Unallocated Disbursements",
   "Next": "Next",
-  "Prev": "Prev",
+  "prev": "Prev",
   "timeoutError": "Connection timeout. Please check your internet connection.",
   "Legend": "Legend",
   "New": "New",
@@ -152,13 +152,11 @@
   "Agreement Code": "Agreement Code",
   "Funding Classification Date": "Funding Classification Date",
   "Currency rate not found": "Currency rate not found",
-  "Currency rate not found": "Currency rate not found",
   "AMP Offline Message": "AMP Offline Message",
   "OK": "OK",
   "Confirmation required": "Confirmation required",
   "Proceed": "Proceed",
   "Action required": "Action required",
   "lastSuccessfulSyncupDate": "Last successful sync up was was done on %date%",
-  "firstTimeSyncupMsg": "Please sync prior to working with the app for the latest data and avoid version conflicts when uploading data",
   "All previous sync up failed": "All previous sync up failed"
 }
