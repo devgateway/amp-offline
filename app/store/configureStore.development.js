@@ -14,6 +14,7 @@ import * as syncUpActions from '../actions/SyncUpAction';
 import * as desktopActions from '../actions/DesktopAction';
 import * as translationActions from '../actions/TranslationAction';
 import * as startUpActions from '../actions/StartUpAction';
+import * as notificationActions from '../actions/NotificationAction';
 
 const actionCreators = {
   ...loginActions,
@@ -24,6 +25,7 @@ const actionCreators = {
   ...desktopActions,
   ...translationActions,
   ...startUpActions,
+  ...notificationActions,
   push,
 };
 
