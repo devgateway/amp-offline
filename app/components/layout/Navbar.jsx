@@ -79,7 +79,7 @@ export default class Navbar extends Component {
             languageList={this.props.translationReducer.languageList}
           />
         </div>
-        <NotificationsContainer/>
+        <NotificationsContainer />
       </div>
     );
   }
