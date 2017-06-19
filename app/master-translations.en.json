@@ -157,7 +157,9 @@
   "OK": "OK",
   "Confirmation required": "Confirmation required",
   "Proceed": "Proceed",
-  "Action required": "Action required"
+  "Action required": "Action required",
+  "lastSuccessfulSyncupDate": "Last successful sync up was was done on %date%",
+  "All previous sync up failed": "All previous sync up failed"
   "Amount": "Amount",
   "Currency": "Currency",
   "Currency rate not found": "Currency rate not found",
