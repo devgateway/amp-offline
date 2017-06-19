@@ -9,14 +9,12 @@ import {
   NOTIFICATION_SEVERITY_ERROR
 } from '../../utils/constants/ErrorConstants';
 
-// total amount of time the message stays visible
-const TIMEOUT = 10 * 1000;
-// when it's this amount of time left, we nofity the user that the message is about to disappear
-const DISAPPEAR_TIMEOUT = TIMEOUT / 5;
-const CHECK_INTERVAL = 100;
-// how long should the enter/leave animation run(ms)
-// (if you change this you'll wanna change it in style.css, too)
-const ANIMATION_DURATION = 500;
+import {
+  MESSAGE_TIMEOUT,
+  MESSAGE_DISAPPEAR_TIMEOUT,
+  MESSAGE_CHECK_INTERVAL,
+  MESSAGE_ANIMATION_DURATION
+} from '../../utils/Constants';
 
 class Message extends PureComponent {
   static propTypes = {
@@ -27,7 +25,7 @@ class Message extends PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
-      timeLeft: TIMEOUT,
+      timeLeft: MESSAGE_TIMEOUT,
       isHovered: false,
       isMounting: false,
       isUnmounting: false,
@@ -39,13 +37,13 @@ class Message extends PureComponent {
   componentDidMount() {
     this.removalInterval = setInterval(() => {
       const { timeLeft, isHovered } = this.state;
-      const newTimeLeft = timeLeft - CHECK_INTERVAL;
+      const newTimeLeft = timeLeft - MESSAGE_CHECK_INTERVAL;
       if (newTimeLeft <= 0) {
         this.dismiss();
       } else if (!isHovered) {
         this.setState({ timeLeft: newTimeLeft });
       }
-    }, CHECK_INTERVAL);
+    }, MESSAGE_CHECK_INTERVAL);
 
     setTimeout(() => this.setState({ isMounting: true }));
   }
@@ -66,10 +64,10 @@ class Message extends PureComponent {
 
   getOpacity() {
     const { timeLeft, isHovered, wasStoppedByUser } = this.state;
-    if (isHovered || wasStoppedByUser || (timeLeft > DISAPPEAR_TIMEOUT)) {
+    if (isHovered || wasStoppedByUser || (timeLeft > MESSAGE_DISAPPEAR_TIMEOUT)) {
       return 1;
     } else {
-      return timeLeft / DISAPPEAR_TIMEOUT;
+      return timeLeft / MESSAGE_DISAPPEAR_TIMEOUT;
     }
   }
 
@@ -77,12 +75,12 @@ class Message extends PureComponent {
     const { onDismiss } = this.props;
     clearInterval(this.removalInterval);
     this.setState({ isUnmounting: true });
-    setTimeout(onDismiss, ANIMATION_DURATION);
+    setTimeout(onDismiss, MESSAGE_ANIMATION_DURATION);
   }
 
   handleUserDismissal() {
     this.setState({ wasDismissedByUser: true });
-    setTimeout(() => this.dismiss(), ANIMATION_DURATION);
+    setTimeout(() => this.dismiss(), MESSAGE_ANIMATION_DURATION);
   }
 
   stoppedByUser() {
