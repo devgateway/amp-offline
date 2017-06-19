@@ -5,10 +5,12 @@ import {
   CONTRACTING_AGENCY,
   BENEFICIARY_AGENCY,
   IMPLEMENTING_AGENCY,
-  RESPONSIBLE_ORGANIZATION
+  RESPONSIBLE_ORGANIZATION,
+  AMP_ORGANIZATION_ROLE_ID
 } from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import styles from './APRelatedOrganizations.css';
+import APLabel from '../components/APLabel';
 
 /**
  * @author Gabriel Inchauspe
@@ -30,14 +32,17 @@ class APRelatedOrganizations extends Component {
 
   _build() {
     // TODO: translate the organization type (AMPOFFLINE-477).
-    const content = [<br />];
+    const content = [];
     this.orgTypes.forEach(orgType => {
       if (this.props.activity[orgType] && this.props.activity[orgType].length > 0) {
-        content.push(<div>{orgType}</div>);
+        content.push(<APLabel label={orgType} key={orgType} separator />);
         this.props.activity[orgType].forEach(org => {
-          content.push(<div className={styles.organization}>{org.organization.value}</div>);
+          content.push(<APLabel
+            label={org.organization.value}
+            labelClass={styles.organization}
+            key={org[AMP_ORGANIZATION_ROLE_ID]}
+            separator />);
         });
-        content.push(<hr />);
       }
     });
     return content;

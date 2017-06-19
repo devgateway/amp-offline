@@ -92,3 +92,13 @@ export const DG_CONTACT_INFO = 'info@developmentgateway.org, Tel: +1.202.572.920
 export const LOG_DIR = 'logs';
 export const LOG_FILE_NAME = 'ampoffline';
 export const LOG_FILE_EXTENSION = 'log';
+
+// Message constants
+// total amount of time the message stays visible
+export const MESSAGE_TIMEOUT = 10 * 1000;
+// when it's this amount of time left, we nofity the user that the message is about to disappear
+export const MESSAGE_DISAPPEAR_TIMEOUT = MESSAGE_TIMEOUT / 5;
+export const MESSAGE_CHECK_INTERVAL = 100;
+// how long should the enter/leave animation run(ms)
+// (if you change this you'll wanna change it in style.css, too)
+export const MESSAGE_ANIMATION_DURATION = 500;
