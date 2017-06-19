@@ -68,7 +68,7 @@ export const dismissFullscreenAlertWithFollowup = alert => dispatch => {
 
 // notification is expected to be an instance of ../modules/helpers/NotificationHelper
 // yesAction is the action to be dispatched is the user clicks 'Yes' on the modal. Optional
-// noAction is the action to be dispatched is the user clicks 'Yes' on the modal. Optional
+// noAction is the action to be dispatched is the user clicks 'No' on the modal. Optional
 export const addConfirmationAlert = (notification, yesAction, noAction) => ({
   type: CONFIRMATION_ALERT_ADDED,
   payload: {
@@ -78,7 +78,7 @@ export const addConfirmationAlert = (notification, yesAction, noAction) => ({
   }
 });
 
-export const dismissConfirmationAlert = (alert, yesOrNo) => dispatch => {
+export const dismissConfirmationAlert = (alert, isYes) => dispatch => {
   dispatch({
     type: CONFIRMATION_ALERT_DISMISSED,
     payload: alert
@@ -86,7 +86,7 @@ export const dismissConfirmationAlert = (alert, yesOrNo) => dispatch => {
 
   const { yesAction, noAction } = alert;
 
-  if (yesOrNo && yesAction) {
+  if (isYes && yesAction) {
     dispatch(yesAction);
   } else if (noAction) {
     dispatch(noAction);

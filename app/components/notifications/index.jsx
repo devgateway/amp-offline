@@ -148,7 +148,7 @@ export default connect(
   dispatch => ({
     onDismissFullscreenAlert: notification => dispatch(dismissFullscreenAlert(notification)),
     onDismissFullscreenAlertWithFollowup: alert => dispatch(dismissFullscreenAlertWithFollowup(alert)),
-    onDismissConfirmationAlert: (alert, yesOrNo) => dispatch(dismissConfirmationAlert(alert, yesOrNo)),
+    onDismissConfirmationAlert: (alert, isYes) => dispatch(dismissConfirmationAlert(alert, isYes)),
     onDismissMessage: notification => dispatch(dismissMessage(notification))
   })
 )(Notifications);
