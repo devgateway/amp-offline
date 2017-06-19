@@ -11,7 +11,8 @@ import APFundingTotalItem from './APFundingTotalItem';
 class APFundingTotalsSection extends Component {
 
   static propTypes = {
-    fundings: PropTypes.array.isRequired
+    fundings: PropTypes.array.isRequired,
+    comparator: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -54,7 +55,7 @@ class APFundingTotalsSection extends Component {
         }
       });
     });
-    groups.forEach(g => {
+    groups.sort(this.props.comparator).forEach(g => {
       content.push(<APFundingTotalItem
         key={g.key}
         currency={translate(g.currency.value)} value={g.amount}
