@@ -147,10 +147,10 @@ export default class ActivityFilter {
      Thus when a new sector, e.g. A101 is added to "A", then it will be filtered out from results.
      On the other hand, locations and programs descendants are built at filtering time, not saved.
      */
-    this._addListMapValueFilter(AC.PRIMARY_SECTORS, AC.SECTOR_ID, '$in', 'sectors');
-    this._addListMapValueFilter(AC.SECONDARY_SECTORS, AC.SECTOR_ID, '$in', 'secondarySectors');
-    this._addListMapValueFilter(AC.TERTIARY_SECTORS, AC.SECTOR_ID, '$in', 'tertiarySectors');
-    this._addListMapValueFilter(AC.TAG_SECTORS, AC.SECTOR_ID, '$in', 'tagSectors');
+    this._addListMapValueFilter(AC.PRIMARY_SECTORS, AC.SECTOR, '$in', 'sectors');
+    this._addListMapValueFilter(AC.SECONDARY_SECTORS, AC.SECTOR, '$in', 'secondarySectors');
+    this._addListMapValueFilter(AC.TERTIARY_SECTORS, AC.SECTOR, '$in', 'tertiarySectors');
+    this._addListMapValueFilter(AC.TAG_SECTORS, AC.SECTOR, '$in', 'tagSectors');
   }
 
   _addProgramFilters() {
