@@ -3,10 +3,13 @@ import React, { Component, PropTypes } from 'react';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
 import WarnMessage from '../common/WarnMessage';
+import InfoMessage from '../common/InfoMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
+import translate from '../../utils/translate';
+import { SYNCUP_STATUS_SUCCESS, SYNCUP_STATUS_FAIL } from '../../utils/Constants';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -63,20 +66,41 @@ export default class SyncUp extends Component {
             {forceSyncUpMessage && <WarnMessage message={forceSyncUpMessage}/>}
           </div>
         );
+      } else if (historyData) {
+        if (historyData.status === SYNCUP_STATUS_SUCCESS) {
+          const message = translate('Last successful sync up was was done on $date$')
+            .replace('$date$', new Date(historyData['sync-date']).toLocaleString());
+
+          return (
+            <div className="container">
+              <div className="row">
+                <div className="col-sm-12">
+                  <InfoMessage type="success" message={message}/>
+                </div>
+              </div>
+            </div>
+          );
+        } else if (historyData.status === SYNCUP_STATUS_FAIL) {
+          return (
+            <div className="container">
+              <div className="row">
+                <div className="col-sm-12">
+                  <WarnMessage message={translate('All previous sync up failed.')}/>
+                </div>
+              </div>
+            </div>
+          );
+        }
       } else {
         return (
           <div className="container">
             <div className="row">
-              <div className="col-sm-4">
-                Requested Date:
+              <div className="col-sm-12">
+                <ErrorMessage
+                  message={translate('Please sync prior to working with the app for the latest data and avoid ' +
+                    'version conflicts when uploading data')}
+                />
               </div>
-              <div className="col-sm-4">
-                {new Date(historyData['sync-date']).toLocaleString()}
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-sm-4">status</div>
-              <div className="col-sm-4">{historyData.status}</div>
             </div>
           </div>
         );
