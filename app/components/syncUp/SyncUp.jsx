@@ -3,10 +3,21 @@ import React, { Component, PropTypes } from 'react';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
 import WarnMessage from '../common/WarnMessage';
+import InfoMessage from '../common/InfoMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
+import translate from '../../utils/translate';
+import { SYNCUP_STATUS_SUCCESS, SYNCUP_STATUS_FAIL } from '../../utils/Constants';
+import DateUtils from '../../utils/DateUtils';
+
+// opposite of `pluck`, provided an object, returns a function that accepts a string
+// and returns the corresponding field of that object
+const valuesOf = obj => field => obj[field];
+
+// accepts a string:boolean map and concats the keys with truthy values into a string that can be passed to `classNames`
+const classes = rules => Object.keys(rules).filter(valuesOf(rules)).join(' ');
 
 export default class SyncUp extends Component {
 
@@ -14,7 +25,8 @@ export default class SyncUp extends Component {
     startSyncUp: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired,
-    syncUpReducer: PropTypes.object.isRequired
+    syncUpReducer: PropTypes.object.isRequired,
+    getSyncUpHistory: PropTypes.func.isRequired
   };
 
   static cancelSync() {
@@ -25,15 +37,11 @@ export default class SyncUp extends Component {
   constructor() {
     super();
     LoggerManager.log('constructor');
-
-    this.selectContentElementToDraw.bind(this);
   }
 
   componentWillMount() {
     LoggerManager.log('componentWillMount');
-    // To avoid the 'no-did-mount-set-state' eslint error.
-    this.setState({ firstLoadSyncUp: false });
-    this.setState({ loadingSyncHistory: this.props.syncUpReducer.loadingSyncHistory });
+    this.props.getSyncUpHistory();
   }
 
   componentDidMount() {
@@ -41,11 +49,8 @@ export default class SyncUp extends Component {
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps() {
     LoggerManager.log('componentWillReceiveProps');
-    if (this.props.syncUpReducer.loadingSyncHistory !== nextProps.syncUpReducer.loadingSyncHistory) {
-      this.setState({ loadingSyncHistory: this.props.syncUpReducer.loadingSyncHistory });
-    }
   }
 
   routerWillLeave() {
@@ -56,62 +61,81 @@ export default class SyncUp extends Component {
 
   selectContentElementToDraw(historyData) {
     LoggerManager.log('selectContentElementToDraw');
+    const { syncUpReducer } = this.props;
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
       return <Loading />;
     } else {
-      const showErrors = this.props.syncUpReducer.errorMessage !== ''
-        || this.props.syncUpReducer.forceSyncUpMessage !== '';
-      if (showErrors) {
-        let error;
-        let warn;
-        if (this.props.syncUpReducer.errorMessage !== '') {
-          error = <ErrorMessage message={this.props.syncUpReducer.errorMessage} />;
-        }
-        if (this.props.syncUpReducer.forceSyncUpMessage !== '') {
-          warn = <WarnMessage message={this.props.syncUpReducer.forceSyncUpMessage} />;
-        }
-        return (<div>{ error }{ warn }</div>);
-      } else {
-        return (<div className={'container'}>
-          <div className={'row'}>
-            <div className={'col-sm-4'}>
-              Requested Date:
+      const { errorMessage, forceSyncUpMessage } = syncUpReducer;
+      if (errorMessage || forceSyncUpMessage) {
+        return (
+          <div>
+            {errorMessage && <ErrorMessage message={errorMessage} />}
+            {forceSyncUpMessage && <WarnMessage message={forceSyncUpMessage} />}
+          </div>
+        );
+      } else if (historyData) {
+        if (historyData.status === SYNCUP_STATUS_SUCCESS) {
+          const message = translate('lastSuccessfulSyncupDate')
+            .replace('%date%', DateUtils.createFormattedDate(new Date(historyData['sync-date'])));
+
+          return (
+            <div className="container">
+              <div className="row">
+                <div className="col-sm-12">
+                  <InfoMessage type="success" message={message} />
+                </div>
+              </div>
             </div>
-            <div className={'col-sm-4'}>{historyData['requested-date']}</div>
+          );
+        } else if (historyData.status === SYNCUP_STATUS_FAIL) {
+          return (
+            <div className="container">
+              <div className="row">
+                <div className="col-sm-12">
+                  <WarnMessage message={translate('All previous sync up failed.')} />
+                </div>
+              </div>
+            </div>
+          );
+        }
+      } else {
+        return (
+          <div className="container">
+            <div className="row">
+              <div className="col-sm-12">
+                <ErrorMessage
+                  message={translate('noUserDataSyncWarning')}
+                />
+              </div>
+            </div>
           </div>
-          <div className={'row'}>
-            <div className={'col-sm-4'}>status</div>
-            <div className={'col-sm-4'}>{historyData.status}</div>
-          </div>
-        </div>);
+        );
       }
     }
   }
 
   render() {
     LoggerManager.log('render');
-    const { startSyncUp } = this.props;
-    const { historyData } = this.props.syncUpReducer;
+    const { startSyncUp, syncUpReducer } = this.props;
+    const { historyData, loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (
       <div className={styles.container}>
         <div className={styles.display_inline}>
           <Button
-            type="button" text="Start Sync Up"
-            className={`btn btn-success ${(this.props.syncUpReducer.loadingSyncHistory
-                || this.props.syncUpReducer.syncUpInProgress
-              ? 'disabled' : '')}`}
-            onClick={() => {
-              startSyncUp();
-            }}
+            type="button"
+            text="Start Sync Up"
+            className={classes({
+              'btn btn-success': true,
+              disabled: loadingSyncHistory || syncUpInProgress
+            })}
+            onClick={startSyncUp}
           />
         </div>
         <div className={styles.display_inline}>
-          <div
-            className={(this.props.syncUpReducer.loadingSyncHistory || this.props.syncUpReducer.syncUpInProgress)
-              ? styles.loader : ''} />
+          <div className={classes({ [styles.loader]: loadingSyncHistory || syncUpInProgress })} />
         </div>
         <hr />
-        {this.selectContentElementToDraw(historyData)}
+        {this.selectContentElementToDraw(historyData[0])}
 
         <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync} />
       </div>

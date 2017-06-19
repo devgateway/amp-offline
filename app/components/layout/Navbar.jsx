@@ -10,6 +10,7 @@ import Logout from '../login/Logout';
 import LoggerManager from '../../modules/util/LoggerManager';
 import { AMP_COUNTRY_LOGO, DESKTOP_CURRENT_URL } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
+import NotificationsContainer from '../notifications';
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -52,11 +53,12 @@ export default class Navbar extends Component {
         <div className={style.navbar}>
           <Link to={DESKTOP_CURRENT_URL}>
             <img
-              src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)} alt="logo"
-              className={[style.countryFlag, style.navbar_left_side].join(' ')} /></Link>
-          <Link
-            className={style.navbar_left_side}
-            style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
+              alt="Logo"
+              src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
+              className={[style.countryFlag, style.navbar_left_side].join(' ')}
+            />
+          </Link>
+          <Link className={style.navbar_left_side} style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
 
           <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
@@ -77,6 +79,7 @@ export default class Navbar extends Component {
             languageList={this.props.translationReducer.languageList}
           />
         </div>
+        <NotificationsContainer />
       </div>
     );
   }

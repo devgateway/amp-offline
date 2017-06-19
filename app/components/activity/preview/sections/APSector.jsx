@@ -4,14 +4,14 @@ import APPercentageList from '../components/APPercentageList';
 import {
   PRIMARY_SECTORS,
   SECONDARY_SECTORS,
-  SECTOR_ID,
+  SECTOR,
   SECTOR_PERCENTAGE
 } from '../../../../utils/constants/ActivityConstants';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
-const PrimarySectorList = APPercentageList(PRIMARY_SECTORS, SECTOR_ID, SECTOR_PERCENTAGE, 'Primary Sector');
-const SecondarySectorList = APPercentageList(SECONDARY_SECTORS, SECTOR_ID, SECTOR_PERCENTAGE, 'Secondary Sector');
+const PrimarySectorList = APPercentageList(PRIMARY_SECTORS, SECTOR, SECTOR_PERCENTAGE, 'Primary Sector');
+const SecondarySectorList = APPercentageList(SECONDARY_SECTORS, SECTOR, SECTOR_PERCENTAGE, 'Secondary Sector');
 
 /**
  * Activity Preview Sector section
