@@ -74,8 +74,8 @@ export default class SyncUp extends Component {
         );
       } else if (historyData) {
         if (historyData.status === SYNCUP_STATUS_SUCCESS) {
-          const message = translate('Last successful sync up was was done on $date$')
-            .replace('$date$', new Date(historyData['sync-date']).toLocaleString());
+          const message = translate('lastSuccessfulSyncupDate')
+            .replace('%date%', new Date(historyData['sync-date']).toLocaleString());
 
           return (
             <div className="container">
@@ -103,8 +103,7 @@ export default class SyncUp extends Component {
             <div className="row">
               <div className="col-sm-12">
                 <ErrorMessage
-                  message={translate('Please sync prior to working with the app for the latest data and avoid ' +
-                    'version conflicts when uploading data')}
+                  message={translate('firstTimeSyncupMsg')}
                 />
               </div>
             </div>

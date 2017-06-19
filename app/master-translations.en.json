@@ -157,5 +157,8 @@
   "OK": "OK",
   "Confirmation required": "Confirmation required",
   "Proceed": "Proceed",
-  "Action required": "Action required"
+  "Action required": "Action required",
+  "lastSuccessfulSyncupDate": "Last successful sync up was was done on %date%",
+  "firstTimeSyncupMsg": "Please sync prior to working with the app for the latest data and avoid version conflicts when uploading data",
+  "All previous sync up failed": "All previous sync up failed"
 }
