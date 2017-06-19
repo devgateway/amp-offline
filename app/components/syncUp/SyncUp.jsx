@@ -68,8 +68,8 @@ export default class SyncUp extends Component {
       if (errorMessage || forceSyncUpMessage) {
         return (
           <div>
-            {errorMessage && <ErrorMessage message={errorMessage}/>}
-            {forceSyncUpMessage && <WarnMessage message={forceSyncUpMessage}/>}
+            {errorMessage && <ErrorMessage message={errorMessage} />}
+            {forceSyncUpMessage && <WarnMessage message={forceSyncUpMessage} />}
           </div>
         );
       } else if (historyData) {
@@ -81,7 +81,7 @@ export default class SyncUp extends Component {
             <div className="container">
               <div className="row">
                 <div className="col-sm-12">
-                  <InfoMessage type="success" message={message}/>
+                  <InfoMessage type="success" message={message} />
                 </div>
               </div>
             </div>
@@ -91,7 +91,7 @@ export default class SyncUp extends Component {
             <div className="container">
               <div className="row">
                 <div className="col-sm-12">
-                  <WarnMessage message={translate('All previous sync up failed.')}/>
+                  <WarnMessage message={translate('All previous sync up failed.')} />
                 </div>
               </div>
             </div>
@@ -132,12 +132,12 @@ export default class SyncUp extends Component {
           />
         </div>
         <div className={styles.display_inline}>
-          <div className={classes({ [styles.loader]: loadingSyncHistory || syncUpInProgress })}/>
+          <div className={classes({ [styles.loader]: loadingSyncHistory || syncUpInProgress })} />
         </div>
         <hr />
         {this.selectContentElementToDraw(historyData[0])}
 
-        <SyncUpProgressDialogModal show={syncUpInProgress} onClick={this.cancelSync.bind(this)}/>
+        <SyncUpProgressDialogModal show={syncUpInProgress} onClick={this.cancelSync.bind(this)} />
       </div>
     );
   }
