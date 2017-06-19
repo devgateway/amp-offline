@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import translate from '../../utils/translate';
 import style from './Navbar.css';
-import TopMenuComponent from './TopMenu';
+import TopMenuContainer from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
 import LoggerManager from '../../modules/util/LoggerManager';
@@ -60,7 +60,7 @@ export default class Navbar extends Component {
           </Link>
           <Link className={style.navbar_left_side} style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
 
-          <Logout loggedIn={this.props.loginReducer.loggedIn}/>
+          <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
             <a className={style.navbar_left_side} >{this.extractLoggedUser('')}</a>
             <a className={style.navbar_left_side} >{this.extractWorkSpace('')}</a>
@@ -69,7 +69,7 @@ export default class Navbar extends Component {
 
         </div>
         <div className={style.main_menu}>
-          <TopMenuComponent
+          <TopMenuContainer
             builder={MenuUtils.default.prototype.buildMenu}
             onClick={MenuUtils.handleClick}
             loggedIn={this.props.loginReducer.loggedIn}

@@ -15,7 +15,7 @@ function setup(loggedIn) {
   const store = configureStore(loggedIn);
   const app = mount(
     <Provider store={store}>
-      <Logout loggedIn={loggedIn}/>
+      <Logout loggedIn={loggedIn} />
     </Provider>
   );
   return {

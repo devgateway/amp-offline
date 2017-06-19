@@ -1,4 +1,5 @@
 export const SHOW_WORKSPACE_FILTER_KEY = 'Show workspace filter';
+export const BASE_CURRENCY_KEY = 'Base Currency';
 export const FILTER_BY_DATE_HIDE_PROJECTS = 'Filter by date hides projects';
 export const DEFAULT_DATE_FORMAT = 'Default Date Format';
 export const GS_DEFAULT_DECIMAL_SEPARATOR = 'Default Decimal Separator';
