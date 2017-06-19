@@ -10,6 +10,7 @@ import LoggerManager from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 import translate from '../../utils/translate';
 import { SYNCUP_STATUS_SUCCESS, SYNCUP_STATUS_FAIL } from '../../utils/Constants';
+import DateUtils from '../../utils/DateUtils';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -75,7 +76,7 @@ export default class SyncUp extends Component {
       } else if (historyData) {
         if (historyData.status === SYNCUP_STATUS_SUCCESS) {
           const message = translate('lastSuccessfulSyncupDate')
-            .replace('%date%', new Date(historyData['sync-date']).toLocaleString());
+            .replace('%date%', DateUtils.createFormattedDate(new Date(historyData['sync-date'])));
 
           return (
             <div className="container">
