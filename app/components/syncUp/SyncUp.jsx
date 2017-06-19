@@ -125,8 +125,8 @@ export default class SyncUp extends Component {
             type="button"
             text="Start Sync Up"
             className={classes({
-              'btn btn-success': true,
-              disabled: loadingSyncHistory || syncUpInProgress
+                'btn btn-success': true,
+                disabled: loadingSyncHistory || syncUpInProgress
             })}
             onClick={startSyncUp}
           />
@@ -137,7 +137,7 @@ export default class SyncUp extends Component {
         <hr />
         {this.selectContentElementToDraw(historyData[0])}
 
-        <SyncUpProgressDialogModal show={syncUpInProgress} onClick={this.cancelSync.bind(this)} />
+        <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync} />
       </div>
     );
   }
