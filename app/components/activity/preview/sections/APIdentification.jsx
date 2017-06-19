@@ -26,7 +26,7 @@ class APIdentification extends Component {
     return (
       <div>
         {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true))}
-        <APInternalIdsFromIdentification key="APInternalIdsFromIdentification" showIfEmpty/>
+        <APInternalIdsFromIdentification key="APInternalIdsFromIdentification" showIfEmpty />
       </div>
     );
   }

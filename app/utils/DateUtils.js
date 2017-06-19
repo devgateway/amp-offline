@@ -19,7 +19,7 @@ export default class DateUtils {
     return new Promise((resolve, reject) => (
       GlobalSettingsHelper.findByKey(DEFAULT_DATE_FORMAT))
       .then((dbDateFormat) => {
-        if (dbDateFormat != null && dbDateFormat.length > 0) {
+        if (dbDateFormat != null) {
           data.dateFormat = dbDateFormat.value;
         }
         return resolve(data);

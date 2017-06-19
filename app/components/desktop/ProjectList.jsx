@@ -23,19 +23,19 @@ export default class ProjectList extends Component {
     projects: PropTypes.array.isRequired
   };
 
-  linkFormatter(cell, row) {
+  static linkFormatter(cell, row) {
     return (
       <LinkFormatter cell={cell} row={row} />
     );
   }
 
-  iconFormatter(cell, row) {
+  static iconFormatter(cell, row) {
     return (
       <IconFormatter cell={cell} row={row} />
     );
   }
 
-  projectNameFormatter(cell, row) {
+  static projectNameFormatter(cell, row) {
     const nameStyles = [];
     switch (row.status) {
       case ACTIVITY_STATUS_DRAFT:
@@ -59,14 +59,14 @@ export default class ProjectList extends Component {
     return `<span class='${classes}'>${row.new ? '* ' : ''}${cell}</span>`;
   }
 
-  numberFormatter(cell) {
+  static numberFormatter(cell) {
     const number = Number(cell);
     return NumberUtils.rawNumberToFormattedString(number);
   }
 
   handlerClickCleanFiltered() {
-    this.refs[AMP_ID].cleanFiltered();
-    this.refs[PROJECT_TITLE].cleanFiltered();
+    this.filter[AMP_ID].cleanFiltered();
+    this.filter[PROJECT_TITLE].cleanFiltered();
   }
 
   render() {
@@ -77,7 +77,7 @@ export default class ProjectList extends Component {
     const pagination = paginationOptions.usePagination;
     return (
       <div className={style.container}>
-        <a onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
+        <a role="link" onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
           {translate('Reset All')}
         </a>
         <BootstrapTable
@@ -85,7 +85,7 @@ export default class ProjectList extends Component {
           containerClass={style.containerTable} tableHeaderClass={style.header} thClassName={style.thClassName}
         >
           <TableHeaderColumn
-            dataField="icon" dataFormat={this.iconFormatter} columnClassName={style.width_7}
+            dataField="icon" dataFormat={ProjectList.iconFormatter} columnClassName={style.width_7}
             className={style.thClassName} />
           <TableHeaderColumn
             dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.width_8}
@@ -93,7 +93,7 @@ export default class ProjectList extends Component {
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField={PROJECT_TITLE} dataFormat={this.projectNameFormatter} dataSort ref="project_title"
+            dataField={PROJECT_TITLE} dataFormat={ProjectList.projectNameFormatter} dataSort ref={PROJECT_TITLE}
             columnClassName={style.width_40}
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
             className={style.thClassName}>
@@ -105,12 +105,12 @@ export default class ProjectList extends Component {
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualCommitments" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={this.numberFormatter}>
+            dataFormat={ProjectList.numberFormatter}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualDisbursements" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={this.numberFormatter}>
+            dataFormat={ProjectList.numberFormatter}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>

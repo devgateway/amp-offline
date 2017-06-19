@@ -81,7 +81,6 @@ export default validate({
 
   plugins: [
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(packageJson.version),
       __COMMIT_HASH__: JSON.stringify(execSync('git rev-parse --short HEAD').toString())
     }), new StringReplacePlugin(),
   ],

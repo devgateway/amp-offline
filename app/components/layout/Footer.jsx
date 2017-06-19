@@ -6,7 +6,8 @@ import {
   DG_COMPANY_NAME,
   DG_ADDRESS_1,
   DG_ADDRESS_2,
-  DG_CONTACT_INFO
+  DG_CONTACT_INFO,
+  VERSION
 } from '../../utils/Constants';
 
 export default class Home extends Component {
@@ -17,16 +18,16 @@ export default class Home extends Component {
           <p>{translate('amp-offline')} {VERSION} {translate('amp-footer')}</p>
         </footer>
         <div className={[styles.footerText, styles.footerImageContainer].join(' ')}>
-          <img className={styles.footerImage} />
-          <br/>
+          <img className={styles.footerImage} alt={'footer'} />
+          <br />
           {DG_COMPANY_NAME}
-          <br/>
+          <br />
           {DG_ADDRESS_1}
-          <br/>
+          <br />
           {DG_ADDRESS_2}
-          <br/>
+          <br />
           {DG_CONTACT_INFO}
-          <br/>
+          <br />
           {__COMMIT_HASH__}
         </div>
       </div>

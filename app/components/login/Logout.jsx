@@ -8,12 +8,10 @@ import LoggerManager from '../../modules/util/LoggerManager';
 class Logout extends React.Component {
 
   static propTypes = {
-    loggedIn: PropTypes.bool.isRequired
+    loggedIn: PropTypes.bool.isRequired,
+    onClickLogout: PropTypes.function
   };
 
-  constructor() {
-    super();
-  }
 
   clickLogout() {
     LoggerManager.log('clickLogout');
@@ -25,8 +23,9 @@ class Logout extends React.Component {
     if (this.props.loggedIn) {
       return (
         <div className={style.logout_container}>
-          <a className={style.navbar_right_side} href="#"
-             onClick={this.clickLogout.bind(this)}>{translate('logoff')}</a>
+          <a
+            className={style.navbar_right_side} href="#logout"
+            onClick={this.clickLogout.bind(this)}>{translate('logoff')}</a>
         </div>
       );
     } else {
@@ -37,18 +36,18 @@ class Logout extends React.Component {
 
 /* TODO: Check if is possible to move this section with Redux code to a new TranslationContainer. We did it this way
  because we dont have a router on index.js, then we cant load this container automatically. */
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (state) => {
   LoggerManager.log('mapStateToProps');
   return state;
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
   LoggerManager.log('mapDispatchToProps');
   return {
     onClickLogout: () => {
-      dispatch(logoutAction())
+      dispatch(logoutAction());
     }
-  }
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Logout);

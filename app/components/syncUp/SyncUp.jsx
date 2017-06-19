@@ -19,6 +19,7 @@ const valuesOf = obj => field => obj[field];
 const classes = rules => Object.keys(rules).filter(valuesOf(rules)).join(' ');
 
 export default class SyncUp extends Component {
+
   static propTypes = {
     startSyncUp: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
@@ -26,6 +27,11 @@ export default class SyncUp extends Component {
     syncUpReducer: PropTypes.object.isRequired,
     getSyncUpHistory: PropTypes.func.isRequired
   };
+
+  static cancelSync() {
+    LoggerManager.log('cancelSync');
+    LoggerManager.log('To be implemented on AMPOFFLINE-208');
+  }
 
   constructor() {
     super();
@@ -56,7 +62,7 @@ export default class SyncUp extends Component {
     LoggerManager.log('selectContentElementToDraw');
     const { syncUpReducer } = this.props;
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
-      return <Loading/>;
+      return <Loading />;
     } else {
       const { errorMessage, forceSyncUpMessage } = syncUpReducer;
       if (errorMessage || forceSyncUpMessage) {
@@ -108,12 +114,6 @@ export default class SyncUp extends Component {
     }
   }
 
-// eslint-disable-next-line class-methods-use-this
-  cancelSync() {
-    LoggerManager.log('cancelSync');
-    alert('To be implemented on AMPOFFLINE-208');
-  }
-
   render() {
     LoggerManager.log('render');
     const { startSyncUp, syncUpReducer } = this.props;
@@ -134,7 +134,7 @@ export default class SyncUp extends Component {
         <div className={styles.display_inline}>
           <div className={classes({ [styles.loader]: loadingSyncHistory || syncUpInProgress })}/>
         </div>
-        <hr/>
+        <hr />
         {this.selectContentElementToDraw(historyData[0])}
 
         <SyncUpProgressDialogModal show={syncUpInProgress} onClick={this.cancelSync.bind(this)}/>

@@ -47,6 +47,19 @@ const SyncUpHelper = {
   saveOrUpdateSyncUpCollection(syncupData) {
     LoggerManager.log('saveOrUpdateSyncUpCollection');
     return DatabaseManager.saveOrUpdateCollection(syncupData, COLLECTION_SYNCUP_LOG);
+  },
+
+  /**
+   * Retrieves the latest sync up log
+   */
+  getLastSyncUpLog() {
+    LoggerManager.log('getLastSyncUpLog');
+    return SyncUpHelper.getLatestId().then(id => {
+      if (id === 0) {
+        return {};
+      }
+      return SyncUpHelper.findSyncUpByExample({ id });
+    });
   }
 };
 

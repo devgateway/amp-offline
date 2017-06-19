@@ -31,13 +31,13 @@ export default class TopArea extends Component {
                   <span className={style.letter_symbol}>*</span>{translate('New')}
                 </li>
                 <li className={style.nav_label_li}>
-                  <span className={draftClasses}/>{translate('Drafts')}
+                  <span className={draftClasses} />{translate('Drafts')}
                 </li>
                 <li className={style.nav_label_li}>
-                  <span className={unvalidatedClasses}/>{translate('Unvalidated')}
+                  <span className={unvalidatedClasses} />{translate('Unvalidated')}
                 </li>
                 <li className={style.nav_label_li}>
-                  <span className={validatedClasses}/>{translate('Validated')}
+                  <span className={validatedClasses} />{translate('Validated')}
                 </li>
                 <li className={style.nav_label_li}>
                   <span className={unsynced}>ABC</span>{translate('Unsynced')}
