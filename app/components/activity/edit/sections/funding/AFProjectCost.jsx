@@ -1,16 +1,16 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as AF from '../../components/AFComponentTypes';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
-import translate from '../../../../../utils/translate';
-import { createFormattedDate } from '../../../../../utils/DateUtils';
-import NumberUtils from '../../../../../utils/NumberUtils';
-import styles from '../../components/AFList.css';
 import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import AFProposedProjectCostTable from './AFProposedProjectCostTable';
+import AFRevisedProjectCostTable from './AFRevisedProjectCostTable';
+import { createFormattedDate } from '../../../../../utils/DateUtils';
+import NumberUtils from '../../../../../utils/NumberUtils';
+import styles from '../../components/AFList.css';
 
 /**
  * @author Gabriel Inchauspe
@@ -25,126 +25,32 @@ export default class AFProjectCost extends Component {
     activity: PropTypes.object.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    LoggerManager.log('constructor');
-    this.options = {
-      withoutNoDataText: true
-    };
-  }
-
-  onAfterSaveCell(currencies, row, cellName, cellValue) {
-    row[AC.CURRENCY_CODE] = currencies[cellValue];
-  }
-
-  getAmount(cell) {
+  static getFormattedAmountCell(cell) {
     return (<span className={styles.editable}>{NumberUtils.rawNumberToFormattedString(cell, true)}</span>);
   }
 
-  getDate(cell) {
+  static getFormattedDateCell(cell) {
     return (<span className={styles.editable}>{createFormattedDate(cell)}</span>);
   }
 
-  getListOfCurrencies(returnFullObject) {
-    // TODO: Check if this is the best way to get the currencies..
-    const currencies = this.context.activityFieldsManager.possibleValuesMap[`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`];
-    if (returnFullObject) {
-      return currencies;
-    }
-    return Object.keys(currencies).sort();
-  }
-
-  getCurrencyCodeSelector(cell) {
+  static getCurrencyCode(cell) {
     return `<span class=${styles.editable}>${cell.value || cell}</span>`; // Notice the `` for editable cell.
   }
 
-  numberValidator(value) {
-    const nan = isNaN(parseFloat(value, 10));
-    if (nan) {
-      return translate('Not a number');
-    }
-    return true;
-  }
-
-  generateProposedProjectCost() {
-    if (this.props.activity[AC.PPC_AMOUNT]) {
-      const cellEdit = {
-        mode: 'click',
-        blurToSave: true,
-        afterSaveCell: this.onAfterSaveCell.bind(null, this.getListOfCurrencies(true))
-      };
-      const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.AMOUNT}`)) {
-        columns.push(<TableHeaderColumn
-          dataField={AC.AMOUNT} editable={false}
-          dataFormat={this.getAmount}>{translate('Amount')}</TableHeaderColumn>);
-      }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
-        columns.push(<TableHeaderColumn
-          dataField={AC.CURRENCY_CODE}
-          editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
-          dataFormat={this.getCurrencyCodeSelector}>{translate('Currency')}</TableHeaderColumn>);
-      }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
-        // TODO: Add a datepicker component.
-        columns.push(<TableHeaderColumn
-          dataField={AC.FUNDING_DATE} editable
-          dataFormat={this.getDate}>{translate('Date')}</TableHeaderColumn>);
-      }
-      return (<div>
-        <span><label htmlFor="ppc_table">{translate('Proposed Project Cost')}</label></span>
-        <BootstrapTable
-          options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={this.props.activity[AC.PPC_AMOUNT]}>
-          {columns}
-        </BootstrapTable>
-      </div>);
-    }
-    return null;
-  }
-
-  generateRevisedProjectCost() {
-    if (this.props.activity[AC.RPC_AMOUNT]) {
-      const cellEdit = {
-        mode: 'click',
-        blurToSave: true
-      };
-      const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.RPC_AMOUNT}~${AC.AMOUNT}`)) {
-        columns.push(<TableHeaderColumn
-          dataField={AC.AMOUNT} editable={{ validator: this.numberValidator }}
-          dataFormat={this.getAmount}>{translate('Amount')}</TableHeaderColumn>);
-      }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.RPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
-        columns.push(<TableHeaderColumn
-          dataField={AC.CURRENCY_CODE}
-          editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
-          dataFormat={this.getCurrencyCodeSelector}>{translate('Currency')}</TableHeaderColumn>);
-      }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.RPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
-        columns.push(<TableHeaderColumn
-          dataField={AC.FUNDING_DATE} editable={{ type: 'date' }}
-          dataFormat={this.getDate}>{translate('Date')}</TableHeaderColumn>);
-      }
-      return (<div>
-        <span><label htmlFor="rpc_table">{translate('Revised Project Cost')}</label></span>
-        <BootstrapTable
-          options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={this.props.activity[AC.RPC_AMOUNT]}>
-          {columns}
-        </BootstrapTable>
-      </div>);
-    }
-    return null;
+  constructor(props) {
+    super(props);
+    LoggerManager.log('constructor');
   }
 
   render() {
     // TODO: implement number field for 'total_number_of_funding_sources'.
     return (<div>
-      {this.generateProposedProjectCost()}
-      {this.generateRevisedProjectCost()}
+      <AFProposedProjectCostTable
+        activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
+        formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
+      <AFRevisedProjectCostTable
+        activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
+        formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
       <AFField parent={this.props.activity} fieldPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} type={AF.NUMBER} />
       <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_COOPERATION} />
       <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_IMPLEMENTATION} />
