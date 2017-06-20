@@ -161,5 +161,7 @@
   "All previous sync up failed": "All previous sync up failed",
   "Amount": "Amount",
   "Currency": "Currency",
-  "Overall Funding Totals ": "Overall Funding Totals "
+  "Overall Funding Totals": "Overall Funding Totals",
+  "Not a number": "Not a number."
+
 }
