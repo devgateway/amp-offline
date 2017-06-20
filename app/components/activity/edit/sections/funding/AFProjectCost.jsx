@@ -32,25 +32,28 @@ export default class AFProjectCost extends Component {
     this.options = {
       withoutNoDataText: true
     };
-    this.updateData = this.updateData.bind(this);
   }
 
   getCurrencyCodeSelector(cell) {
     // TODO: return the list from possible value 'ppc_amount~currency_code' in a combo.
-    return `<span class=${styles.editable}>${cell}</span>`; // Notice the `` for editable cell.
+    return `<span class=${styles.editable}>${cell.value || cell}</span>`; // Notice the `` for editable cell.
   }
 
   getDate(cell) {
-    return (<span className={styles.editable}>{cell}</span>);
+    return (<span className={styles.editable}>{createFormattedDate(cell)}</span>);
   }
 
   getAmount(cell) {
     return (<span className={styles.editable}>{NumberUtils.rawNumberToFormattedString(cell, true)}</span>);
   }
 
-  getListOfCurrencies() {
-    // TODO: Check if this is the best way.
-    return Object.keys(this.context.activityFieldsManager._possibleValuesMap[FP.PPC_AMOUNT_CURRENCY_CODE_PATH]).sort();
+  getListOfCurrencies(returnFullObject) {
+    // TODO: Check if this is the best way to get the currencies..
+    const currencies = this.context.activityFieldsManager._possibleValuesMap[FP.PPC_AMOUNT_CURRENCY_CODE_PATH];
+    if (returnFullObject) {
+      return currencies; // TODO: This cant be used with the simple select provided by the table, we need a custom component.
+    }
+    return Object.keys(currencies).sort();
   }
 
   numberValidator(value) {
@@ -67,14 +70,6 @@ export default class AFProjectCost extends Component {
         mode: 'click',
         blurToSave: true
       };
-      const data = [];
-      this.props.activity[AC.PPC_AMOUNT].forEach((item) => (
-        data.push({
-          [AC.AMOUNT]: NumberUtils.rawNumberToFormattedString(item[AC.AMOUNT], true),
-          [AC.CURRENCY_CODE]: item[AC.CURRENCY_CODE].value,
-          [AC.FUNDING_DATE]: createFormattedDate(item[AC.FUNDING_DATE])
-        })
-      ));
       const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
       // TODO: check FM.
       if (true) {
@@ -86,7 +81,7 @@ export default class AFProjectCost extends Component {
       if (true) {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY_CODE}
-          editable={{ type: 'select', options: { values: this.getListOfCurrencies() } }}
+          editable={{ type: 'select', options: { values: this.getListOfCurrencies(true) } }}
           dataFormat={this.getCurrencyCodeSelector}>{translate('Currency')}</TableHeaderColumn>);
       }
       // TODO: check FM.
@@ -101,7 +96,7 @@ export default class AFProjectCost extends Component {
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
           thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={data}>
+          data={this.props.activity[AC.PPC_AMOUNT]}>
           {columns}
         </BootstrapTable>
       </div>);
@@ -115,14 +110,6 @@ export default class AFProjectCost extends Component {
         mode: 'click',
         blurToSave: true
       };
-      const data = [];
-      this.props.activity[AC.RPC_AMOUNT].forEach((item) => (
-        data.push({
-          [AC.AMOUNT]: NumberUtils.rawNumberToFormattedString(item[AC.AMOUNT], true),
-          [AC.CURRENCY_CODE]: item[AC.CURRENCY_CODE],
-          [AC.FUNDING_DATE]: createFormattedDate(item[AC.FUNDING_DATE])
-        })
-      ));
       const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
       // TODO: check FM.
       if (true) {
@@ -134,13 +121,13 @@ export default class AFProjectCost extends Component {
       if (true) {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY_CODE}
-          editable={{ type: 'select', options: { values: this.getListOfCurrencies() } }}
+          editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
           dataFormat={this.getCurrencyCodeSelector}>{translate('Currency')}</TableHeaderColumn>);
       }
       // TODO: check FM.
       if (true) {
         columns.push(<TableHeaderColumn
-          dataField={AC.FUNDING_DATE} editable
+          dataField={AC.FUNDING_DATE} editable={{ type: 'date' }}
           dataFormat={this.getDate}>{translate('Date')}</TableHeaderColumn>);
       }
       return (<div>
@@ -148,7 +135,7 @@ export default class AFProjectCost extends Component {
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
           thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={data}>
+          data={this.props.activity[AC.RPC_AMOUNT]}>
           {columns}
         </BootstrapTable>
       </div>);
