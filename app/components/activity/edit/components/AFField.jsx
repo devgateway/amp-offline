@@ -11,6 +11,7 @@ import PossibleValuesManager from '../../../../modules/activity/PossibleValuesMa
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
+import AFNumber from './AFNumber';
 
 /* eslint-disable class-methods-use-this */
 
@@ -81,8 +82,9 @@ export default class AFField extends Component {
       return this._getDropDown();
     } else if (this.type === Types.LIST_SELECTOR || (!this.forcedType && this.fieldDef.field_type === 'list')) {
       return this._getListSelector();
+    } else if (this.props.type === Types.NUMBER) {
+      return this._getNumber();
     }
-    debugger
     return 'Not Implemented';
   }
 
@@ -132,6 +134,12 @@ export default class AFField extends Component {
     />);
   }
 
+  _getNumber() {
+    return (<AFNumber
+      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired}
+    />);
+  }
+
   validate() {
     if (this.state.validationError) {
       return 'error';
@@ -155,7 +163,7 @@ export default class AFField extends Component {
       return null;
     }
     return (
-      <FormGroup controlId={this.props.fieldPath} validationState={this.validate()} >
+      <FormGroup controlId={this.props.fieldPath} validationState={this.validate()}>
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />
