@@ -47,11 +47,15 @@ export default class AFProjectCost extends Component {
     return (<span className={styles.editable}>{NumberUtils.rawNumberToFormattedString(cell, true)}</span>);
   }
 
+  onAfterSaveCell(currencies, row, cellName, cellValue) {
+    row[AC.CURRENCY_CODE] = currencies[cellValue];
+  }
+
   getListOfCurrencies(returnFullObject) {
     // TODO: Check if this is the best way to get the currencies..
     const currencies = this.context.activityFieldsManager._possibleValuesMap[FP.PPC_AMOUNT_CURRENCY_CODE_PATH];
     if (returnFullObject) {
-      return currencies; // TODO: This cant be used with the simple select provided by the table, we need a custom component.
+      return currencies;
     }
     return Object.keys(currencies).sort();
   }
@@ -68,7 +72,8 @@ export default class AFProjectCost extends Component {
     if (this.props.activity[AC.PPC_AMOUNT]) {
       const cellEdit = {
         mode: 'click',
-        blurToSave: true
+        blurToSave: true,
+        afterSaveCell: this.onAfterSaveCell.bind(null, this.getListOfCurrencies(true))
       };
       const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
       // TODO: check FM.
@@ -81,7 +86,7 @@ export default class AFProjectCost extends Component {
       if (true) {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY_CODE}
-          editable={{ type: 'select', options: { values: this.getListOfCurrencies(true) } }}
+          editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
           dataFormat={this.getCurrencyCodeSelector}>{translate('Currency')}</TableHeaderColumn>);
       }
       // TODO: check FM.
