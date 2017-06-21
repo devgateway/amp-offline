@@ -11,6 +11,7 @@ import AFRevisedProjectCostTable from './AFRevisedProjectCostTable';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
+import AFPPCAnnualBudgets from './AFPPCAnnualBudgets';
 
 /**
  * @author Gabriel Inchauspe
@@ -48,6 +49,9 @@ export default class AFProjectCost extends Component {
       <AFProposedProjectCostTable
         activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
         formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
+      <AFPPCAnnualBudgets
+        activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
+        formatCurrency={AFProjectCost.getCurrencyCode} />
       <AFRevisedProjectCostTable
         activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
         formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />

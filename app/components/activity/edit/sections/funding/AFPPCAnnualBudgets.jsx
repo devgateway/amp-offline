@@ -10,7 +10,7 @@ import ActivityFieldsManager from '../../../../../modules/activity/ActivityField
 /**
  * @author Gabriel Inchauspe
  */
-export default class AFProposedProjectCostTable extends Component {
+export default class AFPPCAnnualBudgets extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
@@ -19,13 +19,13 @@ export default class AFProposedProjectCostTable extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
     formatAmount: PropTypes.func.isRequired,
-    formatDate: PropTypes.func.isRequired,
     formatCurrency: PropTypes.func.isRequired
   };
 
   static onAfterSaveCell(currencies, row, cellName, cellValue) {
-    if (cellName === AC.CURRENCY_CODE) {
-      row[AC.CURRENCY_CODE] = currencies[cellValue];
+    if (cellName === AC.CURRENCY) {
+      const currency = Object.values(currencies).find(k => k.value === cellValue);
+      row[AC.CURRENCY] = currency;
     }
   }
 
@@ -39,11 +39,11 @@ export default class AFProposedProjectCostTable extends Component {
 
   getListOfCurrencies(returnFullObject) {
     // TODO: Check if this is the best way to get the currencies.
-    const currencies = this.context.activityFieldsManager.possibleValuesMap[`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`];
+    const currencies = this.context.activityFieldsManager.possibleValuesMap[`${AC.PPC_ANNUAL_BUDGETS}~${AC.CURRENCY}`];
     if (returnFullObject) {
       return currencies;
     }
-    return Object.keys(currencies).sort();
+    return Object.keys(currencies).map((k) => (currencies[k].value));
   }
 
   // TODO: move to util class.
@@ -56,36 +56,30 @@ export default class AFProposedProjectCostTable extends Component {
   }
 
   render() {
-    if (this.props.activity[AC.PPC_AMOUNT]) {
+    if (this.props.activity[AC.PPC_ANNUAL_BUDGETS]) {
       const cellEdit = {
         mode: 'click',
         blurToSave: true,
-        afterSaveCell: AFProposedProjectCostTable.onAfterSaveCell.bind(null, this.getListOfCurrencies(true))
+        afterSaveCell: AFPPCAnnualBudgets.onAfterSaveCell.bind(null, this.getListOfCurrencies(true))
       };
-      const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.AMOUNT}`)) {
+      const columns = [<TableHeaderColumn dataField={AC.ANNUAL_PROJECT_BUDGET_ID} isKey hidden />];
+      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.AMOUNT} editable={false}
+          dataField={AC.AMOUNT} editable={{ validator: this.numberValidator }}
           dataFormat={this.props.formatAmount}>{translate('Amount')}</TableHeaderColumn>);
       }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
+      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.CURRENCY}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.CURRENCY_CODE}
+          dataField={AC.CURRENCY}
           editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
           dataFormat={this.props.formatCurrency}>{translate('Currency')}</TableHeaderColumn>);
       }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
-        // TODO: Add a datepicker component.
-        columns.push(<TableHeaderColumn
-          dataField={AC.FUNDING_DATE} editable
-          dataFormat={this.props.formatDate}>{translate('Date')}</TableHeaderColumn>);
-      }
       return (<div>
-        <span><label htmlFor="ppc_table">{translate('Proposed Project Cost')}</label></span>
+        <span><label htmlFor={AC.PPC_ANNUAL_BUDGETS}>{translate('Annual Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
           thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={this.props.activity[AC.PPC_AMOUNT]}>
+          data={this.props.activity[AC.PPC_ANNUAL_BUDGETS]}>
           {columns}
         </BootstrapTable>
       </div>);

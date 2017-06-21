@@ -103,6 +103,7 @@ export const HIERARCHICAL_VALUE_PARTS = 'hierarchical_value_parts';
 export const HIERARCHICAL_VALUE_DEPTH = 'hierarchical_value_depth';
 export const PPC_AMOUNT = 'ppc_amount';
 export const RPC_AMOUNT = 'rpc_amount';
+export const PPC_ANNUAL_BUDGETS = 'ppc_annual_budgets';
 export const AMOUNT = 'amount';
 export const CURRENCY_CODE = 'currency_code';
 export const CURRENCY = 'currency';
@@ -124,6 +125,7 @@ export const FUNDING_AMOUNT_ID = 'amp_funding_amount_id';
 export const EXTRA_INFO = 'extra_info';
 export const ACRONYM = 'acronym';
 export const TYPE_OF_COOPERATION = 'type_of_cooperation';
+export const ANNUAL_PROJECT_BUDGET_ID = 'annual_project_budget_id';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
