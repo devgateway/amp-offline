@@ -33,8 +33,17 @@ export default class AFPPCAnnualBudgets extends Component {
     super(props);
     LoggerManager.log('constructor');
     this.options = {
-      withoutNoDataText: true
+      withoutNoDataText: true,
+      onDeleteRow: this.onDeleteRow.bind(this)
     };
+  }
+
+  onDeleteRow(ids) {
+    ids.forEach(index => {
+      const i = this.props.activity[AC.PPC_ANNUAL_BUDGETS]
+        .findIndex(item => (item[AC.ANNUAL_PROJECT_BUDGET_ID] === index));
+      this.props.activity[AC.PPC_ANNUAL_BUDGETS].splice(i, 1);
+    });
   }
 
   getListOfCurrencies(returnFullObject) {
@@ -62,6 +71,9 @@ export default class AFPPCAnnualBudgets extends Component {
         blurToSave: true,
         afterSaveCell: AFPPCAnnualBudgets.onAfterSaveCell.bind(null, this.getListOfCurrencies(true))
       };
+      const selectRow = {
+        mode: 'checkbox',
+      };
       const columns = [<TableHeaderColumn dataField={AC.ANNUAL_PROJECT_BUDGET_ID} isKey hidden />];
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
@@ -78,7 +90,7 @@ export default class AFPPCAnnualBudgets extends Component {
         <span><label htmlFor={AC.PPC_ANNUAL_BUDGETS}>{translate('Annual Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} cellEdit={cellEdit} hover
+          thClassName={styles.thClassName} cellEdit={cellEdit} hover selectRow={selectRow} deleteRow
           data={this.props.activity[AC.PPC_ANNUAL_BUDGETS]}>
           {columns}
         </BootstrapTable>
