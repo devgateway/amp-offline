@@ -25,7 +25,7 @@ class AFFunding extends Component {
     if (this.props.activity.fundings) {
       return this.props.activity.fundings.map((funding) => (
         <Tab
-          eventKey={funding[AC.AMP_FUNDING_ID]}
+          eventKey={funding[AC.AMP_FUNDING_ID]} key={funding[AC.AMP_FUNDING_ID]}
           title={funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]}>Tab 2
           content</Tab>
       ));
@@ -40,8 +40,10 @@ class AFFunding extends Component {
   }
 
   render() {
+    // TODO: remove this console.log
+    console.log(this.props.activity);
     return (<Tabs defaultActiveKey={0} onSelect={this.handleSelect} id="funding-tabs-container-tabs">
-      <Tab eventKey={0} title="Overview">{this.generateOverviewTabContent()}</Tab>
+      <Tab eventKey={0} title="Overview" key={0}>{this.generateOverviewTabContent()}</Tab>
       {this.addFundingTabs()}
     </Tabs>);
   }

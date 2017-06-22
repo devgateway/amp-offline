@@ -102,10 +102,10 @@ export default class AFOverallFundingTotals extends Component {
   render() {
     const data = [];
     const groups = this._buildGroups(this.props.activity.fundings);
-    const columns = [<TableHeaderColumn dataField="key" isKey hidden />,
-      <TableHeaderColumn dataField="type">{translate('Transaction')}</TableHeaderColumn>,
-      <TableHeaderColumn dataField="amount">{translate('Amount')}</TableHeaderColumn>,
-      <TableHeaderColumn dataField="currency">{translate('Currency')}</TableHeaderColumn>];
+    const columns = [<TableHeaderColumn dataField="key" isKey hidden key={0} />,
+      <TableHeaderColumn dataField={AC.TYPE} key={AC.TYPE}>{translate('Transaction')}</TableHeaderColumn>,
+      <TableHeaderColumn dataField={AC.AMOUNT} key={AC.AMOUNT}>{translate('Amount')}</TableHeaderColumn>,
+      <TableHeaderColumn dataField={AC.CURRENCY} key={AC.CURRENCY}>{translate('Currency')}</TableHeaderColumn>];
     groups.sort(this._compareFundings).forEach((item) => (
       data.push({
         key: item.key,

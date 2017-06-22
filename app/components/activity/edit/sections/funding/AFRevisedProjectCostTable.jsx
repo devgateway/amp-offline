@@ -55,21 +55,21 @@ export default class AFPRevisedProjectCostTable extends Component {
         mode: 'click',
         blurToSave: true
       };
-      const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden />];
+      const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden key={AC.FUNDING_AMOUNT_ID} />];
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.RPC_AMOUNT}~${AC.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.AMOUNT} editable={{ validator: this.numberValidator }}
+          dataField={AC.AMOUNT} editable={{ validator: this.numberValidator }} key={AC.AMOUNT}
           dataFormat={this.props.formatAmount}>{translate('Amount')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.RPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.CURRENCY_CODE}
+          dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
           editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
           dataFormat={this.props.formatCurrency}>{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.RPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.FUNDING_DATE} editable={{ type: 'date' }}
+          dataField={AC.FUNDING_DATE} editable={{ type: 'date' }} key={AC.FUNDING_DATE}
           dataFormat={this.props.formatDate}>{translate('Date')}</TableHeaderColumn>);
       }
       return (<div>

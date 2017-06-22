@@ -74,15 +74,17 @@ export default class AFPPCAnnualBudgets extends Component {
       const selectRow = {
         mode: 'checkbox',
       };
-      const columns = [<TableHeaderColumn dataField={AC.ANNUAL_PROJECT_BUDGET_ID} isKey hidden />];
+      const columns = [<TableHeaderColumn
+        dataField={AC.ANNUAL_PROJECT_BUDGET_ID} isKey hidden
+        key={AC.ANNUAL_PROJECT_BUDGET_ID} />];
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.AMOUNT} editable={{ validator: this.numberValidator }}
+          dataField={AC.AMOUNT} editable={{ validator: this.numberValidator }} key={AC.AMOUNT}
           dataFormat={this.props.formatAmount}>{translate('Amount')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.CURRENCY}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.CURRENCY}
+          dataField={AC.CURRENCY} key={AC.CURRENCY}
           editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
           dataFormat={this.props.formatCurrency}>{translate('Currency')}</TableHeaderColumn>);
       }
