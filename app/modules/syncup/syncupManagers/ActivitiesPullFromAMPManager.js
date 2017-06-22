@@ -68,11 +68,13 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   getDiffLeftover() {
-    const duration = DateUtils.duration(this.syncStartedAt, new Date());
-    LoggerManager.log(`Activities pull duration = ${duration}`);
-    LoggerManager.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
-    this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
-    LoggerManager.log(`unsynced = ${this.diff.saved.length}`);
+    if (this.syncStartedAt) {
+      const duration = DateUtils.duration(this.syncStartedAt, new Date());
+      LoggerManager.log(`Activities pull duration = ${duration}`);
+      LoggerManager.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
+      this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
+      LoggerManager.log(`unsynced = ${this.diff.saved.length}`);
+    }
     return this.diff;
   }
 
@@ -152,6 +154,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
       while (this.resultStack.length > 0) {
         const entry = this.resultStack.shift();
         if (entry === PULL_END) {
+          this.done = true;
           next = () => Promise.resolve();
         } else {
           const [activity, error] = entry;

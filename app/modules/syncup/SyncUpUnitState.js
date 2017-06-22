@@ -14,6 +14,8 @@ export const FAIL = 'FAIL';
 export const DEPENDENCY_FAIL = 'DEPENDENCY_FAIL';
 /** Unit syncup execution did not start. No changes detected. */
 export const NO_CHANGES = 'NO_CHANGES';
+/** Unit syncup execution was aborted. The sync up could not be completed. */
+export const ABORTED = 'ABORTED';
 
 /** Sync up pending to commence states */
 export const STATES_PENDING = [PENDING, DEPENDENCY_PENDING];
@@ -22,4 +24,4 @@ export const STATES_SUCCESS = [SUCCESS, NO_CHANGES];
 /** Fully or partially successful sync up states */
 export const STATES_PARTIAL_SUCCESS = [SUCCESS, PARTIAL, NO_CHANGES];
 /** Sync up ended states, no matter successfully or not */
-export const STATES_FINISH = [SUCCESS, PARTIAL, FAIL, DEPENDENCY_FAIL, NO_CHANGES];
+export const STATES_FINISH = [SUCCESS, PARTIAL, FAIL, DEPENDENCY_FAIL, NO_CHANGES, ABORTED];

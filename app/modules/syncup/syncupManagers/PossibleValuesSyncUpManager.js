@@ -15,6 +15,7 @@ export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpMan
 
   constructor() {
     super(SYNCUP_TYPE_POSSIBLE_VALUES);
+    this.diff = [];
   }
 
   doAtomicSyncUp(fieldPaths) {

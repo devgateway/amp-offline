@@ -2,11 +2,12 @@ import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
 import {
-  DB_FILE_PREFIX,
-  DB_FILE_EXTENSION,
-  AKEY,
+  DB_AUTOCOMPACT_INTERVAL_MILISECONDS,
   DB_COMMON_DATASTORE_OPTIONS,
-  DB_AUTOCOMPACT_INTERVAL_MILISECONDS
+  DB_DEFAULT_QUERY_LIMIT,
+  DB_FILE_EXTENSION,
+  DB_FILE_PREFIX,
+  AKEY
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
@@ -405,6 +406,33 @@ const DatabaseManager = {
     });
   },
 
+  /**
+   * Finds the first element from the filtered results that are sorted by sortCriteria
+   * @param example the documents filter
+   * @param sortCriteria sorting to apply over the filtered results
+   * @param collectionName
+   * @return {Promise}
+   */
+  findTheFirstOne(example, sortCriteria, collectionName) {
+    LoggerManager.log('findTheFirstOne');
+    const projections = Object.assign({ _id: 0 });
+    return DatabaseManager.findAllWithProjectionsAndOtherCriteria(
+      example, collectionName, projections, sortCriteria, 0, 1)
+        .then((docs) => {
+          switch (docs.length) {
+            case 0:
+              return null;
+            case 1:
+              return docs[0];
+            default:
+              return Promise.reject(new Notification({
+                message: 'moreThanOneResultFound',
+                origin: NOTIFICATION_ORIGIN_DATABASE
+              }));
+          }
+        });
+  },
+
   findAll(example, collectionName, projections) {
     LoggerManager.log('findAll');
     return this.findAllWithProjections(example, collectionName, projections);
@@ -432,6 +460,36 @@ const DatabaseManager = {
         }
         resolve(docs);
       });
+    }).catch(reject);
+  },
+
+  findAllWithProjectionsAndOtherCriteria(example, collectionName, projections, sort = { id: 1 }, skip = 0,
+    limit = DB_DEFAULT_QUERY_LIMIT) {
+    LoggerManager.log('findAllWithProjectionsAndOtherCriteria');
+    return new Promise((resolve, reject) => {
+      const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(null, example)
+        .bind(null, collectionName)
+        .bind(null, projections)
+        .bind(null, sort)
+        .bind(null, skip)
+        .bind(null, limit)
+        .bind(null, resolve)
+        .bind(null, reject);
+      this.queuePromise(findAllWithOtherCriteriaFunc, resolve, reject);
+    });
+  },
+
+  _findAllWithProjectionsAndOtherCriteria(example, collectionName, projections, sort, skip, limit, resolve, reject) {
+    LoggerManager.log('_findAllWithProjectionsAndOtherCriteria');
+    const newProjections = Object.assign({ _id: 0 }, projections);
+    DatabaseManager._getCollection(collectionName, null).then((collection) => {
+      collection.find(example, newProjections).sort(sort).skip(skip).limit(limit)
+        .exec((err, docs) => {
+          if (err !== null) {
+            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          }
+          resolve(docs);
+        });
     }).catch(reject);
   },
 

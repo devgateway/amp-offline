@@ -52,7 +52,7 @@ export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpMana
    * @returns {*|Promise.<TResult>}
    */
   _doPartialSync(currencyRates) {
-    return SyncUpHelper.getLastSyncUpLog().then(lastSyncUpLog => {
+    return SyncUpHelper.getLastSyncUpLogWithSyncDiffTimestamp().then(lastSyncUpLog => {
       const timeStamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
       // with the timestamp we go and fetch the partial sync
       const paramsMap = { 'last-sync-time': timeStamp };

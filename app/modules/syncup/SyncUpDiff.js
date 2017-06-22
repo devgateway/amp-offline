@@ -2,6 +2,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_GS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
@@ -9,8 +10,7 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
-  SYNCUP_TYPE_WORKSPACES,
-  SYNCUP_TYPE_EXCHANGE_RATES
+  SYNCUP_TYPE_WORKSPACES
 } from '../../utils/Constants';
 import { throwSyncUpError } from './syncupManagers/SyncUpManagerInterface';
 import LoggerManager from '../../modules/util/LoggerManager';
@@ -29,6 +29,10 @@ export default class SyncUpDiff {
 
   get syncUpDiff() {
     return this._syncUpDiff;
+  }
+
+  getSyncUpDiff(type) {
+    return this._syncUpDiff[type];
   }
 
   /**
@@ -86,6 +90,41 @@ export default class SyncUpDiff {
       return null;
     }
     return diff;
+  }
+
+  /**
+   * Checks if two diffs, provided by SyncUpDiff, are equal.
+   * @param diff1
+   * @param diff2
+   * @return {boolean}
+   */
+  static equals(diff1, diff2) {
+    // nullify undefined
+    diff1 = diff1 === undefined ? null : diff1;
+    diff2 = diff2 === undefined ? null : diff2;
+    // same objects / nulls
+    if (diff1 === diff2) {
+      return true;
+    }
+    // atomic diffs (that are booleans) are different or one of the diffs is null
+    if (typeof diff1 === 'boolean' || diff1 === null || diff2 === null) {
+      return false;
+    }
+    // same list of entries
+    if (diff1.length !== undefined && diff1.length === diff2.length) {
+      return true;
+    }
+    // removed & saved sets are the same, though one of them may not exist
+    if (diff1.removed || diff1.saved) {
+      if ((!diff1.removed || (diff2.removed && diff1.removed.length === diff2.removed.length))
+        && (!diff1.saved || (diff2.saved && diff1.saved.length === diff2.saved.length))) {
+        return true;
+      }
+      return false;
+    }
+    LoggerManager.error(`Diff check reached unexpected use case: diff1 = "${diff1}", diff2 = "${diff2}". 
+    Possibly a bug. Fallback to false.`);
+    return false;
   }
 
 }

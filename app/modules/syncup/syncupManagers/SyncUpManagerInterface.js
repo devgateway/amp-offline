@@ -11,6 +11,8 @@ export default class SyncUpManagerInterface {
 
   constructor(type) {
     this._type = type;
+    this.done = false;
+    this._errors = [];
     if (this.doSyncUp === undefined) {
       throwSyncUpError('SyncUpManagerInterface.doSyncUp not implemented');
     }
@@ -24,6 +26,18 @@ export default class SyncUpManagerInterface {
 
   get type() {
     return this._type;
+  }
+
+  addError(error) {
+    this._errors.push(error);
+  }
+
+  addErrors(errors) {
+    this._errors.push(errors);
+  }
+
+  get errors() {
+    return this._errors;
   }
 
   /**

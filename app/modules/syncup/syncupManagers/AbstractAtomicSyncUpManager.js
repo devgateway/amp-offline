@@ -14,7 +14,6 @@ export default class AbstractAtomicSyncUpManager extends SyncUpManagerInterface 
     if (this.doAtomicSyncUp === undefined) {
       throwSyncUpError('AbstractAtomicSyncUpManager.doAtomicSyncUp not implemented');
     }
-    this.done = false;
   }
 
   doSyncUp(diff) {

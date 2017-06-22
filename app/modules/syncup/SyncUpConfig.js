@@ -15,14 +15,9 @@ import SyncUpDependency from './SyncUpDependency';
 import * as Utils from '../../utils/Utils';
 import * as SS from './SyncUpUnitState';
 import {
-  SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
-  SYNCUP_TYPE_ASSETS,
-  SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FIELDS,
-  SYNCUP_TYPE_GS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
-  SYNCUP_TYPE_TRANSLATIONS,
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
@@ -30,57 +25,62 @@ import {
 } from '../../utils/Constants';
 
 /**
- * Sync up collection that executes units sync up once all dependencies are met
+ * Sync up configuration for units to sync and dependency rules
  * @author Nadejda Mandrescu
  */
-export default class SyncUpCollection {
+export default class SyncUpConfig {
 
-  static _COMMON_DEP = { SYNCUP_TYPE_USERS: SS.STATES_SUCCESS };
   static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, FieldsSyncUpManager,
     PossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager];
-  static _COLLECTION_DEPENDENCY = SyncUpCollection._initCollection();
+  static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
   static _initCollection() {
     const dependencies = {};
-    dependencies[SYNCUP_TYPE_USERS] = {};
-    dependencies[SYNCUP_TYPE_WORKSPACES] = SyncUpCollection._COMMON_DEP;
-    dependencies[SYNCUP_TYPE_WORKSPACE_MEMBERS] = SyncUpCollection._COMMON_DEP;
-    dependencies[SYNCUP_TYPE_WORKSPACE_SETTINGS] = {
-      ...SyncUpCollection._COMMON_DEP,
-      ...Utils.toMap(SYNCUP_TYPE_WORKSPACES, SS.STATES_PARTIAL_SUCCESS)
-    };
-    dependencies[SYNCUP_TYPE_ASSETS] = SyncUpCollection._COMMON_DEP;
-    dependencies[SYNCUP_TYPE_GS] = SyncUpCollection._COMMON_DEP;
-    dependencies[SYNCUP_TYPE_TRANSLATIONS] = SyncUpCollection._COMMON_DEP;
-    dependencies[SYNCUP_TYPE_FIELDS] = SyncUpCollection._COMMON_DEP;
-    dependencies[SYNCUP_TYPE_POSSIBLE_VALUES] = SyncUpCollection._COMMON_DEP;
-    dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH] = SyncUpCollection._COMMON_DEP;
-    dependencies[SYNCUP_TYPE_ACTIVITIES_PULL] = {
-      ...SyncUpCollection._COMMON_DEP,
-      ...Utils.toMap(SYNCUP_TYPE_ACTIVITIES_PUSH, SS.STATES_FINISH)
-    };
-    dependencies[SYNCUP_TYPE_EXCHANGE_RATES] = SyncUpCollection._COMMON_DEP;
+    // Note: current user won't be even able to start the sync if he/she has no right
+    dependencies[SYNCUP_TYPE_WORKSPACE_SETTINGS] = Utils.toMap(SYNCUP_TYPE_WORKSPACES, SS.STATES_PARTIAL_SUCCESS);
+    dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH] = Utils.toMap(SYNCUP_TYPE_USERS, SS.STATES_SUCCESS);
+    // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
+    dependencies[SYNCUP_TYPE_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
+    dependencies[SYNCUP_TYPE_POSSIBLE_VALUES] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
+    return dependencies;
   }
 
   constructor() {
     this._initDependencies();
-    this._changes = {};
   }
 
   _initDependencies() {
     this._syncUpDependency = new SyncUpDependency();
-    this._syncUpCollection = {};
-    this._COLLECTION.forEach((SyncUpClass: SyncUpManagerInterface) => {
-      const syncUpUnit = new SyncUpClass();
-      this._syncUpCollection[syncUpUnit.type] = syncUpUnit;
-      Object.entries(this._COLLECTION_DEPENDENCY[syncUpUnit.type]).forEach(([depType, depStates]) =>
-        this._syncUpDependency.add(syncUpUnit.type, depType, depStates));
+    this._syncUpCollection = new Map();
+    SyncUpConfig._COLLECTION.forEach((SyncUpClass: SyncUpManagerInterface) => {
+      const syncUpManager = new SyncUpClass();
+      this._syncUpCollection.set(syncUpManager.type, syncUpManager);
+      const dependencies = SyncUpConfig._COLLECTION_DEPENDENCY[syncUpManager.type];
+      if (dependencies) {
+        Object.entries(dependencies).forEach(([depType, depStates]) =>
+          this._syncUpDependency.add(syncUpManager.type, depType, depStates));
+      } else {
+        this._syncUpDependency.setState(syncUpManager.type, SS.PENDING);
+      }
     });
   }
 
-  addChanges(type, changes) {
-    this._changes[type] = changes;
+  /**
+   * Provides the entire sync up collection object that stores:
+   * { type: syncUpManagerObject }
+   * @return {Map}
+   */
+  get syncUpCollection() {
+    return this._syncUpCollection;
+  }
+
+  /**
+   * Provides sync up dependencies storage
+   * @return {SyncUpDependency}
+   */
+  get syncUpDependencies() {
+    return this._syncUpDependency;
   }
 }
