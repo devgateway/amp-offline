@@ -39,9 +39,9 @@ function _processResult(data, lastConnectivityStatus) {
     } else {
       status = new ConnectivityStatus(
         false,
-        lastConnectivityStatus.isAmpClientEnabled(),
-        lastConnectivityStatus.isAmpCompatible(),
-        lastConnectivityStatus.getAmpVersion()
+        lastConnectivityStatus.isAmpClientEnabled,
+        lastConnectivityStatus.isAmpCompatible,
+        lastConnectivityStatus.getAmpVersion
       );
     }
   } else {
