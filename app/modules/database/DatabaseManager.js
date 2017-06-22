@@ -467,14 +467,8 @@ const DatabaseManager = {
     limit = DB_DEFAULT_QUERY_LIMIT) {
     LoggerManager.log('findAllWithProjectionsAndOtherCriteria');
     return new Promise((resolve, reject) => {
-      const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(null, example)
-        .bind(null, collectionName)
-        .bind(null, projections)
-        .bind(null, sort)
-        .bind(null, skip)
-        .bind(null, limit)
-        .bind(null, resolve)
-        .bind(null, reject);
+      const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(
+        null, example, collectionName, projections, sort, skip, limit, resolve, reject);
       this.queuePromise(findAllWithOtherCriteriaFunc, resolve, reject);
     });
   },
