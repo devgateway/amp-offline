@@ -26,6 +26,9 @@ export default class AFPPCAnnualBudgets extends Component {
     if (cellName === AC.CURRENCY) {
       const currency = Object.values(currencies).find(k => k.value === cellValue);
       row[AC.CURRENCY] = currency;
+    } else if (cellName === AC.YEAR) {
+      const year = `${cellValue}-01-01T00:00:00.001-0000`;
+      row[AC.YEAR] = year;
     }
   }
 
@@ -55,6 +58,21 @@ export default class AFPPCAnnualBudgets extends Component {
     return Object.keys(currencies).map((k) => (currencies[k].value));
   }
 
+  getListOfYears() {
+    // TODO: check how many years to generate.
+    return Array.from(new Array(30), (x, i) => i + 1990);
+  }
+
+  formatYear(years, cell) {
+    if (years.indexOf(cell) !== -1) {
+      return `<span className=${styles.editable}>${cell}</span>`; // Notice the `` for editable cell.
+    } else {
+      const auxDate = Date.parse(cell);
+      const year = new Date(auxDate).getUTCFullYear();
+      return <span className={styles.editable}>{year}</span>;
+    }
+  }
+
   // TODO: move to util class.
   numberValidator(value) {
     const nan = isNaN(parseFloat(value, 10));
@@ -65,6 +83,8 @@ export default class AFPPCAnnualBudgets extends Component {
   }
 
   render() {
+    // TODO: replace all translate for column names for the corresponding translated-value from possible-values.db.
+    // TODO: maybe to have a "column component" too?
     if (this.props.activity[AC.PPC_ANNUAL_BUDGETS]) {
       const cellEdit = {
         mode: 'click',
@@ -87,6 +107,13 @@ export default class AFPPCAnnualBudgets extends Component {
           dataField={AC.CURRENCY} key={AC.CURRENCY}
           editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
           dataFormat={this.props.formatCurrency}>{translate('Currency')}</TableHeaderColumn>);
+      }
+      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.YEAR}`)) {
+        const years = this.getListOfYears();
+        columns.push(<TableHeaderColumn
+          dataField={AC.YEAR} key={AC.YEAR}
+          editable={{ type: 'select', options: { values: years } }}
+          dataFormat={this.formatYear.bind(null, years)}>{translate('Year')}</TableHeaderColumn>);
       }
       return (<div>
         <span><label htmlFor={AC.PPC_ANNUAL_BUDGETS}>{translate('Annual Proposed Project Cost')}</label></span>

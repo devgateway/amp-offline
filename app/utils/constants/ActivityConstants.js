@@ -127,6 +127,7 @@ export const ACRONYM = 'acronym';
 export const TYPE_OF_COOPERATION = 'type_of_cooperation';
 export const ANNUAL_PROJECT_BUDGET_ID = 'annual_project_budget_id';
 export const TYPE = 'type';
+export const YEAR = 'year';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
