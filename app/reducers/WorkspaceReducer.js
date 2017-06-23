@@ -33,6 +33,7 @@ export default function workspaceReducer(state = defaultState, action: Object) {
       return Object.assign({}, state, {
         workspaceProcessing: false,
         currentWorkspace: action.actionData.workspace,
+        currentWorkspaceSettings: action.actionData.workspaceSettings,
         workspaceFilterGeneration: false,
         workspaceFilter: undefined
       });

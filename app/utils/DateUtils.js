@@ -1,12 +1,12 @@
 /**
  * Created by Anya on 24/04/2017.
  */
-
 import Moment from 'moment';
 import LoggerManager from '../modules/util/LoggerManager';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import store from '../index';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
+import { CURRENCY_DATE_FORMAT } from './Constants';
 
 export default class DateUtils {
 
@@ -27,11 +27,17 @@ export default class DateUtils {
     );
   }
 
-  static createFormattedDate(date) {
+  static formatDate(date, format) {
     LoggerManager.log('createFormattedDate');
-    const formattedDate = Moment(date).isValid() ?
-        Moment(date).format(store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase()) : date;
-    return formattedDate;
+    return Moment(date).isValid() ? Moment(date).format(format) : date;
+  }
+
+  static createFormattedDate(date) {
+    return DateUtils.formatDate(date, store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase());
+  }
+
+  static formatDateForCurrencyRates(date) {
+    return DateUtils.formatDate(date, CURRENCY_DATE_FORMAT);
   }
 
   static duration(from, to) {

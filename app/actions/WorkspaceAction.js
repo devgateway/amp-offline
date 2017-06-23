@@ -4,6 +4,7 @@ import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
 import WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
 import store from '../index';
 import LoggerManager from '../modules/util/LoggerManager';
+import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_CONFIGURING_WORKSPACE_FILTER = 'STATE_CONFIGURING_WORKSPACE_FILTER';
@@ -20,12 +21,14 @@ export function selectWorkspace(wsId) {
   const userId = store.getState().userReducer.userData.id;
   return (dispatch) => (
     WorkspaceHelper.findById(wsId).then((workspace) => (
-      TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId).then((teamMember) => {
-        const actionData = { teamMember, workspace };
-        dispatch({ type: STATE_SELECT_WORKSPACE, actionData });
-        // This is like "chaining actions".
-        return dispatch(loadDesktop(workspace, teamMember.id));
-      }).catch((err) => {
+      TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId).then((teamMember) =>
+        WSSettingsHelper.findByWorkspaceId(wsId).then((workspaceSettings) => {
+          const actionData = { teamMember, workspace, workspaceSettings };
+          dispatch({ type: STATE_SELECT_WORKSPACE, actionData });
+          // This is like "chaining actions".
+          return dispatch(loadDesktop(workspace, teamMember.id));
+        })
+      ).catch((err) => {
         LoggerManager.error(err);
         dispatch({ type: STATE_WORKSPACE_ERROR, actionData: err.toString() });
       })

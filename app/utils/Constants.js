@@ -75,7 +75,7 @@ export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';
 export const ACTIVITY_STATUS_VALIDATED = 'ACTIVITY_STATUS_VALIDATED';
 
 export const CURRENCY_HOUR = '00:00';
-
+export const CURRENCY_DATE_FORMAT = 'YYYY-MM-DD';
 export const VERSION = '0.0.1';
 export const AMP_COUNTRY_LOGO = './assets/ampCountryFlag.png';
 export const ASSEST_DIRECTORY = './assets';

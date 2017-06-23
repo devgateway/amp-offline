@@ -34,7 +34,8 @@ export function loadActivityForActivityPreview(activityId) {
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
-      payload: _loadActivity(activityId, ownProps().userReducer.teamMember.id, paths)
+      payload: _loadActivity(activityId, ownProps().userReducer.teamMember.id, paths,
+        ownProps().workspaceReducer.currentWorkspaceSettings, ownProps().currencyRatesReducer.currencyRatesManager)
     });
 }
 
@@ -63,7 +64,7 @@ export function saveActivity(activity) {
   };
 }
 
-function _loadActivity(activityId, teamMemberId, possibleValuesPaths) {
+function _loadActivity(activityId, teamMemberId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager) {
   return new Promise((resolve, reject) => {
     const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
     return Promise.all([
@@ -74,9 +75,17 @@ function _loadActivity(activityId, teamMemberId, possibleValuesPaths) {
       .then(([activity, fieldsDef, possibleValuesCollection]) => {
         fieldsDef = fieldsDef.fields;
         const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
-        const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager);
+        const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
+          currentWorkspaceSettings, currencyRatesManager);
         return WorkspaceHelper.findById(activity[TEAM].id).then(activityWorkspace =>
-          resolve({ activity, activityWorkspace, activityFieldsManager, activityFundingTotals })
+          resolve({
+            activity,
+            activityWorkspace,
+            activityFieldsManager,
+            activityFundingTotals,
+            currentWorkspaceSettings,
+            currencyRatesManager
+          })
         ).catch(error => reject(_toNotification(error)));
       }).catch(error => reject(_toNotification(error)));
   });

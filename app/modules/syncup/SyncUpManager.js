@@ -43,10 +43,9 @@ import FieldsSyncUpManager from './syncupManagers/FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './syncupManagers/PossibleValuesSyncUpManager';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
-import { loadNumberSettings, loadDateSettings } from '../../actions/StartUpAction';
+import { loadNumberSettings, loadDateSettings, loadCurrencyRatesOnStartup } from '../../actions/StartUpAction';
 import WorkspaceSettingsSyncUpManager from './syncupManagers/WorkspaceSettingsSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
-
 import SyncUpManagerInterface from './syncupManagers/SyncUpManagerInterface';
 
 /* This list allow us to un-hardcode and simplify the syncup process. */
@@ -344,7 +343,8 @@ export default class SyncUpManager {
     return Promise.all([
       loadAllLanguages(restart),
       loadDateSettings(),
-      loadNumberSettings()]);
+      loadNumberSettings(),
+      loadCurrencyRatesOnStartup]);
   }
 
   static getSyncUpHistory() {

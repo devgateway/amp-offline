@@ -1,10 +1,6 @@
 /* eslint "no-nested-ternary": 0 */
 import translate from '../../utils/translate';
-import {
-  ACTIVITY_STATUS_DRAFT,
-  ACTIVITY_STATUS_UNVALIDATED,
-  ACTIVITY_STATUS_VALIDATED
-} from '../../utils/Constants';
+import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import {
@@ -13,7 +9,6 @@ import {
   FUNDINGS,
   FUNDING_DETAILS,
   TRANSACTION_TYPE,
-  TRANSACTION_AMOUNT,
   ADJUSTMENT_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
@@ -22,17 +17,17 @@ import {
   DONOR_ORGANIZATIONS_PATH
 } from '../../utils/constants/FieldPathConstants';
 import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
-
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 const DesktopManager = {
 
-  generateDesktopData(workspace, teamMemberId) {
+  generateDesktopData(workspace, teamMemberId, currentWorkspaceSettings, currencyRatesManager) {
     LoggerManager.log('generateDesktopData');
     return new Promise((resolve, reject) =>
       WorkspaceFilter.getDBFilter(workspace).then(wsFilter =>
-        this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected)
+        this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
+          currencyRatesManager)
           .then((tab1Data) =>
             this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllRejected)
               .then((tab2Data) =>
@@ -47,14 +42,14 @@ const DesktopManager = {
     );
   },
 
-  generateOneTabData(wsFilter, teamMemberId, fn) {
+  generateOneTabData(wsFilter, teamMemberId, fn, currentWorkspaceSettings, currencyRatesManager) {
     LoggerManager.log('generateOneTabData');
     return new Promise((resolve, reject) => (
       fn.call(ActivityHelper, wsFilter)
         .then((activities) => (
           this.hydrateActivities(activities, teamMemberId)
             .then((hydratedActivities) => (
-              this.convertActivitiesToGridStructure(hydratedActivities)
+              this.convertActivitiesToGridStructure(hydratedActivities, currentWorkspaceSettings, currencyRatesManager)
                 .then((activitiesForGrid) => (
                   resolve(activitiesForGrid)
                 )).catch(reject)
@@ -72,7 +67,7 @@ const DesktopManager = {
     });
   },
 
-  convertActivitiesToGridStructure(hydratedActivities) {
+  convertActivitiesToGridStructure(hydratedActivities, currentWorkspaceSettings, currencyRatesManager) {
     LoggerManager.log('convertActivitiesToGridStructure');
     const forGrid = hydratedActivities.map((item) => (
       Object.assign({}, item, {
@@ -80,8 +75,9 @@ const DesktopManager = {
         status: this.getActivityStatus(item),
         donor: this.getActivityDonors(item),
         synced: this.getActivityIsSynced(item),
-        actualDisbursements: this.getActivityAmounts(item, DISBURSEMENTS),
-        actualCommitments: this.getActivityAmounts(item, COMMITMENTS),
+        actualDisbursements: this.getActivityAmounts(item, DISBURSEMENTS, currentWorkspaceSettings,
+          currencyRatesManager),
+        actualCommitments: this.getActivityAmounts(item, COMMITMENTS, currentWorkspaceSettings, currencyRatesManager),
         view: true,
         edit: this.getActivityCanEdit(item),
         new: this.getActivityIsNew(item)
@@ -109,18 +105,17 @@ const DesktopManager = {
     return true; // TODO: to be implemented.
   },
 
-  getActivityAmounts(item, trnType) {
+  getActivityAmounts(item, trnType, currentWorkspaceSettings, currencyRatesManager) {
     let amount = 0;
     item[FUNDINGS].forEach((funding) => (
       funding[FUNDING_DETAILS].forEach((fd) => {
         if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
-          amount += fd[TRANSACTION_AMOUNT];
+          amount += currencyRatesManager.convertTransactionAmountToCurrency(fd, currencyRatesManager.currency);
         }
       })
     ));
     return amount;
   },
-
   getActivityDonors(item) {
     return item.donor_organization.map((donor) => (donor.organization.value));
   },

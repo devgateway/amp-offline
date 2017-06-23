@@ -18,6 +18,7 @@ class APFundingSection extends Component {
     activity: PropTypes.object.isRequired
   };
 
+
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');

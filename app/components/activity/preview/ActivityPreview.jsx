@@ -8,6 +8,7 @@ import MainGroup from './MainGroup';
 import APStatusBar from './sections/APStatusBar';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
+import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 import LoggerManager from '../../../modules/util/LoggerManager';
 import edit from '../../../assets/images/edit_icon.svg';
 
@@ -25,6 +26,8 @@ export default class ActivityPreview extends Component {
       activityWorkspace: PropTypes.object,
       activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
+      currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
+      currentWorkspaceSettings: PropTypes.object,
       errorMessage: PropTypes.object
     }).isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
@@ -37,6 +40,8 @@ export default class ActivityPreview extends Component {
   static childContextTypes = {
     activity: PropTypes.object,
     activityWorkspace: PropTypes.object,
+    currentWorkspaceSettings: PropTypes.object,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals)
   };
@@ -51,7 +56,9 @@ export default class ActivityPreview extends Component {
       activity: this.props.activityReducer.activity,
       activityWorkspace: this.props.activityReducer.activityWorkspace,
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
-      activityFundingTotals: this.props.activityReducer.activityFundingTotals
+      currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings,
+      activityFundingTotals: this.props.activityReducer.activityFundingTotals,
+      currencyRatesManager: this.props.activityReducer.currencyRatesManager
     };
   }
 

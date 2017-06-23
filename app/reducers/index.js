@@ -10,6 +10,7 @@ import activityReducer from './ActivityReducer';
 import ampConnectionStatusReducer from './AmpConnectionStatusReducer';
 import startUpReducer from './StartUpReducer';
 import notificationReducer from './NotificationReducer';
+import currencyRatesReducer from './CurrencyRatesReducer';
 
 const rootReducer = combineReducers({
   loginReducer,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   activityReducer,
   ampConnectionStatusReducer,
   startUpReducer,
-  notificationReducer
+  notificationReducer,
+  currencyRatesReducer
 });
 
 export default rootReducer;
