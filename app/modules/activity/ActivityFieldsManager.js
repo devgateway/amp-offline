@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 import PossibleValuesManager from './PossibleValuesManager';
+import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 /**
@@ -166,6 +167,7 @@ export default class ActivityFieldsManager {
   }
 
   areRequiredFieldsSpecified(activity, asDraft, fieldPathsToSkipSet, invalidFieldPathsSet) {
+    // TODO collect other validation errors, like % validation
     return !this._hasRequiredFieldsUnspecified([activity], this.fieldsDef, asDraft, undefined, fieldPathsToSkipSet,
       invalidFieldPathsSet);
   }
@@ -194,5 +196,47 @@ export default class ActivityFieldsManager {
       }
       return false;
     });
+  }
+
+  /**
+   * Percentage field validator
+   * @param value the value to test
+   * @param fieldPath full field path, used to detect field label to be used for error message
+   * @return {String|boolean} String if an error detected, true if valid
+   */
+  percentValueValidator(value, fieldPath) {
+    let validationError = null;
+    value = Number(value);
+    // using the same messages as in AMP
+    if (!Number.isFinite(value)) {
+      validationError = translate('percentageValid');
+    } else if (value < 0) {
+      validationError = translate('percentageMinimumError');
+    } else if (value > 100) {
+      validationError = translate('percentageRangeError');
+    }
+    if (validationError) {
+      const fieldLabel = this.getFieldLabelTranslation(fieldPath);
+      validationError = validationError.replace('%percentageField%', fieldLabel);
+    }
+    return validationError || true;
+  }
+
+  /**
+   * Total percentage values validator
+   * @param values the values to validate
+   * @param fieldName
+   * @return {String|boolean}
+   */
+  totalPercentageValidator(values, fieldName) {
+    let validationError = null;
+    const totalPercentage = values.reduce((totPercentage, val) => {
+      totPercentage += val[fieldName] || 0;
+      return totPercentage;
+    }, 0);
+    if (totalPercentage !== 100) {
+      validationError = translate('percentageSumError').replace('%totalPercentage%', totalPercentage);
+    }
+    return validationError || true;
   }
 }

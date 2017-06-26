@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
@@ -19,7 +20,8 @@ export default class AFList extends Component {
     values: PropTypes.array.isRequired,
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
     listPath: PropTypes.string.isRequired,
-    onDeleteRow: PropTypes.func
+    onDeleteRow: PropTypes.func,
+    onEditRow: PropTypes.func
   };
 
   constructor(props) {
@@ -30,7 +32,8 @@ export default class AFList extends Component {
       withoutNoDataText: true
     };
     this.state = {
-      values: undefined
+      values: undefined,
+      validationError: null
     };
   }
 
@@ -44,6 +47,9 @@ export default class AFList extends Component {
         res = res || (fieldB.percentage === true ? 1 : 0);
         return res;
       });
+    this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
+    this.percentageFieldPath = this.percentageFieldDef ? `${this.props.listPath}~${this.percentageFieldDef.field_name}`
+      : null;
     this.setState({
       values: this.props.values
     });
@@ -68,6 +74,32 @@ export default class AFList extends Component {
     }
   }
 
+  _beforeSaveCell(row, cellName, cellValue) {
+    // TODO required field validation
+    if (this.percentageFieldDef && this.percentageFieldDef.field_name === cellName) {
+      return this._percentageValidator(cellValue) === true;
+    }
+    return true;
+  }
+
+  _afterSaveCell(row, cellName, cellValue) {
+    if (this.props.onEditRow) {
+      this.props.onEditRow(row, cellName, cellValue);
+    }
+  }
+
+  _percentageValidator(cellValue) {
+    const validationError = this.props.activityFieldsManager.percentValueValidator(cellValue, this.percentageFieldPath);
+    return validationError || true;
+  }
+
+  validate() {
+    if (this.state.validationError) {
+      return 'error';
+    }
+    return null;
+  }
+
   /**
    * Displays AF List as a bootstrap table
    * @return {XML}
@@ -90,29 +122,35 @@ export default class AFList extends Component {
       const childFieldName = childDef.field_name;
       const fieldPath = `${listFieldName}~${childFieldName}`;
       const editable = childDef.id_only !== true;
+      const validator = childDef.percentage === true ? this._percentageValidator.bind(this) : null;
       return (
         <TableHeaderColumn
           key={childFieldName} dataField={childFieldName}
-          editable={editable} columnClassName={this.editableCellClass.bind(this, editable)}
+          editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)}
         >
           {this.props.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);
     }));
     const cellEdit = {
       mode: 'click',
-      blurToSave: true
+      blurToSave: true,
+      beforeSaveCell: this._beforeSaveCell.bind(this),
+      afterSaveCell: this._afterSaveCell.bind(this)
     };
     const selectRow = {
       mode: 'checkbox',
     };
     // there is no one click row removal, we'll simulate with select
-    this.table = (<BootstrapTable
-      data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
-      containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
-      {columns}
-    </BootstrapTable>);
-    return (<div >
-      {this.table}
+    return (<div>
+      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()} >
+        <BootstrapTable
+          data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
+          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
+          {columns}
+        </BootstrapTable>
+        <FormControl.Feedback />
+        <HelpBlock>{this.state.validationError}</HelpBlock>
+      </FormGroup>
     </div>);
   }
 

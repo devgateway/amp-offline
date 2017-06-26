@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import styles from './AFListSelector.css';
 import AFList from './AFList';
 import AFSearchList from './AFSearchList';
@@ -39,10 +39,11 @@ export default class AFListSelector extends Component {
   componentWillMount() {
     this.listDef = this.props.activityFieldsManager.getFieldDef(this.props.listPath);
     // assumption based on current use cases is that we have only one id-only field to select
-    this.idOnlyField = this.listDef.children.find(item =>
-    item.id_only === true).field_name;
+    this.idOnlyField = this.listDef.children.find(item => item.id_only === true).field_name;
+    this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.setState({
-      values: this.props.selectedOptions
+      values: this.props.selectedOptions,
+      validationError: null
     });
   }
 
@@ -63,8 +64,16 @@ export default class AFListSelector extends Component {
   }
 
   dividePercentage() {
-    // TODO divide
-    // TODO check if it is possible to save when percentage sum is not consistent
+    const values = this.state.values;
+    const percentage = Math.floor(100 / values.length);
+    let percentageLeftover = 100 % values.length;
+    values.forEach(item => {
+      item[this.percentageFieldDef.field_name] = percentage;
+    });
+    for (let idx = 0; percentageLeftover > 0; idx++, percentageLeftover--) { // eslint-disable-line no-plusplus
+      values[idx][this.percentageFieldDef.field_name] += 1;
+    }
+    this.handleChange(values);
   }
 
   handleAddValue(value) {
@@ -78,33 +87,63 @@ export default class AFListSelector extends Component {
       }
     });
     const values = this.state.values.concat(newSelectedOption);
-    this.setState({ values });
-    this.props.onChange(values);
+    this.handleChange(values);
   }
 
   handleRemoveValues(ids) {
-    // TODO check constraints
     const values = this.state.values.filter(item => ids.includes(item[this.idOnlyField].id) === false);
+    this.handleChange(values);
+  }
+
+  handleEditValue(rowData, colHeader, cellValue) {
+    const values = this.state.values;
+    const item = values.find(val => val[this.idOnlyField].id === rowData.id);
+    if (this.percentageFieldDef && this.percentageFieldDef.field_name === colHeader) {
+      // percentage validation done by AFList, but the Bootstrap Table widget uses Text Filed (used w/o customization)
+      cellValue = Number(cellValue);
+    }
+    item[colHeader] = cellValue;
+    this.handleChange(values);
+  }
+
+  handleChange(values) {
+    // TODO check constraints
+    // TODO constraints validation
+    const errors = [];
+    const totalPercentage = this.percentageFieldDef && values.length ?
+      this.props.activityFieldsManager.totalPercentageValidator(values, this.percentageFieldDef.field_name) : null;
+    if (totalPercentage !== null && totalPercentage !== true) {
+      errors.push(totalPercentage);
+    }
     this.setState({
-      values
+      values,
+      validationError: errors.length ? errors.join(' ') : null
     });
     this.props.onChange(values);
   }
 
-  handleChange() {
-    // TODO constraints validation
-    this.props.onChange(this.state.value);
+  validate() {
+    if (this.state.validationError) {
+      return 'error';
+    }
+    return null;
   }
 
   render() {
     const btnStyle = `${styles.dividePercentage} btn btn-success`;
     return (<div >
-      <AFList
-        onDeleteRow={this.handleRemoveValues} values={this.getListValues()} listPath={this.props.listPath}
-        activityFieldsManager={this.props.activityFieldsManager} />
+      <FormGroup controlId={this.props.listPath} validationState={this.validate()} >
+        <AFList
+          onDeleteRow={this.handleRemoveValues} values={this.getListValues()} listPath={this.props.listPath}
+          activityFieldsManager={this.props.activityFieldsManager} onEditRow={this.handleEditValue.bind(this)} />
+        <FormControl.Feedback />
+        <HelpBlock>{this.state.validationError}</HelpBlock>
+      </FormGroup>
       <div className={`${styles.inline} ${styles.searchContainer}`} >
         <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
-        <Button onClick={this.dividePercentage.bind(this)} bsStyle="success" bsClass={btnStyle} >
+        <Button
+          onClick={this.dividePercentage.bind(this)} bsStyle="success" bsClass={btnStyle}
+          disabled={this.state.values.length === 0} hidden={this.percentageFieldDef === undefined} >
           {translate('Divide Percentage')}
         </Button>
       </div>
