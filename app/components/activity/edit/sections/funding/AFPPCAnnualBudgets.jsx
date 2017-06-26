@@ -6,7 +6,6 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
-import AFPPCAnnualBudgetsModal from './components/AFPPCAnnualBudgetsModal';
 
 /**
  * @author Gabriel Inchauspe
@@ -23,11 +22,20 @@ export default class AFPPCAnnualBudgets extends Component {
     formatCurrency: PropTypes.func.isRequired
   };
 
+  /**
+   * This function is called after editing an existing cell.
+   * @param currencies
+   * @param row
+   * @param cellName
+   * @param cellValue
+   */
   static onAfterSaveCell(currencies, row, cellName, cellValue) {
     if (cellName === AC.CURRENCY) {
+      // Convert currency string to currency object.
       const currency = Object.values(currencies).find(k => k.value === cellValue);
       row[AC.CURRENCY] = currency;
     } else if (cellName === AC.YEAR) {
+      // Convert year string to full date string.
       const year = `${cellValue}-01-01T00:00:00.001-0000`;
       row[AC.YEAR] = year;
     }
@@ -38,12 +46,33 @@ export default class AFPPCAnnualBudgets extends Component {
     LoggerManager.log('constructor');
   }
 
+  /**
+   * Implement row delete by id.
+   * @param ids
+   */
   onDeleteRow(ids) {
     ids.forEach(index => {
       const i = this.props.activity[AC.PPC_ANNUAL_BUDGETS]
         .findIndex(item => (item[AC.ANNUAL_PROJECT_BUDGET_ID] === index));
       this.props.activity[AC.PPC_ANNUAL_BUDGETS].splice(i, 1);
     });
+  }
+
+  /**
+   * Convert the object from modal window to the same format in AC.PPC_ANNUAL_BUDGETS, then add it to the activity.
+   * @param data
+   * @returns {*}
+   */
+  onAfterInsertRow(data) {
+    debugger
+    const newPPC = {};
+    newPPC[AC.CURRENCY] = Object.values(this.getListOfCurrencies(true)).find(item => item.value === data[AC.CURRENCY]);
+    newPPC[AC.ANNUAL_PROJECT_BUDGET_ID] = Number.parseInt(Math.random() * 1000, 10);
+    newPPC[AC.AMOUNT] = Number.parseFloat(data[AC.AMOUNT], 10);
+    newPPC[AC.YEAR] = `${data[AC.YEAR]}-01-01T00:00:00.001-0000`;
+    // Add it to the activity because is not done automatically.
+    this.props.activity[AC.PPC_ANNUAL_BUDGETS].push(newPPC);
+    return newPPC;
   }
 
   getListOfCurrencies(returnFullObject) {
@@ -60,6 +89,12 @@ export default class AFPPCAnnualBudgets extends Component {
     return Array.from(new Array(30), (x, i) => i + 1990);
   }
 
+  /**
+   * Generate the value we see in the table for years column, the code is different for editing cell.
+   * @param years
+   * @param cell
+   * @returns {*}
+   */
   formatYear(years, cell) {
     if (years.indexOf(cell) !== -1) {
       return `<span className=${styles.editable}>${cell}</span>`; // Notice the `` for editable cell.
@@ -79,25 +114,8 @@ export default class AFPPCAnnualBudgets extends Component {
     return true;
   }
 
-  beforeSave(e) {
-  }
-
-  handleSave(save) {
-    // Custom your onSave event here,
-    // it's not necessary to implement this function if you have no any process before save
-    console.log('This is my custom function for save event');
-    save();
-  }
-
   handleInsertButtonClick(onClick) {
     onClick();
-  }
-
-  onAfterInsertRow(data) {
-    debugger
-    data[AC.CURRENCY] = Object.values(this.getListOfCurrencies(true)).find(item => item.value === data[AC.CURRENCY]);
-    data.annual_project_budget_id = 10;
-    return data;
   }
 
   createCustomInsertButton(onClick) {
@@ -109,15 +127,11 @@ export default class AFPPCAnnualBudgets extends Component {
     );
   }
 
-  createCustomModalFooter = (closeModal, save) => {
-    return (
-      <InsertModalFooter
-        beforeSave={this.beforeSave}
-        onModalClose={() => this.handleModalClose(closeModal)}
-        onSave={() => this.handleSave(save)}
-      />
-    );
-  };
+  createCustomModalFooter = (closeModal) => (
+    <InsertModalFooter
+      onModalClose={() => this.handleModalClose(closeModal)}
+    />
+  );
 
   render() {
     // TODO: replace all translate for column names for the corresponding translated-value from possible-values.db.
