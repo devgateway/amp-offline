@@ -6,6 +6,7 @@ import * as AC from './ActivityConstants';
  */
 
 export const FUNDING_DETAILS_PATH = 'fundings~funding_details';
+export const FUNDING_CURRENCY_PATH = 'fundings~funding_details~currency';
 export const ADJUSTMENT_TYPE_PATH = 'fundings~funding_details~adjustment_type';
 export const TRANSACTION_TYPE_PATH = 'fundings~funding_details~transaction_type';
 export const ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH = 'activity_internal_ids~internal_id';
