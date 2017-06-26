@@ -1,11 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { BootstrapTable, TableHeaderColumn, InsertButton, InsertModalFooter } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import AFPPCAnnualBudgetsModal from './components/AFPPCAnnualBudgetsModal';
 
 /**
  * @author Gabriel Inchauspe
@@ -35,10 +36,6 @@ export default class AFPPCAnnualBudgets extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
-    this.options = {
-      withoutNoDataText: true,
-      onDeleteRow: this.onDeleteRow.bind(this)
-    };
   }
 
   onDeleteRow(ids) {
@@ -82,21 +79,69 @@ export default class AFPPCAnnualBudgets extends Component {
     return true;
   }
 
+  beforeSave(e) {
+  }
+
+  handleSave(save) {
+    // Custom your onSave event here,
+    // it's not necessary to implement this function if you have no any process before save
+    console.log('This is my custom function for save event');
+    save();
+  }
+
+  handleInsertButtonClick(onClick) {
+    onClick();
+  }
+
+  onAfterInsertRow(data) {
+    debugger
+    data[AC.CURRENCY] = Object.values(this.getListOfCurrencies(true)).find(item => item.value === data[AC.CURRENCY]);
+    data.annual_project_budget_id = 10;
+    return data;
+  }
+
+  createCustomInsertButton(onClick) {
+    return (
+      <InsertButton
+        btnText={translate('Add Projection')}
+        onClick={() => this.handleInsertButtonClick(onClick)}
+      />
+    );
+  }
+
+  createCustomModalFooter = (closeModal, save) => {
+    return (
+      <InsertModalFooter
+        beforeSave={this.beforeSave}
+        onModalClose={() => this.handleModalClose(closeModal)}
+        onSave={() => this.handleSave(save)}
+      />
+    );
+  };
+
   render() {
     // TODO: replace all translate for column names for the corresponding translated-value from possible-values.db.
     // TODO: maybe to have a "column component" too?
     if (this.props.activity[AC.PPC_ANNUAL_BUDGETS]) {
+      const options = {
+        withoutNoDataText: true,
+        onDeleteRow: this.onDeleteRow.bind(this),
+        insertBtn: this.createCustomInsertButton.bind(this),
+        insertModalFooter: this.createCustomModalFooter,
+        afterInsertRow: this.onAfterInsertRow.bind(this)
+      };
       const cellEdit = {
         mode: 'click',
         blurToSave: true,
         afterSaveCell: AFPPCAnnualBudgets.onAfterSaveCell.bind(null, this.getListOfCurrencies(true))
       };
       const selectRow = {
-        mode: 'checkbox',
+        mode: 'checkbox'
       };
       const columns = [<TableHeaderColumn
-        dataField={AC.ANNUAL_PROJECT_BUDGET_ID} isKey hidden
-        key={AC.ANNUAL_PROJECT_BUDGET_ID} />];
+        dataField={AC.ANNUAL_PROJECT_BUDGET_ID} isKey hidden hiddenOnInsert editable={false}
+        key={AC.ANNUAL_PROJECT_BUDGET_ID} autoValue
+      />];
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
           dataField={AC.AMOUNT} editable={{ validator: this.numberValidator }} key={AC.AMOUNT}
@@ -118,9 +163,9 @@ export default class AFPPCAnnualBudgets extends Component {
       return (<div>
         <span><label htmlFor={AC.PPC_ANNUAL_BUDGETS}>{translate('Annual Proposed Project Cost')}</label></span>
         <BootstrapTable
-          options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
+          options={options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
           thClassName={styles.thClassName} cellEdit={cellEdit} hover selectRow={selectRow} deleteRow
-          data={this.props.activity[AC.PPC_ANNUAL_BUDGETS]}>
+          data={this.props.activity[AC.PPC_ANNUAL_BUDGETS]} insertRow>
           {columns}
         </BootstrapTable>
       </div>);
