@@ -24,20 +24,19 @@ export default class AFPPCAnnualBudgets extends Component {
 
   /**
    * This function is called after editing an existing cell.
-   * @param currencies
    * @param row
    * @param cellName
    * @param cellValue
    */
-  static onAfterSaveCell(currencies, row, cellName, cellValue) {
+  static onAfterSaveCell(row, cellName, cellValue) {
     if (cellName === AC.CURRENCY) {
       // Convert currency string to currency object.
-      const currency = Object.values(currencies).find(k => k.value === cellValue);
-      row[AC.CURRENCY] = currency;
+      row[AC.CURRENCY] = this._generateCurrencyObject(cellValue);
     } else if (cellName === AC.YEAR) {
       // Convert year string to full date string.
-      const year = `${cellValue}-01-01T00:00:00.001-0000`;
-      row[AC.YEAR] = year;
+      row[AC.YEAR] = this._generateYearString(cellValue);
+    } else if (cellName === AC.AMOUNT) {
+      row[AC.AMOUNT] = Number.parseFloat(cellValue, 10);
     }
   }
 
@@ -64,12 +63,11 @@ export default class AFPPCAnnualBudgets extends Component {
    * @returns {*}
    */
   onAfterInsertRow(data) {
-    debugger
     const newPPC = {};
-    newPPC[AC.CURRENCY] = Object.values(this.getListOfCurrencies(true)).find(item => item.value === data[AC.CURRENCY]);
-    newPPC[AC.ANNUAL_PROJECT_BUDGET_ID] = Number.parseInt(Math.random() * 1000, 10);
+    newPPC[AC.CURRENCY] = this._generateCurrencyObject(data[AC.CURRENCY]);
+    newPPC[AC.ANNUAL_PROJECT_BUDGET_ID] = this._generateId();
     newPPC[AC.AMOUNT] = Number.parseFloat(data[AC.AMOUNT], 10);
-    newPPC[AC.YEAR] = `${data[AC.YEAR]}-01-01T00:00:00.001-0000`;
+    newPPC[AC.YEAR] = this._generateYearString(data[AC.YEAR]);
     // Add it to the activity because is not done automatically.
     this.props.activity[AC.PPC_ANNUAL_BUDGETS].push(newPPC);
     return newPPC;
@@ -87,6 +85,18 @@ export default class AFPPCAnnualBudgets extends Component {
   getListOfYears() {
     // TODO: check how many years to generate.
     return Array.from(new Array(30), (x, i) => i + 1990);
+  }
+
+  _generateCurrencyObject(currencyCode) {
+    return Object.values(this.getListOfCurrencies(true)).find(item => item.value === currencyCode);
+  }
+
+  _generateId() {
+    return Number.parseInt(Math.random() * 1000, 10);
+  }
+
+  _generateYearString(year) {
+    return `${year}-01-01T00:00:00.001-0000`;
   }
 
   /**
@@ -118,6 +128,10 @@ export default class AFPPCAnnualBudgets extends Component {
     onClick();
   }
 
+  handleModalClose(closeModal) {
+    closeModal();
+  }
+
   createCustomInsertButton(onClick) {
     return (
       <InsertButton
@@ -147,7 +161,7 @@ export default class AFPPCAnnualBudgets extends Component {
       const cellEdit = {
         mode: 'click',
         blurToSave: true,
-        afterSaveCell: AFPPCAnnualBudgets.onAfterSaveCell.bind(null, this.getListOfCurrencies(true))
+        afterSaveCell: AFPPCAnnualBudgets.onAfterSaveCell.bind(this)
       };
       const selectRow = {
         mode: 'checkbox'
