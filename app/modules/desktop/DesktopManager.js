@@ -12,9 +12,10 @@ import {
   ADJUSTMENT_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
-  TRANSACTION_TYPE_PATH,
   ADJUSTMENT_TYPE_PATH,
-  DONOR_ORGANIZATIONS_PATH
+  DONOR_ORGANIZATIONS_PATH,
+  FUNDING_CURRENCY_PATH,
+  TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
 import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
@@ -62,7 +63,7 @@ const DesktopManager = {
     LoggerManager.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
-      fieldPaths: [DONOR_ORGANIZATIONS_PATH, ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH],
+      fieldPaths: [DONOR_ORGANIZATIONS_PATH, ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, FUNDING_CURRENCY_PATH],
       teamMemberId
     });
   },
