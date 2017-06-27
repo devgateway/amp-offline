@@ -128,6 +128,10 @@ export const TYPE_OF_COOPERATION = 'type_of_cooperation';
 export const ANNUAL_PROJECT_BUDGET_ID = 'annual_project_budget_id';
 export const TYPE = 'type';
 export const YEAR = 'year';
+export const GROUP_VERSIONED_FUNDING = 'group_versioned_funding';
+export const ACTIVE = 'active';
+export const DELEGATED_COOPERATION = 'delegated_cooperation';
+export const DELEGATED_PARTNER = 'delegated_partner';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
