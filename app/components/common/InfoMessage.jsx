@@ -7,30 +7,35 @@ import LoggerManager from '../../modules/util/LoggerManager';
  * @author Nadejda Mandrescu
  */
 export default class InfoMessage extends Component {
-
   static propTypes = {
     message: PropTypes.string.isRequired,
     type: PropTypes.oneOf(['success', 'info']),
     timeout: PropTypes.number
   };
 
+  static defaultProps = {
+    timeout: 10000, // pass 0 to prevent the message from fading
+    type: 'info'
+  };
+
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
     this.state = {
-      show: false
+      show: true
     };
   }
 
   componentWillMount() {
-    const timeout = this.props.timeout || 10000;
-    this.setState({ show: true });
+    const { timeout } = this.props;
     // TODO in alerts & notifications ticket more behavior, styles, etc
-    setTimeout(() => {
-      if (this.unmounted !== true) {
-        this.setState({ show: false });
-      }
-    }, timeout);
+    if (timeout !== 0) {
+      setTimeout(() => {
+        if (this.unmounted !== true) {
+          this.setState({ show: false });
+        }
+      }, timeout);
+    }
   }
 
   componentWillUnmount() {
@@ -42,11 +47,14 @@ export default class InfoMessage extends Component {
   }
 
   render() {
-    if (this.state.show === false) {
-      return null;
-    }
-    const type = this.props.type || 'info';
-    return <Fade in={this.state.show}><Alert bsStyle={type}>{this.props.message}</Alert></Fade>;
+    const { show } = this.state;
+    const { type, message } = this.props;
+    if (!show) return null;
+    return (
+      <Fade in={show}>
+        <Alert bsStyle={type}>{message}</Alert>
+      </Fade>
+    );
   }
 
 }
