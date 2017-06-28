@@ -243,4 +243,29 @@ export default class ActivityFieldsManager {
     }
     return validationError || true;
   }
+
+  /**
+   * Unique values valodator
+   * @param values the values to validate
+   * @param fieldName which field entries must be unique
+   * @return {String|boolean}
+   */
+  uniqueValuesValidator(values, fieldName) {
+    let validationError = null;
+    const repeating = new Set();
+    const unique = new Set();
+    values.forEach(item => {
+      const value = item[fieldName].value;
+      if (unique.has(value)) {
+        repeating.add(value);
+      } else {
+        unique.add(value);
+      }
+    });
+    if (repeating.size > 0) {
+      const repeated = Array.from(repeating.values()).join(', ');
+      validationError = translate('nonUniqueItemsError').replace('%repetitions%', repeated);
+    }
+    return validationError || true;
+  }
 }

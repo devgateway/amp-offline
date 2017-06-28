@@ -8,6 +8,7 @@ import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsMa
 import { HIERARCHICAL_VALUE } from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import * as Utils from '../../../../utils/Utils';
 
 /* eslint-disable class-methods-use-this */
 
@@ -32,7 +33,8 @@ export default class AFListSelector extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.dividePercentage = this.dividePercentage.bind(this);
     this.state = {
-      values: []
+      values: [],
+      validationError: null
     };
   }
 
@@ -41,15 +43,24 @@ export default class AFListSelector extends Component {
     // assumption based on current use cases is that we have only one id-only field to select
     this.idOnlyField = this.listDef.children.find(item => item.id_only === true).field_name;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
-    this.setState({
-      values: this.props.selectedOptions,
-      validationError: null
+    this.uniqueConstraint = this.listDef.unique_constraint;
+    this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
+    this.setUniqueIdsAndUpdateState(this.props.selectedOptions);
+  }
+
+  setUniqueIdsAndUpdateState(values) {
+    // set unique ids even if no unique items validation is request, to have unique id for deletion
+    values.forEach(value => {
+      if (!value.uniqueId) {
+        value.uniqueId = Utils.stringToUniqueId(value[this.uniqueIdCol].id);
+      }
     });
+    this.setState({ values });
   }
 
   getListValues() {
     return this.state.values.map(value => {
-      const simplifiedValue = {};
+      const simplifiedValue = { uniqueId: value.uniqueId };
       Object.keys(value).forEach(field => {
         const optionValue = value[field] ? (value[field][HIERARCHICAL_VALUE] || value[field].translatedValue) : null;
         if (optionValue) {
@@ -78,7 +89,6 @@ export default class AFListSelector extends Component {
   }
 
   handleAddValue(value) {
-    // TODO check constraints
     const newSelectedOption = {};
     this.listDef.children.forEach(field => {
       if (field.id_only === true) {
@@ -92,13 +102,13 @@ export default class AFListSelector extends Component {
   }
 
   handleRemoveValues(ids) {
-    const values = this.state.values.filter(item => ids.includes(item[this.idOnlyField].id) === false);
+    const values = this.state.values.filter(item => !ids.includes(item.uniqueId));
     this.handleChange(values);
   }
 
   handleEditValue(rowData, colHeader, cellValue) {
     const values = this.state.values;
-    const item = values.find(val => val[this.idOnlyField].id === rowData.id);
+    const item = values.find(val => val.uniqueId === rowData.uniqueId);
     if (this.percentageFieldDef && this.percentageFieldDef.field_name === colHeader) {
       // percentage validation done by AFList, but the Bootstrap Table widget uses Text Filed (used w/o customization)
       cellValue = Number(cellValue);
@@ -108,19 +118,25 @@ export default class AFListSelector extends Component {
   }
 
   handleChange(values) {
-    // TODO check constraints
-    // TODO constraints validation
-    const errors = [];
-    const totalPercentage = this.percentageFieldDef && values.length ?
-      this.props.activityFieldsManager.totalPercentageValidator(values, this.percentageFieldDef.field_name) : null;
-    if (totalPercentage !== null && totalPercentage !== true) {
-      errors.push(totalPercentage);
-    }
-    this.setState({
-      values,
-      validationError: errors.length ? errors.join(' ') : null
-    });
+    const validationError = this._validateChange(values);
+    this.setState({ validationError });
+    this.setUniqueIdsAndUpdateState(values);
     this.props.onChange(values);
+  }
+
+  _validateChange(values) {
+    // TODO mix/max size, parent-child constraints
+    let errors = [];
+    const { activityFieldsManager } = this.props;
+    if (this.percentageFieldDef && values.length) {
+      errors.push(activityFieldsManager.totalPercentageValidator(values, this.percentageFieldDef.field_name));
+    }
+    if (this.uniqueConstraint) {
+      errors.push(activityFieldsManager.uniqueValuesValidator(values, this.uniqueConstraint));
+    }
+    errors = errors.filter(error => error !== true && error !== null);
+
+    return errors.length ? errors.join(' ') : null;
   }
 
   validate() {

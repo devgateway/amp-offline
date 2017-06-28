@@ -3,13 +3,9 @@ import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
-
-// TODO remove this filter once these extra fields are no longer required at import (automatically handled by AMP-26331)
-const FIELDS_TO_IGNORE = new Set([AC.PROGRAM_SETTINGS, AC.AMP_ORGANIZATION_ROLE_ID, AC.ROLE]);
 
 /**
  * Activity Form list of items like Locations, Programs, etc
@@ -39,7 +35,7 @@ export default class AFList extends Component {
 
   componentWillMount() {
     this.listDef = this.props.activityFieldsManager.getFieldDef(this.props.listPath);
-    this.fields = this.listDef.children.filter(child => !FIELDS_TO_IGNORE.has(child.field_name)).sort(
+    this.fields = this.listDef.children.sort(
       (fieldA, fieldB) => {
         let res = fieldA.id_only === true ? -1 : undefined;
         res = res || (fieldB.id_only === true ? 1 : undefined);
@@ -63,7 +59,7 @@ export default class AFList extends Component {
 
   onDeleteRow(rows) {
     this.setState({
-      values: this.state.values.filter(item => item.id !== rows[0])
+      values: this.state.values.filter(item => !rows.includes(item.uniqueId))
     });
     this.props.onDeleteRow(rows);
   }
@@ -116,7 +112,7 @@ export default class AFList extends Component {
      {this.props.activityFieldsManager.getFieldLabelTranslation(listFieldName)}
      </TableHeaderColumn>
      */
-    let columns = [<TableHeaderColumn key="id" dataField="id" isKey hidden />];
+    let columns = [<TableHeaderColumn key="id" dataField="uniqueId" isKey hidden />];
     columns = columns.concat(this.fields.map(childDef => {
       const childFieldName = childDef.field_name;
       const fieldPath = `${listFieldName}~${childFieldName}`;
