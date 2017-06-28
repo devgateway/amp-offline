@@ -100,3 +100,14 @@ html, body {
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
   color: #000000;
 }
+
+/* BOOTSTRAP TABLE OVERRIDE */
+.toast-title {
+  display: none;
+}
+
+.toast-message {
+  -ms-word-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+}

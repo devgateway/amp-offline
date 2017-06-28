@@ -136,6 +136,10 @@ export default class ActivityFieldsManager {
   }
 
   getValue(object, fieldPath) {
+    return ActivityFieldsManager.getValue(object, fieldPath);
+  }
+
+  static getValue(object, fieldPath) {
     const parts = fieldPath ? fieldPath.split('~') : [];
     let value = object;
     parts.some(part => {
