@@ -77,20 +77,19 @@ export default class AFList extends Component {
   _beforeSaveCell(row, cellName, cellValue) {
     // TODO required field validation
     if (this.percentageFieldDef && this.percentageFieldDef.field_name === cellName) {
-      return this._percentageValidator(cellValue) === true;
+      return this._percentageValidator(cellValue, row) === true;
     }
     return true;
+  }
+
+  _percentageValidator(cellValue) {
+    return this.props.activityFieldsManager.percentValueValidator(cellValue, this.percentageFieldPath);
   }
 
   _afterSaveCell(row, cellName, cellValue) {
     if (this.props.onEditRow) {
       this.props.onEditRow(row, cellName, cellValue);
     }
-  }
-
-  _percentageValidator(cellValue) {
-    const validationError = this.props.activityFieldsManager.percentValueValidator(cellValue, this.percentageFieldPath);
-    return validationError || true;
   }
 
   validate() {

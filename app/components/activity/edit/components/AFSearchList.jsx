@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { Button, FormControl, Panel } from 'react-bootstrap';
 import styles from './AFSearchList.css';
 import AFOption from './AFOption';
-import { HIERARCHICAL_VALUE_DEPTH } from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
@@ -35,16 +34,24 @@ export default class AFSearchList extends Component {
   }
 
   componentWillMount() {
-    this.props.options.forEach(option => {
-      option.upperCaseValue = option.translatedValue.toLocaleUpperCase();
-    });
-    this.resetState();
+    this.initOptions(this.props);
   }
 
-  resetState() {
+  componentWillReceiveProps(nextProps) {
+    this.initOptions(nextProps);
+  }
+
+  initOptions(props) {
+    props.options.forEach((option: AFOption) => {
+      option.upperCaseValue = option.displayValue.toLocaleUpperCase();
+    });
+    this.resetState(props);
+  }
+
+  resetState(props = this.props) {
     this.setState({
       filter: '',
-      values: this.props.options,
+      values: props.options,
       showOptions: false
     });
   }
@@ -71,8 +78,9 @@ export default class AFSearchList extends Component {
 
   _getPaddedValue(option: AFOption) {
     if (!option.paddedValue) {
-      const repeatCount = HIERARCHY_LEVEL_PADDING_SIZE * (option[HIERARCHICAL_VALUE_DEPTH] || 0);
-      option.paddedValue = HIERARCHY_LEVEL_PADDING_CHAR.repeat(repeatCount).concat(option.translatedValue);
+      const depth = option.displayHierarchicalValue ? 0 : (option.hierarchicalDepth || 0);
+      const repeatCount = HIERARCHY_LEVEL_PADDING_SIZE * depth;
+      option.paddedValue = HIERARCHY_LEVEL_PADDING_CHAR.repeat(repeatCount).concat(option.displayValue);
     }
     return option.paddedValue;
   }
