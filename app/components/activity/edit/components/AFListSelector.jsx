@@ -69,10 +69,11 @@ export default class AFListSelector extends Component {
     let percentageLeftover = 100 % values.length;
     values.forEach(item => {
       item[this.percentageFieldDef.field_name] = percentage;
+      if (percentageLeftover) {
+        item[this.percentageFieldDef.field_name] += 1;
+        percentageLeftover -= 1;
+      }
     });
-    for (let idx = 0; percentageLeftover > 0; idx++, percentageLeftover--) { // eslint-disable-line no-plusplus
-      values[idx][this.percentageFieldDef.field_name] += 1;
-    }
     this.handleChange(values);
   }
 

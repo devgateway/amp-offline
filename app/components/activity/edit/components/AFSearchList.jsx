@@ -25,7 +25,6 @@ export default class AFSearchList extends Component {
     super(props);
     LoggerManager.log('constructor');
     this.applyFilter = this.applyFilter.bind(this);
-    this.toggleShowOptions = this.toggleShowOptions.bind(this);
     this.state = {
       filter: '',
       values: null,
@@ -67,13 +66,13 @@ export default class AFSearchList extends Component {
     this.setState({ filter, values, showOptions: true });
   }
 
-  toggleShowOptions(e) {
+  showOptions(e) {
     e.preventDefault();
-    if (this.state.showOptions === true) {
-      this.resetState();
-    } else {
-      this.setState({ showOptions: true });
-    }
+    this.setState({ showOptions: true });
+  }
+
+  closeOptions() {
+    this.resetState();
   }
 
   _getPaddedValue(option: AFOption) {
@@ -96,7 +95,7 @@ export default class AFSearchList extends Component {
     return (<div className={styles.searchContainer} >
       <FormControl
         type="text" placeholder={placeHolderText} onChange={this.applyFilter} value={this.state.filter}
-        onFocus={this.toggleShowOptions} onBlur={this.toggleShowOptions} />
+        onFocus={this.showOptions.bind(this)} onBlur={this.closeOptions.bind(this)} />
       <div hidden={this.state.showOptions === false} >
         <Panel collapsible expanded={this.state.showOptions === true} bsClass={styles.searchPanel} >
           {options}
