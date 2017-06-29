@@ -6,9 +6,10 @@ import PossibleValuesManager from '../../../../modules/activity/PossibleValuesMa
  * @author Nadejda Mandrescu
  */
 export default class AFOption {
-  constructor({ id, value, ...extraInfo }) {
+  constructor({ id, value, displayHierarchicalValue, ...extraInfo }) {
     this._id = id;
     this._value = value;
+    this._displayHierarchicalValue = displayHierarchicalValue;
     if (extraInfo) {
       Object.assign(this, extraInfo);
     }
@@ -24,6 +25,17 @@ export default class AFOption {
 
   get hierarchicalValue() {
     return this[HIERARCHICAL_VALUE];
+  }
+
+  get displayHierarchicalValue() {
+    return this._displayHierarchicalValue;
+  }
+
+  get displayValue() {
+    if (this._displayHierarchicalValue) {
+      return this.hierarchicalValue;
+    }
+    return this.translatedValue;
   }
 
   get hierarchicalDepth() {

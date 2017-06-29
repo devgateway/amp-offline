@@ -17,7 +17,7 @@ import {
 } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
-import { loadDateSettings, loadNumberSettings } from '../../actions/StartUpAction';
+import { loadDateSettings, loadGlobalSettings, loadNumberSettings } from '../../actions/StartUpAction';
 
 // TODO: Evaluate in the future whats best: to have static functions or to create instances of SyncUpManager.
 export default class SyncUpManager {
@@ -138,7 +138,8 @@ export default class SyncUpManager {
     return Promise.all([
       loadAllLanguages(restart),
       loadDateSettings(),
-      loadNumberSettings()]);
+      loadNumberSettings(),
+      loadGlobalSettings()]);
   }
 
   static getSyncUpHistory() {
