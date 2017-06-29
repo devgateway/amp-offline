@@ -172,5 +172,11 @@
   "Funding Classification": "Funding Classification",
   "Agreement": "Agreement",
   "No agreement was selected!": "No agreement was selected!",
-  "Search Agreements": "Search Agreements"
+  "Search Agreements": "Search Agreements",
+  "percentageSumError": "Sum of all percentages is %totalPercentage%, it needs to be 100!",
+  "percentageValid": "The value of '%percentageField%' is not a valid Double.",
+  "percentageMinimumError": "The value of '%percentageField%' must be at least 0.",
+  "percentageRangeError": "The value of '%percentageField%' must be between 0 and 100.",
+  "defaultCountryError": "Default country name could not be detected.",
+  "nonUniqueItemsError": "The following items are repeated at least once: %repetitions%"
 }

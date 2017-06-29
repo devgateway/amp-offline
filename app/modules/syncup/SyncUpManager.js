@@ -43,7 +43,7 @@ import FieldsSyncUpManager from './syncupManagers/FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './syncupManagers/PossibleValuesSyncUpManager';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
-import { loadNumberSettings, loadDateSettings } from '../../actions/StartUpAction';
+import { loadDateSettings, loadGlobalSettings, loadNumberSettings } from '../../actions/StartUpAction';
 import WorkspaceSettingsSyncUpManager from './syncupManagers/WorkspaceSettingsSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 
@@ -344,7 +344,8 @@ export default class SyncUpManager {
     return Promise.all([
       loadAllLanguages(restart),
       loadDateSettings(),
-      loadNumberSettings()]);
+      loadNumberSettings(),
+      loadGlobalSettings()]);
   }
 
   static getSyncUpHistory() {

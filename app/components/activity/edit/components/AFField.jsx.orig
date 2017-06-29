@@ -11,8 +11,11 @@ import PossibleValuesManager from '../../../../modules/activity/PossibleValuesMa
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
+<<<<<<< HEAD
 import AFNumber from './AFNumber';
+=======
 import * as FP from '../../../../utils/constants/FieldPathConstants';
+>>>>>>> fa5acddc745ad0b754a574bd51c43915c08e2c7e
 
 /* eslint-disable class-methods-use-this */
 
