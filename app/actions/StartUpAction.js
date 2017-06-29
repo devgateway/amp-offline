@@ -101,16 +101,18 @@ export function loadDateSettings() {
  */
 export function loadGlobalSettings() {
   LoggerManager.log('loadGlobalSettings');
+  const gsPromise = GlobalSettingsHelper.findAll({}).then(gsList => {
+    const gsData = {};
+    gsList.forEach(gs => {
+      gsData[gs.key] = gs.value;
+    });
+    return gsData;
+  });
   store.dispatch({
     type: STATE_GS,
-    payload: GlobalSettingsHelper.findAll({}).then(gsList => {
-      const gsData = {};
-      gsList.forEach(gs => {
-        gsData[gs.key] = gs.value;
-      });
-      return gsData;
-    })
+    payload: gsPromise
   });
+  return gsPromise;
 }
 
 function startUpLoaded(connectionInformation) {
