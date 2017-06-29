@@ -44,7 +44,8 @@ export default class AFFundingDonorTab extends Component {
         && f[AC.SOURCE_ROLE].id === this.props.role.id)).map(g => {
           i += 1;
           return (<Panel
-            header={`${translate('Funding Item')} ${i}`} eventKey={g[AC.GROUP_VERSIONED_FUNDING]}>
+            header={`${translate('Funding Item')} ${i}`} eventKey={g[AC.GROUP_VERSIONED_FUNDING]}
+            key={g[AC.GROUP_VERSIONED_FUNDING]}>
             <AFFundingItemContainer funding={g} />
           </Panel>);
         })}
