@@ -129,7 +129,7 @@ export default class AFList extends Component {
         <TableHeaderColumn
           key={childFieldName} dataField={childFieldName}
           editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)}
-	  dataFormat={this.columnFormatter.bind(null, editable)}
+          dataFormat={this.columnFormatter.bind(null, editable)}
         >
           {this.props.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);
@@ -145,10 +145,10 @@ export default class AFList extends Component {
     };
     // there is no one click row removal, we'll simulate with select
     return (<div>
-      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()} >
+      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()}>
         <BootstrapTable
           data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
-          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
+          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName}>
           {columns}
         </BootstrapTable>
         <FormControl.Feedback />
