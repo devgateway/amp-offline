@@ -10,3 +10,4 @@ export const GS_AMOUNT_OPTION_IN_UNITS = '0';
 export const GS_AMOUNT_OPTION_IN_THOUSANDS = '1';
 export const GS_AMOUNT_OPTION_IN_MILLIONS = '2';
 export const GS_AMOUNT_OPTION_IN_BILLIONS = '3';
+export const DEFAULT_COUNTRY = 'Default Country';
