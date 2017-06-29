@@ -1,14 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
-
-// TODO remove this filter once these extra fields are no longer required at import (automatically handled by AMP-26331)
-const FIELDS_TO_IGNORE = new Set([AC.PROGRAM_SETTINGS, AC.AMP_ORGANIZATION_ROLE_ID, AC.ROLE]);
 
 /**
  * Activity Form list of items like Locations, Programs, etc
@@ -19,7 +16,8 @@ export default class AFList extends Component {
     values: PropTypes.array.isRequired,
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
     listPath: PropTypes.string.isRequired,
-    onDeleteRow: PropTypes.func
+    onDeleteRow: PropTypes.func,
+    onEditRow: PropTypes.func
   };
 
   constructor(props) {
@@ -30,13 +28,14 @@ export default class AFList extends Component {
       withoutNoDataText: true
     };
     this.state = {
-      values: undefined
+      values: undefined,
+      validationError: null
     };
   }
 
   componentWillMount() {
     this.listDef = this.props.activityFieldsManager.getFieldDef(this.props.listPath);
-    this.fields = this.listDef.children.filter(child => !FIELDS_TO_IGNORE.has(child.field_name)).sort(
+    this.fields = this.listDef.children.sort(
       (fieldA, fieldB) => {
         let res = fieldA.id_only === true ? -1 : undefined;
         res = res || (fieldB.id_only === true ? 1 : undefined);
@@ -44,6 +43,9 @@ export default class AFList extends Component {
         res = res || (fieldB.percentage === true ? 1 : 0);
         return res;
       });
+    this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
+    this.percentageFieldPath = this.percentageFieldDef ? `${this.props.listPath}~${this.percentageFieldDef.field_name}`
+      : null;
     this.setState({
       values: this.props.values
     });
@@ -57,7 +59,7 @@ export default class AFList extends Component {
 
   onDeleteRow(rows) {
     this.setState({
-      values: this.state.values.filter(item => item.id !== rows[0])
+      values: this.state.values.filter(item => !rows.includes(item.uniqueId))
     });
     this.props.onDeleteRow(rows);
   }
@@ -66,6 +68,31 @@ export default class AFList extends Component {
     if (editable) {
       return styles.editable;
     }
+  }
+
+  _beforeSaveCell(row, cellName, cellValue) {
+    // TODO required field validation
+    if (this.percentageFieldDef && this.percentageFieldDef.field_name === cellName) {
+      return this._percentageValidator(cellValue, row) === true;
+    }
+    return true;
+  }
+
+  _percentageValidator(cellValue) {
+    return this.props.activityFieldsManager.percentValueValidator(cellValue, this.percentageFieldPath);
+  }
+
+  _afterSaveCell(row, cellName, cellValue) {
+    if (this.props.onEditRow) {
+      this.props.onEditRow(row, cellName, cellValue);
+    }
+  }
+
+  validate() {
+    if (this.state.validationError) {
+      return 'error';
+    }
+    return null;
   }
 
   /**
@@ -85,34 +112,40 @@ export default class AFList extends Component {
      {this.props.activityFieldsManager.getFieldLabelTranslation(listFieldName)}
      </TableHeaderColumn>
      */
-    let columns = [<TableHeaderColumn key="id" dataField="id" isKey hidden />];
+    let columns = [<TableHeaderColumn key="id" dataField="uniqueId" isKey hidden />];
     columns = columns.concat(this.fields.map(childDef => {
       const childFieldName = childDef.field_name;
       const fieldPath = `${listFieldName}~${childFieldName}`;
       const editable = childDef.id_only !== true;
+      const validator = childDef.percentage === true ? this._percentageValidator.bind(this) : null;
       return (
         <TableHeaderColumn
           key={childFieldName} dataField={childFieldName}
-          editable={editable} columnClassName={this.editableCellClass.bind(this, editable)}
+          editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)}
         >
           {this.props.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);
     }));
     const cellEdit = {
       mode: 'click',
-      blurToSave: true
+      blurToSave: true,
+      beforeSaveCell: this._beforeSaveCell.bind(this),
+      afterSaveCell: this._afterSaveCell.bind(this)
     };
     const selectRow = {
       mode: 'checkbox',
     };
     // there is no one click row removal, we'll simulate with select
-    this.table = (<BootstrapTable
-      data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
-      containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
-      {columns}
-    </BootstrapTable>);
-    return (<div >
-      {this.table}
+    return (<div>
+      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()} >
+        <BootstrapTable
+          data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
+          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
+          {columns}
+        </BootstrapTable>
+        <FormControl.Feedback />
+        <HelpBlock>{this.state.validationError}</HelpBlock>
+      </FormGroup>
     </div>);
   }
 

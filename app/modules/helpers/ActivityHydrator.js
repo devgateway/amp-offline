@@ -3,12 +3,8 @@ import * as FieldsHelper from './FieldsHelper';
 import store from '../../index';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../activity/PossibleValuesManager';
+import { LOCATION_PATH, PATHS_WITH_TREE_STRUCTURE } from '../../utils/constants/FieldPathConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
-import { PATHS_WITH_TREE_STRUCTURE, LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
-import {
-  HIERARCHICAL_VALUE,
-  HIERARCHICAL_VALUE_DEPTH
-} from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -133,22 +129,13 @@ export default class ActivityHydrator {
   }
 
   _fillSelectedOption(possibleValues, selectedId) {
-    const option = Object.assign({}, possibleValues['possible-options'][selectedId]);
-    const valueParts = this._getdHierchicalValueParts(possibleValues, selectedId);
-    option[HIERARCHICAL_VALUE] = this._formatValueParts(valueParts);
-    option[HIERARCHICAL_VALUE_DEPTH] = (valueParts && valueParts instanceof Array) ? valueParts.length : 0;
-    // option[HIERARCHICAL_VALUE_PARTS] = valueParts;
-    return option;
+    const options = possibleValues['possible-options'];
+    if (LOCATION_PATH === possibleValues.id || PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
+      return PossibleValuesManager.buildHierarchicalData(options, selectedId);
+    }
+    return Object.assign({}, options[selectedId]);
   }
 
-  _getdHierchicalValueParts(possibleValues, selectedId) {
-    if (LOCATION_PATH === possibleValues.id) {
-      return this._buildHierarchicalValueParts(possibleValues['possible-options'], selectedId);
-    } else if (PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
-      return this._buildHierarchicalValueParts(possibleValues['possible-options'], selectedId);
-    }
-    return null;
-  }
 
   // old mechanism for locations, using v1 API
   _buildLocationHierchicalValueParts(options, selectedId) {
@@ -159,20 +146,6 @@ export default class ActivityHydrator {
       option = option.extra_info ? options[option.extra_info.parent_location_id] : null;
     }
     return nameParts;
-  }
-
-  _buildHierarchicalValueParts(options, selectedId) {
-    const nameParts = [];
-    let current = options[selectedId];
-    while (current) {
-      nameParts.push(PossibleValuesManager.getOptionTranslation(current));
-      current = options[current.parentId];
-    }
-    return nameParts;
-  }
-
-  _formatValueParts(valueParts) {
-    return (valueParts && valueParts instanceof Array) ? `[${valueParts.reverse().join('][')}]` : valueParts;
   }
 
   /**

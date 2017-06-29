@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { Button, FormControl, Panel } from 'react-bootstrap';
 import styles from './AFSearchList.css';
 import AFOption from './AFOption';
-import { HIERARCHICAL_VALUE_DEPTH } from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
@@ -26,7 +25,6 @@ export default class AFSearchList extends Component {
     super(props);
     LoggerManager.log('constructor');
     this.applyFilter = this.applyFilter.bind(this);
-    this.toggleShowOptions = this.toggleShowOptions.bind(this);
     this.state = {
       filter: '',
       values: null,
@@ -35,16 +33,24 @@ export default class AFSearchList extends Component {
   }
 
   componentWillMount() {
-    this.props.options.forEach(option => {
-      option.upperCaseValue = option.translatedValue.toLocaleUpperCase();
-    });
-    this.resetState();
+    this.initOptions(this.props);
   }
 
-  resetState() {
+  componentWillReceiveProps(nextProps) {
+    this.initOptions(nextProps);
+  }
+
+  initOptions(props) {
+    props.options.forEach((option: AFOption) => {
+      option.upperCaseValue = option.displayValue.toLocaleUpperCase();
+    });
+    this.resetState(props);
+  }
+
+  resetState(props = this.props) {
     this.setState({
       filter: '',
-      values: this.props.options,
+      values: props.options,
       showOptions: false
     });
   }
@@ -60,19 +66,20 @@ export default class AFSearchList extends Component {
     this.setState({ filter, values, showOptions: true });
   }
 
-  toggleShowOptions(e) {
+  showOptions(e) {
     e.preventDefault();
-    if (this.state.showOptions === true) {
-      this.resetState();
-    } else {
-      this.setState({ showOptions: true });
-    }
+    this.setState({ showOptions: true });
+  }
+
+  closeOptions() {
+    this.resetState();
   }
 
   _getPaddedValue(option: AFOption) {
     if (!option.paddedValue) {
-      const repeatCount = HIERARCHY_LEVEL_PADDING_SIZE * (option[HIERARCHICAL_VALUE_DEPTH] || 0);
-      option.paddedValue = HIERARCHY_LEVEL_PADDING_CHAR.repeat(repeatCount).concat(option.translatedValue);
+      const depth = option.displayHierarchicalValue ? 0 : (option.hierarchicalDepth || 0);
+      const repeatCount = HIERARCHY_LEVEL_PADDING_SIZE * depth;
+      option.paddedValue = HIERARCHY_LEVEL_PADDING_CHAR.repeat(repeatCount).concat(option.displayValue);
     }
     return option.paddedValue;
   }
@@ -88,7 +95,7 @@ export default class AFSearchList extends Component {
     return (<div className={styles.searchContainer} >
       <FormControl
         type="text" placeholder={placeHolderText} onChange={this.applyFilter} value={this.state.filter}
-        onFocus={this.toggleShowOptions} onBlur={this.toggleShowOptions} />
+        onFocus={this.showOptions.bind(this)} onBlur={this.closeOptions.bind(this)} />
       <div hidden={this.state.showOptions === false} >
         <Panel collapsible expanded={this.state.showOptions === true} bsClass={styles.searchPanel} >
           {options}
