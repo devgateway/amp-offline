@@ -17,7 +17,7 @@ export default class AFFundingDonorTab extends Component {
   };
 
   static propTypes = {
-    fundings: PropTypes.object.isRequired,
+    fundings: PropTypes.array.isRequired,
     organization: PropTypes.object.isRequired,
     role: PropTypes.object.isRequired
   };
