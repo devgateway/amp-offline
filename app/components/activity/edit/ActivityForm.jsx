@@ -180,15 +180,15 @@ export default class ActivityForm extends Component {
         <div className={styles.general_header}>{translate('Actions')}</div>
         <div>
           <Button
-            className={styles.action_button} key="submit"
+            bsClass={styles.action_button} key="submit"
             onClick={this._saveActivity.bind(this, false)} block >{translate('Save and Submit')}
           </Button>
           <Button
-            className={styles.action_button} key="saveAsDraft"
+            bsClass={styles.action_button} key="saveAsDraft"
             onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
           </Button>
           <Button
-            key="preview" className={styles.action_button} disabled={this.state.isNewActivity} block>
+            key="preview" bsClass={styles.action_button} disabled={this.state.isNewActivity} block>
             <Link to={previewUrl} title={translate('Preview')}>
               {translate('Preview')}
             </Link>

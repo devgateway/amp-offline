@@ -74,10 +74,12 @@
     overflow: hidden;
     background-image: none;
     border-radius: 0px;
+    width: 100%;
 }
 
 .action_button a {
   color: #ffffff;
+  text-decoration: none;
 }
 
 .quick_links_toggle {
@@ -108,7 +110,7 @@ div.quick_links {
 }
 
 div.quick_links::after {
-    content: url('../../../assets/images/arrow.svg');
+    content: url('../../../assets/images/af_arrow.svg');
     height: 8px;
     width: 8px;
     display: block;
