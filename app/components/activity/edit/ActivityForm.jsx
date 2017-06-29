@@ -121,7 +121,10 @@ export default class ActivityForm extends Component {
 
   _renderQuickLinks() {
     const sectionLinks = this.sections.map(sectionName =>
-      <Button key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block >
+      <Button
+        key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block
+        className={this.state.currentSection === sectionName ? styles.quick_links_highlight
+          : styles.quick_links_button} >
         <div className={styles.quick_links}>{translate(sectionName)}</div>
       </Button>);
     return (
@@ -176,11 +179,16 @@ export default class ActivityForm extends Component {
       <div>
         <div className={styles.general_header}>{translate('Actions')}</div>
         <div>
-          <Button key="submit" onClick={this._saveActivity.bind(this, false)} block >{translate('Save and Submit')}
+          <Button
+            className={styles.action_button} key="submit"
+            onClick={this._saveActivity.bind(this, false)} block >{translate('Save and Submit')}
           </Button>
-          <Button key="saveAsDraft" onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
+          <Button
+            className={styles.action_button} key="saveAsDraft"
+            onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
           </Button>
-          <Button key="preview" disabled={this.state.isNewActivity} block>
+          <Button
+            key="preview" className={styles.action_button} disabled={this.state.isNewActivity} block>
             <Link to={previewUrl} title={translate('Preview')}>
               {translate('Preview')}
             </Link>

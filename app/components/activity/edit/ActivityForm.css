@@ -36,6 +36,7 @@
     padding-left: 5px;
     padding-right: 5px;
     display: block;
+    margin-bottom: 50px;
 }
 
 .section_group {
@@ -55,6 +56,30 @@
     display: inline-block;
 }
 
+.action_button {
+    background-color: #5E8AD1;
+    border-top: 1px solid #99BAF1;
+    border-left: 1px solid #99BAF1;
+    border-right: 1px solid #225099;
+    border-bottom: 1px solid #225099;
+    font-size: 0.85em;
+    text-shadow: none;
+    font-weight: bold;
+    margin-top: 20px ! important;
+    color: #FFFFFF;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    overflow: hidden;
+    background-image: none;
+    border-radius: 0px;
+}
+
+.action_button a {
+  color: #ffffff;
+}
+
 .quick_links_toggle {
     width: 232px;
     border: 0px;
@@ -68,10 +93,32 @@
     margin-top: 0px;
     padding: 0px;
     text-align: left;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #4A687A;
     -webkit-text-size-adjust: 100%;
 }
 
+.quick_links_button {
+  padding: 0 !important;
+}
+
+div.quick_links {
+  position: relative;
+}
+
+div.quick_links::after {
+    content: url('../../../assets/images/arrow.svg');
+    height: 8px;
+    width: 8px;
+    display: block;
+    position: absolute;
+    left: -13px;
+    top: 0px;
+}
+
 .quick_links_highlight {
+    padding: 0px;
     border-bottom: 1px solid lightgray !important;
     border-right: 1px solid lightgray !important;
     color: white;
@@ -83,4 +130,18 @@
 
 .full_width {
     width: 100%;
+}
+
+.activity_form_control {
+  font-size: 0.85em;
+}
+
+.activity_form_control textarea {
+  font-size: 0.9em;
+  border-radius: 0px;
+}
+
+.activity_form_control select {
+  font-size: 0.9em;
+  border-radius: 0px;
 }
