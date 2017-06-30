@@ -1,11 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { PanelGroup } from 'react-bootstrap';
-// import * as AC from '../../../../../utils/constants/ActivityConstants';
-// import * as VC from '../../../../../utils/constants/ValueConstants';
+import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
-// import translate from '../../../../../utils/translate';
+import AFField from '../../components/AFField';
+import * as AF from '../../components/AFComponentTypes';
 
 /**
  * @author Gabriel Inchauspe
@@ -28,9 +27,18 @@ export default class AFFundingDetailItem extends Component {
 
   render() {
     return (<div>
-      <PanelGroup>
-        TODO
-      </PanelGroup>
+      <AFField
+        parent={this.props.fundingDetail}
+        fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.ADJUSTMENT_TYPE}`} />
+      <AFField
+        parent={this.props.fundingDetail}
+        fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} type={AF.NUMBER} />
+      <AFField
+        parent={this.props.fundingDetail}
+        fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} />
+      <AFField
+        parent={this.props.fundingDetail}
+        fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />
     </div>);
   }
 }

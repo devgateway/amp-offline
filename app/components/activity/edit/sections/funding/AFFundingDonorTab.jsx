@@ -5,7 +5,7 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
-import AFFundingItemContainer from './AFFundingContainer';
+import AFFundingContainer from './AFFundingContainer';
 
 /**
  * @author Gabriel Inchauspe

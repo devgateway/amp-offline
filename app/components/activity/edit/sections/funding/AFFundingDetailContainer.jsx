@@ -49,7 +49,7 @@ export default class AFFundingDetailContainer extends Component {
       return (<div>
         <Panel header={header}>
           {fundingDetails.map(fd => (<AFFundingDetailItem fundingDetail={fd} type={this.props.type} />))}
-          <Button>{translate(`${translate('Add')} ${translate('this.props.type')}`)}</Button>
+          <Button>{translate(`${translate('Add')} ${translate(this.props.type)}`)}</Button>
         </Panel>
       </div>);
     } else {
