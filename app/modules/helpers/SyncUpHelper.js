@@ -1,10 +1,6 @@
-import DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_SYNCUP_LOG } from '../../utils/Constants';
-import LoggerManager from '../../modules/util/LoggerManager';
-
 /**
  data example:
-  {
+ {
     "timestamp": "2017-03-13T18:52:33.694-0300",
     "status": "SUCCESS",
     "requested-by": 19,
@@ -20,6 +16,10 @@ import LoggerManager from '../../modules/util/LoggerManager';
     ]
   }
  */
+import DatabaseManager from '../database/DatabaseManager';
+import { COLLECTION_SYNCUP_LOG, SYNCUP_DATETIME_FIELD } from '../../utils/Constants';
+import LoggerManager from '../../modules/util/LoggerManager';
+import * as Utils from '../../utils/Utils';
 
 const SyncUpHelper = {
 
@@ -59,6 +59,20 @@ const SyncUpHelper = {
         return {};
       }
       return SyncUpHelper.findSyncUpByExample({ id });
+    });
+  },
+
+  /**
+   * Retrieves the latest sync up log when we managed to request sync diff EP and hence to store the timestamp
+   * @return {Promise}
+   */
+  getLastSyncUpLogWithSyncDiffTimestamp() {
+    const filter = Utils.toDefinedNotNullRule(SYNCUP_DATETIME_FIELD);
+    return DatabaseManager.findTheFirstOne(filter, { id: -1 }, COLLECTION_SYNCUP_LOG).then((log) => {
+      if (log === null) {
+        return {};
+      }
+      return log;
     });
   }
 };

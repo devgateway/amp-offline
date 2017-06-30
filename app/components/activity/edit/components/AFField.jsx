@@ -6,6 +6,7 @@ import AFDropDown from './AFDropDown';
 import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
+import styles from '../ActivityForm.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
 import translate from '../../../../utils/translate';
@@ -178,7 +179,8 @@ export default class AFField extends Component {
       return null;
     }
     return (
-      <FormGroup controlId={this.props.fieldPath} validationState={this.validate()}>
+      <FormGroup
+        controlId={this.props.fieldPath} validationState={this.validate()} className={styles.activity_form_control}>
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />
