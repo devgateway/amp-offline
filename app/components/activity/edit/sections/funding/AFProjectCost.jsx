@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
+import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as AF from '../../components/AFComponentTypes';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
@@ -12,6 +13,7 @@ import { createFormattedDate } from '../../../../../utils/DateUtils';
 import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
 import AFPPCAnnualBudgets from './AFPPCAnnualBudgets';
+import afStyles from '../../ActivityForm.css';
 
 /**
  * @author Gabriel Inchauspe
@@ -45,21 +47,49 @@ export default class AFProjectCost extends Component {
 
   render() {
     // TODO: implement number field for 'total_number_of_funding_sources'.
-    return (<div>
-      <AFProposedProjectCostTable
-        activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
-        formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
-      <AFPPCAnnualBudgets
-        activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
-        formatCurrency={AFProjectCost.getCurrencyCode} />
-      <AFRevisedProjectCostTable
-        activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
-        formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
-      <AFField parent={this.props.activity} fieldPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} type={AF.NUMBER} />
-      <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_COOPERATION} />
-      <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_IMPLEMENTATION} />
-      <AFField parent={this.props.activity} fieldPath={AC.MODALITIES} />
-      <AFOverallFundingTotals activity={this.props.activity} />
+    return (<div className={afStyles.full_width}>
+      <Grid className={afStyles.full_width}>
+        <Row>
+          <Col md={12} lg={12}>
+            <AFProposedProjectCostTable
+              activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
+              formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12} lg={12}>
+            <AFPPCAnnualBudgets
+              activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
+              formatCurrency={AFProjectCost.getCurrencyCode} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12} lg={12}>
+            <AFRevisedProjectCostTable
+              activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
+              formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={5} lg={5}>
+            <AFField parent={this.props.activity} fieldPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} type={AF.NUMBER} />
+          </Col>
+          <Col md={5} lg={5}>
+            <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_COOPERATION} />
+          </Col>
+          <Col md={5} lg={5}>
+            <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_IMPLEMENTATION} />
+          </Col>
+          <Col md={5} lg={5}>
+            <AFField parent={this.props.activity} fieldPath={AC.MODALITIES} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12} lg={12}>
+            <AFOverallFundingTotals activity={this.props.activity} />
+          </Col>
+        </Row>
+      </Grid>
     </div>);
   }
 }

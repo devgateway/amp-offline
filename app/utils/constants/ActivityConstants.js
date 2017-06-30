@@ -133,6 +133,9 @@ export const ACTIVE = 'active';
 export const DELEGATED_COOPERATION = 'delegated_cooperation';
 export const DELEGATED_PARTNER = 'delegated_partner';
 export const FINANCING_ID = 'financing_id';
+export const DISBURSEMENT_ORDER_ID = 'disbursement_order_id';
+export const PLEDGE = 'pledge';
+export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
