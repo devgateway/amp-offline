@@ -14,9 +14,9 @@ export const LOCATION_PATH = 'locations~location';
 export const NATIONAL_PLAN_OBJECTIVE_PATH = 'national_plan_objective~program';
 export const PRIMARY_PROGRAM_PATH = 'primary_programs~program';
 export const SECONDARY_PROGRAM_PATH = 'secondary_programs~program';
-export const PRIMARY_SECTOR_PATH = 'primary_sectors~sector_id';
-export const SECONDARY_SECTOR_PATH = 'secondary_sectors~sector_id';
-export const TERTIARY_SECTOR_PATH = 'tertiary_sectors~sector_id';
+export const PRIMARY_SECTOR_PATH = 'primary_sectors~sector';
+export const SECONDARY_SECTOR_PATH = 'secondary_sectors~sector';
+export const TERTIARY_SECTOR_PATH = 'tertiary_sectors~sector';
 export const DONOR_ORGANIZATIONS_PATH = 'donor_organization~organization';
 
 export const RICH_TEXT_FIELDS = new Set([AC.STATUS_REASON, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS,

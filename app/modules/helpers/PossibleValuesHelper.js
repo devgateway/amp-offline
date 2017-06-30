@@ -22,7 +22,13 @@ const optionSchema = {
           anyOf: [{ type: 'string' }]
         },
         'translated-value': { type: 'object' },
-        parentId: { anyOf: [{ type: 'integer' }, { type: 'string' }] }
+        parentId: { anyOf: [{ type: 'integer' }, { type: 'string' }] },
+        reverseSortedChildren: {
+          type: Array,
+          items: {
+            anyOf: [{ type: 'integer' }, { type: 'string' }]
+          }
+        }
       },
       required: ['id', 'value']
     }
@@ -169,6 +175,8 @@ const PossibleValuesHelper = {
         option.parentId = parentId;
         if (option.children) {
           this._transformOptions(option.children, option.id, possibleOptions);
+          // sort once at sync up
+          option.reverseSortedChildren = option.children.sort(this.reverseSortOptions).map(o => o.id);
           delete option.children;
         }
       });
@@ -177,6 +185,19 @@ const PossibleValuesHelper = {
       possibleOptions = possibleOptionsFromAMP;
     }
     return possibleOptions;
+  },
+
+  reverseSortOptions(o1, o2) {
+    if (o1 === o2) {
+      return 0;
+    }
+    if (o1 === null || (o2 && o1.value === null)) {
+      return 1;
+    }
+    if (o2 === null || o2.value === null) {
+      return -1;
+    }
+    return o1.value.localeCompare(o2.value) * (-1);
   },
 
   _getInvalidFormatError(errors) {
