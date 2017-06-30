@@ -132,6 +132,7 @@ export const GROUP_VERSIONED_FUNDING = 'group_versioned_funding';
 export const ACTIVE = 'active';
 export const DELEGATED_COOPERATION = 'delegated_cooperation';
 export const DELEGATED_PARTNER = 'delegated_partner';
+export const FINANCING_ID = 'financing_id';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

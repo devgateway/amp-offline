@@ -2,15 +2,17 @@
 import React, { Component, PropTypes } from 'react';
 import { FormGroup, Checkbox } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
+import AFFundingDetailContainer from './AFFundingDetailContainer';
 
 /**
  * @author Gabriel Inchauspe
  */
-export default class AFFundingItemContainer extends Component {
+export default class AFFundingContainer extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
@@ -26,6 +28,7 @@ export default class AFFundingItemContainer extends Component {
   }
 
   render() {
+    // TODO: Implement 'MTEF Projections' table when available for sync.
     return (<div>
       <FormGroup>
         <Checkbox inline value={this.props.funding[AC.ACTIVE]}>{translate('Active')}</Checkbox>
@@ -36,6 +39,9 @@ export default class AFFundingItemContainer extends Component {
         <Checkbox inline value={this.props.funding[AC.DELEGATED_PARTNER]}>{translate('Delegated Partner')}</Checkbox>
       </FormGroup>
       <AFFundingClassificationPanel funding={this.props.funding} />
+      <AFFundingDetailContainer funding={this.props.funding} type={VC.COMMITMENTS} />
+      <AFFundingDetailContainer funding={this.props.funding} type={VC.DISBURSEMENTS} />
+      <AFFundingDetailContainer funding={this.props.funding} type={VC.EXPENDITURES} />
     </div>);
   }
 }

@@ -5,7 +5,7 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
-import AFFundingItemContainer from './AFFundingItemContainer';
+import AFFundingItemContainer from './AFFundingContainer';
 
 /**
  * @author Gabriel Inchauspe
@@ -46,7 +46,7 @@ export default class AFFundingDonorTab extends Component {
           return (<Panel
             header={`${translate('Funding Item')} ${i}`} eventKey={g[AC.GROUP_VERSIONED_FUNDING]}
             key={g[AC.GROUP_VERSIONED_FUNDING]}>
-            <AFFundingItemContainer funding={g} />
+            <AFFundingContainer funding={g} />
           </Panel>);
         })}
       </PanelGroup>
