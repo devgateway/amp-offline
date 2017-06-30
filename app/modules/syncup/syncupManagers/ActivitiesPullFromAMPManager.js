@@ -1,5 +1,6 @@
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
+import { SYNCUP_TYPE_ACTIVITIES_PULL } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import DateUtils from '../../../utils/DateUtils';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
@@ -12,12 +13,12 @@ import LoggerManager from '../../util/LoggerManager';
 
 const PULL_END = 'PULL_END';
 /*
-On my local, with the current solution, there was no significant difference if using 4 or 100 queue limit,
-or if using 10 or 100 check interval. I will stick to 4 queue limit (for pull requests mainly), to avoid AMP server
-overload in case multiple clients will run simultaneously.
+ On my local, with the current solution, there was no significant difference if using 4 or 100 queue limit,
+ or if using 10 or 100 check interval. I will stick to 4 queue limit (for pull requests mainly), to avoid AMP server
+ overload in case multiple clients will run simultaneously.
 
-On remove there was no difference between check interval. While with a queue limit of 100, results processing was
-taking more than requests and sometime pull wait was aborted over the current 5sec timeout.
+ On remove there was no difference between check interval. While with a queue limit of 100, results processing was
+ taking more than requests and sometime pull wait was aborted over the current 5sec timeout.
  */
 const CHECK_INTERVAL = 100;
 const QUEUE_LIMIT = 4;
@@ -30,7 +31,7 @@ const ABORT_INTERVAL = 60000; // milliseconds
 export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface {
 
   constructor() {
-    super();
+    super(SYNCUP_TYPE_ACTIVITIES_PULL);
     this._cancel = false;
     // TODO update this once AMPOFFLINE-319 is done
     let translations = store.getState().translationReducer.languageList;
@@ -67,11 +68,13 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   getDiffLeftover() {
-    const duration = DateUtils.duration(this.syncStartedAt, new Date());
-    LoggerManager.log(`Activities pull duration = ${duration}`);
-    LoggerManager.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
-    this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
-    LoggerManager.log(`unsynced = ${this.diff.saved.length}`);
+    if (this.syncStartedAt) {
+      const duration = DateUtils.duration(this.syncStartedAt, new Date());
+      LoggerManager.log(`Activities pull duration = ${duration}`);
+      LoggerManager.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
+      this.diff.saved = this.diff.saved.filter(ampId => !this.pulled.has(ampId));
+      LoggerManager.log(`unsynced = ${this.diff.saved.length}`);
+    }
     return this.diff;
   }
 
@@ -151,6 +154,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
       while (this.resultStack.length > 0) {
         const entry = this.resultStack.shift();
         if (entry === PULL_END) {
+          this.done = true;
           next = () => Promise.resolve();
         } else {
           const [activity, error] = entry;

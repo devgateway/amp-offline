@@ -63,6 +63,11 @@ const Utils = {
     return listOfMap.reduce((acc, val) => acc.concat(val[key]), []);
   },
 
+  /**
+   * Wait for the specified timeout
+   * @param timeout in milliseconds
+   * @return {Promise}
+   */
   delay(timeout) {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   },
@@ -72,13 +77,15 @@ const Utils = {
    * @param conditionFunc the function that executes some condition and returns true or false
    * @param checkInterval the ms to wait until rechecking the condition
    * @param abortInterval the total interval to wait until aborting the wait
+   * @param callerId (optional) usually a text to be used for a more suggestive logging on abort. If not provided,
+   * conditionFunc.displayName will be used.
    * @return {Promise.<T>}
    */
-  waitWhile(conditionFunc, checkInterval, abortInterval = undefined) {
+  waitWhile(conditionFunc, checkInterval, abortInterval = undefined, callerId = undefined) {
     if (conditionFunc() === true) {
       if (abortInterval !== undefined) {
         if (abortInterval < 0) {
-          return Promise.reject('Condition wait aborted');
+          return Promise.reject(`Condition wait aborted for ${callerId || conditionFunc.displayName}`);
         }
         abortInterval -= checkInterval;
       }
