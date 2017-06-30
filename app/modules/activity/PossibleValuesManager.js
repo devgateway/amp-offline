@@ -1,3 +1,7 @@
+/**
+ * Possible Values manager that allows to fill in additional information and tranformations
+ * @author Nadejda Mandrescu
+ */
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../utils/constants/ActivityConstants';
 import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import store from '../../index';
@@ -5,10 +9,6 @@ import LoggerManager from '../../modules/util/LoggerManager';
 import ActivityFieldsManager from './ActivityFieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
-/**
- * Possible Values manager that allows to fill in additional information and tranformations
- * @author Nadejda Mandrescu
- */
 const PossibleValuesManager = {
 
   buildFormattedHierarchicalValues(options) {
