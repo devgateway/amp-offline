@@ -120,6 +120,7 @@ export const COMPONENT_TYPE = 'component_type';
 export const COMPONENT_TITLE = 'component_title';
 export const COMPONENT_FUNDING = 'funding';
 export const COMPONENT_DESCRIPTION = 'description';
+export const ACTIVE_LIST = 'active_list';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

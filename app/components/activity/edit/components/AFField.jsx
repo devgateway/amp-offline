@@ -156,7 +156,7 @@ export default class AFField extends Component {
     const isRequired = this.alwaysRequired || (asDraft === false && this.fieldDef.required === 'ND');
     if (isRequired &&
       (value === null || value === undefined || value === '' || (value.length !== undefined && value.length === 0))) {
-      validationError = translate('Field is required!');
+      validationError = translate('requiredField');
     }
     this.props.parent[this.fieldName] = value;
     this.setState({ value, validationError });

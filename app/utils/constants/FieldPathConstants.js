@@ -5,6 +5,7 @@ import * as AC from './ActivityConstants';
  * @author Nadejda Mandrescu
  */
 
+export const FUNDING_ACTIVE_LIST = 'fundings~active_list';
 export const FUNDING_DETAILS_PATH = 'fundings~funding_details';
 export const FUNDING_CURRENCY_PATH = 'fundings~funding_details~currency';
 export const ADJUSTMENT_TYPE_PATH = 'fundings~funding_details~adjustment_type';
