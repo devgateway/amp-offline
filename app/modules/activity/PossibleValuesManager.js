@@ -1,37 +1,15 @@
+/**
+ * Possible Values manager that allows to fill in additional information and tranformations
+ * @author Nadejda Mandrescu
+ */
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../utils/constants/ActivityConstants';
 import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import store from '../../index';
 import LoggerManager from '../../modules/util/LoggerManager';
 import ActivityFieldsManager from './ActivityFieldsManager';
+import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
-/**
- * Possible Values manager that allows to fill in additional information and tranformations
- * @author Nadejda Mandrescu
- */
 const PossibleValuesManager = {
-  /**
-   * Builds tree set of ids from the parentId
-   * This implementation is based on the current locations extra info approach and can change.
-   */
-  expandParentWithChildren(options, parentId) {
-    LoggerManager.log('expandParentWithChildren');
-    if (parentId === undefined || parentId === null) {
-      return null;
-    }
-    const ids = new Set();
-    let idsToExpand = [parentId];
-    while (idsToExpand.length > 0) {
-      const nextId = idsToExpand.pop();
-      if (!ids.has(nextId)) {
-        ids.add(nextId);
-        const newIds = options
-          .filter(o => o.extra_info && o.extra_info.parent_location_id && o.extra_info.parent_location_id === nextId)
-          .map(o => o.id);
-        idsToExpand = idsToExpand.concat(newIds);
-      }
-    }
-    return ids;
-  },
 
   buildFormattedHierarchicalValues(options) {
     // TODO optimize
@@ -132,6 +110,25 @@ const PossibleValuesManager = {
       });
     }
     return options;
+  },
+
+  getTreeSortedOptionsList(optionsObj) {
+    const added = new Set();
+    const optionsList = [];
+    const idsStack = Object.values(optionsObj).filter(o => !o.parentId).sort(PossibleValuesHelper.reverseSortOptions)
+      .map(o => o.id);
+    while (idsStack.length) {
+      const id = idsStack.pop();
+      if (!added.has(id)) {
+        const option = optionsObj[id];
+        if (option.reverseSortedChildren) {
+          idsStack.push(...option.reverseSortedChildren);
+        }
+        added.add(id);
+        optionsList.push(option);
+      }
+    }
+    return optionsList;
   }
 
 };

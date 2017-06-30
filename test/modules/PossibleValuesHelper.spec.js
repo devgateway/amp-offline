@@ -133,13 +133,19 @@ describe('@@ PossibleValuesHelper @@', () => {
 
   describe('saveOrUpdate', () =>
     it('should successfully save valid possible values', () =>
-      expect(actions.saveOrUpdate(ampFormatPV2)).to.eventually.deep.equal(ampFormatPV2)
+      expect(actions.saveOrUpdate(ampFormatPV2).then(dbData => {
+        delete dbData._id;
+        return dbData;
+      })).to.eventually.deep.equal(ampFormatPV2)
     )
   );
 
   describe('saveOrUpdate', () =>
     it('should successfully save valid possible values with children', () =>
-      expect(actions.saveOrUpdate(treeOptions)).to.eventually.deep.equal(treeOptions)
+      expect(actions.saveOrUpdate(treeOptions).then(dbData => {
+        delete dbData._id;
+        return dbData;
+      })).to.eventually.deep.equal(treeOptions)
     )
   );
 

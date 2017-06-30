@@ -12,7 +12,6 @@ import PossibleValuesManager from '../../../../modules/activity/PossibleValuesMa
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
-import * as FP from '../../../../utils/constants/FieldPathConstants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -105,9 +104,7 @@ export default class AFField extends Component {
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
     const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
     let options = this._getOptions(optionsFieldPath);
-    if (optionsFieldPath === FP.LOCATION_PATH) {
-      options = PossibleValuesManager.buildFormattedHierarchicalValues(options);
-    }
+    options = PossibleValuesManager.buildFormattedHierarchicalValues(options);
     const afOptions = this._toAFOptions(PossibleValuesManager.fillHierarchicalDepth(options));
     const selectedOptions = this.state.value;
     return (<AFListSelector
@@ -126,7 +123,7 @@ export default class AFField extends Component {
   }
 
   _toAFOptions(options) {
-    return Object.values(options).map(option => {
+    return PossibleValuesManager.getTreeSortedOptionsList(options).map(option => {
       const afOption = option.visible ? new AFOption(option) : null;
       if (afOption) {
         afOption.value = PossibleValuesManager.getOptionTranslation(option);
