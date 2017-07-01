@@ -49,7 +49,12 @@ export default class SyncUp extends Component {
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.syncUpReducer.syncUpInProgress !== this.props.syncUpReducer.syncUpInProgress &&
+        !nextProps.syncUpReducer.syncUpInProgress
+    ) {
+      this.props.getSyncUpHistory();
+    }
     LoggerManager.log('componentWillReceiveProps');
   }
 
