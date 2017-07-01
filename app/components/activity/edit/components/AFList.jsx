@@ -127,7 +127,7 @@ export default class AFList extends Component {
       const validator = childDef.percentage === true ? this._percentageValidator.bind(this) : null;
       return (
         <TableHeaderColumn
-          key={childFieldName} dataField={childFieldName}
+          key={childFieldName} dataField={childFieldName} columnTitle
           editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)}
           dataFormat={this.columnFormatter.bind(null, editable)}
         >
