@@ -18,12 +18,12 @@ export default class AFNumber extends Component {
     super(props);
     LoggerManager.log('constructor');
     this.state = {
-      value: null
+      value: ''
     };
   }
 
   componentWillMount() {
-    this.setState({ value: this.props.value });
+    this.setState({ value: this.props.value || '' });
   }
 
   handleChange(e) {

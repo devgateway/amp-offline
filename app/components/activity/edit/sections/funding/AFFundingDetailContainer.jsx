@@ -49,14 +49,14 @@ export default class AFFundingDetailContainer extends Component {
         default:
           break;
       }
-      // TODO: poner una key a los elementos del map (ojo, no viene el id del fd).
       return (<div>
         <Panel
           header={header} collapsible expanded={this.state.openFDC}
           onSelect={() => {
             this.setState({ openFDC: !this.state.openFDC });
           }}>
-          {fundingDetails.map(fd => (<AFFundingDetailItem fundingDetail={fd} type={this.props.type} />))}
+          {fundingDetails.map((fd, i) => (
+            <AFFundingDetailItem fundingDetail={fd} type={this.props.type} key={`${header}_${i}`} />))}
           <Button bsStyle="primary">{translate(`${translate('Add')} ${translate(this.props.type)}`)}</Button>
         </Panel>
       </div>);
