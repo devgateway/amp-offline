@@ -79,7 +79,7 @@ export default class SyncUp extends Component {
           </div>
         );
       } else if (historyData) {
-        const allFailed = !historyData.modules.some(module => module.status === SYNCUP_STATUS_SUCCESS);
+        const allFailed = !historyData.units.some(module => module.status === SYNCUP_STATUS_SUCCESS);
         if (!allFailed) {
           const message = translate('lastSuccessfulSyncupDate')
             .replace('%date%', DateUtils.createFormattedDate(new Date(historyData['sync-date'])));
