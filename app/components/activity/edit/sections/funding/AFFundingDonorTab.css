@@ -1,0 +1,8 @@
+.header {
+  font-size: x-small;
+}
+
+.header_small_item {
+  display: inline-block;
+  margin-left: 5px;
+}

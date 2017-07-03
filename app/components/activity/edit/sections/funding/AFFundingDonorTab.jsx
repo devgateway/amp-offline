@@ -6,6 +6,8 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingContainer from './AFFundingContainer';
+import AFValueString from '../../components/AFValueString';
+import styles from './AFFundingDonorTab.css';
 
 /**
  * @author Gabriel Inchauspe
@@ -37,12 +39,36 @@ export default class AFFundingDonorTab extends Component {
     && f[AC.SOURCE_ROLE].id === this.props.role.id));
   }
 
+  _generateComplexHeader(i, funding) {
+    // TODO: Make sure teh AFValueString objects are refreshed when AFFields change.
+    return (<div>
+      <div>{`${translate('Funding Item')} ${i + 1}`}</div>
+      <div className={styles.header}>
+        <AFValueString
+          fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`} parent={funding}
+          className={styles.header_small_item} />
+        <AFValueString
+          fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`} parent={funding}
+          className={styles.header_small_item} />
+        <AFValueString
+          fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding}
+          className={styles.header_small_item} />
+        <AFValueString
+          fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`} parent={funding}
+          className={styles.header_small_item} />
+        <AFValueString
+          fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
+          className={styles.header_small_item} />
+      </div>
+    </div>);
+  }
+
   render() {
     // Filter only the fundings for this organization and role.
     return (<div>
       {this._filterFundings(this.props.fundings).map((g, i) => (
         <Panel
-          header={`${translate('Funding Item')} ${i + 1}`}
+          header={this._generateComplexHeader(i, g)}
           key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible expanded={this.state.openFDT[i]}
           onSelect={() => {
             const newOpenState = this.state.openFDT;
