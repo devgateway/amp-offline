@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { Panel, Button, Glyphicon } from 'react-bootstrap';
+import { Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
