@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { Panel } from 'react-bootstrap';
+import { Panel, Button, Glyphicon } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
@@ -46,26 +46,27 @@ export default class AFFundingDonorTab extends Component {
       <div className={styles.header}>
         <AFValueString
           fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`} parent={funding}
-          className={styles.header_small_item} />
+          className={styles.header_small_item} /> |
         <AFValueString
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`} parent={funding}
-          className={styles.header_small_item} />
+          className={styles.header_small_item} /> |
         <AFValueString
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding}
-          className={styles.header_small_item} />
+          className={styles.header_small_item} /> |
         <AFValueString
           fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`} parent={funding}
-          className={styles.header_small_item} />
+          className={styles.header_small_item} /> |
         <AFValueString
           fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
           className={styles.header_small_item} />
+        {/* <Button bsSize="xsmall" bsStyle="danger"><Glyphicon glyph="glyphicon glyphicon-remove" /></Button> */}
       </div>
     </div>);
   }
 
   render() {
     // Filter only the fundings for this organization and role.
-    return (<div>
+    return (<div className={styles.container}>
       {this._filterFundings(this.props.fundings).map((g, i) => (
         <Panel
           header={this._generateComplexHeader(i, g)}

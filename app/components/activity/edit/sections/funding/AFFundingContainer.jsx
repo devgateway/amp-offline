@@ -29,6 +29,7 @@ export default class AFFundingContainer extends Component {
 
   render() {
     // TODO: Implement 'MTEF Projections' table when available for sync.
+    // TODO: Replace Checkboxes with AFField components.
     return (<div>
       <FormGroup>
         <Checkbox inline value={this.props.funding[AC.ACTIVE]}>{translate('Active')}</Checkbox>
