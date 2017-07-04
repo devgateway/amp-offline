@@ -154,6 +154,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
       while (this.resultStack.length > 0) {
         const entry = this.resultStack.shift();
         if (entry === PULL_END) {
+          LoggerManager.log('Activities PULL_END flag reached on results stack.');
           this.done = true;
           next = () => Promise.resolve();
         } else {
@@ -164,8 +165,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
               .then(this._onPullError.bind(this)));
         }
       }
-      return pFactories.reduce((currentPromise, pFactory) =>
-        currentPromise.then(pFactory), Promise.resolve())
+      return Promise.all(pFactories)
         .then(next)
         // TODO continue sync up of other activities if the error is not a connection issue
         .catch(error => Promise.reject(error));
