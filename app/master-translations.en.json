@@ -172,5 +172,6 @@
   "invalidBoolean": "The value \"%value%\" is not a valid boolean.",
   "invalidDate": "The value \"%value%\" is not a valid date (%gs-format%).",
   "invalidValue": "Invalid value.",
-  "afFieldsGeneralError": "Please review invalid or required fields."
+  "afFieldsGeneralError": "Please review invalid or required fields.",
+  "multipleValuesNotAllowed": "\"%fieldName%\" stores multiple values - not allowed."
 }

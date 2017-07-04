@@ -273,6 +273,7 @@ export default class ActivityFieldsManager {
     const percentageChild = isList && fieldDef.importable === true &&
       fieldDef.children.find(childDef => childDef.percentage === true);
     const uniqueConstraint = isList && fieldDef.unique_constraint;
+    const noMultipleValues = fieldDef.multiple_values !== true;
     // it could be faster to do outer checks for the type and then go through the list for each type,
     // but realistically there won't be many objects in the list, that's why opting for clear code
     objects.forEach(obj => {
@@ -297,6 +298,12 @@ export default class ActivityFieldsManager {
             const uniqueError = this.uniqueValuesValidator(value, uniqueConstraint);
             if (uniqueError !== true) {
               this._addValidationError(obj, errors, fieldPath, uniqueError);
+            }
+          }
+          if (noMultipleValues) {
+            const noMultipleValuesError = this.noMultipleValuesValidator(objects, fieldDef.field_name);
+            if (noMultipleValuesError !== true) {
+              this._addValidationError(obj, errors, fieldPath, noMultipleValuesError);
             }
           }
         }
@@ -401,5 +408,12 @@ export default class ActivityFieldsManager {
       validationError = translate('nonUniqueItemsError').replace('%repetitions%', repeated);
     }
     return validationError || true;
+  }
+
+  noMultipleValuesValidator(values, fieldName) {
+    if (values && values.length > 1) {
+      return translate('multipleValuesNotAllowed').replace('%fieldName%', fieldName);
+    }
+    return true;
   }
 }
