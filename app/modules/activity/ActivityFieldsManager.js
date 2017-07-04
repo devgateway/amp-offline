@@ -277,7 +277,7 @@ export default class ActivityFieldsManager {
       fieldDef.children.find(childDef => childDef.id_only === true);
     const uniqueConstraint = isList && fieldDef.unique_constraint;
     const noMultipleValues = fieldDef.multiple_values !== true;
-    const noParentChildMixing = fieldDef.tree_collection !== true;
+    const noParentChildMixing = fieldDef.tree_collection === true;
     // it could be faster to do outer checks for the type and then go through the list for each type,
     // but realistically there won't be many objects in the list, that's why opting for clear code
     objects.forEach(obj => {
@@ -406,7 +406,7 @@ export default class ActivityFieldsManager {
     const repeating = new Set();
     const unique = new Set();
     values.forEach(item => {
-      const value = item[fieldName].value;
+      const value = item[fieldName][HIERARCHICAL_VALUE];
       if (unique.has(value)) {
         repeating.add(value);
       } else {
