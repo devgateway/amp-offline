@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+import { HIERARCHICAL_VALUE } from '../../utils/constants/ActivityConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
@@ -272,8 +273,11 @@ export default class ActivityFieldsManager {
     const invalidDate = translate('invalidDate');
     const percentageChild = isList && fieldDef.importable === true &&
       fieldDef.children.find(childDef => childDef.percentage === true);
+    const idOnlyField = isList && fieldDef.importable === true &&
+      fieldDef.children.find(childDef => childDef.id_only === true);
     const uniqueConstraint = isList && fieldDef.unique_constraint;
     const noMultipleValues = fieldDef.multiple_values !== true;
+    const noParentChildMixing = fieldDef.tree_collection !== true;
     // it could be faster to do outer checks for the type and then go through the list for each type,
     // but realistically there won't be many objects in the list, that's why opting for clear code
     objects.forEach(obj => {
@@ -284,7 +288,7 @@ export default class ActivityFieldsManager {
           if (!(value instanceof Object)) {
             this._addValidationError(obj, errors, fieldPath, invalidValueError);
           }
-        } else {
+        } else if (fieldDef.importable) {
           if (percentageChild) {
             const childrenValues = value
               .filter(child => child && child instanceof Object && child[percentageChild.field_name]
@@ -301,9 +305,15 @@ export default class ActivityFieldsManager {
             }
           }
           if (noMultipleValues) {
-            const noMultipleValuesError = this.noMultipleValuesValidator(objects, fieldDef.field_name);
+            const noMultipleValuesError = this.noMultipleValuesValidator(value, fieldDef.field_name);
             if (noMultipleValuesError !== true) {
               this._addValidationError(obj, errors, fieldPath, noMultipleValuesError);
+            }
+          }
+          if (noParentChildMixing) {
+            const noParentChildMixingError = this.noParentChildMixing(value, fieldPath, idOnlyField.field_name);
+            if (noParentChildMixingError !== true) {
+              this._addValidationError(obj, errors, fieldPath, noParentChildMixingError);
             }
           }
         }
@@ -413,6 +423,30 @@ export default class ActivityFieldsManager {
   noMultipleValuesValidator(values, fieldName) {
     if (values && values.length > 1) {
       return translate('multipleValuesNotAllowed').replace('%fieldName%', fieldName);
+    }
+    return true;
+  }
+
+  noParentChildMixing(values, fieldPath, noParentChildMixingFieldName) {
+    const options = this.possibleValuesMap[fieldPath];
+    const uniqueRoots = new Set(values.map(v => v[noParentChildMixingFieldName].id));
+    const childrenMixedWithParents = [];
+    values.forEach(value => {
+      let parentId = value[noParentChildMixingFieldName].parentId;
+      while (parentId) {
+        if (uniqueRoots.has(parentId)) {
+          childrenMixedWithParents.push(value[noParentChildMixingFieldName][HIERARCHICAL_VALUE]);
+          uniqueRoots.delete(value[noParentChildMixingFieldName].id);
+          parentId = null;
+        } else {
+          parentId = options[parentId] && options[parentId].parentId;
+        }
+      }
+    });
+
+    if (childrenMixedWithParents.length > 0) {
+      const childrenNames = childrenMixedWithParents.join(', ');
+      return translate('noParentChildMixing').replace('%children%', childrenNames);
     }
     return true;
   }

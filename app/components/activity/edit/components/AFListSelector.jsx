@@ -46,6 +46,8 @@ export default class AFListSelector extends Component {
     this.uniqueConstraint = this.listDef.unique_constraint;
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
     this.noMultipleValues = this.listDef.multiple_values !== true;
+    this.noParentChildMixing = this.listDef.tree_collection === true;
+    this.optionsPath = `${this.props.listPath}~${this.idOnlyField}`;
     this.setUniqueIdsAndUpdateState(this.props.selectedOptions);
   }
 
@@ -138,6 +140,9 @@ export default class AFListSelector extends Component {
     if (this.noMultipleValues) {
       // though UI shouldn't allow, it can be that for some old activities the config was different and allowed it
       errors.push(activityFieldsManager.noMultipleValuesValidator(values, this.idOnlyField));
+    }
+    if (this.noParentChildMixing) {
+      errors.push(activityFieldsManager.noParentChildMixing(values, this.optionsPath, this.idOnlyField));
     }
     errors = errors.filter(error => error !== true && error !== null);
 

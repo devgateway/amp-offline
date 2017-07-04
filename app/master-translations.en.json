@@ -173,5 +173,6 @@
   "invalidDate": "The value \"%value%\" is not a valid date (%gs-format%).",
   "invalidValue": "Invalid value.",
   "afFieldsGeneralError": "Please review invalid or required fields.",
-  "multipleValuesNotAllowed": "\"%fieldName%\" stores multiple values - not allowed."
+  "multipleValuesNotAllowed": "\"%fieldName%\" stores multiple values - not allowed.",
+  "noParentChildMixing": "Both parent and child items are present: %children%."
 }
