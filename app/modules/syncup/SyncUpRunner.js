@@ -191,8 +191,8 @@ export default class SyncUpRunner {
   }
 
   _buildUnitResult(syncUpManager: SyncUpManagerInterface, error) {
-    LoggerManager.log('_buildUnitResult');
     const type = syncUpManager.type;
+    LoggerManager.log(`_buildUnitResult: ${type}`);
     const originalDiff = this._syncUpDiffLeftOver.getSyncUpDiff(type);
     this._syncUpDiffLeftOver.setDiff(type, syncUpManager.getDiffLeftover());
     const unitLeftOver = this._syncUpDiffLeftOver.getSyncUpDiff(type);
