@@ -49,7 +49,12 @@ export default class SyncUp extends Component {
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.syncUpReducer.syncUpInProgress !== this.props.syncUpReducer.syncUpInProgress &&
+        !nextProps.syncUpReducer.syncUpInProgress
+    ) {
+      this.props.getSyncUpHistory();
+    }
     LoggerManager.log('componentWillReceiveProps');
   }
 
@@ -74,7 +79,7 @@ export default class SyncUp extends Component {
           </div>
         );
       } else if (historyData) {
-        const allFailed = !historyData.modules.some(module => module.status === SYNCUP_STATUS_SUCCESS);
+        const allFailed = !historyData.units.some(module => module.status === SYNCUP_STATUS_SUCCESS);
         if (!allFailed) {
           const message = translate('lastSuccessfulSyncupDate')
             .replace('%date%', DateUtils.createFormattedDate(new Date(historyData['sync-date'])));
