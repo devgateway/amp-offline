@@ -10,6 +10,7 @@ import ErrorMessage from '../../common/ErrorMessage';
 import InfoMessage from '../../common/InfoMessage';
 import { PROJECT_TITLE, IS_DRAFT, AMP_ID, INTERNAL_ID } from '../../../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
+import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../utils/translate';
@@ -143,16 +144,14 @@ export default class ActivityForm extends Component {
 
   _saveActivity(asDraft) {
     let validationError;
-    const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID]);
-    const invalidFieldPaths = new Set();
+    // TODO to adjust oonce AMP-XXX is fixed to properly define activive
+    const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID, FUNDING_ACTIVE_LIST]);
     this.activity[IS_DRAFT] = asDraft;
-    if (!this.props.activityReducer.activityFieldsManager.areRequiredFieldsSpecified(this.activity, asDraft,
-        fieldPathsToSkipSet, invalidFieldPaths)) {
-      // Show a simple list of failing fields using the user-friendly name of them.
-      const errorsToLabel = invalidFieldPaths.toJSON()
-        .map(item => (this.props.activityReducer.activityFieldsManager.getFieldLabelTranslation(item)))
-        .join(', ');
-      validationError = `${translate('Please provide all required fields')}: ${errorsToLabel}`;
+    const errors = this.props.activityReducer.activityFieldsManager.areAllConstraintsMet(this.activity, asDraft,
+      fieldPathsToSkipSet);
+    if (errors.length) {
+      // TODO proper errors reporting through AMPOFFLINE-448
+      validationError = translate('afFieldsGeneralError');
     }
     this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
