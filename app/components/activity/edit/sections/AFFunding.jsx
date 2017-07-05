@@ -26,7 +26,7 @@ class AFFunding extends Component {
     if (this.props.activity.fundings) {
       // Group fundings for the same funding organization and role.
       const groups = [];
-      this.props.activity.fundings.map(f => {
+      this.props.activity.fundings.forEach(f => {
         if (!groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
           && i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id))) {
           // TODO: Display acronym for source role.
