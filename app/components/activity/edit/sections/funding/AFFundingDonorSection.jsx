@@ -27,10 +27,11 @@ export default class AFFundingDonorSection extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
-    const ids = [];
-    this._filterFundings(this.props.fundings).map(() => (ids.push(false)));
+    // We manage the open/close state of these panels or they will have problems when nested panels.
+    const openFundingsState = [];
+    this._filterFundings(this.props.fundings).map(() => (openFundingsState.push(false)));
     this.state = {
-      openFDT: ids
+      openFundingDonorSection: openFundingsState
     };
   }
 
@@ -43,7 +44,7 @@ export default class AFFundingDonorSection extends Component {
     // TODO: Make sure teh AFValueString objects are refreshed when AFFields change.
     return (<div>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
-      <div className={styles.header}>
+      <div className={styles.header} >
         <AFValueString
           fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`} parent={funding}
           className={styles.header_small_item} /> |
@@ -66,16 +67,16 @@ export default class AFFundingDonorSection extends Component {
 
   render() {
     // Filter only the fundings for this organization and role.
-    return (<div className={styles.container}>
+    return (<div className={styles.container} >
       {this._filterFundings(this.props.fundings).map((g, i) => (
         <Panel
           header={this._generateComplexHeader(i, g)}
-          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible expanded={this.state.openFDT[i]}
+          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible expanded={this.state.openFundingDonorSection[i]}
           onSelect={() => {
-            const newOpenState = this.state.openFDT;
+            const newOpenState = this.state.openFundingDonorSection;
             newOpenState[i] = !newOpenState[i];
-            this.setState({ openFDT: newOpenState });
-          }}>
+            this.setState({ openFundingDonorSection: newOpenState });
+          }} >
           <AFFundingContainer funding={g} />
         </Panel>
       ))}
