@@ -62,9 +62,9 @@ const RequestConfig = {
     }
     const kv = [];
     if (paramsMap instanceof Map) {
-      paramsMap.forEach((key, value) => kv.push(`${key}=${value}`));
+      paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
     } else {
-      Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${paramsMap[prop]}`));
+      Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
     }
     return `?${kv.join('&')}`;
   },
