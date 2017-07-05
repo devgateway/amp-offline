@@ -7,6 +7,7 @@ import {
   PROGRAM,
   PROGRAM_PERCENTAGE
 } from '../../../../utils/constants/ActivityConstants';
+import styles from '../ActivityPreview.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
@@ -32,11 +33,15 @@ class APProgram extends Component {
 
   render() {
     return (<div>
-      <PrimaryProgramList key="primary-programs-list" {...this.props} />
-      <SecondaryProgramList key="secondary-programs-list" {...this.props} />
+      <div className={styles.primary_sector}>
+        <PrimaryProgramList key="primary-programs-list" {...this.props} />
+      </div>
+      <div className={styles.secondary_sector}>
+        <SecondaryProgramList key="secondary-programs-list" {...this.props} />
+      </div>
     </div>);
   }
 
 }
 
-export default Section(APProgram, 'Program');
+export default Section(APProgram, 'Program', true, 'APProgram');

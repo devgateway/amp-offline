@@ -1,8 +1,10 @@
 import React, { Component, PropTypes } from 'react';
+import Tablify from '../components/Tablify';
 import Section from './Section';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import { ACTIVITY_INTERNAL_IDS } from '../../../../utils/constants/ActivityConstants';
+import { ACTIVITY_INTERNAL_IDS, ACTIVITY_INTERNAL_IDS_COLS } from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
+import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
@@ -54,7 +56,8 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
   render() {
     let content = this.buildContent();
     if (isSeparateSection === true) {
-      content = <div>{content}</div>;
+      const tableContent = Tablify.addRows(content, ACTIVITY_INTERNAL_IDS_COLS);
+      content = <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
     } else if (content || this.props.showIfEmpty) {
       return (
         <div key="InternalIdsFromIdentificationSection">
@@ -70,5 +73,5 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
 
 };
 
-export const APInternalIds = Section(APInternalIdsSection(true), 'Agency Internal IDs');
+export const APInternalIds = Section(APInternalIdsSection(true), 'Agency Internal IDs', true, 'APInternalIds');
 export const APInternalIdsFromIdentification = Section(APInternalIdsSection(false), null, false);

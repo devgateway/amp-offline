@@ -24,7 +24,7 @@ class APFundingItem extends Component {
     LoggerManager.log('render');
     return (
       <tbody>
-        <tr>
+        <tr className={styles.row}>
           <td className={styles.left_text}>{translate(this.props.item[AC.ADJUSTMENT_TYPE].value)}</td>
           <td className={styles.right_text}>{createFormattedDate(this.props.item[AC.TRANSACTION_DATE])}</td>
           <td className={styles.right_text}>{`${rawNumberToFormattedString(this.props.item[AC.TRANSACTION_AMOUNT])}

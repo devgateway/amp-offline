@@ -7,6 +7,7 @@ import {
   SECTOR,
   SECTOR_PERCENTAGE
 } from '../../../../utils/constants/ActivityConstants';
+import styles from './APSector.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
@@ -32,10 +33,14 @@ class APSector extends Component {
 
   render() {
     return (<div>
-      <PrimarySectorList key="primary-programs-list" {...this.props} />
-      <SecondarySectorList key="secondary-programs-list" {...this.props} />
+      <div className={styles.primary_sector}>
+        <PrimarySectorList key="primary-programs-list" {...this.props} />
+      </div>
+      <div className={styles.secondary_sector}>
+        <SecondarySectorList key="secondary-programs-list" {...this.props} />
+      </div>
     </div>);
   }
 }
 
-export default Section(APSector, 'Sectors');
+export default Section(APSector, 'Sectors', true, 'APSector');

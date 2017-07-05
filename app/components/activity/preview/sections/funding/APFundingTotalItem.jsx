@@ -28,7 +28,7 @@ class APFundingTotalItem extends Component {
       ? this.props.value
       : rawNumberToFormattedString(this.props.value));
     val = (this.props.isPercentage === true ? val += '%' : val);
-    return (<div>
+    return (<div className={styles.subtotal_footer}>
       <div className={styles.subtotal_footer_legend}>
         {`${this.props.label}:`}
       </div>

@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Grid, Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import Scrollspy from 'react-scrollspy';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
@@ -65,18 +66,17 @@ export default class ActivityPreview extends Component {
 
   _renderData() {
     const activity = this.props.activityReducer.activity;
-    const style = {
-      verticalAlign: 'top'
-    };
-    const categoryArray = ['Identification', 'Agency Internal IDs', 'Planning',
-      'Location', 'National Plan', 'Program', 'Sectors'];
-    const categories = categoryArray.map((category) =>
-      <li>{category}</li>
+
+    const categories = AC.AP_SECTION_IDS.map((category) =>
+      <li><a href={category.hash}> {translate(category.value)} </a></li>
     );
+
+    const categoryKeys = AC.AP_SECTION_IDS.map(category => category.key);
+
     const editTooltip = (<Tooltip id="editTooltip">Edit</Tooltip>);
 
     return (
-      <div className={styles.preview_container} >
+      <div className={styles.preview_container}>
         <div className={styles.preview_header} >
           <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
           <span className={styles.preview_icons} >
@@ -88,19 +88,21 @@ export default class ActivityPreview extends Component {
               </li>
             </ul>
           </span>
+          <div className={styles.preview_status_container} >
+            <APStatusBar
+              fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail}
+              inline titleClass={styles.status_title_class} groupClass={styles.status_group_class} />
+          </div>
+          <div className={styles.preview_categories} >
+            <Scrollspy items={categoryKeys} currentClassName={styles.preview_category_selected}>
+              {categories}
+            </Scrollspy>
+          </div>
         </div>
-        <div className={styles.preview_status_container} >
-          <APStatusBar fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail} />
-        </div>
-        <div className={styles.preview_categories} >
-          <ul>
-            {categories}
-          </ul>
-        </div>
-        <div>
+        <div className={styles.preview_content}>
           <Grid fluid>
-            <Row className={styles.preview_content}>
-              <Col md={9} className={style.preview_main_data} >
+            <Row>
+              <Col md={9} >
                 <MainGroup />
               </Col>
               <Col mdOffset={9} className={styles.preview_summary} >

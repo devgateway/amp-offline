@@ -6,6 +6,7 @@ import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsMa
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import NumberUtils from '../../../../utils/NumberUtils';
+import DateUtils from '../../../../utils/DateUtils';
 
 /**
  * Activity Preview Proposed Project Cost section
@@ -36,16 +37,15 @@ const APProjectCost = (fieldName) => class extends Component {
       const amount = NumberUtils.rawNumberToFormattedString(this.getFieldValue(`${fieldName}~${AC.AMOUNT}`));
       // TODO currency conversion
       const currency = this.getFieldValue(`${fieldName}~${AC.CURRENCY_CODE}`);
-      // TODO date formatting AMPOFFLINE-308
       const date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
       content = (<div>
-        <div>
-          <span className={styles.field_name}>{translate('Cost')} </span>
-          <span className={styles.field_value}>{amount} {currency}</span>
+        <div className={styles.project_cost_left}>
+          <span className={styles.project_cost_title}>{translate('Cost')} </span>
+          <span className={styles.project_cost_currency}>{amount} {currency}</span>
         </div>
-        <div>
-          <span className={styles.field_name}>{translate('Date')}</span>
-          <span className={styles.field_value}>{date}</span>
+        <div className={styles.project_cost_right}>
+          <span className={styles.project_cost_title}>{translate('Date')}</span>
+          <span className={styles.project_cost_date}>{DateUtils.createFormattedDate(date)}</span>
         </div>
       </div>);
     }
