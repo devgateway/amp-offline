@@ -23,4 +23,4 @@ class APFundingSources extends Component {
   }
 }
 
-export default Section(APFundingSources, 'Funding Sources');
+export default Section(APFundingSources, 'Funding Sources', true, 'APFundingSources');

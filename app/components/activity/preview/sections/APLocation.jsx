@@ -9,6 +9,7 @@ import {
   IMPLEMENTATION_LOCATION
 } from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import styles from '../ActivityPreview.css';
 
 const APLocationsList = APPercentageList(LOCATIONS, LOCATION, LOCATION_PERCENTAGE);
 
@@ -28,13 +29,27 @@ class APLocation extends Component {
   }
 
   render() {
-    let content = [<APLocationsList key="locations-list" {...this.props} />];
-    content.push(this.props.buildSimpleField(IMPLEMENTATION_LEVEL, true, new Set([0])));
-    content.push(this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0])));
+    let content = [<APLocationsList
+      key="locations-list" {...this.props}
+      percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />];
+    const topContent = [];
+    topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LEVEL, true, new Set([0]))} </td>);
+    topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0]))} </td>);
     content = content.filter(el => el !== undefined);
-    return <div>{content}</div>;
+    return (<div>
+      <table className={styles.two_box_table}>
+        <tbody>
+          <tr>{topContent}</tr>
+        </tbody>
+      </table>
+      <table className={styles.box_table2}>
+        <tbody>
+          {content}
+        </tbody>
+      </table>
+    </div>);
   }
 
 }
 
-export default Section(APLocation, 'Location');
+export default Section(APLocation, 'Location', true, 'APLocation');

@@ -3,11 +3,11 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import APField from '../../components/APField';
+import Tablify from '../../components/Tablify';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import translate from '../../../../../utils/translate';
-import commonStyles from '../../ActivityPreview.css';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 
 /**
@@ -17,6 +17,7 @@ class APFundingOrganizationSection extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
+    counter: PropTypes.number.isRequired,
     comparator: PropTypes.func.isRequired
   };
 
@@ -28,30 +29,31 @@ class APFundingOrganizationSection extends Component {
   _buildDonorInfo() {
     const content = [];
     content.push(APField.instance('Organization Name', this.props.funding[AC.FUNDING_DONOR_ORG_ID].value, false, false,
-      commonStyles.section_field_name, commonStyles.section_field_value));
+      styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Organization Role', this.props.funding[AC.SOURCE_ROLE].value, false, false,
-      commonStyles.section_field_name, commonStyles.section_field_value));
+      styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Type of Assistance', this.props.funding[AC.TYPE_OF_ASSISTANCE].value, false, false,
-      commonStyles.section_field_name, commonStyles.section_field_value));
-    content.push(APField.instance('Financing Instrument',
-      this.props.funding[AC.FINANCING_INSTRUMENT].value, false, false, commonStyles.section_field_name,
-      commonStyles.section_field_value));
+      styles.funding_field_name, styles.funding_field_value));
+    content.push(APField.instance('Financing Instrument', this.props.funding[AC.FINANCING_INSTRUMENT].value,
+     false, false, styles.funding_field_name, styles.funding_field_value));
     const fundingStatus = this.props.funding[AC.FUNDING_STATUS] ? this.props.funding[AC.FUNDING_STATUS].value : '';
-    content.push(APField.instance('Funding Status', fundingStatus, false, false, commonStyles.section_field_name,
-      commonStyles.section_field_value));
+    content.push(APField.instance('Funding Status', fundingStatus, false, false,
+    styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Mode of Payment',
       this.props.funding[AC.MODE_OF_PAYMENT] ? this.props.funding[AC.MODE_OF_PAYMENT].value : '', false, false,
-      commonStyles.section_field_name, commonStyles.section_field_value));
+      styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Agreement Title',
       this.props.funding[AC.AGREEMENT] ? this.props.funding[AC.AGREEMENT][AC.AGREEMENT_TITLE] : '', false, false,
-      commonStyles.section_field_name, commonStyles.section_field_value));
+      styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Agreement Code',
       this.props.funding[AC.AGREEMENT] ? this.props.funding[AC.AGREEMENT][AC.AGREEMENT_CODE] : '', false, false,
-      commonStyles.section_field_name, commonStyles.section_field_value));
+      styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Funding Classification Date',
       createFormattedDate(this.props.funding[AC.FUNDING_CLASSIFICATION_DATE]), false, false,
-      commonStyles.section_field_name, commonStyles.section_field_value));
-    return content;
+      styles.funding_field_name, styles.funding_field_value));
+
+    const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
+    return tableContent;
   }
 
   _buildFundingDetailSection() {
@@ -92,7 +94,6 @@ class APFundingOrganizationSection extends Component {
       currency = item[AC.CURRENCY].value;
     });
     return (<div>
-      <hr />
       <APFundingTotalItem
         label={translate('Undisbursed Balance')} value={totalActualCommitments - totalActualDisbursements}
         currency={translate(currency)} />
@@ -102,12 +103,10 @@ class APFundingOrganizationSection extends Component {
   render() {
     LoggerManager.log('render');
     return (<div>
-      <div>{this._buildDonorInfo()}</div>
-      <div>{this._buildFundingDetailSection()}</div>
+      <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
+      <table className={styles.two_box_table}><tbody>{this._buildDonorInfo()}</tbody></table>
+      <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
-      <div className={styles.hr}>
-        <hr />
-      </div>
     </div>);
   }
 }

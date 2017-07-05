@@ -50,7 +50,7 @@ export default class APField extends Component {
 
   render() {
     const classNames = `${this.props.fieldNameClass} ${this.displayClass}`;
-    return (<div className={styles.inline}>
+    return (<div className={this.displayClass}>
       <div className={classNames}>{this.props.title}</div> {this._getValue()}
       {this.useSeparator ? <hr /> : ''}
     </div>);

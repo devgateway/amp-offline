@@ -22,7 +22,7 @@ class APStatusBar extends Component {
     const fieldPaths = [AC.AMP_ID, AC.ACTIVITY_STATUS, AC.ACTIVITY_BUDGET];
     return (
       <div>
-        {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true))}
+        {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true, null, true))}
       </div>
     );
   }
