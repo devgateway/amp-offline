@@ -52,17 +52,14 @@ export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpMana
    * @returns {*|Promise.<TResult>}
    */
   _doPartialSync(currencyRates) {
-    return SyncUpHelper.getLastSyncUpLogWithSyncDiffTimestamp().then(lastSyncUpLog => {
-      const timeStamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
-      // with the timestamp we go and fetch the partial sync
-      const paramsMap = { 'last-sync-time': timeStamp };
-      return ConnectionHelper.doGet({
-        url: GET_INCREMENTAL_EXCHANGE_RATES,
-        paramsMap
-      }).then(updatedCurrencyRates =>
-        this._processPartialSync(currencyRates, updatedCurrencyRates)
-      );
-    });
+    // with the timestamp we go and fetch the partial sync
+    const paramsMap = { 'last-sync-time': this._lastSyncTimestamp };
+    return ConnectionHelper.doGet({
+      url: GET_INCREMENTAL_EXCHANGE_RATES,
+      paramsMap
+    }).then(updatedCurrencyRates =>
+      this._processPartialSync(currencyRates, updatedCurrencyRates)
+    );
   }
 
   _processPartialSync(currencyRates, updatedCurrencyRates) {

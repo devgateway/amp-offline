@@ -40,6 +40,10 @@ export default class SyncUpManagerInterface {
     return this._errors;
   }
 
+  set lastSyncUpDate(lastSyncTimestamp) {
+    this._lastSyncTimestamp = lastSyncTimestamp;
+  }
+
   /**
    * The main sync up processing for the current sync up difference
    * @param diff the current

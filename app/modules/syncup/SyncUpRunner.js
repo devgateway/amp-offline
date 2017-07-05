@@ -16,7 +16,8 @@ import {
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ASSETS,
-  SYNCUP_TYPE_FIELDS
+  SYNCUP_TYPE_FIELDS,
+  SYNCUP_TYPE_EXCHANGE_RATES
 } from '../../utils/Constants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
@@ -144,6 +145,7 @@ export default class SyncUpRunner {
     changes[SYNCUP_TYPE_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
+    changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
       if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined) {
@@ -177,6 +179,7 @@ export default class SyncUpRunner {
     let unitPromise = null;
     if (type) {
       const syncUpManager = this._syncUpCollection.get(type);
+      this._prepareForSync(syncUpManager);
       unitPromise = syncUpManager.doSyncUp(this._syncUpDiffLeftOver.getSyncUpDiff(type))
         .then(() => this._buildUnitResult(syncUpManager))
         .catch(error => {
@@ -188,6 +191,10 @@ export default class SyncUpRunner {
       this._syncUpDependency.setState(type, SS.IN_PROGRESS);
     }
     return unitPromise;
+  }
+
+  _prepareForSync(syncUpManager) {
+    syncUpManager.lastSyncUpDate = this._lastTimestamp;
   }
 
   _buildUnitResult(syncUpManager: SyncUpManagerInterface, error) {
