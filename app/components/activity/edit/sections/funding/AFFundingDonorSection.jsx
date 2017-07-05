@@ -7,12 +7,12 @@ import ActivityFieldsManager from '../../../../../modules/activity/ActivityField
 import translate from '../../../../../utils/translate';
 import AFFundingContainer from './AFFundingContainer';
 import AFValueString from '../../components/AFValueString';
-import styles from './AFFundingDonorTab.css';
+import styles from './AFFundingDonorSection.css';
 
 /**
  * @author Gabriel Inchauspe
  */
-export default class AFFundingDonorTab extends Component {
+export default class AFFundingDonorSection extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired

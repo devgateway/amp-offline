@@ -5,7 +5,7 @@ import { FUNDING } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
-import AFFundingDonorTab from './funding/AFFundingDonorTab';
+import AFFundingDonorSection from './funding/AFFundingDonorSection';
 
 /**
  * Funding Section
@@ -38,7 +38,7 @@ class AFFunding extends Component {
         <Tab
           eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
           title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding[AC.SOURCE_ROLE].value})`}>
-          <AFFundingDonorTab
+          <AFFundingDonorSection
             fundings={this.props.activity.fundings}
             organization={funding[AC.FUNDING_DONOR_ORG_ID]}
             role={funding[AC.SOURCE_ROLE]}
