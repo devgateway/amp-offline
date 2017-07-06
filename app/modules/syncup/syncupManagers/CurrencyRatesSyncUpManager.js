@@ -2,9 +2,8 @@ import CurrencyRatesHelper from '../../helpers/CurrencyRatesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import Utils from '../../../utils/Utils';
-import SyncUpHelper from '../../helpers/SyncUpHelper';
 import { GET_FULL_EXCHANGE_RATES, GET_INCREMENTAL_EXCHANGE_RATES } from '../../connectivity/AmpApiConstants';
-import { SYNCUP_DATETIME_FIELD, SYNCUP_TYPE_EXCHANGE_RATES } from '../../../utils/Constants';
+import { SYNCUP_TYPE_EXCHANGE_RATES } from '../../../utils/Constants';
 
 /* eslint-disable class-methods-use-this */
 
