@@ -34,7 +34,9 @@ export default class AFField extends Component {
     showLabel: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
     type: PropTypes.string,
-    onAfterUpdate: PropTypes.func
+    onAfterUpdate: PropTypes.func,
+    max: PropTypes.number,
+    min: PropTypes.number
   };
 
   constructor(props) {
@@ -149,7 +151,7 @@ export default class AFField extends Component {
 
   _getNumber() {
     return (<AFNumber
-      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired}
+      value={this.state.value} max={this.props.max} min={this.props.min} onChange={this.validateIfRequired}
     />);
   }
 
@@ -160,8 +162,8 @@ export default class AFField extends Component {
     return null;
   }
 
-  validateIfRequired(value, asDraft) {
-    let validationError = null;
+  validateIfRequired(value, asDraft, innerComponentValidationError) {
+    let validationError = innerComponentValidationError;
     const isRequired = this.alwaysRequired || (asDraft === false && this.fieldDef.required === 'ND');
     if (isRequired &&
       (value === null || value === undefined || value === '' || (value.length !== undefined && value.length === 0))) {
@@ -177,7 +179,7 @@ export default class AFField extends Component {
     }
     return (
       <FormGroup
-        controlId={this.props.fieldPath} validationState={this.validate()} className={styles.activity_form_control}>
+        controlId={this.props.fieldPath} validationState={this.validate()} className={styles.activity_form_control} >
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />

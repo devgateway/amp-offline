@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { FormControl } from 'react-bootstrap';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import translate from '../../../../utils/translate';
 
 /**
  * Activity Form Text Area component
@@ -8,8 +9,9 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  */
 export default class AFNumber extends Component {
   static propTypes = {
-    value: PropTypes.number,
-    maxLength: PropTypes.number,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    max: PropTypes.number,
+    min: PropTypes.number,
     onChange: PropTypes.func
     // TODO: Add number check functions.
   };
@@ -26,14 +28,27 @@ export default class AFNumber extends Component {
     this.setState({ value: this.props.value || '' });
   }
 
-  handleChange(e) {
-    let value = e.target.value;
+  validate(value) {
+    let validationError = null;
     if (value) {
-      if (this.props.maxLength !== undefined && value.length > this.props.maxLength) {
-        value = value.substring(0, this.props.maxLength);
+      const auxValue = Number(value);
+      if (Number.isNaN(auxValue)) {
+        validationError = translate('Not a number');
+      }
+      if (this.props.max !== undefined && auxValue > this.props.max) {
+        validationError = `${translate('Number is bigger than')} ${this.props.max}`;
+      }
+      if (this.props.min !== undefined && auxValue < this.props.min) {
+        validationError = `${translate('Number is smaller than')} ${this.props.min}`;
       }
     }
-    this.props.onChange(value ? value.trim() : value);
+    return validationError;
+  }
+
+  handleChange(e) {
+    const value = e.target.value;
+    const validationError = this.validate(value);
+    this.props.onChange(value, null, validationError);
     this.setState({ value });
   }
 

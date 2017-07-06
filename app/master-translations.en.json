@@ -193,5 +193,8 @@
   "invalidValue": "Invalid value.",
   "afFieldsGeneralError": "Please review invalid or required fields.",
   "multipleValuesNotAllowed": "\"%fieldName%\" stores multiple values - not allowed.",
-  "noParentChildMixing": "Both parent and child items are present: %children%."
+  "noParentChildMixing": "Both parent and child items are present: %children%.",
+  "Not a number": "Not a number",
+  "Number is bigger than": "Number is bigger than",
+  "Number is smaller than": "Number is smaller than"
 }
