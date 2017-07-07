@@ -14,6 +14,7 @@ import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
 import AFPPCAnnualBudgets from './AFPPCAnnualBudgets';
 import afStyles from '../../ActivityForm.css';
+import AFDate from '../../components/AFDate';
 
 /**
  * @author Gabriel Inchauspe
@@ -33,7 +34,7 @@ export default class AFProjectCost extends Component {
   }
 
   static getFormattedDateCell(cell) {
-    return (<span className={styles.editable} >{createFormattedDate(cell)}</span>);
+    return <AFDate value={cell} />;
   }
 
   static getCurrencyCode(cell) {

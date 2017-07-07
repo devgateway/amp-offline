@@ -46,15 +46,6 @@ export default class AFProposedProjectCostTable extends Component {
     return Object.keys(currencies).sort();
   }
 
-  // TODO: move to util class.
-  numberValidator(value) {
-    const nan = isNaN(parseFloat(value, 10));
-    if (nan) {
-      return translate('Not a number');
-    }
-    return true;
-  }
-
   render() {
     if (this.props.activity[AC.PPC_AMOUNT]) {
       const cellEdit = {
@@ -66,26 +57,26 @@ export default class AFProposedProjectCostTable extends Component {
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
           dataField={AC.AMOUNT} editable={false} key={AC.AMOUNT}
-          dataFormat={this.props.formatAmount}>{translate('Amount')}</TableHeaderColumn>);
+          dataFormat={this.props.formatAmount} >{translate('Amount')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
           editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
-          dataFormat={this.props.formatCurrency}>{translate('Currency')}</TableHeaderColumn>);
+          dataFormat={this.props.formatCurrency} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
         // TODO: Add a datepicker component.
         columns.push(<TableHeaderColumn
           dataField={AC.FUNDING_DATE} editable key={AC.FUNDING_DATE}
-          dataFormat={this.props.formatDate}>{translate('Date')}</TableHeaderColumn>);
+          dataFormat={this.props.formatDate} >{translate('Date')}</TableHeaderColumn>);
       }
       return (<div>
-        <span><label htmlFor="ppc_table">{translate('Proposed Project Cost')}</label></span>
+        <span><label htmlFor="ppc_table" >{translate('Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
           thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={this.props.activity[AC.PPC_AMOUNT]}>
+          data={this.props.activity[AC.PPC_AMOUNT]} >
           {columns}
         </BootstrapTable>
       </div>);

@@ -4,7 +4,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
 
 /**
- * Activity Form Text Area component
+ * Activity Form Number component
  * @author Gabriel Inchauspe
  */
 export default class AFNumber extends Component {
