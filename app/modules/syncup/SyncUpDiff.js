@@ -3,6 +3,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_EXCHANGE_RATES,
+  SYNCUP_TYPE_FEATURE_MANAGER,
   SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_GS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
@@ -49,6 +50,7 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_ASSETS:
       case SYNCUP_TYPE_EXCHANGE_RATES:
       case SYNCUP_TYPE_FIELDS: // TODO update once AMP-25568 is also done, as part of AMPOFFLINE-270
+      case SYNCUP_TYPE_FEATURE_MANAGER:
       case SYNCUP_TYPE_ACTIVITIES_PUSH:
         diff = diff || this._syncUpDiff[type] || [];
         break;

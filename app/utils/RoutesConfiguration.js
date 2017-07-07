@@ -16,6 +16,7 @@ import {
   SYNC_URL,
   AMP_COUNTRY_FLAG,
   WORKSPACE_SETTINGS_URL,
+  FEATURE_MANAGER_URL,
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
   POSSIBLE_VALUES_V2_MEDIA_TYPE
@@ -99,6 +100,10 @@ const routesConfiguration = [{
 }, {
   url: GET_INCREMENTAL_EXCHANGE_RATES,
   method: 'GET',
+  requiredAuth: true
+}, {
+  url: FEATURE_MANAGER_URL,
+  method: 'POST',
   requiredAuth: true
 }
 ];

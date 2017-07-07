@@ -104,6 +104,16 @@ const Utils = {
       delete item._id;
       return item;
     });
+  },
+
+  /**
+   * Removes DB storage internal _id, mostly for
+   * @param item
+   * @return {*}
+   */
+  removeIdFromItem(item) {
+    delete item._id;
+    return item;
   }
 };
 
