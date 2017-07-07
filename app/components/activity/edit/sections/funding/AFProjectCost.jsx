@@ -9,12 +9,12 @@ import AFOverallFundingTotals from './AFOverallFundingTotals';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
 import AFRevisedProjectCostTable from './AFRevisedProjectCostTable';
-import { createFormattedDate } from '../../../../../utils/DateUtils';
 import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
 import AFPPCAnnualBudgets from './AFPPCAnnualBudgets';
 import afStyles from '../../ActivityForm.css';
 import AFDate from '../../components/AFDate';
+import AFNumber from '../../components/AFNumber';
 
 /**
  * @author Gabriel Inchauspe
@@ -30,7 +30,7 @@ export default class AFProjectCost extends Component {
   };
 
   static getFormattedAmountCell(cell) {
-    return (<span className={styles.editable} >{NumberUtils.rawNumberToFormattedString(cell, true)}</span>);
+    return <AFNumber value={NumberUtils.rawNumberToFormattedString(cell, true)} min={0} />;
   }
 
   static getFormattedDateCell(cell) {
