@@ -47,6 +47,8 @@ export default class AFNumber extends Component {
   }
 
   handleChange(e) {
+    // TODO: I think keep in a variable the string representation of the number (according to current GS) along with
+    // the numeric value.
     const value = e.target.value;
     const validationError = this.validate(value);
     this.props.onChange(value, null, validationError);

@@ -6,6 +6,8 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import AFField from '../../components/AFField';
+import * as Types from '../../components/AFComponentTypes';
 
 /**
  * @author Gabriel Inchauspe
@@ -17,9 +19,7 @@ export default class AFPPCAnnualBudgets extends Component {
   };
 
   static propTypes = {
-    activity: PropTypes.object.isRequired,
-    formatAmount: PropTypes.func.isRequired,
-    formatCurrency: PropTypes.func.isRequired
+    activity: PropTypes.object.isRequired
   };
 
   /**
@@ -111,7 +111,7 @@ export default class AFPPCAnnualBudgets extends Component {
     } else {
       const auxDate = Date.parse(cell);
       const year = new Date(auxDate).getUTCFullYear();
-      return <span className={styles.editable}>{year}</span>;
+      return <span className={styles.editable} >{year}</span>;
     }
   }
 
@@ -158,11 +158,6 @@ export default class AFPPCAnnualBudgets extends Component {
         insertModalFooter: this.createCustomModalFooter,
         afterInsertRow: this.onAfterInsertRow.bind(this)
       };
-      const cellEdit = {
-        mode: 'click',
-        blurToSave: true,
-        afterSaveCell: AFPPCAnnualBudgets.onAfterSaveCell.bind(this)
-      };
       const selectRow = {
         mode: 'checkbox'
       };
@@ -172,28 +167,40 @@ export default class AFPPCAnnualBudgets extends Component {
       />];
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.AMOUNT} editable={{ validator: this.numberValidator }} key={AC.AMOUNT}
-          dataFormat={this.props.formatAmount}>{translate('Amount')}</TableHeaderColumn>);
+          dataField={AC.AMOUNT} editable={false} key={AC.AMOUNT}
+          dataFormat={(cell, row, other, index) => (
+            <AFField
+              parent={this.props.activity[AC.PPC_ANNUAL_BUDGETS][index]}
+              fieldPath={`${AC.PPC_ANNUAL_BUDGETS}~${AC.AMOUNT}`}
+              type={Types.NUMBER} showLabel={false} />)} >{translate('Amount')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.CURRENCY}`)) {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY} key={AC.CURRENCY}
-          editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
-          dataFormat={this.props.formatCurrency}>{translate('Currency')}</TableHeaderColumn>);
+          editable={false}
+          dataFormat={(cell, row, other, index) => (
+            <AFField
+              parent={this.props.activity[AC.PPC_ANNUAL_BUDGETS][index]}
+              fieldPath={`${AC.PPC_ANNUAL_BUDGETS}~${AC.CURRENCY}`}
+              type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.YEAR}`)) {
-        const years = this.getListOfYears();
+        // TODO: we need to show a list of years but we have a string representing a date (check the original solution).
         columns.push(<TableHeaderColumn
           dataField={AC.YEAR} key={AC.YEAR}
-          editable={{ type: 'select', options: { values: years } }}
-          dataFormat={this.formatYear.bind(null, years)}>{translate('Year')}</TableHeaderColumn>);
+          editable={false}
+          dataFormat={(cell, row, other, index) => (
+            <AFField
+              parent={this.props.activity[AC.PPC_ANNUAL_BUDGETS][index]}
+              fieldPath={`${AC.PPC_ANNUAL_BUDGETS}~${AC.YEAR}`}
+              type={Types.NUMBER} showLabel={false} />)} >{translate('Year')}</TableHeaderColumn>);
       }
       return (<div>
-        <span><label htmlFor={AC.PPC_ANNUAL_BUDGETS}>{translate('Annual Proposed Project Cost')}</label></span>
+        <span><label htmlFor={AC.PPC_ANNUAL_BUDGETS} >{translate('Annual Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} cellEdit={cellEdit} hover selectRow={selectRow} deleteRow
-          data={this.props.activity[AC.PPC_ANNUAL_BUDGETS]} insertRow>
+          thClassName={styles.thClassName} hover selectRow={selectRow} deleteRow
+          data={this.props.activity[AC.PPC_ANNUAL_BUDGETS]} insertRow >
           {columns}
         </BootstrapTable>
       </div>);
