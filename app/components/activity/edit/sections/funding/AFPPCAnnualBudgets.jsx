@@ -73,22 +73,9 @@ export default class AFPPCAnnualBudgets extends Component {
     return newPPC;
   }
 
-  getListOfCurrencies(returnFullObject) {
-    // TODO: Check if this is the best way to get the currencies.
-    const currencies = this.context.activityFieldsManager.possibleValuesMap[`${AC.PPC_ANNUAL_BUDGETS}~${AC.CURRENCY}`];
-    if (returnFullObject) {
-      return currencies;
-    }
-    return Object.keys(currencies).map((k) => (currencies[k].value));
-  }
-
   getListOfYears() {
     // TODO: check how many years to generate.
     return Array.from(new Array(30), (x, i) => i + 1990);
-  }
-
-  _generateCurrencyObject(currencyCode) {
-    return Object.values(this.getListOfCurrencies(true)).find(item => item.value === currencyCode);
   }
 
   _generateId() {
@@ -113,15 +100,6 @@ export default class AFPPCAnnualBudgets extends Component {
       const year = new Date(auxDate).getUTCFullYear();
       return <span className={styles.editable} >{year}</span>;
     }
-  }
-
-  // TODO: move to util class.
-  numberValidator(value) {
-    const nan = isNaN(parseFloat(value, 10));
-    if (nan) {
-      return translate('Not a number');
-    }
-    return true;
   }
 
   handleInsertButtonClick(onClick) {
@@ -158,6 +136,11 @@ export default class AFPPCAnnualBudgets extends Component {
         insertModalFooter: this.createCustomModalFooter,
         afterInsertRow: this.onAfterInsertRow.bind(this)
       };
+      const cellEdit = {
+        mode: 'click',
+        blurToSave: true,
+        afterSaveCell: AFPPCAnnualBudgets.onAfterSaveCell.bind(this)
+      };
       const selectRow = {
         mode: 'checkbox'
       };
@@ -185,21 +168,17 @@ export default class AFPPCAnnualBudgets extends Component {
               type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_ANNUAL_BUDGETS}~${AC.YEAR}`)) {
+        const years = this.getListOfYears();
         // TODO: we need to show a list of years but we have a string representing a date (check the original solution).
         columns.push(<TableHeaderColumn
-          dataField={AC.YEAR} key={AC.YEAR}
-          editable={false}
-          dataFormat={(cell, row, other, index) => (
-            <AFField
-              parent={this.props.activity[AC.PPC_ANNUAL_BUDGETS][index]}
-              fieldPath={`${AC.PPC_ANNUAL_BUDGETS}~${AC.YEAR}`}
-              type={Types.NUMBER} showLabel={false} />)} >{translate('Year')}</TableHeaderColumn>);
+          dataField={AC.YEAR} key={AC.YEAR} editable={{ type: 'select', options: { values: years } }}
+          dataFormat={this.formatYear.bind(null, years)} >{translate('Year')}</TableHeaderColumn>);
       }
       return (<div>
         <span><label htmlFor={AC.PPC_ANNUAL_BUDGETS} >{translate('Annual Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} hover selectRow={selectRow} deleteRow
+          thClassName={styles.thClassName} hover selectRow={selectRow} deleteRow cellEdit={cellEdit}
           data={this.props.activity[AC.PPC_ANNUAL_BUDGETS]} insertRow >
           {columns}
         </BootstrapTable>
