@@ -19,13 +19,8 @@ export default class AFProposedProjectCostTable extends Component {
   };
 
   static propTypes = {
-    activity: PropTypes.object.isRequired,
-    formatAmount: PropTypes.func.isRequired, // TODO: remove this functions, are too generic.
-    formatDate: PropTypes.func.isRequired
+    activity: PropTypes.object.isRequired
   };
-
-  static onAfterSaveCell() {
-  }
 
   constructor(props) {
     super(props);
@@ -37,17 +32,17 @@ export default class AFProposedProjectCostTable extends Component {
 
   render() {
     if (this.props.activity[AC.PPC_AMOUNT]) {
-      // TODO: If using editable={false} + using our components on dataFormat --> remove cellEdit and add a comment.
-      const cellEdit = {
-        mode: 'click',
-        blurToSave: true,
-        afterSaveCell: AFProposedProjectCostTable.onAfterSaveCell.bind(this)
-      };
+      /* IMPORTANT: Since we want to mimic the AF that shows inputs on tables not only when the user clicks the
+       cell, then is easier to set editable={false} and use our AFField components inside dateFormat, this way
+       we dont need to have a fake input for displaying and then extra code for editing (plus many other advantages). */
       const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden key={AC.FUNDING_AMOUNT_ID} />];
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
           dataField={AC.AMOUNT} editable={false} key={AC.AMOUNT}
-          dataFormat={this.props.formatAmount} >{translate('Amount')}</TableHeaderColumn>);
+          dataFormat={() => (<AFField
+            parent={this.props.activity[AC.PPC_AMOUNT][0]}
+            fieldPath={`${AC.PPC_AMOUNT}~${AC.AMOUNT}`}
+            type={Types.NUMBER} showLabel={false} readonly />)} >{translate('Amount')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
         columns.push(<TableHeaderColumn
@@ -59,17 +54,19 @@ export default class AFProposedProjectCostTable extends Component {
             type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
-        // TODO: Add a datepicker component.
+        // TODO: Add a datepicker component that respects the same format the activity has on ppc.
         columns.push(<TableHeaderColumn
-          dataField={AC.FUNDING_DATE} editable key={AC.FUNDING_DATE}
-          dataFormat={this.props.formatDate} >{translate('Date')}</TableHeaderColumn>);
+          dataField={AC.FUNDING_DATE} editable={false} key={AC.FUNDING_DATE}
+          dataFormat={() => (<AFField
+            parent={this.props.activity[AC.PPC_AMOUNT][0]}
+            fieldPath={`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`}
+            type={Types.DATE} showLabel={false} />)} >{translate('Date')}</TableHeaderColumn>);
       }
       return (<div>
         <span><label htmlFor="ppc_table" >{translate('Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} cellEdit={cellEdit} hover
-          data={this.props.activity[AC.PPC_AMOUNT]} >
+          thClassName={styles.thClassName} hover data={this.props.activity[AC.PPC_AMOUNT]} >
           {columns}
         </BootstrapTable>
       </div>);

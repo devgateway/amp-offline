@@ -154,9 +154,7 @@ export default class AFField extends Component {
   }
 
   _getNumber() {
-    return (<AFNumber
-      value={this.state.value} max={this.props.max} min={this.props.min} onChange={this.validateIfRequired}
-    />);
+    return (<AFNumber value={this.state.value} onChange={this.validateIfRequired} {...this.props} />);
   }
 
   _getDate() {
