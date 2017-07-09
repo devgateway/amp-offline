@@ -8,7 +8,6 @@ import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
-import AFRevisedProjectCostTable from './AFRevisedProjectCostTable';
 import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
 import AFPPCAnnualBudgets from './AFPPCAnnualBudgets';
@@ -29,18 +28,6 @@ export default class AFProjectCost extends Component {
     activity: PropTypes.object.isRequired,
   };
 
-  static getFormattedAmountCell(cell) {
-    return <AFNumber value={NumberUtils.rawNumberToFormattedString(cell, true)} min={0} />;
-  }
-
-  static getFormattedDateCell(cell) {
-    return <AFDate value={cell} />;
-  }
-
-  static getCurrencyCode(cell) {
-    return `<span class=${styles.editable}>${cell.value || cell}</span>`; // Notice the `` for editable cell.
-  }
-
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
@@ -52,23 +39,12 @@ export default class AFProjectCost extends Component {
       <Grid className={afStyles.full_width} >
         <Row>
           <Col md={12} lg={12} >
-            <AFProposedProjectCostTable
-              activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
-              formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
+            <AFProposedProjectCostTable activity={this.props.activity} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12} >
-            <AFPPCAnnualBudgets
-              activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
-              formatCurrency={AFProjectCost.getCurrencyCode} />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12} lg={12} >
-            <AFRevisedProjectCostTable
-              activity={this.props.activity} formatAmount={AFProjectCost.getFormattedAmountCell}
-              formatDate={AFProjectCost.getFormattedDateCell} formatCurrency={AFProjectCost.getCurrencyCode} />
+            <AFPPCAnnualBudgets activity={this.props.activity} />
           </Col>
         </Row>
         <Row>
