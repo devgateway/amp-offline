@@ -56,8 +56,6 @@ class AFFunding extends Component {
   }
 
   render() {
-    // TODO: remove this console.log
-    console.log(this.props.activity);
     return (<Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs">
       <Tab eventKey={0} title="Overview" key={0}>{this.generateOverviewTabContent()}</Tab>
       {this.addFundingTabs()}
