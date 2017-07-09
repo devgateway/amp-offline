@@ -6,6 +6,8 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import AFField from '../../components/AFField';
+import * as Types from '../../components/AFComponentTypes';
 
 /**
  * @author Gabriel Inchauspe
@@ -18,15 +20,11 @@ export default class AFProposedProjectCostTable extends Component {
 
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    formatAmount: PropTypes.func.isRequired,
-    formatDate: PropTypes.func.isRequired,
-    formatCurrency: PropTypes.func.isRequired
+    formatAmount: PropTypes.func.isRequired, // TODO: remove this functions, are too generic.
+    formatDate: PropTypes.func.isRequired
   };
 
-  static onAfterSaveCell(currencies, row, cellName, cellValue) {
-    if (cellName === AC.CURRENCY_CODE) {
-      row[AC.CURRENCY_CODE] = currencies[cellValue];
-    }
+  static onAfterSaveCell() {
   }
 
   constructor(props) {
@@ -37,21 +35,13 @@ export default class AFProposedProjectCostTable extends Component {
     };
   }
 
-  getListOfCurrencies(returnFullObject) {
-    // TODO: Check if this is the best way to get the currencies.
-    const currencies = this.context.activityFieldsManager.possibleValuesMap[`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`];
-    if (returnFullObject) {
-      return currencies;
-    }
-    return Object.keys(currencies).sort();
-  }
-
   render() {
     if (this.props.activity[AC.PPC_AMOUNT]) {
+      // TODO: If using editable={false} + using our components on dataFormat --> remove cellEdit and add a comment.
       const cellEdit = {
         mode: 'click',
         blurToSave: true,
-        afterSaveCell: AFProposedProjectCostTable.onAfterSaveCell.bind(null, this.getListOfCurrencies(true))
+        afterSaveCell: AFProposedProjectCostTable.onAfterSaveCell.bind(this)
       };
       const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden key={AC.FUNDING_AMOUNT_ID} />];
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.AMOUNT}`)) {
@@ -62,8 +52,11 @@ export default class AFProposedProjectCostTable extends Component {
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
-          editable={{ type: 'select', options: { values: this.getListOfCurrencies(false) } }}
-          dataFormat={this.props.formatCurrency} >{translate('Currency')}</TableHeaderColumn>);
+          editable={false}
+          dataFormat={() => (<AFField
+            parent={this.props.activity[AC.PPC_AMOUNT][0]}
+            fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
+            type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
         // TODO: Add a datepicker component.

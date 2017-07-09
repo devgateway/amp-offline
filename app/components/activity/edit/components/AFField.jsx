@@ -13,6 +13,7 @@ import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
+import AFDate from './AFDate';
 
 /* eslint-disable class-methods-use-this */
 
@@ -89,12 +90,15 @@ export default class AFField extends Component {
       }
     } else if (this.props.type === Types.RICH_TEXT_AREA) {
       return this._getRichTextEditor();
-    } else if (this.type === Types.DROPDOWN || (!this.forcedType && this.fieldDef.id_only === true)) {
+    } else if (this.type === Types.DROPDOWN || (!this.forcedType && this.fieldDef.id_only === true)
+      || this.props.type === Types.DROPDOWN) {
       return this._getDropDown();
     } else if (this.type === Types.LIST_SELECTOR || (!this.forcedType && this.fieldDef.field_type === 'list')) {
       return this._getListSelector();
     } else if (this.props.type === Types.NUMBER) {
       return this._getNumber();
+    } else if (this.props.type === Types.DATE) {
+      return this._getDate();
     }
     return 'Not Implemented';
   }
@@ -153,6 +157,10 @@ export default class AFField extends Component {
     return (<AFNumber
       value={this.state.value} max={this.props.max} min={this.props.min} onChange={this.validateIfRequired}
     />);
+  }
+
+  _getDate() {
+    return (<AFDate value={this.state.value} onChange={this.validateIfRequired} />);
   }
 
   validate() {
