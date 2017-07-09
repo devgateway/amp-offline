@@ -36,15 +36,19 @@ export default class AFFundingDetailContainer extends Component {
     if (fundingDetails.length > 0) {
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
+      let button = '';
       switch (this.props.type) {
         case VC.COMMITMENTS:
           header = translate('Commitments');
+          button = translate('Add Commitments');
           break;
         case VC.DISBURSEMENTS:
           header = translate('Disbursements');
+          button = translate('Add Disbursements');
           break;
         case VC.EXPENDITURES:
           header = translate('Expenditures');
+          button = translate('Add Expenditures');
           break;
         default:
           break;
@@ -54,10 +58,10 @@ export default class AFFundingDetailContainer extends Component {
           header={header} collapsible expanded={this.state.openFDC}
           onSelect={() => {
             this.setState({ openFDC: !this.state.openFDC });
-          }}>
+          }} >
           {fundingDetails.map((fd, i) => (
             <AFFundingDetailItem fundingDetail={fd} type={this.props.type} key={`${header}_${i}`} />))}
-          <Button bsStyle="primary">{translate(`${translate('Add')} ${translate(this.props.type)}`)}</Button>
+          <Button bsStyle="primary" >{button}</Button>
         </Panel>
       </div>);
     } else {
