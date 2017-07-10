@@ -148,12 +148,14 @@ export default class AFField extends Component {
   _getRichTextEditor() {
     return (<AFRichTextEditor
       id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired}
-      language={this.context.activityFieldsManager._lang || this.context.activityFieldsManager._defaultLang} />);
+      language={this.context.activityFieldsManager._lang || this.context.activityFieldsManager._defaultLang}
+      showValueAsLabel={this.props.showValueAsLabel} />);
   }
 
   _getTextArea() {
     return (<AFTextArea
       value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired}
+      showValueAsLabel={this.props.showValueAsLabel}
     />);
   }
 

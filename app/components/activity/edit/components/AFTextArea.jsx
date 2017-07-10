@@ -10,7 +10,8 @@ export default class AFTextArea extends Component {
   static propTypes = {
     value: PropTypes.string,
     maxLength: PropTypes.number,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    showValueAsLabel: PropTypes.bool
   };
 
   constructor(props) {
@@ -37,6 +38,10 @@ export default class AFTextArea extends Component {
   }
 
   render() {
-    return <FormControl componentClass="textarea" value={this.state.value} onChange={this.handleChange.bind(this)} />;
+    if (this.props.showValueAsLabel) {
+      return <div>{this.state.value}</div>;
+    } else {
+      return <FormControl componentClass="textarea" value={this.state.value} onChange={this.handleChange.bind(this)} />;
+    }
   }
 }

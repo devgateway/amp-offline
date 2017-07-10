@@ -8,12 +8,8 @@ import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
-import NumberUtils from '../../../../../utils/NumberUtils';
-import styles from '../../components/AFList.css';
 import AFPPCAnnualBudgets from './AFPPCAnnualBudgets';
 import afStyles from '../../ActivityForm.css';
-import AFDate from '../../components/AFDate';
-import AFNumber from '../../components/AFNumber';
 
 /**
  * @author Gabriel Inchauspe

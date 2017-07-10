@@ -53,7 +53,7 @@ export default class AFFundingDonorSection extends Component {
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`} parent={funding}
           className={styles.header_small_item} showLabel={false} showValueAsLabel /> |
         <AFField
-          fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding} type={Types.NUMBER}
+          fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding} type={Types.TEXT_AREA}
           className={styles.header_small_item} showLabel={false} showValueAsLabel /> |
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`} parent={funding}

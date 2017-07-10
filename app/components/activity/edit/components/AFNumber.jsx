@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { FormControl } from 'react-bootstrap';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
+import NumberUtils from '../../../../utils/NumberUtils';
 
 /**
  * Activity Form Number component
@@ -58,7 +59,7 @@ export default class AFNumber extends Component {
 
   render() {
     if (this.props.showValueAsLabel) {
-      return <div>{this.state.value}</div>;
+      return <div>{NumberUtils.rawNumberToFormattedString(this.state.value)}</div>;
     } else {
       return (<FormControl
         componentClass="input" value={this.state.value} onChange={this.handleChange.bind(this)}
