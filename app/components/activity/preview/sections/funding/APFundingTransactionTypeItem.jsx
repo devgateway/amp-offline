@@ -5,6 +5,7 @@ import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
 import styles from './APFundingTransactionTypeItem.css';
 import APFundingTotalItem from './APFundingTotalItem';
+import APLabel from '../../components/APLabel';
 
 /**
  * @author Gabriel Inchauspe
@@ -27,10 +28,9 @@ class APFundingTransactionTypeItem extends Component {
   }
 
   _drawHeader() {
-    // TODO: Create an APLabel with translation and tooltip.
-    return (<div className={styles.header}>
-      {translate(this.props.group.adjType.value)} {translate(this.props.group.trnType.value)}
-    </div>);
+    const label = `${translate(this.props.group.adjType.value)} ${translate(this.props.group.trnType.value)}`;
+    const key = this.props.group.adjType.value + this.props.group.trnType.value;
+    return <APLabel label={label} className={styles.header} key={key} />;
   }
 
   _drawDetail() {
@@ -40,7 +40,7 @@ class APFundingTransactionTypeItem extends Component {
       content.push(<APFundingItem item={item} key={item.id} />);
     });
     // Not worth the effort to use BootstrapTable here.
-    return <table className={styles.funding_table}>{content}</table>;
+    return <table className={styles.funding_table} >{content}</table>;
   }
 
   _drawSubTotalFooter() {
@@ -49,16 +49,16 @@ class APFundingTransactionTypeItem extends Component {
     return (<div>
       <APFundingTotalItem
         value={subtotal}
-        label={`${translate('Subtotal')} ${translate(this.props.group.adjType.value)}
-        ${translate(this.props.group.trnType.value)}`}
-        currency={translate(this.props.group.currency.value)} />
+        label={translate(`Subtotal ${this.props.group.adjType.value} ${this.props.group.trnType.value}`)}
+        currency={translate(this.props.group.currency.value)}
+        key={this.props.group.adjType.value + this.props.group.trnType.value} />
     </div>);
   }
 
   render() {
     LoggerManager.log('render');
     // TODO: Add Undisbursed Balance section.
-    return (<div className={styles.table_container}>
+    return (<div className={styles.table_container} >
       <div>{this._drawHeader()}</div>
       <div>{this._drawDetail()}</div>
       <div>{this._drawSubTotalFooter()}</div>

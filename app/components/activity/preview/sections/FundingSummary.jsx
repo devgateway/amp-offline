@@ -3,7 +3,6 @@ import Section from './Section';
 import APField from '../components/APField';
 import * as VC from '../../../../utils/constants/ValueConstants';
 import * as PC from '../../../../utils/constants/FieldPathConstants';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
