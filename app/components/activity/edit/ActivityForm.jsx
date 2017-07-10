@@ -151,7 +151,10 @@ export default class ActivityForm extends Component {
       fieldPathsToSkipSet);
     if (errors.length) {
       // TODO proper errors reporting through AMPOFFLINE-448
-      validationError = translate('afFieldsGeneralError');
+      // also adding temporary some initial error message for QA/Dev quick clarification
+      let errorDetails = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join('. ');
+      errorDetails = errorDetails.length > 1000 ? `${errorDetails.substring(0, 1000)}...` : errorDetails;
+      validationError = `${translate('afFieldsGeneralError')} Details: ${errorDetails}`;
     }
     this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });

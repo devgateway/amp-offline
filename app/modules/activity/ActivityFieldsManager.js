@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 import { HIERARCHICAL_VALUE } from '../../utils/constants/ActivityConstants';
+import { DO_NOT_HYDRATE_FIELDS_LIST } from '../../utils/constants/FieldPathConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
@@ -265,6 +266,7 @@ export default class ActivityFieldsManager {
   }
 
   _validateValue(objects, fieldDef, fieldPath, isList, errors) {
+    const wasHydrated = !!this.possibleValuesMap[fieldPath] && !DO_NOT_HYDRATE_FIELDS_LIST.includes(fieldPath);
     const invalidValueError = translate('invalidValue');
     const invalidString = translate('invalidString');
     const stringLengthError = translate('stringTooLong').replace('%fieldName%', fieldDef.field_name);
@@ -281,7 +283,8 @@ export default class ActivityFieldsManager {
     // it could be faster to do outer checks for the type and then go through the list for each type,
     // but realistically there won't be many objects in the list, that's why opting for clear code
     objects.forEach(obj => {
-      const value = obj[fieldDef.field_name];
+      let value = obj[fieldDef.field_name];
+      value = wasHydrated && value ? value.id : value;
       if (isList) {
         if (!Array.isArray(value)) {
           // for complex objects it is also a list of properties
@@ -311,7 +314,8 @@ export default class ActivityFieldsManager {
             }
           }
           if (noParentChildMixing) {
-            const noParentChildMixingError = this.noParentChildMixing(value, fieldPath, idOnlyField.field_name);
+            const idOnlyFieldPath = `${fieldPath}~${idOnlyField.field_name}`;
+            const noParentChildMixingError = this.noParentChildMixing(value, idOnlyFieldPath, idOnlyField.field_name);
             if (noParentChildMixingError !== true) {
               this._addValidationError(obj, errors, fieldPath, noParentChildMixingError);
             }
@@ -324,7 +328,7 @@ export default class ActivityFieldsManager {
           this._addValidationError(obj, errors, fieldPath, stringLengthError);
         }
       } else if (fieldDef.field_type === 'long') {
-        if (!Number.isInteger(fieldDef.id_only === true ? value.id : value)) {
+        if (!Number.isInteger(value)) {
           // TODO AMPOFFLINE-448 add gs format
           this._addValidationError(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
         }
