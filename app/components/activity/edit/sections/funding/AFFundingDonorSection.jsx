@@ -6,8 +6,9 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingContainer from './AFFundingContainer';
-import AFValueString from '../../components/AFValueString';
+import AFField from '../../components/AFField';
 import styles from './AFFundingDonorSection.css';
+import * as Types from '../../components/AFComponentTypes';
 
 /**
  * @author Gabriel Inchauspe
@@ -41,25 +42,25 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _generateComplexHeader(i, funding) {
-    // TODO: Make sure teh AFValueString objects are refreshed when AFFields change.
+    // TODO: AFFields objects are refreshed.
     return (<div>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header} >
-        <AFValueString
+        <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`} parent={funding}
-          className={styles.header_small_item} /> |
-        <AFValueString
+          className={styles.header_small_item} showLabel={false} showValueAsLabel /> |
+        <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`} parent={funding}
-          className={styles.header_small_item} /> |
-        <AFValueString
-          fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding}
-          className={styles.header_small_item} /> |
-        <AFValueString
+          className={styles.header_small_item} showLabel={false} showValueAsLabel /> |
+        <AFField
+          fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding} type={Types.NUMBER}
+          className={styles.header_small_item} showLabel={false} showValueAsLabel /> |
+        <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`} parent={funding}
-          className={styles.header_small_item} /> |
-        <AFValueString
+          className={styles.header_small_item} showLabel={false} showValueAsLabel /> |
+        <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
-          className={styles.header_small_item} />
+          className={styles.header_small_item} showLabel={false} showValueAsLabel />
         {/* <Button bsSize="xsmall" bsStyle="danger"><Glyphicon glyph="glyphicon glyphicon-remove" /></Button> */}
       </div>
     </div>);

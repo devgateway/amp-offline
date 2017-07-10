@@ -13,7 +13,8 @@ export default class AFNumber extends Component {
     max: PropTypes.number,
     min: PropTypes.number,
     onChange: PropTypes.func,
-    readonly: PropTypes.bool
+    readonly: PropTypes.bool,
+    showValueAsLabel: PropTypes.bool
     // TODO: Add number check functions.
   };
 
@@ -56,8 +57,12 @@ export default class AFNumber extends Component {
   }
 
   render() {
-    return (<FormControl
-      componentClass="input" value={this.state.value} onChange={this.handleChange.bind(this)}
-      disabled={this.props.readonly || false} />);
+    if (this.props.showValueAsLabel) {
+      return <div>{this.state.value}</div>;
+    } else {
+      return (<FormControl
+        componentClass="input" value={this.state.value} onChange={this.handleChange.bind(this)}
+        disabled={this.props.readonly || false} />);
+    }
   }
 }

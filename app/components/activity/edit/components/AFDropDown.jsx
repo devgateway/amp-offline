@@ -14,7 +14,8 @@ export default class AFDropDown extends Component {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
     // TODO change it to be only number once we fix possible values to provide ids only as numbers
     selectedId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    showValueAsLabel: PropTypes.bool
   };
 
   constructor(props) {
@@ -60,17 +61,26 @@ export default class AFDropDown extends Component {
     if (!this.state.propsRecieved) {
       return null;
     }
-    const defaultOption = <option key={-1} value={-1} >{translate('Choose One')}</option>;
-    const options = this.props.options.map(option =>
-      <option key={option.id} value={option.id} >{option.translatedValue}</option>);
+    if (this.props.showValueAsLabel) {
+      const option = this.props.options.filter((item) => (
+        (item.id === this.props.selectedId || item._id === this.props.selectedId)
+      ));
+      if (option && option[0]) {
+        return <div>{option[0]._value}</div>;
+      }
+      return null;
+    } else {
+      const defaultOption = <option key={-1} value={-1} >{translate('Choose One')}</option>;
+      const options = this.props.options.map(option =>
+        <option key={option.id} value={option.id} >{option.translatedValue}</option>);
 
-    return (
-      <FormControl
-        componentClass="select" defaultValue={this.state.value} onChange={this.handleChange.bind(this)}
-        placeholder={-1} >
-        {[defaultOption].concat(options)}
-      </FormControl>
-    );
+      return (
+        <FormControl
+          componentClass="select" defaultValue={this.state.value} onChange={this.handleChange.bind(this)}
+          placeholder={-1} >
+          {[defaultOption].concat(options)}
+        </FormControl>
+      );
+    }
   }
-
 }

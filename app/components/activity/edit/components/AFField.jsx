@@ -37,7 +37,9 @@ export default class AFField extends Component {
     type: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     max: PropTypes.number,
-    min: PropTypes.number
+    min: PropTypes.number,
+    showValueAsLabel: PropTypes.bool,
+    className: PropTypes.string
   };
 
   constructor(props) {
@@ -106,7 +108,9 @@ export default class AFField extends Component {
   _getDropDown() {
     const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath));
     const selectedId = this.state.value ? this.state.value.id : null;
-    return <AFDropDown options={afOptions} onChange={this.validateIfRequired} selectedId={selectedId} />;
+    return (<AFDropDown
+      options={afOptions} onChange={this.validateIfRequired} selectedId={selectedId}
+      showValueAsLabel={this.props.showValueAsLabel} className={this.props.className} />);
   }
 
   _getListSelector() {
@@ -154,7 +158,9 @@ export default class AFField extends Component {
   }
 
   _getNumber() {
-    return (<AFNumber value={this.state.value} onChange={this.validateIfRequired} {...this.props} />);
+    return (<AFNumber
+      value={this.state.value} onChange={this.validateIfRequired} max={this.props.max}
+      min={this.props.min} className={this.props.className} showValueAsLabel={this.props.showValueAsLabel} />);
   }
 
   _getDate() {
@@ -185,7 +191,8 @@ export default class AFField extends Component {
     }
     return (
       <FormGroup
-        controlId={this.props.fieldPath} validationState={this.validate()} className={styles.activity_form_control} >
+        controlId={this.props.fieldPath} validationState={this.validate()}
+        className={`${styles.activity_form_control} ${this.props.className}`} >
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />
