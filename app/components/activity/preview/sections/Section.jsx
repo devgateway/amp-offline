@@ -12,12 +12,13 @@ import DateUtils from '../../../../utils/DateUtils';
  * Generic activity preview section class
  * @author Nadejda Mandrescu
  */
-const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = true) => class extends Component {
+const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = true, sID) => class extends Component {
   static propTypes = {
     titleDetails: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     sectionPath: PropTypes.string,
     titleClass: PropTypes.string,
     groupClass: PropTypes.string,
+    composedClass: PropTypes.string,
     fieldNameClass: PropTypes.string,
     fieldValueClass: PropTypes.string
   };
@@ -78,11 +79,13 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       return composedSection;
     }
     // TODO iteration 2+ section toggle (TDC based on desgin + VG)
-    return (<div key={SectionTitle} className={this.props.groupClass}>
+    return (<div key={SectionTitle} className={this.props.groupClass} id={sID}>
       <div className={this.props.titleClass}>
         <span>{translate(SectionTitle)} </span><span>{this.props.titleDetails}</span>
       </div>
-      {composedSection}
+      <div className={this.props.composedClass} >
+        {composedSection}
+      </div>
     </div>);
   }
 };

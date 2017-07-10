@@ -107,6 +107,15 @@ const ActivityHelper = {
   },
 
   /**
+   * Get all unique existing amp-ids
+   * @return {Promise.<Set>|*}
+   */
+  getUniqueAmpIdsList() {
+    return ActivityHelper.findAllNonRejected(Utils.toDefinedNotNullRule(AC.AMP_ID), Utils.toMap(AC.AMP_ID, 1)).then(
+      ampIds => new Set(Utils.flattenToListByKey(ampIds, AC.AMP_ID)));
+  },
+
+  /**
    * Saves the new activity or updates the existing
    * @param activity
    * @return {Promise}

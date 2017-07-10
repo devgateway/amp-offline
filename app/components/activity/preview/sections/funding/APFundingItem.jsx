@@ -30,7 +30,7 @@ class APFundingItem extends Component {
       this.props.wsCurrency);
     return (
       <tbody>
-        <tr>
+        <tr className={styles.row}>
           <td className={styles.left_text}>{translate(this.props.item[AC.ADJUSTMENT_TYPE].value)}</td>
           <td className={styles.right_text}>{createFormattedDate(this.props.item[AC.TRANSACTION_DATE])}</td>
           <td className={styles.right_text}>{`${convertedAmount} ${translate(this.props.wsCurrency)}`}</td>

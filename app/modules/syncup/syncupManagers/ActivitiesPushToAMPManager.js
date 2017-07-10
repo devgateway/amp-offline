@@ -4,6 +4,7 @@ import * as ActivityHelper from '../../helpers/ActivityHelper';
 import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
+import { SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
 import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorConstants';
@@ -19,9 +20,11 @@ import LoggerManager from '../../util/LoggerManager';
  */
 export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   constructor() {
-    super();
+    super(SYNCUP_TYPE_ACTIVITIES_PUSH);
     LoggerManager.log('ActivitiesPushToAMPManager');
     this._cancel = false;
+    this.diff = [];
+    this.pushed = new Set();
   }
 
   /**
@@ -41,31 +44,32 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @return {Promise}
    */
   doSyncUp(diff) {
-    this.diff = [];
-    this.pushed = new Set();
     return this._pushActivitiesToAMP(diff);
   }
 
   getDiffLeftover() {
+    // this leftover won't be used next time, but we calculate it to flag a partial push
     this.diff = this.diff.filter(id => !this.pushed.has(id));
     return this.diff;
   }
 
   _pushActivitiesToAMP(diff) {
     LoggerManager.log('_pushActivitiesToAMP');
-    return new Promise((resolve, reject) => {
-      // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
-      if (store.getState().userReducer.userData.ampOfflinePassword) {
-        return this._rejectActivitiesClientSide(diff)
-          .then(() => {
-            const steps = [
-              this._getValidUsers, this._getWSMembers, this._getActivitiesToPush, this._pushActivities.bind(this)];
-            return this._pushSteps(steps);
-          }).then(resolve).catch(reject);
-      }
-      const errorMsgTrn = translate('SyncupDeniedMustRelogin');
-      reject(new Notification({ message: errorMsgTrn, origin: NOTIFICATION_ORIGIN_API_SYNCUP }));
-    });
+    // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
+    if (store.getState().userReducer.userData.ampOfflinePassword) {
+      return this._rejectActivitiesClientSide(diff)
+        .then(() => {
+          const steps = [
+            this._getValidUsers, this._getWSMembers, this._getActivitiesToPush, this._pushActivities.bind(this)];
+          return this._pushSteps(steps);
+        })
+        .then(() => {
+          this.done = true;
+          return this.done;
+        });
+    }
+    const errorMsgTrn = translate('SyncupDeniedMustRelogin');
+    return Promise.reject(new Notification({ message: errorMsgTrn, origin: NOTIFICATION_ORIGIN_API_SYNCUP }));
   }
 
   /**
@@ -130,19 +134,17 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     LoggerManager.log('_pushActivities');
     this.diff = activities.map(activity => activity.id);
     // executing push one by one for now and sequentially to avoid AMP / client overload
-    return new Promise((resolve, reject) => {
-      if (!activities) {
-        return Promise.resolve();
-      }
-      return activities.reduce((currentPromise, nextActivity) =>
-        currentPromise.then(() => {
-          if (this._cancel === true) {
-            return resolve();
-          }
-          // uninterruptible call
-          return this._pushActivity(nextActivity);
-        }), Promise.resolve()).then(resolve).catch(reject);
-    });
+    if (!activities) {
+      return Promise.resolve();
+    }
+    return activities.reduce((currentPromise, nextActivity) =>
+      currentPromise.then(() => {
+        if (this._cancel === true) {
+          return Promise.resolve();
+        }
+        // uninterruptible call
+        return this._pushActivity(nextActivity);
+      }), Promise.resolve());
   }
 
   _pushActivity(activity) {
@@ -172,6 +174,12 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    */
   _processPushResult({ activity, pushResult, error }) {
     LoggerManager.log('_processPushResult');
+    // If we got an EP result, no matter if the import was rejected, then the push was successful.
+    // The user may either use a newer activity or fix some validation issues.
+    // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
+    if (pushResult) {
+      this.pushed.add(activity.id);
+    }
     // save the rejection immediately to allow a quicker syncup cancellation
     const errorData = error || (pushResult ? pushResult.error : undefined);
     if (errorData) {
@@ -179,8 +187,6 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData))
         .then(resolve)
         .catch(reject));
-    } else {
-      this.pushed.add(activity.id);
     }
     return Promise.resolve();
   }

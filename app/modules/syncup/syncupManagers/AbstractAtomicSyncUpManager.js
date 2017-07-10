@@ -8,13 +8,12 @@ import SyncUpManagerInterface, { throwSyncUpError } from './SyncUpManagerInterfa
  */
 export default class AbstractAtomicSyncUpManager extends SyncUpManagerInterface {
 
-  constructor() {
-    super();
+  constructor(...args) {
+    super(...args);
 
     if (this.doAtomicSyncUp === undefined) {
       throwSyncUpError('AbstractAtomicSyncUpManager.doAtomicSyncUp not implemented');
     }
-    this.done = false;
   }
 
   doSyncUp(diff) {

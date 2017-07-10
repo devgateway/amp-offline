@@ -10,7 +10,9 @@ import NumberUtils from '../../../../utils/NumberUtils';
 export default class APPercentageField extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    value: PropTypes.number
+    value: PropTypes.number,
+    titleClass: PropTypes.string,
+    valueClass: PropTypes.string
   };
 
   constructor(props) {
@@ -23,8 +25,8 @@ export default class APPercentageField extends Component {
       ? `${NumberUtils.rawNumberToFormattedString(this.props.value)}%`
       : null;
     return (<div>
-      <span>{this.props.title} </span>
-      <span className={styles.alignRight}>{percentage}</span>
+      <span className={this.props.titleClass}>{this.props.title} </span>
+      <span className={`${this.props.valueClass} ${styles.alignRight}`}>{percentage}</span>
     </div>);
   }
 }

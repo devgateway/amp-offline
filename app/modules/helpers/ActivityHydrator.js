@@ -3,12 +3,12 @@ import * as FieldsHelper from './FieldsHelper';
 import store from '../../index';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../activity/PossibleValuesManager';
-import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
-import { PATHS_WITH_TREE_STRUCTURE, LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import {
-  HIERARCHICAL_VALUE,
-  HIERARCHICAL_VALUE_DEPTH
-} from '../../utils/constants/ActivityConstants';
+  DO_NOT_HYDRATE_FIELDS_LIST,
+  LOCATION_PATH,
+  PATHS_WITH_TREE_STRUCTURE
+} from '../../utils/constants/FieldPathConstants';
+import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -133,21 +133,11 @@ export default class ActivityHydrator {
   }
 
   _fillSelectedOption(possibleValues, selectedId) {
-    const option = Object.assign({}, possibleValues['possible-options'][selectedId]);
-    const valueParts = this._getdHierchicalValueParts(possibleValues, selectedId);
-    option[HIERARCHICAL_VALUE] = this._formatValueParts(valueParts);
-    option[HIERARCHICAL_VALUE_DEPTH] = (valueParts && valueParts instanceof Array) ? valueParts.length : 0;
-    // option[HIERARCHICAL_VALUE_PARTS] = valueParts;
-    return option;
-  }
-
-  _getdHierchicalValueParts(possibleValues, selectedId) {
-    if (LOCATION_PATH === possibleValues.id) {
-      return this._buildHierarchicalValueParts(possibleValues['possible-options'], selectedId);
-    } else if (PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
-      return this._buildHierarchicalValueParts(possibleValues['possible-options'], selectedId);
+    const options = possibleValues['possible-options'];
+    if (LOCATION_PATH === possibleValues.id || PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
+      return PossibleValuesManager.buildHierarchicalData(options, selectedId);
     }
-    return null;
+    return Object.assign({}, options[selectedId]);
   }
 
   // old mechanism for locations, using v1 API
@@ -161,20 +151,6 @@ export default class ActivityHydrator {
     return nameParts;
   }
 
-  _buildHierarchicalValueParts(options, selectedId) {
-    const nameParts = [];
-    let current = options[selectedId];
-    while (current) {
-      nameParts.push(PossibleValuesManager.getOptionTranslation(current));
-      current = options[current.parentId];
-    }
-    return nameParts;
-  }
-
-  _formatValueParts(valueParts) {
-    return (valueParts && valueParts instanceof Array) ? `[${valueParts.reverse().join('][')}]` : valueParts;
-  }
-
   /**
    * Retrieves possible field options for specified field paths or all options if no field paths are given
    * @param fieldPaths
@@ -183,9 +159,15 @@ export default class ActivityHydrator {
    */
   _getPossibleValues(fieldPaths) {
     const filter = {};
+    // AMP started to provide approval_status possible options, but so far there is no need to hydrate it and it is not
+    // id-only field => if it will be needed, be careful when adding back to include custom validation, etc
+    // TODO rather filter possible options result by non-id fields
     if (fieldPaths && fieldPaths.length > 0) {
-      filter.id = { $in: fieldPaths };
+      filter.id = { $in: fieldPaths.filter(path => !DO_NOT_HYDRATE_FIELDS_LIST.includes(path)) };
+    } else {
+      filter.id = { $nin: DO_NOT_HYDRATE_FIELDS_LIST };
     }
+
     return PossibleValuesHelper.findAll(filter).then(possibleValuesCollection => {
       if (fieldPaths && fieldPaths.legth !== 0 && possibleValuesCollection.length !== fieldPaths.length) {
         const missing = new Map(fieldPaths.map(fieldPath => [fieldPath, 1]));

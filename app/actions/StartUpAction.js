@@ -5,16 +5,17 @@ import { loadCurrencyRates } from './CurrencyRatesAction';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
 // this is temporal will be stored in settings
 import {
-  SERVER_URL,
-  BASE_REST_URL,
-  PROTOCOL,
   BASE_PORT,
+  BASE_REST_URL,
   CONNECTION_TIMEOUT,
-  CONNECTIVITY_CHECK_INTERVAL
+  CONNECTIVITY_CHECK_INTERVAL,
+  PROTOCOL,
+  SERVER_URL
 } from '../utils/Constants';
 import LoggerManager from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import DateUtils from '../utils/DateUtils';
+import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -28,6 +29,10 @@ let timer;
 
 export const STATE_GS_NUMBERS_LOADED = 'STATE_GS_NUMBERS_LOADED';
 export const STATE_GS_DATE_LOADED = 'STATE_GS_DATE_LOADED';
+export const STATE_GS_PENDING = 'STATE_GS_PENDING';
+export const STATE_GS_FULFILLED = 'STATE_GS_FULFILLED';
+export const STATE_GS_REJECTED = 'STATE_GS_REJECTED';
+const STATE_GS = 'STATE_GS';
 
 /**
  * Checks and updates the connectivity status
@@ -38,6 +43,7 @@ export function ampStartUp() {
     .then(scheduleConnectivityCheck)
     .then(loadNumberSettings)
     .then(loadDateSettings)
+    .then(loadGlobalSettings)
     .then(loadCurrencyRatesOnStartup);
 }
 
@@ -89,6 +95,27 @@ export function loadDateSettings() {
     }).catch(reject)
   ));
 }
+
+/**
+ * Loads GS as { key: value } pairs to be ready for sync usage, since the list is small and is readonly on the client.
+ * @return {Promise}
+ */
+export function loadGlobalSettings() {
+  LoggerManager.log('loadGlobalSettings');
+  const gsPromise = GlobalSettingsHelper.findAll({}).then(gsList => {
+    const gsData = {};
+    gsList.forEach(gs => {
+      gsData[gs.key] = gs.value;
+    });
+    return gsData;
+  });
+  store.dispatch({
+    type: STATE_GS,
+    payload: gsPromise
+  });
+  return gsPromise;
+}
+
 export function loadCurrencyRatesOnStartup() {
   return new Promise((resolve) => {
     store.dispatch(loadCurrencyRates());

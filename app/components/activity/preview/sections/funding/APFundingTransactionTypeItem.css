@@ -1,33 +1,45 @@
 .header {
-  text-transform: uppercase;
-  background-color: #FFFFCC;
+  margin-top: 10px;
+  padding: 10px;
+  padding-left: 20px;
+  font-size: 0.85em;
+  color: #767676;
+  background-color: #f8f8f8;
   font-weight: bold;
-  margin-top: 2.5em;
+}
+
+.table_container {
+  margin-bottom: 10px;
 }
 
 .subtotal_footer_legend {
-  text-transform: uppercase;
-  background-color: #eeeeee;
+  display: inline-block;
+  background-color: #f5faff;
   font-weight: bold;
-  border-top: 1px solid #000000;
-  float: left;
+  border-top: 1px solid #ebebeb;
+  border-bottom: 1px solid #ebebeb;
+  text-align: left;
   width: 50%;
+  padding: 5px;
+  padding-left: 20px;
+  padding-top: 8px;
+  padding-bottom: 6px;
+  margin-bottom: 15px;
+  font-size: 0.85em;
+  color: #767676;
 }
 
 .subtotal_footer_number {
-  background-color: #eeeeee;
+  display: inline-block;
+  background-color: #f5faff;
   font-weight: bold;
-  border-top: 1px solid #000000;
-  float: right;
+  border-top: 1px solid #ebebeb;
+  border-bottom: 1px solid #ebebeb;
   width: 50%;
   text-align: right;
-}
-
-.subtotal_footer_number {
-  background-color: #eeeeee;
-  font-weight: bold;
-  border-top: 1px solid #000000;
-  float: right;
+  padding: 5px;
+  padding-right: 20px;
+  margin-bottom: 15px;
 }
 
 .funding_table {

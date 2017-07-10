@@ -2,13 +2,17 @@ import CurrencyRatesHelper from '../../helpers/CurrencyRatesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import Utils from '../../../utils/Utils';
-import SyncUpHelper from '../../helpers/SyncUpHelper';
 import { GET_FULL_EXCHANGE_RATES, GET_INCREMENTAL_EXCHANGE_RATES } from '../../connectivity/AmpApiConstants';
-import { SYNCUP_DATETIME_FIELD } from '../../../utils/Constants';
+import { SYNCUP_TYPE_EXCHANGE_RATES } from '../../../utils/Constants';
 
 /* eslint-disable class-methods-use-this */
 
 export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpManager {
+
+  constructor() {
+    super(SYNCUP_TYPE_EXCHANGE_RATES);
+  }
+
   /**
    * Go to an EP, get the list of Currency Rates and save it in a collection.
    * If the rates are already saved in the database a partial sync will be performed.
@@ -47,17 +51,14 @@ export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpMana
    * @returns {*|Promise.<TResult>}
    */
   _doPartialSync(currencyRates) {
-    return SyncUpHelper.getLastSyncUpLog().then(lastSyncUpLog => {
-      const timeStamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
-      // with the timestamp we go and fetch the partial sync
-      const paramsMap = { 'last-sync-time': timeStamp };
-      return ConnectionHelper.doGet({
-        url: GET_INCREMENTAL_EXCHANGE_RATES,
-        paramsMap
-      }).then(updatedCurrencyRates =>
-        this._processPartialSync(currencyRates, updatedCurrencyRates)
-      );
-    });
+    // with the timestamp we go and fetch the partial sync
+    const paramsMap = { 'last-sync-time': this._lastSyncTimestamp };
+    return ConnectionHelper.doGet({
+      url: GET_INCREMENTAL_EXCHANGE_RATES,
+      paramsMap
+    }).then(updatedCurrencyRates =>
+      this._processPartialSync(currencyRates, updatedCurrencyRates)
+    );
   }
 
   _processPartialSync(currencyRates, updatedCurrencyRates) {

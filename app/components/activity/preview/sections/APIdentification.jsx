@@ -32,4 +32,4 @@ class APIdentification extends Component {
   }
 }
 
-export default Section(APIdentification, 'Identification');
+export default Section(APIdentification, 'Identification', true, 'APIdentification');

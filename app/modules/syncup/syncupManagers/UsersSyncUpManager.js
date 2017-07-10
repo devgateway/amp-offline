@@ -2,6 +2,7 @@ import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import * as UserHelper from '../../helpers/UserHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { USER_PROFILE_URL } from '../../connectivity/AmpApiConstants';
+import { SYNCUP_TYPE_USERS } from '../../../utils/Constants';
 import LoggerManager from '../../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -11,6 +12,10 @@ import LoggerManager from '../../util/LoggerManager';
  * @author Nadejda Mandrescu
  */
 export default class UsersSyncUpManager extends AbstractAtomicSyncUpManager {
+
+  constructor() {
+    super(SYNCUP_TYPE_USERS);
+  }
 
   /**
    * Sync detailed data about the users we currently have in the local db.

@@ -8,7 +8,6 @@ import APLocation from './sections/APLocation';
 import APNationalPlanObjective from './sections/APNationalPlanObjective';
 import APProgram from './sections/APProgram';
 import APSector from './sections/APSector';
-import { APProposedProjectCost, APRevisedProjectCost } from './sections/APProjectCost';
 import APFundingSources from './sections/APFundingSources';
 import LoggerManager from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
@@ -30,15 +29,23 @@ export default class MainGroup extends Component {
     // TODO (iteration 2+) hide sections that are not directly connected to a single field (e.g. planning, program)
     return (<div className={styles.main_group_container}>
       <APIdentification />
-      <APInternalIds sectionPath={AC.ACTIVITY_INTERNAL_IDS} />
-      <APPlanning />
-      <APLocation sectionPath={AC.LOCATIONS} />
-      <APNationalPlanObjective sectionPath={AC.NATIONAL_PLAN_OBJECTIVE} />
-      <APProgram />
-      <APSector />
-      <APProposedProjectCost sectionPath={AC.PPC_AMOUNT} />
-      <APRevisedProjectCost sectionPath={AC.RPC_AMOUNT} />
-      <APRevisedProjectCost sectionPath={AC.RPC_AMOUNT} />
+      <APInternalIds
+        sectionPath={AC.ACTIVITY_INTERNAL_IDS} />
+      <APPlanning
+        inline={false}
+        fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
+      <APLocation
+        sectionPath={AC.LOCATIONS} tablify columns={AC.ACTIVITY_LOCATION_COLS}
+        fieldNameClass="" fieldValueClass="" />
+      <APNationalPlanObjective
+        sectionPath={AC.NATIONAL_PLAN_OBJECTIVE}
+        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
+      <APProgram
+        fieldNameClass={styles.sector_title}
+        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
+      <APSector
+        fieldNameClass={styles.sector_title} fieldValueClass={''}
+        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APFundingSources />
       <APFundingSection />
       <APRelatedOrganizations />

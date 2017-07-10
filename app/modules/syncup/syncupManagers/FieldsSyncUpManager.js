@@ -4,6 +4,7 @@ import * as FieldsHelper from '../../helpers/FieldsHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import Notification from '../../helpers/NotificationHelper';
+import { SYNCUP_TYPE_FIELDS } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../../utils/constants/ErrorConstants';
 
@@ -16,7 +17,7 @@ import { NOTIFICATION_ORIGIN_DATABASE } from '../../../utils/constants/ErrorCons
  */
 export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
   constructor() {
-    super();
+    super(SYNCUP_TYPE_FIELDS);
     // TODO remove once AMP-25568 is done, as part of AMPOFFLINE-270
     this._useSingleTreeEP = true;
     this._doUpdate = true;

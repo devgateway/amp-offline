@@ -6,6 +6,7 @@ import AFDropDown from './AFDropDown';
 import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
+import styles from '../ActivityForm.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
 import translate from '../../../../utils/translate';
@@ -28,9 +29,11 @@ export default class AFField extends Component {
   static propTypes = {
     fieldPath: PropTypes.string.isRequired,
     parent: PropTypes.object.isRequired,
+    filter: PropTypes.array,
     showLabel: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
-    type: PropTypes.string
+    type: PropTypes.string,
+    onAfterUpdate: PropTypes.func
   };
 
   constructor(props) {
@@ -56,6 +59,12 @@ export default class AFField extends Component {
   componentWillReceiveProps() {
     if (this.context.isSaveAndSubmit) {
       this.validateIfRequired(this.state.value, false);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.onAfterUpdate && prevState.value !== this.state.value) {
+      this.props.onAfterUpdate();
     }
   }
 
@@ -93,7 +102,9 @@ export default class AFField extends Component {
 
   _getListSelector() {
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
-    const options = this._getOptions(`${this.props.fieldPath}~${optionsFieldName}`);
+    const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
+    let options = this._getOptions(optionsFieldPath);
+    options = PossibleValuesManager.buildFormattedHierarchicalValues(options);
     const afOptions = this._toAFOptions(PossibleValuesManager.fillHierarchicalDepth(options));
     const selectedOptions = this.state.value;
     return (<AFListSelector
@@ -108,15 +119,17 @@ export default class AFField extends Component {
       LoggerManager.error(`Options not found for ${this.props.fieldPath}`);
       return [];
     }
-    return options;
+    return PossibleValuesManager.setVisibility(options, fieldPath, this.props.filter);
   }
 
   _toAFOptions(options) {
-    return Object.values(options).map(option => {
-      const afOption = new AFOption(option);
-      afOption.value = PossibleValuesManager.getOptionTranslation(option);
+    return PossibleValuesManager.getTreeSortedOptionsList(options).map(option => {
+      const afOption = option.visible ? new AFOption(option) : null;
+      if (afOption) {
+        afOption.value = PossibleValuesManager.getOptionTranslation(option);
+      }
       return afOption;
-    });
+    }).filter(afOption => afOption !== null);
   }
 
   _getRichTextEditor() {
@@ -143,7 +156,7 @@ export default class AFField extends Component {
     const isRequired = this.alwaysRequired || (asDraft === false && this.fieldDef.required === 'ND');
     if (isRequired &&
       (value === null || value === undefined || value === '' || (value.length !== undefined && value.length === 0))) {
-      validationError = translate('Field is required!');
+      validationError = translate('requiredField');
     }
     this.props.parent[this.fieldName] = value;
     this.setState({ value, validationError });
@@ -154,7 +167,8 @@ export default class AFField extends Component {
       return null;
     }
     return (
-      <FormGroup controlId={this.props.fieldPath} validationState={this.validate()} >
+      <FormGroup
+        controlId={this.props.fieldPath} validationState={this.validate()} className={styles.activity_form_control}>
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />

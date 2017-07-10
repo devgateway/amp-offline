@@ -68,7 +68,7 @@ class FundingSummary extends Component {
         const title = `${totalTrn} ${translate(measure)}`;
         const key = `Summary-Total-${measure}`;
         fundingInfoSummary.push(<APField
-          key={key} title={title} value={value}
+          key={key} title={title} value={value} separator={false}
           fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
       }
     });

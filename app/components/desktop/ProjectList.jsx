@@ -89,28 +89,29 @@ export default class ProjectList extends Component {
             className={style.thClassName} />
           <TableHeaderColumn
             dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.width_8}
-            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}>
+            filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}
+            columnTitle>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField={PROJECT_TITLE} dataFormat={ProjectList.projectNameFormatter} dataSort ref={PROJECT_TITLE}
-            columnClassName={style.width_40}
+            columnClassName={style.width_40} columnTitle
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
             className={style.thClassName}>
             {translate('Project Title')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="donor" dataSort columnClassName={style.width_15}
+            dataField="donor" dataSort columnClassName={style.width_15} columnTitle
             className={style.thClassName}>{translate('Funding Agency')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualCommitments" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={ProjectList.numberFormatter}>
+            dataFormat={ProjectList.numberFormatter} columnTitle>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualDisbursements" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={ProjectList.numberFormatter}>
+            dataFormat={ProjectList.numberFormatter} columnTitle>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>

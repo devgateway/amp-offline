@@ -9,7 +9,7 @@ import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 import translate from '../../utils/translate';
-import { SYNCUP_STATUS_SUCCESS, SYNCUP_STATUS_FAIL } from '../../utils/Constants';
+import { SYNCUP_STATUS_SUCCESS } from '../../utils/Constants';
 import DateUtils from '../../utils/DateUtils';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
@@ -49,7 +49,12 @@ export default class SyncUp extends Component {
     this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave.bind(this));
   }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.syncUpReducer.syncUpInProgress !== this.props.syncUpReducer.syncUpInProgress &&
+        !nextProps.syncUpReducer.syncUpInProgress
+    ) {
+      this.props.getSyncUpHistory();
+    }
     LoggerManager.log('componentWillReceiveProps');
   }
 
@@ -74,7 +79,8 @@ export default class SyncUp extends Component {
           </div>
         );
       } else if (historyData) {
-        if (historyData.status === SYNCUP_STATUS_SUCCESS) {
+        const allFailed = !historyData.units.some(module => module.status === SYNCUP_STATUS_SUCCESS);
+        if (!allFailed) {
           const message = translate('lastSuccessfulSyncupDate')
             .replace('%date%', DateUtils.createFormattedDate(new Date(historyData['sync-date'])));
 
@@ -82,12 +88,12 @@ export default class SyncUp extends Component {
             <div className="container">
               <div className="row">
                 <div className="col-sm-12">
-                  <InfoMessage type="success" message={message} />
+                  <InfoMessage type="success" message={message} timeout={0} />
                 </div>
               </div>
             </div>
           );
-        } else if (historyData.status === SYNCUP_STATUS_FAIL) {
+        } else {
           return (
             <div className="container">
               <div className="row">
@@ -103,8 +109,10 @@ export default class SyncUp extends Component {
           <div className="container">
             <div className="row">
               <div className="col-sm-12">
-                <ErrorMessage
+                <InfoMessage
+                  type="success"
                   message={translate('noUserDataSyncWarning')}
+                  timeout={0}
                 />
               </div>
             </div>

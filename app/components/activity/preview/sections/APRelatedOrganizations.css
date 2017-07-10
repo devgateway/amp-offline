@@ -1,4 +1,29 @@
 .organization {
   font-weight: bold;
-  margin-left: 25px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.organization_container {
+  border-top: 1px solid #ebebeb;
+}
+
+.organization_container div:nth-child(2n+1) {
+  border-right: 1px solid #ebebeb;
+}
+
+.organization_title {
+  background-color: #f4f4f4;
+  color: #9d9d9d;
+  border-bottom: 1px solid #ebebeb;
+  padding: 8px;
+  margin-bottom: 15px;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.organization_box {
+  width: 50%;
+  display: inline-block;
 }

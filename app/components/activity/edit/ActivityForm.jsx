@@ -10,6 +10,7 @@ import ErrorMessage from '../../common/ErrorMessage';
 import InfoMessage from '../../common/InfoMessage';
 import { PROJECT_TITLE, IS_DRAFT, AMP_ID, INTERNAL_ID } from '../../../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
+import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../utils/translate';
@@ -121,7 +122,10 @@ export default class ActivityForm extends Component {
 
   _renderQuickLinks() {
     const sectionLinks = this.sections.map(sectionName =>
-      <Button key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block >
+      <Button
+        key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block
+        className={this.state.currentSection === sectionName ? styles.quick_links_highlight
+          : styles.quick_links_button} >
         <div className={styles.quick_links}>{translate(sectionName)}</div>
       </Button>);
     return (
@@ -140,16 +144,17 @@ export default class ActivityForm extends Component {
 
   _saveActivity(asDraft) {
     let validationError;
-    const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID]);
-    const invalidFieldPaths = new Set();
+    // TODO to adjust oonce AMP-XXX is fixed to properly define activive
+    const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID, FUNDING_ACTIVE_LIST]);
     this.activity[IS_DRAFT] = asDraft;
-    if (!this.props.activityReducer.activityFieldsManager.areRequiredFieldsSpecified(this.activity, asDraft,
-        fieldPathsToSkipSet, invalidFieldPaths)) {
-      // Show a simple list of failing fields using the user-friendly name of them.
-      const errorsToLabel = invalidFieldPaths.toJSON()
-        .map(item => (this.props.activityReducer.activityFieldsManager.getFieldLabelTranslation(item)))
-        .join(', ');
-      validationError = `${translate('Please provide all required fields')}: ${errorsToLabel}`;
+    const errors = this.props.activityReducer.activityFieldsManager.areAllConstraintsMet(this.activity, asDraft,
+      fieldPathsToSkipSet);
+    if (errors.length) {
+      // TODO proper errors reporting through AMPOFFLINE-448
+      // also adding temporary some initial error message for QA/Dev quick clarification
+      let errorDetails = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join('. ');
+      errorDetails = errorDetails.length > 1000 ? `${errorDetails.substring(0, 1000)}...` : errorDetails;
+      validationError = `${translate('afFieldsGeneralError')} Details: ${errorDetails}`;
     }
     this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
@@ -176,11 +181,16 @@ export default class ActivityForm extends Component {
       <div>
         <div className={styles.general_header}>{translate('Actions')}</div>
         <div>
-          <Button key="submit" onClick={this._saveActivity.bind(this, false)} block >{translate('Save and Submit')}
+          <Button
+            bsClass={styles.action_button} key="submit"
+            onClick={this._saveActivity.bind(this, false)} block >{translate('Save and Submit')}
           </Button>
-          <Button key="saveAsDraft" onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
+          <Button
+            bsClass={styles.action_button} key="saveAsDraft"
+            onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
           </Button>
-          <Button key="preview" disabled={this.state.isNewActivity} block>
+          <Button
+            key="preview" bsClass={styles.action_button} disabled={this.state.isNewActivity} block>
             <Link to={previewUrl} title={translate('Preview')}>
               {translate('Preview')}
             </Link>

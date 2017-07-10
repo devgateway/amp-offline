@@ -30,11 +30,30 @@ export default class AFDropDown extends Component {
     this.setState({ value: this.props.selectedId, propsRecieved: true });
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.options !== prevProps.options) {
+      this._checkIfValueChanged(this.state.value);
+    }
+  }
+
   handleChange(e) {
-    const value = e.target.value;
-    const selectedOption = this.props.options.find(o => `${o.id}` === value);
+    this._handleChange(this._findSelectedOption(e.target.value));
+  }
+
+  _findSelectedOption(value) {
+    return this.props.options.find(o => `${o.id}` === `${value}`);
+  }
+
+  _checkIfValueChanged(value) {
+    const selectedOption = this._findSelectedOption(value);
+    if ((selectedOption === undefined && this.state.value) || (selectedOption && !this.state.value)) {
+      this._handleChange(selectedOption);
+    }
+  }
+
+  _handleChange(selectedOption) {
     this.props.onChange(selectedOption);
-    this.setState({ value });
+    this.setState({ value: selectedOption ? selectedOption.id : selectedOption });
   }
 
   render() {

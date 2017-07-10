@@ -1,36 +1,45 @@
-import {
-  HIERARCHICAL_VALUE_DEPTH
-} from '../../utils/constants/ActivityConstants';
+import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../utils/constants/ActivityConstants';
+import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import store from '../../index';
 import LoggerManager from '../../modules/util/LoggerManager';
+import ActivityFieldsManager from './ActivityFieldsManager';
+import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 /**
  * Possible Values manager that allows to fill in additional information and tranformations
  * @author Nadejda Mandrescu
  */
 const PossibleValuesManager = {
-  /**
-   * Builds tree set of ids from the parentId
-   * This implementation is based on the current locations extra info approach and can change.
-   */
-  expandParentWithChildren(options, parentId) {
-    LoggerManager.log('expandParentWithChildren');
-    if (parentId === undefined || parentId === null) {
-      return null;
+
+  buildFormattedHierarchicalValues(options) {
+    // TODO optimize
+    const hOptions = {};
+    Object.values(options).forEach(option => {
+      hOptions[option.id] = this.buildHierarchicalData(options, option.id);
+    });
+    return hOptions;
+  },
+
+  buildHierarchicalData(options, selectedId) {
+    const option = Object.assign({}, options[selectedId]);
+    const valueParts = this.getHierarchicalValue(options, selectedId);
+    option[HIERARCHICAL_VALUE] = this.formatValueParts(valueParts);
+    option[HIERARCHICAL_VALUE_DEPTH] = (valueParts && valueParts instanceof Array) ? valueParts.length : 0;
+    return option;
+  },
+
+  getHierarchicalValue(options, selectedId) {
+    const nameParts = [];
+    let current = options[selectedId];
+    while (current) {
+      nameParts.push(this.getOptionTranslation(current));
+      current = options[current.parentId];
     }
-    const ids = new Set();
-    let idsToExpand = [parentId];
-    while (idsToExpand.length > 0) {
-      const nextId = idsToExpand.pop();
-      if (!ids.has(nextId)) {
-        ids.add(nextId);
-        const newIds = options
-          .filter(o => o.extra_info && o.extra_info.parent_location_id && o.extra_info.parent_location_id === nextId)
-          .map(o => o.id);
-        idsToExpand = idsToExpand.concat(newIds);
-      }
-    }
-    return ids;
+    return nameParts;
+  },
+
+  formatValueParts(valueParts) {
+    return (valueParts && valueParts instanceof Array) ? `[${valueParts.reverse().join('][')}]` : valueParts;
   },
 
   /**
@@ -75,6 +84,51 @@ const PossibleValuesManager = {
       resVal = translations[langState.lang] || translations[langState.defaultLang] || resVal;
     }
     return resVal;
+  },
+
+  setVisibility(options, fieldPath, filters) {
+    options = { ...options };
+    Object.values(options).forEach(option => {
+      option.visible = true;
+      if (LOCATION_PATH === fieldPath) {
+        option.displayHierarchicalValue = true;
+      }
+    });
+    if (filters) {
+      filters.forEach(filter => {
+        const filterBy = filter.value;
+        Object.values(options).forEach(option => {
+          const optionDataToCheck = ActivityFieldsManager.getValue(option, filter.path);
+          if (option.visible && optionDataToCheck && (
+            (optionDataToCheck instanceof Array && optionDataToCheck.includes(filterBy)) ||
+            (optionDataToCheck === filterBy))) {
+            option.visible = true;
+          } else {
+            option.visible = false;
+          }
+        });
+      });
+    }
+    return options;
+  },
+
+  getTreeSortedOptionsList(optionsObj) {
+    const added = new Set();
+    const optionsList = [];
+    const idsStack = Object.values(optionsObj).filter(o => !o.parentId).sort(PossibleValuesHelper.reverseSortOptions)
+      .map(o => o.id);
+    while (idsStack.length) {
+      const id = idsStack.pop();
+      if (!added.has(id)) {
+        const option = optionsObj[id];
+        if (option.reverseSortedChildren) {
+          idsStack.push(...option.reverseSortedChildren);
+        }
+        added.add(id);
+        optionsList.push(option);
+      }
+    }
+    return optionsList;
   }
 
 };

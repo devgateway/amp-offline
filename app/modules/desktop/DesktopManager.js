@@ -90,9 +90,9 @@ const DesktopManager = {
   getActivityIsNew(item) {
     if (item[IS_DRAFT]) {
       if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'edited') {
-        return true;
-      } else {
         return false;
+      } else {
+        return true;
       }
     } else {
       if (item[APPROVAL_STATUS] === 'started') {

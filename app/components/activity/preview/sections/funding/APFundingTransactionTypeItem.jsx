@@ -67,7 +67,7 @@ class APFundingTransactionTypeItem extends Component {
   render() {
     LoggerManager.log('render');
     // TODO: Add Undisbursed Balance section.
-    return (<div>
+    return (<div className={styles.table_container}>
       <div>{this._drawHeader()}</div>
       <div>{this._drawDetail()}</div>
       <div>{this._drawSubTotalFooter()}</div>
@@ -76,4 +76,3 @@ class APFundingTransactionTypeItem extends Component {
 }
 
 export default APFundingTransactionTypeItem;
-

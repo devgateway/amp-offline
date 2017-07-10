@@ -35,21 +35,23 @@ class APRelatedOrganizations extends Component {
     const content = [];
     this.orgTypes.forEach(orgType => {
       if (this.props.activity[orgType] && this.props.activity[orgType].length > 0) {
-        content.push(<APLabel label={orgType} key={orgType} separator />);
+        const subcontent = [];
+        subcontent.push(<APLabel label={orgType} key={orgType} labelClass={styles.organization_title} />);
         this.props.activity[orgType].forEach(org => {
-          content.push(<APLabel
+          subcontent.push(<APLabel
             label={org.organization.value}
             labelClass={styles.organization}
             key={org[AMP_ORGANIZATION_ROLE_ID]}
-            separator />);
+            />);
         });
+        content.push(<div className={styles.organization_box}>{subcontent}</div>);
       }
     });
     return content;
   }
 
   render() {
-    return (<div>
+    return (<div className={styles.organization_container}>
       {this._build()}
     </div>);
   }
