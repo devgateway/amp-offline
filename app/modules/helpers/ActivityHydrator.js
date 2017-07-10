@@ -3,8 +3,11 @@ import * as FieldsHelper from './FieldsHelper';
 import store from '../../index';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../activity/PossibleValuesManager';
-import { APPROVAL_STATUS } from '../../utils/constants/ActivityConstants';
-import { LOCATION_PATH, PATHS_WITH_TREE_STRUCTURE } from '../../utils/constants/FieldPathConstants';
+import {
+  DO_NOT_HYDRATE_FIELDS_LIST,
+  LOCATION_PATH,
+  PATHS_WITH_TREE_STRUCTURE
+} from '../../utils/constants/FieldPathConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../util/LoggerManager';
 
@@ -137,7 +140,6 @@ export default class ActivityHydrator {
     return Object.assign({}, options[selectedId]);
   }
 
-
   // old mechanism for locations, using v1 API
   _buildLocationHierchicalValueParts(options, selectedId) {
     const nameParts = [];
@@ -160,11 +162,10 @@ export default class ActivityHydrator {
     // AMP started to provide approval_status possible options, but so far there is no need to hydrate it and it is not
     // id-only field => if it will be needed, be careful when adding back to include custom validation, etc
     // TODO rather filter possible options result by non-id fields
-    const skipActivityPossibleOptions = [APPROVAL_STATUS];
     if (fieldPaths && fieldPaths.length > 0) {
-      filter.id = { $in: fieldPaths.filter(path => !skipActivityPossibleOptions.includes(path)) };
+      filter.id = { $in: fieldPaths.filter(path => !DO_NOT_HYDRATE_FIELDS_LIST.includes(path)) };
     } else {
-      filter.id = { $nin: skipActivityPossibleOptions };
+      filter.id = { $nin: DO_NOT_HYDRATE_FIELDS_LIST };
     }
 
     return PossibleValuesHelper.findAll(filter).then(possibleValuesCollection => {
