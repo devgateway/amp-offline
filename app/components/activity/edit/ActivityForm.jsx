@@ -40,7 +40,8 @@ export default class ActivityForm extends Component {
     saveActivity: PropTypes.func.isRequired,
     params: PropTypes.shape({
       activityId: PropTypes.string
-    }).isRequired
+    }).isRequired,
+    router: PropTypes.object
   };
 
   static childContextTypes ={
@@ -158,6 +159,10 @@ export default class ActivityForm extends Component {
     }
     this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
+    if (!asDraft && !validationError) {
+      this.props.saveActivity(this.activity);
+      this.props.router.push(`/desktop/${this.props.userReducer.teamMember.id}`);
+    }
   }
 
   _renderSaveDialog() {
