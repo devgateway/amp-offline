@@ -38,7 +38,6 @@ export default class AFField extends Component {
     onAfterUpdate: PropTypes.func,
     max: PropTypes.number,
     min: PropTypes.number,
-    showValueAsLabel: PropTypes.bool,
     className: PropTypes.string
   };
 
@@ -92,15 +91,16 @@ export default class AFField extends Component {
       }
     } else if (this.props.type === Types.RICH_TEXT_AREA) {
       return this._getRichTextEditor();
-    } else if (this.type === Types.DROPDOWN || (!this.forcedType && this.fieldDef.id_only === true)
-      || this.props.type === Types.DROPDOWN) {
+    } else if (this.props.type === Types.DROPDOWN || (!this.forcedType && this.fieldDef.id_only === true)) {
       return this._getDropDown();
-    } else if (this.type === Types.LIST_SELECTOR || (!this.forcedType && this.fieldDef.field_type === 'list')) {
+    } else if (this.props.type === Types.LIST_SELECTOR || (!this.forcedType && this.fieldDef.field_type === 'list')) {
       return this._getListSelector();
     } else if (this.props.type === Types.NUMBER) {
       return this._getNumber();
     } else if (this.props.type === Types.DATE) {
       return this._getDate();
+    } else if (this.props.type === Types.LABEL) {
+      return this._getValueAsLabel();
     }
     return 'Not Implemented';
   }
@@ -110,7 +110,7 @@ export default class AFField extends Component {
     const selectedId = this.state.value ? this.state.value.id : null;
     return (<AFDropDown
       options={afOptions} onChange={this.validateIfRequired} selectedId={selectedId}
-      showValueAsLabel={this.props.showValueAsLabel} className={this.props.className} />);
+      className={this.props.className} />);
   }
 
   _getListSelector() {
@@ -148,25 +148,30 @@ export default class AFField extends Component {
   _getRichTextEditor() {
     return (<AFRichTextEditor
       id={this.props.fieldPath} value={this.state.value} onChange={this.validateIfRequired}
-      language={this.context.activityFieldsManager._lang || this.context.activityFieldsManager._defaultLang}
-      showValueAsLabel={this.props.showValueAsLabel} />);
+      language={this.context.activityFieldsManager._lang || this.context.activityFieldsManager._defaultLang} />);
   }
 
   _getTextArea() {
     return (<AFTextArea
-      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired}
-      showValueAsLabel={this.props.showValueAsLabel}
-    />);
+      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.validateIfRequired} />);
   }
 
   _getNumber() {
     return (<AFNumber
       value={this.state.value} onChange={this.validateIfRequired} max={this.props.max}
-      min={this.props.min} className={this.props.className} showValueAsLabel={this.props.showValueAsLabel} />);
+      min={this.props.min} className={this.props.className} />);
   }
 
   _getDate() {
     return (<AFDate value={this.state.value} onChange={this.validateIfRequired} />);
+  }
+
+  _getValueAsLabel() {
+    let val = '';
+    if (this.state.value) {
+      val = this.state.value.value || this.state.value;
+    }
+    return <AFLabel value={val} />;
   }
 
   validate() {

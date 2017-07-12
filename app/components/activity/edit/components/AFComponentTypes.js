@@ -8,4 +8,5 @@ export const DROPDOWN = 'DROPDOWN';
 export const LIST_SELECTOR = 'LIST_SELECTOR';
 export const NUMBER = 'NUMBER';
 export const DATE = 'DATE';
+export const LABEL = 'LABEL';
 

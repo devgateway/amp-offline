@@ -11,8 +11,7 @@ export default class AFRichTextEditor extends Component {
     id: PropTypes.string.isRequired,
     value: PropTypes.string,
     onChange: PropTypes.func,
-    language: PropTypes.string.isRequired,
-    showValueAsLabel: PropTypes.bool
+    language: PropTypes.string.isRequired
   };
 
   constructor(props) {
@@ -43,15 +42,11 @@ export default class AFRichTextEditor extends Component {
   }
 
   render() {
-    if (this.props.showValueAsLabel) {
-      return <div>{this.state.value}</div>;
-    } else {
-      return (
-        <div>
-          <CKEditor
-            id={this.props.id} value={this.state.value} onChange={this.handleChange.bind(this)}
-            language={this.props.language} />
-        </div>);
-    }
+    return (
+      <div>
+        <CKEditor
+          id={this.props.id} value={this.state.value} onChange={this.handleChange.bind(this)}
+          language={this.props.language} />
+      </div>);
   }
 }
