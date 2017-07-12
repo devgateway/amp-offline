@@ -101,6 +101,13 @@ export default class AFList extends Component {
     return null;
   }
 
+  columnFormatter(editable, cell) {
+    if (editable) {
+      return (<span className={styles.editable} >{cell}</span>);
+    }
+    return cell.toString();
+  }
+
   /**
    * Displays AF List as a bootstrap table
    * @return {XML}
@@ -128,6 +135,7 @@ export default class AFList extends Component {
         <TableHeaderColumn
           key={childFieldName} dataField={childFieldName} columnTitle
           editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)}
+          dataFormat={this.columnFormatter.bind(null, editable)}
         >
           {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);

@@ -82,10 +82,11 @@ export default class NumberUtils {
     numeral.locale(localeName);
   }
 
-  static rawNumberToFormattedString(number) {
+  static rawNumberToFormattedString(number, forceUnits = false) {
     LoggerManager.log('rawNumberToFormattedString');
-    return numeral(NumberUtils.calculateInThousands(number))
+    const formatted = numeral(forceUnits ? number : NumberUtils.calculateInThousands(number))
       .format(store.getState().startUpReducer.gsNumberData.format);
+    return formatted;
   }
 
   static calculateInThousands(number) {
