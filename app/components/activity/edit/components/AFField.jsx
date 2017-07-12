@@ -108,8 +108,8 @@ export default class AFField extends Component {
     const afOptions = this._toAFOptions(PossibleValuesManager.fillHierarchicalDepth(options));
     const selectedOptions = this.state.value;
     return (<AFListSelector
-      options={afOptions} selectedOptions={selectedOptions} activityFieldsManager={this.context.activityFieldsManager}
-      listPath={this.props.fieldPath} onChange={this.validateIfRequired} />);
+      options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
+      onChange={this.validateIfRequired} />);
   }
 
   _getOptions(fieldPath) {

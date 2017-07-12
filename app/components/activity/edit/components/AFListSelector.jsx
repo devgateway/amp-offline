@@ -5,6 +5,7 @@ import AFList from './AFList';
 import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import { HIERARCHICAL_VALUE } from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
@@ -17,10 +18,14 @@ import * as Utils from '../../../../utils/Utils';
  * @author Nadejda Mandrescu
  */
 export default class AFListSelector extends Component {
+  static contextTypes = {
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
+  };
+
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
     selectedOptions: PropTypes.array.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
     listPath: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired
   };
@@ -39,7 +44,7 @@ export default class AFListSelector extends Component {
   }
 
   componentWillMount() {
-    this.listDef = this.props.activityFieldsManager.getFieldDef(this.props.listPath);
+    this.listDef = this.context.activityFieldsManager.getFieldDef(this.props.listPath);
     // assumption based on current use cases is that we have only one id-only field to select
     this.idOnlyField = this.listDef.children.find(item => item.id_only === true).field_name;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
@@ -130,19 +135,19 @@ export default class AFListSelector extends Component {
   _validateChange(values) {
     // TODO mix/max size, parent-child constraints
     let errors = [];
-    const { activityFieldsManager } = this.props;
+    const { activityValidator } = this.context;
     if (this.percentageFieldDef && values.length) {
-      errors.push(activityFieldsManager.totalPercentageValidator(values, this.percentageFieldDef.field_name));
+      errors.push(activityValidator.totalPercentageValidator(values, this.percentageFieldDef.field_name));
     }
     if (this.uniqueConstraint) {
-      errors.push(activityFieldsManager.uniqueValuesValidator(values, this.uniqueConstraint));
+      errors.push(activityValidator.uniqueValuesValidator(values, this.uniqueConstraint));
     }
     if (this.noMultipleValues) {
       // though UI shouldn't allow, it can be that for some old activities the config was different and allowed it
-      errors.push(activityFieldsManager.noMultipleValuesValidator(values, this.idOnlyField));
+      errors.push(activityValidator.noMultipleValuesValidator(values, this.idOnlyField));
     }
     if (this.noParentChildMixing) {
-      errors.push(activityFieldsManager.noParentChildMixing(values, this.optionsPath, this.idOnlyField));
+      errors.push(activityValidator.noParentChildMixing(values, this.optionsPath, this.idOnlyField));
     }
     errors = errors.filter(error => error !== true && error !== null);
 
@@ -163,7 +168,7 @@ export default class AFListSelector extends Component {
       <FormGroup controlId={this.props.listPath} validationState={this.validate()} >
         <AFList
           onDeleteRow={this.handleRemoveValues} values={this.getListValues()} listPath={this.props.listPath}
-          activityFieldsManager={this.props.activityFieldsManager} onEditRow={this.handleEditValue.bind(this)} />
+          onEditRow={this.handleEditValue.bind(this)} />
         <FormControl.Feedback />
         <HelpBlock>{this.state.validationError}</HelpBlock>
       </FormGroup>
