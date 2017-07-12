@@ -8,7 +8,6 @@ import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
-import AFPPCAnnualBudgets from './AFPPCAnnualBudgets';
 import afStyles from '../../ActivityForm.css';
 
 /**
@@ -36,11 +35,6 @@ export default class AFProjectCost extends Component {
         <Row>
           <Col md={12} lg={12} >
             <AFProposedProjectCostTable activity={this.props.activity} />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12} lg={12} >
-            <AFPPCAnnualBudgets activity={this.props.activity} />
           </Col>
         </Row>
         <Row>
