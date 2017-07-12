@@ -11,6 +11,7 @@ export const GET_TRANSLATIONS_URL = '/sync/translations';
 export const GET_FULL_EXCHANGE_RATES = '/currency/exchange-rates';
 export const GET_INCREMENTAL_EXCHANGE_RATES = '/sync/exchange-rates';
 export const WORKSPACE_SETTINGS_URL = '/security/workspace-settings';
+export const FEATURE_MANAGER_URL = '/common/fm';
 export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
 export const ACTIVITY_IMPORT_URL = '/activity';

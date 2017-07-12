@@ -229,13 +229,7 @@ const DatabaseManager = {
         if (insertErr) {
           reject(insertErr);
         } else {
-          let newDocs = [];
-          if (itemsToInsert.length === 1) {
-            newDocs.push(newData);
-          } else if (itemsToInsert.length > 1) {
-            newDocs = newData;
-          }
-          resolve(newDocs);
+          resolve(newData);
         }
       });
     });
@@ -362,11 +356,11 @@ const DatabaseManager = {
   removeAll(filter, collectionName) {
     LoggerManager.log('removeAll');
     return new Promise((resolve, reject) => {
-      const removeByIdFunc = this._removeAll.bind(null, filter)
+      const removeAllFunc = this._removeAll.bind(null, filter)
         .bind(null, collectionName)
         .bind(null, resolve)
         .bind(null, reject);
-      this.queuePromise(removeByIdFunc, resolve, reject);
+      this.queuePromise(removeAllFunc, resolve, reject);
     });
   },
 
