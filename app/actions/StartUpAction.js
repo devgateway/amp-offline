@@ -15,6 +15,7 @@ import LoggerManager from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import DateUtils from '../utils/DateUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
+import * as FMHelper from '../modules/helpers/FMHelper';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -32,6 +33,11 @@ export const STATE_GS_PENDING = 'STATE_GS_PENDING';
 export const STATE_GS_FULFILLED = 'STATE_GS_FULFILLED';
 export const STATE_GS_REJECTED = 'STATE_GS_REJECTED';
 const STATE_GS = 'STATE_GS';
+export const STATE_FM_PENDING = 'STATE_FM_PENDING';
+export const STATE_FM_FULFILLED = 'STATE_FM_FULFILLED';
+export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
+const STATE_FM = 'STATE_FM';
+
 
 /**
  * Checks and updates the connectivity status
@@ -42,7 +48,8 @@ export function ampStartUp() {
     .then(scheduleConnectivityCheck)
     .then(loadNumberSettings)
     .then(loadDateSettings)
-    .then(loadGlobalSettings);
+    .then(loadGlobalSettings)
+    .then(loadFMTree);
 }
 
 export function loadConnectionInformation() {
@@ -113,6 +120,21 @@ export function loadGlobalSettings() {
     payload: gsPromise
   });
   return gsPromise;
+}
+
+/**
+ * Loads FM tree, since it's a very small structure and is handy to check synchronously
+ * @param id FM tree ID. If not specified, the first one will be used (Iteration 1 countries)
+ */
+export function loadFMTree(id = undefined) {
+  LoggerManager.log('loadFMTree');
+  const dbFilter = id ? { id } : {};
+  const fmPromise = FMHelper.findAll(dbFilter).then(fmTrees => (fmTrees.length ? fmTrees[0] : null));
+  store.dispatch({
+    type: STATE_FM,
+    payload: fmPromise
+  });
+  return fmPromise;
 }
 
 function startUpLoaded(connectionInformation) {
