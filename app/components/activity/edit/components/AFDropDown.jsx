@@ -72,5 +72,4 @@ export default class AFDropDown extends Component {
       </FormControl>
     );
   }
-
 }

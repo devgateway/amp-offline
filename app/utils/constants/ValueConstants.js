@@ -31,3 +31,6 @@ export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
 export const TRANSACTION_TYPES = [COMMITMENTS, DISBURSEMENTS, EXPENDITURES];
 
 export const NEW_ACTIVITY_ID = '0';
+
+export const PROPOSED_PROJECT_COST = 'ppc';
+export const REVISED_PROJECT_COST = 'rpc';

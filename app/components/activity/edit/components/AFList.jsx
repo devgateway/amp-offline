@@ -3,6 +3,7 @@ import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -12,9 +13,14 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  * @author Nadejda Mandrescu
  */
 export default class AFList extends Component {
+
+  static contextTypes = {
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
+  };
+
   static propTypes = {
     values: PropTypes.array.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
     listPath: PropTypes.string.isRequired,
     onDeleteRow: PropTypes.func,
     onEditRow: PropTypes.func
@@ -34,7 +40,7 @@ export default class AFList extends Component {
   }
 
   componentWillMount() {
-    this.listDef = this.props.activityFieldsManager.getFieldDef(this.props.listPath);
+    this.listDef = this.context.activityFieldsManager.getFieldDef(this.props.listPath);
     this.fields = this.listDef.children.sort(
       (fieldA, fieldB) => {
         let res = fieldA.id_only === true ? -1 : undefined;
@@ -79,7 +85,7 @@ export default class AFList extends Component {
   }
 
   _percentageValidator(cellValue) {
-    return this.props.activityFieldsManager.percentValueValidator(cellValue, this.percentageFieldPath);
+    return this.context.activityValidator.percentValueValidator(cellValue, this.percentageFieldPath);
   }
 
   _afterSaveCell(row, cellName, cellValue) {
@@ -93,6 +99,13 @@ export default class AFList extends Component {
       return 'error';
     }
     return null;
+  }
+
+  columnFormatter(editable, cell) {
+    if (editable) {
+      return (<span className={styles.editable} >{cell}</span>);
+    }
+    return cell.toString();
   }
 
   /**
@@ -122,8 +135,9 @@ export default class AFList extends Component {
         <TableHeaderColumn
           key={childFieldName} dataField={childFieldName} columnTitle
           editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)}
+          dataFormat={this.columnFormatter.bind(null, editable)}
         >
-          {this.props.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
+          {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);
     }));
     const cellEdit = {
@@ -150,7 +164,7 @@ export default class AFList extends Component {
   }
 
   render() {
-    if (!this.props.activityFieldsManager) {
+    if (!this.context.activityFieldsManager) {
       return null;
     }
 
