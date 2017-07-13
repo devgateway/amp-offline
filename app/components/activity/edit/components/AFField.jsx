@@ -14,6 +14,8 @@ import PossibleValuesManager from '../../../../modules/activity/PossibleValuesMa
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
+import AFNumber from './AFNumber';
+import AFDate from './AFDate';
 
 /* eslint-disable class-methods-use-this */
 
@@ -36,6 +38,9 @@ class AFField extends Component {
     showLabel: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
     type: PropTypes.string,
+    max: PropTypes.number,
+    min: PropTypes.number,
+    className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array // eslint-disable-line react/no-unused-prop-types
   };
@@ -129,7 +134,9 @@ class AFField extends Component {
   _getDropDown() {
     const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath));
     const selectedId = this.state.value ? this.state.value.id : null;
-    return <AFDropDown options={afOptions} onChange={this.onChange} selectedId={selectedId} />;
+    return (<AFDropDown
+      options={afOptions} onChange={this.onChange} selectedId={selectedId}
+      className={this.props.className} />);
   }
 
   _getListSelector() {
@@ -172,8 +179,25 @@ class AFField extends Component {
 
   _getTextArea() {
     return (<AFTextArea
-      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange}
-    />);
+      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />);
+  }
+
+  _getNumber() {
+    return (<AFNumber
+      value={this.state.value} onChange={this.validateIfRequired} max={this.props.max}
+      min={this.props.min} className={this.props.className} />);
+  }
+
+  _getDate() {
+    return (<AFDate value={this.state.value} onChange={this.validateIfRequired} />);
+  }
+
+  _getValueAsLabel() {
+    let val = '';
+    if (this.state.value) {
+      val = this.state.value.value || this.state.value;
+    }
+    return <AFLabel value={val} />;
   }
 
   _getValidationState() {
@@ -197,7 +221,7 @@ class AFField extends Component {
     return (
       <FormGroup
         controlId={this.props.fieldPath} validationState={this._getValidationState()}
-        className={styles.activity_form_control} >
+        className={`${styles.activity_form_control}${this.props.className}`}>
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />

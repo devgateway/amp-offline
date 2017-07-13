@@ -32,7 +32,7 @@ html, body {
 .rc-menu-vertical > .rc-menu-item, .rc-menu-inline > .rc-menu-item,
 .rc-menu-vertical > .rc-menu-submenu > .rc-menu-submenu-title,
 .rc-menu-inline > .rc-menu-submenu > .rc-menu-submenu-title {
-  padding:5px 5px !important;
+  padding: 5px 5px !important;
 }
 
 .rc-menu-vertical > .rc-menu-item {
@@ -59,6 +59,7 @@ html, body {
 .rc-menu-root {
   color: #3E6C94;
 }
+
 .rc-menu-item-selected {
   background-color: #ffffff;
 }
@@ -99,6 +100,10 @@ html, body {
 
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
   color: #000000;
+}
+
+.panel-title {
+  cursor: pointer;
 }
 
 /* BOOTSTRAP TABLE OVERRIDE */
