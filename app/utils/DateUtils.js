@@ -27,6 +27,11 @@ export default class DateUtils {
     );
   }
 
+  static isValidDateFormat(date, format) {
+    const moment = Moment(date, format);
+    return moment.isValid();
+  }
+
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
     const formattedDate = Moment(date).isValid() ?

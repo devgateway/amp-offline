@@ -1,8 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import { HIERARCHICAL_VALUE } from '../../utils/constants/ActivityConstants';
 import { DO_NOT_HYDRATE_FIELDS_LIST } from '../../utils/constants/FieldPathConstants';
+import { GS_DEFAULT_NUMBER_FORMAT, DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
+import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
+import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
+import DateUtils from '../../utils/DateUtils';
 import ActivityFieldsManager from './ActivityFieldsManager';
 
 /**
@@ -20,6 +24,7 @@ export default class ActivityValidator {
   areAllConstraintsMet(activity, asDraft, fieldPathsToSkipSet) {
     LoggerManager.log('areAllConstraintsMet');
     const errors = [];
+    this._initGenericErrors();
     this._areAllConstraintsMet([activity], this._fieldsDef, asDraft, undefined, fieldPathsToSkipSet, errors);
     return errors;
   }
@@ -76,6 +81,7 @@ export default class ActivityValidator {
   }
 
   validateField(obj, asDraft, fieldDef, fieldPath) {
+    this._initGenericErrors();
     // normally we fieldPath includes fieldDef field name, but checking it just in case
     if (fieldPath.endsWith(fieldDef.field_name)) {
       if (fieldPath === fieldDef.field_name) {
@@ -110,16 +116,22 @@ export default class ActivityValidator {
     }
   }
 
+  _initGenericErrors() {
+    const gsNumberFormat = GlobalSettingsManager.getSettingByKey(GS_DEFAULT_NUMBER_FORMAT);
+    const gsDateFormat = GlobalSettingsManager.getSettingByKey(DEFAULT_DATE_FORMAT);
+    this.invalidValueError = translate('invalidValue');
+    this.invalidString = translate('invalidString');
+    this.invalidNumber = translate('invalidNumber').replace('%gs-format%', gsNumberFormat);
+    this.invalidBoolean = translate('invalidBoolean');
+    // though we'll validate internal format, we have to report user friendly format
+    this.invalidDate = translate('invalidDate').replace('%gs-format%', gsDateFormat);
+  }
+
   _validateValue(objects, fieldDef, fieldPath, isList, errors) {
     LoggerManager.log('_validateValue');
     const fieldLabel = this._activityFieldsManager.getFieldLabelTranslation(fieldPath);
     const wasHydrated = !!this._possibleValuesMap[fieldPath] && !DO_NOT_HYDRATE_FIELDS_LIST.includes(fieldPath);
-    const invalidValueError = translate('invalidValue');
-    const invalidString = translate('invalidString');
     const stringLengthError = translate('stringTooLong').replace('%fieldName%', fieldLabel);
-    const invalidNumber = translate('invalidNumber');
-    const invalidBoolean = translate('invalidBoolean');
-    const invalidDate = translate('invalidDate');
     const percentageChild = isList && fieldDef.importable === true &&
       fieldDef.children.find(childDef => childDef.percentage === true);
     const idOnlyField = isList && fieldDef.importable === true &&
@@ -136,7 +148,7 @@ export default class ActivityValidator {
         if (!Array.isArray(value)) {
           // for complex objects it is also a list of properties
           if (!(value instanceof Object)) {
-            this.processValidationResult(obj, errors, fieldPath, invalidValueError);
+            this.processValidationResult(obj, errors, fieldPath, this.invalidValueError);
           }
         } else if (fieldDef.importable) {
           if (percentageChild) {
@@ -161,29 +173,26 @@ export default class ActivityValidator {
         }
       } else if (fieldDef.field_type === 'string') {
         if (!(typeof value === 'string' || value instanceof String)) {
-          this.processValidationResult(obj, errors, fieldPath, invalidString.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, this.invalidString.replace('%value%', value));
         } else if (fieldDef.field_length && fieldDef.field_length < value.length) {
           this.processValidationResult(obj, errors, fieldPath, stringLengthError);
         }
       } else if (fieldDef.field_type === 'long') {
         if (!Number.isInteger(value)) {
-          // TODO AMPOFFLINE-448 add gs format
-          this.processValidationResult(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'float') {
         if (value !== +value) {
-          // TODO AMPOFFLINE-448 add gs format
-          this.processValidationResult(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'boolean') {
         if (!(typeof value === 'boolean' || value instanceof Boolean)) {
-          this.processValidationResult(obj, errors, fieldPath, invalidBoolean.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, this.invalidBoolean.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'date') {
-        // TODO AMPOFFLINE-448 add check for date format
-        if (!(typeof value === 'string' || value instanceof String)) {
-          // TODO AMPOFFLINE-448 add gs format
-          this.processValidationResult(obj, errors, fieldPath, invalidDate.replace('%value%', value));
+        if (!(typeof value === 'string' || value instanceof String)
+          || !(value !== '' && DateUtils.isValidDateFormat(value, INTERNAL_DATE_FORMAT))) {
+          this.processValidationResult(obj, errors, fieldPath, this.invalidDate.replace('%value%', value));
         }
       }
       if (fieldDef.percentage === true) {
