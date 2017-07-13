@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import Loading from '../../common/Loading';
@@ -6,7 +7,6 @@ import * as styles from './ActivityForm.css';
 import { IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
-import ErrorMessage from '../../common/ErrorMessage';
 import InfoMessage from '../../common/InfoMessage';
 import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
@@ -33,12 +33,14 @@ export default class ActivityForm extends Component {
       activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       errorMessage: PropTypes.object,
+      validationResult: PropTypes.array,
       isActivitySaved: PropTypes.bool
     }).isRequired,
     userReducer: PropTypes.object.isRequired,
     loadActivityForActivityForm: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     saveActivity: PropTypes.func.isRequired,
+    reportActivityValidation: PropTypes.func.isRequired,
     params: PropTypes.shape({
       activityId: PropTypes.string
     }).isRequired,
@@ -154,12 +156,12 @@ export default class ActivityForm extends Component {
     this.activity[IS_DRAFT] = asDraft;
     const errors = this.activityValidator.areAllConstraintsMet(this.activity, asDraft, fieldPathsToSkipSet);
     if (errors.length) {
-      // TODO proper errors reporting through AMPOFFLINE-448
-      // also adding temporary some initial error message for QA/Dev quick clarification
       let errorDetails = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join('. ');
       errorDetails = errorDetails.length > 1000 ? `${errorDetails.substring(0, 1000)}...` : errorDetails;
       validationError = `${translate('afFieldsGeneralError')} Details: ${errorDetails}`;
+      LoggerManager.error(validationError);
     }
+    this.props.reportActivityValidation(errors);
     this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
     if (!asDraft && !validationError) {
@@ -210,12 +212,10 @@ export default class ActivityForm extends Component {
 
   _renderActivity() {
     const projectTitle = this.props.activityReducer.activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
-    const errorMessage = this.state.validationError ? <ErrorMessage message={this.state.validationError} /> : null;
     const sucessfulSaveMessage = this.props.activityReducer.isActivitySaved
       ? <InfoMessage message={translate('Activity saved successfully')} timeout={5000} /> : null;
     return (
       <div className={styles.form_content} >
-        {errorMessage}
         {sucessfulSaveMessage}
         <Grid fluid >
           <Row >
