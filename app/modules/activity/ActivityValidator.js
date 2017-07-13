@@ -62,7 +62,7 @@ export default class ActivityValidator {
     });
   }
 
-  _processValidationResult(parent, errors, fieldPath, validationResult) {
+  processValidationResult(parent, errors, fieldPath, validationResult) {
     if (validationResult === true || validationResult === null) return;
     const error = {
       path: fieldPath,
@@ -105,7 +105,7 @@ export default class ActivityValidator {
     const isRequired = fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft);
     if (isRequired) {
       objects.forEach(obj => {
-        this._processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
+        this.processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
       });
     }
   }
@@ -136,7 +136,7 @@ export default class ActivityValidator {
         if (!Array.isArray(value)) {
           // for complex objects it is also a list of properties
           if (!(value instanceof Object)) {
-            this._processValidationResult(obj, errors, fieldPath, invalidValueError);
+            this.processValidationResult(obj, errors, fieldPath, invalidValueError);
           }
         } else if (fieldDef.importable) {
           if (percentageChild) {
@@ -144,50 +144,50 @@ export default class ActivityValidator {
               .filter(child => child && child instanceof Object && child[percentageChild.field_name]
               && child[percentageChild.field_name] === +child[percentageChild.field_name]);
             const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name);
-            this._processValidationResult(obj, errors, fieldPath, totError);
+            this.processValidationResult(obj, errors, fieldPath, totError);
           }
           if (uniqueConstraint) {
-            this._processValidationResult(obj, errors, fieldPath, this.uniqueValuesValidator(value, uniqueConstraint));
+            this.processValidationResult(obj, errors, fieldPath, this.uniqueValuesValidator(value, uniqueConstraint));
           }
           if (noMultipleValues) {
             const noMultipleValuesError = this.noMultipleValuesValidator(value, fieldDef.field_name);
-            this._processValidationResult(obj, errors, fieldPath, noMultipleValuesError);
+            this.processValidationResult(obj, errors, fieldPath, noMultipleValuesError);
           }
           if (noParentChildMixing) {
             const idOnlyFieldPath = `${fieldPath}~${idOnlyField.field_name}`;
             const noParentChildMixingError = this.noParentChildMixing(value, idOnlyFieldPath, idOnlyField.field_name);
-            this._processValidationResult(obj, errors, fieldPath, noParentChildMixingError);
+            this.processValidationResult(obj, errors, fieldPath, noParentChildMixingError);
           }
         }
       } else if (fieldDef.field_type === 'string') {
         if (!(typeof value === 'string' || value instanceof String)) {
-          this._processValidationResult(obj, errors, fieldPath, invalidString.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, invalidString.replace('%value%', value));
         } else if (fieldDef.field_length && fieldDef.field_length < value.length) {
-          this._processValidationResult(obj, errors, fieldPath, stringLengthError);
+          this.processValidationResult(obj, errors, fieldPath, stringLengthError);
         }
       } else if (fieldDef.field_type === 'long') {
         if (!Number.isInteger(value)) {
           // TODO AMPOFFLINE-448 add gs format
-          this._processValidationResult(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'float') {
         if (value !== +value) {
           // TODO AMPOFFLINE-448 add gs format
-          this._processValidationResult(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'boolean') {
         if (!(typeof value === 'boolean' || value instanceof Boolean)) {
-          this._processValidationResult(obj, errors, fieldPath, invalidBoolean.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, invalidBoolean.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'date') {
         // TODO AMPOFFLINE-448 add check for date format
         if (!(typeof value === 'string' || value instanceof String)) {
           // TODO AMPOFFLINE-448 add gs format
-          this._processValidationResult(obj, errors, fieldPath, invalidDate.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, invalidDate.replace('%value%', value));
         }
       }
       if (fieldDef.percentage === true) {
-        this._processValidationResult(obj, errors, fieldPath, this.percentValueValidator(value, fieldPath));
+        this.processValidationResult(obj, errors, fieldPath, this.percentValueValidator(value, fieldPath));
       }
     });
   }

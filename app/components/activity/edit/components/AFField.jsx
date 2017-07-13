@@ -80,9 +80,12 @@ class AFField extends Component {
     }
   }
 
-  onChange(value, asDraft) {
+  onChange(value, asDraft, innerComponentValidationError) {
     const errors = this.context.activityValidator.validateField(
       this.props.parent, asDraft, this.fieldDef, this.props.fieldPath);
+    // TODO check if its still needed to have innerComponentValidationError, additionally to API rules
+    this.context.activityValidator.processValidationResult(
+      this.props.parent, errors, this.props.fieldPath, innerComponentValidationError);
     this.props.parent[this.fieldName] = value;
     this.setState({ value });
     this._processValidation(errors);
@@ -100,20 +103,26 @@ class AFField extends Component {
     if (!this.fieldDef) {
       return null;
     }
-    if (this.fieldDef.field_type === 'string') {
-      // TODO known limitation AMP-25950, so until then limiting to text area to allow imports, unless type is explicit
-      if (this.fieldDef.field_length) {
-        return Types.TEXT_AREA;
-      }
-      return Types.RICH_TEXT_AREA;
-    }
     if (this.fieldDef.id_only === true) {
       return Types.DROPDOWN;
     }
-    if (this.fieldDef.field_type === 'list') {
-      return Types.LIST_SELECTOR;
+    switch (this.fieldDef.field_type) {
+      case 'string':
+        // TODO known limitation AMP-25950, until then limiting to text area to allow imports, unless type is explicit
+        if (this.fieldDef.field_length) {
+          return Types.TEXT_AREA;
+        }
+        return Types.RICH_TEXT_AREA;
+      case 'list':
+        return Types.LIST_SELECTOR;
+      case 'long':
+      case 'float':
+        return Types.NUMBER;
+      case 'date':
+        return Types.DATE;
+      default:
+        return null;
     }
-    return null;
   }
 
   getFieldContent() {
@@ -126,6 +135,12 @@ class AFField extends Component {
         return this._getDropDown();
       case Types.LIST_SELECTOR:
         return this._getListSelector();
+      case Types.NUMBER:
+        return this._getNumber();
+      case Types.DATE:
+        return this._getDate();
+      case Types.LABEL:
+        return this._getValueAsLabel();
       default:
         return 'Not Implemented';
     }
@@ -184,12 +199,12 @@ class AFField extends Component {
 
   _getNumber() {
     return (<AFNumber
-      value={this.state.value} onChange={this.validateIfRequired} max={this.props.max}
+      value={this.state.value} onChange={this.onChange} max={this.props.max}
       min={this.props.min} className={this.props.className} />);
   }
 
   _getDate() {
-    return (<AFDate value={this.state.value} onChange={this.validateIfRequired} />);
+    return (<AFDate value={this.state.value} onChange={this.onChange} />);
   }
 
   _getValueAsLabel() {
