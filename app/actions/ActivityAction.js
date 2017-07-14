@@ -15,9 +15,14 @@ import {
   TEAM
 } from '../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
-import { NOTIFICATION_ORIGIN_ACTIVITY } from '../utils/constants/ErrorConstants';
+import {
+  NOTIFICATION_ORIGIN_ACTIVITY,
+  NOTIFICATION_SEVERITY_INFO
+} from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
 import { resetDesktop } from '../actions/DesktopAction';
+import { addMessage } from './NotificationAction';
+import translate from '../utils/translate';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -108,6 +113,13 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
     }
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
-    return ActivityHelper.saveOrUpdate(dehydratedActivity).then(() => (dispatch(resetDesktop())));
+    return ActivityHelper.saveOrUpdate(dehydratedActivity).then(() => {
+      dispatch(addMessage(new Notification({
+        message: translate('activitySavedMsg'),
+        origin: NOTIFICATION_ORIGIN_ACTIVITY,
+        severity: NOTIFICATION_SEVERITY_INFO
+      })));
+      return dispatch(resetDesktop());
+    });
   });
 }
