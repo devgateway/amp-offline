@@ -198,5 +198,6 @@
   "Number is smaller than": "Number is smaller than",
   "Add Commitments": "Add Commitments",
   "Add Disbursements": "Add Disbursements",
-  "Add Expenditures": "Add Expenditures"
+  "Add Expenditures": "Add Expenditures",
+  "activitySavedMsg": "Your changes have been successfully saved. In order to see your changes in the AMP please sync."
 }
