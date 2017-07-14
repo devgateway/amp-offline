@@ -22,7 +22,7 @@ const PULL_END = 'PULL_END';
  */
 const CHECK_INTERVAL = 100;
 const QUEUE_LIMIT = 4;
-const ABORT_INTERVAL = 600000; // milliseconds
+const ABORT_INTERVAL = 60000; // milliseconds
 
 /**
  * Pulls the latest activities state from AMP
