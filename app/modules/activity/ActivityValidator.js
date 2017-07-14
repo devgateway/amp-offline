@@ -152,9 +152,7 @@ export default class ActivityValidator {
           }
         } else if (fieldDef.importable) {
           if (percentageChild) {
-            const childrenValues = value
-              .filter(child => child && child instanceof Object && child[percentageChild.field_name]
-              && child[percentageChild.field_name] === +child[percentageChild.field_name]);
+            const childrenValues = value.filter(child => child && child instanceof Object);
             const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name);
             this.processValidationResult(obj, errors, fieldPath, totError);
           }
@@ -236,10 +234,10 @@ export default class ActivityValidator {
     LoggerManager.log('totalPercentageValidator');
     let validationError = null;
     const totalPercentage = values.reduce((totPercentage, val) => {
-      totPercentage += val[fieldName] || 0;
+      totPercentage += val[fieldName] === +val[fieldName] ? val[fieldName] : 0;
       return totPercentage;
     }, 0);
-    if (totalPercentage !== 100) {
+    if (values.length && totalPercentage !== 100) {
       validationError = translate('percentageSumError').replace('%totalPercentage%', totalPercentage);
     }
     return validationError || true;

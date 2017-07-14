@@ -236,7 +236,7 @@ class AFField extends Component {
     return (
       <FormGroup
         controlId={this.props.fieldPath} validationState={this._getValidationState()}
-        className={`${styles.activity_form_control}${this.props.className}`}>
+        className={`${styles.activity_form_control} ${this.props.className}`} >
         {this.getLabel()}
         {this.getFieldContent()}
         <FormControl.Feedback />
