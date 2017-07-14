@@ -29,6 +29,7 @@ export const COLLECTION_SYNCUP_LOG = 'syncup-log';
 export const COLLECTION_LANGS = 'languages';
 export const COLLECTION_WS_SETTINGS = 'workspace-settings';
 export const COLLECTION_CURRENCY_RATES = 'currency-rates';
+export const COLLECTION_FEATURE_MANAGER = 'feature-manager';
 
 export const DB_FILE_PREFIX = './database/';
 export const DB_FILE_EXTENSION = '.db';
@@ -60,6 +61,7 @@ export const SYNCUP_TYPE_ASSETS = 'assets';
 export const SYNCUP_TYPE_WORKSPACES = 'workspaces';
 export const SYNCUP_TYPE_GS = 'global-settings';
 export const SYNCUP_TYPE_EXCHANGE_RATES = 'exchange-rates';
+export const SYNCUP_TYPE_FEATURE_MANAGER = 'feature-manager';
 export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
 export const SYNCUP_TYPE_ACTIVITIES_PULL = 'activities';
 export const SYNCUP_TYPE_ACTIVITIES_PUSH = 'activities-push';

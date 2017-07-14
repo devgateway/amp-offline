@@ -1,4 +1,7 @@
 import {
+  STATE_FM_FULFILLED,
+  STATE_FM_PENDING,
+  STATE_FM_REJECTED,
   STATE_GS_DATE_LOADED,
   STATE_GS_FULFILLED,
   STATE_GS_NUMBERS_LOADED,
@@ -17,7 +20,11 @@ const defaultState = {
   isGSLoading: false,
   isGSLoaded: false,
   gsLoadError: undefined,
-  globalSettings: undefined
+  globalSettings: undefined,
+  fmTree: undefined,
+  isFMTreeLoading: false,
+  isFMTreeLoaded: false,
+  fmTreeError: undefined
 };
 
 export default function startUpReducer(state = defaultState, action: Object) {
@@ -48,6 +55,21 @@ export default function startUpReducer(state = defaultState, action: Object) {
       return Object.assign({}, state, { globalSettings: action.payload, isGSLoading: false, isGSLoaded: true });
     case STATE_GS_REJECTED:
       return Object.assign({}, state, { gsLoadError: action.payload, isGSLoading: false, isGSLoaded: false });
+    case STATE_FM_PENDING:
+      return Object.assign({}, state, {
+        fmTree: null,
+        fmTreeError: null,
+        isFMTreeLoading: true,
+        isFMTreeLoaded: false
+      });
+    case STATE_FM_FULFILLED:
+      return Object.assign({}, state, {
+        fmTree: action.payload ? action.payload.fmTree : undefined,
+        isFMTreeLoading: false,
+        isFMTreeLoaded: true
+      });
+    case STATE_FM_REJECTED:
+      return Object.assign({}, state, { fmTreeError: action.payload, isFMTreeLoading: false, isFMTreeLoaded: false });
     default:
       return state;
   }
