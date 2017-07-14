@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import * as PropTypes from 'prop-types';
+import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import Loading from '../../common/Loading';
@@ -7,7 +6,6 @@ import * as styles from './ActivityForm.css';
 import { IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
-import InfoMessage from '../../common/InfoMessage';
 import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
 import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
@@ -212,11 +210,8 @@ export default class ActivityForm extends Component {
 
   _renderActivity() {
     const projectTitle = this.props.activityReducer.activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
-    const sucessfulSaveMessage = this.props.activityReducer.isActivitySaved
-      ? <InfoMessage message={translate('Activity saved successfully')} timeout={5000} /> : null;
     return (
       <div className={styles.form_content} >
-        {sucessfulSaveMessage}
         <Grid fluid >
           <Row >
             <Col>{this._renderSaveDialog()}</Col>
