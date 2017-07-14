@@ -7,7 +7,6 @@ import { IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSection
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
 import ErrorMessage from '../../common/ErrorMessage';
-import InfoMessage from '../../common/InfoMessage';
 import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
 import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
