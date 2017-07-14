@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import Loading from '../../common/Loading';
