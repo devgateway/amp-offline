@@ -1,10 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import { CURRENCY_HOUR } from '../../utils/Constants';
+import { CURRENCY_HOUR, CURRENCY_PAIR, RATE_SAME_CURRENCY } from '../../utils/Constants';
 import translate from '../../utils/translate';
-import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/ErrorConstants';
+import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER, RATE_CURRENCY_NOT_FOUND } from '../../utils/constants/ErrorConstants';
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
 import { formatDateForCurrencyRates } from '../../utils/DateUtils';
-
+import * as AC from '../../utils/constants/ActivityConstants';
 
 export default class CurrencyRatesManager {
   constructor(currencyRates, baseCurrency) {
@@ -22,10 +22,13 @@ export default class CurrencyRatesManager {
    * @returns {*|Promise.<TResult>}
    */
   convertCurrency(currencyFrom, currencyTo, dateToFind) {
+    if (currencyFrom === currencyTo) {
+      return RATE_SAME_CURRENCY;
+    }
     const timeDateToFind = (new Date(`${dateToFind} ${CURRENCY_HOUR}`)).getTime();
     if (this._currencyRates) {
       const currenciesToSearchDirect = this._currencyRates.find((item) =>
-        item['currency-pair'].from === currencyFrom && item['currency-pair'].to === currencyTo
+        item[CURRENCY_PAIR].from === currencyFrom && item[CURRENCY_PAIR].to === currencyTo
       );
       if (currenciesToSearchDirect) {
         return this.getExchangeRate(currenciesToSearchDirect, timeDateToFind);
@@ -33,7 +36,7 @@ export default class CurrencyRatesManager {
         // direct not found
         const currenciesToSearchInverse =
           this._currencyRates.find((item) =>
-            item['currency-pair'].from === currencyTo && item['currency-pair'].to === currencyFrom
+            item[CURRENCY_PAIR].from === currencyTo && item[CURRENCY_PAIR].to === currencyFrom
           );
         if (currenciesToSearchInverse) {
           return 1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind);
@@ -41,10 +44,12 @@ export default class CurrencyRatesManager {
           return this.convertViaBaseCurrency(currencyFrom, currencyTo, timeDateToFind);
         }
       }
+    } else {
+      throw this._getCurrencyError('CurrencyRatesNotInitialized');
     }
   }
 
-  converFundingDetailsToCurrency(fundingDetails, currencyTo) {
+  convertFundingDetailsToCurrency(fundingDetails, currencyTo) {
     let total = 0;
     fundingDetails.forEach(fd => {
       total += this.convertTransactionAmountToCurrency(fd, currencyTo);
@@ -53,10 +58,14 @@ export default class CurrencyRatesManager {
     return total;
   }
 
+  convertTransactionAmountToBaseCurrency(fundingDetail) {
+    return this.convertTransactionAmountToCurrency(fundingDetail, this._baseCurrency);
+  }
+
   convertTransactionAmountToCurrency(fundingDetail, currencyTo) {
-    const currencyFrom = fundingDetail.currency.value;
-    const transactionDate = formatDateForCurrencyRates(fundingDetail.transaction_date);
-    const transactionAmount = fundingDetail.transaction_amount;
+    const currencyFrom = fundingDetail[AC.CURRENCY].value;
+    const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
+    const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
     const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate);
     return transactionAmount * currencyRate;
   }
@@ -79,20 +88,20 @@ export default class CurrencyRatesManager {
     return currenciesToSearch.rates[higherEnd].rate;
   }
 
-  _getNoCurrencyError() {
-    const notifErrorNoCurrency = ErrorNotificationHelper.createNotification({
-      message: translate('Currency rate not found'),
+  _getCurrencyError(errorMesage) {
+    const notifErrorCurrency = ErrorNotificationHelper.createNotification({
+      message: translate(errorMesage),
       origin: NOTIFICATION_ORIGIN_CURRENCY_MANAGER
     });
-    return notifErrorNoCurrency;
+    return notifErrorCurrency;
   }
 
   convertViaBaseCurrency(currencyFrom, currencyTo, timeDateToFind) {
     const rateFromToBase = this._currencyRates.find((item) =>
-      item['currency-pair'].from === currencyFrom && item['currency-pair'].to === this._baseCurrency
+      item[CURRENCY_PAIR].from === currencyFrom && item[CURRENCY_PAIR].to === this._baseCurrency
     );
     const rateBaseToTo = this._currencyRates.find((item) =>
-      item['currency-pair'].from === this._baseCurrency && item['currency-pair'].to === currencyTo
+      item[CURRENCY_PAIR].from === this._baseCurrency && item[CURRENCY_PAIR].to === currencyTo
     );
     if (rateFromToBase && rateBaseToTo) {
       // if we have both currencies we just return the product of ech rate
@@ -102,27 +111,27 @@ export default class CurrencyRatesManager {
             // if either of them is not found we try to find the inverse
             // we get the inverse of rateBaseToTo
       const rateToToBase = this._currencyRates.find((item) =>
-        item['currency-pair'].from === currencyTo && item['currency-pair'].to === this._baseCurrency
+        item[CURRENCY_PAIR].from === currencyTo && item[CURRENCY_PAIR].to === this._baseCurrency
       );
       if (rateToToBase) {
         return this.getExchangeRate(rateFromToBase, timeDateToFind)
           * (1 / this.getExchangeRate(rateToToBase, timeDateToFind));
       } else {
-        return Promise.reject(this._getNoCurrencyError());
+        return RATE_CURRENCY_NOT_FOUND;
       }
     } else if (rateBaseToTo) {
       const rateBaseToFrom = this._currencyRates.find((item) =>
-        item['currency-pair'].from === this._baseCurrency && item['currency-pair'].to === currencyFrom
+        item[CURRENCY_PAIR].from === this._baseCurrency && item[CURRENCY_PAIR].to === currencyFrom
       );
       // we try to get the inverse of rateFromToBase
       if (rateBaseToFrom) {
         return (1 / this.getExchangeRate(rateBaseToFrom, timeDateToFind))
           * this.getExchangeRate(rateBaseToTo, timeDateToFind);
       } else {
-        return Promise.reject(this._getNoCurrencyError());
+        return RATE_CURRENCY_NOT_FOUND;
       }
     } else {
-      return Promise.reject(this._getNoCurrencyError());
+      return RATE_CURRENCY_NOT_FOUND;
     }
   }
 }

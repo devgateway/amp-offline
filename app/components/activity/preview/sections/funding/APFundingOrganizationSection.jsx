@@ -92,12 +92,12 @@ class APFundingOrganizationSection extends Component {
     const fdActualCommitments = fd.filter((item) =>
       item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS
     );
-    totalActualCommitments = this.context.currencyRatesManager.converFundingDetailsToCurrency(fdActualCommitments,
+    totalActualCommitments = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualCommitments,
       this._currency);
     const fdActualDisbursements = fd.filter((item) =>
       item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS
     );
-    totalActualDisbursements = this.context.currencyRatesManager.converFundingDetailsToCurrency(fdActualDisbursements,
+    totalActualDisbursements = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualDisbursements,
       this._currency);
 
 

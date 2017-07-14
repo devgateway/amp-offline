@@ -139,10 +139,7 @@ export function loadFMTree(id = undefined) {
 }
 
 export function loadCurrencyRatesOnStartup() {
-  return new Promise((resolve) => {
-    store.dispatch(loadCurrencyRates());
-    resolve();
-  });
+  store.dispatch(loadCurrencyRates());
 }
 function startUpLoaded(connectionInformation) {
   return {

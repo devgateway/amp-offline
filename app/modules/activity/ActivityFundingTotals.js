@@ -85,7 +85,7 @@ export default class ActivityFundingTotals {
     }
     let total = 0;
     if (fundingDetails.length > 0) {
-      total = this._currencyRatesManager.converFundingDetailsToCurrency(fundingDetails,
+      total = this._currencyRatesManager.convertFundingDetailsToCurrency(fundingDetails,
         this._currentWorkspaceSettings.currency);
     }
 

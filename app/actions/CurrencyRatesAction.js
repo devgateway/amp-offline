@@ -18,7 +18,7 @@ export function sendingRequest() {
 }
 
 export function loadCurrencyRates() {
-  LoggerManager.log('loadAllLanguages');
+  LoggerManager.log('loadCurrencyRates');
   return dispatch => new Promise((resolve, reject) => {
     dispatch(sendingRequest());
     return CurrencyRatesHelper.findAll({}).then((rates) =>

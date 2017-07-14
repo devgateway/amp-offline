@@ -140,7 +140,7 @@ export default class SyncUpManager {
       loadDateSettings(),
       loadNumberSettings(),
       loadGlobalSettings(),
-      loadFMTree()],
+      loadFMTree(),
       loadCurrencyRatesOnStartup()]);
   }
 
