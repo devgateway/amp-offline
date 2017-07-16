@@ -70,12 +70,16 @@ export default class AFListSelector extends Component {
     return this.state.values.map(value => {
       const simplifiedValue = { uniqueId: value.uniqueId };
       Object.keys(value).forEach(field => {
-        const optionValue = value[field] ? (value[field][HIERARCHICAL_VALUE] || value[field].translatedValue) : null;
+        let fieldData = value[field];
+        if (field === this.idOnlyField && !fieldData.isAFOption) {
+          fieldData = new AFOption(value[field]);
+        }
+        const optionValue = fieldData ? (fieldData[HIERARCHICAL_VALUE] || fieldData.translatedValue) : null;
         if (optionValue) {
           simplifiedValue[field] = optionValue;
-          simplifiedValue.id = value[field].id;
+          simplifiedValue.id = fieldData.id;
         } else {
-          simplifiedValue[field] = value[field];
+          simplifiedValue[field] = fieldData;
         }
       });
       return simplifiedValue;
@@ -162,8 +166,8 @@ export default class AFListSelector extends Component {
   }
 
   render() {
-    const noMoreAdd = this.noMultipleValues && this.state.values.length > 0;
-    const btnStyle = `${styles.dividePercentage} btn btn-success`;
+    const searchDisplayStyle = this.noMultipleValues && this.state.values.length > 0 ? styles.hidden : styles.inline;
+    const btnStyle = `${this.percentageFieldDef ? styles.dividePercentage : styles.hidden} btn btn-success`;
     return (<div >
       <FormGroup controlId={this.props.listPath} validationState={this.validate()} >
         <AFList
@@ -172,7 +176,7 @@ export default class AFListSelector extends Component {
         <FormControl.Feedback />
         <HelpBlock>{this.state.validationError}</HelpBlock>
       </FormGroup>
-      <div className={`${styles.inline} ${styles.searchContainer}`} hidden={noMoreAdd} >
+      <div className={`${searchDisplayStyle} ${styles.searchContainer}`} >
         <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
         <Button
           onClick={this.dividePercentage.bind(this)} bsStyle="success" bsClass={btnStyle}

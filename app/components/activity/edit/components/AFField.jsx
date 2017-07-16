@@ -9,6 +9,7 @@ import * as Types from './AFComponentTypes';
 import styles from '../ActivityForm.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
+import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
@@ -117,8 +118,11 @@ export default class AFField extends Component {
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
     const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
     let options = this._getOptions(optionsFieldPath);
-    options = PossibleValuesManager.buildFormattedHierarchicalValues(options);
-    const afOptions = this._toAFOptions(PossibleValuesManager.fillHierarchicalDepth(options));
+    if (PATHS_WITH_HIERARCHICAL_VALUES.has(optionsFieldPath)) {
+      options = PossibleValuesManager.buildFormattedHierarchicalValues(options);
+      options = PossibleValuesManager.fillHierarchicalDepth(options);
+    }
+    const afOptions = this._toAFOptions(options);
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
@@ -136,13 +140,8 @@ export default class AFField extends Component {
   }
 
   _toAFOptions(options) {
-    return PossibleValuesManager.getTreeSortedOptionsList(options).map(option => {
-      const afOption = option.visible ? new AFOption(option) : null;
-      if (afOption) {
-        afOption.value = PossibleValuesManager.getOptionTranslation(option);
-      }
-      return afOption;
-    }).filter(afOption => afOption !== null);
+    return PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
+      (option.visible ? new AFOption(option) : null)).filter(afOption => afOption !== null);
   }
 
   _getRichTextEditor() {
