@@ -1,8 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import { HIERARCHICAL_VALUE } from '../../utils/constants/ActivityConstants';
 import { DO_NOT_HYDRATE_FIELDS_LIST } from '../../utils/constants/FieldPathConstants';
+import { GS_DEFAULT_NUMBER_FORMAT, DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
+import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
+import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
+import DateUtils from '../../utils/DateUtils';
 import ActivityFieldsManager from './ActivityFieldsManager';
 
 /**
@@ -18,16 +22,19 @@ export default class ActivityValidator {
   }
 
   areAllConstraintsMet(activity, asDraft, fieldPathsToSkipSet) {
+    LoggerManager.log('areAllConstraintsMet');
     const errors = [];
+    this._initGenericErrors();
     this._areAllConstraintsMet([activity], this._fieldsDef, asDraft, undefined, fieldPathsToSkipSet, errors);
     return errors;
   }
 
   _areAllConstraintsMet(objects, fieldsDef, asDraft, currentPath, fieldPathsToSkipSet, errors) {
-    this._clearErrorState(objects);
+    LoggerManager.log('_areAllConstraintsMet');
     fieldsDef.forEach(fd => {
       const fieldPath = `${currentPath ? `${currentPath}~` : ''}${fd.field_name}`;
-      if (!fieldPathsToSkipSet.has(fieldPath)) {
+      this._clearErrorState(objects, fieldPath);
+      if (!fieldPathsToSkipSet || !fieldPathsToSkipSet.has(fieldPath)) {
         const isList = fd.field_type === 'list';
         this._validateRequiredField(objects, fd, fieldPath, asDraft, isList, errors);
         // once required fields are checked, exclude objects without values from further validation
@@ -49,41 +56,82 @@ export default class ActivityValidator {
     });
   }
 
-  _clearErrorState(objects) {
-    objects.forEach(o => delete o.errors);
+  _clearErrorState(objects, fieldPath) {
+    objects.forEach(o => {
+      if (o.errors) {
+        o.errors = o.errors.filter(e => e.path !== fieldPath);
+        if (!o.errors.length) {
+          delete o.errors;
+        }
+      }
+    });
   }
 
-  _addValidationError(obj, errors, fieldPath, errorMessage) {
+  processValidationResult(parent, errors, fieldPath, validationResult) {
+    if (validationResult === true || validationResult === null) return;
     const error = {
       path: fieldPath,
-      errorMessage
+      errorMessage: validationResult
     };
-    if (!obj.errors) {
-      obj.errors = [];
+    if (!parent.errors) {
+      parent.errors = [];
     }
-    // TODO TBD, this obj stored error can be used directly by the section to flag errors inside
-    obj.errors.push(error);
+    parent.errors.push(error);
     errors.push(error);
   }
 
+  validateField(obj, asDraft, fieldDef, fieldPath) {
+    this._initGenericErrors();
+    // normally we fieldPath includes fieldDef field name, but checking it just in case
+    if (fieldPath.endsWith(fieldDef.field_name)) {
+      if (fieldPath === fieldDef.field_name) {
+        fieldPath = '';
+      } else {
+        fieldPath = fieldPath.substring(0, fieldPath.length - fieldDef.field_name.length - 1);
+      }
+    }
+    const errors = [];
+    this._areAllConstraintsMet([obj], [fieldDef], asDraft, fieldPath, null, errors);
+    return errors;
+  }
+
+  _validateValueIfRequired(value, asDraft, fieldDef) {
+    const isRequired = (fieldDef.required === 'Y' || (fieldDef.required === 'ND' && asDraft === false));
+    return this._validateRequired(value, isRequired);
+  }
+
+  _validateRequired(value, isRequired) {
+    const invalidValue = isRequired &&
+      (value === undefined || value === null || value === '' || (value.length !== undefined && value.length === 0));
+    return invalidValue ? translate('requiredField') : true;
+  }
+
   _validateRequiredField(objects, fieldDef, fieldPath, asDraft, isList, errors) {
-    if (fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft)) {
+    LoggerManager.log('_validateRequiredField');
+    const isRequired = fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft);
+    if (isRequired) {
       objects.forEach(obj => {
-        const value = obj[fieldDef.field_name];
-        const invalidValue = value === undefined || value === null || value === '' || (isList && value.length === 0);
-        if (invalidValue) this._addValidationError(obj, errors, fieldPath, translate('requiredField'));
+        this.processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
       });
     }
   }
 
+  _initGenericErrors() {
+    const gsNumberFormat = GlobalSettingsManager.getSettingByKey(GS_DEFAULT_NUMBER_FORMAT);
+    const gsDateFormat = GlobalSettingsManager.getSettingByKey(DEFAULT_DATE_FORMAT);
+    this.invalidValueError = translate('invalidValue');
+    this.invalidString = translate('invalidString');
+    this.invalidNumber = translate('invalidNumber').replace('%gs-format%', gsNumberFormat);
+    this.invalidBoolean = translate('invalidBoolean');
+    // though we'll validate internal format, we have to report user friendly format
+    this.invalidDate = translate('invalidDate').replace('%gs-format%', gsDateFormat);
+  }
+
   _validateValue(objects, fieldDef, fieldPath, isList, errors) {
+    LoggerManager.log('_validateValue');
+    const fieldLabel = this._activityFieldsManager.getFieldLabelTranslation(fieldPath);
     const wasHydrated = !!this._possibleValuesMap[fieldPath] && !DO_NOT_HYDRATE_FIELDS_LIST.includes(fieldPath);
-    const invalidValueError = translate('invalidValue');
-    const invalidString = translate('invalidString');
-    const stringLengthError = translate('stringTooLong').replace('%fieldName%', fieldDef.field_name);
-    const invalidNumber = translate('invalidNumber');
-    const invalidBoolean = translate('invalidBoolean');
-    const invalidDate = translate('invalidDate');
+    const stringLengthError = translate('stringTooLong').replace('%fieldName%', fieldLabel);
     const percentageChild = isList && fieldDef.importable === true &&
       fieldDef.children.find(childDef => childDef.percentage === true);
     const idOnlyField = isList && fieldDef.importable === true &&
@@ -100,70 +148,53 @@ export default class ActivityValidator {
         if (!Array.isArray(value)) {
           // for complex objects it is also a list of properties
           if (!(value instanceof Object)) {
-            this._addValidationError(obj, errors, fieldPath, invalidValueError);
+            this.processValidationResult(obj, errors, fieldPath, this.invalidValueError);
           }
         } else if (fieldDef.importable) {
           if (percentageChild) {
-            const childrenValues = value
-              .filter(child => child && child instanceof Object && child[percentageChild.field_name]
-              && child[percentageChild.field_name] === +child[percentageChild.field_name]);
+            const childrenValues = value.filter(child => child && child instanceof Object);
             const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name);
-            if (totError !== true) {
-              this._addValidationError(obj, errors, fieldPath, totError);
-            }
+            this.processValidationResult(obj, errors, fieldPath, totError);
           }
           if (uniqueConstraint) {
-            const uniqueError = this.uniqueValuesValidator(value, uniqueConstraint);
-            if (uniqueError !== true) {
-              this._addValidationError(obj, errors, fieldPath, uniqueError);
-            }
+            this.processValidationResult(obj, errors, fieldPath, this.uniqueValuesValidator(value, uniqueConstraint));
           }
           if (noMultipleValues) {
             const noMultipleValuesError = this.noMultipleValuesValidator(value, fieldDef.field_name);
-            if (noMultipleValuesError !== true) {
-              this._addValidationError(obj, errors, fieldPath, noMultipleValuesError);
-            }
+            this.processValidationResult(obj, errors, fieldPath, noMultipleValuesError);
           }
           if (noParentChildMixing) {
             const idOnlyFieldPath = `${fieldPath}~${idOnlyField.field_name}`;
             const noParentChildMixingError = this.noParentChildMixing(value, idOnlyFieldPath, idOnlyField.field_name);
-            if (noParentChildMixingError !== true) {
-              this._addValidationError(obj, errors, fieldPath, noParentChildMixingError);
-            }
+            this.processValidationResult(obj, errors, fieldPath, noParentChildMixingError);
           }
         }
       } else if (fieldDef.field_type === 'string') {
         if (!(typeof value === 'string' || value instanceof String)) {
-          this._addValidationError(obj, errors, fieldPath, invalidString.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, this.invalidString.replace('%value%', value));
         } else if (fieldDef.field_length && fieldDef.field_length < value.length) {
-          this._addValidationError(obj, errors, fieldPath, stringLengthError);
+          this.processValidationResult(obj, errors, fieldPath, stringLengthError);
         }
       } else if (fieldDef.field_type === 'long') {
         if (!Number.isInteger(value)) {
-          // TODO AMPOFFLINE-448 add gs format
-          this._addValidationError(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'float') {
         if (value !== +value) {
-          // TODO AMPOFFLINE-448 add gs format
-          this._addValidationError(obj, errors, fieldPath, invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'boolean') {
         if (!(typeof value === 'boolean' || value instanceof Boolean)) {
-          this._addValidationError(obj, errors, fieldPath, invalidBoolean.replace('%value%', value));
+          this.processValidationResult(obj, errors, fieldPath, this.invalidBoolean.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'date') {
-        // TODO AMPOFFLINE-448 add check for date format
-        if (!(typeof value === 'string' || value instanceof String)) {
-          // TODO AMPOFFLINE-448 add gs format
-          this._addValidationError(obj, errors, fieldPath, invalidDate.replace('%value%', value));
+        if (!(typeof value === 'string' || value instanceof String)
+          || !(value !== '' && DateUtils.isValidDateFormat(value, INTERNAL_DATE_FORMAT))) {
+          this.processValidationResult(obj, errors, fieldPath, this.invalidDate.replace('%value%', value));
         }
       }
       if (fieldDef.percentage === true) {
-        const error = this.percentValueValidator(value, fieldPath);
-        if (error !== null && error !== true) {
-          this._addValidationError(obj, errors, fieldPath, error);
-        }
+        this.processValidationResult(obj, errors, fieldPath, this.percentValueValidator(value, fieldPath));
       }
     });
   }
@@ -175,6 +206,7 @@ export default class ActivityValidator {
    * @return {String|boolean} String if an error detected, true if valid
    */
   percentValueValidator(value, fieldPath) {
+    LoggerManager.log('percentValueValidator');
     let validationError = null;
     value = Number(value);
     // using the same messages as in AMP
@@ -199,12 +231,13 @@ export default class ActivityValidator {
    * @return {String|boolean}
    */
   totalPercentageValidator(values, fieldName) {
+    LoggerManager.log('totalPercentageValidator');
     let validationError = null;
     const totalPercentage = values.reduce((totPercentage, val) => {
-      totPercentage += val[fieldName] || 0;
+      totPercentage += val[fieldName] === +val[fieldName] ? val[fieldName] : 0;
       return totPercentage;
     }, 0);
-    if (totalPercentage !== 100) {
+    if (values.length && totalPercentage !== 100) {
       validationError = translate('percentageSumError').replace('%totalPercentage%', totalPercentage);
     }
     return validationError || true;
@@ -217,6 +250,7 @@ export default class ActivityValidator {
    * @return {String|boolean}
    */
   uniqueValuesValidator(values, fieldName) {
+    LoggerManager.log('uniqueValuesValidator');
     let validationError = null;
     const repeating = new Set();
     const unique = new Set();
@@ -236,6 +270,7 @@ export default class ActivityValidator {
   }
 
   noMultipleValuesValidator(values, fieldName) {
+    LoggerManager.log('noMultipleValuesValidator');
     if (values && values.length > 1) {
       return translate('multipleValuesNotAllowed').replace('%fieldName%', fieldName);
     }
@@ -243,6 +278,7 @@ export default class ActivityValidator {
   }
 
   noParentChildMixing(values, fieldPath, noParentChildMixingFieldName) {
+    LoggerManager.log('noParentChildMixing');
     const options = this._possibleValuesMap[fieldPath];
     const uniqueRoots = new Set(values.map(v => v[noParentChildMixingFieldName].id));
     const childrenMixedWithParents = [];

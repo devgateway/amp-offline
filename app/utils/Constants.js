@@ -106,3 +106,6 @@ export const MESSAGE_CHECK_INTERVAL = 100;
 // how long should the enter/leave animation run(ms)
 // (if you change this you'll wanna change it in style.css, too)
 export const MESSAGE_ANIMATION_DURATION = 500;
+
+// this is the internal date format used to store and sync up dates
+export const INTERNAL_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';

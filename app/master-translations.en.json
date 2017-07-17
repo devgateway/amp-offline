@@ -184,7 +184,7 @@
   "percentageMinimumError": "The value of '%percentageField%' must be at least 0.",
   "percentageRangeError": "The value of '%percentageField%' must be between 0 and 100.",
   "defaultCountryError": "Default country name could not be detected.",
-  "nonUniqueItemsError": "The following items are repeated at least once: %repetitions%",
+  "nonUniqueItemsError": "The following items are repeated at least once: %repetitions%.",
   "Commitments": "Commitments",
   "Disbursements": "Disbursements",
   "Expenditures": "Expenditures",
