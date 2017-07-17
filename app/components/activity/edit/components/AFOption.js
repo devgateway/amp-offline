@@ -1,6 +1,8 @@
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../../../utils/constants/ActivityConstants';
 import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
 
+/* eslint-disable class-methods-use-this */
+
 /**
  * A simple option
  * @author Nadejda Mandrescu
@@ -15,8 +17,20 @@ export default class AFOption {
     }
   }
 
+  get isAFOption() {
+    return true;
+  }
+
   get id() {
     return this._id;
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  set value(value) {
+    this._value = value;
   }
 
   get translatedValue() {

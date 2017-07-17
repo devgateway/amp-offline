@@ -6,7 +6,7 @@ import ActivityFieldsManager from './ActivityFieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 /**
- * Possible Values manager that allows to fill in additional information and tranformations
+ * Possible Values manager that allows to fill in additional information and transformations
  * @author Nadejda Mandrescu
  */
 const PossibleValuesManager = {
