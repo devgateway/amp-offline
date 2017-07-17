@@ -199,5 +199,6 @@
   "Add Commitments": "Add Commitments",
   "Add Disbursements": "Add Disbursements",
   "Add Expenditures": "Add Expenditures",
-  "activitySavedMsg": "Your changes have been successfully saved. In order to see your changes in the AMP please sync."
+  "activitySavedMsg": "Your changes have been successfully saved. In order to see your changes in the AMP please sync.",
+  "CurrencyRatesNotInitialized":"Currency rates not initialized"
 }

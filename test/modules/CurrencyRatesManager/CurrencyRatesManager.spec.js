@@ -1,7 +1,5 @@
-import { describe, it, before } from 'mocha';
-import * as CurrencyRatesHelper from '../../../app/modules/helpers/CurrencyRatesHelper';
-import * as CurrencyRatesManager from '../../../app/modules/util/CurrencyRatesManager';
-import * as GlobalSettingsHelper from '../../../app/modules/helpers/GlobalSettingsHelper';
+import { describe, it } from 'mocha';
+import CurrencyRatesManager from '../../../app/modules/util/CurrencyRatesManager';
 import * as GSC from '../../../app/utils/constants/GlobalSettingsConstants';
 
 const chai = require('chai');
@@ -11,6 +9,7 @@ const currencies = require('./currencies.json');
 
 const expect = chai.expect;
 
+const currencyRatesManager = new CurrencyRatesManager(currencies, 'XOF');
 const gs1 = {};
 gs1[GSC.BASE_CURRENCY_KEY] = 'XOF';
 chai.use(chaiAsPromised);
@@ -27,25 +26,20 @@ const date3 = '2010-08-03';
 const rate3 = 1.311914;
 
 describe('@@ CurrencyRatesManager @@', () => {
-  before(() =>
-    Promise.all([CurrencyRatesHelper.replaceAllCurrencyRates(currencies),
-      GlobalSettingsHelper.saveGlobalSettings(gs1)
-    ])
-  );
   describe('Direct rate conversion', () =>
     it('should match rate', () =>
-      expect(CurrencyRatesManager.convertCurrency(currencyFrom1, currencyTo1, date1)).to.eventually.deep.equal(rate1)
+      expect(currencyRatesManager.convertCurrency(currencyFrom1, currencyTo1, date1)).to.eql(rate1)
     )
   );
   describe('Inverse rate convesion', () =>
     it('should match rate', () =>
-      expect(CurrencyRatesManager.convertCurrency(currencyTo1, currencyFrom1, date1)).to.eventually.deep.equal(rate2)
+      expect(currencyRatesManager.convertCurrency(currencyTo1, currencyFrom1, date1)).to.eql(rate2)
     )
   );
 
   describe('Via XOF rates conversion', () =>
     it('should match rate', () =>
-      expect(CurrencyRatesManager.convertCurrency(currencyFrom3, currencyTo3, date3)).to.eventually.deep.equal(rate3)
+      expect(currencyRatesManager.convertCurrency(currencyFrom3, currencyTo3, date3)).to.eql(rate3)
     )
   );
 });
