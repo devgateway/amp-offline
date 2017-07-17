@@ -5,6 +5,7 @@ import Moment from 'moment';
 import LoggerManager from '../modules/util/LoggerManager';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import store from '../index';
+import { API_DATE_FORMAT } from './Constants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 
 export default class DateUtils {
@@ -24,6 +25,10 @@ export default class DateUtils {
         return resolve(data);
       }).catch(reject)
     );
+  }
+
+  static formatDateForCurrencyRates(date) {
+    return DateUtils.formatDate(date, API_DATE_FORMAT);
   }
 
   static isValidDateFormat(date, format) {
