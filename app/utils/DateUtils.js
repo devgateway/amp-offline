@@ -36,11 +36,15 @@ export default class DateUtils {
     return moment.isValid();
   }
 
+  static formatDate(date, format) {
+    const formattedDate = Moment(date).isValid() ?
+      Moment(date).format(format) : date;
+    return formattedDate;
+  }
+  
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
-    const formattedDate = Moment(date).isValid() ?
-        Moment(date).format(store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase()) : date;
-    return formattedDate;
+    return DateUtils.formatDate(date, store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase());
   }
 
   static duration(from, to) {
