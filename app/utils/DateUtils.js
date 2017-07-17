@@ -5,6 +5,7 @@ import Moment from 'moment';
 import LoggerManager from '../modules/util/LoggerManager';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import store from '../index';
+import { API_DATE_FORMAT } from './Constants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 
 export default class DateUtils {
@@ -26,16 +27,24 @@ export default class DateUtils {
     );
   }
 
+  static formatDateForCurrencyRates(date) {
+    return DateUtils.formatDate(date, API_DATE_FORMAT);
+  }
+
   static isValidDateFormat(date, format) {
     const moment = Moment(date, format);
     return moment.isValid();
   }
 
+  static formatDate(date, format) {
+    const formattedDate = Moment(date).isValid() ?
+      Moment(date).format(format) : date;
+    return formattedDate;
+  }
+
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
-    const formattedDate = Moment(date).isValid() ?
-        Moment(date).format(store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase()) : date;
-    return formattedDate;
+    return DateUtils.formatDate(date, store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase());
   }
 
   static duration(from, to) {
