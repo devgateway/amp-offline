@@ -41,7 +41,7 @@ export default class DateUtils {
       Moment(date).format(format) : date;
     return formattedDate;
   }
-  
+
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
     return DateUtils.formatDate(date, store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase());
