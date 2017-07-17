@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
+import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import APField from '../../components/APField';
@@ -20,10 +21,15 @@ class APFundingOrganizationSection extends Component {
     counter: PropTypes.number.isRequired,
     comparator: PropTypes.func.isRequired
   };
+  static contextTypes = {
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
+    currentWorkspaceSettings: PropTypes.object.isRequired
+  };
 
-  constructor(props) {
+  constructor(props, context) {
     super(props);
     LoggerManager.log('constructor');
+    this._currency = context.currentWorkspaceSettings.currency;
   }
 
   _buildDonorInfo() {
@@ -82,21 +88,23 @@ class APFundingOrganizationSection extends Component {
   _buildUndisbursedBalanceSection() {
     let totalActualDisbursements = 0;
     let totalActualCommitments = 0;
-    let currency = '';
     const fd = this.props.funding[AC.FUNDING_DETAILS];
-    fd.forEach((item) => {
-      if (item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS) {
-        totalActualCommitments += item[AC.TRANSACTION_AMOUNT];
-      } else if (item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) {
-        totalActualDisbursements += item[AC.TRANSACTION_AMOUNT];
-      }
-      // TODO: Currency should be the one in use at this moment?
-      currency = item[AC.CURRENCY].value;
-    });
+    const fdActualCommitments = fd.filter((item) =>
+      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS
+    );
+    totalActualCommitments = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualCommitments,
+      this._currency);
+    const fdActualDisbursements = fd.filter((item) =>
+      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS
+    );
+    totalActualDisbursements = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualDisbursements,
+      this._currency);
+
+
     return (<div>
       <APFundingTotalItem
         label={translate('Undisbursed Balance')} value={totalActualCommitments - totalActualDisbursements}
-        currency={translate(currency)} key={'undisbursed-balance-key'} />
+        currency={translate(this._currency)} key={'undisbursed-balance-key'} />
     </div>);
   }
 

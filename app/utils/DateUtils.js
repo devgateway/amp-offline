@@ -1,7 +1,6 @@
 /**
  * Created by Anya on 24/04/2017.
  */
-
 import Moment from 'moment';
 import LoggerManager from '../modules/util/LoggerManager';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';

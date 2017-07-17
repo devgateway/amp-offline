@@ -1,6 +1,7 @@
 // TODO: this action is not going to be called from a component, its an initialization action
 import store from '../index';
 import { connectivityCheck } from './ConnectivityAction';
+import { loadCurrencyRates } from './CurrencyRatesAction';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
 // this is temporal will be stored in settings
 import {
@@ -49,7 +50,8 @@ export function ampStartUp() {
     .then(loadNumberSettings)
     .then(loadDateSettings)
     .then(loadGlobalSettings)
-    .then(loadFMTree);
+    .then(loadFMTree)
+    .then(loadCurrencyRatesOnStartup);
 }
 
 export function loadConnectionInformation() {
@@ -60,8 +62,8 @@ export function loadConnectionInformation() {
     const connectionInformation = new ConnectionInformation(SERVER_URL, BASE_REST_URL,
       PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT);
     store.dispatch(startUpLoaded(connectionInformation));
-    //  It is dispatch here so its called righ away. since for default it is
-    // Scheduled every 5 minutes, we need to check whether amp is on line or not right away
+    //  It is dispatch here so its called right away. since for default it is
+    // Scheduled every x(configured) minutes, we need to check whether amp is on line or not right away
     store.dispatch(connectivityCheck());
     return resolve();
   });
@@ -71,7 +73,6 @@ export function loadConnectionInformation() {
 export function getTimer() {
   return timer;
 }
-
 function scheduleConnectivityCheck() {
   return new Promise((resolve, reject) => {
     clearInterval(timer);
@@ -137,6 +138,9 @@ export function loadFMTree(id = undefined) {
   return fmPromise;
 }
 
+export function loadCurrencyRatesOnStartup() {
+  store.dispatch(loadCurrencyRates());
+}
 function startUpLoaded(connectionInformation) {
   return {
     type: STATE_PARAMETERS_LOADED,

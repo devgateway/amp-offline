@@ -5,6 +5,7 @@ import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
 import styles from './APFundingTransactionTypeItem.css';
 import APFundingTotalItem from './APFundingTotalItem';
+import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import APLabel from '../../components/APLabel';
 
 /**
@@ -12,14 +13,20 @@ import APLabel from '../../components/APLabel';
  */
 class APFundingTransactionTypeItem extends Component {
 
+  static contextTypes = {
+    currentWorkspaceSettings: PropTypes.object.isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager)
+  };
+
   static propTypes = {
     fundingDetails: PropTypes.array.isRequired,
     group: PropTypes.object.isRequired
   };
 
-  constructor(props) {
+  constructor(props, context) {
     super(props);
     LoggerManager.log('constructor');
+    this._currency = context.currentWorkspaceSettings.currency;
   }
 
   _filterFundingDetails() {
@@ -37,7 +44,7 @@ class APFundingTransactionTypeItem extends Component {
     const filteredFD = this._filterFundingDetails();
     const content = [];
     filteredFD.forEach((item) => {
-      content.push(<APFundingItem item={item} key={item.id} />);
+      content.push(<APFundingItem item={item} key={item.id} wsCurrency={this._currency} />);
     });
     // Not worth the effort to use BootstrapTable here.
     return <table className={styles.funding_table} >{content}</table>;
@@ -45,12 +52,13 @@ class APFundingTransactionTypeItem extends Component {
 
   _drawSubTotalFooter() {
     let subtotal = 0;
-    this._filterFundingDetails().map(item => (subtotal += item[AC.TRANSACTION_AMOUNT]));
+    subtotal = this.context.currencyRatesManager.convertFundingDetailsToCurrency(this._filterFundingDetails(),
+      this._currency);
     return (<div>
       <APFundingTotalItem
         value={subtotal}
         label={translate(`Subtotal ${this.props.group.adjType.value} ${this.props.group.trnType.value}`)}
-        currency={translate(this.props.group.currency.value)}
+        currency={translate(this._currency)}
         key={this.props.group.adjType.value + this.props.group.trnType.value} />
     </div>);
   }
