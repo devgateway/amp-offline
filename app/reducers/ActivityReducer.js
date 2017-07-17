@@ -1,11 +1,12 @@
 import {
-  ACTIVITY_LOAD_PENDING,
   ACTIVITY_LOAD_FULFILLED,
+  ACTIVITY_LOAD_PENDING,
   ACTIVITY_LOAD_REJECTED,
-  ACTIVITY_SAVE_PENDING,
   ACTIVITY_SAVE_FULFILLED,
+  ACTIVITY_SAVE_PENDING,
   ACTIVITY_SAVE_REJECTED,
-  ACTIVITY_UNLOADED
+  ACTIVITY_UNLOADED,
+  ACTIVITY_VALIDATED
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
 import LoggerManager from '../modules/util/LoggerManager';
@@ -21,6 +22,7 @@ const defaultState = {
   activityWorkspace: undefined,
   activityFieldsManager: undefined,
   activityFundingTotals: undefined,
+  validationResult: undefined,
   currentWorkspaceSettings: undefined,
   currencyRatesManager: undefined,
   errorMessage: undefined
@@ -34,7 +36,8 @@ const activityReducer = (state = defaultState, action: Object) => {
     case ACTIVITY_LOAD_PENDING:
       return { ...defaultState, isActivityLoading: true };
     case ACTIVITY_LOAD_FULFILLED:
-      return { ...state,
+      return {
+        ...state,
         isActivityLoading: false,
         isActivityLoaded: true,
         activity: action.payload.activity,
@@ -61,6 +64,8 @@ const activityReducer = (state = defaultState, action: Object) => {
       return { ...state, isActivitySaving: false, isActivitySaved: true, savedActivity: action.payload };
     case ACTIVITY_SAVE_REJECTED:
       return { ...state, isActivitySaving: false, isActivitySaved: false };
+    case ACTIVITY_VALIDATED:
+      return { ...state, validationResult: action.payload };
     default:
       return state;
   }

@@ -31,6 +31,7 @@ export const ACTIVITY_SAVE_PENDING = 'ACTIVITY_SAVE_PENDING';
 export const ACTIVITY_SAVE_FULFILLED = 'ACTIVITY_SAVE_FULFILLED';
 export const ACTIVITY_SAVE_REJECTED = 'ACTIVITY_SAVE_REJECTED';
 export const ACTIVITY_UNLOADED = 'ACTIVITY_UNLOADED';
+export const ACTIVITY_VALIDATED = 'ACTIVITY_VALIDATED';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 
@@ -56,6 +57,14 @@ export function unloadActivity() {
   return (dispatch) =>
     dispatch({
       type: ACTIVITY_UNLOADED
+    });
+}
+
+export function reportActivityValidation(validationResult) {
+  return (dispatch) =>
+    dispatch({
+      type: ACTIVITY_VALIDATED,
+      payload: validationResult
     });
 }
 
