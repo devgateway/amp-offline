@@ -33,9 +33,7 @@ export default class AFNumber extends Component {
     let validationError = null;
     if (value) {
       const auxValue = Number(value);
-      if (Number.isNaN(auxValue)) {
-        validationError = translate('Not a number');
-      }
+      // TODO move it to ActivityValidator._validateValue once we have API restrictions
       if (this.props.max !== undefined && auxValue > this.props.max) {
         validationError = `${translate('Number is bigger than')} ${this.props.max}`;
       }

@@ -102,6 +102,8 @@ export default class AFList extends Component {
   }
 
   columnFormatter(editable, cell) {
+    // TODO we use TableHeaderColumn.columnClassName to do the same thing.
+    // If won't be needed for anything else, then this method can be removed.
     if (editable) {
       return (<span className={styles.editable} >{cell}</span>);
     }
@@ -134,9 +136,7 @@ export default class AFList extends Component {
       return (
         <TableHeaderColumn
           key={childFieldName} dataField={childFieldName} columnTitle
-          editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)}
-          dataFormat={this.columnFormatter.bind(null, editable)}
-        >
+          editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)} >
           {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);
     }));

@@ -20,14 +20,16 @@ import * as Utils from '../../../../utils/Utils';
 export default class AFListSelector extends Component {
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
-    activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
+    activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired
   };
 
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
     selectedOptions: PropTypes.array.isRequired,
     listPath: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    // we need to report validation error before search box, thus passing to the component to display
+    validationError: PropTypes.string
   };
 
   constructor(props) {
@@ -38,8 +40,7 @@ export default class AFListSelector extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.dividePercentage = this.dividePercentage.bind(this);
     this.state = {
-      values: [],
-      validationError: null
+      values: []
     };
   }
 
@@ -48,11 +49,7 @@ export default class AFListSelector extends Component {
     // assumption based on current use cases is that we have only one id-only field to select
     this.idOnlyField = this.listDef.children.find(item => item.id_only === true).field_name;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
-    this.uniqueConstraint = this.listDef.unique_constraint;
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
-    this.noMultipleValues = this.listDef.multiple_values !== true;
-    this.noParentChildMixing = this.listDef.tree_collection === true;
-    this.optionsPath = `${this.props.listPath}~${this.idOnlyField}`;
     this.setUniqueIdsAndUpdateState(this.props.selectedOptions);
   }
 
@@ -130,36 +127,12 @@ export default class AFListSelector extends Component {
   }
 
   handleChange(values) {
-    const validationError = this._validateChange(values);
-    this.setState({ validationError });
     this.setUniqueIdsAndUpdateState(values);
     this.props.onChange(values);
   }
 
-  _validateChange(values) {
-    // TODO mix/max size, parent-child constraints
-    let errors = [];
-    const { activityValidator } = this.context;
-    if (this.percentageFieldDef && values.length) {
-      errors.push(activityValidator.totalPercentageValidator(values, this.percentageFieldDef.field_name));
-    }
-    if (this.uniqueConstraint) {
-      errors.push(activityValidator.uniqueValuesValidator(values, this.uniqueConstraint));
-    }
-    if (this.noMultipleValues) {
-      // though UI shouldn't allow, it can be that for some old activities the config was different and allowed it
-      errors.push(activityValidator.noMultipleValuesValidator(values, this.idOnlyField));
-    }
-    if (this.noParentChildMixing) {
-      errors.push(activityValidator.noParentChildMixing(values, this.optionsPath, this.idOnlyField));
-    }
-    errors = errors.filter(error => error !== true && error !== null);
-
-    return errors.length ? errors.join(' ') : null;
-  }
-
-  validate() {
-    if (this.state.validationError) {
+  _getValidationState() {
+    if (this.props.validationError) {
       return 'error';
     }
     return null;
@@ -169,12 +142,12 @@ export default class AFListSelector extends Component {
     const searchDisplayStyle = this.noMultipleValues && this.state.values.length > 0 ? styles.hidden : styles.inline;
     const btnStyle = `${this.percentageFieldDef ? styles.dividePercentage : styles.hidden} btn btn-success`;
     return (<div >
-      <FormGroup controlId={this.props.listPath} validationState={this.validate()} >
+      <FormGroup controlId={this.props.listPath} >
         <AFList
           onDeleteRow={this.handleRemoveValues} values={this.getListValues()} listPath={this.props.listPath}
           onEditRow={this.handleEditValue.bind(this)} />
         <FormControl.Feedback />
-        <HelpBlock>{this.state.validationError}</HelpBlock>
+        <HelpBlock>{this.props.validationError}</HelpBlock>
       </FormGroup>
       <div className={`${searchDisplayStyle} ${styles.searchContainer}`} >
         <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
