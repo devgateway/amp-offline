@@ -17,7 +17,13 @@ import {
 } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
-import { loadDateSettings, loadGlobalSettings, loadNumberSettings, loadFMTree, loadCurrencyRatesOnStartup } from '../../actions/StartUpAction';
+import {
+  loadDateSettings,
+  loadGlobalSettings,
+  loadNumberSettings,
+  loadFMTree,
+  loadCurrencyRatesOnStartup
+} from '../../actions/StartUpAction';
 
 // TODO: Evaluate in the future whats best: to have static functions or to create instances of SyncUpManager.
 export default class SyncUpManager {

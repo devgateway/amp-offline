@@ -53,7 +53,7 @@ class APFundingTransactionTypeItem extends Component {
 
   _drawSubTotalFooter() {
     let subtotal = 0;
-     subtotal = this.context.currencyRatesManager.convertFundingDetailsToCurrency(this._filterFundingDetails(),
+    subtotal = this.context.currencyRatesManager.convertFundingDetailsToCurrency(this._filterFundingDetails(),
       this._currency);
     return (<div>
       <APFundingTotalItem

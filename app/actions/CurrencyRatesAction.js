@@ -4,7 +4,7 @@
 import CurrencyRatesHelper from '../modules/helpers/CurrencyRatesHelper';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import LoggerManager from '../modules/util/LoggerManager';
-import { DEFAULT_CURRENCY } from '../utils/constants';
+import { DEFAULT_CURRENCY } from '../utils/Constants';
 import { BASE_CURRENCY_KEY } from '../utils/constants/GlobalSettingsConstants';
 
 export const STATE_LOADING_CURRENCY_RATES = 'STATE_LOADING_CURRENCY_RATES';

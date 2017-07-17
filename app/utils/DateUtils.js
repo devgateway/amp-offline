@@ -6,7 +6,6 @@ import LoggerManager from '../modules/util/LoggerManager';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import store from '../index';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
-import { CURRENCY_DATE_FORMAT } from './Constants';
 
 export default class DateUtils {
 
