@@ -5,9 +5,11 @@ import NumberUtils from '../../utils/NumberUtils';
  * @author Nadejda Mandrescu
  */
 export default class ActivityFundingTotals {
-  constructor(activity, activityFieldsManager) {
+  constructor(activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager) {
     this._activity = activity;
     this._activityFieldsManager = activityFieldsManager;
+    this._currentWorkspaceSettings = currentWorkspaceSettings;
+    this._currencyRatesManager = currencyRatesManager;
     // caches a structure of totals by adj and then trn type for specified filter (that can be empty for global totals)
     this._filteredTotals = {};
   }
@@ -50,9 +52,11 @@ export default class ActivityFundingTotals {
     if (path.length === 2) {
       value = this._buildStandardMeasureTotal(filter, path[0], path[1]);
     }
-    // TODO use workspace currency once its support is available
     value = NumberUtils.rawNumberToFormattedString(value);
-    value = value.toLocaleString('en-EN', { currency: 'USD', currencyDisplay: 'code' });
+    value = value.toLocaleString('en-EN', {
+      currency: this._currentWorkspaceSettings.currency,
+      currencyDisplay: 'code'
+    });
     cache[filter] = value;
     return value;
   }
@@ -80,10 +84,11 @@ export default class ActivityFundingTotals {
       });
     }
     let total = 0;
-    // TODO apply currency conversion once its support is available
-    fundingDetails.forEach(fd => {
-      total += fd.transaction_amount;
-    });
+    if (fundingDetails.length > 0) {
+      total = this._currencyRatesManager.convertFundingDetailsToCurrency(fundingDetails,
+        this._currentWorkspaceSettings.currency);
+    }
+
     return total;
   }
 }

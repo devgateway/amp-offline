@@ -23,6 +23,8 @@ const defaultState = {
   activityFieldsManager: undefined,
   activityFundingTotals: undefined,
   validationResult: undefined,
+  currentWorkspaceSettings: undefined,
+  currencyRatesManager: undefined,
   errorMessage: undefined
 };
 
@@ -41,7 +43,9 @@ const activityReducer = (state = defaultState, action: Object) => {
         activity: action.payload.activity,
         activityWorkspace: action.payload.activityWorkspace,
         activityFieldsManager: action.payload.activityFieldsManager,
-        activityFundingTotals: action.payload.activityFundingTotals
+        activityFundingTotals: action.payload.activityFundingTotals,
+        currentWorkspaceSettings: action.payload.currentWorkspaceSettings,
+        currencyRatesManager: action.payload.currencyRatesManager
       };
     case ACTIVITY_LOAD_REJECTED:
       return { ...defaultState, errorMessage: action.payload };

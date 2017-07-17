@@ -5,7 +5,6 @@ import { routerMiddleware, push } from 'react-router-redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import createLogger from 'redux-logger';
 import rootReducer from '../reducers';
-
 import * as loginActions from '../actions/LoginAction';
 import * as workspaceActions from '../actions/WorkspaceAction';
 import * as connectivityActions from '../actions/ConnectivityAction';
@@ -15,6 +14,7 @@ import * as desktopActions from '../actions/DesktopAction';
 import * as translationActions from '../actions/TranslationAction';
 import * as startUpActions from '../actions/StartUpAction';
 import * as notificationActions from '../actions/NotificationAction';
+import * as currencyRatesActions from '../actions/CurrencyRatesAction';
 
 const actionCreators = {
   ...loginActions,
@@ -26,6 +26,7 @@ const actionCreators = {
   ...translationActions,
   ...startUpActions,
   ...notificationActions,
+  ...currencyRatesActions,
   push,
 };
 

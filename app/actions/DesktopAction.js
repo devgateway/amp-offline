@@ -14,7 +14,11 @@ export function loadDesktop(workspace, teamMemberId) {
   return (dispatch, ownProps) => {
     if (ownProps().desktopReducer.isLoadingDesktop === false) {
       dispatch(sendingRequest());
-      DesktopManager.generateDesktopData(workspace, teamMemberId).then((data) => {
+      // we need to send the currency convertor and the workspace currency so it can convert
+      // totals
+      const currentWsSettings = ownProps().workspaceReducer.currentWorkspaceSettings;
+      const ratesManager = ownProps().currencyRatesReducer.currencyRatesManager;
+      DesktopManager.generateDesktopData(workspace, teamMemberId, currentWsSettings, ratesManager).then((data) => {
         dispatch(_loadDesktop({
           activeProjects: data.activeProjects,
           rejectedProjects: data.rejectedProjects,
