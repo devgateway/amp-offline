@@ -94,11 +94,14 @@ export default class SyncUp extends Component {
             </div>
           );
         } else {
+          const allSyncUpsFailed = translate('All previous sync up failed.');
+          const noUserDataSyncWarning = translate('noUserDataSyncWarning');
+          const message = `${allSyncUpsFailed} ${noUserDataSyncWarning}`;
           return (
             <div className="container">
               <div className="row">
                 <div className="col-sm-12">
-                  <WarnMessage message={translate('All previous sync up failed.')} />
+                  <WarnMessage message={message} />
                 </div>
               </div>
             </div>
@@ -109,7 +112,7 @@ export default class SyncUp extends Component {
           <div className="container">
             <div className="row">
               <div className="col-sm-12">
-                <InfoMessage
+                <WarnMessage
                   type="success"
                   message={translate('noUserDataSyncWarning')}
                   timeout={0}
