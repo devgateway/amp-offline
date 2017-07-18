@@ -12,7 +12,8 @@ class MenuUtils {
     LoggerManager.log('constructor');
   }
 
-  buildMenu(loggedIn, menu, onClickHandler, workspaceList, menuOnClickHandler, languageList) {
+  buildMenu(loggedIn, menu, onClickHandler, workspaceReducer, menuOnClickHandler, languageList) {
+    const { workspaceList } = workspaceReducer;
     LoggerManager.log('buildMenu');
     const firstLevelEntries = [];
     const newMenu = Object.assign({}, menu);
