@@ -7,7 +7,6 @@ import store from '../index';
 import LoggerManager from '../modules/util/LoggerManager';
 
 const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
-const ADD_ACTIVITY = '/addActivity';
 
 class MenuUtils {
 
