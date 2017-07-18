@@ -16,7 +16,7 @@ import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
-import AFDate from './AFDate-AntDesign';
+import AFDate from './AFDate-MaterialUI';
 
 /* eslint-disable class-methods-use-this */
 
