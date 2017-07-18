@@ -217,9 +217,10 @@ export default class ActivityForm extends Component {
 
   _renderActivity() {
     const { activityFieldsManager } = this.props.activityReducer;
-    const projectTitle = activityFieldsManager ?
-      activityFieldsManager.getValue(this.activity, PROJECT_TITLE) :
-      'New activity';
+    let projectTitle;
+    if (activityFieldsManager) {
+      projectTitle = activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
+    }
 
     return (
       <div className={styles.form_content} >
@@ -231,7 +232,8 @@ export default class ActivityForm extends Component {
             <Col md={10} >
               <div className={styles.form_main_content} >
                 <div className={styles.general_header} >
-                  {translate('Edit Activity Form')}({ projectTitle })
+                  {translate('Edit Activity Form')}
+                  {projectTitle && `(${projectTitle})`}
                 </div>
                 <div>{AFSectionLoader(this.state.currentSection)}</div>
               </div>
