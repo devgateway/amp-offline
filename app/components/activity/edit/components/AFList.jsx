@@ -70,12 +70,6 @@ export default class AFList extends Component {
     this.props.onDeleteRow(rows);
   }
 
-  editableCellClass(editable) {
-    if (editable) {
-      return styles.editable;
-    }
-  }
-
   _beforeSaveCell(row, cellName, cellValue) {
     // TODO required field validation
     if (this.percentageFieldDef && this.percentageFieldDef.field_name === cellName) {
@@ -105,7 +99,7 @@ export default class AFList extends Component {
     // TODO we use TableHeaderColumn.columnClassName to do the same thing.
     // If won't be needed for anything else, then this method can be removed.
     if (editable) {
-      return (<span className={styles.editable} >{cell}</span>);
+      return (<span className={styles.editable} >{cell}</span >);
     }
     return cell.toString();
   }
@@ -136,9 +130,9 @@ export default class AFList extends Component {
       return (
         <TableHeaderColumn
           key={childFieldName} dataField={childFieldName} columnTitle
-          editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)} >
+          editable={{ readOnly: !editable, validator }} dataFormat={this.columnFormatter.bind(null, editable)} >
           {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
-        </TableHeaderColumn>);
+        </TableHeaderColumn >);
     }));
     const cellEdit = {
       mode: 'click',
@@ -150,17 +144,17 @@ export default class AFList extends Component {
       mode: 'checkbox',
     };
     // there is no one click row removal, we'll simulate with select
-    return (<div>
+    return (<div >
       <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()} >
         <BootstrapTable
           data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
           containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
           {columns}
-        </BootstrapTable>
+        </BootstrapTable >
         <FormControl.Feedback />
-        <HelpBlock>{this.state.validationError}</HelpBlock>
-      </FormGroup>
-    </div>);
+        <HelpBlock >{this.state.validationError}</HelpBlock >
+      </FormGroup >
+    </div >);
   }
 
   render() {
