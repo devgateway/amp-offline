@@ -48,6 +48,9 @@ initializeI18Next().then(() => {
             <Route
               path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store}
             />
+            <Route
+              path="/addActivity" component={ActivityFormPage} onEnter={checkAuth} store={store}
+            />
           </Route>
         </Router>
       </Provider>,
