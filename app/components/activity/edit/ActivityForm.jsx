@@ -76,7 +76,7 @@ export default class ActivityForm extends Component {
     const { params, loadActivityForActivityForm } = this.props;
     const { activityId } = params;
 
-    if(activityId){
+    if (activityId) {
       loadActivityForActivityForm(activityId);
     }
 
@@ -218,7 +218,7 @@ export default class ActivityForm extends Component {
   _renderActivity() {
     const { activityFieldsManager } = this.props.activityReducer;
     const projectTitle = activityFieldsManager ?
-      activityFieldsManagergetValue(this.activity, PROJECT_TITLE) :
+      activityFieldsManager.getValue(this.activity, PROJECT_TITLE) :
       'New activity';
 
     return (
@@ -250,12 +250,10 @@ export default class ActivityForm extends Component {
 
   render() {
     const { isActivityLoading, isActivitySaving } = this.props.activityReducer;
-    if (isActivityLoading || isActivitySaving ) {
+    if (isActivityLoading || isActivitySaving) {
       return <Loading />;
     } else {
       return this._renderActivity();
     }
-    return <div />;
   }
-
 }

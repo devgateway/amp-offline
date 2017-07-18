@@ -15,8 +15,8 @@ class MenuUtils {
   }
 
   buildMenu(loggedIn, menu, onClickHandler, workspaceReducer, menuOnClickHandler, languageList) {
-    const { workspaceList } = workspaceReducer;
     LoggerManager.log('buildMenu');
+    const { workspaceList } = workspaceReducer;
     const firstLevelEntries = [];
     const newMenu = cloneDeep(menu);
 
