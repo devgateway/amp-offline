@@ -82,7 +82,7 @@ class AFDateAntDesign extends Component {
         <LocaleProvider locale={ADLocales[this.props.lang]} >
           <DatePicker
             value={this.state.date} onChange={this.onDateChange.bind(this)} format={this.gsDateFormat}
-            placeholder={this.gsDateFormat} allowClear showToday
+            placeholder={this.gsDateFormat} allowClear showToday size={'large'}
             disabledDate={this.isOutsideRange.bind(this)} />
         </LocaleProvider>
       </div>);
