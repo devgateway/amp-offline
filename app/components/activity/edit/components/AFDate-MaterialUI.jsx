@@ -21,6 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  */
+/*
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -36,6 +37,12 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 injectTapEventPlugin();
 
 const DateTimeFormat = global.Intl.DateTimeFormat;
+*/
+
+/*
+ Leaving this Date Picker option for later, when custom calendars or RTL will be needed, since it doesn't fit well
+ with our design and UX.
+ */
 
 /* eslint-disable class-methods-use-this */
 
@@ -45,6 +52,7 @@ const DateTimeFormat = global.Intl.DateTimeFormat;
  * b) RTL support https://bitsrc.io/materialui/react-material-ui/styles/rtl
  * @author Nadejda Mandrescu
  */
+/*
 class AFDateMaterialUI extends Component {
   static propTypes = {
     value: PropTypes.string,
@@ -98,4 +106,4 @@ export default connect(
     lang: state.translationReducer.lang
   })
 )(AFDateMaterialUI);
-
+*/

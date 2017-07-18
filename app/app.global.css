@@ -1,10 +1,10 @@
+/* @import '../node_modules/react-dates/lib/css/_datepicker.css'; */
+@import '../node_modules/antd/dist/antd.css';
 @import "../resources/css/bootstrap.css";
 @import "../resources/css/bootstrap-theme.css";
 @import "../node_modules/rc-menu/assets/index.css";
 @import '../node_modules/react-bootstrap-table/css/react-bootstrap-table.css';
 @import '../node_modules/react-bootstrap-table/css/toastr.css';
-/* @import '../node_modules/react-dates/lib/css/_datepicker.css'; */
-/* @import '../node_modules/antd/dist/antd.css'; */
 @import './assets/fonts/opensans_regular_macroman/stylesheet.css';
 @import './assets/fonts/opensans_extrabold_macroman/stylesheet.css';
 
@@ -125,8 +125,6 @@ html, body {
 }
 */
 
-/*
 .ant-input {
   height: 34px;
 }
-*/

@@ -145,6 +145,7 @@
     "webpack-validator": "^2.2.9"
   },
   "dependencies": {
+    "antd": "^2.12.1",
     "babel-plugin-webpack-alias": "^2.1.2",
     "bluebird": "^3.4.6",
     "bluebird-queue": "0.0.8",

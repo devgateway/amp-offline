@@ -1,4 +1,3 @@
-/*
 export en from 'antd/lib/locale-provider/en_US';
 export fr from 'antd/lib/locale-provider/fr_FR';
 export bg from 'antd/lib/locale-provider/bg_BG';
@@ -21,4 +20,3 @@ export sv from 'antd/lib/locale-provider/sv_SE';
 export tr from 'antd/lib/locale-provider/tr_TR';
 export vi from 'antd/lib/locale-provider/vi_VN';
 export th from 'antd/lib/locale-provider/th_TH';
-*/

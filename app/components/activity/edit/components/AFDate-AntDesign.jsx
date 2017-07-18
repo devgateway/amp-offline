@@ -22,7 +22,6 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-/*
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -32,20 +31,18 @@ import * as ADLocales from './AntDesignLocales';
 import { MIN_SUPPORTED_YEAR, MAX_SUPPORTED_YEAR } from '../../../../utils/Constants';
 import DateUtils from '../../../../utils/DateUtils';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-*/
 
 /* eslint-disable class-methods-use-this */
 
 /**
- * I found another component that provides both RTL and calendar customization support, as well as nicer locale
- * configuration: date-picker
+ * We have an alternative AFDate-MaterialUI implementation that can be extended to use RTL and custom calendars,
+ * but so far sticking to this one, since its UX & UI is more appropriate.
  */
 
 /**
  * Activity Form Date input field using AntDesign widget
  * @author Nadejda Mandrescu
  */
-/*
 class AFDateAntDesign extends Component {
   static propTypes = {
     value: PropTypes.string,
@@ -97,4 +94,3 @@ export default connect(
     lang: state.translationReducer.lang
   })
 )(AFDateAntDesign);
-*/
