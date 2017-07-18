@@ -67,7 +67,7 @@ class AFFunding extends Component {
             organization={funding[AC.FUNDING_DONOR_ORG_ID]}
             role={funding[AC.SOURCE_ROLE]}
           />
-        </Tab >
+        </Tab>
       ));
     }
     return null;
@@ -76,14 +76,14 @@ class AFFunding extends Component {
   generateOverviewTabContent() {
     return (<div >
       <AFProjectCost activity={this.props.activity} />
-    </div >);
+    </div>);
   }
 
   render() {
     return (<Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs" >
-      <Tab eventKey={0} title="Overview" key={0} >{this.generateOverviewTabContent()}</Tab >
+      <Tab eventKey={0} title="Overview" key={0} >{this.generateOverviewTabContent()}</Tab>
       {this.addFundingTabs()}
-    </Tabs >);
+    </Tabs>);
   }
 }
 
