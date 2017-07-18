@@ -137,6 +137,11 @@ export const FINANCING_ID = 'financing_id';
 export const DISBURSEMENT_ORDER_ID = 'disbursement_order_id';
 export const PLEDGE = 'pledge';
 export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
+export const ACRONYM_DONOR_ORGANIZATION = 'DN';
+export const ACRONYM_EXECUTING_AGENCY = 'EA';
+export const ACRONYM_IMPLEMENTING_AGENCY = 'IA';
+export const ACRONYM_BENEFICIARY_AGENCY = 'BA';
+export const ACRONYM_RESPONSIBLE_ORGANIZATION = 'RO';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =

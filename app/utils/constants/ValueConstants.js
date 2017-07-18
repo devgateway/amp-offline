@@ -8,6 +8,7 @@ export const EXECUTING_AGENCY = 'Executing Agency';
 export const IMPLEMENTING_AGENCY = 'Implementing Agency';
 export const BENEFICIARY_AGENCY = 'Beneficiary Agency';
 export const CONTRACTING_AGENCY = 'Contracting Agency';
+export const DONOR_AGENCY = 'Donor';
 export const REGIONAL_GROUP = 'Regional Group';
 export const SECTOR_GROUP = 'Sector Group';
 
