@@ -97,7 +97,7 @@ export default class AFList extends Component {
 
   columnFormatter(editable, cell) {
     if (editable) {
-      return (<span className={styles.editable} >{cell}</span >);
+      return (<span className={styles.editable} >{cell}</span>);
     }
     return cell.toString();
   }
@@ -130,7 +130,7 @@ export default class AFList extends Component {
           key={childFieldName} dataField={childFieldName} columnTitle
           editable={{ readOnly: !editable, validator }} dataFormat={this.columnFormatter.bind(null, editable)} >
           {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
-        </TableHeaderColumn >);
+        </TableHeaderColumn>);
     }));
     const cellEdit = {
       mode: 'click',
@@ -148,11 +148,11 @@ export default class AFList extends Component {
           data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
           containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
           {columns}
-        </BootstrapTable >
+        </BootstrapTable>
         <FormControl.Feedback />
-        <HelpBlock >{this.state.validationError}</HelpBlock >
-      </FormGroup >
-    </div >);
+        <HelpBlock >{this.state.validationError}</HelpBlock>
+      </FormGroup>
+    </div>);
   }
 
   render() {
