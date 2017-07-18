@@ -1,3 +1,4 @@
+/*
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Moment from 'moment';
@@ -5,13 +6,20 @@ import { SingleDatePicker } from 'react-dates';
 import { MIN_SUPPORTED_YEAR, MAX_SUPPORTED_YEAR } from '../../../../utils/Constants';
 import DateUtils from '../../../../utils/DateUtils';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+*/
+
+/**
+ * Unfortunately this widget doesn't support quick change of months and years
+ * https://github.com/airbnb/react-dates/issues/25
+ */
 
 /* eslint-disable class-methods-use-this */
 
 /**
- * Activity Form Date component
+ * Activity Form Date Input component using AirBnb widget
  * @author Gabriel Inchauspe
  */
+/*
 export default class AFDate extends Component {
   static propTypes = {
     value: PropTypes.string,
@@ -78,3 +86,4 @@ export default class AFDate extends Component {
       </div>);
   }
 }
+*/
