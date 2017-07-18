@@ -7,6 +7,8 @@ import store from '../index';
 import LoggerManager from '../modules/util/LoggerManager';
 
 const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
+const ADD_ACTIVITY = '/addActivity';
+
 class MenuUtils {
 
   constructor() {
@@ -26,6 +28,10 @@ class MenuUtils {
         nodes[value.name] = { objId: value.id, 'translation-type': 'content' }
       ));
       newMenu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
+
+      if (!workspaceReducer.currentWorkspace || !workspaceReducer.currentWorkspace['add-activity']) {
+        delete newMenu.menu.DESKTOP.nodes['Add Activity'];
+      }
     }
 
     // Dynamic list of languages with its own click handler.
