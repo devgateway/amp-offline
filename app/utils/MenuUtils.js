@@ -6,6 +6,7 @@ import { setLanguage } from '../actions/TranslationAction';
 import store from '../index';
 import LoggerManager from '../modules/util/LoggerManager';
 
+const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
 class MenuUtils {
 
   constructor() {
@@ -16,7 +17,7 @@ class MenuUtils {
     const { workspaceList } = workspaceReducer;
     LoggerManager.log('buildMenu');
     const firstLevelEntries = [];
-    const newMenu = Object.assign({}, menu);
+    const newMenu = cloneDeep(menu);
 
     // Dynamic list of workspaces.
     if (newMenu.menu.DESKTOP) {
