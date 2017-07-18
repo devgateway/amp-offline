@@ -73,7 +73,13 @@ export default class ActivityForm extends Component {
   }
 
   componentWillMount() {
-    this.props.loadActivityForActivityForm(this.props.params.activityId);
+    const { params, loadActivityForActivityForm } = this.props;
+    const { activityId } = params;
+
+    if(activityId){
+      loadActivityForActivityForm(activityId);
+    }
+
     this.setState({
       isNewActivity: this.props.params.activityId === NEW_ACTIVITY_ID,
       quickLinksExpanded: true,
@@ -127,7 +133,7 @@ export default class ActivityForm extends Component {
   }
 
   _renderQuickLinks() {
-    const sectionLinks = this.sections.map(sectionName =>
+    const sectionLinks = this.sections && this.sections.map(sectionName =>
       <Button
         key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block
         className={this.state.currentSection === sectionName ? styles.quick_links_highlight
@@ -210,7 +216,11 @@ export default class ActivityForm extends Component {
   }
 
   _renderActivity() {
-    const projectTitle = this.props.activityReducer.activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
+    const { activityFieldsManager } = this.props.activityReducer;
+    const projectTitle = activityFieldsManager ?
+      activityFieldsManagergetValue(this.activity, PROJECT_TITLE) :
+      'New activity';
+
     return (
       <div className={styles.form_content} >
         <Grid fluid >
@@ -239,10 +249,10 @@ export default class ActivityForm extends Component {
   }
 
   render() {
-    if (this.props.activityReducer.isActivityLoading || this.props.activityReducer.isActivitySaving || !this.activity) {
+    const { isActivityLoading, isActivitySaving } = this.props.activityReducer;
+    if (isActivityLoading || isActivitySaving ) {
       return <Loading />;
-    }
-    if (this.activity) {
+    } else {
       return this._renderActivity();
     }
     return <div />;
