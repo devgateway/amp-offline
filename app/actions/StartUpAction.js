@@ -95,6 +95,7 @@ export function loadNumberSettings() {
 
 export function loadDateSettings() {
   LoggerManager.log('loadDateSettings');
+  DateUtils.setCurrentLang(store.getState().translationReducer.lang);
   return new Promise((resolve, reject) => (
     DateUtils.getConfigFromDB().then((data) => {
       store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: data });
