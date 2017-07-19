@@ -1,3 +1,5 @@
+/* @import '../node_modules/react-dates/lib/css/_datepicker.css'; */
+@import '../node_modules/antd/dist/antd.css';
 @import "../resources/css/bootstrap.css";
 @import "../resources/css/bootstrap-theme.css";
 @import "../node_modules/rc-menu/assets/index.css";
@@ -116,3 +118,9 @@ html, body {
   word-wrap: break-word;
   white-space: normal;
 }
+
+/*
+.DateInput {
+  width: 140px;
+}
+*/
