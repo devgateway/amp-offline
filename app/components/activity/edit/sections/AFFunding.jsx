@@ -61,7 +61,7 @@ class AFFunding extends Component {
       return groups.map((funding) => (
         <Tab
           eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
-          title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`} >
+          title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
           <AFFundingDonorSection
             fundings={this.props.activity.fundings}
             organization={funding[AC.FUNDING_DONOR_ORG_ID]}
@@ -74,7 +74,7 @@ class AFFunding extends Component {
   }
 
   generateOverviewTabContent() {
-    return (<div >
+    return (<div>
       <AFProjectCost activity={this.props.activity} />
     </div>);
   }
