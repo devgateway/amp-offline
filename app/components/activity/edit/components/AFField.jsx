@@ -17,6 +17,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
 import AFDate from './AFDate';
+import AFCheckbox from './AFCheckbox';
 
 /* eslint-disable class-methods-use-this */
 
@@ -142,6 +143,8 @@ class AFField extends Component {
         return this._getDate();
       case Types.LABEL:
         return this._getValueAsLabel();
+      case Types.CHECKBOX:
+        return this._getBoolean();
       default:
         return 'Not Implemented';
     }
@@ -204,6 +207,10 @@ class AFField extends Component {
 
   _getDate() {
     return (<AFDate value={this.state.value} onChange={this.onChange} />);
+  }
+
+  _getBoolean() {
+    return (<AFCheckbox value={this.state.value} onChange={this.onChange} />);
   }
 
   _getValueAsLabel() {
