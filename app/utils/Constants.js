@@ -113,3 +113,6 @@ export const MESSAGE_ANIMATION_DURATION = 500;
 
 // this is the internal date format used to store and sync up dates
 export const INTERNAL_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
+// currently supported max & min years in AMP, i.e. from 1970-01-01 till 2050-12-31
+export const MIN_SUPPORTED_YEAR = 1970;
+export const MAX_SUPPORTED_YEAR = 2050;

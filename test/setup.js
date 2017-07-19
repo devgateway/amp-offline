@@ -15,3 +15,10 @@ window.localStorage = window.sessionStorage = {
     this[key] = undefined;
   },
 };
+const matchMedia = {
+  matches: false,
+  addListener: () => {},
+  removeListener: () => {}
+};
+const matchMediaFunc = () => matchMedia;
+window.matchMedia = window.matchMedia || matchMediaFunc;
