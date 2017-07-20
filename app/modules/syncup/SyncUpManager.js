@@ -175,21 +175,22 @@ export default class SyncUpManager {
    */
   static isForceSyncUp() {
     LoggerManager.log('isForceSyncUp');
-    return SyncUpManager.getLastSyncInDays().then((days) => {
-      const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
-      const user = store.getState().userReducer.userData; // No need to to go the DB in this stage.
-      const hasUserData = !!user['first-name']; // Hint: this is the same as a ternary if :)
-      const force = forceBecauseDays || !hasUserData;
-      let message = '';
-      if (force) {
-        if (forceBecauseDays) {
-          message = translate('tooOldSyncWarning');
-        } else {
-          message = translate('noUserDataSyncWarning');
+    return Promise.all([SyncUpManager.getLastSyncInDays(), SyncUpManager.getLastSuccessfulSyncUp()])
+      .then(([days, lastSuccessfulSyncUp]) => {
+        const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
+        const user = store.getState().userReducer.userData; // No need to to go the DB in this stage.
+        const hasUserData = lastSuccessfulSyncUp && lastSuccessfulSyncUp['sync-date'] > user.registeredOnClient;
+        const force = forceBecauseDays || !hasUserData;
+        let message = '';
+        if (force) {
+          if (forceBecauseDays) {
+            message = translate('tooOldSyncWarning');
+          } else {
+            message = translate('noUserDataSyncWarning');
+          }
         }
-      }
-      return { force, message };
-    });
+        return { force, message };
+      });
   }
 
   static isWarnSyncUp() {
