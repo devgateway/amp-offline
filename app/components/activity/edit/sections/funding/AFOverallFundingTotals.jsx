@@ -81,8 +81,6 @@ export default class AFOverallFundingTotals extends Component {
     return f1String > f2String ? 1 : -1;
   }
 
-  /* TODO: Once https://github.com/devgateway/amp-client/pull/151 is merged
-   use _buildTotals() from APFundingTotalsSection.jsx */
   _buildGroups(fundings) {
     const groups = [];
     fundings.forEach((item) => {
