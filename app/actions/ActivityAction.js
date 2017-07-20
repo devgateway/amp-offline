@@ -131,13 +131,16 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
     }
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
-    return ActivityHelper.saveOrUpdate(dehydratedActivity).then(() => {
+    return ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {
       dispatch(addMessage(new Notification({
         message: translate('activitySavedMsg'),
         origin: NOTIFICATION_ORIGIN_ACTIVITY,
         severity: NOTIFICATION_SEVERITY_INFO
       })));
-      return dispatch(resetDesktop());
+      // TODO this reset is useless if we choose to stay within AF when activity is saved
+      dispatch(resetDesktop());
+      // DO NOT return anything else! It is recorded by the reducer and refreshes AF when you choose to stay in AF
+      return savedActivity;
     });
   });
 }
