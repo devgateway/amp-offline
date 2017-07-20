@@ -30,10 +30,7 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       });
     case STATE_SYNCUP_LOADING_HISTORY:
       return Object.assign({}, state, {
-        loadingSyncHistory: true,
-        errorMessage: '',
-        forceSyncUp: false,
-        forceSyncUpMessage: ''
+        loadingSyncHistory: true
       });
     case STATE_SYNCUP_COMPLETED:
       return Object.assign({}, state, {
