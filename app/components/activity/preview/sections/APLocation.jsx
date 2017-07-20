@@ -42,11 +42,7 @@ class APLocation extends Component {
           <tr>{topContent}</tr>
         </tbody>
       </table>
-      <table className={styles.box_table2}>
-        <tbody>
-          {content}
-        </tbody>
-      </table>
+      {content}
     </div>);
   }
 

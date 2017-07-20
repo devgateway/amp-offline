@@ -20,7 +20,7 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
     fieldValueClass: PropTypes.string,
     percentTitleClass: PropTypes.string,
     percentValueClass: PropTypes.string,
-    tablify: PropTypes.boolean,
+    tablify: PropTypes.bool,
     columns: PropTypes.number
   };
 
@@ -43,11 +43,15 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
           titleClass={this.props.percentTitleClass} valueClass={this.props.percentValueClass} />);
       });
       if (this.props.tablify) {
-        content = Tablify.addRows(content, this.props.columns);
+        content = <Tablify content={content} columns={this.props.columns} />;
+        content = (<APField
+          key={listField} title={title} value={content} separator={false} inline
+          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
+      } else {
+        content = (<APField
+          key={listField} title={title} value={content} separator={false}
+          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
       }
-      content = (<APField
-        key={listField} title={title} value={content} separator={false}
-        fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
     }
     return content;
   }

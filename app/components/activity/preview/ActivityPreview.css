@@ -220,6 +220,7 @@
 
 .two_box_table {
   border-top: 1px solid #ebebeb;
+  border-bottom: 1px solid #ebebeb;
   width: 100%;
 }
 
@@ -246,16 +247,22 @@
 }
 
 .percent_field_name {
+  display: inline-block;
   font-weight: bold;
   padding-top: 10px;
   padding-bottom: 5px;
   margin-left: 10px;
+  width: 70%;
 }
 
 .percent_field_value {
+  display: inline-block;
   color: #3a84b3;
   font-weight: bold;
-  /*padding-bottom: 10px;*/
+  width: 15%;
+  padding-left: 5%;
+  padding-top: 10px;
+  vertical-align: top;
 }
 
 .project_cost_left {
@@ -325,7 +332,6 @@
 
 .alignRight {
     text-align: right;
-    padding-left: 100px;
 }
 
 .paddingBottom {
@@ -337,6 +343,7 @@
   border-bottom: 1px solid #ebebeb;
   border-collapse: collapse;
   width: 100%;
+  display: table ! important;
 }
 
 .box_table2 td {
