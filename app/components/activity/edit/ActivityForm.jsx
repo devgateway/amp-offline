@@ -15,6 +15,7 @@ import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTota
 import ActivityValidator from '../../../modules/activity/ActivityValidator';
 import translate from '../../../utils/translate';
 import LoggerManager from '../../../modules/util/LoggerManager';
+import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 
 /**
  * Activity Form
@@ -33,7 +34,9 @@ export default class ActivityForm extends Component {
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       errorMessage: PropTypes.object,
       validationResult: PropTypes.array,
-      isActivitySaved: PropTypes.bool
+      isActivitySaved: PropTypes.bool,
+      currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
+      currentWorkspaceSettings: PropTypes.object
     }).isRequired,
     userReducer: PropTypes.object.isRequired,
     loadActivityForActivityForm: PropTypes.func.isRequired,
@@ -51,7 +54,9 @@ export default class ActivityForm extends Component {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
-    isSaveAndSubmit: PropTypes.bool
+    isSaveAndSubmit: PropTypes.bool,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
+    currentWorkspaceSettings: PropTypes.object
   };
 
   constructor(props) {
@@ -68,7 +73,9 @@ export default class ActivityForm extends Component {
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       activityValidator: this.activityValidator,
-      isSaveAndSubmit: this.state.isSaveAndSubmit
+      isSaveAndSubmit: this.state.isSaveAndSubmit,
+      currencyRatesManager: this.props.activityReducer.currencyRatesManager,
+      currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings
     };
   }
 

@@ -49,7 +49,8 @@ export function loadActivityForActivityForm(activityId) {
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
-      payload: _loadActivity(activityId, ownProps().userReducer.teamMember.id)
+      payload: _loadActivity(activityId, ownProps().userReducer.teamMember.id, null
+        , ownProps().workspaceReducer.currentWorkspaceSettings, ownProps().currencyRatesReducer.currencyRatesManager)
     });
 }
 
