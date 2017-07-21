@@ -39,6 +39,7 @@
   "unsyncedLegend": "Unsynced. These are activities created on AMPOffline not yet synchronized with AMP.",
   "moreThanOneResultFound": "Query returned more than one result.",
   "unknownNetworkError": "Unknown network error",
+  "corruptedResponse": "Response message is corrupted.",
   "Donor": "Donor",
   "Activities": "Activities",
   "Rejected Sync": "Rejected Sync",

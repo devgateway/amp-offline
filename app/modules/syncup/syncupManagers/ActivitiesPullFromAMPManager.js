@@ -192,7 +192,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   _onPullError(ampId, error) {
     LoggerManager.log('_onPullError');
     if (error) {
-      LoggerManager.error(error);
+      LoggerManager.error(`Activity amp-id=${ampId} pull error: ${error}`);
     } else if (ampId) {
       this.pulled.add(ampId);
     }

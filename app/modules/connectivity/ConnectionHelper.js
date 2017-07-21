@@ -94,6 +94,11 @@ const ConnectionHelper = {
               origin
             }));
           }
+        } else if (!response.complete) {
+          reject(ErrorNotificationHelper.createNotification({
+            message: translate('corruptedResponse'),
+            origin: NOTIFICATION_ORIGIN_API_NETWORK
+          }));
         } else {
           resolve(body);
         }

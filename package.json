@@ -130,7 +130,7 @@
     "react-bootstrap-table": "^3.4.1",
     "redux-logger": "^2.7.4",
     "redux-mock-store": "^1.2.1",
-    "request": "^2.79.0",
+    "request": "^2.81.0",
     "sinon": "^1.17.6",
     "spectron": "^3.4.0",
     "string-replace-webpack-plugin": "^0.0.5",
