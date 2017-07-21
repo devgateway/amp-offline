@@ -128,6 +128,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     // TODO content translations (iteration 2)
     return this._waitWhile(this._isPullDenied).then(() => {
       ConnectionHelper.doGet({
+        shouldRetry: true,
         url: ACTIVITY_EXPORT_URL,
         paramsMap: { 'amp-id': ampId, translations: this._translations }
       }).then((activity, error) => {

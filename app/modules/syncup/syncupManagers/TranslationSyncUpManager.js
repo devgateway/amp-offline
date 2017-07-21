@@ -51,7 +51,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   syncUpLangList() {
     LoggerManager.log('syncUpLangList');
     return new Promise((resolve, reject) => (
-      ConnectionHelper.doGet({ url: AVAILABLE_LANGUAGES_URL }).then((langs) => (
+      ConnectionHelper.doGet({ url: AVAILABLE_LANGUAGES_URL, shouldRetry: true }).then((langs) => (
         // Replace the list of available languages first.
         LanguageHelper.replaceCollection(langs).then(() => {
           // Delete removed language files if needed (it can happen!).
@@ -123,6 +123,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     // Extract text to translate from our master-file.
     const masterTexts = Object.values(originalMasterTrnFile);
     return ConnectionHelper.doPost({
+      shouldRetry: true,
       url: POST_TRANSLATIONS_URL,
       body: masterTexts,
       paramsMap: { translations: langIds.join('|') }
@@ -134,6 +135,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   doIncrementalSyncup(langIds, originalMasterTrnFile) {
     LoggerManager.log('doIncrementalSyncup');
     return ConnectionHelper.doGet({
+      shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
       paramsMap: { translations: langIds.join('|') }
     }).then((newTranslations) => (

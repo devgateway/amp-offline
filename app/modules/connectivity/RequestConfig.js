@@ -34,6 +34,8 @@ const RequestConfig = {
       json: true,
       headers,
       method,
+      simple: false,
+      resolveWithFullResponse: true,
       gzip: true,
       jar: true // enables cookies to be saved
     };
