@@ -73,13 +73,7 @@ export default class ActivityForm extends Component {
   }
 
   componentWillMount() {
-    const { params, loadActivityForActivityForm } = this.props;
-    const { activityId } = params;
-
-    if (activityId) {
-      loadActivityForActivityForm(activityId);
-    }
-
+    this.props.loadActivityForActivityForm(this.props.params.activityId);
     this.setState({
       isNewActivity: this.props.params.activityId === NEW_ACTIVITY_ID,
       quickLinksExpanded: true,
@@ -252,10 +246,9 @@ export default class ActivityForm extends Component {
 
   render() {
     const { isActivityLoading, isActivitySaving } = this.props.activityReducer;
-    if (isActivityLoading || isActivitySaving) {
-      return <Loading />;
-    } else {
+    if (!isActivityLoading && !isActivitySaving) {
       return this._renderActivity();
     }
+    return <Loading />;
   }
 }
