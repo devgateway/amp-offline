@@ -44,14 +44,10 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
       });
       if (this.props.tablify) {
         content = <Tablify content={content} columns={this.props.columns} />;
-        content = (<APField
-          key={listField} title={title} value={content} separator={false} inline
-          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
-      } else {
-        content = (<APField
-          key={listField} title={title} value={content} separator={false}
-          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
       }
+      content = (<APField
+        key={listField} title={title} value={content} separator={false} inline={this.props.tablify === true}
+        fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
     }
     return content;
   }

@@ -1,4 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styles from '../ActivityPreview.css';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
 /**
@@ -38,30 +40,19 @@ export default class Tablify extends Component {
   }
 
   render() {
-    const cellWidth = `${Math.floor(100 / this.props.columns)}%`;
-    console.log(cellWidth);
-    const cellStyle = {
-      display: 'inline-block',
-      'padding-bottom': '5px',
-      'border-bottom': '1px solid #ebebeb',
-      width: cellWidth,
-      'vertical-align': 'top'
-    };
-    const cellStyle2 = {
-      display: 'inline-block',
-      'padding-bottom': '5px',
-      'border-left': '1px solid #ebebeb',
-      'border-bottom': '1px solid #ebebeb',
-      height: '41px',
+    const cellWidth = `${(100 / this.props.columns)}%`;
+    const cellwidthStyle = {
       width: cellWidth
     };
     const rows = Math.ceil(this.props.content.length / this.props.columns);
     const tableContent = [];
     for (let i = 0; i < rows; i++) {
       const rowContent = [];
-      rowContent.push(<div style={cellStyle}>{this.props.content.pop()}</div>);
+      rowContent.push(<div style={cellwidthStyle} className={styles.tablify_outer_cell}>
+        {this.props.content.pop()}</div>);
       for (let j = 1; j < this.props.columns; j++) {
-        rowContent.push(<div style={cellStyle2}>{this.props.content.pop()}</div>);
+        rowContent.push(<div style={cellwidthStyle} className={styles.tablify_inner_cell}>
+          {this.props.content.pop()}</div>);
       }
       tableContent.push(<div>{rowContent}</div>);
     }
