@@ -25,7 +25,7 @@ export default class AFListSelector extends Component {
 
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
-    selectedOptions: PropTypes.array.isRequired,
+    selectedOptions: PropTypes.array,
     listPath: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     // we need to report validation error before search box, thus passing to the component to display
@@ -50,7 +50,7 @@ export default class AFListSelector extends Component {
     this.idOnlyField = this.listDef.children.find(item => item.id_only === true).field_name;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
-    this.setUniqueIdsAndUpdateState(this.props.selectedOptions);
+    this.setUniqueIdsAndUpdateState(this.props.selectedOptions || []);
   }
 
   setUniqueIdsAndUpdateState(values) {
