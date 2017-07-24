@@ -43,11 +43,9 @@ initializeI18Next().then(() => {
             <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
             <Route path="/desktop/current" component={DesktopPage} onEnter={checkAuth} store={store} />
             <Route
-              path="/activity/preview/:activityId" component={ActivityPreviewPage} onEnter={checkAuth} store={store}
-            />
+              path="/activity/preview/:activityId" component={ActivityPreviewPage} onEnter={checkAuth} store={store} />
             <Route
-              path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store}
-            />
+              path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store} />
           </Route>
         </Router>
       </Provider>,

@@ -10,7 +10,7 @@ export class TopMenu extends Component {
     loggedIn: PropTypes.bool.isRequired,
     menu: PropTypes.object,
     onClick: PropTypes.func,
-    workspaceList: PropTypes.object,
+    workspaceReducer: PropTypes.object,
     menuOnClickHandler: PropTypes.func,
     languageList: PropTypes.object
   };
@@ -25,7 +25,7 @@ export class TopMenu extends Component {
     return this.props.builder(this.props.loggedIn,
       this.props.menu,
       this.props.onClick,
-      this.props.workspaceList,
+      this.props.workspaceReducer,
       this.props.menuOnClickHandler,
       this.props.languageList);
   }
