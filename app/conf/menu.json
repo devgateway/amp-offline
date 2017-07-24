@@ -10,7 +10,7 @@
           "params": null
         },
         "Add Activity": {
-          "route": "/addActivity"
+          "route": "/activity/edit/NEW_ACTIVITY_ID"
         },
         "Change workspace": {
           "public": false,

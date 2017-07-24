@@ -59,9 +59,15 @@ const activityReducer = (state = defaultState, action: Object) => {
       return { ...state, activityFieldsManager };
     }
     case ACTIVITY_SAVE_PENDING:
-      return { ...state, isActivitySaving: true, isActivitySaved: false };
+      return { ...state, isActivitySaving: true, isActivitySaved: false, isActivityLoaded: false };
     case ACTIVITY_SAVE_FULFILLED:
-      return { ...state, isActivitySaving: false, isActivitySaved: true, savedActivity: action.payload };
+      return {
+        ...state,
+        isActivitySaving: false,
+        isActivitySaved: true,
+        savedActivity: action.payload,
+        isActivityLoaded: true
+      };
     case ACTIVITY_SAVE_REJECTED:
       return { ...state, isActivitySaving: false, isActivitySaved: false };
     case ACTIVITY_VALIDATED:

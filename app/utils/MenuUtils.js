@@ -4,7 +4,10 @@ import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
 import store from '../index';
+import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
 import LoggerManager from '../modules/util/LoggerManager';
+
+const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
 
 class MenuUtils {
 
@@ -12,10 +15,11 @@ class MenuUtils {
     LoggerManager.log('constructor');
   }
 
-  buildMenu(loggedIn, menu, onClickHandler, workspaceList, menuOnClickHandler, languageList) {
+  buildMenu(loggedIn, menu, onClickHandler, workspaceReducer, menuOnClickHandler, languageList) {
     LoggerManager.log('buildMenu');
+    const { workspaceList } = workspaceReducer;
     const firstLevelEntries = [];
-    const newMenu = Object.assign({}, menu);
+    const newMenu = cloneDeep(menu);
 
     // Dynamic list of workspaces.
     if (newMenu.menu.DESKTOP) {
@@ -24,6 +28,13 @@ class MenuUtils {
         nodes[value.name] = { objId: value.id, 'translation-type': 'content' }
       ));
       newMenu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
+
+      if (!workspaceReducer.currentWorkspace || !workspaceReducer.currentWorkspace['add-activity']) {
+        delete newMenu.menu.DESKTOP.nodes['Add Activity'];
+      } else {
+        const addActivityRoute = newMenu.menu.DESKTOP.nodes['Add Activity'].route;
+        newMenu.menu.DESKTOP.nodes['Add Activity'].route = addActivityRoute.replace('NEW_ACTIVITY_ID', NEW_ACTIVITY_ID);
+      }
     }
 
     // Dynamic list of languages with its own click handler.
