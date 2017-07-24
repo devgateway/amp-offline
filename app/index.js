@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, hashHistory, Route, IndexRoute } from 'react-router';
+import { Router, hashHistory, Route, IndexRoute, Redirect } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import configureStore from './store/configureStore';
 import './app.global.css';
@@ -16,6 +16,7 @@ import { ampStartUp } from './actions/StartUpAction';
 import { loadAllLanguages } from './actions/TranslationAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 import LoggerManager from './modules/util/LoggerManager';
+import { NEW_ACTIVITY_ID } from './utils/constants/ValueConstants';
 
 LoggerManager.log('index');
 const store = configureStore();
@@ -48,9 +49,7 @@ initializeI18Next().then(() => {
             <Route
               path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store}
             />
-            <Route
-              path="/addActivity" component={ActivityFormPage} onEnter={checkAuth} store={store}
-            />
+            <Redirect from="/addActivity" to={`/activity/edit/${NEW_ACTIVITY_ID}`} />
           </Route>
         </Router>
       </Provider>,
