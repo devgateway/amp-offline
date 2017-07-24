@@ -60,6 +60,9 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         value = DateUtils.createFormattedDate(value);
       }
       value = NAOptions && NAOptions.has(value) ? null : value;
+      if (value === null) {
+        value = 'No Data';
+      }
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
         return (<APField

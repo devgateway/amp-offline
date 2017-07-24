@@ -36,17 +36,24 @@ class APLocation extends Component {
     topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LEVEL, true, new Set([0]))} </td>);
     topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0]))} </td>);
     content = content.filter(el => el !== undefined);
+    let table = null;
+    if ((this.props.activity.implementation_level
+      && this.props.activity.implementation_level.value !== 'National')
+      || (this.props.activity.implentation_location
+      && this.props.activity.implementation_location !== 'Country')) {
+      table = (<table className={styles.box_table2}>
+        <tbody>
+          {content}
+        </tbody>
+      </table>);
+    }
     return (<div>
       <table className={styles.two_box_table}>
         <tbody>
           <tr>{topContent}</tr>
         </tbody>
       </table>
-      <table className={styles.box_table2}>
-        <tbody>
-          {content}
-        </tbody>
-      </table>
+      {table}
     </div>);
   }
 
