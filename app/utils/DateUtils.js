@@ -27,6 +27,14 @@ export default class DateUtils {
     );
   }
 
+  /**
+   * Configures the global locale to be used by the Moment library, e.g. in the Date Picker
+   * @param lang
+   */
+  static setCurrentLang(lang) {
+    Moment.locale(lang);
+  }
+
   static formatDateForCurrencyRates(date) {
     return DateUtils.formatDate(date, API_DATE_FORMAT);
   }
@@ -42,9 +50,13 @@ export default class DateUtils {
     return formattedDate;
   }
 
+  static getGSDateFormat() {
+    return store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase();
+  }
+
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
-    return DateUtils.formatDate(date, store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase());
+    return DateUtils.formatDate(date, DateUtils.getGSDateFormat());
   }
 
   static duration(from, to) {
