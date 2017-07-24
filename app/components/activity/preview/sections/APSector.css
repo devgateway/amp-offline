@@ -1,14 +1,18 @@
+.sector_container {
+  border-bottom: 1px solid #ebebeb;
+}
+
 .primary_sector {
   display: inline-block;
   width: 50%;
   padding-bottom: 10px;
   border-right: 1px solid #ebebeb;
-  border-bottom: 1px solid #ebebeb;
+  vertical-align: top;
 }
 
 .secondary_sector {
   display: inline-block;
   width: 50%;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ebebeb;
+  vertical-align: top;
 }

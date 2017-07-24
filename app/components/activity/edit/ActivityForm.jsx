@@ -127,7 +127,7 @@ export default class ActivityForm extends Component {
   }
 
   _renderQuickLinks() {
-    const sectionLinks = this.sections.map(sectionName =>
+    const sectionLinks = this.sections && this.sections.map(sectionName =>
       <Button
         key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block
         className={this.state.currentSection === sectionName ? styles.quick_links_highlight
@@ -210,7 +210,9 @@ export default class ActivityForm extends Component {
   }
 
   _renderActivity() {
-    const projectTitle = this.props.activityReducer.activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
+    const { activityFieldsManager } = this.props.activityReducer;
+    const projectTitle = activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
+
     return (
       <div className={styles.form_content} >
         <Grid fluid >
@@ -221,7 +223,8 @@ export default class ActivityForm extends Component {
             <Col md={10} >
               <div className={styles.form_main_content} >
                 <div className={styles.general_header} >
-                  {translate('Edit Activity Form')}({ projectTitle })
+                  {translate('Edit Activity Form')}
+                  {projectTitle && `(${projectTitle})`}
                 </div>
                 <div>{AFSectionLoader(this.state.currentSection)}</div>
               </div>
@@ -239,13 +242,10 @@ export default class ActivityForm extends Component {
   }
 
   render() {
-    if (this.props.activityReducer.isActivityLoading || this.props.activityReducer.isActivitySaving || !this.activity) {
-      return <Loading />;
-    }
-    if (this.activity) {
+    if (this.props.activityReducer.isActivityLoaded) {
       return this._renderActivity();
     }
-    return <div />;
+    // TODO report errors if not loading and not loaded
+    return <Loading />;
   }
-
 }
