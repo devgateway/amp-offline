@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styles from '../ActivityPreview.css';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-
 
 /**
  * Component for converting content to table form
  * @author Anya Marshall
  */
 export default class Tablify extends Component {
+
+  static propTypes = {
+    content: PropTypes.any,
+    columns: PropTypes.number
+  };
 
   /**
    * Takes an array and turns it into table rows and columns.
@@ -34,6 +40,24 @@ export default class Tablify extends Component {
   }
 
   render() {
-    return (<div />);
+    const cellWidth = `${(100 / this.props.columns)}%`;
+    const cellwidthStyle = {
+      width: cellWidth
+    };
+    const rows = Math.ceil(this.props.content.length / this.props.columns);
+    const tableContent = [];
+    for (let i = 0; i < rows; i++) {
+      const rowContent = [];
+      rowContent.push(<div style={cellwidthStyle} className={styles.tablify_outer_cell}>
+        {this.props.content.pop()}</div>);
+      for (let j = 1; j < this.props.columns; j++) {
+        rowContent.push(<div style={cellwidthStyle} className={styles.tablify_inner_cell}>
+          {this.props.content.pop()}</div>);
+      }
+      tableContent.push(<div>{rowContent}</div>);
+    }
+    return (<div>
+      {tableContent}
+    </div>);
   }
 }
