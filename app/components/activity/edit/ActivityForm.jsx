@@ -211,10 +211,7 @@ export default class ActivityForm extends Component {
 
   _renderActivity() {
     const { activityFieldsManager } = this.props.activityReducer;
-    let projectTitle;
-    if (activityFieldsManager) {
-      projectTitle = activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
-    }
+    const projectTitle = activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
 
     return (
       <div className={styles.form_content} >
@@ -245,10 +242,10 @@ export default class ActivityForm extends Component {
   }
 
   render() {
-    const { isActivityLoading, isActivitySaving } = this.props.activityReducer;
-    if (!isActivityLoading && !isActivitySaving) {
+    if (this.props.activityReducer.isActivityLoaded) {
       return this._renderActivity();
     }
+    // TODO report errors if not loading and not loaded
     return <Loading />;
   }
 }

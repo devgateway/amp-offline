@@ -4,6 +4,7 @@ import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
 import store from '../index';
+import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
 import LoggerManager from '../modules/util/LoggerManager';
 
 const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
@@ -30,6 +31,9 @@ class MenuUtils {
 
       if (!workspaceReducer.currentWorkspace || !workspaceReducer.currentWorkspace['add-activity']) {
         delete newMenu.menu.DESKTOP.nodes['Add Activity'];
+      } else {
+        const addActivityRoute = newMenu.menu.DESKTOP.nodes['Add Activity'].route;
+        newMenu.menu.DESKTOP.nodes['Add Activity'].route = addActivityRoute.replace('NEW_ACTIVITY_ID', NEW_ACTIVITY_ID);
       }
     }
 

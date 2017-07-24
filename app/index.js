@@ -16,7 +16,6 @@ import { ampStartUp } from './actions/StartUpAction';
 import { loadAllLanguages } from './actions/TranslationAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 import LoggerManager from './modules/util/LoggerManager';
-import { NEW_ACTIVITY_ID } from './utils/constants/ValueConstants';
 
 LoggerManager.log('index');
 const store = configureStore();
@@ -44,12 +43,9 @@ initializeI18Next().then(() => {
             <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
             <Route path="/desktop/current" component={DesktopPage} onEnter={checkAuth} store={store} />
             <Route
-              path="/activity/preview/:activityId" component={ActivityPreviewPage} onEnter={checkAuth} store={store}
-            />
+              path="/activity/preview/:activityId" component={ActivityPreviewPage} onEnter={checkAuth} store={store} />
             <Route
-              path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store}
-            />
-            <Redirect from="/addActivity" to={`/activity/edit/${NEW_ACTIVITY_ID}`} />
+              path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store} />
           </Route>
         </Router>
       </Provider>,
