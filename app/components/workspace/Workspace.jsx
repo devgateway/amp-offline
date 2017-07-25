@@ -77,6 +77,15 @@ export default class WorkspacePage extends Component {
         ));
         workspacesByGroup.push(wsByGroup);
       });
+      /* collect workspaces with no group into a virtual "Other" group */
+      const otherWs = [];
+      this.props.workspaceReducer.workspaceList.forEach((ws) => {
+        if (!ws['workspace-group']) {
+          ws['workspace-group'] = 'Other';
+          otherWs.push(ws);
+        }
+      });
+      workspacesByGroup.push(otherWs);
     }
     return workspacesByGroup;
   }
