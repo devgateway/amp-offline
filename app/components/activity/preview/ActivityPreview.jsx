@@ -93,7 +93,7 @@ export default class ActivityPreview extends Component {
                 <li>
                   <OverlayTrigger placement="top" overlay={editTooltip}>
                     <object type={'image/svg+xml'} data={edit} style={{ pointerEvents: 'none' }}>
-                      {translate('Edit')}
+                      {translate('activityEdit')}
                     </object>
                   </OverlayTrigger>
                 </li>
