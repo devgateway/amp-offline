@@ -48,6 +48,7 @@ html, body {
 .rc-menu-item { /* sub items without childs*/
   cursor: pointer;
   text-align: left;
+  padding: 5px 15px !important;
 }
 
 .rc-menu-vertical.rc-menu-sub {
