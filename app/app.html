@@ -18,8 +18,12 @@
   </head>
   <body>
     <div id="root" class="outerContainer"></div>
-    <script src="libs/dll/lib.js"></script>
     <script>
+      if(process.env.HOT){
+        const script = document.createElement('script');
+        script.src = 'libs/dll/lib.js';
+        document.body.append(script);
+      }
       {
         const script = document.createElement('script');
         const port = process.env.PORT || 3000;
