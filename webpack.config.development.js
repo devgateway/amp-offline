@@ -67,6 +67,12 @@ export default validate(merge(baseConfig, {
   },
 
   plugins: [
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      name: 'lib',
+      manifest: require('./app/libs/dll/manifest.json')
+    }),
+
     // https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
     new webpack.HotModuleReplacementPlugin(),
 
