@@ -37,12 +37,7 @@
     },
     "SYNC": {
       "public": false,
-      "nodes": {
-        "Synchronize": {
-          "route": "/syncUp",
-          "public": false
-        }
-      }
+      "route": "/syncUp"
     },
     "HELP": {
       "public": true,
