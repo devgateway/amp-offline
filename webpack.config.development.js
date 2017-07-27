@@ -9,6 +9,7 @@ import validate from 'webpack-validator';
 import merge from 'webpack-merge';
 import formatter from 'eslint-formatter-pretty';
 import baseConfig from './webpack.config.base';
+import vendorManifest from './app/libs/dll/manifest.json';
 
 const port = process.env.PORT || 3000;
 
@@ -67,6 +68,12 @@ export default validate(merge(baseConfig, {
   },
 
   plugins: [
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      name: 'lib',
+      manifest: vendorManifest
+    }),
+
     // https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
     new webpack.HotModuleReplacementPlugin(),
 

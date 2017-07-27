@@ -18,7 +18,7 @@ export default validate({
   module: {
     loaders: [{
       test: /\.jsx?$/,
-      loaders: ['babel-loader'],
+      loaders: ['babel-loader?cacheDirectory'],
       exclude: /node_modules/
     }, {
       test: /\.json$/,
