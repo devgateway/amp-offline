@@ -9,8 +9,10 @@ import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 import translate from '../../utils/translate';
-import { SYNCUP_STATUS_SUCCESS } from '../../utils/Constants';
+import { SYNCUP_STATUS_SUCCESS, VERSION } from '../../utils/Constants';
 import DateUtils from '../../utils/DateUtils';
+import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
+import { URL_CONNECTIVITY_CHECK_EP } from '../../modules/connectivity/AmpApiConstants';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -37,6 +39,8 @@ export default class SyncUp extends Component {
   constructor() {
     super();
     LoggerManager.log('constructor');
+    this.checkConnection = this.checkConnection.bind(this);
+    this.connectionError = undefined;
   }
 
   componentWillMount() {
@@ -69,6 +73,12 @@ export default class SyncUp extends Component {
     const { syncUpReducer } = this.props;
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
       return <Loading />;
+    } else if (this.connectionError) {
+      return (
+        <div>
+          <ErrorMessage message={this.connectionError} />
+        </div>
+      );
     } else {
       const { errorMessage, forceSyncUpMessage } = syncUpReducer;
       if (errorMessage || forceSyncUpMessage) {
@@ -125,9 +135,23 @@ export default class SyncUp extends Component {
     }
   }
 
+  checkConnection() {
+    LoggerManager.log('checkConnection');
+    const { startSyncUp } = this.props;
+    const url = URL_CONNECTIVITY_CHECK_EP;
+    const paramsMap = { 'amp-offline-version': VERSION };
+    ConnectionHelper.doGet({ url, paramsMap }).then(() =>
+     startSyncUp()
+   ).catch((err) => {
+     console.log(err);
+     this.connectionError = translate('syncConnectionError');
+     this.render();
+   });
+  }
+
   render() {
     LoggerManager.log('render');
-    const { startSyncUp, syncUpReducer } = this.props;
+    const { syncUpReducer } = this.props;
     const { historyData, loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (
       <div className={styles.container}>
@@ -139,7 +163,7 @@ export default class SyncUp extends Component {
               'btn btn-success': true,
               disabled: loadingSyncHistory || syncUpInProgress
             })}
-            onClick={startSyncUp}
+            onClick={this.checkConnection}
           />
         </div>
         <div className={styles.display_inline}>
