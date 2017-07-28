@@ -14,6 +14,7 @@ npm 3.x or above.
 Install
 -------    
     npm install
+    npm run build-dll
     
 Run
 -----

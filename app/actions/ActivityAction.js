@@ -92,7 +92,8 @@ function _loadActivity(activityId, teamMemberId, possibleValuesPaths, currentWor
         const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
-        return WorkspaceHelper.findById(activity[TEAM].id).then(activityWorkspace =>
+        const activityWsId = activity[TEAM] && activity[TEAM].id;
+        return WorkspaceHelper.findById(activityWsId).then(activityWorkspace =>
           resolve({
             activity,
             activityWorkspace,

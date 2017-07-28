@@ -52,6 +52,12 @@
   "Planned Disbursements": "Planned Disbursements",
   "Planned Expenditures": "Planned Expenditures",
   "Unallocated Disbursements": "Unallocated Disbursements",
+  "Subtotal Actual Commitments": "Subtotal Actual Commitments",
+  "Subtotal Actual Disbursements": "Subtotal Actual Disbursements",
+  "Subtotal Actual Expenditures": "Subtotal Actual Expenditures",
+  "Subtotal Planned Commitments": "Subtotal Planned Commitments",
+  "Subtotal Planned Disbursements": "Subtotal Planned Disbursements",
+  "Subtotal Planned Expenditures": "Subtotal Planned Expenditures",
   "Next": "Next",
   "Prev": "Prev",
   "timeoutError": "Connection timeout. Please check your internet connection.",
@@ -204,5 +210,6 @@
   "BA": "BA",
   "DO": "DO",
   "EA": "EA",
-  "IA": "IA"
+  "IA": "IA",
+  "activityEdit": "Edit"
 }

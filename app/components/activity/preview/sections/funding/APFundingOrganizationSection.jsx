@@ -41,10 +41,10 @@ class APFundingOrganizationSection extends Component {
     content.push(APField.instance('Type of Assistance', this.props.funding[AC.TYPE_OF_ASSISTANCE].value, false, false,
       styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Financing Instrument', this.props.funding[AC.FINANCING_INSTRUMENT].value,
-     false, false, styles.funding_field_name, styles.funding_field_value));
+      false, false, styles.funding_field_name, styles.funding_field_value));
     const fundingStatus = this.props.funding[AC.FUNDING_STATUS] ? this.props.funding[AC.FUNDING_STATUS].value : '';
     content.push(APField.instance('Funding Status', fundingStatus, false, false,
-    styles.funding_field_name, styles.funding_field_value));
+      styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Mode of Payment',
       this.props.funding[AC.MODE_OF_PAYMENT] ? this.props.funding[AC.MODE_OF_PAYMENT].value : '', false, false,
       styles.funding_field_name, styles.funding_field_value));
@@ -104,16 +104,18 @@ class APFundingOrganizationSection extends Component {
     return (<div>
       <APFundingTotalItem
         label={translate('Undisbursed Balance')} value={totalActualCommitments - totalActualDisbursements}
-        currency={translate(this._currency)} />
+        currency={translate(this._currency)} key={'undisbursed-balance-key'} />
     </div>);
   }
 
   render() {
     LoggerManager.log('render');
     return (<div>
-      <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
-      <table className={styles.two_box_table}><tbody>{this._buildDonorInfo()}</tbody></table>
-      <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
+      <div className={styles.section_header} > {translate('Funding Item')} {this.props.counter} </div>
+      <table className={styles.two_box_table} >
+        <tbody>{this._buildDonorInfo()}</tbody>
+      </table>
+      <div className={styles.funding_detail} >{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
     </div>);
   }

@@ -10,7 +10,7 @@
           "params": null
         },
         "Add Activity": {
-          "route": "/addActivity"
+          "route": "/activity/edit/NEW_ACTIVITY_ID"
         },
         "Change workspace": {
           "public": false,
@@ -37,12 +37,7 @@
     },
     "SYNC": {
       "public": false,
-      "nodes": {
-        "Synchronize": {
-          "route": "/syncUp",
-          "public": false
-        }
-      }
+      "route": "/syncUp"
     },
     "HELP": {
       "public": true,
