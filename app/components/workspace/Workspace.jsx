@@ -23,7 +23,6 @@ export default class WorkspacePage extends Component {
     if (workspaceList.length > 0) {
       return (<WorkspaceList
         workspaceList={workspaceList}
-        workspaceGroup={workspaceList[0]['workspace-group']}
         onClickHandler={selectWorkspace} />);
     } else {
       return <br />;
@@ -61,9 +60,7 @@ export default class WorkspacePage extends Component {
     if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
       return <ErrorMessage message={this.props.workspaceReducer.errorMessage} />;
     } else {
-      return this.splitWorkspaceByGroups().map((workspaceList) => (
-        WorkspacePage.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
-      ));
+      return WorkspacePage.drawWorkspaceList(this.props.workspaceReducer.workspaceList, this.props.selectWorkspace);
     }
   }
 
