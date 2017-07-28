@@ -7,6 +7,7 @@ import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import { WORKSPACES_GROUPS } from '../../utils/constants/WorkspaceGroupsConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
+import translate from '../../utils/translate';
 
 export default class WorkspacePage extends Component {
 
@@ -23,6 +24,7 @@ export default class WorkspacePage extends Component {
     if (workspaceList.length > 0) {
       return (<WorkspaceList
         workspaceList={workspaceList}
+        workspaceGroup={translate('allWorkspaces')}
         onClickHandler={selectWorkspace} />);
     } else {
       return <br />;

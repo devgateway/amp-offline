@@ -7,7 +7,8 @@ export default class WorkspaceList extends Component {
 
   static propTypes = {
     workspaceList: PropTypes.array.isRequired,
-    onClickHandler: PropTypes.func.isRequired
+    onClickHandler: PropTypes.func.isRequired,
+    workspaceGroup: PropTypes.string.isRequired
   };
 
   render() {
@@ -21,7 +22,7 @@ export default class WorkspaceList extends Component {
       <BootstrapTable
         data={this.props.workspaceList} options={tableOptions} keyField="id" tableHeaderClass={styles.table}
         bordered={false} striped hover trClassName={styles.row}>
-        <TableHeaderColumn dataField="name">All Workspaces</TableHeaderColumn>
+        <TableHeaderColumn dataField="name">{this.props.workspaceGroup}</TableHeaderColumn>
       </BootstrapTable>
     );
   }
