@@ -6,7 +6,6 @@ import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
-import { HIERARCHICAL_VALUE } from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import * as Utils from '../../../../utils/Utils';
@@ -36,7 +35,7 @@ export default class AFListSelector extends Component {
     super(props);
     LoggerManager.log('constructor');
     this.handleAddValue = this.handleAddValue.bind(this);
-    this.handleRemoveValues = this.handleRemoveValues.bind(this);
+    this.handleRemoveValue = this.handleRemoveValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.dividePercentage = this.dividePercentage.bind(this);
     this.state = {
@@ -64,35 +63,27 @@ export default class AFListSelector extends Component {
   }
 
   getListValues() {
-    return this.state.values.map(value => {
-      const simplifiedValue = { uniqueId: value.uniqueId };
-      Object.keys(value).forEach(field => {
-        let fieldData = value[field];
-        if (field === this.idOnlyField && !fieldData.isAFOption) {
-          fieldData = new AFOption(value[field]);
-        }
-        const optionValue = fieldData ? (fieldData[HIERARCHICAL_VALUE] || fieldData.translatedValue) : null;
-        if (optionValue) {
-          simplifiedValue[field] = optionValue;
-          simplifiedValue.id = fieldData.id;
-        } else {
-          simplifiedValue[field] = fieldData;
-        }
-      });
-      return simplifiedValue;
+    this.state.values.forEach(value => {
+      const idOnlyFieldValue = value[this.idOnlyField];
+      if (!idOnlyFieldValue.isAFOption) {
+        value[this.idOnlyField] = new AFOption({ ...idOnlyFieldValue, displayHierarchicalValue: true });
+      }
     });
+    return this.state.values;
   }
 
   dividePercentage() {
-    const values = this.state.values;
+    let values = this.state.values;
     const percentage = Math.floor(100 / values.length);
     let percentageLeftover = 100 % values.length;
-    values.forEach(item => {
+    // using .map to generate new values that trigger the list component refresh
+    values = values.map(item => {
       item[this.percentageFieldDef.field_name] = percentage;
       if (percentageLeftover) {
         item[this.percentageFieldDef.field_name] += 1;
         percentageLeftover -= 1;
       }
+      return item;
     });
     this.handleChange(values);
   }
@@ -110,18 +101,14 @@ export default class AFListSelector extends Component {
     this.handleChange(values);
   }
 
-  handleRemoveValues(ids) {
-    const values = this.state.values.filter(item => !ids.includes(item.uniqueId));
+  handleRemoveValue(id) {
+    const values = this.state.values.filter(item => id !== item.uniqueId);
     this.handleChange(values);
   }
 
   handleEditValue(rowData, colHeader, cellValue) {
     const values = this.state.values;
     const item = values.find(val => val.uniqueId === rowData.uniqueId);
-    if (this.percentageFieldDef && this.percentageFieldDef.field_name === colHeader) {
-      // percentage validation done by AFList, but the Bootstrap Table widget uses Text Filed (used w/o customization)
-      cellValue = Number(cellValue);
-    }
     item[colHeader] = cellValue;
     this.handleChange(values);
   }
@@ -142,21 +129,21 @@ export default class AFListSelector extends Component {
     const searchDisplayStyle = this.noMultipleValues && this.state.values.length > 0 ? styles.hidden : styles.inline;
     const btnStyle = `${this.percentageFieldDef ? styles.dividePercentage : styles.hidden} btn btn-success`;
     return (<div >
-      <FormGroup controlId={this.props.listPath} >
-        <AFList
-          onDeleteRow={this.handleRemoveValues} values={this.getListValues()} listPath={this.props.listPath}
-          onEditRow={this.handleEditValue.bind(this)} />
+      <AFList
+        onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
+        onEditRow={this.handleEditValue.bind(this)} />
+      <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()} >
         <FormControl.Feedback />
-        <HelpBlock>{this.props.validationError}</HelpBlock>
-      </FormGroup>
+        <HelpBlock >{this.props.validationError}</HelpBlock >
+      </FormGroup >
       <div className={`${searchDisplayStyle} ${styles.searchContainer}`} >
         <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
         <Button
           onClick={this.dividePercentage.bind(this)} bsStyle="success" bsClass={btnStyle}
           disabled={this.state.values.length === 0} hidden={this.percentageFieldDef === undefined} >
           {translate('Divide Percentage')}
-        </Button>
-      </div>
-    </div>);
+        </Button >
+      </div >
+    </div >);
   }
 }
