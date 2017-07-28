@@ -9,10 +9,9 @@ import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 import translate from '../../utils/translate';
-import { SYNCUP_STATUS_SUCCESS, VERSION } from '../../utils/Constants';
+import { SYNCUP_STATUS_SUCCESS } from '../../utils/Constants';
 import DateUtils from '../../utils/DateUtils';
-import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
-import { URL_CONNECTIVITY_CHECK_EP } from '../../modules/connectivity/AmpApiConstants';
+import store from '../../index';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -137,16 +136,12 @@ export default class SyncUp extends Component {
 
   checkConnection() {
     LoggerManager.log('checkConnection');
-    const { startSyncUp } = this.props;
-    const url = URL_CONNECTIVITY_CHECK_EP;
-    const paramsMap = { 'amp-offline-version': VERSION };
-    ConnectionHelper.doGet({ url, paramsMap }).then(() =>
-     startSyncUp()
-   ).catch((err) => {
-     console.log(err);
-     this.connectionError = translate('syncConnectionError');
-     this.render();
-   });
+    if (store.getState().ampConnectionStatusReducer.status._isAmpAvailable) {
+      this.props.startSyncUp();
+    } else {
+      this.connectionError = translate('syncConnectionError');
+      this.render();
+    }
   }
 
   render() {
