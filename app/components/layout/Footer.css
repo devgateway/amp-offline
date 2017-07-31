@@ -11,9 +11,8 @@
 }
 
 .footerContainer {
-  height: 145px;
-  margin-top: -145px;
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .footerText {
