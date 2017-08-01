@@ -49,7 +49,8 @@ export default class AFNumber extends Component {
     // the numeric value.
     const value = e.target.value;
     const validationError = this.validate(value);
-    this.props.onChange(value, null, validationError);
+    const valueAsNumber = value === null || value === undefined ? value : Number(value);
+    this.props.onChange(valueAsNumber, null, validationError);
     this.setState({ value });
   }
 
