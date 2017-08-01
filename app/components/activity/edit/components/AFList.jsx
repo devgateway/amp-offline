@@ -2,9 +2,12 @@ import React, { Component, PropTypes } from 'react';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
+import afStyles from '../ActivityForm.css';
+import { LABEL } from './AFComponentTypes';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import AFField from './AFField';
 
 /* eslint-disable class-methods-use-this */
 
@@ -63,17 +66,37 @@ export default class AFList extends Component {
     });
   }
 
-  onDeleteRow(rows) {
-    this.setState({
-      values: this.state.values.filter(item => !rows.includes(item.uniqueId))
-    });
-    this.props.onDeleteRow(rows);
+  shouldComponentUpdate(nextProps) {
+    return nextProps.values !== this.props.values;
   }
 
-  editableCellClass(editable) {
+  onDeleteRow(uniqueId) {
+    this.setState({
+      values: this.state.values.filter(item => uniqueId !== item.uniqueId)
+    });
+    this.props.onDeleteRow(uniqueId);
+  }
+
+  getCellClass(editable, required) {
+    const cellClasses = [];
     if (editable) {
-      return styles.editable;
+      cellClasses.push(styles.editable);
+      if (required) {
+        cellClasses.push(afStyles.required);
+      }
     }
+    return cellClasses.length ? cellClasses.join(' ') : null;
+  }
+
+  getCustomEditor(fieldPath, onUpdate, props) {
+    return <AFField onUpdate={onUpdate} fieldPath={fieldPath} parent={props.row} showLabel={false} {...props} />;
+  }
+
+  getDataFormat(editable, fieldPath, cell, row) {
+    if (editable) {
+      return <AFField fieldPath={fieldPath} parent={row} showLabel={false} />;
+    }
+    return cell;
   }
 
   _beforeSaveCell(row, cellName, cellValue) {
@@ -132,11 +155,14 @@ export default class AFList extends Component {
       const childFieldName = childDef.field_name;
       const fieldPath = `${listFieldName}~${childFieldName}`;
       const editable = childDef.id_only !== true;
+      const required = childDef.required !== 'N';
       const validator = childDef.percentage === true ? this._percentageValidator.bind(this) : null;
       return (
         <TableHeaderColumn
-          key={childFieldName} dataField={childFieldName} columnTitle
-          editable={{ readOnly: !editable, validator }} columnClassName={this.editableCellClass.bind(this, editable)} >
+          key={childFieldName} dataField={childFieldName} columnTitle editable={{ readOnly: !editable, validator }}
+          dataFormat={this.getDataFormat.bind(this, editable, fieldPath)}
+          customEditor={{ getElement: this.getCustomEditor.bind(this, fieldPath) }}
+          columnClassName={this.getCellClass.bind(this, editable, required)} >
           {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);
     }));
@@ -163,11 +189,65 @@ export default class AFList extends Component {
     </div>);
   }
 
+  renderAsSimpleTable() {
+    const { listPath } = this.props;
+    const headers = [];
+    const content = [];
+    const collWidth = { width: 90 / this.fields.length };
+    this.fields.forEach(childDef => {
+      const childFieldName = childDef.field_name;
+      const fieldPath = `${listPath}~${childFieldName}`;
+      const editable = childDef.id_only !== true;
+      const fieldType = editable ? null : LABEL;
+      const className = editable ? styles.cell_editable : styles.cell_readonly;
+
+      headers.push(this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath));
+      let rowId = 0;
+      this.state.values.forEach(rowData => {
+        if (rowId === content.length) {
+          content.push({ rowData, cells: [] });
+        }
+        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId) || rowData[childFieldName];
+        const value = (<AFField
+          fieldPath={fieldPath} parent={rowData} type={fieldType} showLabel={false} className={className} inline
+          showRequired={editable} onAfterUpdate={this._afterSaveCell.bind(this, rowData, childFieldName)} />);
+        content[rowId].cells.push({ key, value });
+        rowId += 1;
+      });
+    });
+    return (
+      <div className="react-bs-table react-bs-table-bordered" >
+        <table className="table table-bordered table-hover" >
+          <tbody className="react-bs-container-body" >
+            <tr >
+              {headers.map(header =>
+                (<th className={styles.thClassName} style={collWidth} key={header} >{header}</th >))}
+              <th className={`${styles.thDelete} ${styles.thClassName}`} />
+            </tr >
+            {content.map(row => (
+              <tr key={row.rowData.uniqueId}>
+                {row.cells.map(cell => (
+                  <td key={cell.key} className={styles.cell} >{cell.value}</td >
+                ))}
+                <td className={styles.thDelete} >
+                  <a
+                    onClick={this.onDeleteRow.bind(this, row.rowData.uniqueId)} className={styles.delete} href={null} >
+                    <span >&nbsp;</span >
+                  </a >
+                </td >
+              </tr >
+            ))}
+          </tbody >
+        </table >
+      </div >
+    );
+  }
+
   render() {
     if (!this.context.activityFieldsManager) {
       return null;
     }
 
-    return this.renderAsBootstrapTable();
+    return this.renderAsSimpleTable();
   }
 }

@@ -52,6 +52,10 @@ export default class AFOption {
     return this.translatedValue;
   }
 
+  get displayFullValue() {
+    return this.hierarchicalValue || this.translatedValue;
+  }
+
   get hierarchicalDepth() {
     return this[HIERARCHICAL_VALUE_DEPTH];
   }
