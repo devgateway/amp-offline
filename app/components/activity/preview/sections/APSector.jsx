@@ -32,7 +32,7 @@ class APSector extends Component {
   }
 
   render() {
-    return (<div>
+    return (<div className={styles.sector_container}>
       <div className={styles.primary_sector}>
         <PrimarySectorList key="primary-programs-list" {...this.props} />
       </div>

@@ -53,6 +53,12 @@
   "Planned Disbursements": "Planned Disbursements",
   "Planned Expenditures": "Planned Expenditures",
   "Unallocated Disbursements": "Unallocated Disbursements",
+  "Subtotal Actual Commitments": "Subtotal Actual Commitments",
+  "Subtotal Actual Disbursements": "Subtotal Actual Disbursements",
+  "Subtotal Actual Expenditures": "Subtotal Actual Expenditures",
+  "Subtotal Planned Commitments": "Subtotal Planned Commitments",
+  "Subtotal Planned Disbursements": "Subtotal Planned Disbursements",
+  "Subtotal Planned Expenditures": "Subtotal Planned Expenditures",
   "Next": "Next",
   "Prev": "Prev",
   "timeoutError": "Connection timeout. Please check your internet connection.",
@@ -201,5 +207,12 @@
   "Add Disbursements": "Add Disbursements",
   "Add Expenditures": "Add Expenditures",
   "activitySavedMsg": "Your changes have been successfully saved. In order to see your changes in the AMP please sync.",
-  "CurrencyRatesNotInitialized":"Currency rates not initialized"
+  "CurrencyRatesNotInitialized":"Currency rates not initialized",
+  "activityEdit": "Edit",
+  "allWorkspaces": "All Workspaces",
+  "Search Organizations": "Search Organizations",
+  "Search Locations": "Search Locations",
+  "Search Primary Sectors": "Search Primary Sectors",
+  "Search Secondary Sectors": "Search Secondary Sectors",
+  "Add Program": "Add Program"
 }

@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import Loading from '../../common/Loading';
 import * as styles from './ActivityForm.css';
-import { IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
+import { IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH, FIELDS_PER_SECTIONS } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
 import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
@@ -15,6 +15,8 @@ import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTota
 import ActivityValidator from '../../../modules/activity/ActivityValidator';
 import translate from '../../../utils/translate';
 import LoggerManager from '../../../modules/util/LoggerManager';
+
+/* eslint-disable class-methods-use-this */
 
 /**
  * Activity Form
@@ -33,6 +35,7 @@ export default class ActivityForm extends Component {
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       errorMessage: PropTypes.object,
       validationResult: PropTypes.array,
+      fieldValidationResult: PropTypes.object,
       isActivitySaved: PropTypes.bool
     }).isRequired,
     userReducer: PropTypes.object.isRequired,
@@ -79,6 +82,7 @@ export default class ActivityForm extends Component {
       quickLinksExpanded: true,
       currentSection: undefined,
       content: undefined,
+      sectionsWithErrors: [],
       validationError: null,
       isSaveAndSubmit: false
     });
@@ -106,6 +110,16 @@ export default class ActivityForm extends Component {
     }
   }
 
+  componentDidUpdate() {
+    if (this.jumpToError) {
+      this.jumpToError = false;
+      const elementsWithError = this.mainContent.getElementsByClassName('has-error');
+      if (elementsWithError && elementsWithError.length) {
+        elementsWithError[0].scrollIntoView();
+      }
+    }
+  }
+
   componentWillUnmount() {
     this.props.unloadActivity();
   }
@@ -121,19 +135,25 @@ export default class ActivityForm extends Component {
   }
 
   _selectSection(sectionName) {
+    const sectionsWithErrors = this.state.sectionsWithErrors.filter(sWithErrors => sWithErrors !== sectionName);
     this.setState({
-      currentSection: sectionName
+      currentSection: sectionName,
+      sectionsWithErrors
     });
   }
 
   _renderQuickLinks() {
-    const sectionLinks = this.sections.map(sectionName =>
-      <Button
+    const { currentSection, sectionsWithErrors } = this.state;
+    const sectionLinks = this.sections && this.sections.map(sectionName => {
+      const linkStyle = currentSection === sectionName ? styles.quick_links_highlight : styles.quick_links_button;
+      const textStyle = `${styles.quick_links} 
+      ${sectionsWithErrors.includes(sectionName) && currentSection !== sectionName ? styles.quick_links_required : ''}`;
+      return (<Button
         key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block
-        className={this.state.currentSection === sectionName ? styles.quick_links_highlight
-          : styles.quick_links_button} >
-        <div className={styles.quick_links} >{translate(sectionName)}</div>
+        className={linkStyle} >
+        <div className={textStyle} >{translate(sectionName)}</div>
       </Button>);
+    });
     return (
       <div>
         <Button bsClass={styles.quick_links_toggle} onClick={this._toggleQuickLinks} block >
@@ -155,10 +175,7 @@ export default class ActivityForm extends Component {
     this.activity[IS_DRAFT] = asDraft;
     const errors = this.activityValidator.areAllConstraintsMet(this.activity, asDraft, fieldPathsToSkipSet);
     if (errors.length) {
-      let errorDetails = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join('. ');
-      errorDetails = errorDetails.length > 1000 ? `${errorDetails.substring(0, 1000)}...` : errorDetails;
-      validationError = `${translate('afFieldsGeneralError')} Details: ${errorDetails}`;
-      LoggerManager.error(validationError);
+      validationError = this._handleSaveErrors(errors);
     }
     this.props.reportActivityValidation(errors);
     this.showSaveDialog = asDraft && !validationError;
@@ -167,6 +184,29 @@ export default class ActivityForm extends Component {
       this.props.saveActivity(this.activity);
       this.props.router.push(`/desktop/${this.props.userReducer.teamMember.id}`);
     }
+  }
+
+  _handleSaveErrors(errors) {
+    const sectionsWithErrors = this._getSectionsWithErrors(errors);
+    if (sectionsWithErrors.length && this.state.currentSection !== sectionsWithErrors[0]) {
+      this._selectSection(sectionsWithErrors.shift());
+    }
+    this.setState({ sectionsWithErrors });
+    // storing as a non state, since it will be used without rerendering
+    this.jumpToError = true;
+    let errorDetails = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join('. ');
+    errorDetails = errorDetails.length > 1000 ? `${errorDetails.substring(0, 1000)}...` : errorDetails;
+    const validationError = `${translate('afFieldsGeneralError')} Details: ${errorDetails}`;
+    LoggerManager.error(validationError);
+    return validationError;
+  }
+
+  _getSectionsWithErrors(errors) {
+    const errorRoots = errors.map(error => error.path.split('~')[0]);
+    return SECTIONS.filter(sectionName => {
+      const fieldRoots = FIELDS_PER_SECTIONS[sectionName];
+      return fieldRoots && errorRoots.some(errorRoot => fieldRoots.has(errorRoot));
+    });
   }
 
   _renderSaveDialog() {
@@ -210,7 +250,9 @@ export default class ActivityForm extends Component {
   }
 
   _renderActivity() {
-    const projectTitle = this.props.activityReducer.activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
+    const { activityFieldsManager } = this.props.activityReducer;
+    const projectTitle = activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
+
     return (
       <div className={styles.form_content} >
         <Grid fluid >
@@ -221,9 +263,12 @@ export default class ActivityForm extends Component {
             <Col md={10} >
               <div className={styles.form_main_content} >
                 <div className={styles.general_header} >
-                  {translate('Edit Activity Form')}({ projectTitle })
+                  {translate('Edit Activity Form')}
+                  {projectTitle && `(${projectTitle})`}
                 </div>
-                <div>{AFSectionLoader(this.state.currentSection)}</div>
+                <div ref={(mainContent => { this.mainContent = mainContent; })}>
+                  {AFSectionLoader(this.state.currentSection)}
+                </div>
               </div>
             </Col>
             <Col mdOffset={10} >
@@ -239,13 +284,10 @@ export default class ActivityForm extends Component {
   }
 
   render() {
-    if (this.props.activityReducer.isActivityLoading || this.props.activityReducer.isActivitySaving || !this.activity) {
-      return <Loading />;
-    }
-    if (this.activity) {
+    if (this.props.activityReducer.isActivityLoaded) {
       return this._renderActivity();
     }
-    return <div />;
+    // TODO report errors if not loading and not loaded
+    return <Loading />;
   }
-
 }

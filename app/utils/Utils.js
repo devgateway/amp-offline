@@ -114,6 +114,10 @@ const Utils = {
   removeIdFromItem(item) {
     delete item._id;
     return item;
+  },
+
+  capitalize(text: string) {
+    return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
   }
 };
 

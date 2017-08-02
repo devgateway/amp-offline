@@ -152,7 +152,9 @@ export default class ActivityValidator {
           }
         } else if (fieldDef.importable) {
           if (percentageChild) {
-            const childrenValues = value.filter(child => child && child instanceof Object);
+            // similarly to AMP, we should report total error if there are % set. E.g. In Niger, Programs % is optional.
+            const childrenValues = value.filter(child => child && child instanceof Object
+              && this._hasValue(child[percentageChild.field_name]));
             const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name);
             this.processValidationResult(obj, errors, fieldPath, totError);
           }
@@ -197,6 +199,10 @@ export default class ActivityValidator {
         this.processValidationResult(obj, errors, fieldPath, this.percentValueValidator(value, fieldPath));
       }
     });
+  }
+
+  _hasValue(value) {
+    return value !== null && value !== undefined && value !== '';
   }
 
   /**

@@ -32,6 +32,7 @@ export const ACTIVITY_SAVE_FULFILLED = 'ACTIVITY_SAVE_FULFILLED';
 export const ACTIVITY_SAVE_REJECTED = 'ACTIVITY_SAVE_REJECTED';
 export const ACTIVITY_UNLOADED = 'ACTIVITY_UNLOADED';
 export const ACTIVITY_VALIDATED = 'ACTIVITY_VALIDATED';
+export const ACTIVITY_FIELD_VALIDATED = 'ACTIVITY_FIELD_VALIDATED';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 
@@ -68,6 +69,14 @@ export function reportActivityValidation(validationResult) {
     });
 }
 
+export function reportFieldValidation(fieldPath, validationResult) {
+  return (dispatch) =>
+    dispatch({
+      type: ACTIVITY_FIELD_VALIDATED,
+      payload: { fieldPath, validationResult }
+    });
+}
+
 export function saveActivity(activity) {
   return (dispatch, ownProps) => {
     dispatch({
@@ -91,7 +100,8 @@ function _loadActivity(activityId, teamMemberId, possibleValuesPaths, currentWor
         const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
-        return WorkspaceHelper.findById(activity[TEAM].id).then(activityWorkspace =>
+        const activityWsId = activity[TEAM] && activity[TEAM].id;
+        return WorkspaceHelper.findById(activityWsId).then(activityWorkspace =>
           resolve({
             activity,
             activityWorkspace,
