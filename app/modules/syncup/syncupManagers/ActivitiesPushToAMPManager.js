@@ -58,11 +58,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
     if (store.getState().userReducer.userData.ampOfflinePassword) {
       return this._rejectActivitiesClientSide(diff)
-        .then(() => {
-          const steps = [
-            this._getValidUsers, this._getWSMembers, this._getActivitiesToPush, this._pushActivities.bind(this)];
-          return this._pushSteps(steps);
-        })
+        .then(() => ActivitiesPushToAMPManager.getActivitiesToPush().then(this._pushActivities.bind(this)))
         .then(() => {
           this.done = true;
           return this.done;
@@ -89,9 +85,14 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     return Promise.resolve([]);
   }
 
-  _pushSteps(steps) {
-    LoggerManager.log('_pushSteps');
-    return steps.reduce((currentPromise, promiseFactory) => currentPromise.then(promiseFactory), Promise.resolve());
+  /**
+   * Detects activities that should be pushed to AMP
+   * @return {Promise.<activity>}
+   */
+  static getActivitiesToPush() {
+    return ActivitiesPushToAMPManager._getValidUsers()
+      .then(ActivitiesPushToAMPManager._getWSMembers)
+      .then(ActivitiesPushToAMPManager._getActivitiesToPush);
   }
 
   /**
@@ -99,14 +100,14 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @private
    * @return {Promise}
    */
-  _getValidUsers() {
+  static _getValidUsers() {
     LoggerManager.log('_getValidUsers');
     const filter = { $and: [{ 'is-banned': { $ne: true } }, { 'is-active': { $ne: true } }] };
     const projections = { id: 1 };
     return UserHelper.findAllUsersByExample(filter, projections);
   }
 
-  _getWSMembers(users) {
+  static _getWSMembers(users) {
     const wsMembersFilter = { 'user-id': { $in: Utils.flattenToListByKey(users, 'id') } };
     return TeamMemberHelper.findAll(wsMembersFilter);
   }
@@ -117,7 +118,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @private
    * @returns {Promise}
    */
-  _getActivitiesToPush(workspaceMembers) {
+  static _getActivitiesToPush(workspaceMembers) {
     LoggerManager.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
