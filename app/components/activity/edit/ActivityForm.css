@@ -126,6 +126,10 @@ div.quick_links::after {
     color: white;
 }
 
+.quick_links_required {
+    color: red !important;
+}
+
 .label_highlight {
     font-weight: bold;
 }

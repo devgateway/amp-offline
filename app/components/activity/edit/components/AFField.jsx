@@ -13,6 +13,7 @@ import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsMa
 import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
 import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import { reportFieldValidation } from '../../../../actions/ActivityAction';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
@@ -45,7 +46,8 @@ class AFField extends Component {
     min: PropTypes.number,
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
-    validationResult: PropTypes.array // eslint-disable-line react/no-unused-prop-types
+    validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
+    onFieldValidation: PropTypes.func.isRequired // eslint-disable-line react/no-unused-prop-types
   };
 
   static defaultProps = {
@@ -236,6 +238,7 @@ class AFField extends Component {
   _processValidation(errors) {
     const fieldErrors = errors && errors.filter(e => e.path === this.props.fieldPath);
     const validationError = fieldErrors ? fieldErrors.map(e => e.errorMessage).join(' ') : null;
+    // this.props.onFieldValidation(this.props.fieldPath, errors);
     this.setState({ validationError });
   }
 
@@ -262,5 +265,8 @@ class AFField extends Component {
 export default connect(
   state => ({
     validationResult: state.activityReducer.validationResult
+  }),
+  dispatch => ({
+    onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))
   })
 )(AFField);
