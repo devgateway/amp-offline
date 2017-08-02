@@ -32,6 +32,7 @@ export const ACTIVITY_SAVE_FULFILLED = 'ACTIVITY_SAVE_FULFILLED';
 export const ACTIVITY_SAVE_REJECTED = 'ACTIVITY_SAVE_REJECTED';
 export const ACTIVITY_UNLOADED = 'ACTIVITY_UNLOADED';
 export const ACTIVITY_VALIDATED = 'ACTIVITY_VALIDATED';
+export const ACTIVITY_FIELD_VALIDATED = 'ACTIVITY_FIELD_VALIDATED';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 
@@ -65,6 +66,14 @@ export function reportActivityValidation(validationResult) {
     dispatch({
       type: ACTIVITY_VALIDATED,
       payload: validationResult
+    });
+}
+
+export function reportFieldValidation(fieldPath, validationResult) {
+  return (dispatch) =>
+    dispatch({
+      type: ACTIVITY_FIELD_VALIDATED,
+      payload: { fieldPath, validationResult }
     });
 }
 
