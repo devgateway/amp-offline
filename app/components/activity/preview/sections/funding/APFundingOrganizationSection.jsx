@@ -57,6 +57,9 @@ class APFundingOrganizationSection extends Component {
     content.push(APField.instance('Funding Classification Date',
       createFormattedDate(this.props.funding[AC.FUNDING_CLASSIFICATION_DATE]), false, false,
       styles.funding_field_name, styles.funding_field_value));
+    content.push(APField.instance('Funding Organization Id',
+      this.props.funding[AC.FINANCING_ID] ? this.props.funding[AC.FINANCING_ID] : '', false, false,
+      styles.funding_field_name, styles.funding_field_value));
 
     const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
     return tableContent;
