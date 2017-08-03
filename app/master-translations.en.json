@@ -212,5 +212,10 @@
   "EA": "EA",
   "IA": "IA",
   "activityEdit": "Edit",
-  "allWorkspaces": "All Workspaces"
+  "allWorkspaces": "All Workspaces",
+  "Search Organizations": "Search Organizations",
+  "Search Locations": "Search Locations",
+  "Search Primary Sectors": "Search Primary Sectors",
+  "Search Secondary Sectors": "Search Secondary Sectors",
+  "Add Program": "Add Program"
 }

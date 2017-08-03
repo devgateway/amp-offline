@@ -13,6 +13,7 @@ import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsMa
 import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
 import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import { reportFieldValidation } from '../../../../actions/ActivityAction';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
@@ -38,13 +39,22 @@ class AFField extends Component {
     parent: PropTypes.object.isRequired,
     filter: PropTypes.array,
     showLabel: PropTypes.bool,
+    showRequired: PropTypes.bool,
+    inline: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
     type: PropTypes.string,
     max: PropTypes.number,
     min: PropTypes.number,
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
-    validationResult: PropTypes.array // eslint-disable-line react/no-unused-prop-types
+    validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
+    onFieldValidation: PropTypes.func.isRequired // eslint-disable-line react/no-unused-prop-types
+  };
+
+  static defaultProps = {
+    showLabel: true,
+    showRequired: true,
+    inline: false
   };
 
   constructor(props) {
@@ -78,7 +88,7 @@ class AFField extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.onAfterUpdate && prevState.value !== this.state.value) {
-      this.props.onAfterUpdate();
+      this.props.onAfterUpdate(this.state.value);
     }
   }
 
@@ -94,11 +104,15 @@ class AFField extends Component {
   }
 
   getLabel() {
+    const required = (this.requiredND || this.alwaysRequired) && this.props.showRequired === true;
     if (this.props.showLabel === false) {
+      if (required) {
+        return <span className={styles.required} />;
+      }
       return null;
     }
     const label = this.context.activityFieldsManager.getFieldLabelTranslation(this.props.fieldPath);
-    return <AFLabel value={label} required={this.requiredND || this.alwaysRequired} />;
+    return <AFLabel value={label} required={required} className={styles.label_highlight} />;
   }
 
   getComponentTypeByFieldType() {
@@ -216,7 +230,7 @@ class AFField extends Component {
   _getValueAsLabel() {
     let val = '';
     if (this.state.value) {
-      val = this.state.value.value || this.state.value;
+      val = this.state.value.displayFullValue || this.state.value;
     }
     return <AFLabel value={val} />;
   }
@@ -231,6 +245,7 @@ class AFField extends Component {
   _processValidation(errors) {
     const fieldErrors = errors && errors.filter(e => e.path === this.props.fieldPath);
     const validationError = fieldErrors ? fieldErrors.map(e => e.errorMessage).join(' ') : null;
+    // this.props.onFieldValidation(this.props.fieldPath, errors);
     this.setState({ validationError });
   }
 
@@ -241,12 +256,14 @@ class AFField extends Component {
     const showValidationError = this.componentType !== Types.LIST_SELECTOR;
     return (
       <FormGroup
-        controlId={this.props.fieldPath} validationState={this._getValidationState()}
+        controlId={this.props.fieldPath} validationState={showValidationError ? this._getValidationState() : null}
         className={`${styles.activity_form_control} ${this.props.className}`} >
-        {this.getLabel()}
-        {this.getFieldContent()}
+        <span className={this.props.inline ? styles.inline_field : null}>
+          {this.getLabel()}
+          {this.getFieldContent()}
+        </span>
         <FormControl.Feedback />
-        <HelpBlock>{showValidationError && this.state.validationError}</HelpBlock>
+        <HelpBlock className={styles.help_block}>{showValidationError && this.state.validationError}</HelpBlock>
       </FormGroup>
     );
   }
@@ -254,6 +271,10 @@ class AFField extends Component {
 
 export default connect(
   state => ({
-    validationResult: state.activityReducer.validationResult
+    validationResult: state.activityReducer.validationResult,
+    lang: state.translationReducer.lang
+  }),
+  dispatch => ({
+    onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))
   })
 )(AFField);
