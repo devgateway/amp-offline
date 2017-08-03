@@ -6,7 +6,6 @@ import DateUtils from '../../../utils/DateUtils';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
-import store from '../../../index';
 import LoggerManager from '../../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -34,11 +33,6 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     super(SYNCUP_TYPE_ACTIVITIES_PULL);
     this._cancel = false;
     // TODO update this once AMPOFFLINE-319 is done
-    let translations = store.getState().translationReducer.languageList;
-    if (!translations) {
-      translations = ['en', 'pt', 'tm', 'fr']; // using explicitly Timor and Niger langs until 319 is done
-    }
-    this._translations = translations.join('|');
     this.resultStack = [];
     this.requestsToProcess = 0;
     this._onPullError = this._onPullError.bind(this);
@@ -129,7 +123,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     return this._waitWhile(this._isPullDenied).then(() => {
       ConnectionHelper.doGet({
         url: ACTIVITY_EXPORT_URL,
-        paramsMap: { 'amp-id': ampId, translations: this._translations }
+        paramsMap: { 'amp-id': ampId }
       }).then((activity, error) => {
         this.resultStack.push([activity, error]);
         return this._decRequestsToProcess();
