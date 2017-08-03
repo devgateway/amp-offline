@@ -38,9 +38,11 @@ class APFundingOrganizationSection extends Component {
       styles.funding_field_name, styles.funding_field_value));
     content.push(APField.instance('Organization Role', this.props.funding[AC.SOURCE_ROLE].value, false, false,
       styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Type of Assistance', this.props.funding[AC.TYPE_OF_ASSISTANCE].value, false, false,
+    content.push(APField.instance('Type of Assistance', this.props.funding[AC.TYPE_OF_ASSISTANCE]
+      ? this.props.funding[AC.TYPE_OF_ASSISTANCE].value : '', false, false,
       styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Financing Instrument', this.props.funding[AC.FINANCING_INSTRUMENT].value,
+    content.push(APField.instance('Financing Instrument', this.props.funding[AC.FINANCING_INSTRUMENT]
+      ? this.props.funding[AC.FINANCING_INSTRUMENT].value : '',
       false, false, styles.funding_field_name, styles.funding_field_value));
     const fundingStatus = this.props.funding[AC.FUNDING_STATUS] ? this.props.funding[AC.FUNDING_STATUS].value : '';
     content.push(APField.instance('Funding Status', fundingStatus, false, false,
