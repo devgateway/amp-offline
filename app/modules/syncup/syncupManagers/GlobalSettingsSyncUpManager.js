@@ -20,7 +20,7 @@ export default class GlobalSettingsSyncUpManager extends AbstractAtomicSyncUpMan
   doAtomicSyncUp() {
     LoggerManager.log('syncUpGlobalSettings');
     return new Promise((resolve, reject) => (
-      ConnectionHelper.doGet({ url: GLOBAL_SETTINGS_URL }).then(
+      ConnectionHelper.doGet({ url: GLOBAL_SETTINGS_URL, shouldRetry: true }).then(
         (data) => GlobalSettingsHelper.saveGlobalSettings(data).then(resolve).catch(reject)
       ).catch(reject)
     ));

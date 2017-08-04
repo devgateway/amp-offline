@@ -264,7 +264,8 @@ class AFField extends Component {
 
 export default connect(
   state => ({
-    validationResult: state.activityReducer.validationResult
+    validationResult: state.activityReducer.validationResult,
+    lang: state.translationReducer.lang
   }),
   dispatch => ({
     onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))
