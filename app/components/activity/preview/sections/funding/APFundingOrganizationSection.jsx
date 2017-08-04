@@ -19,7 +19,8 @@ class APFundingOrganizationSection extends Component {
   static propTypes = {
     funding: PropTypes.object.isRequired,
     counter: PropTypes.number.isRequired,
-    comparator: PropTypes.func.isRequired
+    comparator: PropTypes.func.isRequired,
+    buildSimpleField: PropTypes.func.isRequired
   };
   static contextTypes = {
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
@@ -34,34 +35,19 @@ class APFundingOrganizationSection extends Component {
 
   _buildDonorInfo() {
     const content = [];
-    content.push(APField.instance('Organization Name', this.props.funding[AC.FUNDING_DONOR_ORG_ID].value, false, false,
-      styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Organization Role', this.props.funding[AC.SOURCE_ROLE].value, false, false,
-      styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Type of Assistance', this.props.funding[AC.TYPE_OF_ASSISTANCE]
-      ? this.props.funding[AC.TYPE_OF_ASSISTANCE].value : '', false, false,
-      styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Financing Instrument', this.props.funding[AC.FINANCING_INSTRUMENT]
-      ? this.props.funding[AC.FINANCING_INSTRUMENT].value : '',
-      false, false, styles.funding_field_name, styles.funding_field_value));
-    const fundingStatus = this.props.funding[AC.FUNDING_STATUS] ? this.props.funding[AC.FUNDING_STATUS].value : '';
-    content.push(APField.instance('Funding Status', fundingStatus, false, false,
-      styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Mode of Payment',
-      this.props.funding[AC.MODE_OF_PAYMENT] ? this.props.funding[AC.MODE_OF_PAYMENT].value : '', false, false,
-      styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Agreement Title',
-      this.props.funding[AC.AGREEMENT] ? this.props.funding[AC.AGREEMENT][AC.AGREEMENT_TITLE] : '', false, false,
-      styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Agreement Code',
-      this.props.funding[AC.AGREEMENT] ? this.props.funding[AC.AGREEMENT][AC.AGREEMENT_CODE] : '', false, false,
-      styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Funding Classification Date',
-      createFormattedDate(this.props.funding[AC.FUNDING_CLASSIFICATION_DATE]), false, false,
-      styles.funding_field_name, styles.funding_field_value));
-    content.push(APField.instance('Funding Organization Id',
-      this.props.funding[AC.FINANCING_ID] ? this.props.funding[AC.FINANCING_ID] : '', false, false,
-      styles.funding_field_name, styles.funding_field_value));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DONOR_ORG_ID]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.TYPE_OF_ASSISTANCE]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_STATUS]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.MODE_OF_PAYMENT]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
+      true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
+      true, null, true));
 
     const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
     return tableContent;
