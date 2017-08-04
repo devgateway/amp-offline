@@ -2,8 +2,9 @@ import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
-import { PARAM_AMPOFFLINE_AGENT } from './AmpApiConstants';
+import { PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
+import Utils from '../../utils/Utils';
 
 const RequestConfig = {
   /**
@@ -58,10 +59,23 @@ const RequestConfig = {
     return requestConfig;
   },
 
-  _paramsMapToString(paramsMap) {
-    if (paramsMap === null || paramsMap === undefined) {
-      return '';
+  _addTranslations(paramsMap) {
+    let translations = store.getState().translationReducer.languageList;
+    if (translations) {
+      translations = translations.join('|');
+      if (paramsMap instanceof Map) {
+        paramsMap.set(TRANSLATIONS_PARAM, translations);
+      } else if (!paramsMap) {
+        paramsMap = Utils.toMap(TRANSLATIONS_PARAM, translations);
+      } else {
+        paramsMap[TRANSLATIONS_PARAM] = translations;
+      }
     }
+    return paramsMap;
+  },
+
+  _paramsMapToString(paramsMap) {
+    paramsMap = this._addTranslations(paramsMap);
     const kv = [];
     if (paramsMap instanceof Map) {
       paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
