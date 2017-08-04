@@ -19,7 +19,7 @@ export default class WorkspaceSettingsSyncUpManager extends AbstractAtomicSyncUp
     LoggerManager.log('doAtomicSyncUp');
     return WorkspaceHelper.findAll({}).then(wsMap => {
       const paramsMap = { 'workspace-ids': Utils.flattenToListByKey(wsMap, 'id') };
-      return ConnectionHelper.doGet({ url: WORKSPACE_SETTINGS_URL, paramsMap })
+      return ConnectionHelper.doGet({ url: WORKSPACE_SETTINGS_URL, paramsMap, shouldRetry: true })
         .then((data) => WSSettingsHelper.replaceAllWSSettings(data));
     });
   }
