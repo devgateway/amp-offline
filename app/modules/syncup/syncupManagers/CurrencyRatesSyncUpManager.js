@@ -22,7 +22,7 @@ export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpMana
     return CurrencyRatesHelper.findAll({}).then(currencyRates => {
       if (Object.keys(currencyRates).length === 0) {
         // we go and fetch full sync
-        return ConnectionHelper.doGet({ url: GET_FULL_EXCHANGE_RATES }).then(rawCurrencyRates =>
+        return ConnectionHelper.doGet({ url: GET_FULL_EXCHANGE_RATES, shouldRetry: true }).then(rawCurrencyRates =>
           this._doFullSync(rawCurrencyRates));
       } else {
         return this._doPartialSync(currencyRates);
@@ -54,6 +54,7 @@ export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpMana
     // with the timestamp we go and fetch the partial sync
     const paramsMap = { 'last-sync-time': this._lastSyncTimestamp };
     return ConnectionHelper.doGet({
+      shouldRetry: true,
       url: GET_INCREMENTAL_EXCHANGE_RATES,
       paramsMap
     }).then(updatedCurrencyRates =>

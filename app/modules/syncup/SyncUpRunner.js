@@ -136,7 +136,7 @@ export default class SyncUpRunner {
     }
     // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
     body['amp-ids'] = this._ampIds;
-    return ConnectionHelper.doPost({ url: SYNC_URL, body }).then((changes) => {
+    return ConnectionHelper.doPost({ url: SYNC_URL, body, shouldRetry: true }).then((changes) => {
       this._currentTimestamp = changes[SYNCUP_DATETIME_FIELD];
       return changes;
     });

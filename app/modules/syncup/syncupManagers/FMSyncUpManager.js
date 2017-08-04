@@ -21,7 +21,7 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
   doAtomicSyncUp() {
     LoggerManager.log('doAtomicSyncUp');
     const body = this._getRequestBody();
-    return ConnectionHelper.doPost({ url: FEATURE_MANAGER_URL, body })
+    return ConnectionHelper.doPost({ url: FEATURE_MANAGER_URL, body, shouldRetry: true })
       .then((fmTree) => FMHelper.replaceAll([this._prepareData(fmTree)]));
   }
 

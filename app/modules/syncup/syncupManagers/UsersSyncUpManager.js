@@ -44,7 +44,7 @@ export default class UsersSyncUpManager extends AbstractAtomicSyncUpManager {
 
   _pullUserData(saved) {
     return UserHelper.findAllUsersByExample({}).then((dbUsers) =>
-      ConnectionHelper.doGet({ url: USER_PROFILE_URL, paramsMap: { ids: saved } })
+      ConnectionHelper.doGet({ url: USER_PROFILE_URL, paramsMap: { ids: saved }, shouldRetry: true })
         .then((data) => UserHelper.saveOrUpdateUserCollection(this._getNewUsers(data, dbUsers)))
     );
   }
