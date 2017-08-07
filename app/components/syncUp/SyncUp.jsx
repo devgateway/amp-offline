@@ -11,7 +11,6 @@ import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 import translate from '../../utils/translate';
 import { SYNCUP_STATUS_SUCCESS } from '../../utils/Constants';
 import DateUtils from '../../utils/DateUtils';
-import store from '../../index';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -27,6 +26,7 @@ export default class SyncUp extends Component {
     router: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired,
     syncUpReducer: PropTypes.object.isRequired,
+    ampConnectionStatusReducer: PropTypes.object.isRequired,
     getSyncUpHistory: PropTypes.func.isRequired
   };
 
@@ -136,7 +136,8 @@ export default class SyncUp extends Component {
 
   checkConnection() {
     LoggerManager.log('checkConnection');
-    if (store.getState().ampConnectionStatusReducer.status._isAmpAvailable) {
+    const { ampConnectionStatusReducer } = this.props;
+    if (ampConnectionStatusReducer.status._isAmpAvailable) {
       this.props.startSyncUp();
     } else {
       this.connectionError = translate('syncConnectionError');
