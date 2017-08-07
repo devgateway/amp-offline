@@ -126,8 +126,22 @@ div.quick_links::after {
     color: white;
 }
 
+.quick_links_required {
+    color: red !important;
+}
+
+.label_highlight {
+    font-weight: bold;
+}
+
 .required {
     color: red;
+}
+
+.required:before {
+    content: '\002A';
+    vertical-align: top;
+    padding-right: 4px;
 }
 
 .full_width {
@@ -146,4 +160,14 @@ div.quick_links::after {
 .activity_form_control select {
   font-size: 0.9em;
   border-radius: 0px;
+}
+
+.help_block {
+  width: inherit;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.inline_field {
+    display: inline-block;
 }

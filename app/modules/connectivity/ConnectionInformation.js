@@ -7,12 +7,13 @@ export default class ConnectionInformation {
    * @param basePort usually will be 443
    * @param timeout request timeout
    */
-  constructor(serverUrl, baseRestUrl, protocol, basePort, timeout) {
+  constructor(serverUrl, baseRestUrl, protocol, basePort, timeout, forcedTimeout) {
     this._serverUrl = serverUrl;
     this._baseRestUrl = baseRestUrl;
     this._protocol = protocol;
     this._basePort = basePort;
     this._timeout = timeout;
+    this._forcedTimeout = forcedTimeout;
   }
 
   /**
@@ -49,6 +50,10 @@ export default class ConnectionInformation {
 
   get timeOut() {
     return this._timeout;
+  }
+
+  get forcedTimeout() {
+    return this._forcedTimeout;
   }
 
   getPort() {

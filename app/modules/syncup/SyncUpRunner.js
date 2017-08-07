@@ -3,6 +3,7 @@ import SyncUpUnits from './SyncUpUnits';
 import SyncUpDiff from './SyncUpDiff';
 import * as SS from './SyncUpUnitState';
 import SyncUpManagerInterface from './syncupManagers/SyncUpManagerInterface';
+import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';
 import * as ActivityHelper from '../helpers/ActivityHelper';
 import * as UserHelper from '../helpers/UserHelper';
 import { SYNC_URL } from '../connectivity/AmpApiConstants';
@@ -111,10 +112,12 @@ export default class SyncUpRunner {
     this._lastTimestamp = this._currentTimestamp || this._lastTimestamp;
     this._syncRunNo = syncRunNo;
 
-    return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds()])
-      .then(([ampIds, userIds]) => {
+    return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
+      ActivitiesPushToAMPManager.getActivitiesToPush()])
+      .then(([ampIds, userIds, activitiesToPush]) => {
         this._ampIds = ampIds;
         this._registeredUserIds = userIds;
+        this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
         return this._getCumulativeSyncUpChanges();
       });
   }
@@ -133,7 +136,7 @@ export default class SyncUpRunner {
     }
     // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
     body['amp-ids'] = this._ampIds;
-    return ConnectionHelper.doPost({ url: SYNC_URL, body }).then((changes) => {
+    return ConnectionHelper.doPost({ url: SYNC_URL, body, shouldRetry: true }).then((changes) => {
       this._currentTimestamp = changes[SYNCUP_DATETIME_FIELD];
       return changes;
     });
@@ -141,18 +144,18 @@ export default class SyncUpRunner {
 
   _mergeToLeftOverAndUpdateNoChanges(changes) {
     LoggerManager.log('_mergeToLeftOverAndUpdateNoChanges');
+    const isFirstRun = this._syncRunNo === SyncUpRunner._SYNC_RUN_1;
     // TODO: remove this flag once AMP-25568 is done
     changes[SYNCUP_TYPE_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
+    changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && this._hasActivitiesToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
       if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined) {
-        if (!(SYNCUP_TYPE_ACTIVITIES_PUSH === type && this._syncRunNo === this._SYNC_RUN_1)) {
-          this._syncUpDependency.setState(type, SS.NO_CHANGES);
-          this._syncUpCollection.get(type).done = true;
-        }
+        this._syncUpDependency.setState(type, SS.NO_CHANGES);
+        this._syncUpCollection.get(type).done = true;
       }
     }
   }
