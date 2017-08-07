@@ -18,7 +18,7 @@ import LoggerManager from './modules/util/LoggerManager';
 
 LoggerManager.log('index');
 const store = configureStore();
-const history = syncHistoryWithStore(hashHistory, store);
+export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
 
 function checkAuth(nextState, replaceState) {

@@ -105,10 +105,10 @@ export function checkIfShouldSyncBeforeLogout() {
   }).catch(error => LoggerManager.error(error));
 }
 
-export function logoutAction(isInactivityTimeout = false) {
+export function logoutAction(isInactivityTimeout = false, dispatch = store.dispatch) {
   LoggerManager.log('logoutAction');
   RequestConfig.clearCookies();
-  store.dispatch({
+  dispatch({
     type: STATE_LOGOUT,
     actionData: { isInactivityTimeout }
   });
