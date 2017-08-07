@@ -3,8 +3,7 @@ export const BASE_REST_URL = '/rest';
 export const PROTOCOL = '__SERVER_PROTOCOL__';
 export const BASE_PORT = '__SERVER_PORT__';
 
-// TODO: we'll update it to a higher value during AMPOFFLINE-487
-export const CONNECTION_TIMEOUT = 5000;
+export const CONNECTION_TIMEOUT = 25000;
 export const CONNECTION_FORCED_TIMEOUT = CONNECTION_TIMEOUT + 5000;
 export const MAX_RETRY_ATEMPTS = 5;
 export const ERRORS_TO_RETRY = ['ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNRESET', 'EAI_AGAIN'];
