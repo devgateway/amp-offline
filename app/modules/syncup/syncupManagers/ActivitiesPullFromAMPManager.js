@@ -1,6 +1,6 @@
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
-import { SYNCUP_TYPE_ACTIVITIES_PULL } from '../../../utils/Constants';
+import { SYNCUP_TYPE_ACTIVITIES_PULL, CONNECTION_FORCED_TIMEOUT } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import DateUtils from '../../../utils/DateUtils';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
@@ -21,7 +21,7 @@ const PULL_END = 'PULL_END';
  */
 const CHECK_INTERVAL = 100;
 const QUEUE_LIMIT = 4;
-const ABORT_INTERVAL = 60000; // milliseconds
+const ABORT_INTERVAL = (CONNECTION_FORCED_TIMEOUT + CHECK_INTERVAL) * (QUEUE_LIMIT + 1); // milliseconds
 
 /**
  * Pulls the latest activities state from AMP
