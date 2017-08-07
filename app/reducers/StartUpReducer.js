@@ -9,7 +9,10 @@ import {
   STATE_GS_REJECTED,
   STATE_PARAMETERS_FAILED,
   STATE_PARAMETERS_LOADED,
-  STATE_PARAMETERS_LOADING
+  STATE_PARAMETERS_LOADING,
+  STATE_CHECK_VERSION_FULFILLED,
+  STATE_CHECK_VERSION_PENDING,
+  STATE_CHECK_VERSION_REJECTED
 } from '../actions/StartUpAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -24,7 +27,11 @@ const defaultState = {
   fmTree: undefined,
   isFMTreeLoading: false,
   isFMTreeLoaded: false,
-  fmTreeError: undefined
+  fmTreeError: undefined,
+  isCheckVersionLoading: false,
+  isCheckVersionLoaded: false,
+  checkVersionError: undefined,
+  checkVersionData: undefined
 };
 
 export default function startUpReducer(state = defaultState, action: Object) {
@@ -70,6 +77,27 @@ export default function startUpReducer(state = defaultState, action: Object) {
       });
     case STATE_FM_REJECTED:
       return Object.assign({}, state, { fmTreeError: action.payload, isFMTreeLoading: false, isFMTreeLoaded: false });
+    case STATE_CHECK_VERSION_PENDING:
+      return Object.assign({}, state, {
+        isCheckVersionLoading: true,
+        isCheckVersionLoaded: false,
+        checkVersionError: null,
+        checkVersionData: null
+      });
+    case STATE_CHECK_VERSION_REJECTED:
+      return Object.assign({}, state, {
+        isCheckVersionLoading: false,
+        isCheckVersionLoaded: false,
+        checkVersionError: action.payload,
+        checkVersionData: null
+      });
+    case STATE_CHECK_VERSION_FULFILLED:
+      return Object.assign({}, state, {
+        isCheckVersionLoading: false,
+        isCheckVersionLoaded: true,
+        checkVersionError: null,
+        checkVersionData: action.payload
+      });
     default:
       return state;
   }

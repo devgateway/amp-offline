@@ -11,13 +11,15 @@ import {
   CONNECTION_FORCED_TIMEOUT,
   CONNECTIVITY_CHECK_INTERVAL,
   PROTOCOL,
-  SERVER_URL
+  SERVER_URL,
+  VERSION
 } from '../utils/Constants';
 import LoggerManager from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import DateUtils from '../utils/DateUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
+import * as VersionCheckManager from '../modules/util/VersionCheckManager';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -39,6 +41,10 @@ export const STATE_FM_PENDING = 'STATE_FM_PENDING';
 export const STATE_FM_FULFILLED = 'STATE_FM_FULFILLED';
 export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
+export const STATE_CHECK_VERSION_PENDING = 'STATE_CHECK_VERSION_PENDING';
+export const STATE_CHECK_VERSION_FULFILLED = 'STATE_CHECK_VERSION_FULFILLED';
+export const STATE_CHECK_VERSION_REJECTED = 'STATE_CHECK_VERSION_REJECTED';
+const STATE_CHECK_VERSION = 'STATE_CHECK_VERSION';
 
 
 /**
@@ -52,7 +58,16 @@ export function ampStartUp() {
     .then(loadDateSettings)
     .then(loadGlobalSettings)
     .then(loadFMTree)
-    .then(loadCurrencyRatesOnStartup);
+    .then(loadCurrencyRatesOnStartup)
+    .then(checkVersion);
+}
+
+export function checkVersion() {
+  LoggerManager.log('checkVersion');
+  // payload is null when we there is no update data.
+  const checkVersionPromise = VersionCheckManager.checkVersion(VERSION).then(data => (data));
+  store.dispatch({ type: STATE_CHECK_VERSION, payload: checkVersionPromise });
+  return checkVersionPromise;
 }
 
 export function loadConnectionInformation() {
@@ -74,6 +89,7 @@ export function loadConnectionInformation() {
 export function getTimer() {
   return timer;
 }
+
 function scheduleConnectivityCheck() {
   return new Promise((resolve, reject) => {
     clearInterval(timer);
@@ -143,6 +159,7 @@ export function loadFMTree(id = undefined) {
 export function loadCurrencyRatesOnStartup() {
   store.dispatch(loadCurrencyRates());
 }
+
 function startUpLoaded(connectionInformation) {
   return {
     type: STATE_PARAMETERS_LOADED,
