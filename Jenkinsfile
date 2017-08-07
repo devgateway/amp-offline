@@ -58,24 +58,14 @@ stage('UnitTest') {
 		}
 	}
 }
-
-
-def deployed = false
-// If this stage fails then next stage will retry deployment. Otherwise next stage will be skipped.
-stage('Build') {
+stage('Dist') {
 	node {
 		try {
-			// we run package version
-			//sh 'npm run package-win'
-			// here we will copy the build file to a web server
-			slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE- Success\nDeployed ${changePretty} ")
-			deployed = true
-			// we commented out the build since its not working and we need to mark the build as success
-			currentBuild.result = 'SUCCESS'
+			sh './dist.sh'
+			sh 'ssh sulfur "mkdir -p /opt/amp-offline-snapshots/${BRANCH_NAME}"'
+			sh 'scp dist/*.exe dist/*.rpm dist/*.deb sulfur:/opt/amp-offline-snapshots/${BRANCH_NAME}'
 		} catch (e) {
-			slackSend(channel: 'amp-offline-i', color: 'warning', message: "Deploy AMP OFFLINE - Failed\nFailed to deploy ${changePretty}")
-			currentBuild.result = 'UNSTABLE'
+			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP DIST  Failed on ${changePretty}")
 		}
 	}
 }
-

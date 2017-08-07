@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm -r dist
+
 # Command to be executed in the container. First it makes sure all dependencies are downloaded. Then create linux
 # packages (4 files, rpm/deb x 32/64). Then create two Windows (NSIS) installers once at a time since doing both at the
 # same time will result in one installer supporting 32 and 64 bit architectures.
