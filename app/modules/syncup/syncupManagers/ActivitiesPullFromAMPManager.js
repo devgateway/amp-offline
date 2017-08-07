@@ -122,6 +122,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     // TODO content translations (iteration 2)
     return this._waitWhile(this._isPullDenied).then(() => {
       ConnectionHelper.doGet({
+        shouldRetry: true,
         url: ACTIVITY_EXPORT_URL,
         paramsMap: { 'amp-id': ampId }
       }).then((activity, error) => {
@@ -186,7 +187,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   _onPullError(ampId, error) {
     LoggerManager.log('_onPullError');
     if (error) {
-      LoggerManager.error(error);
+      LoggerManager.error(`Activity amp-id=${ampId} pull error: ${error}`);
     } else if (ampId) {
       this.pulled.add(ampId);
     }
