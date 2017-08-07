@@ -3,13 +3,11 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
-import APField from '../../components/APField';
 import Tablify from '../../components/Tablify';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import translate from '../../../../../utils/translate';
-import { createFormattedDate } from '../../../../../utils/DateUtils';
 
 /**
  * @author Gabriel Inchauspe
