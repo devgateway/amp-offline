@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Grid, Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
+import { Link } from 'react-router';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
@@ -88,13 +89,18 @@ export default class ActivityPreview extends Component {
           <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
           <span className={styles.preview_icons} >
             <ul>
-              <li>
-                <OverlayTrigger placement="top" overlay={editTooltip}>
-                  <object type={'image/svg+xml'} data={edit}> Edit </object>
-                </OverlayTrigger>
-              </li>
+              <Link to={`/activity/edit/${activity.id}`}>
+                <li>
+                  <OverlayTrigger placement="top" overlay={editTooltip}>
+                    <object type={'image/svg+xml'} data={edit} style={{ pointerEvents: 'none' }}>
+                      {translate('activityEdit')}
+                    </object>
+                  </OverlayTrigger>
+                </li>
+              </Link>
             </ul>
           </span>
+
           <div className={styles.preview_status_container} >
             <APStatusBar
               fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail}

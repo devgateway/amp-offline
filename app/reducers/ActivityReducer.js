@@ -6,7 +6,8 @@ import {
   ACTIVITY_SAVE_PENDING,
   ACTIVITY_SAVE_REJECTED,
   ACTIVITY_UNLOADED,
-  ACTIVITY_VALIDATED
+  ACTIVITY_VALIDATED,
+  ACTIVITY_FIELD_VALIDATED
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
 import LoggerManager from '../modules/util/LoggerManager';
@@ -23,6 +24,7 @@ const defaultState = {
   activityFieldsManager: undefined,
   activityFundingTotals: undefined,
   validationResult: undefined,
+  fieldValidationResult: undefined,
   currentWorkspaceSettings: undefined,
   currencyRatesManager: undefined,
   errorMessage: undefined
@@ -72,6 +74,8 @@ const activityReducer = (state = defaultState, action: Object) => {
       return { ...state, isActivitySaving: false, isActivitySaved: false };
     case ACTIVITY_VALIDATED:
       return { ...state, validationResult: action.payload };
+    case ACTIVITY_FIELD_VALIDATED:
+      return { ...state, fieldValidationResult: action.payload };
     default:
       return state;
   }

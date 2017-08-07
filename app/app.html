@@ -19,6 +19,11 @@
   <body>
     <div id="root" class="outerContainer"></div>
     <script>
+      if(process.env.HOT){
+        const script = document.createElement('script');
+        script.src = 'libs/dll/lib.js';
+        document.body.appendChild(script);
+      }
       {
         const script = document.createElement('script');
         const port = process.env.PORT || 3000;

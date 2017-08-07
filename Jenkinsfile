@@ -29,6 +29,7 @@ stage('PrepareSetup'){
 		sh 'npm prune'
 		//install all needed dependencies
 		sh 'npm install'
+		sh 'npm run build-dll'
 	}
 }
 stage('StyleCheck') {

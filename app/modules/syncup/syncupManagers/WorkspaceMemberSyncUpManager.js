@@ -29,7 +29,7 @@ export default class WorkspaceMemberSyncUpManager extends AbstractAtomicSyncUpMa
 
   _pullWorkspaceMembers(saved) {
     LoggerManager.log('_pullWorkspaceMembers');
-    return ConnectionHelper.doGet({ url: WORKSPACE_MEMBER_URL, paramsMap: { ids: saved } })
+    return ConnectionHelper.doGet({ url: WORKSPACE_MEMBER_URL, paramsMap: { ids: saved }, shouldRetry: true })
       .then((data) => TeamMemberHelper.saveOrUpdateTeamMembers(data));
   }
 

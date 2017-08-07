@@ -7,6 +7,7 @@ import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import { WORKSPACES_GROUPS } from '../../utils/constants/WorkspaceGroupsConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
+import translate from '../../utils/translate';
 
 export default class WorkspacePage extends Component {
 
@@ -23,7 +24,7 @@ export default class WorkspacePage extends Component {
     if (workspaceList.length > 0) {
       return (<WorkspaceList
         workspaceList={workspaceList}
-        workspaceGroup={workspaceList[0]['workspace-group']}
+        workspaceGroup={translate('allWorkspaces')}
         onClickHandler={selectWorkspace} />);
     } else {
       return <br />;
@@ -61,9 +62,7 @@ export default class WorkspacePage extends Component {
     if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
       return <ErrorMessage message={this.props.workspaceReducer.errorMessage} />;
     } else {
-      return this.splitWorkspaceByGroups().map((workspaceList) => (
-        WorkspacePage.drawWorkspaceList(workspaceList, this.props.selectWorkspace)
-      ));
+      return WorkspacePage.drawWorkspaceList(this.props.workspaceReducer.workspaceList, this.props.selectWorkspace);
     }
   }
 
@@ -77,6 +76,15 @@ export default class WorkspacePage extends Component {
         ));
         workspacesByGroup.push(wsByGroup);
       });
+      /* collect workspaces with no group into a virtual "Other" group */
+      const otherWs = [];
+      this.props.workspaceReducer.workspaceList.forEach((ws) => {
+        if (!ws['workspace-group']) {
+          ws['workspace-group'] = 'Other';
+          otherWs.push(ws);
+        }
+      });
+      workspacesByGroup.push(otherWs);
     }
     return workspacesByGroup;
   }

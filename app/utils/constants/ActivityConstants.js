@@ -1,4 +1,5 @@
 import * as ValueConstants from './ValueConstants';
+import { capitalize } from '../Utils';
 
 /**
  * @author Nadejda Mandrescu
@@ -76,6 +77,7 @@ export const PROGRAM_SETTINGS = 'program_settings';
 export const NATIONAL_PLAN_OBJECTIVE = 'national_plan_objective';
 export const PRIMARY_PROGRAMS = 'primary_programs';
 export const SECONDARY_PROGRAMS = 'secondary_programs';
+export const TERTIAR_PROGRAMS = 'tertiary_programs';
 export const GOVERNMENT_APPROVAL_PROCEDURES = 'government_approval_procedures';
 export const JOINT_CRITERIA = 'joint_criteria';
 export const TEAM = 'team';
@@ -161,6 +163,20 @@ export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
 }
 
-export function toFieldName(name) {
+/**
+ * Converts the original non-translated label to internal field name
+ * @param name
+ * @return {string}
+ */
+export function toFieldName(name: string) {
   return name.toLowerCase().replace(' ', '_');
+}
+
+/**
+ * Converts the internal field name to the Original non-translated label
+ * @param fieldName
+ * @return {string}
+ */
+export function toOriginalLabel(fieldName: string) {
+  return capitalize(fieldName.replace('_', ' '));
 }
