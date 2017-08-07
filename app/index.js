@@ -13,7 +13,6 @@ import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './containers/SyncUpPage';
 import auth from './modules/security/Auth';
 import { ampStartUp } from './actions/StartUpAction';
-import { loadAllLanguages } from './actions/TranslationAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 import LoggerManager from './modules/util/LoggerManager';
 
@@ -30,9 +29,8 @@ function checkAuth(nextState, replaceState) {
 }
 initializeLanguageDirectory();
 
-initializeI18Next().then(() => {
-  store.dispatch(loadAllLanguages());
-  return ampStartUp().then(() =>
+initializeI18Next().then(() =>
+  ampStartUp().then(() =>
     render(
       <Provider store={store}>
         <Router history={history} store={store}>
@@ -51,5 +49,5 @@ initializeI18Next().then(() => {
       </Provider>,
       document.getElementById('root')
     )
-  ).catch((err) => (LoggerManager.error(err)));
-}).catch((err) => (LoggerManager.error(err)));
+  ).catch((err) => (LoggerManager.error(err)))
+).catch((err) => (LoggerManager.error(err)));

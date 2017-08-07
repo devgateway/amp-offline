@@ -11,8 +11,9 @@ import ampConnectionStatusReducer from './AmpConnectionStatusReducer';
 import startUpReducer from './StartUpReducer';
 import notificationReducer from './NotificationReducer';
 import currencyRatesReducer from './CurrencyRatesReducer';
+import { STATE_LOGOUT } from '../actions/LoginAction';
 
-const rootReducer = combineReducers({
+const combinedReducers = combineReducers({
   loginReducer,
   workspaceReducer,
   routing,
@@ -26,5 +27,12 @@ const rootReducer = combineReducers({
   notificationReducer,
   currencyRatesReducer
 });
+
+const rootReducer = (state, action) => {
+  if (action.type === STATE_LOGOUT) {
+    state = undefined;
+  }
+  return combinedReducers(state, action);
+};
 
 export default rootReducer;
