@@ -32,9 +32,13 @@
   padding-left: 10px;
 }
 
-.navbar a {
+.navbar button, a {
   text-decoration: none;
   color: white;
+}
+
+.navbar button::selection, .navbar button:hover, .navbar a:hover {
+  color: #c7d4db !important;
 }
 
 .navbar_left_side {

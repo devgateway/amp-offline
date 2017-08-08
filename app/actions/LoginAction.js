@@ -1,13 +1,21 @@
 /* eslint flowtype-errors/show-errors: 0 */
+import store from '../index';
 import UrlUtils from '../utils/URLUtils';
-import { WORKSPACE_URL, LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
+import { LOGIN_URL, SYNCUP_URL, WORKSPACE_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
+import ActivitiesPushToAMPManager from '../modules/syncup/syncupManagers/ActivitiesPushToAMPManager';
 import { isForceSyncUpAction } from './SyncUpAction';
+import { ampStartUp } from './StartUpAction';
+import * as RequestConfig from '../modules/connectivity/RequestConfig';
 import LoggerManager from '../modules/util/LoggerManager';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
 export const STATE_LOGIN_PROCESSING = 'STATE_LOGIN_PROCESSING';
+export const STATE_LOGOUT_REQUESTED = 'STATE_LOGOUT_REQUESTED';
+export const STATE_LOGOUT_ASK_TO_SYNC = 'STATE_LOGOUT_ASK_TO_SYNC';
+export const STATE_LOGOUT_DISMISS_TO_SYNC = 'STATE_LOGOUT_DISMISS_TO_SYNC';
+export const STATE_LOGOUT_DISMISS = 'STATE_LOGOUT_DISMISS';
 export const STATE_LOGOUT = 'STATE_LOGOUT';
 
 export function loginAction(email: string, password: string) {
@@ -16,7 +24,7 @@ export function loginAction(email: string, password: string) {
     if (ownProps().loginReducer.loginProcessing === false) {
       dispatch(sendingRequest());
       const isAmpAvailable = (ownProps().ampConnectionStatusReducer.status
-      && ownProps().ampConnectionStatusReducer.status.isAmpAvailable);
+        && ownProps().ampConnectionStatusReducer.status.isAmpAvailable);
       return LoginManager.processLogin(email, password, isAmpAvailable).then((data) => {
         const userData = data.dbUser;
         const token = data.token;
@@ -28,21 +36,13 @@ export function loginAction(email: string, password: string) {
           if (force) {
             return UrlUtils.forwardTo(SYNCUP_URL);
           } else {
-            return UrlUtils.forwardTo(WORKSPACE_URL);
+            return checkIfShouldSyncBeforeLogout().then(() => UrlUtils.forwardTo(WORKSPACE_URL));
           }
         }));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
     }
-  };
-}
-
-export function logoutAction() {
-  LoggerManager.log('logoutAction');
-  return (dispatch) => {
-    dispatch(logout());
-    UrlUtils.forwardTo(LOGIN_URL);
   };
 }
 
@@ -59,7 +59,7 @@ export function loginAutomaticallyAction() {
       return resolve(data);
     }).catch((err) => {
       dispatch(loginFailed(err));
-      dispatch(logoutAction());
+      logoutAction();
       reject(err);
     });
   });
@@ -97,9 +97,21 @@ function sendingRequest() {
   };
 }
 
-export function logout() {
+export function checkIfShouldSyncBeforeLogout() {
+  return ActivitiesPushToAMPManager.getActivitiesToPush().then(activities => {
+    const askToSync = activities && activities.length > 0;
+    store.dispatch({ type: STATE_LOGOUT_ASK_TO_SYNC, actionData: { askToSync } });
+    return activities;
+  }).catch(error => LoggerManager.error(error));
+}
+
+export function logoutAction(isInactivityTimeout = false, dispatch = store.dispatch) {
   LoggerManager.log('logoutAction');
-  return {
-    type: STATE_LOGOUT
-  };
+  RequestConfig.clearCookies();
+  dispatch({
+    type: STATE_LOGOUT,
+    actionData: { isInactivityTimeout }
+  });
+  UrlUtils.forwardTo(LOGIN_URL);
+  return ampStartUp();
 }

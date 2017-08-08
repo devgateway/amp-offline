@@ -12,7 +12,7 @@ export class TopMenu extends Component {
     onClick: PropTypes.func,
     workspaceReducer: PropTypes.object,
     menuOnClickHandler: PropTypes.func,
-    languageList: PropTypes.object
+    languageList: PropTypes.array
   };
 
   constructor() {
