@@ -62,8 +62,7 @@ stage('Dist') {
 	node {
 		try {
 			sh './dist.sh'
-			sh 'ssh sulfur "mkdir -p /opt/amp-offline-snapshots/${BRANCH_NAME}"'
-			sh 'scp dist/*.exe dist/*.rpm dist/*.deb sulfur:/opt/amp-offline-snapshots/${BRANCH_NAME}'
+			sh './publish.sh ${BRANCH_NAME}'
 		} catch (e) {
 			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP DIST  Failed on ${changePretty}")
 		}
