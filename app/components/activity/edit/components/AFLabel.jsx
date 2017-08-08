@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react';
-import { ControlLabel, Glyphicon, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
+import { Glyphicon, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import * as styles from '../ActivityForm.css';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
@@ -14,7 +15,8 @@ export default class AFLabel extends Component {
   static propTypes = {
     value: PropTypes.string.isRequired,
     tooltip: PropTypes.string,
-    required: PropTypes.bool
+    required: PropTypes.bool,
+    className: PropTypes.string
   };
 
   constructor(props) {
@@ -37,14 +39,13 @@ export default class AFLabel extends Component {
 
   _renderRequired() {
     if (this.props.required) {
-      return <span className={styles.required} >*</span>;
+      return <span className={styles.required} />;
     }
     return null;
   }
 
   _renderValue() {
-    // TODO any special styles
-    return <ControlLabel>{this.props.value}</ControlLabel>;
+    return <span className={this.props.className}>{this.props.value}</span>;
   }
 
   render() {

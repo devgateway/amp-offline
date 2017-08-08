@@ -125,3 +125,9 @@ html, body {
   width: 140px;
 }
 */
+
+/* this is antd css that breaks bootstrap error reporting styles */
+.has-success.has-feedback:after, .has-warning.has-feedback:after, .has-error.has-feedback:after,
+.is-validating.has-feedback:after {
+  visibility: hidden;
+}

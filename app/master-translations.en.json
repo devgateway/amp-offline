@@ -39,6 +39,7 @@
   "unsyncedLegend": "Unsynced. These are activities created on AMPOffline not yet synchronized with AMP.",
   "moreThanOneResultFound": "Query returned more than one result.",
   "unknownNetworkError": "Unknown network error",
+  "corruptedResponse": "Response message is corrupted.",
   "Donor": "Donor",
   "Activities": "Activities",
   "Rejected Sync": "Rejected Sync",
@@ -206,5 +207,12 @@
   "Add Disbursements": "Add Disbursements",
   "Add Expenditures": "Add Expenditures",
   "activitySavedMsg": "Your changes have been successfully saved. In order to see your changes in the AMP please sync.",
-  "CurrencyRatesNotInitialized":"Currency rates not initialized"
+  "CurrencyRatesNotInitialized":"Currency rates not initialized",
+  "activityEdit": "Edit",
+  "allWorkspaces": "All Workspaces",
+  "Search Organizations": "Search Organizations",
+  "Search Locations": "Search Locations",
+  "Search Primary Sectors": "Search Primary Sectors",
+  "Search Secondary Sectors": "Search Secondary Sectors",
+  "Add Program": "Add Program"
 }

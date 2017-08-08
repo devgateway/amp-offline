@@ -8,6 +8,7 @@ import {
   BASE_PORT,
   BASE_REST_URL,
   CONNECTION_TIMEOUT,
+  CONNECTION_FORCED_TIMEOUT,
   CONNECTIVITY_CHECK_INTERVAL,
   PROTOCOL,
   SERVER_URL
@@ -60,7 +61,7 @@ export function loadConnectionInformation() {
     store.dispatch(sendingRequest());
     // TODO we will have a module that will return this from storage, hardcoded in this first commit
     const connectionInformation = new ConnectionInformation(SERVER_URL, BASE_REST_URL,
-      PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT);
+      PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT, CONNECTION_FORCED_TIMEOUT);
     store.dispatch(startUpLoaded(connectionInformation));
     //  It is dispatch here so its called right away. since for default it is
     // Scheduled every x(configured) minutes, we need to check whether amp is on line or not right away
