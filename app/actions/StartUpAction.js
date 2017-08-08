@@ -20,6 +20,10 @@ import DateUtils from '../utils/DateUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
 import * as VersionCheckManager from '../modules/util/VersionCheckManager';
+import Notification from '../modules/helpers/NotificationHelper';
+import { addMessage, CONFIRMATION_ALERT_ADDED, MESSAGE_ADDED } from './NotificationAction';
+import { NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_INFO } from '../utils/constants/ErrorConstants';
+import translate from '../utils/translate';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -64,10 +68,27 @@ export function ampStartUp() {
 
 export function checkVersion() {
   LoggerManager.log('checkVersion');
-  // payload is null when we there is no update data.
-  const checkVersionPromise = VersionCheckManager.checkVersion(VERSION).then(data => (data));
+  const checkVersionPromise = VersionCheckManager.checkVersion(VERSION).then(data => {
+    // payload is null when there is no update data.
+    if (data) {
+      let message = '';
+      if (data[VersionCheckManager.MANDATORY_UPDATE] === true) {
+        message = translate('offlineVersionCritical');
+      } else {
+        message = translate('offlineVersionOutdated');
+      }
+      store.dispatch({
+        type: CONFIRMATION_ALERT_ADDED,
+        payload: {
+          notification: { message },
+          yesAction: { type: MESSAGE_ADDED, payload: { message: 'Accepted!' } },
+          noAction: { type: MESSAGE_ADDED, payload: { message: 'Refused!' } }
+        }
+      });
+    }
+    return data;
+  });
   store.dispatch({ type: STATE_CHECK_VERSION, payload: checkVersionPromise });
-  return checkVersionPromise;
 }
 
 export function loadConnectionInformation() {
