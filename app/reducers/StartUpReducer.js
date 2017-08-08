@@ -12,7 +12,9 @@ import {
   STATE_PARAMETERS_LOADING,
   STATE_CHECK_VERSION_FULFILLED,
   STATE_CHECK_VERSION_PENDING,
-  STATE_CHECK_VERSION_REJECTED
+  STATE_CHECK_VERSION_REJECTED,
+  STATE_CHECK_VERSION_DOWNLOAD_START,
+  STATE_CHECK_VERSION_DOWNLOAD_STOP
 } from '../actions/StartUpAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -31,7 +33,8 @@ const defaultState = {
   isCheckVersionLoading: false,
   isCheckVersionLoaded: false,
   checkVersionError: undefined,
-  checkVersionData: undefined
+  checkVersionData: undefined,
+  followCheckVersionUpdateLink: false
 };
 
 export default function startUpReducer(state = defaultState, action: Object) {
@@ -82,21 +85,32 @@ export default function startUpReducer(state = defaultState, action: Object) {
         isCheckVersionLoading: true,
         isCheckVersionLoaded: false,
         checkVersionError: null,
-        checkVersionData: null
+        checkVersionData: null,
+        followCheckVersionUpdateLink: false
       });
     case STATE_CHECK_VERSION_REJECTED:
       return Object.assign({}, state, {
         isCheckVersionLoading: false,
         isCheckVersionLoaded: false,
         checkVersionError: action.payload,
-        checkVersionData: null
+        checkVersionData: null,
+        followCheckVersionUpdateLink: false
       });
     case STATE_CHECK_VERSION_FULFILLED:
       return Object.assign({}, state, {
         isCheckVersionLoading: false,
         isCheckVersionLoaded: true,
         checkVersionError: null,
-        checkVersionData: action.payload
+        checkVersionData: action.payload,
+        followCheckVersionUpdateLink: false
+      });
+    case STATE_CHECK_VERSION_DOWNLOAD_START:
+      return Object.assign({}, state, {
+        followCheckVersionUpdateLink: true
+      });
+    case STATE_CHECK_VERSION_DOWNLOAD_STOP:
+      return Object.assign({}, state, {
+        followCheckVersionUpdateLink: false
       });
     default:
       return state;

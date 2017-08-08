@@ -12,7 +12,7 @@ import Notification from '../../modules/helpers/NotificationHelper';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import { NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_INFO } from '../../utils/constants/ErrorConstants';
 import translate from '../../utils/translate';
-import { STATE_CHECK_VERSION_DOWNLOAD } from './../../actions/StartUpAction';
+import { STATE_CHECK_VERSION_DOWNLOAD_START } from './../../actions/StartUpAction';
 
 class Login extends Component {
 
@@ -51,11 +51,12 @@ class Login extends Component {
 
   processLogin(email, password) {
     if (this.props.forceUpdateToContinue) {
+      // Login not allowed.
       this.props.onConfirmationAlert(this.props.updateAlertMessage);
-    } else if (this.props.suggestUpdateToContinue) {
-      this.props.onConfirmationAlert(this.props.updateAlertMessage);
-      this.props.loginAction(email, password);
     } else {
+      if (this.props.suggestUpdateToContinue === true) {
+        this.props.onConfirmationAlert(this.props.updateAlertMessage);
+      }
       this.props.loginAction(email, password);
     }
   }
@@ -103,8 +104,7 @@ const updateConfirmationAlert = (message) => {
     severity: NOTIFICATION_SEVERITY_INFO
   });
   const proceedWithDownload = new FollowUp({
-    type: STATE_CHECK_VERSION_DOWNLOAD,
-    actionData: {}
+    type: STATE_CHECK_VERSION_DOWNLOAD_START
   }, translate('Download'));
   const actions = [proceedWithDownload];
   return new ConfirmationAlert(downloadNotification, actions, true);
@@ -113,16 +113,16 @@ const updateConfirmationAlert = (message) => {
 export default connect(
   state => ({
     forceUpdateToContinue: (state.startUpReducer.checkVersionData
-      && state.startUpReducer.checkVersionData[MANDATORY_UPDATE]),
+      && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === true),
     suggestUpdateToContinue: (state.startUpReducer.checkVersionData
       && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === false),
-    updateAlertMessage: (state.startUpReducer.checkVersionData && state.startUpReducer.checkVersionData.updateMessage)
+    updateAlertMessage: (state.startUpReducer.checkVersionData && state.startUpReducer.checkVersionData.updateMessage),
+    updateURL: (state.startUpReducer.checkVersionData
+      && state.startUpReducer.checkVersionData['latest-amp-offline'].url),
+    followCheckVersionUpdateLink: (state.startUpReducer.checkVersionData
+      && state.startUpReducer.followCheckVersionUpdateLink === true)
   }),
   dispatch => ({
-    onConfirmationAlert: (message) => dispatch(addConfirmationAlert(updateConfirmationAlert(message))),
-    onOpenDownloadLink: () => {
-      dispatch({ type: STATE_CHECK_VERSION_DOWNLOAD });
-      // URLUtils.forwardTo(SYNCUP_URL);
-    }
+    onConfirmationAlert: (message) => dispatch(addConfirmationAlert(updateConfirmationAlert(message)))
   })
 )(Login);

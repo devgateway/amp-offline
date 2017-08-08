@@ -1,7 +1,9 @@
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/jsx-space-before-closing: 0 */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import { shell } from 'electron';
 import translate from '../../utils/translate';
 import style from './Navbar.css';
 import TopMenuContainer from './TopMenu';
@@ -11,10 +13,11 @@ import LoggerManager from '../../modules/util/LoggerManager';
 import { AMP_COUNTRY_LOGO, DESKTOP_CURRENT_URL } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
 import NotificationsContainer from '../notifications';
+import { STATE_CHECK_VERSION_DOWNLOAD_STOP } from './../../actions/StartUpAction';
 
 const defaultMenu = require('../../conf/menu.json');
 
-export default class Navbar extends Component {
+class Navbar extends Component {
 
   static propTypes = {
     userReducer: PropTypes.object.isRequired,
@@ -22,7 +25,9 @@ export default class Navbar extends Component {
     workspaceList: PropTypes.array.isRequired,
     menuOnClickHandler: PropTypes.func.isRequired,
     translationReducer: PropTypes.object.isRequired,
-    workspaceReducer: PropTypes.object.isRequired
+    workspaceReducer: PropTypes.object.isRequired,
+    followCheckVersionUpdateLink: PropTypes.bool,
+    onUpdateLinkOpen: PropTypes.func.isRequired
   };
 
   constructor() {
@@ -38,7 +43,7 @@ export default class Navbar extends Component {
     return '';
   }
 
-  extractWorkSpace(prepend) {
+  extractWorkspace(prepend) {
     LoggerManager.log('extractWorkSpace');
     if (this.props.workspaceReducer && this.props.workspaceReducer.currentWorkspace) {
       return prepend + this.props.workspaceReducer.currentWorkspace.name;
@@ -46,8 +51,16 @@ export default class Navbar extends Component {
     return '';
   }
 
+  openUpdateLink() {
+    if (this.props.followCheckVersionUpdateLink === true) {
+      shell.openExternal('https://github.com');
+      this.props.onUpdateLinkOpen();
+    }
+  }
+
   render() {
     LoggerManager.log('render');
+    this.openUpdateLink();
     return (
       <div className={style.container}>
         <div className={style.navbar}>
@@ -59,14 +72,11 @@ export default class Navbar extends Component {
             />
           </Link>
           <Link className={style.navbar_left_side} style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
-
           <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
             <a className={style.navbar_left_side} >{this.extractLoggedUser('')}</a>
-            <a className={style.navbar_left_side} >{this.extractWorkSpace('')}</a>
+            <a className={style.navbar_left_side} >{this.extractWorkspace('')}</a>
           </div>
-
-
         </div>
         <div className={style.main_menu}>
           <TopMenuContainer
@@ -84,3 +94,13 @@ export default class Navbar extends Component {
     );
   }
 }
+
+export default connect(
+  state => ({
+    followCheckVersionUpdateLink: (state.startUpReducer.checkVersionData
+      && state.startUpReducer.followCheckVersionUpdateLink === true)
+  }),
+  dispatch => ({
+    onUpdateLinkOpen: () => dispatch({ type: STATE_CHECK_VERSION_DOWNLOAD_STOP })
+  })
+)(Navbar);

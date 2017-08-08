@@ -47,7 +47,8 @@ export const STATE_CHECK_VERSION_PENDING = 'STATE_CHECK_VERSION_PENDING';
 export const STATE_CHECK_VERSION_FULFILLED = 'STATE_CHECK_VERSION_FULFILLED';
 export const STATE_CHECK_VERSION_REJECTED = 'STATE_CHECK_VERSION_REJECTED';
 const STATE_CHECK_VERSION = 'STATE_CHECK_VERSION';
-export const STATE_CHECK_VERSION_DOWNLOAD = 'STATE_CHECK_VERSION_DOWNLOAD';
+export const STATE_CHECK_VERSION_DOWNLOAD_START = 'STATE_CHECK_VERSION_DOWNLOAD_START';
+export const STATE_CHECK_VERSION_DOWNLOAD_STOP = 'STATE_CHECK_VERSION_DOWNLOAD_STOP';
 
 /**
  * Checks and updates the connectivity status
@@ -75,7 +76,6 @@ export function checkVersion() {
       } else {
         data.updateMessage = translate('offlineVersionOutdated');
       }
-      // store.dispatch(addConfirmationAlert(updateConfirmationAlert(message)));
     }
     return data;
   });
