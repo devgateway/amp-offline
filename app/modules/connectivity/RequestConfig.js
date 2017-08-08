@@ -1,3 +1,4 @@
+import request from 'request';
 import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
@@ -5,6 +6,8 @@ import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '..
 import { PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
+
+let cookiesStore = request.jar();
 
 const RequestConfig = {
   /**
@@ -38,7 +41,7 @@ const RequestConfig = {
       simple: false,
       resolveWithFullResponse: true,
       gzip: true,
-      jar: true // enables cookies to be saved
+      jar: cookiesStore // enables cookies to be saved
     };
     if (routeConfiguration.isBinary) {
       // in case its binary we need to set json to false
@@ -107,6 +110,10 @@ const RequestConfig = {
     // above we ensure we have only one route
     return routesConfigurationFiltered[0];
   },
+
+  clearCookies() {
+    cookiesStore = request.jar();
+  }
 };
 
 module.exports = RequestConfig;
