@@ -46,12 +46,15 @@ stage('UnitTest') {
 	node {
 		try {
 			sh 'npm run test-mocha'
+			// TODO remove once DIST is enabled back
+			slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
 		} catch(e) {
 			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
 			throw e
 		}
 	}
 }
+/* disabling DIST step temporary, until it works for develop
 stage('Dist') {
 	node {
 		try {
@@ -64,3 +67,4 @@ stage('Dist') {
 		}
 	}
 }
+*/
