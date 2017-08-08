@@ -14,13 +14,13 @@ if (BRANCH_NAME ==~ /feature\/AMP-\d+.*/) {
 // Record original branch or pull request for cleanup jobs
 def branch = env.CHANGE_ID == null ? BRANCH_NAME : null
 def pr = env.CHANGE_ID
-println  "Branch: ${branch}"
+println "Branch: ${branch}"
 println "Pull request: ${pr}"
 println "Tag: ${tag}"
 
 def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
-stage('PrepareSetup'){
+stage('PrepareSetup') {
 	node {
 		checkout scm
 		//we print node version
@@ -34,26 +34,20 @@ stage('PrepareSetup'){
 }
 stage('StyleCheck') {
 	node {
-		try{
-			//run eslint
+		try {
 			sh 'npm run lint'
-		}catch(e){
-			//eslint failed
+		} catch(e) {
 			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
-			//commenting the exception so the process continues until we fix every eslint error
 			throw e
 		}
 	}
 }
 stage('UnitTest') {
-	node{
-		try{
-			//run test
+	node {
+		try {
 			sh 'npm run test-mocha'
-		}catch(e){
-			//eslint failed
+		} catch(e) {
 			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
-			//commenting the exception so the process continues until we fix every failing test
 			throw e
 		}
 	}
