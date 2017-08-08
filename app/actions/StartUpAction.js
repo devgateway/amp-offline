@@ -21,9 +21,6 @@ import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
 import { loadAllLanguages } from '../actions/TranslationAction';
 import * as VersionCheckManager from '../modules/util/VersionCheckManager';
-import Notification from '../modules/helpers/NotificationHelper';
-import { addMessage, CONFIRMATION_ALERT_ADDED, MESSAGE_ADDED } from './NotificationAction';
-import { NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_INFO } from '../utils/constants/ErrorConstants';
 import translate from '../utils/translate';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
@@ -50,7 +47,7 @@ export const STATE_CHECK_VERSION_PENDING = 'STATE_CHECK_VERSION_PENDING';
 export const STATE_CHECK_VERSION_FULFILLED = 'STATE_CHECK_VERSION_FULFILLED';
 export const STATE_CHECK_VERSION_REJECTED = 'STATE_CHECK_VERSION_REJECTED';
 const STATE_CHECK_VERSION = 'STATE_CHECK_VERSION';
-
+export const STATE_CHECK_VERSION_DOWNLOAD = 'STATE_CHECK_VERSION_DOWNLOAD';
 
 /**
  * Checks and updates the connectivity status
@@ -73,20 +70,12 @@ export function checkVersion() {
   const checkVersionPromise = VersionCheckManager.checkVersion(VERSION).then(data => {
     // payload is null when there is no update data.
     if (data) {
-      let message = '';
       if (data[VersionCheckManager.MANDATORY_UPDATE] === true) {
-        message = translate('offlineVersionCritical');
+        data.updateMessage = translate('offlineVersionCritical');
       } else {
-        message = translate('offlineVersionOutdated');
+        data.updateMessage = translate('offlineVersionOutdated');
       }
-      store.dispatch({
-        type: CONFIRMATION_ALERT_ADDED,
-        payload: {
-          notification: { message },
-          yesAction: { type: MESSAGE_ADDED, payload: { message: 'Accepted!' } },
-          noAction: { type: MESSAGE_ADDED, payload: { message: 'Refused!' } }
-        }
-      });
+      // store.dispatch(addConfirmationAlert(updateConfirmationAlert(message)));
     }
     return data;
   });
