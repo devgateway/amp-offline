@@ -24,6 +24,7 @@ import {
   loadFMTree,
   loadCurrencyRatesOnStartup
 } from '../../actions/StartUpAction';
+import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
 
 // TODO: Evaluate in the future whats best: to have static functions or to create instances of SyncUpManager.
 export default class SyncUpManager {
@@ -147,7 +148,9 @@ export default class SyncUpManager {
       loadNumberSettings(),
       loadGlobalSettings(),
       loadFMTree(),
-      loadCurrencyRatesOnStartup()]);
+      loadCurrencyRatesOnStartup(),
+      checkIfShouldSyncBeforeLogout()
+    ]);
   }
 
   static getSyncUpHistory() {

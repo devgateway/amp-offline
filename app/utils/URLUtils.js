@@ -1,14 +1,15 @@
-import { hashHistory } from 'react-router';
+import { history } from '../index';
 import LoggerManager from '../modules/util/LoggerManager';
 
 const urlUtils = {
 
   forwardTo(location) {
     LoggerManager.log(`forwardTo( ${location} )`);
-    hashHistory.push(location);
+    history.push(location);
   },
+
   goBack() {
-    hashHistory.goBack();
+    history.goBack();
   }
 };
 
