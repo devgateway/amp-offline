@@ -16,6 +16,8 @@ import Notification from '../../modules/helpers/NotificationHelper';
 import translate from '../../utils/translate';
 import styles from './style.css';
 import Message from './message';
+import FollowUp from './followup';
+import ConfirmationAlert from './confirmationAlert';
 
 class Notifications extends PureComponent {
   static propTypes = {
@@ -24,11 +26,7 @@ class Notifications extends PureComponent {
       notification: PropTypes.instanceOf(Notification).isRequired,
       nextAction: PropTypes.object.isRequired
     })).isRequired,
-    confirmationAlerts: PropTypes.arrayOf(PropTypes.shape({
-      notification: PropTypes.instanceOf(Notification).isRequired,
-      yesAction: PropTypes.object,
-      noAction: PropTypes.object
-    })).isRequired,
+    confirmationAlerts: PropTypes.arrayOf(ConfirmationAlert).isRequired,
     messages: PropTypes.arrayOf(PropTypes.instanceOf(Notification)).isRequired,
     onDismissFullscreenAlert: PropTypes.func.isRequired,
     onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired,
@@ -85,25 +83,31 @@ class Notifications extends PureComponent {
 
     if (!confirmationAlerts[0]) return null;
 
-    const alert = confirmationAlerts[0];
+    const alert: ConfirmationAlert = confirmationAlerts[0];
 
     return (
       <Modal show>
         <Modal.Header>
           <Modal.Title>
-            {translate('Action required')}
+            {alert.title}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {alert.notification.message}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={onDismissConfirmationAlert.bind(null, alert, true)}>
-            {translate('Proceed')}
-          </Button>
-          <Button onClick={onDismissConfirmationAlert.bind(null, alert, false)}>
-            {translate('Cancel')}
-          </Button>
+          {alert.actions.map((followUp: FollowUp) => (
+            <Button
+              key={followUp.actionButtonTitle} onClick={onDismissConfirmationAlert.bind(null, alert, followUp.action)} >
+              {followUp.actionButtonTitle}
+            </Button>
+            )
+          )}
+          {alert.explicitCancel && (
+            <Button onClick={onDismissConfirmationAlert.bind(null, alert, null)} >
+              {translate('Cancel')}
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
     );
@@ -148,7 +152,7 @@ export default connect(
   dispatch => ({
     onDismissFullscreenAlert: notification => dispatch(dismissFullscreenAlert(notification)),
     onDismissFullscreenAlertWithFollowup: alert => dispatch(dismissFullscreenAlertWithFollowup(alert)),
-    onDismissConfirmationAlert: (alert, isYes) => dispatch(dismissConfirmationAlert(alert, isYes)),
+    onDismissConfirmationAlert: (alert, followUp) => dispatch(dismissConfirmationAlert(alert, followUp)),
     onDismissMessage: notification => dispatch(dismissMessage(notification))
   })
 )(Notifications);

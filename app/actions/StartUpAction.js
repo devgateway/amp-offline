@@ -19,6 +19,7 @@ import NumberUtils from '../utils/NumberUtils';
 import DateUtils from '../utils/DateUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
+import { loadAllLanguages } from '../actions/TranslationAction';
 import * as VersionCheckManager from '../modules/util/VersionCheckManager';
 import Notification from '../modules/helpers/NotificationHelper';
 import { addMessage, CONFIRMATION_ALERT_ADDED, MESSAGE_ADDED } from './NotificationAction';
@@ -56,6 +57,7 @@ const STATE_CHECK_VERSION = 'STATE_CHECK_VERSION';
  * @returns ConnectivityStatus
  */
 export function ampStartUp() {
+  store.dispatch(loadAllLanguages());
   return loadConnectionInformation()
     .then(scheduleConnectivityCheck)
     .then(loadNumberSettings)

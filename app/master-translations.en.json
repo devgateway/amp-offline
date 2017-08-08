@@ -9,6 +9,7 @@
   "AMPUnreachableError": "AMP Server is unreachable. Please try again later.",
   "wrongPassword": "Wrong user or password.",
   "logoff": "Log Off",
+  "logout": "Logout",
   "workspaceTitle": "Workspaces",
   "DESKTOP": "DESKTOP",
   "My Desktop": "My Desktop",
@@ -215,6 +216,8 @@
   "Search Primary Sectors": "Search Primary Sectors",
   "Search Secondary Sectors": "Search Secondary Sectors",
   "Add Program": "Add Program",
+  "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
+  "Sync": "Sync",
   "offlineVersionOutdated": "This version of the app is outdated. Please download the most recent version as soon as possible.",
   "offlineVersionCritical": "This version of the app is outdated. You may not continue until you download the most recent version as soon as possible."
 }
