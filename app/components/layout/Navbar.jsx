@@ -35,6 +35,10 @@ class Navbar extends Component {
     LoggerManager.log('constructor');
   }
 
+  componentDidUpdate() {
+    this.openUpdateLink();
+  }
+
   extractLoggedUser(prepend) {
     LoggerManager.log('extractLoggedUser');
     if (this.props.userReducer instanceof Object && this.props.userReducer.userData instanceof Object) {
@@ -60,7 +64,6 @@ class Navbar extends Component {
 
   render() {
     LoggerManager.log('render');
-    this.openUpdateLink();
     return (
       <div className={style.container}>
         <div className={style.navbar}>
