@@ -32,7 +32,7 @@
   padding-left: 10px;
 }
 
-.navbar button, a {
+.navbar button, .navbar a {
   text-decoration: none;
   color: white;
 }
