@@ -6,8 +6,8 @@
   1. One that just informs the user of something, but after it's dismissed nothing happens(addFullscreenAlert)
   2. One that informs the user about something, but after it's dismissed another action is dispatched
      (addFullscreenAlertWithFollowup)
-  3. One that asks user to accept or refuse something, it has 2 actions, one for 'yes' and one for 'no'
-     (both are optional), that are dispatched depending on what the user chooses(addConfirmationAlert)
+  3. One that asks user to accept or refuse something, it allows multiple actions, e.g. one for 'yes' and one for 'no'
+     (all are optional), that are dispatched depending on what the user chooses(addConfirmationAlert)
 
   All alerts are `first came first served`, meaning if there's more of them they'll be displayed chronologically.
   Alerts are prioritized in this way: fullscreen alert with no follup > fullscreen alerts with followup > confirmations,
@@ -22,6 +22,8 @@
   Related reducer: reducers/NotificationReducer
   Related components: components/notifications
  */
+
+import ConfirmationAlert from '../components/notifications/confirmationAlert';
 
 export const FULLSCREEN_ALERT_ADDED = 'FULLSCREEN_ALERT_ADDED';
 export const FULLSCREEN_ALERT_DISMISSED = 'FULLSCREEN_ALERT_DISMISSED';
@@ -66,30 +68,20 @@ export const dismissFullscreenAlertWithFollowup = alert => dispatch => {
   return null;
 };
 
-// notification is expected to be an instance of ../modules/helpers/NotificationHelper
-// yesAction is the action to be dispatched is the user clicks 'Yes' on the modal. Optional
-// noAction is the action to be dispatched is the user clicks 'No' on the modal. Optional
-export const addConfirmationAlert = (notification, yesAction, noAction) => ({
+// confirmationAlert is expected to be an instance of ../components/notifications/confirmationAlert
+export const addConfirmationAlert = (confirmationAlert: ConfirmationAlert) => ({
   type: CONFIRMATION_ALERT_ADDED,
-  payload: {
-    notification,
-    yesAction,
-    noAction
-  }
+  payload: confirmationAlert
 });
 
-export const dismissConfirmationAlert = (alert, isYes) => dispatch => {
+export const dismissConfirmationAlert = (alert, action) => dispatch => {
   dispatch({
     type: CONFIRMATION_ALERT_DISMISSED,
     payload: alert
   });
 
-  const { yesAction, noAction } = alert;
-
-  if (isYes && yesAction) {
-    dispatch(yesAction);
-  } else if (noAction) {
-    dispatch(noAction);
+  if (action) {
+    dispatch(action);
   }
 };
 
