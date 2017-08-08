@@ -65,6 +65,7 @@ stage('Dist') {
 			sh './publish.sh ${BRANCH_NAME}'
 		} catch (e) {
 			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Failed to create and publish installers for ${changePretty}")
+			throw e
 		}
 	}
 }
