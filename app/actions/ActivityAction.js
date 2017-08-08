@@ -16,10 +16,14 @@ import {
   TEAM
 } from '../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
-import { NOTIFICATION_ORIGIN_ACTIVITY, NOTIFICATION_SEVERITY_INFO } from '../utils/constants/ErrorConstants';
+import {
+  NOTIFICATION_ORIGIN_ACTIVITY,
+  NOTIFICATION_SEVERITY_INFO
+} from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
+import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import Utils from '../utils/Utils';
 import translate from '../utils/translate';
 
@@ -157,6 +161,7 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
       })));
       // TODO this reset is useless if we choose to stay within AF when activity is saved
       dispatch(resetDesktop());
+      checkIfShouldSyncBeforeLogout();
       // DO NOT return anything else! It is recorded by the reducer and refreshes AF when you choose to stay in AF
       return savedActivity;
     });

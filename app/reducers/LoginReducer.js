@@ -1,9 +1,22 @@
-import { STATE_LOGIN_OK, STATE_LOGIN_FAIL, STATE_LOGOUT, STATE_LOGIN_PROCESSING } from '../actions/LoginAction';
+import {
+  STATE_LOGIN_FAIL,
+  STATE_LOGIN_OK,
+  STATE_LOGIN_PROCESSING,
+  STATE_LOGOUT,
+  STATE_LOGOUT_ASK_TO_SYNC,
+  STATE_LOGOUT_DISMISS,
+  STATE_LOGOUT_DISMISS_TO_SYNC,
+  STATE_LOGOUT_REQUESTED
+} from '../actions/LoginAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
   loggedIn: false,
   loginProcessing: false,
+  askToSync: false,
+  logoutConfirmed: false,
+  logoutDismissedToSync: false,
+  isInactivityTimeout: false,
   errorMessage: ''
 };
 
@@ -28,11 +41,24 @@ export default function loginReducer(state: Object = defaultState, action: Objec
         loginProcessing: false,
         errorMessage: action.actionData.errorMessage
       });
+    case STATE_LOGOUT_ASK_TO_SYNC:
+      return { ...state, askToSync: action.actionData.askToSync };
+    case STATE_LOGOUT_DISMISS:
+      return { ...state, logoutConfirmed: false, logoutDismissedToSync: false };
+    case STATE_LOGOUT_DISMISS_TO_SYNC:
+      return { ...state, logoutConfirmed: false, logoutDismissedToSync: true };
+    case STATE_LOGOUT_REQUESTED:
+      return {
+        ...state,
+        logoutConfirmed: action.actionData.logoutConfirmed,
+        isInactivityTimeout: action.actionData.isInactivityTimeout
+      };
     case STATE_LOGOUT:
-      return defaultState;
+      return { ...defaultState, isInactivityTimeout: action.actionData && action.actionData.isInactivityTimeout };
     case STATE_LOGIN_PROCESSING:
       return Object.assign({}, state, {
-        loginProcessing: true
+        loginProcessing: true,
+        isInactivityTimeout: false
       });
     default:
       return state;
