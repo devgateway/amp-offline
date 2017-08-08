@@ -14,13 +14,13 @@ if (BRANCH_NAME ==~ /feature\/AMP-\d+.*/) {
 // Record original branch or pull request for cleanup jobs
 def branch = env.CHANGE_ID == null ? BRANCH_NAME : null
 def pr = env.CHANGE_ID
-println  "Branch: ${branch}"
+println "Branch: ${branch}"
 println "Pull request: ${pr}"
 println "Tag: ${tag}"
 
 def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
-stage('PrepareSetup'){
+stage('PrepareSetup') {
 	node {
 		checkout scm
 		//we print node version
@@ -34,48 +34,33 @@ stage('PrepareSetup'){
 }
 stage('StyleCheck') {
 	node {
-		try{
-			//run eslint
+		try {
 			sh 'npm run lint'
-		}catch(e){
-			//eslint failed
+		} catch(e) {
 			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
-			//commenting the exception so the process continues until we fix every eslint error
 			throw e
 		}
 	}
 }
 stage('UnitTest') {
-	node{
-		try{
-			//run test
+	node {
+		try {
 			sh 'npm run test-mocha'
-		}catch(e){
-			//eslint failed
+		} catch(e) {
 			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
-			//commenting the exception so the process continues until we fix every failing test
 			throw e
 		}
 	}
 }
-
-
-def deployed = false
-// If this stage fails then next stage will retry deployment. Otherwise next stage will be skipped.
-stage('Build') {
+stage('Dist') {
 	node {
 		try {
-			// we run package version
-			//sh 'npm run package-win'
-			// here we will copy the build file to a web server
-			slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE- Success\nDeployed ${changePretty} ")
-			deployed = true
-			// we commented out the build since its not working and we need to mark the build as success
-			currentBuild.result = 'SUCCESS'
+			sh './dist.sh'
+			sh './publish.sh ${BRANCH_NAME}'
+			slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
 		} catch (e) {
-			slackSend(channel: 'amp-offline-i', color: 'warning', message: "Deploy AMP OFFLINE - Failed\nFailed to deploy ${changePretty}")
-			currentBuild.result = 'UNSTABLE'
+			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Failed to create and publish installers for ${changePretty}")
+			throw e
 		}
 	}
 }
-
