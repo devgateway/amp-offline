@@ -55,6 +55,7 @@ class Login extends Component {
       this.props.onConfirmationAlert(this.props.updateAlertMessage);
     } else {
       if (this.props.suggestUpdateToContinue === true) {
+        // Login allowed + suggested update alert.
         this.props.onConfirmationAlert(this.props.updateAlertMessage);
       }
       this.props.loginAction(email, password);
@@ -116,11 +117,7 @@ export default connect(
       && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === true),
     suggestUpdateToContinue: (state.startUpReducer.checkVersionData
       && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === false),
-    updateAlertMessage: (state.startUpReducer.checkVersionData && state.startUpReducer.checkVersionData.updateMessage),
-    updateURL: (state.startUpReducer.checkVersionData
-      && state.startUpReducer.checkVersionData['latest-amp-offline'].url),
-    followCheckVersionUpdateLink: (state.startUpReducer.checkVersionData
-      && state.startUpReducer.followCheckVersionUpdateLink === true)
+    updateAlertMessage: (state.startUpReducer.checkVersionData && state.startUpReducer.checkVersionData.updateMessage)
   }),
   dispatch => ({
     onConfirmationAlert: (message) => dispatch(addConfirmationAlert(updateConfirmationAlert(message)))

@@ -15,20 +15,6 @@ export function checkVersion(version) {
   LoggerManager.log('checkVersion');
   return new Promise((resolve) => (
     ConnectionHelper.doGet({ url: CHECK_VERSION_URL }).then((data) => {
-      // TODO: delete this mock data.
-      data = {
-        'amp-offline-compatible': true,
-        'amp-version': '3.0',
-        'amp-offline-enabled': true,
-        'latest-amp-offline': {
-          os: 'windows',
-          arch: '32',
-          critical: false,
-          date: '2017-01-01',
-          version: '1.4.0',
-          url: '<base_url>/amp-client/release?v=1.2.1&os=windows&arch=32'
-        }
-      };
       const noVersionData = null;
       if (data && data[LATEST_AMP_OFFLINE]) {
         const url = buildUrl(data[LATEST_AMP_OFFLINE].url);

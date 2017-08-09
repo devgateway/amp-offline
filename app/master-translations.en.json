@@ -219,5 +219,6 @@
   "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
   "Sync": "Sync",
   "offlineVersionOutdated": "This version of the app is outdated. Please download the most recent version as soon as possible.",
-  "offlineVersionCritical": "This version of the app is outdated. You may not continue until you download the most recent version as soon as possible."
+  "offlineVersionCritical": "This version of the app is outdated. You may not continue until you download the most recent version as soon as possible.",
+  "Download": "Download"
 }
