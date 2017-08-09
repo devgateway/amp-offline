@@ -234,7 +234,7 @@ class AFField extends Component {
   _getValueAsLabel() {
     let val = '';
     if (this.state.value) {
-      val = this.state.value.displayFullValue || this.state.value;
+      val = this.state.value.displayFullValue || this.state.value.value || this.state.value;
     }
     return <AFLabel value={val} />;
   }
