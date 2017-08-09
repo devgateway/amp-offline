@@ -14,6 +14,7 @@ import { AMP_COUNTRY_LOGO, DESKTOP_CURRENT_URL } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
 import NotificationsContainer from '../notifications';
 import { STATE_CHECK_VERSION_DOWNLOAD_STOP } from './../../actions/StartUpAction';
+import { LATEST_AMP_OFFLINE } from '../../modules/util/VersionCheckManager';
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -27,7 +28,8 @@ class Navbar extends Component {
     translationReducer: PropTypes.object.isRequired,
     workspaceReducer: PropTypes.object.isRequired,
     followCheckVersionUpdateLink: PropTypes.bool,
-    onUpdateLinkOpen: PropTypes.func.isRequired
+    afterUpdateLinkOpen: PropTypes.func.isRequired,
+    checkVersionUpdateLink: PropTypes.string
   };
 
   constructor() {
@@ -55,10 +57,14 @@ class Navbar extends Component {
     return '';
   }
 
+  /**
+   * Open the update url we get from the VersionCheckManager in the default browser (just one time).
+   */
   openUpdateLink() {
+    LoggerManager.log('openUpdateLink');
     if (this.props.followCheckVersionUpdateLink === true) {
-      shell.openExternal('https://github.com');
-      this.props.onUpdateLinkOpen();
+      shell.openExternal(this.props.checkVersionUpdateLink);
+      this.props.afterUpdateLinkOpen();
     }
   }
 
@@ -100,10 +106,12 @@ class Navbar extends Component {
 
 export default connect(
   state => ({
-    followCheckVersionUpdateLink: (state.startUpReducer.checkVersionData
-      && state.startUpReducer.followCheckVersionUpdateLink === true)
+    followCheckVersionUpdateLink: state.startUpReducer.followCheckVersionUpdateLink,
+    checkVersionUpdateLink: (state.startUpReducer.checkVersionData &&
+    state.startUpReducer.checkVersionData[LATEST_AMP_OFFLINE])
+      ? state.startUpReducer.checkVersionData[LATEST_AMP_OFFLINE].url : null
   }),
   dispatch => ({
-    onUpdateLinkOpen: () => dispatch({ type: STATE_CHECK_VERSION_DOWNLOAD_STOP })
+    afterUpdateLinkOpen: () => dispatch({ type: STATE_CHECK_VERSION_DOWNLOAD_STOP })
   })
 )(Navbar);
