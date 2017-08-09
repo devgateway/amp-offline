@@ -173,6 +173,10 @@ class AFField extends Component {
   }
 
   _getListSelector() {
+    if (!this.fieldDef.children.find(item => item.id_only === true)) {
+      // TODO: Lists without id_only field will be addressed on AMPOFFLINE-674.
+      return null;
+    }
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
     const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
     let options = this._getOptions(optionsFieldPath);
