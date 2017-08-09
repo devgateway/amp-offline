@@ -54,7 +54,6 @@ stage('UnitTest') {
 		}
 	}
 }
-/* disabling DIST step temporary, until it works for develop
 stage('Dist') {
 	node {
 		try {
@@ -67,4 +66,3 @@ stage('Dist') {
 		}
 	}
 }
-*/
