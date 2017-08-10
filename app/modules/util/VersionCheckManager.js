@@ -1,6 +1,6 @@
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import LoggerManager from './LoggerManager';
-import { CHECK_VERSION_URL } from '../../modules/connectivity/AmpApiConstants';
+import { URL_CONNECTIVITY_CHECK_EP } from '../../modules/connectivity/AmpApiConstants';
 import store from '../../index';
 
 export const LATEST_AMP_OFFLINE = 'latest-amp-offline';
