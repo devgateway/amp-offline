@@ -3,7 +3,12 @@ import styles from '../ActivityPreview.css';
 import APField from '../components/APField';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
-import { RICH_TEXT_FIELDS } from '../../../../utils/constants/FieldPathConstants';
+import FeatureManager from '../../../../modules/util/FeatureManager';
+import {
+  ACTIVITY_FIELDS_FM_PATH,
+  ALTERNATE_VALUE_PATH,
+  RICH_TEXT_FIELDS
+} from '../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
@@ -52,9 +57,15 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
    * @return {null|APField}
    */
   buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false) {
-    if (this.context.activityFieldsManager.isFieldPathEnabled(path)) {
+    const fmPath = ACTIVITY_FIELDS_FM_PATH[path];
+    if (this.context.activityFieldsManager.isFieldPathEnabled(path)
+      && (!fmPath || FeatureManager.isFMSettingEnabled(fmPath, false))) {
       const title = this.context.activityFieldsManager.getFieldLabelTranslation(path);
+      const alternatePath = ALTERNATE_VALUE_PATH[path];
       let value = this.context.activityFieldsManager.getValue(this.context.activity, path);
+      if ((value === null || value === undefined) && alternatePath) {
+        value = this.context.activityFieldsManager.getValue(this.context.activity, alternatePath);
+      }
       const fieldDef = this.context.activityFieldsManager.getFieldDef(path);
       if (fieldDef.field_type === 'date') {
         value = DateUtils.createFormattedDate(value);
@@ -79,14 +90,14 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       return composedSection;
     }
     // TODO iteration 2+ section toggle (TDC based on desgin + VG)
-    return (<div key={SectionTitle} className={this.props.groupClass} id={sID}>
-      <div className={this.props.titleClass}>
-        <span>{translate(SectionTitle)} </span><span>{this.props.titleDetails}</span>
-      </div>
+    return (<div key={SectionTitle} className={this.props.groupClass} id={sID} >
+      <div className={this.props.titleClass} >
+        <span >{translate(SectionTitle)} </span ><span >{this.props.titleDetails}</span >
+      </div >
       <div className={this.props.composedClass} >
         {composedSection}
-      </div>
-    </div>);
+      </div >
+    </div >);
   }
 };
 
