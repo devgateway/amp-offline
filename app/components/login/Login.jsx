@@ -10,7 +10,9 @@ import FollowUp from '../../components/notifications/followup';
 import ConfirmationAlert from '../../components/notifications/confirmationAlert';
 import Notification from '../../modules/helpers/NotificationHelper';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
-import { NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_INFO } from '../../utils/constants/ErrorConstants';
+import {
+  NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_WARNING
+} from '../../utils/constants/ErrorConstants';
 import translate from '../../utils/translate';
 import { STATE_CHECK_VERSION_DOWNLOAD_START } from './../../actions/StartUpAction';
 
@@ -102,7 +104,7 @@ const updateConfirmationAlert = (forceUpdate) => {
   const downloadNotification = new Notification({
     message,
     origin: NOTIFICATION_ORIGIN_UPDATE_CHECK,
-    severity: NOTIFICATION_SEVERITY_INFO
+    severity: NOTIFICATION_SEVERITY_WARNING
   });
   const proceedWithDownload = new FollowUp({
     type: STATE_CHECK_VERSION_DOWNLOAD_START
