@@ -68,17 +68,8 @@ export function ampStartUp() {
 
 export function checkVersion() {
   LoggerManager.log('checkVersion');
-  const checkVersionPromise = VersionCheckManager.checkVersion(VERSION).then(data => {
-    // payload is null when there is no update data.
-    if (data) {
-      if (data[VersionCheckManager.MANDATORY_UPDATE] === true) {
-        data.updateMessage = translate('offlineVersionCritical');
-      } else {
-        data.updateMessage = translate('offlineVersionOutdated');
-      }
-    }
-    return data;
-  });
+  // payload is null when there is no update data.
+  const checkVersionPromise = VersionCheckManager.checkVersion(VERSION).then(data => (data));
   store.dispatch({ type: STATE_CHECK_VERSION, payload: checkVersionPromise });
   return checkVersionPromise;
 }

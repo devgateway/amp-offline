@@ -24,7 +24,6 @@ class Login extends Component {
     loginReducer: PropTypes.object.isRequired,
     forceUpdateToContinue: PropTypes.bool,
     suggestUpdateToContinue: PropTypes.bool,
-    updateAlertMessage: PropTypes.string,
     onConfirmationAlert: PropTypes.func.isRequired
   };
 
@@ -52,11 +51,11 @@ class Login extends Component {
   processLogin(email, password) {
     if (this.props.forceUpdateToContinue) {
       // Login not allowed.
-      this.props.onConfirmationAlert(this.props.updateAlertMessage);
+      this.props.onConfirmationAlert(translate('offlineVersionCritical'));
     } else {
-      if (this.props.suggestUpdateToContinue === true) {
+      if (this.props.suggestUpdateToContinue) {
         // Login allowed + suggested update alert.
-        this.props.onConfirmationAlert(this.props.updateAlertMessage);
+        this.props.onConfirmationAlert(translate('offlineVersionOutdated'));
       }
       this.props.loginAction(email, password);
     }
@@ -116,8 +115,7 @@ export default connect(
     forceUpdateToContinue: (state.startUpReducer.checkVersionData
       && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === true),
     suggestUpdateToContinue: (state.startUpReducer.checkVersionData
-      && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === false),
-    updateAlertMessage: (state.startUpReducer.checkVersionData && state.startUpReducer.checkVersionData.updateMessage)
+      && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === false)
   }),
   dispatch => ({
     onConfirmationAlert: (message) => dispatch(addConfirmationAlert(updateConfirmationAlert(message)))
