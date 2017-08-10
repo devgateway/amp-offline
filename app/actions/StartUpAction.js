@@ -80,6 +80,7 @@ export function checkVersion() {
     return data;
   });
   store.dispatch({ type: STATE_CHECK_VERSION, payload: checkVersionPromise });
+  return checkVersionPromise;
 }
 
 export function loadConnectionInformation() {
