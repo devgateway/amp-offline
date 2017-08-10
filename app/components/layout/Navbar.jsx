@@ -27,7 +27,7 @@ class Navbar extends Component {
     menuOnClickHandler: PropTypes.func.isRequired,
     translationReducer: PropTypes.object.isRequired,
     workspaceReducer: PropTypes.object.isRequired,
-    followCheckVersionUpdateLink: PropTypes.bool,
+    proceedWithDownload: PropTypes.bool,
     afterUpdateLinkOpen: PropTypes.func.isRequired,
     checkVersionUpdateLink: PropTypes.string
   };
@@ -62,7 +62,7 @@ class Navbar extends Component {
    */
   openUpdateLink() {
     LoggerManager.log('openUpdateLink');
-    if (this.props.followCheckVersionUpdateLink === true) {
+    if (this.props.proceedWithDownload === true) {
       shell.openExternal(this.props.checkVersionUpdateLink);
       this.props.afterUpdateLinkOpen();
     }
@@ -106,7 +106,7 @@ class Navbar extends Component {
 
 export default connect(
   state => ({
-    followCheckVersionUpdateLink: state.startUpReducer.followCheckVersionUpdateLink,
+    proceedWithDownload: state.startUpReducer.proceedWithDownload,
     checkVersionUpdateLink: (state.startUpReducer.checkVersionData &&
     state.startUpReducer.checkVersionData[LATEST_AMP_OFFLINE])
       ? state.startUpReducer.checkVersionData[LATEST_AMP_OFFLINE].url : null
