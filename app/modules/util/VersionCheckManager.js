@@ -14,7 +14,7 @@ export const MANDATORY_UPDATE = 'mandatory_update';
 export function checkVersion(version) {
   LoggerManager.log('checkVersion');
   return new Promise((resolve) => (
-    ConnectionHelper.doGet({ url: CHECK_VERSION_URL }).then((data) => {
+    ConnectionHelper.doGet({ url: URL_CONNECTIVITY_CHECK_EP }).then((data) => {
       const noVersionData = null;
       if (data && data[LATEST_AMP_OFFLINE]) {
         const url = buildUrl(data[LATEST_AMP_OFFLINE].url);
