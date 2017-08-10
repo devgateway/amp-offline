@@ -18,6 +18,7 @@ import NumberUtils from '../utils/NumberUtils';
 import DateUtils from '../utils/DateUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
+import { loadAllLanguages } from '../actions/TranslationAction';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -46,6 +47,7 @@ const STATE_FM = 'STATE_FM';
  * @returns ConnectivityStatus
  */
 export function ampStartUp() {
+  store.dispatch(loadAllLanguages());
   return loadConnectionInformation()
     .then(scheduleConnectivityCheck)
     .then(loadNumberSettings)
