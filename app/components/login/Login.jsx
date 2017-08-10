@@ -51,11 +51,11 @@ class Login extends Component {
   processLogin(email, password) {
     if (this.props.forceUpdateToContinue) {
       // Login not allowed.
-      this.props.onConfirmationAlert(translate('offlineVersionCritical'));
+      this.props.onConfirmationAlert(true);
     } else {
       if (this.props.suggestUpdateToContinue) {
         // Login allowed + suggested update alert.
-        this.props.onConfirmationAlert(translate('offlineVersionOutdated'));
+        this.props.onConfirmationAlert(false);
       }
       this.props.loginAction(email, password);
     }
@@ -97,7 +97,8 @@ class Login extends Component {
   }
 }
 
-const updateConfirmationAlert = (message) => {
+const updateConfirmationAlert = (forceUpdate) => {
+  const message = forceUpdate ? translate('offlineVersionCritical') : translate('offlineVersionOutdated');
   const downloadNotification = new Notification({
     message,
     origin: NOTIFICATION_ORIGIN_UPDATE_CHECK,
@@ -118,6 +119,6 @@ export default connect(
       && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === false)
   }),
   dispatch => ({
-    onConfirmationAlert: (message) => dispatch(addConfirmationAlert(updateConfirmationAlert(message)))
+    onConfirmationAlert: (forceUpdate) => dispatch(addConfirmationAlert(updateConfirmationAlert(forceUpdate)))
   })
 )(Login);
