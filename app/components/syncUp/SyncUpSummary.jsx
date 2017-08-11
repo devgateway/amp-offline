@@ -13,17 +13,25 @@ const entry = (label, value) => (
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
-    data: PropTypes.object,
+    history: PropTypes.array,
+    params: PropTypes.shape({
+      id: PropTypes.string
+    }),
     getHistory: PropTypes.func.isRequired
   }
 
+  maybeGetData (){
+    const { history, params } = this.props;
+    return history.find(syncObj => syncObj.id === +params.id);
+  }
+
   componentDidMount() {
-    const { data, getHistory } = this.props;
-    if (!data) getHistory();
+    const { getHistory } = this.props;
+    if (!this.maybeGetData()) getHistory();
   }
 
   render() {
-    const { data } = this.props;
+    const data = this.maybeGetData();
     if (!data) return null;
     const { status, timestamp } = data;
     return (

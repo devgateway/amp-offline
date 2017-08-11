@@ -13,7 +13,7 @@ const defaultState = {
   loadingSyncHistory: false,
   syncUpInProgress: false,
   errorMessage: '',
-  historyData: {},
+  historyData: [],
   forceSyncUp: false,
   forceSyncUpMessage: ''
 };

@@ -56,7 +56,7 @@ export default class DateUtils {
 
   static getDateTimeFormat() {
     const dateFormat = this.getGSDateFormat();
-    return `${dateFormat} h:mm:ss`;
+    return `${dateFormat} H:mm:ss`;
   }
 
   static createFormattedDate(date) {

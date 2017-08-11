@@ -4,7 +4,7 @@ import { getSyncUpHistory } from '../actions/SyncUpAction';
 
 function mapStateToProps(state) {
   return {
-    data: state.syncUpReducer.historyData[0]
+    history: state.syncUpReducer.historyData
   };
 }
 
