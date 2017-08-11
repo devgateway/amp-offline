@@ -1,9 +1,21 @@
 import request from 'request';
+import os from 'os';
 import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
-import { PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
+import {
+  ARCH32,
+  ARCH64,
+  ARCH64_NODE_OS_OPTIONS,
+  ARCH64_USER_AGENT_OPTIONS,
+  PARAM_AMPOFFLINE_AGENT,
+  PLATFORM_DEBIAN,
+  PLATFORM_MAC_OS,
+  PLATFORM_REDHAT,
+  PLATFORM_WINDOWS,
+  TRANSLATIONS_PARAM
+} from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
 
@@ -25,7 +37,7 @@ const RequestConfig = {
     const urlParams = this._paramsMapToString(paramsMap);
     const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
     const headers = {
-      'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${navigator.userAgent}`
+      'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${this._getExtendedUserAgent(navigator.userAgent)}`
     };
     if (!routeConfiguration.isBinary) {
       // If it is not binary we assume its JSON if we need to handle
@@ -60,6 +72,29 @@ const RequestConfig = {
       requestConfig.body = body;
     }
     return requestConfig;
+  },
+
+  _getExtendedUserAgent(userAgent) {
+    const userAgentLowerCase = userAgent.toLowerCase();
+    let platform = os.platform().toLowerCase();
+    if (platform === 'darwin') {
+      platform = PLATFORM_MAC_OS;
+    } else if (platform === 'win32') {
+      platform = PLATFORM_WINDOWS;
+    } else if (platform === 'linux') {
+      if (userAgentLowerCase.includes('red hat')) {
+        platform = PLATFORM_REDHAT;
+      } else {
+        platform = PLATFORM_DEBIAN;
+      }
+    }
+    let arch = os.arch();
+    if (ARCH64_NODE_OS_OPTIONS.has(arch) || ARCH64_USER_AGENT_OPTIONS.some(a64 => userAgentLowerCase.includes(a64))) {
+      arch = ARCH64;
+    } else {
+      arch = ARCH32;
+    }
+    return `(${platform}; ${arch}) ${userAgent}`;
   },
 
   _addTranslations(paramsMap) {
@@ -98,7 +133,7 @@ const RequestConfig = {
 
   _getRouteConfiguration(method, url) {
     const routesConfigurationFiltered = routesConfiguration.filter(element =>
-    element.url === url && element.method === method);
+      element.url === url && element.method === method);
 
     if (!routesConfigurationFiltered || routesConfigurationFiltered.length !== 1) {
       throw new Notification({
