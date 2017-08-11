@@ -217,5 +217,8 @@
   "Search Secondary Sectors": "Search Secondary Sectors",
   "Add Program": "Add Program",
   "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
-  "Sync": "Sync"
+  "Sync": "Sync",
+  "Status": "Status",
+  "Started": "Started",
+  "Finished": "Finished"
 }
