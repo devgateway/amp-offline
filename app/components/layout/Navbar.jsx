@@ -13,8 +13,7 @@ import LoggerManager from '../../modules/util/LoggerManager';
 import { AMP_COUNTRY_LOGO, DESKTOP_CURRENT_URL } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
 import NotificationsContainer from '../notifications';
-import { STATE_CHECK_VERSION_DOWNLOAD_STOP } from './../../actions/StartUpAction';
-import { LATEST_AMP_OFFLINE } from '../../modules/util/VersionCheckManager';
+import { STATE_DOWNLOAD_UPDATE_IN_PROGRESS } from '../../actions/StartUpAction';
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -58,7 +57,7 @@ class Navbar extends Component {
   }
 
   /**
-   * Open the update url we get from the VersionCheckManager in the default browser (just one time).
+   * Open the update url we get from the ConnectivityAction in the default browser (just one time).
    */
   openUpdateLink() {
     LoggerManager.log('openUpdateLink');
@@ -83,8 +82,8 @@ class Navbar extends Component {
           <Link className={style.navbar_left_side} style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
           <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
-            <a className={style.navbar_left_side} >{this.extractLoggedUser('')}</a>
-            <a className={style.navbar_left_side} >{this.extractWorkspace('')}</a>
+            <a className={style.navbar_left_side}>{this.extractLoggedUser('')}</a>
+            <a className={style.navbar_left_side}>{this.extractWorkspace('')}</a>
           </div>
         </div>
         <div className={style.main_menu}>
@@ -107,11 +106,12 @@ class Navbar extends Component {
 export default connect(
   state => ({
     proceedWithDownload: state.startUpReducer.proceedWithDownload,
-    checkVersionUpdateLink: (state.startUpReducer.checkVersionData &&
-    state.startUpReducer.checkVersionData[LATEST_AMP_OFFLINE])
-      ? state.startUpReducer.checkVersionData[LATEST_AMP_OFFLINE].url : null
+    checkVersionUpdateLink: (state.ampConnectionStatusReducer
+      && state.ampConnectionStatusReducer.status
+      && state.ampConnectionStatusReducer.status.getLatestAmpOffline)
+      ? state.ampConnectionStatusReducer.status.getLatestAmpOffline.url : null
   }),
   dispatch => ({
-    afterUpdateLinkOpen: () => dispatch({ type: STATE_CHECK_VERSION_DOWNLOAD_STOP })
+    afterUpdateLinkOpen: () => dispatch({ type: STATE_DOWNLOAD_UPDATE_IN_PROGRESS })
   })
 )(Navbar);

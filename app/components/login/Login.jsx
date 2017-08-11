@@ -5,7 +5,7 @@ import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
-import { MANDATORY_UPDATE } from '../../modules/util/VersionCheckManager';
+import { MANDATORY_UPDATE } from '../../actions/ConnectivityAction';
 import FollowUp from '../../components/notifications/followup';
 import ConfirmationAlert from '../../components/notifications/confirmationAlert';
 import Notification from '../../modules/helpers/NotificationHelper';
@@ -14,7 +14,7 @@ import {
   NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_WARNING
 } from '../../utils/constants/ErrorConstants';
 import translate from '../../utils/translate';
-import { STATE_CHECK_VERSION_DOWNLOAD_START } from './../../actions/StartUpAction';
+import { STATE_DOWNLOAD_UPDATE_CONFIRMED } from './../../actions/StartUpAction';
 
 class Login extends Component {
 
@@ -107,7 +107,7 @@ const updateConfirmationAlert = (forceUpdate) => {
     severity: NOTIFICATION_SEVERITY_WARNING
   });
   const proceedWithDownload = new FollowUp({
-    type: STATE_CHECK_VERSION_DOWNLOAD_START
+    type: STATE_DOWNLOAD_UPDATE_CONFIRMED
   }, translate('Download'));
   const actions = [proceedWithDownload];
   return new ConfirmationAlert(downloadNotification, actions, true);
@@ -115,10 +115,12 @@ const updateConfirmationAlert = (forceUpdate) => {
 
 export default connect(
   state => ({
-    forceUpdateToContinue: (state.startUpReducer.checkVersionData
-      && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === true),
-    suggestUpdateToContinue: (state.startUpReducer.checkVersionData
-      && state.startUpReducer.checkVersionData[MANDATORY_UPDATE] === false)
+    forceUpdateToContinue: (state.ampConnectionStatusReducer && state.ampConnectionStatusReducer.status
+      && state.ampConnectionStatusReducer.status.getLatestAmpOffline
+      && state.ampConnectionStatusReducer.status.getLatestAmpOffline[MANDATORY_UPDATE] === true),
+    suggestUpdateToContinue: (state.ampConnectionStatusReducer && state.ampConnectionStatusReducer.status
+      && state.ampConnectionStatusReducer.status.getLatestAmpOffline
+      && state.ampConnectionStatusReducer.status.getLatestAmpOffline[MANDATORY_UPDATE] === false)
   }),
   dispatch => ({
     onConfirmationAlert: (forceUpdate) => dispatch(addConfirmationAlert(updateConfirmationAlert(forceUpdate)))

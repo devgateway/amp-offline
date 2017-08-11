@@ -20,8 +20,6 @@ import DateUtils from '../utils/DateUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
 import { loadAllLanguages } from '../actions/TranslationAction';
-import * as VersionCheckManager from '../modules/util/VersionCheckManager';
-import translate from '../utils/translate';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -43,10 +41,7 @@ export const STATE_FM_PENDING = 'STATE_FM_PENDING';
 export const STATE_FM_FULFILLED = 'STATE_FM_FULFILLED';
 export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
-export const STATE_CHECK_VERSION_PENDING = 'STATE_CHECK_VERSION_PENDING';
-export const STATE_CHECK_VERSION_FULFILLED = 'STATE_CHECK_VERSION_FULFILLED';
-export const STATE_CHECK_VERSION_REJECTED = 'STATE_CHECK_VERSION_REJECTED';
-const STATE_CHECK_VERSION = 'STATE_CHECK_VERSION';
+export const STATE_CHECK_VERSION = 'STATE_CHECK_VERSION';
 export const STATE_DOWNLOAD_UPDATE_CONFIRMED = 'STATE_DOWNLOAD_UPDATE_CONFIRMED';
 export const STATE_DOWNLOAD_UPDATE_IN_PROGRESS = 'STATE_DOWNLOAD_UPDATE_IN_PROGRESS';
 
@@ -62,16 +57,7 @@ export function ampStartUp() {
     .then(loadDateSettings)
     .then(loadGlobalSettings)
     .then(loadFMTree)
-    .then(loadCurrencyRatesOnStartup)
-    .then(checkVersion);
-}
-
-export function checkVersion() {
-  LoggerManager.log('checkVersion');
-  // payload is null when there is no update data.
-  const checkVersionPromise = VersionCheckManager.checkVersion(VERSION).then(data => (data));
-  store.dispatch({ type: STATE_CHECK_VERSION, payload: checkVersionPromise });
-  return checkVersionPromise;
+    .then(loadCurrencyRatesOnStartup);
 }
 
 export function loadConnectionInformation() {
@@ -95,6 +81,9 @@ export function getTimer() {
 }
 
 function scheduleConnectivityCheck() {
+  LoggerManager.log('scheduleConnectivityCheck');
+  store.dispatch({ type: STATE_CHECK_VERSION });
+
   return new Promise((resolve, reject) => {
     clearInterval(timer);
     timer = setInterval(() => store.dispatch(connectivityCheck()), CONNECTIVITY_CHECK_INTERVAL);

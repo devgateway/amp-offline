@@ -5,12 +5,14 @@ export default class ConnectivityStatus {
    * @param isAmpClientEnabled
    * @param isAmpCompatible
    * @param ampVersion
+   * @param latestAmpOffline
    */
-  constructor(isAmpAvailable, isAmpClientEnabled, isAmpCompatible, ampVersion) {
+  constructor(isAmpAvailable, isAmpClientEnabled, isAmpCompatible, ampVersion, latestAmpOffline) {
     this._isAmpAvailable = isAmpAvailable;
     this._isAmpClientEnabled = isAmpClientEnabled;
     this._isAmpCompatible = isAmpCompatible;
     this._ampVersion = ampVersion;
+    this._latestAmpOffline = latestAmpOffline;
   }
 
   /**
@@ -39,6 +41,13 @@ export default class ConnectivityStatus {
    */
   get getAmpVersion() {
     return this._ampVersion;
+  }
+
+  /**
+   * @returns {Object} Data to upgrade the current installation (if available).
+   */
+  get getLatestAmpOffline() {
+    return this._latestAmpOffline;
   }
 }
 

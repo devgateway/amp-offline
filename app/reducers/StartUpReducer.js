@@ -10,9 +10,7 @@ import {
   STATE_PARAMETERS_FAILED,
   STATE_PARAMETERS_LOADED,
   STATE_PARAMETERS_LOADING,
-  STATE_CHECK_VERSION_FULFILLED,
-  STATE_CHECK_VERSION_PENDING,
-  STATE_CHECK_VERSION_REJECTED,
+  STATE_CHECK_VERSION,
   STATE_DOWNLOAD_UPDATE_CONFIRMED,
   STATE_DOWNLOAD_UPDATE_IN_PROGRESS
 } from '../actions/StartUpAction';
@@ -30,8 +28,6 @@ const defaultState = {
   isFMTreeLoading: false,
   isFMTreeLoaded: false,
   fmTreeError: undefined,
-  checkVersionError: undefined,
-  checkVersionData: undefined,
   proceedWithDownload: false
 };
 
@@ -78,22 +74,8 @@ export default function startUpReducer(state = defaultState, action: Object) {
       });
     case STATE_FM_REJECTED:
       return Object.assign({}, state, { fmTreeError: action.payload, isFMTreeLoading: false, isFMTreeLoaded: false });
-    case STATE_CHECK_VERSION_PENDING:
+    case STATE_CHECK_VERSION:
       return Object.assign({}, state, {
-        checkVersionError: null,
-        checkVersionData: null,
-        proceedWithDownload: false
-      });
-    case STATE_CHECK_VERSION_REJECTED:
-      return Object.assign({}, state, {
-        checkVersionError: action.payload,
-        checkVersionData: null,
-        proceedWithDownload: false
-      });
-    case STATE_CHECK_VERSION_FULFILLED:
-      return Object.assign({}, state, {
-        checkVersionError: null,
-        checkVersionData: action.payload,
         proceedWithDownload: false
       });
     case STATE_DOWNLOAD_UPDATE_CONFIRMED:
