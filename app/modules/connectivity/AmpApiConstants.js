@@ -28,3 +28,5 @@ export const PARAM_AMPOFFLINE_AGENT = 'AMPOffline';
 export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2+json';
 
 export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
+
+export const DOWNLOAD_UPGRADE_URL = '/amp/download-upgrade'; // TODO: this url will change for sure.

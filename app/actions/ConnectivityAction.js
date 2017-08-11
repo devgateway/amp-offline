@@ -85,6 +85,11 @@ function _processResult(data, lastConnectivityStatus) {
   return status;
 }
 
+/**
+ * This function builds the url of a web page we open for the user to manually download the upgrade.
+ * For automatic download use DOWNLOAD_UPGRADE_URL (to be done).
+ * @param url
+ */
 function buildDownloadUrl(url) {
   LoggerManager.log('buildDownloadUrl');
   const baseUrl = store.getState().startUpReducer.connectionInformation.getFullUrl();

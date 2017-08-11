@@ -19,7 +19,8 @@ import {
   FEATURE_MANAGER_URL,
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
-  POSSIBLE_VALUES_V2_MEDIA_TYPE
+  POSSIBLE_VALUES_V2_MEDIA_TYPE,
+  DOWNLOAD_UPGRADE_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -105,6 +106,10 @@ const routesConfiguration = [{
   url: FEATURE_MANAGER_URL,
   method: 'POST',
   requiredAuth: true
+}, {
+  url: DOWNLOAD_UPGRADE_URL,
+  method: 'GET',
+  isBinary: true
 }
 ];
 
