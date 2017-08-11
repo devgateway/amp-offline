@@ -1,5 +1,6 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
+import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
@@ -12,6 +13,7 @@ export const STATE_SYNCUP_IN_PROCESS = 'STATE_SYNCUP_IN_PROCESS';
 export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
+export const STATE_SYNCUP_CONNECTION_UNAVAILABLE = 'STATE_SYNCUP_CONNECTION_UNAVAILABLE';
 
 export function getSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');
@@ -25,6 +27,17 @@ export function getSyncUpHistory() {
       ));
     }
     dispatch(sendingRequest());
+  };
+}
+
+export function checkSyncConnection() {
+  LoggerManager.log('checkSyncConnection');
+  return (dispatch, ownProps) => {
+    if (ownProps().ampConnectionStatusReducer.status.isAmpAvailable) {
+      this.startSyncUp();
+    } else {
+      dispatch(syncConnectionUnavailable());
+    }
   };
 }
 
@@ -96,5 +109,14 @@ function syncUpInProgress() {
   LoggerManager.log('sendingRequest');
   return {
     type: STATE_SYNCUP_IN_PROCESS
+  };
+}
+
+function syncConnectionUnavailable() {
+  LoggerManager.log('syncConnectionUnavailable');
+  const msg = translate('syncConnectionError');
+  return {
+    type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,
+    actionData: { errorMessage: msg }
   };
 }

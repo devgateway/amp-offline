@@ -22,11 +22,10 @@ const classes = rules => Object.keys(rules).filter(valuesOf(rules)).join(' ');
 export default class SyncUp extends Component {
 
   static propTypes = {
-    startSyncUp: PropTypes.func.isRequired,
+    checkSyncConnection: PropTypes.func.isRequired,
     router: PropTypes.object.isRequired,
     route: PropTypes.object.isRequired,
     syncUpReducer: PropTypes.object.isRequired,
-    ampConnectionStatusReducer: PropTypes.object.isRequired,
     getSyncUpHistory: PropTypes.func.isRequired
   };
 
@@ -38,8 +37,6 @@ export default class SyncUp extends Component {
   constructor() {
     super();
     LoggerManager.log('constructor');
-    this.checkConnection = this.checkConnection.bind(this);
-    this.connectionError = undefined;
   }
 
   componentWillMount() {
@@ -72,12 +69,6 @@ export default class SyncUp extends Component {
     const { syncUpReducer } = this.props;
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
       return <Loading />;
-    } else if (this.connectionError) {
-      return (
-        <div>
-          <ErrorMessage message={this.connectionError} />
-        </div>
-      );
     } else {
       const { errorMessage, forceSyncUpMessage } = syncUpReducer;
       if (errorMessage || forceSyncUpMessage) {
@@ -134,20 +125,9 @@ export default class SyncUp extends Component {
     }
   }
 
-  checkConnection() {
-    LoggerManager.log('checkConnection');
-    const { ampConnectionStatusReducer } = this.props;
-    if (ampConnectionStatusReducer.status._isAmpAvailable) {
-      this.props.startSyncUp();
-    } else {
-      this.connectionError = translate('syncConnectionError');
-      this.render();
-    }
-  }
-
   render() {
     LoggerManager.log('render');
-    const { syncUpReducer } = this.props;
+    const { checkSyncConnection, syncUpReducer } = this.props;
     const { historyData, loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (
       <div className={styles.container}>
@@ -159,7 +139,7 @@ export default class SyncUp extends Component {
               'btn btn-success': true,
               disabled: loadingSyncHistory || syncUpInProgress
             })}
-            onClick={this.checkConnection}
+            onClick={checkSyncConnection}
           />
         </div>
         <div className={styles.display_inline}>

@@ -5,7 +5,8 @@ import {
   STATE_SYNCUP_IN_PROCESS,
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED,
-  STATE_SYNCUP_FORCED
+  STATE_SYNCUP_FORCED,
+  STATE_SYNCUP_CONNECTION_UNAVAILABLE
 } from '../actions/SyncUpAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -58,6 +59,10 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       return Object.assign({}, state, {
         forceSyncUp: action.actionData.force,
         forceSyncUpMessage: action.actionData.message
+      });
+    case STATE_SYNCUP_CONNECTION_UNAVAILABLE:
+      return Object.assign({}, state, {
+        errorMessage: action.actionData.errorMessage
       });
     default:
       return state;
