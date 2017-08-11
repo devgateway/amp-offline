@@ -35,7 +35,7 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
     case STATE_SYNCUP_COMPLETED:
       return Object.assign({}, state, {
         syncUpInProgress: false,
-        syncUpResutls: action.actionData,
+        syncUpResults: action.actionData,
         errorMessage: '',
         forceSyncUp: false,
         forceSyncUpMessage: ''
