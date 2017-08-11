@@ -28,15 +28,15 @@ class AFFunding extends Component {
   _getAcronym(sourceRole) {
     switch (sourceRole.value) {
       case VC.DONOR_AGENCY:
-        return translate(AC.ACRONYM_DONOR_ORGANIZATION);
+        return translate(VC.ACRONYM_DONOR_ORGANIZATION);
       case VC.BENEFICIARY_AGENCY:
-        return translate(AC.ACRONYM_BENEFICIARY_AGENCY);
+        return translate(VC.ACRONYM_BENEFICIARY_AGENCY);
       case VC.IMPLEMENTING_AGENCY:
-        return translate(AC.ACRONYM_IMPLEMENTING_AGENCY);
+        return translate(VC.ACRONYM_IMPLEMENTING_AGENCY);
       case VC.EXECUTING_AGENCY:
-        return translate(AC.ACRONYM_EXECUTING_AGENCY);
+        return translate(VC.ACRONYM_EXECUTING_AGENCY);
       case VC.RESPONSIBLE_ORGANIZATION:
-        return translate(AC.ACRONYM_RESPONSIBLE_ORGANIZATION);
+        return translate(VC.ACRONYM_RESPONSIBLE_ORGANIZATION);
       default:
         return null;
     }
