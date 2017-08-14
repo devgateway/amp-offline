@@ -1,10 +1,10 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import store from '../index';
 import UrlUtils from '../utils/URLUtils';
-import { LOGIN_URL, SYNCUP_URL, WORKSPACE_URL } from '../utils/Constants';
+import { LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import ActivitiesPushToAMPManager from '../modules/syncup/syncupManagers/ActivitiesPushToAMPManager';
-import { isForceSyncUpAction } from './SyncUpAction';
+import { checkIfToForceSyncUp } from './SyncUpAction';
 import { ampStartUp } from './StartUpAction';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
 import LoggerManager from '../modules/util/LoggerManager';
@@ -30,15 +30,7 @@ export function loginAction(email: string, password: string) {
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
-
-        // Tell react-router to move to another page.
-        return dispatch(isForceSyncUpAction((force) => {
-          if (force) {
-            return UrlUtils.forwardTo(SYNCUP_URL);
-          } else {
-            return checkIfShouldSyncBeforeLogout().then(() => UrlUtils.forwardTo(WORKSPACE_URL));
-          }
-        }));
+        return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(SYNCUP_URL));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });

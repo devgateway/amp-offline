@@ -38,9 +38,9 @@ const SyncUpHelper = {
     return DatabaseManager.saveOrUpdate(syncupData.id, syncupData, COLLECTION_SYNCUP_LOG, {});
   },
 
-  getLatestId() {
+  getLatestId(example: {}) {
     LoggerManager.log('saveOrUpdateSyncUp');
-    return DatabaseManager.findAll({}, COLLECTION_SYNCUP_LOG, { id: 1 }).then(ids =>
+    return DatabaseManager.findAll(example, COLLECTION_SYNCUP_LOG, { id: 1 }).then(ids =>
       Math.max(...[0].concat(ids.map(idObj => idObj.id))));
   },
 
