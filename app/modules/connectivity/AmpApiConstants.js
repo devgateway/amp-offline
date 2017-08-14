@@ -28,3 +28,13 @@ export const PARAM_AMPOFFLINE_AGENT = 'AMPOffline';
 export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2+json';
 
 export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
+
+export const PLATFORM_WINDOWS = 'windows';
+export const PLATFORM_MAC_OS = 'osx';
+export const PLATFORM_REDHAT = 'redhat';
+export const PLATFORM_DEBIAN = 'debian';
+
+export const ARCH64 = '64';
+export const ARCH32 = '32';
+export const ARCH64_NODE_OS_OPTIONS = new Set(['arm64', 'ppc64', 'x64']);
+export const ARCH64_USER_AGENT_OPTIONS = ['x86_64', 'amd64'];
