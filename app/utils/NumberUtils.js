@@ -16,6 +16,7 @@ import {
 } from './constants/GlobalSettingsConstants';
 import store from '../index';
 import Utils from './Utils';
+import translate from './translate';
 
 export default class NumberUtils {
 
@@ -102,6 +103,22 @@ export default class NumberUtils {
         return number / 1000 / 1000 / 1000;
       default:
         return number;
+    }
+  }
+
+  static getAmountsInThousandsMessage() {
+    LoggerManager.log('getAmountsInThousandsMessage');
+    switch (store.getState().startUpReducer.gsNumberData.amountsInThousands) {
+      case GS_AMOUNT_OPTION_IN_UNITS:
+        return translate('Amounts in Units');
+      case GS_AMOUNT_OPTION_IN_THOUSANDS:
+        return translate('Amounts in Thousands (000)');
+      case GS_AMOUNT_OPTION_IN_MILLIONS:
+        return translate('Amounts in Millions (000 000)');
+      case GS_AMOUNT_OPTION_IN_BILLIONS:
+        return translate('Amounts in Billions (000 000 000)');
+      default:
+        return '';
     }
   }
 }

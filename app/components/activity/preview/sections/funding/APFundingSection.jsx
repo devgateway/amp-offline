@@ -8,6 +8,7 @@ import APFundingTotalsSection from './APFundingTotalsSection';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import fundingStyles from './APFundingSection.css';
 import * as VC from '../../../../../utils/constants/ValueConstants';
+import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
 
 /**
  * Total Number of Fundings section
@@ -87,7 +88,7 @@ class APFundingSection extends Component {
       counter += 1;
     });
     return (<div className={fundingStyles.container}>
-      <div className={fundingStyles.byline}> Amounts in Thousands (000) and Millions (000 000) </div>
+      <div className={fundingStyles.byline}>{getAmountsInThousandsMessage()}</div>
       <APProposedProjectCost sectionPath={AC.PPC_AMOUNT} titleClass={fundingStyles.section_header} />
       <APRevisedProjectCost sectionPath={AC.RPC_AMOUNT} />
       <div>{fundingList}</div>
