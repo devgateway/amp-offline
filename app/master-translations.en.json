@@ -221,5 +221,9 @@
   "Search Secondary Sectors": "Search Secondary Sectors",
   "Add Program": "Add Program",
   "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
-  "Sync": "Sync"
+  "Sync": "Sync",
+  "Amounts in Units": "Amounts in Units",
+  "Amounts in Thousands (000)": "Amounts in Thousands (000)",
+  "Amounts in Millions (000 000)": "Amounts in Millions (000 000)",
+  "Amounts in Billions (000 000 000)": "Amounts in Billions (000 000 000)"
 }
