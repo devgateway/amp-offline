@@ -204,7 +204,7 @@
   "Add Disbursements": "Add Disbursements",
   "Add Expenditures": "Add Expenditures",
   "activitySavedMsg": "Your changes have been successfully saved. In order to see your changes in the AMP please sync.",
-  "CurrencyRatesNotInitialized":"Currency rates not initialized",
+  "CurrencyRatesNotInitialized": "Currency rates not initialized",
   "activityEdit": "Edit",
   "allWorkspaces": "All Workspaces",
   "Search Organizations": "Search Organizations",
@@ -213,5 +213,9 @@
   "Search Secondary Sectors": "Search Secondary Sectors",
   "Add Program": "Add Program",
   "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
-  "Sync": "Sync"
+  "Sync": "Sync",
+  "Amounts in Units": "Amounts in Units",
+  "Amounts in Thousands (000)": "Amounts in Thousands (000)",
+  "Amounts in Millions (000 000)": "Amounts in Millions (000 000)",
+  "Amounts in Billions (000 000 000)": "Amounts in Billions (000 000 000)"
 }
