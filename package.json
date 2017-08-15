@@ -196,7 +196,7 @@
   },
   "config": {
     "ampServerUrl": "amp-niger-future-v3-0-tc9.ampsite.net",
-    "ampServerPort": "80",
-    "ampServerProtocol": "http"
+    "ampServerPort": "443",
+    "ampServerProtocol": "https"
   }
 }
