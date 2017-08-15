@@ -2,14 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import translate from '../../utils/translate';
 import { createFormattedDateTime } from '../../utils/DateUtils';
-
-const entry = (label, value) => (
-  <div className="col-md-12">
-    <strong>{label}</strong>
-    &nbsp;
-    {value}
-  </div>
-);
+import {SYNCUP_STATUS_FAIL} from '../../utils/Constants';
+import ErrorMessage from '../common/ErrorMessage';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
@@ -33,12 +27,36 @@ class SyncUpSummary extends PureComponent {
   render() {
     const data = this.maybeGetData();
     if (!data) return null;
-    const { status, timestamp } = data;
+    const { status, timestamp, errors } = data;
     return (
       <div className="container">
-        {entry(translate('Status'), status)}
-        {entry(translate('Started'), createFormattedDateTime(timestamp))}
-        {entry(translate('Finished'), createFormattedDateTime(data['sync-date']))}
+        <div className="row">
+          <div className="col-md-4 text-right">
+            <strong>{translate('Status')}</strong>
+          </div>
+          <div className="col-md-8">
+            {status}
+            {status === SYNCUP_STATUS_FAIL && errors.map(msg =>
+              <ErrorMessage message={msg} />
+            )}
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-4 text-right">
+            <strong>{translate('Started')}</strong>
+          </div>
+          <div className="col-md-8">
+            {createFormattedDateTime(timestamp)}
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-4 text-right">
+            <strong>{translate('Finished')}</strong>
+          </div>
+          <div className="col-md-8">
+            {createFormattedDateTime(data['sync-date'])}
+          </div>
+        </div>
       </div>
     );
   }

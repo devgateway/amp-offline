@@ -220,5 +220,6 @@
   "Sync": "Sync",
   "Status": "Status",
   "Started": "Started",
-  "Finished": "Finished"
+  "Finished": "Finished",
+  "Errors": "Errors"
 }
