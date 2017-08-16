@@ -16,7 +16,10 @@ class SyncUpSummary extends PureComponent {
 
   maybeGetData (){
     const { history, params } = this.props;
-    return history.find(syncObj => syncObj.id === +params.id);
+    const { id } = params;
+    return id ?
+      history.find(syncObj => syncObj.id === +params.id) :
+      history.reduce((a, b) => b.id > a.id ? b : a);
   }
 
   componentDidMount() {

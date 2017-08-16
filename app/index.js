@@ -40,6 +40,7 @@ initializeI18Next().then(() =>
             <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
             <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} />
             <Route path="/syncUpSummary/:id" component={SyncUpSummaryPage} onEnter={checkAuth} />
+            <Route path="/syncUpSummary" component={SyncUpSummaryPage} onEnter={checkAuth} />
 
             <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
             <Route path="/desktop/current" component={DesktopPage} onEnter={checkAuth} store={store} />
