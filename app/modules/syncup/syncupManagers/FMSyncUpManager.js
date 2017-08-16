@@ -52,10 +52,17 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
     // until AMP-26523 is done, workaround to remove the duplicate top level
     const dataToStore = {};
     Object.entries(fmTree).forEach(([key, value]) => {
-      const excludeItems = new Set([key, '__enabled']);
-      const firstLevelEntries = Object.keys(value).filter(subKey => !excludeItems.has(subKey));
+      const excludeItems = new Set([key.toUpperCase(), '__ENABLED']);
+      let actualSubKey = key;
+      const firstLevelEntries = Object.keys(value).filter(subKey => {
+        const subKeyUpper = subKey.toUpperCase();
+        if (subKeyUpper === key) {
+          actualSubKey = subKey;
+        }
+        return !excludeItems.has(subKeyUpper);
+      });
       if (firstLevelEntries.length === 0) {
-        dataToStore[key] = value[key];
+        dataToStore[actualSubKey] = value[actualSubKey];
       } else {
         dataToStore[key] = value;
       }
