@@ -3,6 +3,7 @@
 import rp from 'request-promise';
 import RequestConfig from './RequestConfig';
 import ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
+import Notification from '../helpers/NotificationHelper';
 import { MAX_RETRY_ATEMPTS, ERRORS_TO_RETRY, ERROR_NO_AMP_SERVER } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_API_SECURITY,
@@ -60,7 +61,12 @@ const ConnectionHelper = {
     bbPromise.timeout(requestPromiseForcedTimeout);
     return requestPromise
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
-      .catch(reason => this._processResultOrRetry({ ...resultRetryConfig, ...this._reasonToProcess(reason) }))
+      .catch(reason => {
+        if (reason instanceof Notification) {
+          return Promise.reject(reason);
+        }
+        return this._processResultOrRetry({ ...resultRetryConfig, ...this._reasonToProcess(reason) });
+      })
       .finally(() => {
         if (bbPromise.isCancelled()) {
           if (shouldRetry && maxRetryAttempts) {
