@@ -53,6 +53,10 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     return this.diff;
   }
 
+  getPushedIds() {
+    return Array.from(this.pushed);
+  }
+
   _pushActivitiesToAMP(diff) {
     LoggerManager.log('_pushActivitiesToAMP');
     // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
@@ -133,7 +137,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    */
   _pushActivities(activities) {
     LoggerManager.log('_pushActivities');
-    this.diff = activities.map(activity => activity[AC.AMP_ID] || activity.id);
+    this.diff = activities.map(activity => activity.id);
     // executing push one by one for now and sequentially to avoid AMP / client overload
     if (!activities) {
       return Promise.resolve();
@@ -179,7 +183,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
     if (pushResult) {
-      this.pushed.add(activity[AC.AMP_ID] || activity.id);
+      this.pushed.add(activity.id);
     }
     // save the rejection immediately to allow a quicker syncup cancellation
     const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
