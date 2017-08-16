@@ -3,6 +3,7 @@ import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
+import { push } from 'react-router-redux';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -37,21 +38,23 @@ export function startSyncUp(historyData) {
     if (ownProps().syncUpReducer.syncUpInProgress === false) {
       dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
       dispatch(syncUpInProgress());
-      return SyncUpManager.syncUpAllTypesOnDemand().then(() => {
+      return SyncUpManager.syncUpAllTypesOnDemand().then(({ id }) => {
         // TODO probably the way in which we will update the ui will change
         // once we get the final version also it will change the way in which pass
         // the historyData object
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
         LoggerManager.log('syncupSucessfull');
-        return dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
-      }).catch((err) => {
+        dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
+        return dispatch(push(`/syncUpSummary/${id}`));
+      }).catch((err, ...args) => {
         const actionData = { errorMessage: err };
         // Check if we need to remain in the force syncup state.
         if (currentState.forceSyncUp) {
           actionData.force = true;
           actionData.warnMessage = currentState.forceSyncUpMessage;
         }
-        return dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
+        dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
+        return dispatch(push('/syncUpSummary'));
       });
     }
   };
