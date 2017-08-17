@@ -18,25 +18,27 @@ class SyncUpSummary extends PureComponent {
     getHistory: PropTypes.func.isRequired
   }
 
-  maybeGetData (){
+  componentDidMount() {
+    const { getHistory } = this.props;
+    if (!this.maybeGetData()) getHistory();
+  }
+
+  maybeGetData() {
     const { history, params } = this.props;
     const { id } = params;
     return id ?
       history.find(syncObj => syncObj.id === +params.id) :
-      history.reduce((a, b) => b.id > a.id ? b : a);
-  }
-
-  componentDidMount() {
-    const { getHistory } = this.props;
-    if (!this.maybeGetData()) getHistory();
+      history.reduce((a, b) => (b.id > a.id ? b : a));
   }
 
   render() {
     const data = this.maybeGetData();
     if (!data) return null;
     const { status, timestamp, errors } = data;
-    const pulled = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).pulled;
-    const pushed = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).pushed;
+    const successful = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).pulled.concat(
+      data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).pushed
+    );
+
     return (
       <div className="container">
         <div className="row">
@@ -66,27 +68,16 @@ class SyncUpSummary extends PureComponent {
             {createFormattedDateTime(data['sync-date'])}
           </div>
         </div>
-        {pulled.length && <div className="row">
-            <div className="col-md-4 text-right">
-              <strong>{translate('Pulled activities')}</strong>
-            </div>
-            <div className="col-md-8">
-              {pulled.map(id =>
-                <div key={id}>{id}</div>)
-              }
-            </div>
+        {successful.length && <div className="row">
+          <div className="col-md-4 text-right">
+            <strong>{translate('Synced projects')}</strong>
           </div>
-        }
-        {pushed.length && <div className="row">
-            <div className="col-md-4 text-right">
-              <strong>{translate('Pushed activities')}</strong>
-            </div>
-            <div className="col-md-8">
-              {pushed.map(id =>
-                <div key={id}>{id}</div>)
-              }
-            </div>
+          <div className="col-md-8">
+            {successful.map(id =>
+              <div key={id}>{id}</div>)
+            }
           </div>
+        </div>
         }
       </div>
     );
