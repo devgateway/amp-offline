@@ -37,7 +37,7 @@
   color: white;
 }
 
-.navbar button::selection, .navbar button:hover, .navbar a:hover {
+.navbar button::selection, .navbar button:hover, .navbar button:focus, .navbar a:hover, .navbar a:focus {
   color: #c7d4db !important;
 }
 
