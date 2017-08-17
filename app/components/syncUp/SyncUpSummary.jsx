@@ -9,6 +9,13 @@ import {
 } from '../../utils/Constants';
 import ErrorMessage from '../common/ErrorMessage';
 
+const safeGet = (obj, key, ...rest) => (rest.length && obj[key] ?
+  safeGet(obj[key], rest) :
+  obj[key]
+);
+
+const ensureArray = maybeArray => (Array.isArray(maybeArray) ? maybeArray : []);
+
 class SyncUpSummary extends PureComponent {
   static propTypes = {
     history: PropTypes.array,
@@ -26,6 +33,7 @@ class SyncUpSummary extends PureComponent {
   maybeGetData() {
     const { history, params } = this.props;
     const { id } = params;
+    if (!history.length) return null;
     return id ?
       history.find(syncObj => syncObj.id === +params.id) :
       history.reduce((a, b) => (b.id > a.id ? b : a));
@@ -37,6 +45,9 @@ class SyncUpSummary extends PureComponent {
     const { status, timestamp, errors } = data;
     const successful = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).pulled.concat(
       data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).pushed
+    );
+    const failed = ensureArray(
+      safeGet(data, 'syncup-diff-leftover', SYNCUP_TYPE_ACTIVITIES_PULL, 'saved')
     );
 
     return (
@@ -74,6 +85,17 @@ class SyncUpSummary extends PureComponent {
           </div>
           <div className="col-md-8">
             {successful.map(id =>
+              <div key={id}>{id}</div>)
+            }
+          </div>
+        </div>
+        }
+        {failed.length && <div className="row">
+          <div className="col-md-4 text-right">
+            <strong>{translate('Failed projects')}</strong>
+          </div>
+          <div className="col-md-8">
+            {failed.map(id =>
               <div key={id}>{id}</div>)
             }
           </div>
