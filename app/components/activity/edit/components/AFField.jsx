@@ -36,6 +36,7 @@ class AFField extends Component {
   static propTypes = {
     fieldPath: PropTypes.string.isRequired,
     parent: PropTypes.object.isRequired,
+    id: PropTypes.string,
     filter: PropTypes.array,
     showLabel: PropTypes.bool,
     showRequired: PropTypes.bool,
@@ -250,7 +251,7 @@ class AFField extends Component {
     return (
       <FormGroup
         controlId={this.props.fieldPath} validationState={showValidationError ? this._getValidationState() : null}
-        className={`${styles.activity_form_control} ${this.props.className}`} >
+        className={`${styles.activity_form_control} ${this.props.className}`} id={this.props.id} >
         <span className={this.props.inline ? styles.inline_field : null}>
           {this.getLabel()}
           {this.getFieldContent()}
