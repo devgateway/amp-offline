@@ -227,5 +227,6 @@
   "Amounts in Millions (000 000)": "Amounts in Millions (000 000)",
   "Amounts in Billions (000 000 000)": "Amounts in Billions (000 000 000)",
   "Synced projects": "Synced projects",
-  "Failed projects": "Failed projects"
+  "Failed projects": "Failed projects",
+  "None": "None"
 }

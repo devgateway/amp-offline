@@ -17,7 +17,7 @@ const defaultState = {
   historyData: [],
   forceSyncUp: false,
   forceSyncUpMessage: '',
-  activityTitles: []
+  activityTitles: {}
 };
 
 export default function syncUpReducer(state: Object = defaultState, action: Object) {
@@ -63,7 +63,7 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       });
     case SYNCUP_ACTIVITY_TITLES_LOADED:
       return Object.assign({}, state, {
-        activityTitles: state.activityTitles.concat(action.actionData)
+        activityTitles: { ...state.activityTitles, ...action.actionData }
       });
     default:
       return state;

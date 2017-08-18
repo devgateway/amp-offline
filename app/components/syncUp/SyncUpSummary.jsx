@@ -19,7 +19,7 @@ const ensureArray = maybeArray => (Array.isArray(maybeArray) ? maybeArray : []);
 class SyncUpSummary extends PureComponent {
   static propTypes = {
     history: PropTypes.array,
-    activityTitles: PropTypes.array,
+    activityTitles: PropTypes.object,
     params: PropTypes.shape({
       id: PropTypes.string
     }),
@@ -113,7 +113,7 @@ class SyncUpSummary extends PureComponent {
           </div>
           <div className="col-md-8">
             {successful.length ? successful.map(id =>
-              <div key={id}>{activityTitles[id]}</div>
+              <div key={id}>{activityTitles[id] || id}</div>
             ) : translate('None')}
           </div>
         </div>
@@ -124,7 +124,7 @@ class SyncUpSummary extends PureComponent {
           </div>
           <div className="col-md-8">
             {failed.length ? failed.map(id =>
-              <div key={id}>{activityTitles[id]}</div>
+              <div key={id}>{activityTitles[id] || id}</div>
             ) : translate('None')}
           </div>
         </div>

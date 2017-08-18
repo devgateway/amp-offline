@@ -104,14 +104,21 @@ function syncUpInProgress() {
   };
 }
 
-export const loadActivityTitles = ids => (dispatch) =>
+export const loadActivityTitles = ids => (dispatch) => {
   ActivityHelper.findAll({ amp_id: { $in: ids } }).then(activities => {
-    const titles = [];
+    const titles = {};
     activities.forEach(({ amp_id, project_title: projectTitle }) => {
       titles[amp_id] = projectTitle;
     });
-    return dispatch({
+    dispatch({
       type: SYNCUP_ACTIVITY_TITLES_LOADED,
       actionData: titles
     });
+    return titles;
+  }).catch(() => {
+    dispatch({
+      type: SYNCUP_ACTIVITY_TITLES_LOADED,
+      actionData: []
+    });
   });
+};
