@@ -54,10 +54,15 @@ export default function loginReducer(state: Object = defaultState, action: Objec
         isInactivityTimeout: action.actionData.isInactivityTimeout
       };
     case STATE_LOGOUT:
-      return { ...defaultState, isInactivityTimeout: action.actionData && action.actionData.isInactivityTimeout };
+      return {
+        ...defaultState,
+        logoutConfirmed: true,
+        isInactivityTimeout: action.actionData && action.actionData.isInactivityTimeout
+      };
     case STATE_LOGIN_PROCESSING:
       return Object.assign({}, state, {
         loginProcessing: true,
+        logoutConfirmed: false,
         isInactivityTimeout: false
       });
     default:
