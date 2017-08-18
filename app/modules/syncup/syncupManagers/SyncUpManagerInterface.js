@@ -36,6 +36,9 @@ export default class SyncUpManagerInterface {
     this._errors.push(errors);
   }
 
+  /**
+   * @return {Array}
+   */
   get errors() {
     return this._errors;
   }
