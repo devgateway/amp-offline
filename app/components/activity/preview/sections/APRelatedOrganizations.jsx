@@ -47,6 +47,10 @@ class APRelatedOrganizations extends Component {
         content.push(<div className={styles.organization_box}>{subcontent}</div>);
       }
     });
+    if (content.length % 2 === 1) {
+      content.push(<div className={styles.organization_placeholder} />);
+    }
+
     return content;
   }
 

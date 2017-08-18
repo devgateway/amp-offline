@@ -60,7 +60,8 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         value = DateUtils.createFormattedDate(value);
       }
       value = NAOptions && NAOptions.has(value) ? null : value;
-      if (value === null) {
+      console.log(value);
+      if (value === ' ' || value === null) {
         value = 'No Data';
       }
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
