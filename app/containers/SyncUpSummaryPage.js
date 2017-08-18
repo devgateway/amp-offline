@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import SyncUpSummary from '../components/syncUp/SyncUpSummary';
-import { getSyncUpHistory, loadActivityTitles } from '../actions/SyncUpAction';
+import { loadSyncUpHistory, loadActivityTitles } from '../actions/SyncUpAction';
 
 function mapStateToProps(state) {
   return {
@@ -12,7 +12,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     getHistory: () => {
-      dispatch(getSyncUpHistory());
+      dispatch(loadSyncUpHistory());
     },
     getActivitiesNames: (ids) => {
       dispatch(loadActivityTitles(ids));

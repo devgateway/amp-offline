@@ -41,17 +41,17 @@ export function startSyncUp(historyData) {
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
     store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
-    SyncUpManager.syncUpAllTypesOnDemand().then(({ id }) => {
+    SyncUpManager.syncUpAllTypesOnDemand().then(({ id }) =>
       // TODO probably the way in which we will update the ui will change
       // once we get the final version also it will change the way in which pass
       // the historyData object
-      return checkIfToForceSyncUp().then(() => {
+      checkIfToForceSyncUp().then(() => {
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
         LoggerManager.log('syncupSucessfull');
         store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
         return store.dispatch(push(`/syncUpSummary/${id}`));
-      });
-    }).catch((err) => {
+      })
+    ).catch((err) => {
       const actionData = { errorMessage: err };
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
       store.dispatch(push('/syncUpSummary'));
