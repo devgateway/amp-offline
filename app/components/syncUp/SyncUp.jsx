@@ -21,7 +21,6 @@ import { STATE_LOGOUT_DISMISS_TO_SYNC, STATE_LOGOUT_REQUESTED } from '../../acti
 import {
   dismissSyncAndChooseWorkspace,
   loadSyncUpHistory,
-  startSyncUp,
   STATE_SYNCUP_DISMISSED
 } from '../../actions/SyncUpAction';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
@@ -41,8 +40,6 @@ class SyncUp extends Component {
 
   static propTypes = {
     checkSyncConnection: PropTypes.func.isRequired,
-    router: PropTypes.object.isRequired,
-    route: PropTypes.object.isRequired,
     syncUpReducer: PropTypes.object.isRequired,
     currentWorkspace: PropTypes.object,
     onSyncConfirmationAlert: PropTypes.func.isRequired,
@@ -127,7 +124,7 @@ class SyncUp extends Component {
   render() {
     LoggerManager.log('render');
     const { checkSyncConnection, syncUpReducer } = this.props;
-    const { historyData, loadingSyncHistory, syncUpInProgress } = syncUpReducer;
+    const { loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (
       <div className={styles.container}>
         <div className={styles.display_inline}>
