@@ -73,7 +73,7 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   }
 
   getPulledAmpIds() {
-    return Array.from(this.pulled);
+    return this.pulled ? Array.from(this.pulled) : [];
   }
 
   cancel() {
