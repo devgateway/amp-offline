@@ -1,9 +1,10 @@
 /* eslint flowtype-errors/show-errors: 0 */
+import { push } from 'react-router-redux';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
-import { push } from 'react-router-redux';
+import ActivityHelper from '../modules/helpers/ActivityHelper';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -13,6 +14,7 @@ export const STATE_SYNCUP_IN_PROCESS = 'STATE_SYNCUP_IN_PROCESS';
 export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
+export const SYNCUP_ACTIVITY_TITLES_LOADED = 'SYNCUP_ACTIVITY_TITLES_LOADED';
 
 export function getSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');
@@ -46,7 +48,7 @@ export function startSyncUp(historyData) {
         LoggerManager.log('syncupSucessfull');
         dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
         return dispatch(push(`/syncUpSummary/${id}`));
-      }).catch((err, ...args) => {
+      }).catch((err) => {
         const actionData = { errorMessage: err };
         // Check if we need to remain in the force syncup state.
         if (currentState.forceSyncUp) {
@@ -101,3 +103,15 @@ function syncUpInProgress() {
     type: STATE_SYNCUP_IN_PROCESS
   };
 }
+
+export const loadActivityTitles = ids => (dispatch) =>
+  ActivityHelper.findAll({ amp_id: { $in: ids } }).then(activities => {
+    const titles = [];
+    activities.forEach(({ amp_id, project_title: projectTitle }) => {
+      titles[amp_id] = projectTitle;
+    });
+    return dispatch({
+      type: SYNCUP_ACTIVITY_TITLES_LOADED,
+      actionData: titles
+    });
+  });

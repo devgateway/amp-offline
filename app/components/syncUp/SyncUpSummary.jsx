@@ -19,15 +19,47 @@ const ensureArray = maybeArray => (Array.isArray(maybeArray) ? maybeArray : []);
 class SyncUpSummary extends PureComponent {
   static propTypes = {
     history: PropTypes.array,
+    activityTitles: PropTypes.array,
     params: PropTypes.shape({
       id: PropTypes.string
     }),
-    getHistory: PropTypes.func.isRequired
+    getHistory: PropTypes.func.isRequired,
+    getActivitiesNames: PropTypes.func.isRequired
   }
 
   componentDidMount() {
-    const { getHistory } = this.props;
-    if (!this.maybeGetData()) getHistory();
+    const { getHistory, getActivitiesNames } = this.props;
+    if (!this.maybeGetData()) {
+      getHistory();
+    } else {
+      getActivitiesNames(this.getAllActivities());
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if ((this.props.history.length && !prevProps.history.length) ||
+        this.props.params.id !== prevProps.params.id) {
+      const { getActivitiesNames } = this.props;
+      getActivitiesNames(this.getAllActivities());
+    }
+  }
+
+  getSuccessful() {
+    const data = this.maybeGetData();
+    return data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).pulled.concat(
+      data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).pushed
+    );
+  }
+
+  getFailed() {
+    const data = this.maybeGetData();
+    return ensureArray(
+      safeGet(data, 'syncup-diff-leftover', SYNCUP_TYPE_ACTIVITIES_PULL, 'saved')
+    );
+  }
+
+  getAllActivities() {
+    return this.getSuccessful().concat(this.getFailed());
   }
 
   maybeGetData() {
@@ -40,16 +72,12 @@ class SyncUpSummary extends PureComponent {
   }
 
   render() {
+    const { activityTitles } = this.props;
     const data = this.maybeGetData();
     if (!data) return null;
     const { status, timestamp, errors } = data;
-    const successful = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).pulled.concat(
-      data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).pushed
-    );
-    const failed = ensureArray(
-      safeGet(data, 'syncup-diff-leftover', SYNCUP_TYPE_ACTIVITIES_PULL, 'saved')
-    );
-
+    const successful = this.getSuccessful();
+    const failed = this.getFailed();
     return (
       <div className="container">
         <div className="row">
@@ -79,25 +107,25 @@ class SyncUpSummary extends PureComponent {
             {createFormattedDateTime(data['sync-date'])}
           </div>
         </div>
-        {successful.length && <div className="row">
+        {<div className="row">
           <div className="col-md-4 text-right">
             <strong>{translate('Synced projects')}</strong>
           </div>
           <div className="col-md-8">
-            {successful.map(id =>
-              <div key={id}>{id}</div>)
-            }
+            {successful.length ? successful.map(id =>
+              <div key={id}>{activityTitles[id]}</div>
+            ) : translate('None')}
           </div>
         </div>
         }
-        {failed.length && <div className="row">
+        {<div className="row">
           <div className="col-md-4 text-right">
             <strong>{translate('Failed projects')}</strong>
           </div>
           <div className="col-md-8">
-            {failed.map(id =>
-              <div key={id}>{id}</div>)
-            }
+            {failed.length ? failed.map(id =>
+              <div key={id}>{activityTitles[id]}</div>
+            ) : translate('None')}
           </div>
         </div>
         }

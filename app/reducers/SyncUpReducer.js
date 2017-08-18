@@ -5,7 +5,8 @@ import {
   STATE_SYNCUP_IN_PROCESS,
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED,
-  STATE_SYNCUP_FORCED
+  STATE_SYNCUP_FORCED,
+  SYNCUP_ACTIVITY_TITLES_LOADED
 } from '../actions/SyncUpAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -15,7 +16,8 @@ const defaultState = {
   errorMessage: '',
   historyData: [],
   forceSyncUp: false,
-  forceSyncUpMessage: ''
+  forceSyncUpMessage: '',
+  activityTitles: []
 };
 
 export default function syncUpReducer(state: Object = defaultState, action: Object) {
@@ -58,6 +60,10 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       return Object.assign({}, state, {
         forceSyncUp: action.actionData.force,
         forceSyncUpMessage: action.actionData.message
+      });
+    case SYNCUP_ACTIVITY_TITLES_LOADED:
+      return Object.assign({}, state, {
+        activityTitles: state.activityTitles.concat(action.actionData)
       });
     default:
       return state;
