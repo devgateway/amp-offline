@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Tablify from '../components/Tablify';
 import Section from './Section';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import translate from '../../../../utils/translate';
 import { ACTIVITY_INTERNAL_IDS, ACTIVITY_INTERNAL_IDS_COLS } from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
@@ -56,7 +57,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     let content = this.buildContent();
     if (isSeparateSection === true) {
       // make sure content exists before formatting
-      const noData = <tr><td>No Data</td></tr>;
+      const noData = <tr><td>{translate('No Data')}</td></tr>;
       const tableContent = content ? Tablify.addRows(content, ACTIVITY_INTERNAL_IDS_COLS) : noData;
       content = <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
     } else if (content || this.props.showIfEmpty) {

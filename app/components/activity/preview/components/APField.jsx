@@ -41,7 +41,7 @@ export default class APField extends Component {
 
   _getValue() {
     const classNames = `${this.props.fieldValueClass} ${this.displayClass}`;
-    const value = this.props.value ? this.props.value : 'No Data';
+    const value = this.props.value ? this.props.value : translate('No Data');
     if (this.props.useInnerHTML) {
       return <div className={classNames} dangerouslySetInnerHTML={{ __html: value }} />;
     } else {
