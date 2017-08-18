@@ -6,8 +6,10 @@ import {
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED,
   STATE_SYNCUP_FORCED,
+  STATE_SYNCUP_DISMISSED,
   SYNCUP_ACTIVITY_TITLES_LOADED
 } from '../actions/SyncUpAction';
+import { STATE_LOGOUT_DISMISS_TO_SYNC } from '../actions/LoginAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
 const defaultState = {
@@ -16,7 +18,12 @@ const defaultState = {
   errorMessage: '',
   historyData: [],
   forceSyncUp: false,
-  forceSyncUpMessage: '',
+  lastSuccessfulSyncUp: undefined,
+  didUserSuccessfulSyncUp: false,
+  didSyncUp: false,
+  syncUpRejected: false,
+  syncUpAccepted: false,
+  daysFromLastSuccessfulSyncUp: undefined,
   activityTitles: {}
 };
 
@@ -32,7 +39,8 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       });
     case STATE_SYNCUP_LOADING_HISTORY:
       return Object.assign({}, state, {
-        loadingSyncHistory: true
+        loadingSyncHistory: true,
+        syncUpRejected: false
       });
     case STATE_SYNCUP_COMPLETED:
       return Object.assign({}, state, {
@@ -58,9 +66,18 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       });
     case STATE_SYNCUP_FORCED:
       return Object.assign({}, state, {
-        forceSyncUp: action.actionData.force,
-        forceSyncUpMessage: action.actionData.message
+        forceSyncUp: action.actionData.forceSyncUp,
+        lastSuccessfulSyncUp: action.actionData.lastSuccessfulSyncUp,
+        didUserSuccessfulSyncUp: action.actionData.didUserSuccessfulSyncUp,
+        didSyncUp: action.actionData.didSyncUp,
+        daysFromLastSuccessfulSyncUp: action.actionData.daysFromLastSuccessfulSyncUp,
+        syncUpRejected: false,
+        syncUpAccepted: false
       });
+    case STATE_SYNCUP_DISMISSED:
+      return { ...state, syncUpRejected: true };
+    case STATE_LOGOUT_DISMISS_TO_SYNC:
+      return { ...state, syncUpAccepted: true };
     case SYNCUP_ACTIVITY_TITLES_LOADED:
       return Object.assign({}, state, {
         activityTitles: { ...state.activityTitles, ...action.actionData }

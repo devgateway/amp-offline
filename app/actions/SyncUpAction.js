@@ -1,9 +1,12 @@
-/* eslint flowtype-errors/show-errors: 0 */
 import { push } from 'react-router-redux';
+import store from '../index';
+import * as URLUtils from '../utils/URLUtils';
+import { WORKSPACE_URL } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
+import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import ActivityHelper from '../modules/helpers/ActivityHelper';
 
 // Types of redux actions
@@ -14,64 +17,64 @@ export const STATE_SYNCUP_IN_PROCESS = 'STATE_SYNCUP_IN_PROCESS';
 export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
+export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
 export const SYNCUP_ACTIVITY_TITLES_LOADED = 'SYNCUP_ACTIVITY_TITLES_LOADED';
 
-export function getSyncUpHistory() {
+export function loadSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');
-  return (dispatch, ownProps) => {
-    if (ownProps().syncUpReducer.loadingSyncHistory === false) {
-      SyncUpManager.getSyncUpHistory().then((data) => (
-        // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-        dispatch(syncUpSearchHistoryOk(data))
-      )).catch((err) => (
-        dispatch(syncUpSearchHistoryFailed(err))
-      ));
-    }
-    dispatch(sendingRequest());
-  };
+  if (store.getState().syncUpReducer.loadingSyncHistory === false) {
+    SyncUpManager.getSyncUpHistory().then((data) => (
+      // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
+      store.dispatch(syncUpSearchHistoryOk(data))
+    )).catch((err) => (
+      store.dispatch(syncUpSearchHistoryFailed(err))
+    ));
+  }
+  store.dispatch(sendingRequest());
 }
 
 export function startSyncUp(historyData) {
   LoggerManager.log('startSyncUp');
-  return (dispatch, ownProps) => {
-    /* Save current syncup redux state because this might be a "forced" syncup and we dont want
-     the user to be able to leave the page if this syncup fails. */
-    const currentState = ownProps().syncUpReducer;
-    if (ownProps().syncUpReducer.syncUpInProgress === false) {
-      dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
-      dispatch(syncUpInProgress());
-      return SyncUpManager.syncUpAllTypesOnDemand().then(({ id }) => {
-        // TODO probably the way in which we will update the ui will change
-        // once we get the final version also it will change the way in which pass
-        // the historyData object
-        const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
-        LoggerManager.log('syncupSucessfull');
-        dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
-        return dispatch(push(`/syncUpSummary/${id}`));
-      }).catch((err) => {
-        const actionData = { errorMessage: err };
-        // Check if we need to remain in the force syncup state.
-        if (currentState.forceSyncUp) {
-          actionData.force = true;
-          actionData.warnMessage = currentState.forceSyncUpMessage;
-        }
-        dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
-        return dispatch(push('/syncUpSummary'));
-      });
-    }
-  };
+  /* Save current syncup redux state because this might be a "forced" syncup and we dont want
+   the user to be able to leave the page if this syncup fails. */
+  if (store.getState().syncUpReducer.syncUpInProgress === false) {
+    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
+    store.dispatch(syncUpInProgress());
+    return SyncUpManager.syncUpAllTypesOnDemand().then(() => checkIfToForceSyncUp()).then(() => {
+      // TODO probably the way in which we will update the ui will change
+      // once we get the final version also it will change the way in which pass
+      // the historyData object
+      const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
+      LoggerManager.log('syncupSucessfull');
+      dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
+      dispatch(push(`/syncUpSummary/${id}`));
+      return newHistoryData;
+    }).catch((err) => {
+      const actionData = { errorMessage: err };
+      dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
+      dispatch(push('/syncUpSummary'));
+      return checkIfToForceSyncUp();
+    });
+  }
+  return Promise.resolve();
 }
 
-export function isForceSyncUpAction(callback) {
-  LoggerManager.log('isForceSyncUpAction');
-  return (dispatch) => (
-    SyncUpManager.isForceSyncUp().then((forceData) => {
-      dispatch({
-        type: STATE_SYNCUP_FORCED,
-        actionData: { force: forceData.force, message: forceData.message }
-      });
-      return callback(forceData.force);
-    }));
+export function checkIfToForceSyncUp() {
+  return SyncUpManager.checkIfToForceSyncUp().then((forceData) => {
+    store.dispatch({
+      type: STATE_SYNCUP_FORCED,
+      actionData: forceData
+    });
+    return forceData.forceSyncUp;
+  });
+}
+
+export function isForceSyncUp() {
+  return store.getState().syncUpReducer.forceSyncUp;
+}
+
+export function dismissSyncAndChooseWorkspace() {
+  return checkIfShouldSyncBeforeLogout().then(() => URLUtils.forwardTo(WORKSPACE_URL));
 }
 
 function syncUpSearchHistoryOk(data) {
