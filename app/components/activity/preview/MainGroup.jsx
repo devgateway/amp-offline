@@ -36,7 +36,7 @@ export default class MainGroup extends Component {
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
       <APLocation
         sectionPath={AC.LOCATIONS} tablify columns={AC.ACTIVITY_LOCATION_COLS}
-        fieldNameClass="" fieldValueClass="" />
+        fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
       <APNationalPlanObjective
         sectionPath={AC.NATIONAL_PLAN_OBJECTIVE}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
