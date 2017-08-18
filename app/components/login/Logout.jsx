@@ -10,7 +10,6 @@ import {
 import URLUtils from '../../utils/URLUtils';
 import {
   logoutAction,
-  STATE_LOGOUT_DISMISS,
   STATE_LOGOUT_DISMISS_TO_SYNC,
   STATE_LOGOUT_REQUESTED
 } from '../../actions/LoginAction';
@@ -93,7 +92,6 @@ export default connect(
   dispatch => ({
     onConfirmationAlert: () => dispatch(addConfirmationAlert(logoutConfirmationAlert())),
     onLogoutDismissToSync: () => {
-      dispatch({ type: STATE_LOGOUT_DISMISS });
       URLUtils.forwardTo(SYNCUP_URL);
     }
   })
