@@ -20,20 +20,19 @@ println "Tag: ${tag}"
 
 def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
-stage('PrepareSetup') {
-	node {
+node {
+	stage('PrepareSetup') {
 		checkout scm
 		//we print node version
 		sh 'node -v'
+		sh returnStatus: true, script: 'tar xf ../nm_cache.tar'
 		//remove Extraneous packages
 		sh 'npm prune'
 		//install all needed dependencies
 		sh 'npm install'
 		sh 'npm run build-dll'
 	}
-}
-stage('StyleCheck') {
-	node {
+	stage('StyleCheck') {
 		try {
 			sh 'npm run lint'
 		} catch(e) {
@@ -41,9 +40,7 @@ stage('StyleCheck') {
 			throw e
 		}
 	}
-}
-stage('UnitTest') {
-	node {
+	stage('UnitTest') {
 		try {
 			sh 'npm run test-mocha'
 		} catch(e) {
@@ -51,12 +48,11 @@ stage('UnitTest') {
 			throw e
 		}
 	}
-}
-stage('Dist') {
-	node {
+	stage('Dist') {
 		try {
 			sh './dist.sh'
 			sh './publish.sh ${BRANCH_NAME}'
+			sh 'tar cf ../nm_cache.tar node_modules'
 			sh 'rm -r dist node_modules'
 			slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
 		} catch (e) {
