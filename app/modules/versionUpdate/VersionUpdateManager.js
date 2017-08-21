@@ -15,13 +15,19 @@ export default class VersionUpdateManager {
   static downloadInstaller(id) {
     LoggerManager.log('downloadInstaller');
     return new Promise((resolve, reject) => (
-      ConnectionHelper.doGet({ url: DOWNLOAD_UPDATE_BINARY_URL, shouldRetry: true, id: 1 }).then((data) => {
+      ConnectionHelper.doGet({
+        url: DOWNLOAD_UPDATE_BINARY_URL,
+        shouldRetry: true,
+        extraUrlParam: id
+      }).then((data) => {
         LoggerManager.log('Save file to disk.');
         if (!fs.existsSync(UPDATES_DIR)) {
           fs.mkdirSync(UPDATES_DIR);
         }
         const fileName = `./${UPDATES_DIR}/amp-offline.exe`;
-        // TODO: chequear si el archivo existe.
+        if (fs.existsSync(fileName)) {
+          fs.unlinkSync(fileName);
+        }
         fs.writeFileSync(fileName, data);
         return resolve(fileName);
       }).catch(reject)
