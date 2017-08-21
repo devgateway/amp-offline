@@ -25,6 +25,7 @@ stage('PrepareSetup') {
 		checkout scm
 		//we print node version
 		sh 'node -v'
+		sh 'tar xf ../nm_cache.tar'
 		//remove Extraneous packages
 		sh 'npm prune'
 		//install all needed dependencies
@@ -57,6 +58,7 @@ stage('Dist') {
 		try {
 			sh './dist.sh'
 			sh './publish.sh ${BRANCH_NAME}'
+			sh 'tar cf ../nm_cache.tar node_modules'
 			sh 'rm -r dist node_modules'
 			slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
 		} catch (e) {
