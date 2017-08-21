@@ -1,7 +1,7 @@
 import * as child from 'child_process';
 import * as path from 'path';
 import { app } from 'electron';
-import { fs } from 'fs';
+import fs from 'fs';
 import LoggerManager from '../util/LoggerManager';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { DOWNLOAD_UPDATE_BINARY_URL } from '../connectivity/AmpApiConstants';
@@ -11,24 +11,21 @@ export default class VersionUpdateManager {
 
   /**
    * Download the binary installer executable.
-   * @param v: new version.
-   * @param os: operating system (PLATFORM_WINDOWS)
-   * @param arch: ARCH64 | ARCH32
    */
-  static downloadInstaller(v, os, arch) {
+  static downloadInstaller(id) {
     LoggerManager.log('downloadInstaller');
-    return new Promise((resolve, reject) => {
-      ConnectionHelper.doGet({ url: DOWNLOAD_UPDATE_BINARY_URL, shouldRetry: true, v, os, arch }).then((data) => {
+    return new Promise((resolve, reject) => (
+      ConnectionHelper.doGet({ url: DOWNLOAD_UPDATE_BINARY_URL, shouldRetry: true, id: 1 }).then((data) => {
         LoggerManager.log('Save file to disk.');
         if (!fs.existsSync(UPDATES_DIR)) {
           fs.mkdirSync(UPDATES_DIR);
         }
-        const fileName = `./${UPDATES_DIR}/amp-offline_${v}_${os}_${arch}.exe`;
+        const fileName = `./${UPDATES_DIR}/amp-offline.exe`;
         // TODO: chequear si el archivo existe.
         fs.writeFileSync(fileName, data);
         return resolve(fileName);
-      }).catch(reject);
-    });
+      }).catch(reject)
+    ));
   }
 
   /**

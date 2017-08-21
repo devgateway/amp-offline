@@ -11,11 +11,9 @@ export const STATE_UPDATE_FAILED = 'STATE_UPDATE_FAILED';
 
 export function downloadUpdate() {
   LoggerManager.log('downloadUpdate');
-  // TODO: This constants will be params after AMPOFFLINE-191 is done.
-  const version = '1.0.1';
-  const os = 'windows';
-  const arch = '64';
-  const downloadPromise = VersionUpdateManager.downloadInstaller(version, os, arch);
+  // TODO: This constant will be params after AMPOFFLINE-191 is done.
+  const id = 1;
+  const downloadPromise = VersionUpdateManager.downloadInstaller(id).then(fileName => (fileName));
   store.dispatch({
     type: STATE_DOWNLOAD_UPDATE,
     payload: downloadPromise

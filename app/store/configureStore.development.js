@@ -15,6 +15,7 @@ import * as translationActions from '../actions/TranslationAction';
 import * as startUpActions from '../actions/StartUpAction';
 import * as notificationActions from '../actions/NotificationAction';
 import * as currencyRatesActions from '../actions/CurrencyRatesAction';
+import * as downloadUpdatesActions from '../actions/DownloadUpdateAction';
 
 const actionCreators = {
   ...loginActions,
@@ -27,6 +28,7 @@ const actionCreators = {
   ...startUpActions,
   ...notificationActions,
   ...currencyRatesActions,
+  ...downloadUpdatesActions,
   push,
 };
 
