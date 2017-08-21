@@ -153,7 +153,8 @@ export default class SyncUpRunner {
     changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && this._hasActivitiesToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
-      if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined) {
+      if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined
+        || (type === SYNCUP_TYPE_ACTIVITIES_PUSH && !isFirstRun)) {
         this._syncUpDependency.setState(type, SS.NO_CHANGES);
         this._syncUpCollection.get(type).done = true;
       }
@@ -208,6 +209,9 @@ export default class SyncUpRunner {
     const unitLeftOver = this._syncUpDiffLeftOver.getSyncUpDiff(type);
     const status = unitLeftOver ? SYNCUP_STATUS_FAIL : SYNCUP_STATUS_SUCCESS;
     const state = this._getStateOrSetBasedOnLeftOver(type, originalDiff, unitLeftOver, syncUpManager.done);
+    if (!error && syncUpManager.errors && syncUpManager.errors.length) {
+      error = syncUpManager.errors.join('. ');
+    }
     let unitResult = { type, status, state, error };
     // if no changes in the second run, keep run 1 result
     if (this._syncRunNo === SyncUpRunner._SYNC_RUN_2 && state === SS.NO_CHANGES) {
