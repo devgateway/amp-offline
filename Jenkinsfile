@@ -25,7 +25,7 @@ stage('PrepareSetup') {
 		checkout scm
 		//we print node version
 		sh 'node -v'
-		sh 'tar xf ../nm_cache.tar'
+		sh returnStatus: true, script: 'tar xf ../nm_cache.tar'
 		//remove Extraneous packages
 		sh 'npm prune'
 		//install all needed dependencies
