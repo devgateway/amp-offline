@@ -1,12 +1,21 @@
 import * as child from 'child_process';
 import * as path from 'path';
-import * as app from 'electron';
+import { app } from 'electron';
+import LoggerManager from '../util/LoggerManager';
 
 export default class versionUpdateManager {
 
-  static install() {
-    alert('install');
-    const isSilent = false;
+  static downloadInstaller() {
+
+  }
+
+  /**
+   * This code is based on NsisUpdater.js from electron-updater module and adapted to our needs.
+   * @returns {boolean}
+   */
+  static runInstaller(installerPath) {
+    LoggerManager.log('runInstaller');
+    const isSilent = true;
     if (this.quitAndInstallCalled) {
       return false;
     }
@@ -28,15 +37,16 @@ export default class versionUpdateManager {
       // yes, such errors dispatched not as error event
       // https://github.com/electron-userland/electron-builder/issues/1129
       if (e.code === 'UNKNOWN') {
-        console.error('UNKNOWN error code on spawn, will be executed again using elevate');
+        LoggerManager.error('UNKNOWN error code on spawn, will be executed again using elevate');
         try {
           (0, (child).spawn)(path.join(process.resourcesPath, 'elevate.exe'), [setupPath].concat(args), spawnOptions)
             .unref();
+          app.quit();
         } catch (e2) {
-          console.error(e2);
+          LoggerManager.error(e2);
         }
       } else {
-        console.error(e);
+        LoggerManager.error(e);
       }
     }
     return true;
