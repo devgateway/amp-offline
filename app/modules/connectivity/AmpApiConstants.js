@@ -20,6 +20,7 @@ export const ACTIVITY_EXPORT_URL = '/activity/project';
 export const SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
 export const FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
 export const POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
+export const DOWNLOAD_UPDATE_BINARY_URL = '/amp/amp-offline-release';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
