@@ -33,19 +33,28 @@ class APFundingOrganizationSection extends Component {
 
   _buildDonorInfo() {
     const content = [];
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DONOR_ORG_ID]}`, true, null, true));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`, true, null, true));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.TYPE_OF_ASSISTANCE]}`, true, null, true));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, true));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_STATUS]}`, true, null, true));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.MODE_OF_PAYMENT]}`, true, null, true));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, true));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`, true, null, true));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`, true, null, true));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DONOR_ORG_ID]}`
+      , true, null, true, this.props.funding));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`
+      , true, null, true, this.props.funding));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.TYPE_OF_ASSISTANCE]}`
+      , true, null, true, this.props.funding));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`
+      , true, null, true, this.props.funding));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_STATUS]}`
+      , true, null, true, this.props.funding));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.MODE_OF_PAYMENT]}`
+      , true, null, true, this.props.funding));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`
+      , true, null, true, this.props.funding));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`
+      , true, null, true, this.props.funding));
+    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`
+      , true, null, true, this.props.funding));
     content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
-      true, null, true));
+      true, null, true, this.props.funding));
     content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
-      true, null, true));
+      true, null, true, this.props.funding));
 
     const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
     return tableContent;
@@ -100,11 +109,11 @@ class APFundingOrganizationSection extends Component {
   render() {
     LoggerManager.log('render');
     return (<div>
-      <div className={styles.section_header} > {translate('Funding Item')} {this.props.counter} </div>
-      <table className={styles.two_box_table} >
+      <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
+      <table className={styles.two_box_table}>
         <tbody>{this._buildDonorInfo()}</tbody>
       </table>
-      <div className={styles.funding_detail} >{this._buildFundingDetailSection()}</div>
+      <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
     </div>);
   }
