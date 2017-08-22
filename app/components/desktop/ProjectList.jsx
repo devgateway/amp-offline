@@ -20,7 +20,8 @@ import NumberUtils from '../../utils/NumberUtils';
 export default class ProjectList extends Component {
 
   static propTypes = {
-    projects: PropTypes.array.isRequired
+    projects: PropTypes.array.isRequired,
+    name: PropTypes.string.isRequired
   };
 
   static linkFormatter(cell, row) {
@@ -75,6 +76,10 @@ export default class ProjectList extends Component {
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
     const pagination = paginationOptions.usePagination;
+    const iconColumn = (this.props.name !== 'Rejected Sync') &&
+    (<TableHeaderColumn
+      dataField="icon" dataFormat={ProjectList.iconFormatter} columnClassName={style.width_7}
+      className={style.thClassName} />);
     return (
       <div className={style.container}>
         <a role="link" onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
@@ -84,9 +89,7 @@ export default class ProjectList extends Component {
           data={this.props.projects} striped hover pagination={pagination} options={paginationOptions}
           containerClass={style.containerTable} tableHeaderClass={style.header} thClassName={style.thClassName}
         >
-          <TableHeaderColumn
-            dataField="icon" dataFormat={ProjectList.iconFormatter} columnClassName={style.width_7}
-            className={style.thClassName} />
+          {iconColumn}
           <TableHeaderColumn
             dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.width_8}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}
