@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { HIERARCHICAL_VALUE } from '../../utils/constants/ActivityConstants';
+import { HIERARCHICAL_VALUE, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
 import { DO_NOT_HYDRATE_FIELDS_LIST } from '../../utils/constants/FieldPathConstants';
 import { GS_DEFAULT_NUMBER_FORMAT, DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
@@ -14,11 +14,12 @@ import ActivityFieldsManager from './ActivityFieldsManager';
  * @author Nadejda Mandrescu
  */
 export default class ActivityValidator {
-  constructor(activityFieldsManager: ActivityFieldsManager) {
+  constructor(activityFieldsManager: ActivityFieldsManager, otherProjectTitles: Array) {
     LoggerManager.log('constructor');
     this._fieldsDef = activityFieldsManager.fieldsDef;
     this._possibleValuesMap = activityFieldsManager.possibleValuesMap;
     this._activityFieldsManager = activityFieldsManager;
+    this._otherProjectTitles = new Set(otherProjectTitles);
   }
 
   areAllConstraintsMet(activity, asDraft, fieldPathsToSkipSet) {
@@ -123,6 +124,7 @@ export default class ActivityValidator {
     this.invalidString = translate('invalidString');
     this.invalidNumber = translate('invalidNumber').replace('%gs-format%', gsNumberFormat);
     this.invalidBoolean = translate('invalidBoolean');
+    this.invalidTitle = translate('duplicateTitle');
     // though we'll validate internal format, we have to report user friendly format
     this.invalidDate = translate('invalidDate').replace('%gs-format%', gsDateFormat);
   }
@@ -172,10 +174,13 @@ export default class ActivityValidator {
           }
         }
       } else if (fieldDef.field_type === 'string') {
+        // TODO multilingual support Iteration 2+
         if (!(typeof value === 'string' || value instanceof String)) {
           this.processValidationResult(obj, errors, fieldPath, this.invalidString.replace('%value%', value));
         } else if (fieldDef.field_length && fieldDef.field_length < value.length) {
           this.processValidationResult(obj, errors, fieldPath, stringLengthError);
+        } else if (fieldPath === PROJECT_TITLE) {
+          this.processValidationResult(obj, errors, fieldPath, this.projectTitleValidator(value));
         }
       } else if (fieldDef.field_type === 'long') {
         if (!Number.isInteger(value)) {
@@ -203,6 +208,11 @@ export default class ActivityValidator {
 
   _hasValue(value) {
     return value !== null && value !== undefined && value !== '';
+  }
+
+  projectTitleValidator(value) {
+    LoggerManager.log('projectTitleValidator');
+    return !this._otherProjectTitles.has(value) || this.invalidTitle;
   }
 
   /**
