@@ -27,6 +27,7 @@ const defaultState = {
   fieldValidationResult: undefined,
   currentWorkspaceSettings: undefined,
   currencyRatesManager: undefined,
+  otherProjectTitles: undefined,
   errorMessage: undefined
 };
 
@@ -47,7 +48,8 @@ const activityReducer = (state = defaultState, action: Object) => {
         activityFieldsManager: action.payload.activityFieldsManager,
         activityFundingTotals: action.payload.activityFundingTotals,
         currentWorkspaceSettings: action.payload.currentWorkspaceSettings,
-        currencyRatesManager: action.payload.currencyRatesManager
+        currencyRatesManager: action.payload.currencyRatesManager,
+        otherProjectTitles: action.payload.otherProjectTitles
       };
     case ACTIVITY_LOAD_REJECTED:
       return { ...defaultState, errorMessage: action.payload };
