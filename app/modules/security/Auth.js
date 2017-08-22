@@ -14,7 +14,7 @@ export default class Auth {
     LoggerManager.log('login');
     const url = LOGIN_URL;
     const body = {
-      username: email,
+      username: email.toLowerCase(),
       password
     };
     return new Promise((resolve, reject) => {
