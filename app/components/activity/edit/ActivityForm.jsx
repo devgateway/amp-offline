@@ -38,6 +38,7 @@ export default class ActivityForm extends Component {
       validationResult: PropTypes.array,
       fieldValidationResult: PropTypes.object,
       isActivitySaved: PropTypes.bool,
+      otherProjectTitles: PropTypes.array,
       currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
       currentWorkspaceSettings: PropTypes.object
     }).isRequired,
@@ -96,22 +97,23 @@ export default class ActivityForm extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.activityReducer.activityFieldsManager) {
-      this.activityValidator = new ActivityValidator(nextProps.activityReducer.activityFieldsManager);
+    const { activityFieldsManager, otherProjectTitles, activity, savedActivity } = nextProps.activityReducer;
+    if (activityFieldsManager) {
+      this.activityValidator = new ActivityValidator(activityFieldsManager, otherProjectTitles);
       this.sections = SECTIONS.map(name => {
         const fmPath = SECTIONS_FM_PATH[name];
-        if (!fmPath || nextProps.activityReducer.activityFieldsManager.isFieldPathEnabled(fmPath)) {
+        if (!fmPath || activityFieldsManager.isFieldPathEnabled(fmPath)) {
           return name;
         }
         return null;
       }).filter(name => name);
     }
-    if ((!this.activity && nextProps.activityReducer.activity) || nextProps.activityReducer.savedActivity) {
-      if (nextProps.activityReducer.savedActivity) {
+    if ((!this.activity && activity) || savedActivity) {
+      if (savedActivity) {
         this.activity = undefined;
-        this.props.loadActivityForActivityForm(nextProps.activityReducer.savedActivity.id);
+        this.props.loadActivityForActivityForm(savedActivity.id);
       } else {
-        this.activity = nextProps.activityReducer.activity;
+        this.activity = activity;
         this._selectSection(IDENTIFICATION);
       }
     }
