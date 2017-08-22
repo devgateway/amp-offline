@@ -54,7 +54,10 @@ export default class VersionUpdateManager {
       detached: true,
       stdio: 'ignore'
     };
-    // TODO: chequear q el archivo exista.
+    if (!fs.existsSync(installPath)) {
+      LoggerManager.error(`Cant find file ${installPath}, update will stop.`);
+      return false;
+    }
     try {
       (0, (child).spawn)(installPath, args, spawnOptions).unref();
       app.quit();
