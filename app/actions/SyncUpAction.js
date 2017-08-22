@@ -1,4 +1,3 @@
-import { push } from 'react-router-redux';
 import store from '../index';
 import * as URLUtils from '../utils/URLUtils';
 import { WORKSPACE_URL } from '../utils/Constants';
@@ -49,12 +48,13 @@ export function startSyncUp(historyData) {
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
         LoggerManager.log('syncupSucessfull');
         store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
-        return store.dispatch(push(`/syncUpSummary/${id}`));
+        URLUtils.forwardTo(`/syncUpSummary/${id}`);
+        return newHistoryData;
       })
     ).catch((err) => {
       const actionData = { errorMessage: err };
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
-      store.dispatch(push('/syncUpSummary'));
+      URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });
   }
