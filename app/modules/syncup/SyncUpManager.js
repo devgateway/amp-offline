@@ -12,17 +12,17 @@ import {
   SYNCUP_DIFF_LEFTOVER,
   SYNCUP_FORCE_DAYS,
   SYNCUP_NO_DATE,
+  SYNCUP_SYNC_REQUESTED_AT,
   SYNCUP_STATUS_FAIL,
   SYNCUP_STATUS_SUCCESS
 } from '../../utils/Constants';
-import translate from '../../utils/translate';
 import LoggerManager from '../../modules/util/LoggerManager';
 import {
+  loadCurrencyRatesOnStartup,
   loadDateSettings,
-  loadGlobalSettings,
-  loadNumberSettings,
   loadFMTree,
-  loadCurrencyRatesOnStartup
+  loadGlobalSettings,
+  loadNumberSettings
 } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
 
@@ -75,6 +75,12 @@ export default class SyncUpManager {
       }
       return SyncUpHelper.findSyncUpByExample({ id });
     });
+  }
+
+  static getLastSyncUpIdForCurrentUser() {
+    LoggerManager.log('getLastSyncUpLog');
+    const user = store.getState().userReducer.userData;
+    return SyncUpHelper.getLatestId({ 'requested-by': user.id });
   }
 
   /**
@@ -176,23 +182,23 @@ export default class SyncUpManager {
   /**
    * Check if the last syncup is too old or there is not user data in storage, also set the message.
    */
-  static isForceSyncUp() {
-    LoggerManager.log('isForceSyncUp');
-    return Promise.all([SyncUpManager.getLastSyncInDays(), SyncUpManager.getLastSuccessfulSyncUp()])
-      .then(([days, lastSuccessfulSyncUp]) => {
+  static checkIfToForceSyncUp() {
+    LoggerManager.log('checkIfToForceSyncUp');
+    return Promise.all([SyncUpManager.getLastSyncInDays(), SyncUpManager.getLastSuccessfulSyncUp(),
+      SyncUpManager.getLastSyncUpIdForCurrentUser()])
+      .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser]) => {
+        const didSyncUp = !!lastSyncUpIdForCurrentUser;
         const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
         const user = store.getState().userReducer.userData; // No need to to go the DB in this stage.
-        const hasUserData = lastSuccessfulSyncUp && lastSuccessfulSyncUp['sync-date'] > user.registeredOnClient;
-        const force = forceBecauseDays || !hasUserData;
-        let message = '';
-        if (force) {
-          if (forceBecauseDays) {
-            message = translate('tooOldSyncWarning');
-          } else {
-            message = translate('noUserDataSyncWarning');
-          }
-        }
-        return { force, message };
+        const hasUserData = lastSuccessful && lastSuccessful[SYNCUP_SYNC_REQUESTED_AT] > user.registeredOnClient;
+        const forceSyncUp = forceBecauseDays || !hasUserData;
+        return {
+          forceSyncUp,
+          didUserSuccessfulSyncUp: hasUserData,
+          lastSuccessfulSyncUp: hasUserData ? lastSuccessful : null,
+          didSyncUp,
+          daysFromLastSuccessfulSyncUp: days
+        };
       });
   }
 
