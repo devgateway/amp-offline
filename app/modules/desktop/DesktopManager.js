@@ -9,7 +9,9 @@ import {
   FUNDINGS,
   FUNDING_DETAILS,
   TRANSACTION_TYPE,
-  ADJUSTMENT_TYPE
+  ADJUSTMENT_TYPE,
+  ACTIVITIES_TAB_TITLE,
+  REJECTED_TAB_TITLE
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -149,7 +151,7 @@ const DesktopManager = {
     const defaultTabs = [
       {
         id: 0,
-        name: 'Activities',
+        name: ACTIVITIES_TAB_TITLE,
         isActive: true,
         projects: projectsWithLinks,
         sorting: null,
@@ -157,7 +159,7 @@ const DesktopManager = {
       },
       {
         id: 1,
-        name: 'Rejected Sync',
+        name: REJECTED_TAB_TITLE,
         isActive: false,
         projects: rejected,
         sorting: null,

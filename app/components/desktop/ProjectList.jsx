@@ -13,7 +13,7 @@ import {
   ACTIVITY_STATUS_VALIDATED
 } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
-import { AMP_ID, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
+import { AMP_ID, PROJECT_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
 
@@ -76,7 +76,7 @@ export default class ProjectList extends Component {
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
     const pagination = paginationOptions.usePagination;
-    const iconColumn = (this.props.name !== 'Rejected Sync') &&
+    const iconColumn = (this.props.name !== REJECTED_TAB_TITLE) &&
     (<TableHeaderColumn
       dataField="icon" dataFormat={ProjectList.iconFormatter} columnClassName={style.width_7}
       className={style.thClassName} />);
