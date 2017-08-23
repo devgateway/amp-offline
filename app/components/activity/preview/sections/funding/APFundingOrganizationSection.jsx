@@ -33,28 +33,20 @@ class APFundingOrganizationSection extends Component {
 
   _buildDonorInfo() {
     const content = [];
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DONOR_ORG_ID]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.TYPE_OF_ASSISTANCE]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_STATUS]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.MODE_OF_PAYMENT]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`
-      , true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
-      true, null, true, this.props.funding));
-    content.push(this.props.buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
-      true, null, true, this.props.funding));
+    const { buildSimpleField, funding } = this.props;
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DONOR_ORG_ID]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.TYPE_OF_ASSISTANCE]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_STATUS]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.MODE_OF_PAYMENT]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`, true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
+      true, null, true, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
+      true, null, true, funding));
 
     const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
     return tableContent;

@@ -55,14 +55,12 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
   buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false, parent = null) {
     if (this.context.activityFieldsManager.isFieldPathEnabled(path)) {
       const title = this.context.activityFieldsManager.getFieldLabelTranslation(path);
-      let value = null;
+      let valuePath = path;
       if (parent) {
         const fieldPathParts = path.split('~');
-        const fieldName = fieldPathParts[fieldPathParts.length - 1];
-        value = (parent[fieldName] && parent[fieldName].value) || parent[fieldName];
-      } else {
-        value = this.context.activityFieldsManager.getValue(this.context.activity, path);
+        valuePath = fieldPathParts[fieldPathParts.length - 1];
       }
+      let value = this.context.activityFieldsManager.getValue(parent || this.context.activity, valuePath);
       const fieldDef = this.context.activityFieldsManager.getFieldDef(path);
       if (fieldDef.field_type === 'date') {
         value = DateUtils.createFormattedDate(value);
@@ -94,7 +92,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       <div className={this.props.titleClass}>
         <span>{translate(SectionTitle)} </span><span>{this.props.titleDetails}</span>
       </div>
-      <div className={this.props.composedClass} >
+      <div className={this.props.composedClass}>
         {composedSection}
       </div>
     </div>);
