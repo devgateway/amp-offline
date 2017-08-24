@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { Panel, Button } from 'react-bootstrap';
+import { Panel, Button, Glyphicon } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
@@ -36,7 +36,7 @@ export default class AFFundingDonorSection extends Component {
       fundingList: this.props.fundings
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
-    // console.log(this.props.fundings);
+    this._removeFundingItem = this._removeFundingItem.bind(this);
   }
 
   _addNewFundingItem() {
@@ -51,13 +51,20 @@ export default class AFFundingDonorSection extends Component {
     this.setState({ fundingList: newFundingList });
   }
 
+  _removeFundingItem(index) {
+    // TODO: Display a confirm dialog to delete the funding item.
+    const newFundingList = this.state.fundingList;
+    newFundingList.splice(index, 1);
+    this.setState({ fundingList: newFundingList });
+  }
+
   _filterFundings(fundings) {
     return fundings.filter(f => (f[AC.FUNDING_DONOR_ORG_ID].id === this.props.organization.id
       && f[AC.SOURCE_ROLE].id === this.props.role.id));
   }
 
   _generateComplexHeader(i, funding) {
-    // TODO: AFFields objects are not being refreshed (use state not props!).
+    // TODO: AFFields objects are not being refreshed (use a bind function?).
     return (<div>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
@@ -76,7 +83,8 @@ export default class AFFundingDonorSection extends Component {
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
           className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
-        {/* <Button bsSize="xsmall" bsStyle="danger"><Glyphicon glyph="glyphicon glyphicon-remove" /></Button> */}
+        <Button bsSize="xsmall" bsStyle="danger" onClick={this._removeFundingItem.bind(this, i)}><Glyphicon
+          glyph="glyphicon glyphicon-remove" /></Button>
       </div>
     </div>);
   }
