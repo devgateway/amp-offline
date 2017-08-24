@@ -6,8 +6,7 @@ import {
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED,
   STATE_SYNCUP_FORCED,
-  STATE_SYNCUP_DISMISSED,
-  SYNCUP_ACTIVITY_TITLES_LOADED
+  STATE_SYNCUP_DISMISSED
 } from '../actions/SyncUpAction';
 import { STATE_LOGOUT_DISMISS_TO_SYNC } from '../actions/LoginAction';
 import LoggerManager from '../modules/util/LoggerManager';
@@ -23,8 +22,7 @@ const defaultState = {
   didSyncUp: false,
   syncUpRejected: false,
   syncUpAccepted: false,
-  daysFromLastSuccessfulSyncUp: undefined,
-  activityTitles: {}
+  daysFromLastSuccessfulSyncUp: undefined
 };
 
 export default function syncUpReducer(state: Object = defaultState, action: Object) {
@@ -78,10 +76,6 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       return { ...state, syncUpRejected: true };
     case STATE_LOGOUT_DISMISS_TO_SYNC:
       return { ...state, syncUpAccepted: true };
-    case SYNCUP_ACTIVITY_TITLES_LOADED:
-      return Object.assign({}, state, {
-        activityTitles: { ...state.activityTitles, ...action.actionData }
-      });
     default:
       return state;
   }

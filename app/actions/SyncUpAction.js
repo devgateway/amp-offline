@@ -6,7 +6,6 @@ import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import ActivityHelper from '../modules/helpers/ActivityHelper';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -17,7 +16,6 @@ export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
-export const SYNCUP_ACTIVITY_TITLES_LOADED = 'SYNCUP_ACTIVITY_TITLES_LOADED';
 
 export function loadSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');
@@ -108,22 +106,3 @@ function syncUpInProgress() {
     type: STATE_SYNCUP_IN_PROCESS
   };
 }
-
-export const loadActivityTitles = ids => (dispatch) => {
-  ActivityHelper.findAll({ amp_id: { $in: ids } }).then(activities => {
-    const titles = {};
-    activities.forEach(({ amp_id, project_title: projectTitle }) => {
-      titles[amp_id] = projectTitle;
-    });
-    dispatch({
-      type: SYNCUP_ACTIVITY_TITLES_LOADED,
-      actionData: titles
-    });
-    return titles;
-  }).catch(() => {
-    dispatch({
-      type: SYNCUP_ACTIVITY_TITLES_LOADED,
-      actionData: []
-    });
-  });
-};
