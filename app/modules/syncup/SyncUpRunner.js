@@ -228,10 +228,10 @@ export default class SyncUpRunner {
   _addStats(syncUpManager: SyncUpManagerInterface, unitResult, prevUnitResult) {
     switch (syncUpManager.type) {
       case SYNCUP_TYPE_ACTIVITIES_PUSH:
-        unitResult.pushed = syncUpManager.getPushedIds();
+        unitResult.details = syncUpManager.details;
         break;
       case SYNCUP_TYPE_ACTIVITIES_PULL:
-        unitResult.pulled = ((prevUnitResult && prevUnitResult.pulled) || []).concat(syncUpManager.getPulledAmpIds());
+        unitResult.details = syncUpManager.mergeDetails(prevUnitResult && prevUnitResult.details);
         break;
       default:
         break;
