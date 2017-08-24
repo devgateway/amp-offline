@@ -41,10 +41,9 @@ export default class AFFundingDonorSection extends Component {
 
   _addNewFundingItem() {
     // Since Funding Item belongs to a "Funding Tab" we can inherit that info.
-    const existentFunding = this.props.fundings[0];
     const fundingItem = {};
-    fundingItem[AC.FUNDING_DONOR_ORG_ID] = existentFunding[AC.FUNDING_DONOR_ORG_ID];
-    fundingItem[AC.SOURCE_ROLE] = existentFunding[AC.SOURCE_ROLE];
+    fundingItem[AC.FUNDING_DONOR_ORG_ID] = this.props.organization;
+    fundingItem[AC.SOURCE_ROLE] = this.props.role;
     fundingItem.funding_details = [];
     const newFundingList = this.state.fundingList;
     newFundingList.push(fundingItem);
