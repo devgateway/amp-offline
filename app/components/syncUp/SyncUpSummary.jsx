@@ -35,7 +35,7 @@ class SyncUpSummary extends PureComponent {
   render() {
     const { data } = this.props;
     if (!data) return null;
-    const { timestamp, status, errors } = data;
+    const { dateStarted, status, errors } = data;
     const details = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).details;
     return (
       <div className="container">
@@ -55,7 +55,7 @@ class SyncUpSummary extends PureComponent {
             {translate('Started')}
           </div>
           <div className="col-md-8">
-            {createFormattedDateTime(timestamp)}
+            {createFormattedDateTime(dateStarted)}
           </div>
         </div>
         <div className="row">
