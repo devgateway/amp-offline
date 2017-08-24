@@ -7,6 +7,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PULL
 } from '../../utils/Constants';
 import ErrorMessage from '../common/ErrorMessage';
+import styles from './SyncUpSummary.css';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
@@ -39,8 +40,8 @@ class SyncUpSummary extends PureComponent {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-md-4 text-right">
-            <strong>{translate('Status')}</strong>
+          <div className={`col-md-4 text-right ${styles.section_title}`}>
+            {translate('Status')}
           </div>
           <div className="col-md-8">
             {status}
@@ -50,32 +51,32 @@ class SyncUpSummary extends PureComponent {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-4 text-right">
-            <strong>{translate('Started')}</strong>
+          <div className={`col-md-4 text-right ${styles.section_title}`}>
+            {translate('Started')}
           </div>
           <div className="col-md-8">
             {createFormattedDateTime(timestamp)}
           </div>
         </div>
         <div className="row">
-          <div className="col-md-4 text-right">
-            <strong>{translate('Finished')}</strong>
+          <div className={`col-md-4 text-right ${styles.section_title}`}>
+            {translate('Finished')}
           </div>
           <div className="col-md-8">
             {createFormattedDateTime(data['sync-date'])}
           </div>
         </div>
         <div className="row">
-          <div className="col-md-4 text-right">
-            <strong>{translate('Synced projects')}</strong>
+          <div className={`col-md-4 text-right ${styles.section_title}`}>
+            {translate('Synced projects')}
           </div>
           <div className="col-md-8">
             {this.constructor.listActivities(details.synced)}
           </div>
         </div>
         <div className="row">
-          <div className="col-md-4 text-right">
-            <strong>{translate('Failed projects')}</strong>
+          <div className={`col-md-4 text-right ${styles.section_title}`}>
+            {translate('Failed projects')}
           </div>
           <div className="col-md-8">
             {this.constructor.listActivities(details.unsynced)}
