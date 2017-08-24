@@ -40,38 +40,12 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _addNewFundingItem() {
-    // TODO: Construir un nuevo funding con la misma estructura de los otros pero vacío, podría "clonar y limpiar" uno
-    // existente pero y si no tengo porque es el primero?
+    // Since Funding Item belongs to a "Funding Tab" we can inherit that info.
+    const existentFunding = this.props.fundings[0];
     const fundingItem = {};
-    fundingItem.active = false;
-    fundingItem.active_list = [];
-    fundingItem.actual_completion_date = null;
-    fundingItem.actual_start_date = null;
-    fundingItem.agreement = null;
-    fundingItem.cal_type = null;
-    fundingItem.capital_spending_percentage = true;
-    fundingItem.comments = null;
-    fundingItem.conditions = null;
-    fundingItem.crs_transaction_number = null;
-    fundingItem.delegated_cooperation = null;
-    fundingItem.delegated_partned = null;
-    fundingItem.donor_objective = null;
-    fundingItem.donor_organization_id = {
-      extra_info: {
-        acronym: 'nada',
-        organization_group: 'nada'
-      },
-      id: 105,
-      'translated-value': { en: 'nada', fr: 'nada fr' },
-      value: 'nada'
-    };
-    fundingItem.financing_id = null;
-    fundingItem.financing_instrument = null;
-    fundingItem.funding_classification_date = null;
+    fundingItem[AC.FUNDING_DONOR_ORG_ID] = existentFunding[AC.FUNDING_DONOR_ORG_ID];
+    fundingItem[AC.SOURCE_ROLE] = existentFunding[AC.SOURCE_ROLE];
     fundingItem.funding_details = [];
-    fundingItem.funding_status = null;
-    fundingItem.source_role = { id: 1, value: 'Donor' };
-    fundingItem.type_of_assistance = null;
     const newFundingList = this.state.fundingList;
     newFundingList.push(fundingItem);
     this.setState({ fundingList: newFundingList });
@@ -83,7 +57,7 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _generateComplexHeader(i, funding) {
-    // TODO: AFFields objects are not being refreshed.
+    // TODO: AFFields objects are not being refreshed (use state not props!).
     return (<div>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
