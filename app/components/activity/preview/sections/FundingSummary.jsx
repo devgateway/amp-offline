@@ -40,7 +40,7 @@ class FundingSummary extends Component {
     VC.TRANSACTION_TYPES.forEach(trnType => {
       const pv = this.props.activityFieldsManager.possibleValuesMap[PC.TRANSACTION_TYPE_PATH];
       const enabledTrnList = Object.keys(pv).map((i) => (pv[i].value));
-      if (enabledTrnList.filter((t) => (t.value === trnType))) {
+      if (enabledTrnList.filter((t) => (t === trnType)).length > 0) {
         // checking if this transaction type is provided as an option, through a trick by detecting the translation
         const trnTypeTrn = this.props.activityFieldsManager.getValueTranslation(PC.TRANSACTION_TYPE_PATH, trnType);
         VC.ADJUSTMENT_TYPES.forEach(adjType => {
