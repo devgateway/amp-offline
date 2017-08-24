@@ -1,11 +1,20 @@
 import { connect } from 'react-redux';
 import SyncUpSummary from '../components/syncUp/SyncUpSummary';
-import { loadSyncUpHistory, loadActivityTitles } from '../actions/SyncUpAction';
+import { loadSyncUpHistory } from '../actions/SyncUpAction';
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const { historyData } = state.syncUpReducer;
+  const { id } = ownProps.params;
+  let data;
+  if (historyData.length) {
+    if (id) {
+      data = historyData.find(syncObj => syncObj.id === +id);
+    } else {
+      data = historyData.reduce((a, b) => (b.id > a.id ? b : a));
+    }
+  }
   return {
-    history: state.syncUpReducer.historyData,
-    activityTitles: state.syncUpReducer.activityTitles
+    data
   };
 }
 
@@ -13,9 +22,6 @@ function mapDispatchToProps(dispatch) {
   return {
     getHistory: () => {
       dispatch(loadSyncUpHistory());
-    },
-    getActivitiesNames: (ids) => {
-      dispatch(loadActivityTitles(ids));
     }
   };
 }
