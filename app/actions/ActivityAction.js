@@ -24,7 +24,6 @@ import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import Utils from '../utils/Utils';
 import translate from '../utils/translate';
 import * as Utils from '../utils/Utils';
 
