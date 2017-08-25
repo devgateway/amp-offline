@@ -118,7 +118,22 @@ const Utils = {
 
   capitalize(text: string) {
     return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
+  },
+
+  textTruncate(str, length, ending) {
+    if (length === null) {
+      length = 58;
+    }
+    if (ending === null) {
+      ending = '...';
+    }
+    if (str.length > length) {
+      return str.substring(0, length - ending.length) + ending;
+    } else {
+      return str;
+    }
   }
+
 };
 
 module.exports = Utils;

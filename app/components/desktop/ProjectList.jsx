@@ -2,6 +2,7 @@
 /* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import classNames from 'classnames';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
@@ -16,6 +17,7 @@ import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManage
 import { AMP_ID, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
+import Utils from '../../utils/Utils';
 
 export default class ProjectList extends Component {
 
@@ -33,6 +35,13 @@ export default class ProjectList extends Component {
     return (
       <IconFormatter cell={cell} row={row} />
     );
+  }
+
+  static IDFormatter(cell, row) {
+    const cellDisplay = Utils.textTruncate(cell);
+    const tooltip = <Tooltip id={`id-tooltip-${row.id}`}>{cell}</Tooltip>;
+    return (<OverlayTrigger
+      placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
   }
 
   static projectNameFormatter(cell, row) {
@@ -56,12 +65,33 @@ export default class ProjectList extends Component {
       nameStyles.push(style.rejected);
     }
     const classes = classNames(nameStyles.toString()).replace(',', ' ');
-    return `<span class='${classes}'>${row.new ? '* ' : ''}${cell}</span>`;
+    const cellDisplay = `${row.new ? '* ' : ''}${Utils.textTruncate(cell)}`;
+    const tooltip = <Tooltip id={`title-tooltip-${row.id}`}>{cell}</Tooltip>;
+    return (<OverlayTrigger
+      placement="bottom" overlay={tooltip}><span className={classes}>{cellDisplay}</span></OverlayTrigger>);
   }
 
-  static numberFormatter(cell) {
+  static fundingFormatter(cell, row) {
+    const cellDisplay = Utils.textTruncate(cell);
+    const tooltip = <Tooltip id={`funding-tooltip-${row.id}`}>{cell}</Tooltip>;
+    return (<OverlayTrigger
+      placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
+  }
+
+  static ACFormatter(cell, row) {
     const number = Number(cell);
-    return NumberUtils.rawNumberToFormattedString(number);
+    const tooltip = <Tooltip id={`ac-tooltip-${row.id}`}>{number}</Tooltip>;
+    const cellDisplay = Utils.textTruncate(NumberUtils.rawNumberToFormattedString(number));
+    return (<OverlayTrigger
+      placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
+  }
+
+  static ADFormatter(cell, row) {
+    const number = Number(cell);
+    const tooltip = <Tooltip id={`ad-tooltip-${row.id}`}>{number}</Tooltip>;
+    const cellDisplay = Utils.textTruncate(NumberUtils.rawNumberToFormattedString(number));
+    return (<OverlayTrigger
+      placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
   }
 
   handlerClickCleanFiltered() {
@@ -90,28 +120,28 @@ export default class ProjectList extends Component {
           <TableHeaderColumn
             dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.width_8}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}
-            columnTitle>
+            dataFormat={ProjectList.IDFormatter} >
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField={PROJECT_TITLE} dataFormat={ProjectList.projectNameFormatter} dataSort ref={PROJECT_TITLE}
-            columnClassName={style.width_40} columnTitle
+            columnClassName={style.width_40}
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
             className={style.thClassName}>
             {translate('Project Title')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="donor" dataSort columnClassName={style.width_15} columnTitle
+            dataField="donor" dataSort columnClassName={style.width_15} dataFormat={ProjectList.fundingFormatter}
             className={style.thClassName}>{translate('Funding Agency')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualCommitments" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={ProjectList.numberFormatter} columnTitle>
+            dataFormat={ProjectList.ACFormatter} columnTitle>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualDisbursements" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={ProjectList.numberFormatter} columnTitle>
+            dataFormat={ProjectList.ADFormatter} columnTitle>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>
