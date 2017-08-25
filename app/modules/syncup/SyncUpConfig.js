@@ -5,9 +5,9 @@ import WorkspaceMemberSyncUpManager from './syncupManagers/WorkspaceMemberSyncUp
 import WorkspaceSettingsSyncUpManager from './syncupManagers/WorkspaceSettingsSyncUpManager';
 import GlobalSettingsSyncUpManager from './syncupManagers/GlobalSettingsSyncUpManager';
 import TranslationSyncUpManager from './syncupManagers/TranslationSyncUpManager';
-import FieldsSyncUpManager from './syncupManagers/FieldsSyncUpManager';
 import PossibleValuesSyncUpManager from './syncupManagers/PossibleValuesSyncUpManager';
 import AmpAssetManager from './syncupManagers/AmpAssetManager';
+import ActivityFieldsSyncUpManager from './syncupManagers/ActivityFieldsSyncUpManager';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
@@ -17,7 +17,7 @@ import * as Utils from '../../utils/Utils';
 import * as SS from './SyncUpUnitState';
 import {
   SYNCUP_TYPE_ACTIVITIES_PUSH,
-  SYNCUP_TYPE_FIELDS,
+  SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
@@ -32,7 +32,7 @@ import {
 export default class SyncUpConfig {
 
   static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
-    WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, FieldsSyncUpManager,
+    WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
     PossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
@@ -43,7 +43,7 @@ export default class SyncUpConfig {
     dependencies[SYNCUP_TYPE_WORKSPACE_SETTINGS] = Utils.toMap(SYNCUP_TYPE_WORKSPACES, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH] = Utils.toMap(SYNCUP_TYPE_USERS, SS.STATES_SUCCESS);
     // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
-    dependencies[SYNCUP_TYPE_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
+    dependencies[SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_POSSIBLE_VALUES] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     return dependencies;
   }

@@ -17,8 +17,8 @@ export const TEST_URL = '/test/testjsonauth';
 export const ACTIVITY_IMPORT_URL = '/activity';
 export const ACTIVITY_EXPORT_URL = '/activity/project';
 // TODO remove as part of AMPOFFLINE-270
-export const SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
-export const FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
+export const ACTIVITY_SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
+export const ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
 export const POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
 
 /** OTHER */

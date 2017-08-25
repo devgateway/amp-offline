@@ -71,7 +71,7 @@ const WSSettingsHelper = {
    */
   replaceAllWSSettings(wsSettingsCollection) {
     LoggerManager.log('replaceAllWSSettings');
-    return DatabaseManager.replaceCollection(wsSettingsCollection, COLLECTION_WS_SETTINGS, {});
+    return DatabaseManager.replaceCollection(wsSettingsCollection, COLLECTION_WS_SETTINGS);
   }
 };
 

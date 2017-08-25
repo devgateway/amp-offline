@@ -11,7 +11,7 @@ import {
   GET_TRANSLATIONS_URL,
   ACTIVITY_IMPORT_URL,
   ACTIVITY_EXPORT_URL,
-  SINGLE_FIELDS_TREE_URL,
+  ACTIVITY_SINGLE_FIELDS_TREE_URL,
   POSSIBLE_VALUES_PER_FIELD_PATHS,
   SYNC_URL,
   AMP_COUNTRY_FLAG,
@@ -67,7 +67,7 @@ const routesConfiguration = [{
   method: 'GET',
   requiresAuth: true
 }, {
-  url: SINGLE_FIELDS_TREE_URL,
+  url: ACTIVITY_SINGLE_FIELDS_TREE_URL,
   method: 'GET',
   requiresAuth: true
 }, {

@@ -10,6 +10,7 @@ import {
 } from '../../utils/constants/FieldPathConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../util/LoggerManager';
+import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -212,14 +213,15 @@ export default class ActivityHydrator {
           reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
         }
       }
-      return FieldsHelper.findByWorkspaceMemberId(teamMemberId).then((fieldsDef) => {
-        if (fieldsDef === null) {
-          throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
-        } else {
-          const hydrator = new ActivityHydrator(fieldsDef.fields);
-          return hydrator.hydrateActivities(activities, fieldPaths).then(resolve).catch(reject);
-        }
-      }).catch(reject);
+      return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS)
+        .then((fieldsDef) => {
+          if (fieldsDef === null) {
+            throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
+          } else {
+            const hydrator = new ActivityHydrator(fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS]);
+            return hydrator.hydrateActivities(activities, fieldPaths).then(resolve).catch(reject);
+          }
+        }).catch(reject);
     });
   }
 }

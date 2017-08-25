@@ -26,6 +26,7 @@ import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import Utils from '../utils/Utils';
 import translate from '../utils/translate';
+import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -101,12 +102,12 @@ function _loadActivity({ activityId, teamMemberId, possibleValuesPaths, currentW
     const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
     return Promise.all([
       _getActivity(activityId),
-      FieldsHelper.findByWorkspaceMemberId(teamMemberId),
+      FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
       PossibleValuesHelper.findAll(pvFilter),
       isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } }, Utils.toMap(PROJECT_TITLE, 1)) : []
     ])
       .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
-        fieldsDef = fieldsDef.fields;
+        fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
         const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
