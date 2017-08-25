@@ -81,7 +81,7 @@ export default class ProjectList extends Component {
   static ACFormatter(cell, row) {
     const number = Number(cell);
     const tooltip = <Tooltip id={`ac-tooltip-${row.id}`}>{number}</Tooltip>;
-    const cellDisplay = Utils.textTruncate(NumberUtils.rawNumberToFormattedString(number));
+    const cellDisplay = Utils.textTruncate(NumberUtils.rawNumberToFormattedString(number), 20);
     return (<OverlayTrigger
       placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
   }
@@ -89,7 +89,7 @@ export default class ProjectList extends Component {
   static ADFormatter(cell, row) {
     const number = Number(cell);
     const tooltip = <Tooltip id={`ad-tooltip-${row.id}`}>{number}</Tooltip>;
-    const cellDisplay = Utils.textTruncate(NumberUtils.rawNumberToFormattedString(number));
+    const cellDisplay = Utils.textTruncate(NumberUtils.rawNumberToFormattedString(number), 20);
     return (<OverlayTrigger
       placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
   }
