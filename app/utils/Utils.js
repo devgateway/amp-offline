@@ -20,6 +20,10 @@ const Utils = {
     return `${this.stringToId(string)}-${Date.now()}-${Math.random()}`;
   },
 
+  numberRandom() {
+    return (Math.random() * 1000000).toString().substring(0, 6);
+  },
+
   hexBufferToString(buffer) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
     const hexCodes = [];

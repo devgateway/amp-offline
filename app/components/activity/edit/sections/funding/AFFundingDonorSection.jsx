@@ -9,6 +9,7 @@ import AFFundingContainer from './AFFundingContainer';
 import AFField from '../../components/AFField';
 import styles from './AFFundingDonorSection.css';
 import * as Types from '../../components/AFComponentTypes';
+import * as Utils from '../../../../../utils/Utils';
 
 /**
  * @author Gabriel Inchauspe
@@ -40,19 +41,23 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _addNewFundingItem() {
+    LoggerManager.log('_addNewFundingItem');
     // Since Funding Item belongs to a "Funding Tab" we can inherit that info.
     const fundingItem = {};
     fundingItem[AC.FUNDING_DONOR_ORG_ID] = this.props.organization;
     fundingItem[AC.SOURCE_ROLE] = this.props.role;
-    fundingItem.funding_details = [];
+    fundingItem[AC.FUNDING_DETAILS] = [];
+    fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom() * -1;
     const newFundingList = this.state.fundingList;
     newFundingList.push(fundingItem);
     this.setState({ fundingList: newFundingList });
   }
 
-  _removeFundingItem(index) {
+  _removeFundingItem(id) {
+    LoggerManager.log('_removeFundingItem');
     // TODO: Display a confirm dialog to delete the funding item.
     const newFundingList = this.state.fundingList;
+    const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
     newFundingList.splice(index, 1);
     this.setState({ fundingList: newFundingList });
   }
@@ -82,8 +87,11 @@ export default class AFFundingDonorSection extends Component {
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
           className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
-        <Button bsSize="xsmall" bsStyle="danger" onClick={this._removeFundingItem.bind(this, i)}><Glyphicon
-          glyph="glyphicon glyphicon-remove" /></Button>
+        <Button
+          bsSize="xsmall" bsStyle="danger"
+          onClick={this._removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING])}>
+          <Glyphicon glyph="glyphicon glyphicon-remove" />
+        </Button>
       </div>
     </div>);
   }
