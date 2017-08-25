@@ -16,8 +16,9 @@ import {
   SYNCUP_STATUS_FAIL,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
-  SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_ACTIVITY_FIELDS,
+  SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_EXCHANGE_RATES
 } from '../../utils/Constants';
 import LoggerManager from '../../modules/util/LoggerManager';
@@ -147,6 +148,7 @@ export default class SyncUpRunner {
     const isFirstRun = this._syncRunNo === SyncUpRunner._SYNC_RUN_1;
     // TODO: remove this flag once AMP-25568 is done
     changes[SYNCUP_TYPE_ACTIVITY_FIELDS] = true;
+    changes[SYNCUP_TYPE_CONTACT_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;

@@ -10,6 +10,7 @@ import AmpAssetManager from './syncupManagers/AmpAssetManager';
 import ActivityFieldsSyncUpManager from './syncupManagers/ActivityFieldsSyncUpManager';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';
+import ContactFieldsSyncUpManager from './syncupManagers/ContactFieldsSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
@@ -19,6 +20,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_POSSIBLE_VALUES,
+  SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
@@ -34,6 +36,7 @@ export default class SyncUpConfig {
   static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
     PossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
+    ContactFieldsSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
@@ -45,6 +48,7 @@ export default class SyncUpConfig {
     // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
     dependencies[SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_POSSIBLE_VALUES] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
+    dependencies[SYNCUP_TYPE_CONTACT_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     return dependencies;
   }
 

@@ -19,7 +19,8 @@ import {
   FEATURE_MANAGER_URL,
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
-  POSSIBLE_VALUES_V2_MEDIA_TYPE
+  POSSIBLE_VALUES_V2_MEDIA_TYPE,
+  CONTACT_SINGLE_FIELDS_TREE_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -104,6 +105,10 @@ const routesConfiguration = [{
 }, {
   url: FEATURE_MANAGER_URL,
   method: 'POST',
+  requiredAuth: true
+}, {
+  url: CONTACT_SINGLE_FIELDS_TREE_URL,
+  method: 'GET',
   requiredAuth: true
 }
 ];
