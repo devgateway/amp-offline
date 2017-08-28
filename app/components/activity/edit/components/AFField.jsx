@@ -18,6 +18,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
+import AFCheckbox from './AFCheckbox';
 
 /* eslint-disable class-methods-use-this */
 
@@ -157,6 +158,8 @@ class AFField extends Component {
         return this._getDate();
       case Types.LABEL:
         return this._getValueAsLabel();
+      case Types.CHECKBOX:
+        return this._getBoolean();
       default:
         return 'Not Implemented';
     }
@@ -171,6 +174,10 @@ class AFField extends Component {
   }
 
   _getListSelector() {
+    if (!this.fieldDef.children.find(item => item.id_only === true)) {
+      // TODO: Lists without id_only field will be addressed on AMPOFFLINE-674.
+      return null;
+    }
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
     const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
     let options = this._getOptions(optionsFieldPath);
@@ -221,10 +228,14 @@ class AFField extends Component {
     return (<AFDate value={this.state.value} onChange={this.onChange} />);
   }
 
+  _getBoolean() {
+    return (<AFCheckbox value={this.state.value} onChange={this.onChange} />);
+  }
+
   _getValueAsLabel() {
     let val = '';
     if (this.state.value) {
-      val = this.state.value.displayFullValue || this.state.value;
+      val = this.state.value.displayFullValue || this.state.value.value || this.state.value;
     }
     return <AFLabel value={val} />;
   }

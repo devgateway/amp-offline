@@ -210,6 +210,10 @@
   "Add Expenditures": "Add Expenditures",
   "activitySavedMsg": "Your changes have been successfully saved. In order to see your changes in the AMP please sync.",
   "CurrencyRatesNotInitialized": "Currency rates not initialized",
+  "BA": "BA",
+  "DO": "DO",
+  "EA": "EA",
+  "IA": "IA",
   "activityEdit": "Edit",
   "allWorkspaces": "All Workspaces",
   "Search Organizations": "Search Organizations",
@@ -224,5 +228,6 @@
   "Amounts in Millions (000 000)": "Amounts in Millions (000 000)",
   "Amounts in Billions (000 000 000)": "Amounts in Billions (000 000 000)",
   "Same as Proposed Start Date": "Same as Proposed Start Date",
-  "Same as Proposed Approval Date": "Same as Proposed Approval Date"
+  "Same as Proposed Approval Date": "Same as Proposed Approval Date",
+  "unsynced text": "Italic text of any color"
 }
