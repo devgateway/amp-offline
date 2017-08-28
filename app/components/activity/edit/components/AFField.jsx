@@ -48,7 +48,8 @@ class AFField extends Component {
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
-    onFieldValidation: PropTypes.func.isRequired // eslint-disable-line react/no-unused-prop-types
+    onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    listParams: PropTypes.object
   };
 
   static defaultProps = {
@@ -188,7 +189,7 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} />);
+      onChange={this.onChange} validationError={this.state.validationError} listParams={this.props.listParams} />);
   }
 
   _getOptions(fieldPath) {
@@ -261,7 +262,7 @@ class AFField extends Component {
     return (
       <FormGroup
         controlId={this.props.fieldPath} validationState={showValidationError ? this._getValidationState() : null}
-        className={`${styles.activity_form_control} ${this.props.className}`} >
+        className={`${styles.activity_form_control} ${this.props.className}`}>
         <span className={this.props.inline ? styles.inline_field : null}>
           {this.getLabel()}
           {this.getFieldContent()}

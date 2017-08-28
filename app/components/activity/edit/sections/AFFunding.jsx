@@ -9,6 +9,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
+import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
 
 /**
  * Funding Section
@@ -80,10 +81,13 @@ class AFFunding extends Component {
   }
 
   render() {
-    return (<Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs" >
-      <Tab eventKey={0} title="Overview" key={0} >{this.generateOverviewTabContent()}</Tab>
-      {this.addFundingTabs()}
-    </Tabs>);
+    return (<div>
+      <Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs">
+        <Tab eventKey={0} title="Overview" key={0}>{this.generateOverviewTabContent()}</Tab>
+        {this.addFundingTabs()}
+      </Tabs>
+      <AFFundingOrganizationSelect activity={this.props.activity} />
+    </div>);
   }
 }
 
