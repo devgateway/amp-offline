@@ -21,9 +21,7 @@ export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpMan
     LoggerManager.log('doAtomicSyncUp');
     return ConnectionHelper.doPost({ url: this._url, body: fieldPaths, shouldRetry: true })
       .then(possibleValuesCollection => {
-        const newPossibleValues = [];
-        Object.entries(possibleValuesCollection).forEach(entry =>
-          newPossibleValues.push(PossibleValuesHelper.transformToClientUsage(entry)));
+        const newPossibleValues = this.preparePossibleValues(possibleValuesCollection);
         return PossibleValuesHelper.saveOrUpdateCollection(newPossibleValues);
       }).then((result) => {
         this.done = true;
@@ -31,5 +29,9 @@ export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpMan
       }).catch(() => {
         this.diff = fieldPaths;
       });
+  }
+
+  preparePossibleValues(possibleValuesCollection) {
+    return Object.entries(possibleValuesCollection).map(entry => PossibleValuesHelper.transformToClientUsage(entry));
   }
 }

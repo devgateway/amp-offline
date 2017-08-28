@@ -5,6 +5,7 @@ import {
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_CONTACT_FIELDS,
+  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
   SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FEATURE_MANAGER,
   SYNCUP_TYPE_GS,
@@ -67,6 +68,7 @@ export default class SyncUpDiff {
         break;
       // a list of elements to sync up
       case SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES:
+      case SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES:
         diff = Array.from(new Set((this._syncUpDiff[type] || []).concat(diff)));
         break;
       default:

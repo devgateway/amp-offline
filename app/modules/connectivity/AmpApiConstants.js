@@ -22,6 +22,7 @@ export const ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fie
 export const ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
 export const CONTACT_SINGLE_FIELDS_TREE_URL = '/contact/fields';
 export const CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL = '/contact/ws-member-fields';
+export const CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS = '/contact/field/values';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
