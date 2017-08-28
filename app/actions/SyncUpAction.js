@@ -40,15 +40,8 @@ export function startSyncUp(historyData) {
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
     store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
-    const redirectToSummary = () => SyncUpHelper.getLastSyncUpLog().then(log => {
-      const { id } = log;
-      store.dispatch({
-        type: STATE_SYNCUP_LOG_LOADED,
-        actionData: log
-      });
-      return URLUtils.forwardTo(`/syncUpSummary/${id}`);
-    });
-    SyncUpManager.syncUpAllTypesOnDemand().then(() =>
+
+    SyncUpManager.syncUpAllTypesOnDemand().then((log) =>
       // TODO probably the way in which we will update the ui will change
       // once we get the final version also it will change the way in which pass
       // the historyData object
@@ -56,13 +49,18 @@ export function startSyncUp(historyData) {
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
         LoggerManager.log('syncupSucessfull');
         store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
-        redirectToSummary();
+        const { id } = log;
+        store.dispatch({
+          type: STATE_SYNCUP_LOG_LOADED,
+          actionData: log
+        });
+        URLUtils.forwardTo(`/syncUpSummary/${id}`);
         return newHistoryData;
       })
     ).catch((err) => {
       const actionData = { errorMessage: err };
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
-      redirectToSummary();
+      URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });
   }

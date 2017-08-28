@@ -1,19 +1,15 @@
 import { connect } from 'react-redux';
 import SyncUpSummary from '../components/syncUp/SyncUpSummary';
 
-function mapStateToProps(state, ownProps) {
-  const { historyData } = state.syncUpReducer;
-  const { id } = ownProps.params;
-  let data;
-  if (historyData.length) {
-    if (id) {
-      data = historyData.find(syncObj => syncObj.id === +id);
-    } else {
-      data = historyData.reduce((a, b) => (b.id > a.id ? b : a));
-    }
-  }
+function mapStateToProps({ syncUpReducer }, { params }) {
+  const { historyData, errorMessage } = syncUpReducer;
+  const { id } = params;
+
   return {
-    data
+    errorMessage,
+    data: id && historyData.length ?
+      historyData.find(syncObj => syncObj.id === +id) :
+      null
   };
 }
 

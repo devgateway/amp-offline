@@ -34,14 +34,14 @@ class SyncUpSummary extends PureComponent {
     }
   }
 
-  render() {
-    const { data } = this.props;
-    if (!data) return null;
-    const { dateStarted, status, errors } = data;
-    const pulled = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).details;
-    const pushed = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).details;
-    const synced = (pulled.synced || []).concat(pushed.synced || []);
-    const unsynced = (pulled.unsynced || []).concat(pushed.unsynced || []);
+  static report ({
+    status,
+    errors,
+    dateStarted,
+    dateFinished,
+    syncedActivities,
+    unsyncedActivities
+  }) {
     return (
       <div className="container">
         <div className="row">
@@ -60,7 +60,7 @@ class SyncUpSummary extends PureComponent {
             {translate('Started')}
           </div>
           <div className="col-md-8">
-            {createFormattedDateTime(dateStarted)}
+            {dateStarted}
           </div>
         </div>
         <div className="row">
@@ -68,7 +68,7 @@ class SyncUpSummary extends PureComponent {
             {translate('Finished')}
           </div>
           <div className="col-md-8">
-            {createFormattedDateTime(data['sync-date'])}
+            {dateFinished}
           </div>
         </div>
         <div className="row">
@@ -76,7 +76,7 @@ class SyncUpSummary extends PureComponent {
             {translate('Synced projects')}
           </div>
           <div className="col-md-8">
-            {this.constructor.listActivities(synced)}
+            {syncedActivities}
           </div>
         </div>
         <div className="row">
@@ -84,11 +84,40 @@ class SyncUpSummary extends PureComponent {
             {translate('Failed projects')}
           </div>
           <div className="col-md-8">
-            {this.constructor.listActivities(unsynced)}
+            {unsyncedActivities}
           </div>
         </div>
       </div>
-    );
+    )
+  }
+
+  render() {
+    const { data, errorMessage } = this.props;
+    if (data) {
+      const { status, errors, dateStarted } = data;
+      const pulled = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).details;
+      const pushed = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).details;
+      const synced = (pulled.synced || []).concat(pushed.synced || []);
+      const unsynced = (pulled.unsynced || []).concat(pushed.unsynced || []);
+      return this.constructor.report({
+        status,
+        errors,
+        dateStarted: createFormattedDateTime(dateStarted),
+        dateFinished: createFormattedDateTime(data['sync-date']),
+        syncedActivities: this.constructor.listActivities(synced),
+        unsyncedActivities: this.constructor.listActivities(unsynced)
+      });
+    } else if (errorMessage) {
+      return this.constructor.report({
+        status: SYNCUP_STATUS_FAIL,
+        errors: [errorMessage],
+        dateStarted: 'n/a',
+        dateFinished: 'n/a',
+        syncedActivities: 'n/a',
+        unsyncedActivities: 'n/a'
+      });
+    }
+    return null;
   }
 }
 
