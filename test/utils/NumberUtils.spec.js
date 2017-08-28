@@ -38,7 +38,6 @@ const amountInMillionsConfig = {
 };
 
 describe('@@ Numbertils @@', () => {
-
   it('should convert numbers without decimals', () => {
     GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(noDecimalConfig));
     NumberUtils.createLanguage();
