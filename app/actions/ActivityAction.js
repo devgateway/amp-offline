@@ -101,7 +101,7 @@ function _loadActivity({ activityId, teamMemberId, possibleValuesPaths, currentW
   return new Promise((resolve, reject) => {
     const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
     return Promise.all([
-      _getActivity(activityId),
+      _getActivity(activityId, teamMemberId),
       FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
       PossibleValuesHelper.findAll(pvFilter),
       isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } }, Utils.toMap(PROJECT_TITLE, 1)) : []
@@ -130,13 +130,13 @@ function _loadActivity({ activityId, teamMemberId, possibleValuesPaths, currentW
 
 const _toNotification = (error) => new Notification({ message: error, origin: NOTIFICATION_ORIGIN_ACTIVITY });
 
-const _getActivity = (activityId) => {
+const _getActivity = (activityId, teamMemberId) => {
   // special case for the new activity
   if (activityId === NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
   return ActivityHelper.findNonRejectedById(activityId).then(activity =>
-    ActivityHydrator.hydrateActivity({ activity }));
+    ActivityHydrator.hydrateActivity({ activity, teamMemberId }));
 };
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {

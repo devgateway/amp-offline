@@ -12,7 +12,7 @@ import { ActivityPreviewPage, ActivityFormPage } from './containers/ActivityPage
 import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './components/syncUp/SyncUp';
 import auth from './modules/security/Auth';
-import { ampStartUp } from './actions/StartUpAction';
+import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 import LoggerManager from './modules/util/LoggerManager';
@@ -36,7 +36,7 @@ function checkAuth(nextState, replaceState) {
 initializeLanguageDirectory();
 
 initializeI18Next().then(() =>
-  ampStartUp().then(() =>
+  ampOfflineStartUp().then(() =>
     render(
       <Provider store={store}>
         <Router history={history} store={store}>

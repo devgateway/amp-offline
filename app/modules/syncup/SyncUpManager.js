@@ -150,8 +150,6 @@ export default class SyncUpManager {
     const restart = true;
     return Promise.all([
       loadAllLanguages(restart),
-      loadDateSettings(),
-      loadNumberSettings(),
       loadGlobalSettings(),
       loadFMTree(),
       loadCurrencyRatesOnStartup(),

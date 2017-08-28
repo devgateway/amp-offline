@@ -4,11 +4,10 @@
 import { expect } from 'chai';
 import NumberUtils from '../../app/utils/NumberUtils';
 import {
-  GS_AMOUNT_OPTION_IN_UNITS,
-  GS_AMOUNT_OPTION_IN_MILLIONS
+  GS_AMOUNT_OPTION_IN_MILLIONS,
+  GS_AMOUNT_OPTION_IN_UNITS
 } from '../../app/utils/constants/GlobalSettingsConstants';
-import { STATE_GS_NUMBERS_LOADED } from '../../app/actions/StartUpAction';
-import store from '../../app/index';
+import GlobalSettingsManager from '../../app/modules/util/GlobalSettingsManager';
 
 const noDecimalConfig = {
   decimalSeparator: '@', // choose non-standard options to test for false negatives.
@@ -39,13 +38,9 @@ const amountInMillionsConfig = {
 };
 
 describe('@@ Numbertils @@', () => {
-  it('should return a config', () => {
-    expect(NumberUtils.getConfigFromDB())
-      .to.eventually.have.all.keys('decimalSeparator', 'groupSeparator', 'format', 'amountsInThousands');
-  });
 
   it('should convert numbers without decimals', () => {
-    store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: noDecimalConfig });
+    GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(noDecimalConfig));
     NumberUtils.createLanguage();
     expect(NumberUtils.rawNumberToFormattedString(1)).to.equal('1');
     expect(NumberUtils.rawNumberToFormattedString(10)).to.equal('10');
@@ -58,7 +53,7 @@ describe('@@ Numbertils @@', () => {
   });
 
   it('should convert numbers with decimals', () => {
-    store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: decimalConfig });
+    GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(decimalConfig));
     NumberUtils.createLanguage();
     expect(NumberUtils.rawNumberToFormattedString(1)).to.equal('1 00');
     expect(NumberUtils.rawNumberToFormattedString(10)).to.equal('10 00');
@@ -71,7 +66,7 @@ describe('@@ Numbertils @@', () => {
   });
 
   it('should convert numbers without grouping', () => {
-    store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: noGroupingConfig });
+    GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(noGroupingConfig));
     NumberUtils.createLanguage();
     expect(NumberUtils.rawNumberToFormattedString(1)).to.equal('1,0');
     expect(NumberUtils.rawNumberToFormattedString(10)).to.equal('10,0');
@@ -84,7 +79,7 @@ describe('@@ Numbertils @@', () => {
   });
 
   it('should convert numbers with amounts in millions', () => {
-    store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: amountInMillionsConfig });
+    GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(amountInMillionsConfig));
     NumberUtils.createLanguage();
     expect(NumberUtils.rawNumberToFormattedString(1)).to.equal('0.00');
     expect(NumberUtils.rawNumberToFormattedString(10)).to.equal('0.00');

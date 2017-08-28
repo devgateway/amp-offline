@@ -1,6 +1,5 @@
 import * as PossibleValuesHelper from './PossibleValuesHelper';
 import * as FieldsHelper from './FieldsHelper';
-import store from '../../index';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../activity/PossibleValuesManager';
 import {
@@ -208,10 +207,7 @@ export default class ActivityHydrator {
     // Note: 926 activities are hydrated in 0.2s, where a significant time is consumed by promises
     return new Promise((resolve, reject) => {
       if (teamMemberId === undefined) {
-        teamMemberId = store.getState().userReducer.teamMember ? store.getState().userReducer.teamMember.id : undefined;
-        if (teamMemberId === undefined) {
-          reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
-        }
+        reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
       }
       return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS)
         .then((fieldsDef) => {
