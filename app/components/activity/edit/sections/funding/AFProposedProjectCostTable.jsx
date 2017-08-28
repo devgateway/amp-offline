@@ -54,7 +54,6 @@ export default class AFProposedProjectCostTable extends Component {
             type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
-        // TODO: Add a datepicker component that respects the same format the activity has on ppc.
         columns.push(<TableHeaderColumn
           dataField={AC.FUNDING_DATE} editable={false} key={AC.FUNDING_DATE}
           dataFormat={() => (<AFField
