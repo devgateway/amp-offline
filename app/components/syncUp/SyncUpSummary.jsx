@@ -9,6 +9,7 @@ import {
 } from '../../utils/Constants';
 import ErrorMessage from '../common/ErrorMessage';
 import styles from './SyncUpSummary.css';
+import { AMP_ID } from '../../utils/constants/ActivityConstants.js';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
@@ -17,10 +18,15 @@ class SyncUpSummary extends PureComponent {
 
   static listActivities(activities) {
     if (Array.isArray(activities) && activities.length) {
-      return activities.map(({ id, project_title: title }) =>
+      return activities.map((activity) => {
+        const id = activity[AMP_ID];
+        const { project_title: title } = activity;
+        return (
         <div key={id}>
           {id} {title && `(${title})`}
         </div>
+        );
+      }
       );
     } else {
       return translate('None');
