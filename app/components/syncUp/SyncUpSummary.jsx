@@ -10,6 +10,7 @@ import {
 import ErrorMessage from '../common/ErrorMessage';
 import styles from './SyncUpSummary.css';
 import { AMP_ID } from '../../utils/constants/ActivityConstants';
+import Utils from '../../utils/Utils';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
@@ -22,7 +23,7 @@ class SyncUpSummary extends PureComponent {
         const id = activity[AMP_ID];
         const { project_title: title } = activity;
         return (
-          <div key={id}>
+          <div key={id || Utils.stringToId(title)}>
             {id} {title && `(${title})`}
           </div>
         );
