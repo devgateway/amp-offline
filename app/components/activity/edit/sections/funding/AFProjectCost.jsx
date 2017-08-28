@@ -29,7 +29,6 @@ export default class AFProjectCost extends Component {
   }
 
   render() {
-    // TODO: implement number field for 'total_number_of_funding_sources'.
     return (<div className={afStyles.full_width} >
       <Grid className={afStyles.full_width} >
         <Row>
