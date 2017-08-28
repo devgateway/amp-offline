@@ -37,9 +37,9 @@ export default class ProjectList extends Component {
     );
   }
 
-  static IDFormatter(cell, row) {
+  static textFormatter(cell, row, extraData) {
     const cellDisplay = Utils.textTruncate(cell);
-    const tooltip = <Tooltip id={`id-tooltip-${row.id}`}>{cell}</Tooltip>;
+    const tooltip = <Tooltip id={`${extraData}-tooltip-${row.id}`}>{cell}</Tooltip>;
     return (<OverlayTrigger
       placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
   }
@@ -71,25 +71,10 @@ export default class ProjectList extends Component {
       placement="bottom" overlay={tooltip}><span className={classes}>{cellDisplay}</span></OverlayTrigger>);
   }
 
-  static fundingFormatter(cell, row) {
-    const cellDisplay = Utils.textTruncate(cell);
-    const tooltip = <Tooltip id={`funding-tooltip-${row.id}`}>{cell}</Tooltip>;
-    return (<OverlayTrigger
-      placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
-  }
-
-  static ACFormatter(cell, row) {
-    const number = Number(cell);
-    const tooltip = <Tooltip id={`ac-tooltip-${row.id}`}>{number}</Tooltip>;
-    const cellDisplay = Utils.textTruncate(NumberUtils.rawNumberToFormattedString(number), 20);
-    return (<OverlayTrigger
-      placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
-  }
-
-  static ADFormatter(cell, row) {
-    const number = Number(cell);
-    const tooltip = <Tooltip id={`ad-tooltip-${row.id}`}>{number}</Tooltip>;
-    const cellDisplay = Utils.textTruncate(NumberUtils.rawNumberToFormattedString(number), 20);
+  static numberFormatter(cell, row, extraData) {
+    const number = NumberUtils.rawNumberToFormattedString(Number(cell));
+    const tooltip = <Tooltip id={`${extraData}-tooltip-${row.id}`}>{number}</Tooltip>;
+    const cellDisplay = Utils.textTruncate(number, 20);
     return (<OverlayTrigger
       placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
   }
@@ -120,7 +105,7 @@ export default class ProjectList extends Component {
           <TableHeaderColumn
             dataField={AMP_ID} isKey dataAlign="center" dataSort ref={AMP_ID} columnClassName={style.width_8}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}
-            dataFormat={ProjectList.IDFormatter} >
+            dataFormat={ProjectList.textFormatter} formatExtraData={'id'}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
@@ -131,17 +116,17 @@ export default class ProjectList extends Component {
             {translate('Project Title')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField="donor" dataSort columnClassName={style.width_15} dataFormat={ProjectList.fundingFormatter}
-            className={style.thClassName}>{translate('Funding Agency')}
+            dataField="donor" dataSort columnClassName={style.width_15} dataFormat={ProjectList.textFormatter}
+            className={style.thClassName} formatExtraData={'funding'}>{translate('Funding Agency')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualCommitments" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={ProjectList.ACFormatter} columnTitle>
+            dataFormat={ProjectList.numberFormatter} columnTitle formatExtraData={'AC'}>
             {translate('Actual Commitments')}
           </TableHeaderColumn>
           <TableHeaderColumn
             dataField="actualDisbursements" dataSort columnClassName={style.width_15} className={style.thClassName}
-            dataFormat={ProjectList.ADFormatter} columnTitle>
+            dataFormat={ProjectList.numberFormatter} columnTitle formatExtraData={'AD'}>
             {translate('Actual Disbursements')}
           </TableHeaderColumn>
         </BootstrapTable>
