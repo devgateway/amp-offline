@@ -4,7 +4,8 @@ import translate from '../../utils/translate';
 import { createFormattedDateTime } from '../../utils/DateUtils';
 import {
   SYNCUP_STATUS_FAIL,
-  SYNCUP_TYPE_ACTIVITIES_PULL
+  SYNCUP_TYPE_ACTIVITIES_PULL,
+  SYNCUP_TYPE_ACTIVITIES_PUSH
 } from '../../utils/Constants';
 import ErrorMessage from '../common/ErrorMessage';
 import styles from './SyncUpSummary.css';
@@ -30,7 +31,10 @@ class SyncUpSummary extends PureComponent {
     const { data } = this.props;
     if (!data) return null;
     const { dateStarted, status, errors } = data;
-    const details = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).details;
+    const pulled = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).details;
+    const pushed = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).details;
+    const synced = (pulled.synced || []).concat(pushed.synced || []);
+    const unsynced = (pulled.unsynced || []).concat(pushed.unsynced || []);
     return (
       <div className="container">
         <div className="row">
@@ -65,7 +69,7 @@ class SyncUpSummary extends PureComponent {
             {translate('Synced projects')}
           </div>
           <div className="col-md-8">
-            {this.constructor.listActivities(details.synced)}
+            {this.constructor.listActivities(synced)}
           </div>
         </div>
         <div className="row">
@@ -73,7 +77,7 @@ class SyncUpSummary extends PureComponent {
             {translate('Failed projects')}
           </div>
           <div className="col-md-8">
-            {this.constructor.listActivities(details.unsynced)}
+            {this.constructor.listActivities(unsynced)}
           </div>
         </div>
       </div>
