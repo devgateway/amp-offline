@@ -11,8 +11,7 @@ import styles from './SyncUpSummary.css';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
-    data: PropTypes.object,
-    getHistory: PropTypes.func.isRequired
+    data: PropTypes.object
   };
 
   static listActivities(activities) {
@@ -25,11 +24,6 @@ class SyncUpSummary extends PureComponent {
     } else {
       return translate('None');
     }
-  }
-
-  componentDidMount() {
-    const { data, getHistory } = this.props;
-    if (!data) getHistory();
   }
 
   render() {

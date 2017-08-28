@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import SyncUpSummary from '../components/syncUp/SyncUpSummary';
-import { loadSyncUpHistory } from '../actions/SyncUpAction';
 
 function mapStateToProps(state, ownProps) {
   const { historyData } = state.syncUpReducer;
@@ -18,12 +17,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    getHistory: () => {
-      dispatch(loadSyncUpHistory());
-    }
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SyncUpSummary);
+export default connect(mapStateToProps)(SyncUpSummary);

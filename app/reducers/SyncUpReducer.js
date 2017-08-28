@@ -6,7 +6,8 @@ import {
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED,
   STATE_SYNCUP_FORCED,
-  STATE_SYNCUP_DISMISSED
+  STATE_SYNCUP_DISMISSED,
+  STATE_SYNCUP_LOG_LOADED
 } from '../actions/SyncUpAction';
 import { STATE_LOGOUT_DISMISS_TO_SYNC } from '../actions/LoginAction';
 import LoggerManager from '../modules/util/LoggerManager';
@@ -76,6 +77,8 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       return { ...state, syncUpRejected: true };
     case STATE_LOGOUT_DISMISS_TO_SYNC:
       return { ...state, syncUpAccepted: true };
+    case STATE_SYNCUP_LOG_LOADED:
+      return { ...state, historyData: state.historyData.concat(action.actionData) };
     default:
       return state;
   }
