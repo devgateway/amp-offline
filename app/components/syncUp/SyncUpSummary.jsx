@@ -14,7 +14,8 @@ import Utils from '../../utils/Utils';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
-    data: PropTypes.object
+    data: PropTypes.object,
+    errorMessage: PropTypes.string
   };
 
   static listActivities(activities) {
@@ -34,7 +35,7 @@ class SyncUpSummary extends PureComponent {
     }
   }
 
-  static report ({
+  static report({
     status,
     errors,
     dateStarted,
@@ -88,7 +89,7 @@ class SyncUpSummary extends PureComponent {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   render() {

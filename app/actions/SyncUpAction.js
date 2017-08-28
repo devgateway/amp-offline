@@ -6,7 +6,6 @@ import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import SyncUpHelper from '../modules/helpers/SyncUpHelper';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
