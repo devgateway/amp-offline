@@ -48,16 +48,16 @@ export default class AFFundingDonorSection extends Component {
       <div className={styles.header} >
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} /> |
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} /> |
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} /> |
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} /> |
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
           className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
