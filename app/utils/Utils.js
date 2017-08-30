@@ -120,9 +120,9 @@ const Utils = {
     return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
   },
 
-  textTruncate(str, length, ending) {
+  textTruncate(str, length, ending = '...') {
     if (length === null) {
-      length = 58;
+      length = 50;
     }
     if (str.length > length) {
       return str.substring(0, length) + ending;
