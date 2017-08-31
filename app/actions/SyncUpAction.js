@@ -34,13 +34,11 @@ export function loadSyncUpHistory() {
 
 export function checkSyncConnection() {
   LoggerManager.log('checkSyncConnection');
-  return (dispatch, ownProps) => {
-    if (ownProps().ampConnectionStatusReducer.status.isAmpAvailable) {
-      this.startSyncUp();
-    } else {
-      dispatch(syncConnectionUnavailable());
-    }
-  };
+  if (store.getState().ampConnectionStatusReducer.status.isAmpAvailable) {
+    startSyncUp();
+  } else {
+    store.dispatch(syncConnectionUnavailable());
+  }
 }
 
 export function startSyncUp(historyData) {

@@ -19,6 +19,7 @@ import {
 } from '../../utils/constants/ErrorConstants';
 import { STATE_LOGOUT_DISMISS_TO_SYNC, STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import {
+  checkSyncConnection,
   dismissSyncAndChooseWorkspace,
   loadSyncUpHistory,
   STATE_SYNCUP_DISMISSED
@@ -39,7 +40,6 @@ class SyncUp extends Component {
   };
 
   static propTypes = {
-    checkSyncConnection: PropTypes.func.isRequired,
     syncUpReducer: PropTypes.object.isRequired,
     currentWorkspace: PropTypes.object,
     onSyncConfirmationAlert: PropTypes.func.isRequired,
@@ -123,7 +123,7 @@ class SyncUp extends Component {
 
   render() {
     LoggerManager.log('render');
-    const { checkSyncConnection, syncUpReducer } = this.props;
+    const { syncUpReducer } = this.props;
     const { loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (
       <div className={styles.container}>
