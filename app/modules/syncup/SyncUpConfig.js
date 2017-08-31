@@ -10,6 +10,7 @@ import AmpAssetManager from './syncupManagers/AmpAssetManager';
 import ActivityFieldsSyncUpManager from './syncupManagers/ActivityFieldsSyncUpManager';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';
+import ContactsPullSyncUpManager from './syncupManagers/ContactsPullSyncUpManager';
 import ContactFieldsSyncUpManager from './syncupManagers/ContactFieldsSyncUpManager';
 import ContactPossibleValuesSyncUpManager from './syncupManagers/ContactPossibleValuesSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
@@ -38,7 +39,7 @@ export default class SyncUpConfig {
   static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
-    ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager,
+    ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 

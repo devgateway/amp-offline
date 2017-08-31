@@ -92,6 +92,12 @@ const ContactHelper = {
     LoggerManager.log('deleteContactByInternalId');
     const filterRule = Utils.toMap(INTERNAL_ID, internalId);
     return DatabaseManager.removeAll(filterRule, COLLECTION_CONTACTS);
+  },
+
+  removeAllByIds(ids) {
+    LoggerManager.log('removeAllByIds');
+    const idsFilter = { id: { $in: ids } };
+    return DatabaseManager.removeAll(idsFilter, COLLECTION_CONTACTS);
   }
 };
 

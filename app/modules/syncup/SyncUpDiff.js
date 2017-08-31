@@ -6,6 +6,7 @@ import {
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
+  SYNCUP_TYPE_CONTACTS_PULL,
   SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FEATURE_MANAGER,
   SYNCUP_TYPE_GS,
@@ -60,6 +61,7 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_USERS:
       case SYNCUP_TYPE_WORKSPACE_MEMBERS:
       case SYNCUP_TYPE_ACTIVITIES_PULL:
+      case SYNCUP_TYPE_CONTACTS_PULL:
         diff.removed = (this._syncUpDiff[type] ? (this._syncUpDiff[type].removed || []) : []).concat(diff.removed);
         diff.removed = Array.from(new Set(diff.removed)); // get unique entries; keep array as it is expected everywhere
         diff.saved = (this._syncUpDiff[type] ? (this._syncUpDiff[type].saved || []) : []).concat(diff.saved);
