@@ -118,14 +118,6 @@ const Utils = {
 
   capitalize(text: string) {
     return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
-  },
-
-  textTruncate(str, length, ending = '...') {
-    if (str.length > length) {
-      return str.substring(0, (length - ending.length)) + ending;
-    } else {
-      return str;
-    }
   }
 
 };

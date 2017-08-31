@@ -159,11 +159,6 @@ export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
 
-export const DESKTOP_COLUMN_RATIOS = { id: 0.01, title: 0.06, funding: 0.04, AC: 0.02, AD: 0.02 };
-
-export const DEFAULT_DESKTOP_WIDTH = 1000;
-
-
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
 }
