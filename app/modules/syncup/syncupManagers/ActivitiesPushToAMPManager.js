@@ -4,7 +4,7 @@ import * as ActivityHelper from '../../helpers/ActivityHelper';
 import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
-import { SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
+import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
 import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorConstants';
@@ -44,6 +44,8 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @return {Promise}
    */
   doSyncUp(diff) {
+    this._details[SYNCUP_DETAILS_SYNCED] = [];
+    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
     return this._pushActivitiesToAMP(diff);
   }
 
@@ -133,7 +135,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    */
   _pushActivities(activities) {
     LoggerManager.log('_pushActivities');
-    this.diff = activities.map(activity => activity[AC.AMP_ID] || activity.id);
+    this.diff = activities.map(activity => activity.id);
     // executing push one by one for now and sequentially to avoid AMP / client overload
     if (!activities) {
       return Promise.resolve();
@@ -179,10 +181,11 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
     if (pushResult) {
-      this.pushed.add(activity[AC.AMP_ID] || activity.id);
+      this.pushed.add(activity.id);
     }
     // save the rejection immediately to allow a quicker syncup cancellation
     const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
+    this._updateDetails({ activity, pushResult, errorData });
     if (errorData) {
       return new Promise((resolve, reject) => this._getRejectedId(activity)
         .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData))
@@ -190,6 +193,14 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         .catch(reject));
     }
     return Promise.resolve();
+  }
+
+  _updateDetails({ activity, pushResult, errorData }) {
+    const detailType = errorData ? SYNCUP_DETAILS_UNSYNCED : SYNCUP_DETAILS_SYNCED;
+    const detail = Utils.toMap(AC.PROJECT_TITLE, activity[AC.PROJECT_TITLE]);
+    detail[AC.AMP_ID] = (pushResult && pushResult[AC.AMP_ID]) || activity[AC.AMP_ID];
+    detail.id = (pushResult && pushResult[AC.INTERNAL_ID]) || activity.id;
+    this._details[detailType].push(detail);
   }
 
   _getRejectedId(activity) {

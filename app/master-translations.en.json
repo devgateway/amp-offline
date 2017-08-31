@@ -223,9 +223,16 @@
   "Add Program": "Add Program",
   "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
   "Sync": "Sync",
+  "Status": "Status",
+  "Started": "Started",
+  "Finished": "Finished",
+  "Errors": "Errors",
   "Amounts in Units": "Amounts in Units",
   "Amounts in Thousands (000)": "Amounts in Thousands (000)",
   "Amounts in Millions (000 000)": "Amounts in Millions (000 000)",
   "Amounts in Billions (000 000 000)": "Amounts in Billions (000 000 000)",
-  "unsynced text": "Italic text of any color"
+  "unsynced text": "Italic text of any color",
+  "Synced projects": "Synced projects",
+  "Failed projects": "Failed projects",
+  "None": "None"
 }
