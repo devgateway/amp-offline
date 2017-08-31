@@ -24,6 +24,16 @@ class AFFunding extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
+    this.state = {
+      fundingList: []
+    };
+    this.handleDonorSelect = this.handleDonorSelect.bind(this);
+  }
+
+  componentWillReceiveProps() {
+    this.state = {
+      fundingList: this.props.activity.fundings
+    };
   }
 
   _getAcronym(sourceRole) {
@@ -43,11 +53,31 @@ class AFFunding extends Component {
     }
   }
 
+  handleDonorSelect(value) {
+    LoggerManager.log('handleDonorSelect');
+    // TODO: ver si tengo q sacar el nuevo org de la tabla.
+    const fundingItem = {};
+    fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
+      id: value._id,
+      value: value._value,
+      extra_info: value.extra_info,
+      'translated-value': value['translated-value']
+    };
+    // TODO: hardcoded.
+    fundingItem[AC.SOURCE_ROLE] = { id: 1, value: 'Donor' };
+    fundingItem[AC.FUNDING_DETAILS] = [];
+    fundingItem[AC.GROUP_VERSIONED_FUNDING] = Math.random();
+    fundingItem[AC.AMP_FUNDING_ID] = Math.random();
+    const newFundingList = this.state.fundingList;
+    newFundingList.push(fundingItem);
+    this.setState({ fundingList: newFundingList });
+  }
+
   addFundingTabs() {
-    if (this.props.activity.fundings) {
+    if (this.state.fundingList) {
       // Group fundings for the same funding organization and role.
       const groups = [];
-      this.props.activity.fundings.forEach(f => {
+      this.state.fundingList.forEach(f => {
         if (!groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
             && i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id))) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
@@ -64,7 +94,7 @@ class AFFunding extends Component {
           eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
           title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
           <AFFundingDonorSection
-            fundings={this.props.activity.fundings}
+            fundings={this.state.fundingList}
             organization={funding[AC.FUNDING_DONOR_ORG_ID]}
             role={funding[AC.SOURCE_ROLE]}
           />
@@ -86,7 +116,7 @@ class AFFunding extends Component {
         <Tab eventKey={0} title="Overview" key={0}>{this.generateOverviewTabContent()}</Tab>
         {this.addFundingTabs()}
       </Tabs>
-      <AFFundingOrganizationSelect activity={this.props.activity} />
+      <AFFundingOrganizationSelect activity={this.props.activity} handleDonorSelect={this.handleDonorSelect} />
     </div>);
   }
 }
