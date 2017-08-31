@@ -1,6 +1,7 @@
 /* eslint react/jsx-space-before-closing: 0 */
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/no-did-mount-set-state: 0 */
+/* eslint react/no-did-update-set-state: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -48,7 +49,7 @@ export default class ProjectList extends Component {
     const cellDisplay = Utils.textTruncate(cell, columnWidth);
     const tooltip = <Tooltip id={`${extraData.label}-tooltip-${row.id}`}>{cell}</Tooltip>;
     return (<OverlayTrigger
-      placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
+      placement="bottom" overlay={tooltip}><span className={extraData.classes}>{cellDisplay}</span></OverlayTrigger>);
   }
 
   static projectNameFormatter(cell, row, extraData) {
@@ -72,20 +73,14 @@ export default class ProjectList extends Component {
       nameStyles.push(style.rejected);
     }
     const classes = classNames(nameStyles.toString()).replace(',', ' ');
-    const columnWidth = Math.round(DESKTOP_COLUMN_RATIOS[extraData.label] * extraData.offset);
-    const cellDisplay = `${row.new ? '* ' : ''}${Utils.textTruncate(cell, columnWidth)}`;
-    const tooltip = <Tooltip id={`title-tooltip-${row.id}`}>{cell}</Tooltip>;
-    return (<OverlayTrigger
-      placement="bottom" overlay={tooltip}><span className={classes}>{cellDisplay}</span></OverlayTrigger>);
+    const cellDisplay = `${row.new ? '* ' : ''}${cell}`;
+    extraData.classes = classes;
+    return ProjectList.textFormatter(cellDisplay, row, extraData);
   }
 
   static numberFormatter(cell, row, extraData) {
     const number = NumberUtils.rawNumberToFormattedString(Number(cell));
-    const columnWidth = Math.round(DESKTOP_COLUMN_RATIOS[extraData.label] * extraData.offset);
-    const cellDisplay = Utils.textTruncate(number, columnWidth);
-    const tooltip = <Tooltip id={`${extraData.label}-tooltip-${row.id}`}>{number}</Tooltip>;
-    return (<OverlayTrigger
-      placement="bottom" overlay={tooltip}><span>{cellDisplay}</span></OverlayTrigger>);
+    return ProjectList.textFormatter(number, row, extraData);
   }
 
   constructor(props) {
@@ -96,6 +91,13 @@ export default class ProjectList extends Component {
   componentDidMount() {
     const width = this.tableWidth.offsetWidth;
     this.setState({ tableOffset: width });
+  }
+
+  componentDidUpdate() {
+    const width = this.tableWidth.offsetWidth;
+    if (width !== this.state.tableOffset) {
+      this.setState({ tableOffset: width });
+    }
   }
 
   handlerClickCleanFiltered() {
