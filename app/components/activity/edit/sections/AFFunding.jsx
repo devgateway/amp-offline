@@ -30,7 +30,7 @@ class AFFunding extends Component {
     this.handleDonorSelect = this.handleDonorSelect.bind(this);
   }
 
-  componentWillReceiveProps() {
+  componentWillMount() {
     this.state = {
       fundingList: this.props.activity.fundings
     };
@@ -63,11 +63,11 @@ class AFFunding extends Component {
       extra_info: value.extra_info,
       'translated-value': value['translated-value']
     };
-    // TODO: hardcoded.
+    // TODO: remove everything hardcoded.
     fundingItem[AC.SOURCE_ROLE] = { id: 1, value: 'Donor' };
     fundingItem[AC.FUNDING_DETAILS] = [];
-    fundingItem[AC.GROUP_VERSIONED_FUNDING] = Math.random();
-    fundingItem[AC.AMP_FUNDING_ID] = Math.random();
+    fundingItem[AC.GROUP_VERSIONED_FUNDING] = Math.trunc(Math.random() * 10000);
+    fundingItem[AC.AMP_FUNDING_ID] = Math.trunc(Math.random() * 10000);
     const newFundingList = this.state.fundingList;
     newFundingList.push(fundingItem);
     this.setState({ fundingList: newFundingList });
