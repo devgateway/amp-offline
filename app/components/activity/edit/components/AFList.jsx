@@ -125,8 +125,6 @@ export default class AFList extends Component {
   }
 
   columnFormatter(editable, cell) {
-    // TODO we use TableHeaderColumn.columnClassName to do the same thing.
-    // If won't be needed for anything else, then this method can be removed.
     if (editable) {
       return (<span className={styles.editable} >{cell}</span>);
     }
