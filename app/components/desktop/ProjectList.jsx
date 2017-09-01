@@ -88,7 +88,7 @@ export default class ProjectList extends Component {
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
     const pagination = paginationOptions.usePagination;
     return (
-      <div className={style.container} ref={ref => (this.tableWidth = ref)}>
+      <div className={style.container}>
         <a role="link" onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
           {translate('Reset All')}
         </a>
