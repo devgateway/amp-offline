@@ -47,7 +47,7 @@ export default class AFFundingDonorSection extends Component {
     fundingItem[AC.FUNDING_DONOR_ORG_ID] = this.props.organization;
     fundingItem[AC.SOURCE_ROLE] = this.props.role;
     fundingItem[AC.FUNDING_DETAILS] = [];
-    fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom() * -1;
+    fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
     const newFundingList = this.state.fundingList;
     newFundingList.push(fundingItem);
     this.setState({ fundingList: newFundingList });

@@ -21,7 +21,7 @@ const Utils = {
   },
 
   numberRandom() {
-    return (Math.random() * 1000000).toString().substring(0, 6);
+    return Math.trunc((Math.random() * 1000000));
   },
 
   hexBufferToString(buffer) {
