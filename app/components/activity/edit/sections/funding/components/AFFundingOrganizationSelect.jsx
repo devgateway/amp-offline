@@ -2,7 +2,6 @@
 import React, { Component, PropTypes } from 'react';
 import LoggerManager from '../../../../../../modules/util/LoggerManager';
 import AFField from '../../../components/AFField';
-import * as AC from '../../../../../../utils/constants/ActivityConstants';
 
 /**
  * Funding Section
@@ -28,8 +27,6 @@ export default class AFFundingOrganizationSelect extends Component {
   render() {
     return (<div>
       <div>
-        Esto funca relativamente bien: deja lo elegido, devuelve ese solo y me lo agrega a la lista de donor
-        organizations.
         <AFField
           parent={this.props.activity} fieldPath={'donor_organization~organization'}
           listParams={{ 'no-table': true }} onAfterUpdate={this._handleDonorSelect.bind(this)} />

@@ -10,12 +10,18 @@ import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
+import Utils from '../../../../utils/Utils';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 
 /**
  * Funding Section
  * @author Nadejda Mandrescu
  */
 class AFFunding extends Component {
+
+  static contextTypes = {
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+  };
 
   static propTypes = {
     activity: PropTypes.object.isRequired
@@ -55,22 +61,25 @@ class AFFunding extends Component {
 
   handleDonorSelect(value) {
     LoggerManager.log('handleDonorSelect');
-    // TODO: ver si tengo q sacar el nuevo org de la tabla.
-    const fundingItem = {};
-    fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
-      id: value._id,
-      value: value._value,
-      extra_info: value.extra_info,
-      'translated-value': value['translated-value']
-    };
-    // TODO: remove everything hardcoded.
-    fundingItem[AC.SOURCE_ROLE] = { id: 1, value: 'Donor' };
-    fundingItem[AC.FUNDING_DETAILS] = [];
-    fundingItem[AC.GROUP_VERSIONED_FUNDING] = Math.trunc(Math.random() * 10000);
-    fundingItem[AC.AMP_FUNDING_ID] = Math.trunc(Math.random() * 10000);
-    const newFundingList = this.state.fundingList;
-    newFundingList.push(fundingItem);
-    this.setState({ fundingList: newFundingList });
+    if (value) {
+      const fundingItem = {};
+      fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
+        id: value._id,
+        value: value._value,
+        extra_info: value.extra_info,
+        'translated-value': value['translated-value']
+      };
+      // Find the 'Donor' org type.
+      const donorList = this.context.activityFieldsManager.possibleValuesMap[`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`];
+      const donorOrg = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
+      fundingItem[AC.SOURCE_ROLE] = donorOrg;
+      fundingItem[AC.FUNDING_DETAILS] = [];
+      fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
+      fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
+      const newFundingList = this.state.fundingList;
+      newFundingList.push(fundingItem);
+      this.setState({ fundingList: newFundingList });
+    }
   }
 
   addFundingTabs() {
