@@ -182,7 +182,7 @@ const syncConfirmationAlert = (syncUpReducer) => {
   }, translate('Cancel'));
   const proceedWithWorkspace = new FollowUp({
     type: STATE_SYNCUP_DISMISSED
-  }, translate('Cancel'));
+  }, translate('Ignore'));
   const proceedWithSync = new FollowUp({
     type: STATE_LOGOUT_DISMISS_TO_SYNC
   }, translate('Sync'));
