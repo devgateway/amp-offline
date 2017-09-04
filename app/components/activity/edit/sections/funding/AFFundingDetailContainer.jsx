@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { Panel, Button } from 'react-bootstrap';
+import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
@@ -31,9 +31,11 @@ export default class AFFundingDetailContainer extends Component {
   }
 
   render() {
-    const fundingDetails = this.props.funding[AC.FUNDING_DETAILS]
-      .filter(fd => (fd[AC.TRANSACTION_TYPE].value === this.props.type));
-    if (fundingDetails.length > 0) {
+    const transactionTypes = Object.values(this.context.activityFieldsManager
+      .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`]);
+    if (transactionTypes.find(item => (item.value === this.props.type))) {
+      const fundingDetails = this.props.funding[AC.FUNDING_DETAILS]
+        .filter(fd => (fd[AC.TRANSACTION_TYPE].value === this.props.type));
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
@@ -53,17 +55,20 @@ export default class AFFundingDetailContainer extends Component {
         default:
           break;
       }
-      return (<div>
-        <Panel
-          header={header} collapsible expanded={this.state.openFDC}
-          onSelect={() => {
-            this.setState({ openFDC: !this.state.openFDC });
-          }} >
-          {fundingDetails.map((fd, i) => (
-            <AFFundingDetailItem fundingDetail={fd} type={this.props.type} key={`${header}_${i}`} />))}
-          <Button bsStyle="primary" >{button}</Button>
-        </Panel>
-      </div>);
+      if (fundingDetails.length > 0) {
+        return (<div>
+          <Panel
+            header={header} collapsible expanded={this.state.openFDC}
+            onSelect={() => {
+              this.setState({ openFDC: !this.state.openFDC });
+            }}>
+            {fundingDetails.map((fd, i) => (
+              <AFFundingDetailItem fundingDetail={fd} type={this.props.type} key={`${header}_${i}`} />))}
+            <Button bsStyle="primary">{button}</Button>
+          </Panel>
+        </div>);
+      }
+      return <Button bsStyle="primary">{button}</Button>;
     } else {
       return null;
     }
