@@ -221,6 +221,7 @@
   "Search Primary Sectors": "Search Primary Sectors",
   "Search Secondary Sectors": "Search Secondary Sectors",
   "Add Program": "Add Program",
+  "Funding Organization Id": "Funding Organization Id",
   "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
   "Sync": "Sync",
   "Status": "Status",
@@ -234,5 +235,7 @@
   "unsynced text": "Italic text of any color",
   "Synced projects": "Synced projects",
   "Failed projects": "Failed projects",
-  "None": "None"
+  "None": "None",
+  "New Funding Item": "New Funding Item",
+  "Ignore": "Ignore"
 }
