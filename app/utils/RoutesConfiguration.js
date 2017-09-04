@@ -117,7 +117,7 @@ const routesConfiguration = [{
   url: CONTACT_PUSH_URL,
   method: 'POST',
   requiredAuth: true
-},{
+}, {
   url: CONTACT_PUSH_URL,
   method: 'PUT',
   requiredAuth: true

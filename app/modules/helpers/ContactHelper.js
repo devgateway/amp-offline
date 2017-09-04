@@ -52,7 +52,7 @@ const ContactHelper = {
   },
 
   isNewContact(contact) {
-    return contact.id && contact.id.startsWith(CLIENT_CHANGE_ID_PREFIX);
+    return contact.id && `${contact.id}`.startsWith(CLIENT_CHANGE_ID_PREFIX);
   },
 
   cleanupLocalData(contact) {
