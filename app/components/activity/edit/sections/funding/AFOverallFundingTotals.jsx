@@ -7,11 +7,17 @@ import LoggerManager from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
+import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 
 /**
  * @author Gabriel Inchauspe
  */
 export default class AFOverallFundingTotals extends Component {
+
+  static contextTypes = {
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
+    currentWorkspaceSettings: PropTypes.object.isRequired
+  };
 
   static propTypes = {
     activity: PropTypes.object.isRequired
@@ -75,18 +81,18 @@ export default class AFOverallFundingTotals extends Component {
     return f1String > f2String ? 1 : -1;
   }
 
-  /* TODO: Once https://github.com/devgateway/amp-client/pull/151 is merged
-   use _buildTotals() from APFundingTotalsSection.jsx */
   _buildGroups(fundings) {
     const groups = [];
     fundings.forEach((item) => {
       item[AC.FUNDING_DETAILS].forEach(item2 => {
+        const amount = this.context.currencyRatesManager
+          .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency);
         const auxFd = {
           adjType: item2[AC.ADJUSTMENT_TYPE],
           trnType: item2[AC.TRANSACTION_TYPE],
           key: item2.id,
-          currency: item2[AC.CURRENCY], // TODO: do currency conversion.
-          amount: item2[AC.TRANSACTION_AMOUNT]
+          currency: this.context.currentWorkspaceSettings.currency,
+          amount
         };
         const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id);
         if (!group) {
@@ -109,7 +115,7 @@ export default class AFOverallFundingTotals extends Component {
     groups.sort(this._compareFundings).forEach((item) => (
       data.push({
         key: item.key,
-        currency: item.currency.value,
+        currency: item.currency,
         amount: NumberUtils.rawNumberToFormattedString(item.amount),
         type: translate(`Total ${item.adjType.value} ${item.trnType.value}`)
       })
