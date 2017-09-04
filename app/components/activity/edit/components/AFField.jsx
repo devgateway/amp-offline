@@ -49,7 +49,7 @@ class AFField extends Component {
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
     onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    listParams: PropTypes.object
+    extraParams: PropTypes.object
   };
 
   static defaultProps = {
@@ -189,7 +189,7 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} listParams={this.props.listParams} />);
+      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams} />);
   }
 
   _getOptions(fieldPath) {

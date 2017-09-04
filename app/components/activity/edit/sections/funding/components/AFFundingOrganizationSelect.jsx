@@ -29,7 +29,7 @@ export default class AFFundingOrganizationSelect extends Component {
       <div>
         <AFField
           parent={this.props.activity} fieldPath={'donor_organization~organization'}
-          listParams={{ 'no-table': true }} onAfterUpdate={this._handleDonorSelect.bind(this)} />
+          extraParams={{ 'no-table': true }} onAfterUpdate={this._handleDonorSelect.bind(this)} />
       </div>
     </div>);
   }
