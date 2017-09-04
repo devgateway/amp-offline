@@ -51,6 +51,20 @@ const ContactHelper = {
     return contact;
   },
 
+  isNewContact(contact) {
+    return contact.id && contact.id.startsWith(CLIENT_CHANGE_ID_PREFIX);
+  },
+
+  cleanupLocalData(contact) {
+    const cleanContact = { ...contact };
+    if (ContactHelper.isNewContact(contact)) {
+      delete cleanContact.id;
+    }
+    delete cleanContact[CLIENT_CHANGE_ID];
+    delete cleanContact._id;
+    return cleanContact;
+  },
+
   /**
    * Save the contact
    * @param contact

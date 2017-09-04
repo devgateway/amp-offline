@@ -11,6 +11,7 @@ import ActivityFieldsSyncUpManager from './syncupManagers/ActivityFieldsSyncUpMa
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';
 import ContactsPullSyncUpManager from './syncupManagers/ContactsPullSyncUpManager';
+import ContactsPushSyncUpManager from './syncupManagers/ContactsPushSyncUpManager';
 import ContactFieldsSyncUpManager from './syncupManagers/ContactFieldsSyncUpManager';
 import ContactPossibleValuesSyncUpManager from './syncupManagers/ContactPossibleValuesSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
@@ -23,7 +24,7 @@ import {
   SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_CONTACT_FIELDS,
-  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
+  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES, SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
@@ -40,6 +41,7 @@ export default class SyncUpConfig {
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
+    ContactsPushSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
@@ -48,6 +50,12 @@ export default class SyncUpConfig {
     // Note: current user won't be even able to start the sync if he/she has no right
     dependencies[SYNCUP_TYPE_WORKSPACE_SETTINGS] = Utils.toMap(SYNCUP_TYPE_WORKSPACES, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH] = Utils.toMap(SYNCUP_TYPE_USERS, SS.STATES_SUCCESS);
+    /*
+    We need to push contacts before activities, so that new contacts are registered on AMP and links in activities
+    are updated to the AMP ids. We don't need it to finish successfully, since we may have such contacts in just a few
+    activities or not at all. We will fail only dependent activities if their new contact push doesn't work.
+     */
+    dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_CONTACTS_PUSH] = SS.STATES_FINISH;
     // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
     dependencies[SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] =

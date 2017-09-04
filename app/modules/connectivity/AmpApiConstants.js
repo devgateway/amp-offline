@@ -21,6 +21,7 @@ export const ACTIVITY_SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
 export const ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
 export const ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
 export const CONTACT_PULL_URL = '/contact';
+export const CONTACT_PUSH_URL = '/contact';
 export const CONTACT_SINGLE_FIELDS_TREE_URL = '/contact/fields';
 export const CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL = '/contact/ws-member-fields';
 export const CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS = '/contact/field/values';

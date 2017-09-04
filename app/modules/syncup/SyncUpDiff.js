@@ -7,6 +7,7 @@ import {
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
   SYNCUP_TYPE_CONTACTS_PULL,
+  SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FEATURE_MANAGER,
   SYNCUP_TYPE_GS,
@@ -27,7 +28,6 @@ import LoggerManager from '../../modules/util/LoggerManager';
  */
 export default class SyncUpDiff {
   constructor(syncUpDiff) {
-    LoggerManager.log('constructor');
     this._syncUpDiff = syncUpDiff || {};
   }
 
@@ -56,6 +56,7 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_CONTACT_FIELDS:
       case SYNCUP_TYPE_FEATURE_MANAGER:
       case SYNCUP_TYPE_ACTIVITIES_PUSH:
+      case SYNCUP_TYPE_CONTACTS_PUSH:
         diff = diff || this._syncUpDiff[type] || [];
         break;
       case SYNCUP_TYPE_USERS:
