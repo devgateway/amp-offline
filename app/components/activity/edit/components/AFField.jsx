@@ -60,7 +60,7 @@ class AFField extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this.fieldExists = false;
   }
 

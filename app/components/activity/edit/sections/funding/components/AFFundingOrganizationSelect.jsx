@@ -16,11 +16,11 @@ export default class AFFundingOrganizationSelect extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
   }
 
   _handleDonorSelect(value) {
-    LoggerManager.log('_handleDonorSelect');
+    LoggerManager.debug('_handleDonorSelect');
     this.props.handleDonorSelect(value);
   }
 
