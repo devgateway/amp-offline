@@ -55,20 +55,17 @@ export default class AFFundingDetailContainer extends Component {
         default:
           break;
       }
-      if (fundingDetails.length > 0) {
-        return (<div>
-          <Panel
-            header={header} collapsible expanded={this.state.openFDC}
-            onSelect={() => {
-              this.setState({ openFDC: !this.state.openFDC });
-            }}>
-            {fundingDetails.map((fd, i) => (
-              <AFFundingDetailItem fundingDetail={fd} type={this.props.type} key={`${header}_${i}`} />))}
-            <Button bsStyle="primary">{button}</Button>
-          </Panel>
-        </div>);
-      }
-      return <Button bsStyle="primary">{button}</Button>;
+      return (<div>
+        <Panel
+          header={header} collapsible expanded={this.state.openFDC}
+          onSelect={() => {
+            this.setState({ openFDC: !this.state.openFDC });
+          }}>
+          {fundingDetails.map((fd, i) => (
+            <AFFundingDetailItem fundingDetail={fd} type={this.props.type} key={`${header}_${i}`} />))}
+          <Button bsStyle="primary">{button}</Button>
+        </Panel>
+      </div>);
     } else {
       return null;
     }
