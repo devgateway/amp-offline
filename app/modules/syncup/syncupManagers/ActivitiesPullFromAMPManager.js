@@ -40,6 +40,8 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     // TODO update this once AMPOFFLINE-319 is done
     this.resultStack = [];
     this.requestsToProcess = 0;
+    this._details[SYNCUP_DETAILS_SYNCED] = [];
+    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
     this._onPullError = this._onPullError.bind(this);
     this._processResult = this._processResult.bind(this);
     this._waitWhile = this._waitWhile.bind(this);
@@ -62,8 +64,6 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
   doSyncUp({ saved, removed }) {
     this.diff = { saved, removed };
     this.pulled = new Set();
-    this._details[SYNCUP_DETAILS_SYNCED] = [];
-    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
     this.syncStartedAt = new Date();
     return this._pullActivitiesFromAMP();
   }
@@ -87,8 +87,10 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
       synced.push(...prevSynced.filter(detail => !syncedAmpIds.has(detail[AC.AMP_ID])));
     }
     const merged = Utils.toMap(SYNCUP_DETAILS_SYNCED, synced);
-    // only the latest unsyced are relevant, since those from the previous attempt were retried this time
-    merged[SYNCUP_DETAILS_UNSYNCED] = this._details[SYNCUP_DETAILS_UNSYNCED];
+    /* If the current sync didn't even start (e.g. connection interruption or canceled before 2nd run), then keep
+    previous result, otherwise only the latest unsyced are relevant, since those from the previous attempt were retried
+    this time */
+    merged[SYNCUP_DETAILS_UNSYNCED] = (this.diff ? this._details : previousDetails)[SYNCUP_DETAILS_UNSYNCED];
     return merged;
   }
 
