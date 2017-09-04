@@ -40,7 +40,9 @@ export default class AFFundingContainer extends Component {
       .possibleValuesMap[`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.TRANSACTION_TYPE]}`];
     const trnType = Object.values(trnTypeList).find(item => item.value === type);
     fundingDetailItem[AC.TRANSACTION_TYPE] = trnType;
-
+    fundingDetailItem[AC.CURRENCY] = {};
+    fundingDetailItem[AC.TRANSACTION_AMOUNT] = 0;
+    fundingDetailItem[AC.ADJUSTMENT_TYPE] = {};
     const newFunding = this.state.funding;
     if (newFunding[AC.FUNDING_DETAILS] === undefined) {
       newFunding[AC.FUNDING_DETAILS] = [];
