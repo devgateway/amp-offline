@@ -29,11 +29,12 @@ export default class AFFundingContainer extends Component {
     this.state = {
       funding: this.props.funding
     };
-    this._addNewTransactionItem = this._addNewTransactionItem.bind(this);
+    this._addTransactionItem = this._addTransactionItem.bind(this);
+    this._removeTransactionItem = this._removeTransactionItem.bind(this);
   }
 
-  _addNewTransactionItem(type) {
-    LoggerManager.log('_addNewTransactionItem');
+  _addTransactionItem(type) {
+    LoggerManager.log('_addTransactionItem');
     const fundingDetailItem = {};
     fundingDetailItem[AC.REPORTING_DATE] = new Date().toISOString();
     const trnTypeList = this.context.activityFieldsManager
@@ -48,6 +49,15 @@ export default class AFFundingContainer extends Component {
       newFunding[AC.FUNDING_DETAILS] = [];
     }
     newFunding[AC.FUNDING_DETAILS].push(fundingDetailItem);
+    this.setState({ funding: newFunding });
+  }
+
+  _removeTransactionItem(id) {
+    LoggerManager.log('_removeTransactionItem');
+    // TODO: Display a confirm dialog to delete the item.
+    const newFunding = this.state.funding;
+    const index = this.state.fundingList.findIndex((item) => (item[AC.id] === id));
+    newFunding[AC.FUNDING_DETAILS].splice(index, 1);
     this.setState({ funding: newFunding });
   }
 
@@ -77,13 +87,13 @@ export default class AFFundingContainer extends Component {
         funding={this.state.funding} />
       <AFFundingDetailContainer
         funding={this.state.funding} type={VC.COMMITMENTS}
-        handleNewTransaction={this._addNewTransactionItem} />
+        handleNewTransaction={this._addTransactionItem} handleRemoveTransaction={this._removeTransactionItem} />
       <AFFundingDetailContainer
         funding={this.state.funding} type={VC.DISBURSEMENTS}
-        handleNewTransaction={this._addNewTransactionItem} />
+        handleNewTransaction={this._addTransactionItem} handleRemoveTransaction={this._removeTransactionItem} />
       <AFFundingDetailContainer
         funding={this.state.funding} type={VC.EXPENDITURES}
-        handleNewTransaction={this._addNewTransactionItem} />
+        handleNewTransaction={this._addTransactionItem} handleRemoveTransaction={this._removeTransactionItem} />
     </div>);
   }
 }

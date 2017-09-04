@@ -20,7 +20,8 @@ export default class AFFundingDetailContainer extends Component {
   static propTypes = {
     funding: PropTypes.object.isRequired,
     type: PropTypes.string.isRequired,
-    handleNewTransaction: PropTypes.func.isRequired
+    handleNewTransaction: PropTypes.func.isRequired,
+    handleRemoveTransaction: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -67,7 +68,9 @@ export default class AFFundingDetailContainer extends Component {
             this.setState({ openFDC: !this.state.openFDC });
           }}>
           {fundingDetails.map((fd, i) => (
-            <AFFundingDetailItem fundingDetail={fd} type={this.props.type} key={`${header}_${i}`} />))}
+            <AFFundingDetailItem
+              fundingDetail={fd} type={this.props.type} key={`${header}_${i}`}
+              handleRemoveTransaction={this.props.handleRemoveTransaction} />))}
           <Button bsStyle="primary" onClick={this._addTransactionItem.bind(this)}>{button}</Button>
         </Panel>
       </div>);
