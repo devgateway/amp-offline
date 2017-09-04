@@ -141,6 +141,7 @@ export const FINANCING_ID = 'financing_id';
 export const DISBURSEMENT_ORDER_ID = 'disbursement_order_id';
 export const PLEDGE = 'pledge';
 export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
+export const REPORTING_DATE = 'reporting_date';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =

@@ -26,6 +26,27 @@ export default class AFFundingContainer extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
+    this.state = {
+      funding: this.props.funding
+    };
+    this._addNewTransactionItem = this._addNewTransactionItem.bind(this);
+  }
+
+  _addNewTransactionItem(type) {
+    LoggerManager.log('_addNewTransactionItem');
+    const fundingDetailItem = {};
+    fundingDetailItem[AC.REPORTING_DATE] = new Date().toISOString();
+    const trnTypeList = this.context.activityFieldsManager
+      .possibleValuesMap[`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.TRANSACTION_TYPE]}`];
+    const trnType = Object.values(trnTypeList).find(item => item.value === type);
+    fundingDetailItem[AC.TRANSACTION_TYPE] = trnType;
+
+    const newFunding = this.state.funding;
+    if (newFunding[AC.FUNDING_DETAILS] === undefined) {
+      newFunding[AC.FUNDING_DETAILS] = [];
+    }
+    newFunding[AC.FUNDING_DETAILS].push(fundingDetailItem);
+    this.setState({ funding: newFunding });
   }
 
   render() {
@@ -35,25 +56,32 @@ export default class AFFundingContainer extends Component {
         <Grid>
           <Row>
             <Col md={2} lg={2}>
-              <AFField parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.ACTIVE}`} type={Types.CHECKBOX} />
+              <AFField parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.ACTIVE}`} type={Types.CHECKBOX} />
             </Col>
             <Col md={2} lg={2}>
               <AFField
-                parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_COOPERATION}`}
+                parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_COOPERATION}`}
                 type={Types.CHECKBOX} />
             </Col>
             <Col md={2} lg={2}>
               <AFField
-                parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_PARTNER}`}
+                parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_PARTNER}`}
                 type={Types.CHECKBOX} />
             </Col>
           </Row>
         </Grid>
       </FormGroup>
-      <AFFundingClassificationPanel funding={this.props.funding} />
-      <AFFundingDetailContainer funding={this.props.funding} type={VC.COMMITMENTS} />
-      <AFFundingDetailContainer funding={this.props.funding} type={VC.DISBURSEMENTS} />
-      <AFFundingDetailContainer funding={this.props.funding} type={VC.EXPENDITURES} />
+      <AFFundingClassificationPanel
+        funding={this.state.funding} />
+      <AFFundingDetailContainer
+        funding={this.state.funding} type={VC.COMMITMENTS}
+        handleNewTransaction={this._addNewTransactionItem} />
+      <AFFundingDetailContainer
+        funding={this.state.funding} type={VC.DISBURSEMENTS}
+        handleNewTransaction={this._addNewTransactionItem} />
+      <AFFundingDetailContainer
+        funding={this.state.funding} type={VC.EXPENDITURES}
+        handleNewTransaction={this._addNewTransactionItem} />
     </div>);
   }
 }
