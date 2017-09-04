@@ -29,7 +29,7 @@ class AFFunding extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this.state = {
       fundingList: []
     };
@@ -60,7 +60,7 @@ class AFFunding extends Component {
   }
 
   handleDonorSelect(value) {
-    LoggerManager.log('handleDonorSelect');
+    LoggerManager.debug('handleDonorSelect');
     if (value) {
       const fundingItem = {};
       fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
