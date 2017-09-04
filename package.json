@@ -34,7 +34,8 @@
   "build": {
     "appId": "dg.AmpOffline",
     "mac": {
-      "category": "public.app-category.tools"
+      "category": "public.app-category.tools",
+      "target": "dmg"
     },
     "dmg": {
       "contents": [

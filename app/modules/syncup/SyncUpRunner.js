@@ -264,7 +264,7 @@ export default class SyncUpRunner {
     const status = successful ? SYNCUP_STATUS_SUCCESS : SYNCUP_STATUS_FAIL;
     const syncUpDiff = successful ? null : this._syncUpDiffLeftOver.syncUpDiff;
     const unitsResult = Array.from(this._unitsResult.values());
-    if (!successful && unitsResult.length) {
+    if (unitsResult.length) {
       errors = this._collectErrors(unitsResult, errors);
     }
     return SyncUpRunner.buildResult({
