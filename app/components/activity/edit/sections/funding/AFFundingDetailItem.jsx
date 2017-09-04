@@ -61,7 +61,7 @@ export default class AFFundingDetailItem extends Component {
           </Col>
           <Button
             bsSize="xsmall" bsStyle="danger"
-            onClick={this._removeFundingItem.bind(this, this.props.fundingDetail[AC.id])}>
+            onClick={this.props.handleRemoveTransaction.bind(this, this.props.fundingDetail[AC.id])}>
             <Glyphicon glyph="glyphicon glyphicon-remove" />
           </Button>
         </Row>
