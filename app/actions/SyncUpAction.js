@@ -20,16 +20,14 @@ export const STATE_SYNCUP_LOG_LOADED = 'STATE_SYNCUP_LOG_LOADED';
 
 export function loadSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');
-  return (dispatch) => {
-    if (store.getState().syncUpReducer.loadingSyncHistory === false) {
-      SyncUpManager.getSyncUpHistory().then((data) => (
-        dispatch(syncUpSearchHistoryOk(data))
-      )).catch((err) => (
-        dispatch(syncUpSearchHistoryFailed(err))
-      ));
-    }
-    dispatch(sendingRequest());
-  };
+  if (store.getState().syncUpReducer.loadingSyncHistory === false) {
+    SyncUpManager.getSyncUpHistory().then((data) => (
+      store.dispatch(syncUpSearchHistoryOk(data))
+    )).catch((err) => (
+      store.dispatch(syncUpSearchHistoryFailed(err))
+    ));
+  }
+  store.dispatch(sendingRequest());
 }
 
 export function startSyncUp(historyData) {
