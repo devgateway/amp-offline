@@ -221,13 +221,16 @@
   "Search Primary Sectors": "Search Primary Sectors",
   "Search Secondary Sectors": "Search Secondary Sectors",
   "Add Program": "Add Program",
+  "Funding Organization Id": "Funding Organization Id",
   "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
   "Sync": "Sync",
   "Amounts in Units": "Amounts in Units",
   "Amounts in Thousands (000)": "Amounts in Thousands (000)",
   "Amounts in Millions (000 000)": "Amounts in Millions (000 000)",
   "Amounts in Billions (000 000 000)": "Amounts in Billions (000 000 000)",
+  "unsynced text": "Italic text of any color",
+  "New Funding Item": "New Funding Item",
   "Same as Proposed Start Date": "Same as Proposed Start Date",
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
-  "unsynced text": "Italic text of any color"
+  "Ignore": "Ignore"
 }

@@ -131,3 +131,7 @@ html, body {
 .is-validating.has-feedback:after {
   visibility: hidden;
 }
+
+.form-control-feedback.glyphicon.glyphicon-remove {
+  visibility: hidden;
+}
