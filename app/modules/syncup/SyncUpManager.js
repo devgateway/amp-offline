@@ -98,12 +98,7 @@ export default class SyncUpManager {
         return this._saveMainSyncUpLog(result);
       })
       .then(this._postSyncUp)
-      .then(() => {
-        if (syncResult.errors.length) {
-          return Promise.reject(syncResult.errors.join('. '));
-        }
-        return syncResult;
-      });
+      .then(() => syncResult);
   }
 
   /**
