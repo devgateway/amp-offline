@@ -237,5 +237,7 @@
   "Failed projects": "Failed projects",
   "None": "None",
   "New Funding Item": "New Funding Item",
-  "Ignore": "Ignore"
+  "Ignore": "Ignore",
+  "History": "History",
+  "completedOn": "Completed on"
 }

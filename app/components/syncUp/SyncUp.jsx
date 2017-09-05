@@ -150,13 +150,13 @@ class SyncUp extends Component {
               <div className="col-sm-12">
                 <table className="table table-stripped">
                   <caption>
-                    <h3>History</h3>
+                    <h3>{translate('History')}</h3>
                   </caption>
                   <thead>
                     <tr>
                       <th></th>
-                      <th>Completed on</th>
-                      <th>Status</th>
+                      <th>{translate('completedOn')}</th>
+                      <th>{translate('Status')}</th>
                     </tr>
                   </thead>
                   <tbody>
