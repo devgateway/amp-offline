@@ -25,7 +25,7 @@ export default class AFFundingContainer extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this.state = {
       funding: this.props.funding
     };
@@ -34,7 +34,7 @@ export default class AFFundingContainer extends Component {
   }
 
   _addTransactionItem(type) {
-    LoggerManager.log('_addTransactionItem');
+    LoggerManager.debug('_addTransactionItem');
     const fundingDetailItem = {};
     fundingDetailItem[AC.REPORTING_DATE] = new Date().toISOString();
     const trnTypeList = this.context.activityFieldsManager
@@ -53,7 +53,7 @@ export default class AFFundingContainer extends Component {
   }
 
   _removeTransactionItem(id) {
-    LoggerManager.log('_removeTransactionItem');
+    LoggerManager.debug('_removeTransactionItem');
     // TODO: Display a confirm dialog to delete the item.
     const newFunding = this.state.funding;
     const index = this.state.fundingList.findIndex((item) => (item[AC.id] === id));
