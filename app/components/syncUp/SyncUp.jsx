@@ -123,7 +123,7 @@ class SyncUp extends Component {
 
   render() {
     LoggerManager.log('render');
-    const { syncUpReducer } = this.props;
+    const { syncUpReducer, currentUserHistory } = this.props;
     const { loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (
       <div className={styles.container}>
@@ -132,8 +132,8 @@ class SyncUp extends Component {
             type="button"
             text="Start Sync Up"
             className={classes({
-              'btn btn-success': true,
-              disabled: loadingSyncHistory || syncUpInProgress
+                'btn btn-success': true,
+                disabled: loadingSyncHistory || syncUpInProgress
             })}
             onClick={startSyncUp}
           />
@@ -143,6 +143,36 @@ class SyncUp extends Component {
         </div>
         <hr />
         {this.selectContentElementToDraw()}
+
+        {!!currentUserHistory.length &&
+          <div className="container">
+            <div className="row">
+              <div className="col-sm-12">
+                <table className="table table-stripped">
+                  <caption>
+                    <h3>History</h3>
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Completed on</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentUserHistory.map((log, index) => (
+                      <tr>
+                        <td>{index + 1}</td>
+                        <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
+                        <td></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
 
         <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync} />
       </div>
@@ -192,12 +222,19 @@ const syncConfirmationAlert = (syncUpReducer) => {
 };
 
 export default connect(
-  state => ({
-    syncUpReducer: state.syncUpReducer,
-    currentWorkspace: state.workspaceReducer.currentWorkspace,
-    logoutConfirmed: state.loginReducer.logoutConfirmed,
-    logoutDismissedToSync: state.loginReducer.logoutDismissedToSync
-  }),
+  state => {
+    const { syncUpReducer, userReducer } = state;
+    return {
+      syncUpReducer: syncUpReducer,
+      currentWorkspace: state.workspaceReducer.currentWorkspace,
+      logoutConfirmed: state.loginReducer.logoutConfirmed,
+      logoutDismissedToSync: state.loginReducer.logoutDismissedToSync,
+      currentUserHistory: syncUpReducer.historyData.filter(
+        datum => datum['requested-by'] === userReducer.userData.id
+      ).slice(0, 5)
+    }
+  },
+
   dispatch => ({
     onSyncConfirmationAlert: (syncUpReducer) => dispatch(addConfirmationAlert(syncConfirmationAlert(syncUpReducer)))
   })
