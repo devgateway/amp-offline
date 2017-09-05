@@ -133,7 +133,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    */
   _pushActivities(activities) {
     LoggerManager.log('_pushActivities');
-    this.diff = activities.map(activity => activity.id);
+    this.diff = activities.map(activity => activity[AC.AMP_ID] || activity.id);
     // executing push one by one for now and sequentially to avoid AMP / client overload
     if (!activities) {
       return Promise.resolve();
@@ -179,10 +179,10 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
     if (pushResult) {
-      this.pushed.add(activity.id);
+      this.pushed.add(activity[AC.AMP_ID] || activity.id);
     }
     // save the rejection immediately to allow a quicker syncup cancellation
-    const errorData = error || (pushResult ? pushResult.error : undefined);
+    const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
     if (errorData) {
       return new Promise((resolve, reject) => this._getRejectedId(activity)
         .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData))
@@ -222,11 +222,15 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _saveRejectedActivity(activity, rejectedId, error) {
-    LoggerManager.log('_saveRejectActivity');
+    const idToLog = activity[AC.AMP_ID] || activity.id;
+    const fieldNameToLog = activity[AC.AMP_ID] ? AC.AMP_ID : AC.INTERNAL_ID;
+    error = `(${fieldNameToLog} = ${idToLog}): ${error}`;
+    LoggerManager.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;
     rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
     rejectedActivity.error = error;
+    this.addError(error);
     return ActivityHelper.saveOrUpdate(rejectedActivity);
   }
 }

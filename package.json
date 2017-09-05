@@ -28,12 +28,13 @@
     "package-all": "npm run build && build -mwl",
     "cleanup": "mop -v",
     "flow": "flow",
-    "build-dll": "cross-env NODE_ENV=development node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.dll.js --progress --profile --colors"
+    "build-dll": "cross-env NODE_ENV=development node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.dll.js --profile"
   },
   "build": {
     "appId": "dg.AmpOffline",
     "mac": {
-      "category": "public.app-category.tools"
+      "category": "public.app-category.tools",
+      "target": "dmg"
     },
     "dmg": {
       "contents": [
@@ -196,7 +197,7 @@
   },
   "config": {
     "ampServerUrl": "amp-niger-future-v3-0-tc9.ampsite.net",
-    "ampServerPort": "80",
-    "ampServerProtocol": "http"
+    "ampServerPort": "443",
+    "ampServerProtocol": "https"
   }
 }

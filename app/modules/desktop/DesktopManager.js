@@ -30,7 +30,8 @@ const DesktopManager = {
         this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
           currencyRatesManager)
           .then((tab1Data) =>
-            this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllRejected)
+            this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllRejected, currentWorkspaceSettings,
+              currencyRatesManager)
               .then((tab2Data) =>
                 resolve({
                   activeProjects: tab1Data,

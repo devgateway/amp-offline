@@ -15,6 +15,7 @@ import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTota
 import ActivityValidator from '../../../modules/activity/ActivityValidator';
 import translate from '../../../utils/translate';
 import LoggerManager from '../../../modules/util/LoggerManager';
+import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 
 /* eslint-disable class-methods-use-this */
 
@@ -36,7 +37,10 @@ export default class ActivityForm extends Component {
       errorMessage: PropTypes.object,
       validationResult: PropTypes.array,
       fieldValidationResult: PropTypes.object,
-      isActivitySaved: PropTypes.bool
+      isActivitySaved: PropTypes.bool,
+      otherProjectTitles: PropTypes.array,
+      currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
+      currentWorkspaceSettings: PropTypes.object
     }).isRequired,
     userReducer: PropTypes.object.isRequired,
     loadActivityForActivityForm: PropTypes.func.isRequired,
@@ -54,7 +58,9 @@ export default class ActivityForm extends Component {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
-    isSaveAndSubmit: PropTypes.bool
+    isSaveAndSubmit: PropTypes.bool,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
+    currentWorkspaceSettings: PropTypes.object
   };
 
   constructor(props) {
@@ -71,7 +77,9 @@ export default class ActivityForm extends Component {
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       activityValidator: this.activityValidator,
-      isSaveAndSubmit: this.state.isSaveAndSubmit
+      isSaveAndSubmit: this.state.isSaveAndSubmit,
+      currencyRatesManager: this.props.activityReducer.currencyRatesManager,
+      currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings
     };
   }
 
@@ -89,22 +97,23 @@ export default class ActivityForm extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.activityReducer.activityFieldsManager) {
-      this.activityValidator = new ActivityValidator(nextProps.activityReducer.activityFieldsManager);
+    const { activityFieldsManager, otherProjectTitles, activity, savedActivity } = nextProps.activityReducer;
+    if (activityFieldsManager) {
+      this.activityValidator = new ActivityValidator(activityFieldsManager, otherProjectTitles);
       this.sections = SECTIONS.map(name => {
         const fmPath = SECTIONS_FM_PATH[name];
-        if (!fmPath || nextProps.activityReducer.activityFieldsManager.isFieldPathEnabled(fmPath)) {
+        if (!fmPath || activityFieldsManager.isFieldPathEnabled(fmPath)) {
           return name;
         }
         return null;
       }).filter(name => name);
     }
-    if ((!this.activity && nextProps.activityReducer.activity) || nextProps.activityReducer.savedActivity) {
-      if (nextProps.activityReducer.savedActivity) {
+    if ((!this.activity && activity) || savedActivity) {
+      if (savedActivity) {
         this.activity = undefined;
-        this.props.loadActivityForActivityForm(nextProps.activityReducer.savedActivity.id);
+        this.props.loadActivityForActivityForm(savedActivity.id);
       } else {
-        this.activity = nextProps.activityReducer.activity;
+        this.activity = activity;
         this._selectSection(IDENTIFICATION);
       }
     }

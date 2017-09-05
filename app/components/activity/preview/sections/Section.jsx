@@ -54,15 +54,21 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
    * @param showIfNotAvailable flag to forcibly display the field when no value is provided
    * @param NAOptions optional set of values that should be treated as undefined
    * @param inline optional flag to render name and values on the same line
+   * @param parent optional object where we look for the path (instead of the activity root).
    * @return {null|APField}
    */
-  buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false) {
+  buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false, parent = null) {
     const fmPath = ACTIVITY_FIELDS_FM_PATH[path];
     if (this.context.activityFieldsManager.isFieldPathEnabled(path)
       && (!fmPath || FeatureManager.isFMSettingEnabled(fmPath, false))) {
       const title = this.context.activityFieldsManager.getFieldLabelTranslation(path);
-      const alternatePath = ALTERNATE_VALUE_PATH[path];
-      let value = this.context.activityFieldsManager.getValue(this.context.activity, path);
+      let valuePath = path;
+      if (parent) {
+        const fieldPathParts = path.split('~');
+        valuePath = fieldPathParts[fieldPathParts.length - 1];
+      }
+      const alternatePath = ALTERNATE_VALUE_PATH[valuePath];
+      let value = this.context.activityFieldsManager.getValue(parent || this.context.activity, valuePath);
       if ((value === null || value === undefined) && alternatePath) {
         value = this.context.activityFieldsManager.getValue(this.context.activity, alternatePath);
       }
@@ -71,6 +77,9 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         value = DateUtils.createFormattedDate(value);
       }
       value = NAOptions && NAOptions.has(value) ? null : value;
+      if (value === null) {
+        value = 'No Data';
+      }
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
         return (<APField
@@ -90,14 +99,14 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       return composedSection;
     }
     // TODO iteration 2+ section toggle (TDC based on desgin + VG)
-    return (<div key={SectionTitle} className={this.props.groupClass} id={sID} >
-      <div className={this.props.titleClass} >
-        <span >{translate(SectionTitle)} </span ><span >{this.props.titleDetails}</span >
-      </div >
-      <div className={this.props.composedClass} >
+    return (<div key={SectionTitle} className={this.props.groupClass} id={sID}>
+      <div className={this.props.titleClass}>
+        <span>{translate(SectionTitle)} </span><span>{this.props.titleDetails}</span>
+      </div>
+      <div className={this.props.composedClass}>
         {composedSection}
-      </div >
-    </div >);
+      </div>
+    </div>);
   }
 };
 
