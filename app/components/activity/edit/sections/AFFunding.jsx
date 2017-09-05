@@ -70,7 +70,7 @@ class AFFunding extends Component {
         'translated-value': value['translated-value']
       };
       // Find the 'Donor' org type.
-      const donorList = this.context.activityFieldsManager.possibleValuesMap[`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`];
+      const donorList = this.context.activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
       const donorOrg = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
       fundingItem[AC.SOURCE_ROLE] = donorOrg;
       fundingItem[AC.FUNDING_DETAILS] = [];
