@@ -157,6 +157,7 @@
   "Activity saved successfully": "Activity saved successfully",
   "workspaceManager": "Workspace manager",
   "activityLastUpdatedBy": "Activity last updated by",
+  "No Data": "No Data",
   "Currency rate not found": "Currency rate not found",
   "Mode of Payment": "Mode of Payment",
   "Agreement Title": "Agreement Title",
@@ -221,12 +222,14 @@
   "Search Primary Sectors": "Search Primary Sectors",
   "Search Secondary Sectors": "Search Secondary Sectors",
   "Add Program": "Add Program",
+  "Funding Organization Id": "Funding Organization Id",
   "logoutConfirmation": "You are attempting to log off without syncing your changes. Please sync as soon as possible to avoid data conflicts.",
   "Sync": "Sync",
   "Amounts in Units": "Amounts in Units",
   "Amounts in Thousands (000)": "Amounts in Thousands (000)",
   "Amounts in Millions (000 000)": "Amounts in Millions (000 000)",
   "Amounts in Billions (000 000 000)": "Amounts in Billions (000 000 000)",
-  "No Data": "No Data",
-  "unsynced text": "Italic text of any color"
+  "unsynced text": "Italic text of any color",
+  "New Funding Item": "New Funding Item",
+  "Ignore": "Ignore"
 }
