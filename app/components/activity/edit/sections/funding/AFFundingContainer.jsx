@@ -38,7 +38,7 @@ export default class AFFundingContainer extends Component {
     const fundingDetailItem = {};
     fundingDetailItem[AC.REPORTING_DATE] = new Date().toISOString();
     const trnTypeList = this.context.activityFieldsManager
-      .possibleValuesMap[`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.TRANSACTION_TYPE]}`];
+      .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`];
     const trnType = Object.values(trnTypeList).find(item => item.value === type);
     fundingDetailItem[AC.TRANSACTION_TYPE] = trnType;
     fundingDetailItem[AC.CURRENCY] = {};
