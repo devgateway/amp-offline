@@ -1,12 +1,14 @@
 import store from '../index';
 import * as URLUtils from '../utils/URLUtils';
-import { WORKSPACE_URL } from '../utils/Constants';
+import { WORKSPACE_URL, VERSION } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
+import { URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
 import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
+import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -18,6 +20,7 @@ export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 export const STATE_SYNCUP_CONNECTION_UNAVAILABLE = 'STATE_SYNCUP_CONNECTION_UNAVAILABLE';
 export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
+export const STATE_CONNECTION_CHECK_IN_PROGRESS = 'STATE_CONNECTION_CHECK_IN_PROGRESS';
 
 export function loadSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');
@@ -34,11 +37,14 @@ export function loadSyncUpHistory() {
 
 export function checkSyncConnection() {
   LoggerManager.log('checkSyncConnection');
-  if (store.getState().ampConnectionStatusReducer.status.isAmpAvailable) {
-    startSyncUp();
-  } else {
+  const url = URL_CONNECTIVITY_CHECK_EP;
+  const paramsMap = { 'amp-offline-version': VERSION };
+  ConnectionHelper.doGet({ url, paramsMap }).then(() =>
+    startSyncUp()
+  ).catch((err) => {
+    LoggerManager.log(err);
     store.dispatch(syncConnectionUnavailable());
-  }
+  });
 }
 
 export function startSyncUp(historyData) {
