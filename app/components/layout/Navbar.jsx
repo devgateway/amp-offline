@@ -57,7 +57,11 @@ export default class Navbar extends Component {
               src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
               className={[style.countryFlag, style.navbar_left_side].join(' ')}
             />
+<<<<<<< HEAD
             <a className={style.navbar_left_side}>{translate('amp-title')}</a>
+=======
+          <Link className={style.navbar_left_side} style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
+>>>>>>> 93bece6115339110fff773bbb8d60160f199cf28
           </Link>
           <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
