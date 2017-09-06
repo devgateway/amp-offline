@@ -148,9 +148,8 @@ export default class SyncUpManager {
   }
 
   static _postSyncUp() {
-    const restart = true;
     return Promise.all([
-      loadAllLanguages(restart),
+      SyncUpManager.dispatchLoadAllLanguages(),
       loadDateSettings(),
       loadNumberSettings(),
       loadGlobalSettings(),
@@ -160,6 +159,11 @@ export default class SyncUpManager {
       SyncUpManager.reloadMenu()
     ]);
   }
+
+   static dispatchLoadAllLanguages() {
+   const restart = true;
+   return store.dispatch(loadAllLanguages(restart));
+   }
 
   static reloadMenu() {
     const loggedUserId = store.getState().userReducer.userData.id;

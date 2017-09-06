@@ -5,6 +5,7 @@ import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
 import store from '../index';
 import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
+import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
 import LoggerManager from '../modules/util/LoggerManager';
 
 const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
@@ -30,11 +31,15 @@ class MenuUtils {
       newMenu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
 
       if (!workspaceReducer.currentWorkspace || !workspaceReducer.currentWorkspace['add-activity']) {
-        delete newMenu.menu.DESKTOP.nodes['Add Activity'];
+        delete newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY];
       } else {
-        const addActivityRoute = newMenu.menu.DESKTOP.nodes['Add Activity'].route;
-        newMenu.menu.DESKTOP.nodes['Add Activity'].route = addActivityRoute.replace('NEW_ACTIVITY_ID', NEW_ACTIVITY_ID);
+        const addActivityRoute = newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route;
+        newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route = addActivityRoute.replace('NEW_ACTIVITY_ID', NEW_ACTIVITY_ID);
       }
+      if (!workspaceReducer.currentWorkspace) {
+        delete newMenu.menu.DESKTOP.nodes[MY_DESKTOP];
+      }
+
     }
 
     // Dynamic list of languages with its own click handler.
