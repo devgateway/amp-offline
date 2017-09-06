@@ -5,6 +5,7 @@ import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { TEST_URL } from '../connectivity/AmpApiConstants';
 import SyncUpHelper from '../helpers/SyncUpHelper';
 import { loadAllLanguages } from '../../actions/TranslationAction';
+import { loadWorkspaces } from '../../actions/WorkspaceAction';
 import store from '../../index';
 import {
   SYNCUP_BEST_BEFORE_DAYS,
@@ -155,8 +156,14 @@ export default class SyncUpManager {
       loadGlobalSettings(),
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
-      checkIfShouldSyncBeforeLogout()
+      checkIfShouldSyncBeforeLogout(),
+      SyncUpManager.reloadMenu()
     ]);
+  }
+
+  static reloadMenu() {
+    const loggedUserId = store.getState().userReducer.userData.id;
+    return store.dispatch(loadWorkspaces(loggedUserId));
   }
 
   static getSyncUpHistory() {
