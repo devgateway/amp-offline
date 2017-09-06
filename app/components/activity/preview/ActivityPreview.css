@@ -367,3 +367,10 @@
   border-bottom: 1px solid #ebebeb;
   vertical-align: top;
 }
+
+.nodata {
+  padding-left: 10px;
+  padding-bottom: 10px;
+  vertical-align: top;
+  font-weight: bold;
+}

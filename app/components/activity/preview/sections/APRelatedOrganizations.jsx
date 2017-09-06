@@ -32,7 +32,7 @@ class APRelatedOrganizations extends Component {
 
   _build() {
     // TODO: translate the organization type (AMPOFFLINE-477).
-    const content = [];
+    let content = [];
     this.orgTypes.forEach(orgType => {
       if (this.props.activity[orgType] && this.props.activity[orgType].length > 0) {
         const subcontent = [];
@@ -50,7 +50,9 @@ class APRelatedOrganizations extends Component {
     if (content.length % 2 === 1) {
       content.push(<div className={styles.organization_placeholder} />);
     }
-
+    if (content.length === 0) {
+      content = (<div className={styles.nodata}>No Data</div>);
+    }
     return content;
   }
 
