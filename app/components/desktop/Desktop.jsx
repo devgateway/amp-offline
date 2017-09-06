@@ -39,7 +39,10 @@ export default class Desktop extends Component {
     } else {
       return (
         <div>
-          <TopArea workspaceReducer={this.props.workspaceReducer.currentWorkspace} />
+          <TopArea
+            workspaceReducer={this.props.workspaceReducer.currentWorkspace}
+            currentWorkspaceSettings={this.props.workspaceReducer.currentWorkspaceSettings}
+          />
           <TabsContainer tabsData={this.props.desktopReducer.tabsData} />
         </div>
       );

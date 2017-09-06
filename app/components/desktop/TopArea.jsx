@@ -1,5 +1,5 @@
 /* eslint react/jsx-space-before-closing: 0 */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import style from './TopArea.css';
 import translate from '../../utils/translate';
@@ -8,6 +8,10 @@ import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class TopArea extends Component {
 
+  static propTypes = {
+    currentWorkspaceSettings: PropTypes.object.isRequired
+  };
+
   render() {
     LoggerManager.log('render');
     const draftClasses = classNames(style.square_symbol, style.draft);
@@ -15,9 +19,8 @@ export default class TopArea extends Component {
     const validatedClasses = classNames(style.square_symbol, style.validated);
     const unsynced = classNames(style.letter_symbol, style.unsynced);
     const currencyP = classNames('navbar-text', 'pull-right', style.currency);
-    const currencyLabel = classNames(style.currency_label);
     const ul = classNames('nav', 'navbar-nav', style.ul_var);
-
+    const wsCurrency = this.props.currentWorkspaceSettings.currency;
     return (
       <div className="navbar-wrapper">
         <div className="container">
@@ -44,8 +47,7 @@ export default class TopArea extends Component {
                 </li>
               </ul>
 
-              <p className={currencyP}>USD
-                <span className={currencyLabel}> - US Dollar</span>
+              <p className={currencyP}>{wsCurrency}
               </p>
             </div>
           </nav>
