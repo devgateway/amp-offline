@@ -1,14 +1,13 @@
 import store from '../index';
 import * as URLUtils from '../utils/URLUtils';
-import { WORKSPACE_URL, VERSION } from '../utils/Constants';
+import { WORKSPACE_URL } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
-import { URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
 import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
+import { connectivityCheck } from './ConnectivityAction';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -35,15 +34,13 @@ export function loadSyncUpHistory() {
   store.dispatch(sendingRequest());
 }
 
-export function checkSyncConnection() {
-  LoggerManager.log('checkSyncConnection');
-  const url = URL_CONNECTIVITY_CHECK_EP;
-  const paramsMap = { 'amp-offline-version': VERSION };
-  ConnectionHelper.doGet({ url, paramsMap }).then(() =>
-    startSyncUp()
-  ).catch((err) => {
-    LoggerManager.log(err);
+export function startSyncUpIfConnectionAvailable() {
+  return connectivityCheck().then(status => {
+    if (status.isAmpAvailable) {
+      return startSyncUp();
+    }
     store.dispatch(syncConnectionUnavailable());
+    return null;
   });
 }
 
@@ -106,21 +103,21 @@ function syncUpSearchHistoryFailed(err) {
 }
 
 function sendingRequest() {
-  LoggerManager.log('sendingRequest');
+  LoggerManager.debug('sendingRequest');
   return {
     type: STATE_SYNCUP_LOADING_HISTORY
   };
 }
 
 function syncUpInProgress() {
-  LoggerManager.log('sendingRequest');
+  LoggerManager.debug('sendingRequest');
   return {
     type: STATE_SYNCUP_IN_PROCESS
   };
 }
 
 function syncConnectionUnavailable() {
-  LoggerManager.log('syncConnectionUnavailable');
+  LoggerManager.debug('syncConnectionUnavailable');
   const msg = translate('syncConnectionError');
   return {
     type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,

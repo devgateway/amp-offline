@@ -67,7 +67,7 @@ export function loadConnectionInformation() {
     store.dispatch(startUpLoaded(connectionInformation));
     //  It is dispatch here so its called right away. since for default it is
     // Scheduled every x(configured) minutes, we need to check whether amp is on line or not right away
-    store.dispatch(connectivityCheck());
+    connectivityCheck();
     return resolve();
   });
 }
@@ -79,7 +79,7 @@ export function getTimer() {
 function scheduleConnectivityCheck() {
   return new Promise((resolve, reject) => {
     clearInterval(timer);
-    timer = setInterval(() => store.dispatch(connectivityCheck()), CONNECTIVITY_CHECK_INTERVAL);
+    timer = setInterval(() => connectivityCheck(), CONNECTIVITY_CHECK_INTERVAL);
     store.dispatch({ type: TIMER_START });
     return resolve();
   });

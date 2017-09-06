@@ -19,7 +19,7 @@ import {
 } from '../../utils/constants/ErrorConstants';
 import { STATE_LOGOUT_DISMISS_TO_SYNC, STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import {
-  checkSyncConnection,
+  startSyncUpIfConnectionAvailable,
   dismissSyncAndChooseWorkspace,
   loadSyncUpHistory,
   STATE_SYNCUP_DISMISSED
@@ -135,7 +135,7 @@ class SyncUp extends Component {
               'btn btn-success': true,
               disabled: loadingSyncHistory || syncUpInProgress
             })}
-            onClick={checkSyncConnection}
+            onClick={startSyncUpIfConnectionAvailable}
           />
         </div>
         <div className={styles.display_inline}>
