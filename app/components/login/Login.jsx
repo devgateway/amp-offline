@@ -4,6 +4,7 @@ import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
+import translate from '../../utils/translate';
 
 export default class Login extends Component {
 
@@ -44,7 +45,7 @@ export default class Login extends Component {
         <table>
           <tbody>
             <tr>
-              <td><Span text="user" /></td>
+              <td><Span text={translate('user')} /></td>
               <td>
                 <input
                   type="text" value={this.state.email} onChange={this.handleEmailChange}
@@ -52,7 +53,7 @@ export default class Login extends Component {
               </td>
             </tr>
             <tr>
-              <td><Span text="password" /></td>
+              <td><Span text={translate('password')} /></td>
               <td>
                 <input
                   type="password" value={this.state.password} onChange={this.handlePasswordChange}
@@ -65,7 +66,7 @@ export default class Login extends Component {
           type="button" className={`btn btn-success ${(this.props.loginReducer.loginProcessing ? 'disabled' : '')}`}
           onClick={() => {
             loginAction(this.state.email.toLowerCase(), this.state.password);
-          }} text="login" />
+          }} text={translate('login')} />
         <hr />
         <ErrorMessage message={this.props.loginReducer.errorMessage} />
       </div>
