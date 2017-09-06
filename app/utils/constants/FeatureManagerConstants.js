@@ -11,3 +11,5 @@ export const ACTIVITY_SAME_AS_PROPOSED_START_DATE =
   '/Activity Form/Planning/Actual Start Date/Same as Proposed Start Date';
 export const ACTIVITY_SAME_AS_PROPOSED_APPROVAL_DATE =
   '/Activity Form/Planning/Actual Approval Date/Same as Proposed Approval Date';
+export const ACTIVITY_LAST_UPDATED_BY = '/Activity Form/Identification/Activity Last Updated by';
+export const ACTIVITY_LAST_UPDATED_ON = '/Activity Form/Identification/Activity Updated On';
