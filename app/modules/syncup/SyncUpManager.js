@@ -156,18 +156,13 @@ export default class SyncUpManager {
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
       checkIfShouldSyncBeforeLogout(),
-      SyncUpManager.reloadMenu()
+      store.dispatch(loadWorkspaces())
     ]);
   }
 
   static dispatchLoadAllLanguages() {
     const restart = true;
     return store.dispatch(loadAllLanguages(restart));
-  }
-
-  static reloadMenu() {
-    const loggedUserId = store.getState().userReducer.userData.id;
-    return store.dispatch(loadWorkspaces(loggedUserId));
   }
 
   static getSyncUpHistory() {
