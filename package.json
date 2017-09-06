@@ -33,7 +33,8 @@
   "build": {
     "appId": "dg.AmpOffline",
     "mac": {
-      "category": "public.app-category.tools"
+      "category": "public.app-category.tools",
+      "target": "dmg"
     },
     "dmg": {
       "contents": [
@@ -196,7 +197,7 @@
   },
   "config": {
     "ampServerUrl": "amp-niger-future-v3-0-tc9.ampsite.net",
-    "ampServerPort": "80",
-    "ampServerProtocol": "http"
+    "ampServerPort": "443",
+    "ampServerProtocol": "https"
   }
 }

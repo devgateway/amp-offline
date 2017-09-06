@@ -56,7 +56,7 @@ export function ampStartUp() {
     .then(loadNumberSettings)
     .then(loadDateSettings)
     .then(loadGlobalSettings)
-    .then(loadFMTree)
+    .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup);
 }
 
