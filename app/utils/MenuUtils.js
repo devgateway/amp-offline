@@ -39,7 +39,6 @@ class MenuUtils {
       if (!workspaceReducer.currentWorkspace) {
         delete newMenu.menu.DESKTOP.nodes[MY_DESKTOP];
       }
-
     }
 
     // Dynamic list of languages with its own click handler.

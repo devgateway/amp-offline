@@ -160,10 +160,10 @@ export default class SyncUpManager {
     ]);
   }
 
-   static dispatchLoadAllLanguages() {
-   const restart = true;
-   return store.dispatch(loadAllLanguages(restart));
-   }
+  static dispatchLoadAllLanguages() {
+    const restart = true;
+    return store.dispatch(loadAllLanguages(restart));
+  }
 
   static reloadMenu() {
     const loggedUserId = store.getState().userReducer.userData.id;
