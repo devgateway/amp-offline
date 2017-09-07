@@ -25,7 +25,7 @@ export default class AFFundingContainer extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
   }
 
   render() {

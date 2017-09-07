@@ -27,7 +27,7 @@ class APFundingOrganizationSection extends Component {
 
   constructor(props, context) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this._currency = context.currentWorkspaceSettings.currency;
   }
 
@@ -99,7 +99,7 @@ class APFundingOrganizationSection extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    LoggerManager.debug('render');
     return (<div>
       <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
       <table className={styles.two_box_table}>
