@@ -90,7 +90,8 @@ export default class ActivitiesPullFromAMPManager extends SyncUpManagerInterface
     /* If the current sync didn't even start (e.g. connection interruption or canceled before 2nd run), then keep
     previous result, otherwise only the latest unsyced are relevant, since those from the previous attempt were retried
     this time */
-    merged[SYNCUP_DETAILS_UNSYNCED] = (this.diff ? this._details : previousDetails)[SYNCUP_DETAILS_UNSYNCED];
+    const unsycedSource = this.diff ? this._details : (previousDetails || []);
+    merged[SYNCUP_DETAILS_UNSYNCED] = unsycedSource[SYNCUP_DETAILS_UNSYNCED];
     return merged;
   }
 
