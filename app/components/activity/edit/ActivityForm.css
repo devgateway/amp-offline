@@ -153,12 +153,12 @@ div.quick_links::after {
 }
 
 .activity_form_control textarea {
-  font-size: 0.9em;
+  font-size: 12px;
   border-radius: 0px;
 }
 
 .activity_form_control select {
-  font-size: 0.9em;
+  font-size: 12px;
   border-radius: 0px;
 }
 
