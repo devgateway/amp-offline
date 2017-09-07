@@ -36,12 +36,13 @@ export default class AFListSelector extends Component {
     listPath: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     // we need to report validation error before search box, thus passing to the component to display
-    validationError: PropTypes.string
+    validationError: PropTypes.string,
+    extraParams: PropTypes.object
   };
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this.handleAddValue = this.handleAddValue.bind(this);
     this.handleRemoveValue = this.handleRemoveValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -135,29 +136,37 @@ export default class AFListSelector extends Component {
     return null;
   }
 
+  _renderTable() {
+    const params = this.props.extraParams || {};
+    if (params['no-table'] !== true) {
+      return (<div>
+        <div>
+          <AFLabel value={translate(this.searchLabel)} />
+        </div>
+        <AFList
+          onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
+          onEditRow={this.handleEditValue.bind(this)} />
+        <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()}>
+          <FormControl.Feedback />
+          <HelpBlock>{this.props.validationError}</HelpBlock>
+        </FormGroup>
+      </div>);
+    }
+  }
+
   render() {
     const searchDisplayStyle = this.noMultipleValues && this.state.values.length > 0 ? styles.hidden : styles.inline;
     const btnStyle = `${this.percentageFieldDef ? styles.dividePercentage : styles.hidden} btn btn-success`;
-
-    return (<div >
-      <AFList
-        onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
-        onEditRow={this.handleEditValue.bind(this)} />
-      <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()} >
-        <FormControl.Feedback />
-        <HelpBlock >{this.props.validationError}</HelpBlock >
-      </FormGroup >
-      <div>
-        <AFLabel value={translate(this.searchLabel)} />
-      </div>
-      <div className={`${searchDisplayStyle} ${styles.searchContainer}`} >
+    return (<div>
+      {this._renderTable()}
+      <div className={`${searchDisplayStyle} ${styles.searchContainer}`}>
         <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
         <Button
           onClick={this.dividePercentage.bind(this)} bsStyle="success" bsClass={btnStyle}
-          disabled={this.state.values.length === 0} hidden={this.percentageFieldDef === undefined} >
+          disabled={this.state.values.length === 0} hidden={this.percentageFieldDef === undefined}>
           {translate('Divide Percentage')}
-        </Button >
-      </div >
-    </div >);
+        </Button>
+      </div>
+    </div>);
   }
 }
