@@ -9,6 +9,9 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
+import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
+import Utils from '../../../../utils/Utils';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 
 /**
  * Funding Section
@@ -16,13 +19,27 @@ import translate from '../../../../utils/translate';
  */
 class AFFunding extends Component {
 
+  static contextTypes = {
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+  };
+
   static propTypes = {
     activity: PropTypes.object.isRequired
   };
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
+    this.state = {
+      fundingList: []
+    };
+    this.handleDonorSelect = this.handleDonorSelect.bind(this);
+  }
+
+  componentWillMount() {
+    this.state = {
+      fundingList: this.props.activity.fundings
+    };
   }
 
   _getAcronym(sourceRole) {
@@ -42,11 +59,34 @@ class AFFunding extends Component {
     }
   }
 
+  handleDonorSelect(value) {
+    LoggerManager.debug('handleDonorSelect');
+    if (value) {
+      const fundingItem = {};
+      fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
+        id: value._id,
+        value: value._value,
+        extra_info: value.extra_info,
+        'translated-value': value['translated-value']
+      };
+      // Find the 'Donor' org type.
+      const donorList = this.context.activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
+      const donorOrg = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
+      fundingItem[AC.SOURCE_ROLE] = donorOrg;
+      fundingItem[AC.FUNDING_DETAILS] = [];
+      fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
+      fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
+      const newFundingList = this.state.fundingList;
+      newFundingList.push(fundingItem);
+      this.setState({ fundingList: newFundingList });
+    }
+  }
+
   addFundingTabs() {
-    if (this.props.activity.fundings) {
+    if (this.state.fundingList) {
       // Group fundings for the same funding organization and role.
       const groups = [];
-      this.props.activity.fundings.forEach(f => {
+      this.state.fundingList.forEach(f => {
         if (!groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
             && i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id))) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
@@ -63,7 +103,7 @@ class AFFunding extends Component {
           eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
           title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
           <AFFundingDonorSection
-            fundings={this.props.activity.fundings}
+            fundings={this.state.fundingList}
             organization={funding[AC.FUNDING_DONOR_ORG_ID]}
             role={funding[AC.SOURCE_ROLE]}
           />
@@ -80,10 +120,13 @@ class AFFunding extends Component {
   }
 
   render() {
-    return (<Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs" >
-      <Tab eventKey={0} title="Overview" key={0} >{this.generateOverviewTabContent()}</Tab>
-      {this.addFundingTabs()}
-    </Tabs>);
+    return (<div>
+      <Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs">
+        <Tab eventKey={0} title="Overview" key={0}>{this.generateOverviewTabContent()}</Tab>
+        {this.addFundingTabs()}
+      </Tabs>
+      <AFFundingOrganizationSelect activity={this.props.activity} handleDonorSelect={this.handleDonorSelect} />
+    </div>);
   }
 }
 
