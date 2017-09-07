@@ -12,7 +12,11 @@ import DateUtils from '../../utils/DateUtils';
 import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
-import { SYNCUP_FORCE_DAYS, SYNCUP_SYNC_REQUESTED_AT } from '../../utils/Constants';
+import {
+  SYNCUP_FORCE_DAYS,
+  SYNCUP_SYNC_REQUESTED_AT,
+  SYNCUP_STATUS_SUCCESS
+} from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
   NOTIFICATION_SEVERITY_WARNING
@@ -26,6 +30,10 @@ import {
 } from '../../actions/SyncUpAction';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
+import {
+  PARTIAL,
+  STATES_PARTIAL_SUCCESS
+} from '../../modules/syncup/SyncUpUnitState';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -44,12 +52,32 @@ class SyncUp extends Component {
     currentWorkspace: PropTypes.object,
     onSyncConfirmationAlert: PropTypes.func.isRequired,
     logoutConfirmed: PropTypes.bool.isRequired,
-    logoutDismissedToSync: PropTypes.bool.isRequired
+    logoutDismissedToSync: PropTypes.bool.isRequired,
+    currentUserHistory: PropTypes.object
   };
 
   static cancelSync() {
     LoggerManager.log('cancelSync');
     LoggerManager.log('To be implemented on AMPOFFLINE-208');
+  }
+
+  static getLogStatus(log) {
+    const { units } = log;
+    const allModulesPartialSuccess = units &&
+      units.every(unit =>
+        STATES_PARTIAL_SUCCESS.indexOf(unit.state) > -1);
+
+    const atLeastOneModulePartial = units &&
+      units.some(unit =>
+        unit.state === PARTIAL);
+
+    if (allModulesPartialSuccess && atLeastOneModulePartial) {
+      return translate('Partial');
+    } else if (log.status === SYNCUP_STATUS_SUCCESS) {
+      return translate('Success');
+    } else {
+      return translate('Failed');
+    }
   }
 
   constructor() {
@@ -132,8 +160,8 @@ class SyncUp extends Component {
             type="button"
             text="Start Sync Up"
             className={classes({
-                'btn btn-success': true,
-                disabled: loadingSyncHistory || syncUpInProgress
+              'btn btn-success': true,
+              disabled: loadingSyncHistory || syncUpInProgress
             })}
             onClick={startSyncUp}
           />
@@ -154,17 +182,17 @@ class SyncUp extends Component {
                   </caption>
                   <thead>
                     <tr>
-                      <th></th>
+                      <th />
                       <th>{translate('completedOn')}</th>
                       <th>{translate('Status')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {currentUserHistory.map((log, index) => (
-                      <tr>
+                      <tr key={log.id}>
                         <td>{index + 1}</td>
                         <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
-                        <td></td>
+                        <td>{this.constructor.getLogStatus(log)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -225,14 +253,14 @@ export default connect(
   state => {
     const { syncUpReducer, userReducer } = state;
     return {
-      syncUpReducer: syncUpReducer,
+      syncUpReducer,
       currentWorkspace: state.workspaceReducer.currentWorkspace,
       logoutConfirmed: state.loginReducer.logoutConfirmed,
       logoutDismissedToSync: state.loginReducer.logoutDismissedToSync,
       currentUserHistory: syncUpReducer.historyData.filter(
         datum => datum['requested-by'] === userReducer.userData.id
       ).slice(0, 5)
-    }
+    };
   },
 
   dispatch => ({
