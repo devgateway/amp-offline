@@ -6,6 +6,7 @@ import styles from './APIssues.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APMeasure from './APMeasure';
+import translate from '../../../../../utils/translate';
 
 /**
  * @author Gabriel Inchauspe
@@ -36,7 +37,7 @@ class APIssues extends Component {
       });
     });
     if (content.length === 0) {
-      content = (<div className={styles.nodata}>No Data</div>);
+      content = (<div className={styles.nodata}>{translate('No Data')}</div>);
     }
     return content;
   }

@@ -34,7 +34,7 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
     const title = listTitle ? translate(listTitle) : null;
     const items = this.props.activity[listField];
     let content = (<APField
-      key={listField} title={title} value={'No Data'} separator={false} inline={this.props.tablify === true}
+      key={listField} title={title} value={translate('No Data')} separator={false} inline={this.props.tablify === true}
       fieldNameClass={this.props.fieldNameClass} fieldValueClass={styles.nodata} />);
     const isListEnabled = this.props.activityFieldsManager.isFieldPathEnabled(listField) === true;
     if (isListEnabled && items && items.length) {

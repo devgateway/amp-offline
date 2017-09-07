@@ -53,11 +53,11 @@ const APProjectCost = (fieldName) => class extends Component {
         content = (<div>
           <div className={styles.project_cost_left}>
             <span className={styles.project_cost_title}>{translate('Cost')} </span>
-            <span className={styles.project_cost_date}>{'No Data'}</span>
+            <span className={styles.project_cost_date}>{translate('No Data')}</span>
           </div>
           <div className={styles.project_cost_right}>
             <span className={styles.project_cost_title}>{translate('Date')}</span>
-            <span className={styles.project_cost_date}>{'No Data'}</span>
+            <span className={styles.project_cost_date}>{translate('No Data')}</span>
           </div>
         </div>);
       }

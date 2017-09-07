@@ -11,6 +11,7 @@ import {
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import styles from './APRelatedOrganizations.css';
 import APLabel from '../components/APLabel';
+import translate from '../../../../utils/translate';
 
 /**
  * @author Gabriel Inchauspe
@@ -51,7 +52,7 @@ class APRelatedOrganizations extends Component {
       content.push(<div className={styles.organization_placeholder} />);
     }
     if (content.length === 0) {
-      content = (<div className={styles.nodata}>No Data</div>);
+      content = (<div className={styles.nodata}>{translate('No Data')}</div>);
     }
     return content;
   }
