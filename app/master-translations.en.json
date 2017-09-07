@@ -239,5 +239,8 @@
   "New Funding Item": "New Funding Item",
   "Ignore": "Ignore",
   "History": "History",
-  "completedOn": "Completed on"
+  "completedOn": "Completed on",
+  "Success": "Success",
+  "Failed": "Failed",
+  "Partial": "Partial"
 }
