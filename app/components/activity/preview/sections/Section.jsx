@@ -77,7 +77,10 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         value = DateUtils.createFormattedDate(value);
       }
       value = NAOptions && NAOptions.has(value) ? null : value;
-      if (value === ' ' || value === null) {
+
+      const re = /^\s?$/; // check for whitespace
+      if (re.test(value)) value = value.trim(); // check for whitespace
+      if (value === '' || value === null) {
         value = translate('No Data');
       }
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
