@@ -9,7 +9,8 @@ import LoggerManager from '../../modules/util/LoggerManager';
 export default class TopArea extends Component {
 
   static propTypes = {
-    currentWorkspaceSettings: PropTypes.object.isRequired
+    currentWorkspaceSettings: PropTypes.object.isRequired,
+    translationReducer: PropTypes.object.isRequired
   };
 
   render() {
@@ -19,8 +20,11 @@ export default class TopArea extends Component {
     const validatedClasses = classNames(style.square_symbol, style.validated);
     const unsynced = classNames(style.letter_symbol, style.unsynced);
     const currencyP = classNames('navbar-text', 'pull-right', style.currency);
+    const currencyLabel = classNames(style.currency_label);
     const ul = classNames('nav', 'navbar-nav', style.ul_var);
-    const wsCurrency = this.props.currentWorkspaceSettings.currency;
+    const { currency } = this.props.currentWorkspaceSettings;
+    const wsCurrencyCode = currency.code;
+    const wsCurrencyLabel = currency['translated-value'][this.props.translationReducer.lang];
     return (
       <div className="navbar-wrapper">
         <div className="container">
@@ -47,7 +51,9 @@ export default class TopArea extends Component {
                 </li>
               </ul>
 
-              <p className={currencyP}>{wsCurrency}
+              <p className={currencyP}>{wsCurrencyCode}
+                <span className={currencyLabel}> - {wsCurrencyLabel}</span>
+
               </p>
             </div>
           </nav>

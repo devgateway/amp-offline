@@ -26,7 +26,7 @@ class APFundingTransactionTypeItem extends Component {
   constructor(props, context) {
     super(props);
     LoggerManager.log('constructor');
-    this._currency = context.currentWorkspaceSettings.currency;
+    this._currency = context.currentWorkspaceSettings.currency.code;
   }
 
   _filterFundingDetails() {

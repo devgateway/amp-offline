@@ -13,7 +13,9 @@ export default class Desktop extends Component {
     desktopReducer: PropTypes.object.isRequired,
     workspaceReducer: PropTypes.object.isRequired,
     userReducer: PropTypes.object.isRequired,
+    translationReducer: PropTypes.object.isRequired,
     loadDesktop: PropTypes.func.isRequired
+
   };
 
   componentDidMount() {
@@ -42,6 +44,7 @@ export default class Desktop extends Component {
           <TopArea
             workspaceReducer={this.props.workspaceReducer.currentWorkspace}
             currentWorkspaceSettings={this.props.workspaceReducer.currentWorkspaceSettings}
+            translationReducer={this.props.translationReducer}
           />
           <TabsContainer tabsData={this.props.desktopReducer.tabsData} />
         </div>
