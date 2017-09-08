@@ -150,6 +150,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
     LoggerManager.log('updateTranslationFiles');
     const fn = (lang) => {
+      // We might need access to previous translations for this language.
       const oldTranslationFileExists = TranslationSyncUpManager.detectSynchronizedTranslationFile(lang);
       let oldTrnFile;
       if (oldTranslationFileExists) {
@@ -164,7 +165,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
           const newTextObject = newTranslations[textFromMaster];
           if (newTextObject && newTextObject[lang]) {
             copyMasterTrnFile[key] = newTextObject[lang];
-          } else if (oldTranslationFileExists) {
+          } else if (oldTranslationFileExists && oldTrnFile[key]) {
             // Check if we have a previous translation and use it.
             copyMasterTrnFile[key] = oldTrnFile[key];
           }
