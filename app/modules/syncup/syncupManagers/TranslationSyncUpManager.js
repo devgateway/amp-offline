@@ -79,6 +79,10 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     ));
   }
 
+  static getFileNameForLang(lang) {
+    return `${LOCAL_LANGUAGE_FILE}${lang}.json`;
+  }
+
   /**
    * Check if we have a valid translations file for a given language.
    * @param lang
@@ -87,7 +91,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   static detectSynchronizedTranslationFile(lang) {
     LoggerManager.log('detectSynchronizedTranslationFile');
     let ret = false;
-    const fileName = `${LOCAL_LANGUAGE_FILE}${lang}.json`;
+    const fileName = TranslationSyncUpManager.getFileNameForLang(lang);
     if (fs.existsSync(fileName)) {
       const stats = fs.statSync(fileName);
       const fileSize = stats.size;
@@ -146,6 +150,12 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
     LoggerManager.log('updateTranslationFiles');
     const fn = (lang) => {
+      const oldTranslationFileExists = TranslationSyncUpManager.detectSynchronizedTranslationFile(lang);
+      let oldTrnFile;
+      if (oldTranslationFileExists) {
+        const fileName = TranslationSyncUpManager.getFileNameForLang(lang);
+        oldTrnFile = JSON.parse(fs.readFileSync(fileName, 'utf8'));
+      }
       const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
       return new Promise((resolve, reject) => {
         // Iterate the master-file copy and look for translations on this language.
@@ -154,11 +164,14 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
           const newTextObject = newTranslations[textFromMaster];
           if (newTextObject && newTextObject[lang]) {
             copyMasterTrnFile[key] = newTextObject[lang];
+          } else if (oldTranslationFileExists) {
+            // Check if we have a previous translation and use it.
+            copyMasterTrnFile[key] = oldTrnFile[key];
           }
         });
 
         // Overwrite local file for this language with the new translations from server.
-        const localTrnFile = `${LOCAL_LANGUAGE_FILE}${lang}.json`;
+        const localTrnFile = TranslationSyncUpManager.getFileNameForLang(lang);
         fs.writeFile(localTrnFile, JSON.stringify(copyMasterTrnFile), (err) => {
           if (err) {
             reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }));
