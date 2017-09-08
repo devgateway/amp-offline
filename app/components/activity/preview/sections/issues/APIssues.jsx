@@ -46,7 +46,7 @@ class APIssues extends Component {
     if (this.props.activityFieldsManager.isFieldPathEnabled(AC.ISSUES)) {
       return <div>{this._buildIssues()}</div>;
     } else {
-      return <div className={styles.nodata}>No Data</div>;
+      return <div className={styles.nodata}>{translate('No Data')}</div>;
     }
   }
 }
