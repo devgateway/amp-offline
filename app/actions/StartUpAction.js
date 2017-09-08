@@ -53,7 +53,7 @@ export function ampOfflineInit() {
   return loadConnectionInformation()
     .then(scheduleConnectivityCheck)
     .then(loadGlobalSettings)
-    .then(loadFMTree)
+    .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup);
 }
 
