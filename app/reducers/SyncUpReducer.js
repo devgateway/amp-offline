@@ -6,6 +6,7 @@ import {
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED,
   STATE_SYNCUP_FORCED,
+  STATE_SYNCUP_CONNECTION_UNAVAILABLE,
   STATE_SYNCUP_DISMISSED,
   STATE_SYNCUP_LOG_LOADED
 } from '../actions/SyncUpAction';
@@ -72,6 +73,10 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
         daysFromLastSuccessfulSyncUp: action.actionData.daysFromLastSuccessfulSyncUp,
         syncUpRejected: false,
         syncUpAccepted: false
+      });
+    case STATE_SYNCUP_CONNECTION_UNAVAILABLE:
+      return Object.assign({}, state, {
+        errorMessage: action.actionData.errorMessage
       });
     case STATE_SYNCUP_DISMISSED:
       return { ...state, syncUpRejected: true };
