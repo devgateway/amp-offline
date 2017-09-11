@@ -80,6 +80,8 @@ export const SYNCUP_SYNC_REQUESTED_AT = 'sync-date';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
 export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
 export const SYNCUP_DEPENDENCY_CHECK_INTERVAL = 10;
+export const SYNCUP_DETAILS_SYNCED = 'synced';
+export const SYNCUP_DETAILS_UNSYNCED = 'unsynced';
 
 export const ACTIVITY_STATUS_DRAFT = 'ACTIVITY_STATUS_DRAFT';
 export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';

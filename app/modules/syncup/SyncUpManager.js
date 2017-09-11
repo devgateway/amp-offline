@@ -88,18 +88,15 @@ export default class SyncUpManager {
   static syncUpAllTypesOnDemand() {
     LoggerManager.log('syncUpAllTypesOnDemand');
     let syncResult;
+    const startDate = new Date();
     return this._startSyncUp()
       .then(result => {
         syncResult = result;
+        syncResult.dateStarted = startDate.toISOString();
         return this._saveMainSyncUpLog(result);
       })
       .then(this._postSyncUp)
-      .then(() => {
-        if (syncResult.errors.length) {
-          return Promise.reject(syncResult.errors.join('. '));
-        }
-        return syncResult;
-      });
+      .then(() => syncResult);
   }
 
   /**

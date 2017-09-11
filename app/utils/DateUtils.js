@@ -35,9 +35,18 @@ export default class DateUtils {
     return GlobalSettingsManager.getSettingByKey(DEFAULT_DATE_FORMAT).toUpperCase();
   }
 
+  static getDateTimeFormat() {
+    const dateFormat = this.getGSDateFormat();
+    return `${dateFormat} H:mm:ss`;
+  }
+
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
     return DateUtils.formatDate(date, DateUtils.getGSDateFormat());
+  }
+
+  static createFormattedDateTime(date) {
+    return DateUtils.formatDate(date, DateUtils.getDateTimeFormat());
   }
 
   static duration(from, to) {
