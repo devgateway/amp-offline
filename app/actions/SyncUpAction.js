@@ -72,6 +72,7 @@ export function startSyncUp(historyData) {
       })
     ).catch((err) => {
       LoggerManager.log(err);
+      const actionData = { errorMessage: translate('defaultSyncError') };
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();

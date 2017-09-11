@@ -245,4 +245,5 @@
   "Same as Proposed Start Date": "Same as Proposed Start Date",
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
   "Ignore": "Ignore",
+  "defaultSyncError": "There was an error while attempting to sync. Please try again."
 }
