@@ -16,6 +16,7 @@ import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManage
 import { AMP_ID, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
+import { stripTags } from '../../utils/Utils';
 
 export default class ProjectList extends Component {
 
@@ -56,7 +57,7 @@ export default class ProjectList extends Component {
       nameStyles.push(style.rejected);
     }
     const classes = classNames(nameStyles.toString()).replace(',', ' ');
-    return `<span class='${classes}'>${row.new ? '* ' : ''}${cell}</span>`;
+    return `<span class='${classes}'>${row.new ? '* ' : ''}${stripTags(cell)}</span>`;
   }
 
   static numberFormatter(cell) {
