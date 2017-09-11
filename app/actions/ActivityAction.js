@@ -24,8 +24,8 @@ import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import Utils from '../utils/Utils';
 import translate from '../utils/translate';
+import * as Utils from '../utils/Utils';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
@@ -37,6 +37,7 @@ export const ACTIVITY_SAVE_REJECTED = 'ACTIVITY_SAVE_REJECTED';
 export const ACTIVITY_UNLOADED = 'ACTIVITY_UNLOADED';
 export const ACTIVITY_VALIDATED = 'ACTIVITY_VALIDATED';
 export const ACTIVITY_FIELD_VALIDATED = 'ACTIVITY_FIELD_VALIDATED';
+export const ACTIVITY_UPDATE_GLOBAL_STATE = 'ACTIVITY_UPDATE_GLOBAL_STATE';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 
@@ -176,4 +177,11 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
       return savedActivity;
     });
   });
+}
+
+export function updateActivityGlobalState(setting, value) {
+  return {
+    type: ACTIVITY_UPDATE_GLOBAL_STATE,
+    actionData: Utils.toMap(setting, value)
+  };
 }
