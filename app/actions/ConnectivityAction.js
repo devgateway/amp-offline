@@ -2,6 +2,7 @@ import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
 import { URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
 import { VERSION } from '../utils/Constants';
+import store from '../index';
 import LoggerManager from '../modules/util/LoggerManager';
 
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
@@ -9,29 +10,24 @@ export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_
 
 /**
  * Checks and updates the connectivity status
-@returns ConnectivityStatus
+ * @returns ConnectivityStatus
  */
-
 export function connectivityCheck() {
   LoggerManager.log('connectivityCheck');
-  return (dispatch, ownProps) => {
-    dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
-    // we should introduce a manager here to keep the actions simple
-    const url = URL_CONNECTIVITY_CHECK_EP;
-    const paramsMap = { 'amp-offline-version': VERSION };
-    const lastConnectivityStatus = ownProps().ampConnectionStatusReducer.status;
-    return ConnectionHelper.doGet({ url, paramsMap }).then(data => {
-      const connectivityData = _processResult(data, lastConnectivityStatus);
-      return dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: connectivityData });
-    }).catch(error => {
+  store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
+  // we should introduce a manager here to keep the actions simple
+  const url = URL_CONNECTIVITY_CHECK_EP;
+  const paramsMap = { 'amp-offline-version': VERSION };
+  return ConnectionHelper.doGet({ url, paramsMap })
+    .then(data => _processResult(data))
+    .catch(error => {
       LoggerManager.error(`Couldn't check the connection status. Error: ${error}`);
-      const data = _processResult(null, lastConnectivityStatus);
-      return dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: data });
+      return _processResult(null);
     });
-  };
 }
 
-function _processResult(data, lastConnectivityStatus) {
+function _processResult(data) {
+  const lastConnectivityStatus = store.getState().ampConnectionStatusReducer.status;
   let status;
   if (data === null || data === undefined) {
     if (lastConnectivityStatus === undefined) {
@@ -49,5 +45,6 @@ function _processResult(data, lastConnectivityStatus) {
     const isAmpCompatible = data['amp-offline-compatible'] === true;
     status = new ConnectivityStatus(true, isAmpClientEnabled, isAmpCompatible, data['amp-version']);
   }
+  store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: status });
   return status;
 }
