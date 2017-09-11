@@ -37,6 +37,7 @@ class AFField extends Component {
   static propTypes = {
     fieldPath: PropTypes.string.isRequired,
     parent: PropTypes.object.isRequired,
+    id: PropTypes.string,
     filter: PropTypes.array,
     showLabel: PropTypes.bool,
     showRequired: PropTypes.bool,
@@ -48,7 +49,8 @@ class AFField extends Component {
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
-    onFieldValidation: PropTypes.func.isRequired // eslint-disable-line react/no-unused-prop-types
+    onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    extraParams: PropTypes.object
   };
 
   static defaultProps = {
@@ -59,7 +61,7 @@ class AFField extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this.fieldExists = false;
   }
 
@@ -188,7 +190,7 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} />);
+      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams} />);
   }
 
   _getOptions(fieldPath) {
@@ -261,7 +263,7 @@ class AFField extends Component {
     return (
       <FormGroup
         controlId={this.props.fieldPath} validationState={showValidationError ? this._getValidationState() : null}
-        className={`${styles.activity_form_control} ${this.props.className}`} >
+        className={`${styles.activity_form_control} ${this.props.className}`} id={this.props.id}>
         <span className={this.props.inline ? styles.inline_field : null}>
           {this.getLabel()}
           {this.getFieldContent()}
