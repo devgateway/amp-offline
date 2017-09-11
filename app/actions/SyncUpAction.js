@@ -20,18 +20,20 @@ export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 export const STATE_SYNCUP_CONNECTION_UNAVAILABLE = 'STATE_SYNCUP_CONNECTION_UNAVAILABLE';
 export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
 export const STATE_CONNECTION_CHECK_IN_PROGRESS = 'STATE_CONNECTION_CHECK_IN_PROGRESS';
+export const STATE_SYNCUP_LOG_LOADED = 'STATE_SYNCUP_LOG_LOADED';
 
 export function loadSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');
-  if (store.getState().syncUpReducer.loadingSyncHistory === false) {
-    SyncUpManager.getSyncUpHistory().then((data) => (
-      // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
-      store.dispatch(syncUpSearchHistoryOk(data))
-    )).catch((err) => (
-      store.dispatch(syncUpSearchHistoryFailed(err))
-    ));
-  }
-  store.dispatch(sendingRequest());
+  return (dispatch) => {
+    if (store.getState().syncUpReducer.loadingSyncHistory === false) {
+      SyncUpManager.getSyncUpHistory().then((data) => (
+        dispatch(syncUpSearchHistoryOk(data))
+      )).catch((err) => (
+        dispatch(syncUpSearchHistoryFailed(err))
+      ));
+    }
+    dispatch(sendingRequest());
+  };
 }
 
 export function startSyncUpIfConnectionAvailable() {
@@ -51,17 +53,27 @@ export function startSyncUp(historyData) {
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
     store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
-    return SyncUpManager.syncUpAllTypesOnDemand().then(() => checkIfToForceSyncUp()).then(() => {
+
+    return SyncUpManager.syncUpAllTypesOnDemand().then((log) =>
       // TODO probably the way in which we will update the ui will change
       // once we get the final version also it will change the way in which pass
       // the historyData object
-      const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
-      LoggerManager.log('syncupSucessfull');
-      store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
-      return newHistoryData;
-    }).catch((err) => {
+      checkIfToForceSyncUp().then(() => {
+        const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
+        LoggerManager.log('syncupSucessfull');
+        store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
+        const { id } = log;
+        store.dispatch({
+          type: STATE_SYNCUP_LOG_LOADED,
+          actionData: log
+        });
+        URLUtils.forwardTo(`/syncUpSummary/${id}`);
+        return newHistoryData;
+      })
+    ).catch((err) => {
       const actionData = { errorMessage: err };
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
+      URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });
   }
