@@ -36,6 +36,7 @@ class FundingSummary extends Component {
     const measuresOrder = [VC.ACTUAL_COMMITMENTS, VC.PLANNED_COMMITMENTS, VC.ACTUAL_DISBURSEMENTS,
       VC.PLANNED_DISBURSEMENTS, VC.ACTUAL_EXPENDITURES, VC.UNALLOCATED_DISBURSEMENTS, VC.PLANNED_EXPENDITURES];
     const measuresTotals = {};
+    let expendituresAreEnabled = false;
     // Commitments, Disbursements, Expenditures
     VC.TRANSACTION_TYPES.forEach(trnType => {
       const pv = this.props.activityFieldsManager.possibleValuesMap[PC.TRANSACTION_TYPE_PATH];
@@ -50,11 +51,12 @@ class FundingSummary extends Component {
             measuresTotals[`${adjType} ${trnType}`] = value;
           }
         });
+        expendituresAreEnabled = (trnType === VC.EXPENDITURES);
       }
     });
     // Other measures
     const adjTypeActualTrn = this.props.activityFieldsManager.getValueTranslation(PC.ADJUSTMENT_TYPE_PATH, VC.ACTUAL);
-    if (adjTypeActualTrn) {
+    if (adjTypeActualTrn && expendituresAreEnabled) {
       const ub = VC.UNALLOCATED_DISBURSEMENTS;
       measuresTotals[ub] = this.props.activityFundingTotals.getTotals(ub, {});
     }
