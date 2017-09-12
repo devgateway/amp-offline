@@ -90,6 +90,11 @@ export default class NumberUtils {
     return formatted;
   }
 
+  static formattedStringToRawNumber(numberString) {
+    LoggerManager.debug('formattedStringToRawNumber');
+    return numeral(numberString).value();
+  }
+
   static calculateInThousands(number) {
     LoggerManager.log('calculateInThousands');
     switch (store.getState().startUpReducer.gsNumberData.amountsInThousands) {
