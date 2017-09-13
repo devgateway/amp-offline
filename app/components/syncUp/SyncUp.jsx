@@ -19,9 +19,9 @@ import {
 } from '../../utils/constants/ErrorConstants';
 import { STATE_LOGOUT_DISMISS_TO_SYNC, STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import {
+  startSyncUpIfConnectionAvailable,
   dismissSyncAndChooseWorkspace,
   loadSyncUpHistory,
-  startSyncUp,
   STATE_SYNCUP_DISMISSED
 } from '../../actions/SyncUpAction';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
@@ -135,7 +135,7 @@ class SyncUp extends Component {
               'btn btn-success': true,
               disabled: loadingSyncHistory || syncUpInProgress
             })}
-            onClick={startSyncUp}
+            onClick={startSyncUpIfConnectionAvailable}
           />
         </div>
         <div className={styles.display_inline}>

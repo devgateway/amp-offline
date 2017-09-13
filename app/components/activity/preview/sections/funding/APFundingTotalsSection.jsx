@@ -63,10 +63,12 @@ class APFundingTotalsSection extends Component {
       });
     });
     groups.sort(this.props.comparator).forEach(g => {
+      const measure = `${g.adjType.value} ${g.trnType.value}`;
+      const labelTrn = translate(`${measure === VC.UNALLOCATED_DISBURSEMENTS ? '' : 'Total '}${measure}`);
       content.push(<APFundingTotalItem
         key={g.key}
         currency={translate(this._wsCurrency)} value={g.amount}
-        label={`${translate('Total')} ${translate(g.adjType.value)} ${translate(g.trnType.value)}`} />);
+        label={labelTrn} />);
     });
     if (sumOfActualDisbursements !== 0 && sumOfPlannedDisbursements !== 0) {
       content.push(<APFundingTotalItem
