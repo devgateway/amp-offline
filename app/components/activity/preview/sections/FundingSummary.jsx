@@ -102,7 +102,6 @@ class FundingSummary extends Component {
 
   _buildTotalFields(measuresOrder, measuresTotals) {
     const fundingInfoSummary = [];
-    const totalTrn = translate('Total');
     measuresOrder.forEach(measure => {
       const value = measuresTotals[measure.trn];
       if (value !== undefined) {
