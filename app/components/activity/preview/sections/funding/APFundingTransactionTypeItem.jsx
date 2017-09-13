@@ -26,7 +26,7 @@ class APFundingTransactionTypeItem extends Component {
   constructor(props, context) {
     super(props);
     LoggerManager.log('constructor');
-    this._currency = context.currentWorkspaceSettings.currency;
+    this._currency = context.currentWorkspaceSettings.currency.code;
   }
 
   _filterFundingDetails() {
@@ -35,7 +35,8 @@ class APFundingTransactionTypeItem extends Component {
   }
 
   _drawHeader() {
-    const label = `${translate(this.props.group.adjType.value)} ${translate(this.props.group.trnType.value)}`;
+    const measure = `${this.props.group.adjType.value} ${this.props.group.trnType.value}`;
+    const label = translate(measure);
     const key = this.props.group.adjType.value + this.props.group.trnType.value;
     return <APLabel label={label} className={styles.header} key={key} />;
   }
@@ -54,10 +55,12 @@ class APFundingTransactionTypeItem extends Component {
     let subtotal = 0;
     subtotal = this.context.currencyRatesManager.convertFundingDetailsToCurrency(this._filterFundingDetails(),
       this._currency);
+    const measure = `${this.props.group.adjType.value} ${this.props.group.trnType.value}`;
+    const labelTrn = translate(`Subtotal ${measure}`).toUpperCase();
     return (<div>
       <APFundingTotalItem
         value={subtotal}
-        label={translate(`Subtotal ${this.props.group.adjType.value} ${this.props.group.trnType.value}`)}
+        label={labelTrn}
         currency={translate(this._currency)}
         key={this.props.group.adjType.value + this.props.group.trnType.value} />
     </div>);

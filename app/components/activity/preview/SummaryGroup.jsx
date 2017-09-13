@@ -20,10 +20,10 @@ export default class SummaryGroup extends Component {
   }
 
   render() {
-    const currency = this.context.currentWorkspaceSettings.currency;
+    const currency = this.context.currentWorkspaceSettings.currency.code;
     return (<div className={styles.summary_container}>
       <FundingSummary
-        titleDetails={currency}
+        titleDetails={`(${currency})`}
         titleClass={styles.summary_section_title}
         groupClass={styles.summary_section_group}
         fieldNameClass={styles.summary_field_name}

@@ -1,13 +1,14 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { FormGroup, Checkbox } from 'react-bootstrap';
+import { FormGroup, Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
-import translate from '../../../../../utils/translate';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
+import AFField from '../../components/AFField';
+import * as Types from '../../components/AFComponentTypes';
 
 /**
  * @author Gabriel Inchauspe
@@ -24,20 +25,30 @@ export default class AFFundingContainer extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
   }
 
   render() {
     // TODO: Implement 'MTEF Projections' table when available for sync.
-    // TODO: Replace Checkboxes with AFField components.
     return (<div>
       <FormGroup>
-        <Checkbox inline value={this.props.funding[AC.ACTIVE]}>{translate('Active')}</Checkbox>
-        <Checkbox
-          inline value={this.props.funding[AC.DELEGATED_COOPERATION]}>
-          {translate('Delegated Cooperation')}
-        </Checkbox>
-        <Checkbox inline value={this.props.funding[AC.DELEGATED_PARTNER]}>{translate('Delegated Partner')}</Checkbox>
+        <Grid>
+          <Row>
+            <Col md={2} lg={2}>
+              <AFField parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.ACTIVE}`} type={Types.CHECKBOX} />
+            </Col>
+            <Col md={2} lg={2}>
+              <AFField
+                parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_COOPERATION}`}
+                type={Types.CHECKBOX} />
+            </Col>
+            <Col md={2} lg={2}>
+              <AFField
+                parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_PARTNER}`}
+                type={Types.CHECKBOX} />
+            </Col>
+          </Row>
+        </Grid>
       </FormGroup>
       <AFFundingClassificationPanel funding={this.props.funding} />
       <AFFundingDetailContainer funding={this.props.funding} type={VC.COMMITMENTS} />

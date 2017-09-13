@@ -8,6 +8,7 @@ export const EXECUTING_AGENCY = 'Executing Agency';
 export const IMPLEMENTING_AGENCY = 'Implementing Agency';
 export const BENEFICIARY_AGENCY = 'Beneficiary Agency';
 export const CONTRACTING_AGENCY = 'Contracting Agency';
+export const DONOR_AGENCY = 'Donor';
 export const REGIONAL_GROUP = 'Regional Group';
 export const SECTOR_GROUP = 'Sector Group';
 
@@ -34,3 +35,9 @@ export const NEW_ACTIVITY_ID = '0';
 
 export const PROPOSED_PROJECT_COST = 'ppc';
 export const REVISED_PROJECT_COST = 'rpc';
+
+export const ACRONYM_DONOR_ORGANIZATION = 'DN';
+export const ACRONYM_EXECUTING_AGENCY = 'EA';
+export const ACRONYM_IMPLEMENTING_AGENCY = 'IA';
+export const ACRONYM_BENEFICIARY_AGENCY = 'BA';
+export const ACRONYM_RESPONSIBLE_ORGANIZATION = 'RO';

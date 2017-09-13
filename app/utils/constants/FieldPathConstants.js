@@ -1,4 +1,5 @@
 import * as AC from './ActivityConstants';
+import * as FM from './FeatureManagerConstants';
 
 /**
  * This is a set of field paths that are used for frequent needs
@@ -32,3 +33,13 @@ export const PATHS_WITH_HIERARCHICAL_VALUES = new Set([NATIONAL_PLAN_OBJECTIVE_P
 
 
 export const DO_NOT_HYDRATE_FIELDS_LIST = [AC.APPROVAL_STATUS];
+
+/* Fields paths alternative values location */
+export const ALTERNATE_VALUE_PATH = {};
+ALTERNATE_VALUE_PATH[AC.CREATED_ON] = AC.CLIENT_CREATED_ON;
+ALTERNATE_VALUE_PATH[AC.MODIFIED_ON] = AC.CLIENT_UPDATED_ON;
+
+/* FM paths for some activity fields that are always present in fields def, but may be hidden from display through FM */
+export const ACTIVITY_FIELDS_FM_PATH = {};
+ACTIVITY_FIELDS_FM_PATH[AC.MODIFIED_BY] = FM.ACTIVITY_LAST_UPDATED_BY;
+ACTIVITY_FIELDS_FM_PATH[AC.MODIFIED_ON] = FM.ACTIVITY_LAST_UPDATED_ON;

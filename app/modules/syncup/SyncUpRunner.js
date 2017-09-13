@@ -16,6 +16,7 @@ import {
   SYNCUP_STATUS_FAIL,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
+  SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_FIELDS,
   SYNCUP_TYPE_EXCHANGE_RATES
@@ -217,10 +218,24 @@ export default class SyncUpRunner {
     if (this._syncRunNo === SyncUpRunner._SYNC_RUN_2 && state === SS.NO_CHANGES) {
       unitResult = this._unitsResult.get(type);
     } else {
+      this._addStats(syncUpManager, unitResult, this._unitsResult.get(type));
       this._unitsResult.set(type, unitResult);
     }
     this._remainingSyncUpTypes.delete(syncUpManager.type);
     return unitResult;
+  }
+
+  _addStats(syncUpManager: SyncUpManagerInterface, unitResult, prevUnitResult) {
+    switch (syncUpManager.type) {
+      case SYNCUP_TYPE_ACTIVITIES_PUSH:
+        unitResult.details = syncUpManager.details;
+        break;
+      case SYNCUP_TYPE_ACTIVITIES_PULL:
+        unitResult.details = syncUpManager.mergeDetails(prevUnitResult && prevUnitResult.details);
+        break;
+      default:
+        break;
+    }
   }
 
   _getStateOrSetBasedOnLeftOver(type, originalDiff, unitLeftOver, done) {
@@ -256,7 +271,7 @@ export default class SyncUpRunner {
     const status = successful ? SYNCUP_STATUS_SUCCESS : SYNCUP_STATUS_FAIL;
     const syncUpDiff = successful ? null : this._syncUpDiffLeftOver.syncUpDiff;
     const unitsResult = Array.from(this._unitsResult.values());
-    if (!successful && unitsResult.length) {
+    if (unitsResult.length) {
       errors = this._collectErrors(unitsResult, errors);
     }
     return SyncUpRunner.buildResult({

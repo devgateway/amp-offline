@@ -21,43 +21,46 @@ println "Tag: ${tag}"
 def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
 node {
-	stage('PrepareSetup') {
-		checkout scm
-		//we print node version
-		sh 'node -v'
-		sh returnStatus: true, script: 'tar xf ../nm_cache.tar'
-		//remove Extraneous packages
-		sh 'npm prune'
-		//install all needed dependencies
-		sh 'npm install'
-		sh 'npm run build-dll'
-	}
-	stage('StyleCheck') {
-		try {
-			sh 'npm run lint'
-		} catch(e) {
-			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
-			throw e
+	try {
+		stage('PrepareSetup') {
+			checkout scm
+			//we print node version
+			sh 'node -v'
+			sh returnStatus: true, script: 'tar xf ../nm_cache.tar'
+			//remove Extraneous packages
+			sh 'npm prune'
+			//install all needed dependencies
+			sh 'npm install'
+			sh 'npm run build-dll'
+			sh returnStatus: true, script: 'tar cf ../nm_cache.tar node_modules'
 		}
-	}
-	stage('UnitTest') {
-		try {
-			sh 'npm run test-mocha'
-		} catch(e) {
-			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
-			throw e
+		stage('StyleCheck') {
+			try {
+				sh 'npm run lint'
+			} catch(e) {
+				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
+				throw e
+			}
 		}
-	}
-	stage('Dist') {
-		try {
-			sh './dist.sh'
-			sh './publish.sh ${BRANCH_NAME}'
-			sh 'tar cf ../nm_cache.tar node_modules'
-			sh 'rm -r dist node_modules'
-			slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
-		} catch (e) {
-			slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Failed to create and publish installers for ${changePretty}")
-			throw e
+		stage('UnitTest') {
+			try {
+				sh 'npm run test-mocha'
+			} catch(e) {
+				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
+				throw e
+			}
 		}
+		stage('Dist') {
+			try {
+				sh './dist.sh'
+				sh './publish.sh ${BRANCH_NAME}'
+				slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
+			} catch (e) {
+				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Failed to create and publish installers for ${changePretty}")
+				throw e
+			}
+		}
+	} finally {
+		sh 'rm -r dist node_modules'
 	}
 }
