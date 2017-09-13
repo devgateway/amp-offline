@@ -151,6 +151,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _pushActivity(activity) {
+    // TODO AMPOFFLINE-706 reject activity client if it uses a new contact that could not be pushed
     LoggerManager.log('_pushActivity');
     // TODO remove once invalid fields are ignored by AMP
     activity = Object.assign({}, activity);

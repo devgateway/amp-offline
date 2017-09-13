@@ -24,7 +24,7 @@ import {
   SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_CONTACT_FIELDS,
-  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES, SYNCUP_TYPE_CONTACTS_PUSH,
+  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES, SYNCUP_TYPE_CONTACTS_PULL, SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
@@ -56,6 +56,8 @@ export default class SyncUpConfig {
     activities or not at all. We will fail only dependent activities if their new contact push doesn't work.
      */
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_CONTACTS_PUSH] = SS.STATES_FINISH;
+    // we need to pull contacts before activities push, to unlink deleted contacts from activities
+    dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_CONTACTS_PULL] = SS.STATES_FINISH;
     // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
     dependencies[SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] =

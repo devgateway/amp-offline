@@ -3,6 +3,10 @@ import { SYNCUP_TYPE_CONTACTS_PULL } from '../../../utils/Constants';
 import { CONTACT_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import LoggerManager from '../../util/LoggerManager';
+import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
+import { CONTACT } from '../../../utils/constants/ActivityConstants';
+import * as Utils from '../../../utils/Utils';
+import * as ActivityHelper from '../../helpers/ActivityHelper';
 
 /* eslint-disable class-methods-use-this */
 
@@ -14,12 +18,40 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
 
   constructor() {
     super(SYNCUP_TYPE_CONTACTS_PULL);
+    this.unlinkRemovedContactsFromActivities = this.unlinkRemovedContactsFromActivities.bind(this);
+    this.unlinkRemovedContactsFromActivity = this.unlinkRemovedContactsFromActivity.bind(this);
   }
 
   removeEntries() {
-    return ContactHelper.removeAllByIds(this.diff.removed).then((result) => {
+    const removedContactIds = this.diff.removed;
+    return ContactHelper.removeAllByIds(removedContactIds).then(() => {
+      // clear diff immediately
       this.diff.removed = [];
-      return result;
+      return this.unlinkRemovedContactsFromActivities(removedContactIds);
+    });
+  }
+
+  unlinkRemovedContactsFromActivities(removedContactIds) {
+    if (!removedContactIds || !removedContactIds.length) {
+      return removedContactIds;
+    }
+    const matchContact = Utils.toMap(CONTACT, { $in: removedContactIds });
+    const queries = ACTIVITY_CONTACT_PATHS.map(type => Utils.toMap(type, { $elemMatch: matchContact }));
+    const filter = { $or: queries };
+    // TODO: check if AMP reports activity as modified if a contact is removed, until then remove from all local
+    return ActivityHelper.findAllNonRejected(filter).then(activities => {
+      activities.forEach(activity => this.unlinkRemovedContactsFromActivity(activity, removedContactIds));
+      return ActivityHelper.saveOrUpdateCollection(activities);
+    });
+  }
+
+  unlinkRemovedContactsFromActivity(activity, removedContactIds) {
+    ACTIVITY_CONTACT_PATHS.forEach(contactType => {
+      let contacts = activity[contactType];
+      if (contacts && contacts.length) {
+        contacts = contacts.filter(contact => !removedContactIds.includes(contact[CONTACT]));
+        activity[contactType] = contacts;
+      }
     });
   }
 
