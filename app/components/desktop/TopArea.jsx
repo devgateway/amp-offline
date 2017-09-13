@@ -1,5 +1,5 @@
 /* eslint react/jsx-space-before-closing: 0 */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import style from './TopArea.css';
 import translate from '../../utils/translate';
@@ -7,6 +7,11 @@ import Legends from './Legends';
 import LoggerManager from '../../modules/util/LoggerManager';
 
 export default class TopArea extends Component {
+
+  static propTypes = {
+    currentWorkspaceSettings: PropTypes.object.isRequired,
+    translationReducer: PropTypes.object.isRequired
+  };
 
   render() {
     LoggerManager.log('render');
@@ -17,7 +22,9 @@ export default class TopArea extends Component {
     const currencyP = classNames('navbar-text', 'pull-right', style.currency);
     const currencyLabel = classNames(style.currency_label);
     const ul = classNames('nav', 'navbar-nav', style.ul_var);
-
+    const { currency } = this.props.currentWorkspaceSettings;
+    const wsCurrencyCode = currency.code;
+    const wsCurrencyLabel = currency['translated-value'][this.props.translationReducer.lang];
     return (
       <div className="navbar-wrapper">
         <div className="container">
@@ -44,8 +51,9 @@ export default class TopArea extends Component {
                 </li>
               </ul>
 
-              <p className={currencyP}>USD
-                <span className={currencyLabel}> - US Dollar</span>
+              <p className={currencyP}>{wsCurrencyCode}
+                <span className={currencyLabel}> - {wsCurrencyLabel}</span>
+
               </p>
             </div>
           </nav>
