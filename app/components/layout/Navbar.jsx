@@ -62,8 +62,8 @@ export default class Navbar extends Component {
 
           <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
-            <a className={style.navbar_left_side} >{this.extractLoggedUser('')}</a>
-            <a className={style.navbar_left_side} >{this.extractWorkSpace('')}</a>
+            <a className={style.navbar_right_side} >{this.extractLoggedUser('')}</a>
+            <a className={style.navbar_right_side} >{this.extractWorkSpace('')}</a>
           </div>
 
 
