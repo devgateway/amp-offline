@@ -82,8 +82,8 @@ class Navbar extends Component {
           <Link className={style.navbar_left_side} style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
           <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
-            <a className={style.navbar_left_side}>{this.extractLoggedUser('')}</a>
-            <a className={style.navbar_left_side}>{this.extractWorkspace('')}</a>
+            <a className={style.navbar_right_side}>{this.extractLoggedUser('')}</a>
+            <a className={style.navbar_right_side}>{this.extractWorkspace('')}</a>
           </div>
         </div>
         <div className={style.main_menu}>

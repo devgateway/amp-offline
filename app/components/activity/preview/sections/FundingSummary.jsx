@@ -64,11 +64,10 @@ class FundingSummary extends Component {
 
   _buildTotalFields(measuresOrder, measuresTotals) {
     const fundingInfoSummary = [];
-    const totalTrn = translate('Total');
     measuresOrder.forEach(measure => {
       const value = measuresTotals[measure];
       if (value !== undefined) {
-        const title = `${totalTrn} ${translate(measure)}`;
+        const title = translate(`${measure === VC.UNALLOCATED_DISBURSEMENTS ? '' : 'Total '}${measure}`);
         const key = `Summary-Total-${measure}`;
         fundingInfoSummary.push(<APField
           key={key} title={title} value={value} separator={false}
