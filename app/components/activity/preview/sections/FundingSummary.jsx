@@ -90,10 +90,10 @@ class FundingSummary extends Component {
         let value = NumberUtils.formattedStringToRawNumber(measuresTotals[`${VC.ACTUAL} ${VC.DISBURSEMENTS}`])
           / NumberUtils.formattedStringToRawNumber(measuresTotals[`${VC.ACTUAL} ${VC.COMMITMENTS}`]);
         value *= 100;
-        value = NumberUtils.rawNumberToFormattedString(value);
+        value = `${NumberUtils.rawNumberToFormattedString(value)}%`;
         measuresTotals[VC.DELIVERY_RATE] = value;
       } else {
-        measuresTotals[VC.DELIVERY_RATE] = 0;
+        measuresTotals[VC.DELIVERY_RATE] = '0%';
       }
     }
 
