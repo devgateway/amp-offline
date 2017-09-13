@@ -105,10 +105,11 @@ class FundingSummary extends Component {
     measuresOrder.forEach(measure => {
       const value = measuresTotals[measure.trn];
       if (value !== undefined) {
-        let title = translate(measure.trn);
+        let title = measure.trn;
         if (measure.total) {
-          title = `${totalTrn} ${title}`;
+          title = `Total ${title}`;
         }
+        title = translate(title);
         const key = `Summary-Total-${measure.trn}`;
         fundingInfoSummary.push(<APField
           key={key} title={title} value={value} separator={false}
