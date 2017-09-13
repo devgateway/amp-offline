@@ -13,6 +13,7 @@ export default class SyncUpManagerInterface {
     this._type = type;
     this.done = false;
     this._errors = [];
+    this._details = {};
     if (this.doSyncUp === undefined) {
       throwSyncUpError('SyncUpManagerInterface.doSyncUp not implemented');
     }
@@ -45,6 +46,23 @@ export default class SyncUpManagerInterface {
 
   set lastSyncUpDate(lastSyncTimestamp) {
     this._lastSyncTimestamp = lastSyncTimestamp;
+  }
+
+  get details() {
+    return this._details;
+  }
+
+  /**
+   * Merge sync unit details with another details and provide the merge result. The sync up unit details will not
+   * be replaces by the merge result.
+   *
+   * This must be implemented by each unit that intends to provide the details or a notification error will be raised.
+   *
+   * @param previousDetails details from a previous run
+   * @return {{}}
+   */
+  mergeDetails(previousDetails) { // eslint-disable-line
+    throwSyncUpError('SyncUpManagerInterface.mergeDetails not implemented');
   }
 
   /**
