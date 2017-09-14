@@ -340,11 +340,7 @@
 }
 
 .box_table2 {
-  border-top: 1px solid #ebebeb;
-  border-bottom: 1px solid #ebebeb;
-  border-collapse: collapse;
   width: 100%;
-  display: table ! important;
 }
 
 .box_table2 td {
@@ -370,4 +366,11 @@
   padding-bottom: 5px;
   border-bottom: 1px solid #ebebeb;
   vertical-align: top;
+}
+
+.nodata {
+  padding-left: 10px;
+  padding-bottom: 10px;
+  vertical-align: top;
+  font-weight: bold;
 }
