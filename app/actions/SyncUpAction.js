@@ -2,10 +2,12 @@ import store from '../index';
 import * as URLUtils from '../utils/URLUtils';
 import { WORKSPACE_URL } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
+import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
+import { connectivityCheck } from './ConnectivityAction';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -15,7 +17,9 @@ export const STATE_SYNCUP_IN_PROCESS = 'STATE_SYNCUP_IN_PROCESS';
 export const STATE_SYNCUP_COMPLETED = 'STATE_SYNCUP_COMPLETED';
 export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
+export const STATE_SYNCUP_CONNECTION_UNAVAILABLE = 'STATE_SYNCUP_CONNECTION_UNAVAILABLE';
 export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
+export const STATE_CONNECTION_CHECK_IN_PROGRESS = 'STATE_CONNECTION_CHECK_IN_PROGRESS';
 export const STATE_SYNCUP_LOG_LOADED = 'STATE_SYNCUP_LOG_LOADED';
 
 export function loadSyncUpHistory() {
@@ -30,6 +34,16 @@ export function loadSyncUpHistory() {
   store.dispatch(sendingRequest());
 }
 
+export function startSyncUpIfConnectionAvailable() {
+  return connectivityCheck().then(status => {
+    if (status.isAmpAvailable) {
+      return startSyncUp();
+    }
+    store.dispatch(syncConnectionUnavailable());
+    return null;
+  });
+}
+
 export function startSyncUp(historyData) {
   LoggerManager.log('startSyncUp');
   /* Save current syncup redux state because this might be a "forced" syncup and we dont want
@@ -38,7 +52,7 @@ export function startSyncUp(historyData) {
     store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
 
-    SyncUpManager.syncUpAllTypesOnDemand().then((log) =>
+    return SyncUpManager.syncUpAllTypesOnDemand().then((log) =>
       // TODO probably the way in which we will update the ui will change
       // once we get the final version also it will change the way in which pass
       // the historyData object
@@ -99,15 +113,24 @@ function syncUpSearchHistoryFailed(err) {
 }
 
 function sendingRequest() {
-  LoggerManager.log('sendingRequest');
+  LoggerManager.debug('sendingRequest');
   return {
     type: STATE_SYNCUP_LOADING_HISTORY
   };
 }
 
 function syncUpInProgress() {
-  LoggerManager.log('sendingRequest');
+  LoggerManager.debug('sendingRequest');
   return {
     type: STATE_SYNCUP_IN_PROCESS
+  };
+}
+
+function syncConnectionUnavailable() {
+  LoggerManager.debug('syncConnectionUnavailable');
+  const msg = translate('syncConnectionError');
+  return {
+    type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,
+    actionData: { errorMessage: msg }
   };
 }
