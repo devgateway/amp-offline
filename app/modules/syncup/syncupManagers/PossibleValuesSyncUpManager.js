@@ -1,8 +1,6 @@
-import { POSSIBLE_VALUES_PER_FIELD_PATHS } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import PossibleValuesHelper from '../../helpers/PossibleValuesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
-import { SYNCUP_TYPE_POSSIBLE_VALUES } from '../../../utils/Constants';
 import LoggerManager from '../../util/LoggerManager';
 
 /* eslint-disable class-methods-use-this */
@@ -13,18 +11,17 @@ import LoggerManager from '../../util/LoggerManager';
  */
 export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpManager {
 
-  constructor() {
-    super(SYNCUP_TYPE_POSSIBLE_VALUES);
+  constructor(possibleValuesType, url) {
+    super(possibleValuesType);
+    this._url = url;
     this.diff = [];
   }
 
   doAtomicSyncUp(fieldPaths) {
     LoggerManager.log('doAtomicSyncUp');
-    return ConnectionHelper.doPost({ url: POSSIBLE_VALUES_PER_FIELD_PATHS, body: fieldPaths, shouldRetry: true })
+    return ConnectionHelper.doPost({ url: this._url, body: fieldPaths, shouldRetry: true })
       .then(possibleValuesCollection => {
-        const newPossibleValues = [];
-        Object.entries(possibleValuesCollection).forEach(entry =>
-          newPossibleValues.push(PossibleValuesHelper.transformToClientUsage(entry)));
+        const newPossibleValues = this.preparePossibleValues(possibleValuesCollection);
         return PossibleValuesHelper.saveOrUpdateCollection(newPossibleValues);
       }).then((result) => {
         this.done = true;
@@ -32,5 +29,9 @@ export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpMan
       }).catch(() => {
         this.diff = fieldPaths;
       });
+  }
+
+  preparePossibleValues(possibleValuesCollection) {
+    return Object.entries(possibleValuesCollection).map(entry => PossibleValuesHelper.transformToClientUsage(entry));
   }
 }

@@ -18,7 +18,9 @@ import NumberUtils from '../utils/NumberUtils';
 import DateUtils from '../utils/DateUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
-import { loadAllLanguages } from '../actions/TranslationAction';
+import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
+import FeatureManager from '../modules/util/FeatureManager';
+import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -41,17 +43,15 @@ export const STATE_FM_FULFILLED = 'STATE_FM_FULFILLED';
 export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
 
+export function ampOfflineStartUp() {
+  return ampOfflineInit()
+    .then(initLanguage);
+}
 
-/**
- * Checks and updates the connectivity status
- * @returns ConnectivityStatus
- */
-export function ampStartUp() {
+export function ampOfflineInit() {
   store.dispatch(loadAllLanguages());
   return loadConnectionInformation()
     .then(scheduleConnectivityCheck)
-    .then(loadNumberSettings)
-    .then(loadDateSettings)
     .then(loadGlobalSettings)
     .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup);
@@ -85,28 +85,6 @@ function scheduleConnectivityCheck() {
   });
 }
 
-export function loadNumberSettings() {
-  LoggerManager.log('loadNumberSettings');
-  return new Promise((resolve, reject) => (
-    NumberUtils.getConfigFromDB().then((data) => {
-      store.dispatch({ type: STATE_GS_NUMBERS_LOADED, actionData: data });
-      NumberUtils.createLanguage();
-      return resolve();
-    }).catch(reject)
-  ));
-}
-
-export function loadDateSettings() {
-  LoggerManager.log('loadDateSettings');
-  DateUtils.setCurrentLang(store.getState().translationReducer.lang);
-  return new Promise((resolve, reject) => (
-    DateUtils.getConfigFromDB().then((data) => {
-      store.dispatch({ type: STATE_GS_DATE_LOADED, actionData: data });
-      return resolve();
-    }).catch(reject)
-  ));
-}
-
 /**
  * Loads GS as { key: value } pairs to be ready for sync usage, since the list is small and is readonly on the client.
  * @return {Promise}
@@ -118,6 +96,8 @@ export function loadGlobalSettings() {
     gsList.forEach(gs => {
       gsData[gs.key] = gs.value;
     });
+    GlobalSettingsManager.setGlobalSettings(gsData);
+    NumberUtils.createLanguage();
     return gsData;
   });
   store.dispatch({
@@ -134,7 +114,12 @@ export function loadGlobalSettings() {
 export function loadFMTree(id = undefined) {
   LoggerManager.log('loadFMTree');
   const dbFilter = id ? { id } : {};
-  const fmPromise = FMHelper.findAll(dbFilter).then(fmTrees => (fmTrees.length ? fmTrees[0] : null));
+  const fmPromise = FMHelper.findAll(dbFilter)
+    .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))
+    .then(fmTree => {
+      FeatureManager.setFMTree(fmTree);
+      return fmTree;
+    });
   store.dispatch({
     type: STATE_FM,
     payload: fmPromise

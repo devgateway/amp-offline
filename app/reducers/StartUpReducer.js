@@ -16,7 +16,6 @@ import LoggerManager from '../modules/util/LoggerManager';
 const defaultState = {
   connectionInformation: undefined,
   loadingInProgress: false,
-  gsNumberData: undefined,
   isGSLoading: false,
   isGSLoaded: false,
   gsLoadError: undefined,
@@ -41,9 +40,9 @@ export default function startUpReducer(state = defaultState, action: Object) {
     case STATE_PARAMETERS_FAILED:
       return Object.assign({}, state, { error: action.error, loadingInProgress: false });
     case STATE_GS_NUMBERS_LOADED:
-      return Object.assign({}, state, { error: action.error, gsNumberData: action.actionData });
+      return Object.assign({}, state, { error: action.error });
     case STATE_GS_DATE_LOADED:
-      return Object.assign({}, state, { error: action.error, gsDateData: action.actionData });
+      return Object.assign({}, state, { error: action.error });
     case STATE_GS_PENDING:
       return Object.assign({}, state, {
         globalSettings: null,

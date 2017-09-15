@@ -5,7 +5,7 @@ import { LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import ActivitiesPushToAMPManager from '../modules/syncup/syncupManagers/ActivitiesPushToAMPManager';
 import { checkIfToForceSyncUp } from './SyncUpAction';
-import { ampStartUp } from './StartUpAction';
+import { ampOfflineInit } from './StartUpAction';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -105,5 +105,5 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
     actionData: { isInactivityTimeout }
   });
   UrlUtils.forwardTo(LOGIN_URL);
-  return ampStartUp();
+  return ampOfflineInit();
 }
