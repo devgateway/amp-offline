@@ -2,7 +2,6 @@
   font-weight: bold;
   padding-left: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ebebeb;
 }
 
 .organization_container {
@@ -26,4 +25,20 @@
 .organization_box {
   width: 50%;
   display: inline-block;
+  border-bottom: 1px solid #ebebeb;
+  vertical-align: top;
+}
+
+.organization_placeholder {
+  margin: 0;
+  height: 79px;
+  width: 50%;
+  display: inline-block;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.nodata {
+  padding: 10px;
+  vertical-align: top;
+  font-weight: bold;
 }

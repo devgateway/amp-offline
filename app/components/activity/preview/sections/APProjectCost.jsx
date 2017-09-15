@@ -38,16 +38,29 @@ const APProjectCost = (fieldName) => class extends Component {
       // TODO currency conversion
       const currency = this.getFieldValue(`${fieldName}~${AC.CURRENCY_CODE}`);
       const date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
-      content = (<div>
-        <div className={styles.project_cost_left}>
-          <span className={styles.project_cost_title}>{translate('Cost')} </span>
-          <span className={styles.project_cost_currency}>{amount} {currency}</span>
-        </div>
-        <div className={styles.project_cost_right}>
-          <span className={styles.project_cost_title}>{translate('Date')}</span>
-          <span className={styles.project_cost_date}>{DateUtils.createFormattedDate(date)}</span>
-        </div>
-      </div>);
+      if (this.props.activity.fundings.length) {
+        content = (<div>
+          <div className={styles.project_cost_left}>
+            <span className={styles.project_cost_title}>{translate('Cost')} </span>
+            <span className={styles.project_cost_currency}>{amount} {currency}</span>
+          </div>
+          <div className={styles.project_cost_right}>
+            <span className={styles.project_cost_title}>{translate('Date')}</span>
+            <span className={styles.project_cost_date}>{DateUtils.createFormattedDate(date)}</span>
+          </div>
+        </div>);
+      } else {
+        content = (<div>
+          <div className={styles.project_cost_left}>
+            <span className={styles.project_cost_title}>{translate('Cost')} </span>
+            <span className={styles.project_cost_date}>{translate('No Data')}</span>
+          </div>
+          <div className={styles.project_cost_right}>
+            <span className={styles.project_cost_title}>{translate('Date')}</span>
+            <span className={styles.project_cost_date}>{translate('No Data')}</span>
+          </div>
+        </div>);
+      }
     }
     return content;
   }

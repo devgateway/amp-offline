@@ -54,7 +54,7 @@ export default class ActivityFundingTotals {
     }
     value = NumberUtils.rawNumberToFormattedString(value);
     value = value.toLocaleString('en-EN', {
-      currency: this._currentWorkspaceSettings.currency,
+      currency: this._currentWorkspaceSettings.currency.code,
       currencyDisplay: 'code'
     });
     cache[filter] = value;
@@ -86,7 +86,7 @@ export default class ActivityFundingTotals {
     let total = 0;
     if (fundingDetails.length > 0) {
       total = this._currencyRatesManager.convertFundingDetailsToCurrency(fundingDetails,
-        this._currentWorkspaceSettings.currency);
+        this._currentWorkspaceSettings.currency.code);
     }
 
     return total;
