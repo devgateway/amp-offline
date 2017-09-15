@@ -112,7 +112,7 @@ const DesktopManager = {
     item[FUNDINGS].forEach((funding) => (
       funding[FUNDING_DETAILS].forEach((fd) => {
         if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
-          amount += currencyRatesManager.convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency);
+          amount += currencyRatesManager.convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
         }
       })
     ));

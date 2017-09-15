@@ -11,6 +11,7 @@ import {
 import LoggerManager from '../../../../modules/util/LoggerManager';
 import styles from './APRelatedOrganizations.css';
 import APLabel from '../components/APLabel';
+import translate from '../../../../utils/translate';
 
 /**
  * @author Gabriel Inchauspe
@@ -47,12 +48,21 @@ class APRelatedOrganizations extends Component {
         content.push(<div className={styles.organization_box}>{subcontent}</div>);
       }
     });
+    if (content.length % 2 === 1) {
+      content.push(<div className={styles.organization_placeholder} />);
+    }
     return content;
   }
 
   render() {
-    return (<div className={styles.organization_container}>
-      {this._build()}
+    let content = this._build();
+    let container = true;
+    if (content.length === 0) {
+      content = (<div className={styles.nodata}>{translate('No Data')}</div>);
+      container = false;
+    }
+    return (<div className={container && styles.organization_container}>
+      {content}
     </div>);
   }
 }
