@@ -26,8 +26,8 @@ export default class AFFundingDonorSection extends Component {
     role: PropTypes.object.isRequired
   };
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     LoggerManager.log('constructor');
     // We manage the open/close state of these panels or they will have problems when nested panels.
     const openFundingsState = [];
