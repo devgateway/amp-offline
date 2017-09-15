@@ -17,12 +17,15 @@ import {
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ACTIVITIES_PULL,
+  SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_ASSETS,
-  SYNCUP_TYPE_FIELDS,
+  SYNCUP_TYPE_CONTACT_FIELDS,
+  SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES
 } from '../../utils/Constants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
+import ContactHelper from '../helpers/ContactHelper';
 
 /* eslint-disable class-methods-use-this */
 
@@ -59,6 +62,8 @@ export default class SyncUpRunner {
   static _SYNC_RUN_1 = 1;
   /** Sync up run no 2 */
   static _SYNC_RUN_2 = 2;
+
+  static _SECOND_RUN_SKIP = new Set([SYNCUP_TYPE_ACTIVITIES_PUSH, SYNCUP_TYPE_CONTACTS_PUSH]);
 
   /**
    * Generates a new instance of the Sync Up Runner. This must be only instance per user request.
@@ -114,11 +119,12 @@ export default class SyncUpRunner {
     this._syncRunNo = syncRunNo;
 
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
-      ActivitiesPushToAMPManager.getActivitiesToPush()])
-      .then(([ampIds, userIds, activitiesToPush]) => {
+      ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient()])
+      .then(([ampIds, userIds, activitiesToPush, contactsToPush]) => {
         this._ampIds = ampIds;
         this._registeredUserIds = userIds;
         this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
+        this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
         return this._getCumulativeSyncUpChanges();
       });
   }
@@ -147,15 +153,17 @@ export default class SyncUpRunner {
     LoggerManager.log('_mergeToLeftOverAndUpdateNoChanges');
     const isFirstRun = this._syncRunNo === SyncUpRunner._SYNC_RUN_1;
     // TODO: remove this flag once AMP-25568 is done
-    changes[SYNCUP_TYPE_FIELDS] = true;
+    changes[SYNCUP_TYPE_ACTIVITY_FIELDS] = true;
+    changes[SYNCUP_TYPE_CONTACT_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
     changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && this._hasActivitiesToPush;
+    changes[SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._hasContactsToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
       if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined
-        || (type === SYNCUP_TYPE_ACTIVITIES_PUSH && !isFirstRun)) {
+        || (SyncUpRunner._SECOND_RUN_SKIP.has(type) && !isFirstRun)) {
         this._syncUpDependency.setState(type, SS.NO_CHANGES);
         this._syncUpCollection.get(type).done = true;
       }

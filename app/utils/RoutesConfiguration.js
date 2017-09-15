@@ -11,8 +11,8 @@ import {
   GET_TRANSLATIONS_URL,
   ACTIVITY_IMPORT_URL,
   ACTIVITY_EXPORT_URL,
-  SINGLE_FIELDS_TREE_URL,
-  POSSIBLE_VALUES_PER_FIELD_PATHS,
+  ACTIVITY_SINGLE_FIELDS_TREE_URL,
+  ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
   SYNC_URL,
   AMP_COUNTRY_FLAG,
   WORKSPACE_SETTINGS_URL,
@@ -20,7 +20,11 @@ import {
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
   POSSIBLE_VALUES_V2_MEDIA_TYPE,
-  DOWNLOAD_UPGRADE_URL
+  DOWNLOAD_UPGRADE_URL,
+  CONTACT_PULL_URL,
+  CONTACT_PUSH_URL,
+  CONTACT_SINGLE_FIELDS_TREE_URL,
+  CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -68,11 +72,11 @@ const routesConfiguration = [{
   method: 'GET',
   requiresAuth: true
 }, {
-  url: SINGLE_FIELDS_TREE_URL,
+  url: ACTIVITY_SINGLE_FIELDS_TREE_URL,
   method: 'GET',
   requiresAuth: true
 }, {
-  url: POSSIBLE_VALUES_PER_FIELD_PATHS,
+  url: ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
   requiresAuth: true,
   accept: POSSIBLE_VALUES_V2_MEDIA_TYPE
@@ -110,6 +114,26 @@ const routesConfiguration = [{
   url: DOWNLOAD_UPGRADE_URL,
   method: 'GET',
   isBinary: true
+}, {
+  url: CONTACT_PULL_URL,
+  method: 'GET',
+  requiredAuth: true
+}, {
+  url: CONTACT_PUSH_URL,
+  method: 'POST',
+  requiredAuth: true
+}, {
+  url: CONTACT_PUSH_URL,
+  method: 'PUT',
+  requiredAuth: true
+}, {
+  url: CONTACT_SINGLE_FIELDS_TREE_URL,
+  method: 'GET',
+  requiredAuth: true
+}, {
+  url: CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
+  requiredAuth: true
 }
 ];
 
