@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { Panel, Button, Glyphicon } from 'react-bootstrap';
+import { Button, Glyphicon, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
@@ -45,7 +45,9 @@ export default class AFFundingDonorSection extends Component {
     // Since Funding Item belongs to a "Funding Tab" we can inherit that info.
     const fundingItem = {};
     fundingItem[AC.FUNDING_DONOR_ORG_ID] = this.props.organization;
-    fundingItem[AC.SOURCE_ROLE] = this.props.role;
+    if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
+      fundingItem[AC.SOURCE_ROLE] = this.props.role;
+    }
     fundingItem[AC.FUNDING_DETAILS] = [];
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
     const newFundingList = this.state.fundingList;
@@ -63,8 +65,10 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _filterFundings(fundings) {
+    // If source_role is disabled then we filter only by organization.
+    const filterSourceRole = this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`);
     return fundings.filter(f => (f[AC.FUNDING_DONOR_ORG_ID].id === this.props.organization.id
-      && f[AC.SOURCE_ROLE].id === this.props.role.id));
+      && (filterSourceRole ? f[AC.SOURCE_ROLE].id === this.props.role.id : true)));
   }
 
   _generateComplexHeader(i, funding) {

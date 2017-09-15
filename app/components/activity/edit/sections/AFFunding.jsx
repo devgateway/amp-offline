@@ -43,19 +43,23 @@ class AFFunding extends Component {
   }
 
   _getAcronym(sourceRole) {
-    switch (sourceRole.value) {
-      case VC.DONOR_AGENCY:
-        return translate(VC.ACRONYM_DONOR_ORGANIZATION);
-      case VC.BENEFICIARY_AGENCY:
-        return translate(VC.ACRONYM_BENEFICIARY_AGENCY);
-      case VC.IMPLEMENTING_AGENCY:
-        return translate(VC.ACRONYM_IMPLEMENTING_AGENCY);
-      case VC.EXECUTING_AGENCY:
-        return translate(VC.ACRONYM_EXECUTING_AGENCY);
-      case VC.RESPONSIBLE_ORGANIZATION:
-        return translate(VC.ACRONYM_RESPONSIBLE_ORGANIZATION);
-      default:
-        return null;
+    if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
+      switch (sourceRole.value) {
+        case VC.DONOR_AGENCY:
+          return translate(VC.ACRONYM_DONOR_ORGANIZATION);
+        case VC.BENEFICIARY_AGENCY:
+          return translate(VC.ACRONYM_BENEFICIARY_AGENCY);
+        case VC.IMPLEMENTING_AGENCY:
+          return translate(VC.ACRONYM_IMPLEMENTING_AGENCY);
+        case VC.EXECUTING_AGENCY:
+          return translate(VC.ACRONYM_EXECUTING_AGENCY);
+        case VC.RESPONSIBLE_ORGANIZATION:
+          return translate(VC.ACRONYM_RESPONSIBLE_ORGANIZATION);
+        default:
+          return null;
+      }
+    } else {
+      return translate(VC.ACRONYM_DONOR_ORGANIZATION);
     }
   }
 
@@ -98,17 +102,19 @@ class AFFunding extends Component {
         }
         return groups;
       });
-      return groups.map((funding) => (
-        <Tab
+      return groups.map((funding) => {
+        const sourceRole = this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)
+          ? funding[AC.SOURCE_ROLE] : {}; // TODO: como obtengo los datos del typo "Donor".
+        return (<Tab
           eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
           title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
           <AFFundingDonorSection
             fundings={this.state.fundingList}
             organization={funding[AC.FUNDING_DONOR_ORG_ID]}
-            role={funding[AC.SOURCE_ROLE]}
+            role={sourceRole}
           />
-        </Tab>
-      ));
+        </Tab>);
+      });
     }
     return null;
   }
