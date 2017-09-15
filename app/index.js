@@ -12,6 +12,7 @@ import { ActivityPreviewPage, ActivityFormPage } from './containers/ActivityPage
 import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './components/syncUp/SyncUp';
 import SyncUpSummaryPage from './containers/SyncUpSummaryPage';
+import UpdatePage from './containers/UpdatePage';
 import auth from './modules/security/Auth';
 import { ampStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
@@ -53,6 +54,7 @@ initializeI18Next().then(() =>
               path="/activity/preview/:activityId" component={ActivityPreviewPage} onEnter={checkAuth} store={store} />
             <Route
               path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store} />
+            <Route path="/update" component={UpdatePage} store={store} />
           </Route>
         </Router>
       </Provider>,

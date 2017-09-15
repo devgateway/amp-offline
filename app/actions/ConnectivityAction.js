@@ -39,7 +39,7 @@ function _processResult(data) {
         lastConnectivityStatus.isAmpClientEnabled,
         lastConnectivityStatus.isAmpCompatible,
         lastConnectivityStatus.getAmpVersion,
-        lastConnectivityStatus.getLatestAmpOffline
+        lastConnectivityStatus.latestAmpOffline
       );
     }
   } else {
@@ -49,14 +49,9 @@ function _processResult(data) {
     const version = data['amp-version'];
     // Process data related to version upgrades.
     if (latestAmpOffline) {
-      const url = buildDownloadUrl(latestAmpOffline.url);
       if (isAmpCompatible === false || latestAmpOffline.critical === true) {
-        // This is a mandatory update.
-        latestAmpOffline.url = url;
         latestAmpOffline[MANDATORY_UPDATE] = true;
       } else if (latestAmpOffline.version !== version) {
-        // This is an optional update.
-        latestAmpOffline.url = url;
         latestAmpOffline[MANDATORY_UPDATE] = false;
       }
     }
@@ -64,15 +59,4 @@ function _processResult(data) {
   }
   store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: status });
   return status;
-}
-
-/**
- * This function builds the url of a web page we open for the user to manually download the upgrade.
- * For automatic download use DOWNLOAD_UPGRADE_URL (to be done).
- * @param url
- */
-function buildDownloadUrl(url) {
-  LoggerManager.log('buildDownloadUrl');
-  const baseUrl = store.getState().startUpReducer.connectionInformation.getFullUrl();
-  return url.replace(/<base_url>/gi, baseUrl);
 }

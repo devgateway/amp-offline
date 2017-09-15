@@ -46,7 +46,7 @@ export default class ConnectivityStatus {
   /**
    * @returns {Object} Data to upgrade the current installation (if available).
    */
-  get getLatestAmpOffline() {
+  get latestAmpOffline() {
     return this._latestAmpOffline;
   }
 }

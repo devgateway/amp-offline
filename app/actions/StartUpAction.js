@@ -42,8 +42,6 @@ export const STATE_FM_FULFILLED = 'STATE_FM_FULFILLED';
 export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
 export const STATE_CHECK_VERSION = 'STATE_CHECK_VERSION';
-export const STATE_DOWNLOAD_UPDATE_CONFIRMED = 'STATE_DOWNLOAD_UPDATE_CONFIRMED';
-export const STATE_DOWNLOAD_UPDATE_IN_PROGRESS = 'STATE_DOWNLOAD_UPDATE_IN_PROGRESS';
 
 /**
  * Checks and updates the connectivity status
@@ -82,8 +80,6 @@ export function getTimer() {
 
 function scheduleConnectivityCheck() {
   LoggerManager.log('scheduleConnectivityCheck');
-  store.dispatch({ type: STATE_CHECK_VERSION });
-
   return new Promise((resolve, reject) => {
     clearInterval(timer);
     timer = setInterval(() => connectivityCheck(), CONNECTIVITY_CHECK_INTERVAL);

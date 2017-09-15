@@ -9,10 +9,7 @@ import {
   STATE_GS_REJECTED,
   STATE_PARAMETERS_FAILED,
   STATE_PARAMETERS_LOADED,
-  STATE_PARAMETERS_LOADING,
-  STATE_CHECK_VERSION,
-  STATE_DOWNLOAD_UPDATE_CONFIRMED,
-  STATE_DOWNLOAD_UPDATE_IN_PROGRESS
+  STATE_PARAMETERS_LOADING
 } from '../actions/StartUpAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -27,8 +24,7 @@ const defaultState = {
   fmTree: undefined,
   isFMTreeLoading: false,
   isFMTreeLoaded: false,
-  fmTreeError: undefined,
-  proceedWithDownload: false
+  fmTreeError: undefined
 };
 
 export default function startUpReducer(state = defaultState, action: Object) {
@@ -74,18 +70,6 @@ export default function startUpReducer(state = defaultState, action: Object) {
       });
     case STATE_FM_REJECTED:
       return Object.assign({}, state, { fmTreeError: action.payload, isFMTreeLoading: false, isFMTreeLoaded: false });
-    case STATE_CHECK_VERSION:
-      return Object.assign({}, state, {
-        proceedWithDownload: false
-      });
-    case STATE_DOWNLOAD_UPDATE_CONFIRMED:
-      return Object.assign({}, state, {
-        proceedWithDownload: true
-      });
-    case STATE_DOWNLOAD_UPDATE_IN_PROGRESS:
-      return Object.assign({}, state, {
-        proceedWithDownload: false
-      });
     default:
       return state;
   }
