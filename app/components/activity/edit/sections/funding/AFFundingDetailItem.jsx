@@ -58,7 +58,6 @@ export default class AFFundingDetailItem extends Component {
             onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}>
             <Glyphicon glyph="glyphicon glyphicon-remove" />
           </Button>
-          {this.props.fundingDetail[AC.TEMPORAL_ID]}
         </Row>
       </Grid>
     </div>);
