@@ -142,6 +142,7 @@ export const DISBURSEMENT_ORDER_ID = 'disbursement_order_id';
 export const PLEDGE = 'pledge';
 export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
 export const RECIPIENT_ROLE = 'recipient_role';
+export const TEMPORAL_ID = '_temporal_id';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';

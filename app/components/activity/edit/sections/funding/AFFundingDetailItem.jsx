@@ -2,7 +2,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Col, Grid, Row, Button, Glyphicon } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFField from '../../components/AFField';
 import * as AF from '../../components/AFComponentTypes';
@@ -20,13 +19,8 @@ export default class AFFundingDetailItem extends Component {
 
   static propTypes = {
     fundingDetail: PropTypes.object.isRequired,
-    // type: PropTypes.string.isRequired
+    removeFundingDetailItem: PropTypes.func.isRequired
   };
-
-  constructor(props) {
-    super(props);
-    LoggerManager.log('constructor');
-  }
 
   render() {
     return (<div className={afStyles.full_width}>
@@ -59,7 +53,12 @@ export default class AFFundingDetailItem extends Component {
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} type={AF.NUMBER} />
           </Col>
-          <Button bsSize="xsmall" bsStyle="danger"><Glyphicon glyph="glyphicon glyphicon-remove" /></Button>
+          <Button
+            bsSize="xsmall" bsStyle="danger"
+            onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}>
+            <Glyphicon glyph="glyphicon glyphicon-remove" />
+          </Button>
+          {this.props.fundingDetail[AC.TEMPORAL_ID]}
         </Row>
       </Grid>
     </div>);

@@ -26,6 +26,19 @@ export default class AFFundingContainer extends Component {
   constructor(props) {
     super(props);
     LoggerManager.debug('constructor');
+    this._removeFundingDetailItem = this._removeFundingDetailItem.bind(this);
+    this.state = {
+      stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS]
+    };
+  }
+
+  _removeFundingDetailItem(id) {
+    LoggerManager.debug('_removeFundingDetailItem');
+    // TODO: Display a confirm dialog to delete the funding item.
+    const newFunding = this.state.stateFundingDetail;
+    const index = this.state.stateFundingDetail.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
+    newFunding.splice(index, 1);
+    this.setState({ stateFundingDetail: newFunding });
   }
 
   render() {
@@ -51,9 +64,18 @@ export default class AFFundingContainer extends Component {
         </Grid>
       </FormGroup>
       <AFFundingClassificationPanel funding={this.props.funding} />
-      <AFFundingDetailContainer funding={this.props.funding} type={VC.COMMITMENTS} />
-      <AFFundingDetailContainer funding={this.props.funding} type={VC.DISBURSEMENTS} />
-      <AFFundingDetailContainer funding={this.props.funding} type={VC.EXPENDITURES} />
+      <AFFundingDetailContainer
+        fundingDetail={this.state.stateFundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS))}
+        type={VC.COMMITMENTS}
+        removeFundingDetailItem={this._removeFundingDetailItem} />
+      <AFFundingDetailContainer
+        fundingDetail={this.state.stateFundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS))}
+        type={VC.DISBURSEMENTS}
+        removeFundingDetailItem={this._removeFundingDetailItem} />
+      <AFFundingDetailContainer
+        fundingDetail={this.state.stateFundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === VC.EXPENDITURES))}
+        type={VC.EXPENDITURES}
+        removeFundingDetailItem={this._removeFundingDetailItem} />
     </div>);
   }
 }
