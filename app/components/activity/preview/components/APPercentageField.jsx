@@ -22,8 +22,7 @@ export default class APPercentageField extends Component {
 
   render() {
     const percentage = this.props.value !== undefined && this.props.value !== null
-      ? `${NumberUtils.rawNumberToFormattedString(this.props.value)}%`
-      : null;
+      ? `${NumberUtils.rawNumberToFormattedString(this.props.value, true)}%` : null;
     return (<div>
       <span className={this.props.titleClass}>{this.props.title} </span>
       <span className={`${this.props.valueClass} ${styles.alignRight}`}>{percentage}</span>

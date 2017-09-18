@@ -7,7 +7,8 @@
   "scripts": {
     "test-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
     "test-electron-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.electron-mocha.js",
-    "test": "npm run test-mocha && npm run test-electron-mocha",
+    "test-store": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.store.js",
+    "test": "npm run test-mocha && npm run test-electron-mocha && npm run ",
     "test-watch": "npm test -- --watch",
     "test-mocha-watch": "npm run test-mocha -- --watch",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --retries 2 --compilers js:babel-register --require ./test/setup.js ./test/e2e.js",
@@ -196,7 +197,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-niger-future-v3-0-tc9.ampsite.net",
+    "ampServerUrl": "amp-chad-future-v3-0-tc9.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   }

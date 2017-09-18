@@ -64,7 +64,7 @@ export default class Login extends Component {
         <Button
           type="button" className={`btn btn-success ${(this.props.loginReducer.loginProcessing ? 'disabled' : '')}`}
           onClick={() => {
-            loginAction(this.state.email, this.state.password);
+            loginAction(this.state.email.toLowerCase(), this.state.password);
           }} text="login" />
         <hr />
         <ErrorMessage message={this.props.loginReducer.errorMessage} />
