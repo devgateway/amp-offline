@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-/* esling-disable jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component, PropTypes } from 'react';
 import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
