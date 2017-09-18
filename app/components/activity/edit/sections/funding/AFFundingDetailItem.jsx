@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
+/* esling-disable jsx-a11y/anchor-has-content */
 import React, { Component, PropTypes } from 'react';
-import { Col, Grid, Row, Button, Glyphicon } from 'react-bootstrap';
+import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFField from '../../components/AFField';
@@ -53,11 +54,11 @@ export default class AFFundingDetailItem extends Component {
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} type={AF.NUMBER} />
           </Col>
-          <Button
-            bsSize="xsmall" bsStyle="danger"
-            onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}>
-            <Glyphicon glyph="glyphicon glyphicon-remove" />
-          </Button>
+          <Col md={3} lg={3}>
+            <a
+              onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
+              className={styles.delete} href={null} />
+          </Col>
         </Row>
       </Grid>
     </div>);
