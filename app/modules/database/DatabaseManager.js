@@ -261,10 +261,10 @@ const DatabaseManager = {
     });
   },
 
-  _replaceAll(collectionData, collectionName, options, resolve, reject) {
+  _replaceAll(collectionData, collectionName, filter = {}, resolve, reject) {
     LoggerManager.log('_replaceAll');
-    DatabaseManager._getCollection(collectionName, options).then((collection) => {
-      collection.remove({}, { multi: true }, (err) => {
+    DatabaseManager._getCollection(collectionName, {}).then((collection) => {
+      collection.remove(filter, { multi: true }, (err) => {
         if (err === null) {
           collection.insert(collectionData, (err2, newDocs) => {
             if (err2 === null && newDocs.length === collectionData.length) {
@@ -297,14 +297,14 @@ const DatabaseManager = {
    * Replace entire collection with the new set of data
    * @param collectionData
    * @param collectionName
-   * @param options
+   * @param filter
    */
-  replaceCollection(collectionData, collectionName, options) {
+  replaceCollection(collectionData, collectionName, filter) {
     return new Promise((resolve, reject) => {
       const replaceAll = DatabaseManager._replaceAll
         .bind(null, collectionData)
         .bind(null, collectionName)
-        .bind(null, options)
+        .bind(null, filter)
         .bind(null, resolve)
         .bind(null, reject);
       DatabaseManager.queuePromise(replaceAll);
