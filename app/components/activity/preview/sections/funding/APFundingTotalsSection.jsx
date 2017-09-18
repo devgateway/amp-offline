@@ -23,7 +23,7 @@ class APFundingTotalsSection extends Component {
   constructor(props, context) {
     super(props);
     LoggerManager.log('constructor');
-    this._wsCurrency = context.currentWorkspaceSettings.currency;
+    this._wsCurrency = context.currentWorkspaceSettings.currency.code;
   }
 
   _buildTotals() {
