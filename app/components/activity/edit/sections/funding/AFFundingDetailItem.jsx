@@ -20,7 +20,7 @@ export default class AFFundingDetailItem extends Component {
 
   static propTypes = {
     fundingDetail: PropTypes.object.isRequired,
-    // type: PropTypes.string.isRequired
+    handleRemoveTransaction: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -59,7 +59,11 @@ export default class AFFundingDetailItem extends Component {
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} type={AF.NUMBER} />
           </Col>
-          <Button bsSize="xsmall" bsStyle="danger"><Glyphicon glyph="glyphicon glyphicon-remove" /></Button>
+          <Button
+            bsSize="xsmall" bsStyle="danger"
+            onClick={this.props.handleRemoveTransaction.bind(this, this.props.fundingDetail[AC.id])}>
+            <Glyphicon glyph="glyphicon glyphicon-remove" />
+          </Button>
         </Row>
       </Grid>
     </div>);
