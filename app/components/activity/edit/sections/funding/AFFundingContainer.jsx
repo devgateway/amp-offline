@@ -96,17 +96,17 @@ export default class AFFundingContainer extends Component {
       </FormGroup>
       <AFFundingClassificationPanel funding={this.state.funding} />
       <AFFundingDetailContainer
-        fundingDetail={this.state.stateFundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS))}
+        fundingDetail={this.state.stateFundingDetail}
         type={VC.COMMITMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         handleNewTransaction={this._addTransactionItem} />
       <AFFundingDetailContainer
-        fundingDetail={this.state.stateFundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS))}
+        fundingDetail={this.state.stateFundingDetail}
         type={VC.DISBURSEMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         handleNewTransaction={this._addTransactionItem} />
       <AFFundingDetailContainer
-        fundingDetail={this.state.stateFundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === VC.EXPENDITURES))}
+        fundingDetail={this.state.stateFundingDetail}
         type={VC.EXPENDITURES}
         removeFundingDetailItem={this._removeFundingDetailItem}
         handleNewTransaction={this._addTransactionItem} />

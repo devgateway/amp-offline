@@ -38,7 +38,10 @@ export default class AFFundingDetailContainer extends Component {
   }
 
   render() {
-    if (this.props.fundingDetail.length > 0) {
+    const transactionTypes = Object.values(this.context.activityFieldsManager
+      .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`]);
+    if (transactionTypes.find(item => (item.value === this.props.type))) {
+      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === this.props.type));
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
@@ -64,7 +67,7 @@ export default class AFFundingDetailContainer extends Component {
           onSelect={() => {
             this.setState({ openFDC: !this.state.openFDC });
           }}>
-          {this.props.fundingDetail.map((fd) => {
+          {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
             if (!fd[AC.TEMPORAL_ID]) {
               fd[AC.TEMPORAL_ID] = Utils.numberRandom();
