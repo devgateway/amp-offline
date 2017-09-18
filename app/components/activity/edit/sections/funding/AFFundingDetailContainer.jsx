@@ -72,6 +72,8 @@ export default class AFFundingDetailContainer extends Component {
             if (!fd[AC.TEMPORAL_ID]) {
               fd[AC.TEMPORAL_ID] = Utils.numberRandom();
             }
+            /* Lesson learned: DO NOT use an array index as component key if later we will remove elements from
+            that array because that will confuse React. */
             return (<AFFundingDetailItem
               fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
               removeFundingDetailItem={this.props.removeFundingDetailItem} />);
