@@ -21,6 +21,7 @@ export default class AFFundingDetailContainer extends Component {
   static propTypes = {
     fundingDetail: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
+    handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired
   };
 
@@ -30,6 +31,10 @@ export default class AFFundingDetailContainer extends Component {
     this.state = {
       openFDC: false
     };
+  }
+
+  _addTransactionItem() {
+    this.props.handleNewTransaction(this.props.type);
   }
 
   render() {
@@ -68,7 +73,7 @@ export default class AFFundingDetailContainer extends Component {
               fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
               removeFundingDetailItem={this.props.removeFundingDetailItem} />);
           })}
-          <Button bsStyle="primary">{button}</Button>
+          <Button bsStyle="primary" onClick={this._addTransactionItem.bind(this)}>{button}</Button>
         </Panel>
       </div>);
     } else {
