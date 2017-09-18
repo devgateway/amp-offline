@@ -34,6 +34,7 @@ class AFFunding extends Component {
       fundingList: []
     };
     this.handleDonorSelect = this.handleDonorSelect.bind(this);
+    this.removeFundingItem = this.removeFundingItem.bind(this);
   }
 
   componentWillMount() {
@@ -121,11 +122,21 @@ class AFFunding extends Component {
             fundings={this.state.fundingList}
             organization={funding[AC.FUNDING_DONOR_ORG_ID]}
             role={sourceRole}
+            removeFundingItem={this.removeFundingItem}
           />
         </Tab>);
       });
     }
     return null;
+  }
+
+  removeFundingItem(id) {
+    LoggerManager.log('_removeFundingItem');
+    // TODO: Display a confirm dialog to delete the funding item.
+    const newFundingList = this.state.fundingList;
+    const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+    newFundingList.splice(index, 1);
+    this.setState({ fundingList: newFundingList });
   }
 
   generateOverviewTabContent() {
