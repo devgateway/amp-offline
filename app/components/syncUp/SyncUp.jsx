@@ -15,7 +15,8 @@ import ConfirmationAlert from '../notifications/confirmationAlert';
 import {
   SYNCUP_FORCE_DAYS,
   SYNCUP_SYNC_REQUESTED_AT,
-  SYNCUP_STATUS_SUCCESS
+  SYNCUP_STATUS_SUCCESS,
+  NR_SYNC_HISTORY_ENTRIES
 } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
@@ -259,7 +260,7 @@ export default connect(
       logoutDismissedToSync: state.loginReducer.logoutDismissedToSync,
       currentUserHistory: syncUpReducer.historyData.filter(
         datum => datum['requested-by'] === userReducer.userData.id
-      ).slice(0, 5)
+      ).slice(0, NR_SYNC_HISTORY_ENTRIES)
     };
   },
 
