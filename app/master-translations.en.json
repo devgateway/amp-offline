@@ -58,7 +58,7 @@
   "Subtotal Actual Disbursements": "Subtotal Actual Disbursement",
   "Subtotal Actual Expenditures": "Subtotal Actual Expenditures",
   "Subtotal Planned Commitments": "Subtotal Planned Commitments",
-  "Subtotal Planned Disbursements": "Subtotal Planned Disbursement",
+  "Subtotal Planned Disbursements": "Subtotal Planned Disbursements",
   "Subtotal Planned Expenditures": "Subtotal Planned Expenditures",
   "Total Actual Commitments": "Total Actual Commitments",
   "Total Planned Commitments": "Total Planned Commitments",
@@ -246,5 +246,10 @@
   "New Funding Item": "New Funding Item",
   "Same as Proposed Start Date": "Same as Proposed Start Date",
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
-  "Ignore": "Ignore"
+  "Ignore": "Ignore",
+  "Sector Percentage": "Sector Percentage",
+  "Sector": "Sector",
+  "Primary Sectors": "Primary Sectors",
+  "Secondary Sectors": "Secondary Sectors",
+  "Search Sector": "Search Sector"
 }
