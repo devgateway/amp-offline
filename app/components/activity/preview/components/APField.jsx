@@ -45,7 +45,7 @@ export default class APField extends Component {
     if (this.props.useInnerHTML) {
       return <div className={classNames} dangerouslySetInnerHTML={{ __html: value }} />;
     } else {
-      return <div className={classNames}>{value}</div>;
+      return <div className={classNames}>{`${value} `}</div>;
     }
   }
 
