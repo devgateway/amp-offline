@@ -1,3 +1,8 @@
 .issues {
   font-weight: bold;
 }
+
+.nodata {
+  margin-left: 10px;
+  font-weight: bold;
+}

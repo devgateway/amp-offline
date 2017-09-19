@@ -5,6 +5,8 @@ import WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
 import store from '../index';
 import LoggerManager from '../modules/util/LoggerManager';
 import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
+import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
+import * as AC from '../utils/constants/ActivityConstants';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_CONFIGURING_WORKSPACE_FILTER = 'STATE_CONFIGURING_WORKSPACE_FILTER';
@@ -22,12 +24,19 @@ export function selectWorkspace(wsId) {
   return (dispatch) => (
     WorkspaceHelper.findById(wsId).then((workspace) => (
       TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId).then((teamMember) =>
-        WSSettingsHelper.findByWorkspaceId(wsId).then((workspaceSettings) => {
-          const actionData = { teamMember, workspace, workspaceSettings };
-          dispatch({ type: STATE_SELECT_WORKSPACE, actionData });
-          // This is like "chaining actions".
-          return dispatch(loadDesktop(workspace, teamMember.id));
-        })
+        WSSettingsHelper.findByWorkspaceId(wsId).then((workspaceSettings) =>
+          PossibleValuesHelper.findById(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`).then((possibleValue) => {
+            const currency = {};
+            currency.code = workspaceSettings.currency;
+            currency['translated-value'] =
+              possibleValue['possible-options'][workspaceSettings.currency]['translated-value'];
+            workspaceSettings.currency = currency;
+            const actionData = { teamMember, workspace, workspaceSettings };
+            dispatch({ type: STATE_SELECT_WORKSPACE, actionData });
+            // This is like "chaining actions".
+            return dispatch(loadDesktop(workspace, teamMember.id));
+          })
+        )
       ).catch((err) => {
         LoggerManager.error(err);
         dispatch({ type: STATE_WORKSPACE_ERROR, actionData: err.toString() });
