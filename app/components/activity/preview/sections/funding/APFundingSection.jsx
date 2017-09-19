@@ -17,7 +17,8 @@ import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
 class APFundingSection extends Component {
 
   static propTypes = {
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    buildSimpleField: PropTypes.func.isRequired
   };
 
 
@@ -83,7 +84,8 @@ class APFundingSection extends Component {
     this.props.activity.fundings.forEach((funding) => {
       const item = (<APFundingOrganizationSection
         funding={funding} key={funding[AC.AMP_FUNDING_ID]}
-        counter={counter} comparator={this._compareFundings} />);
+        counter={counter} comparator={this._compareFundings}
+        buildSimpleField={this.props.buildSimpleField} />);
       fundingList.push(item);
       counter += 1;
     });

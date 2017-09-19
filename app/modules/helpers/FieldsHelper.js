@@ -14,7 +14,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findById(id) {
-    LoggerManager.log('findById');
+    LoggerManager.debug('findById');
     const filter = { id };
     return DatabaseManager.findOne(filter, COLLECTION_FIELDS);
   },
@@ -22,12 +22,28 @@ const FieldsHelper = {
   /**
    * Find fields tree by workspace member
    * @param wsMemberId
+   * @param fieldsType
    * @return {Promise}
    */
-  findByWorkspaceMemberId(wsMemberId) {
-    LoggerManager.log('findByWorkspaceMemberId');
+  findByWorkspaceMemberIdAndType(wsMemberId, fieldsType) {
+    LoggerManager.debug('findByWorkspaceMemberIdAndType');
     const filter = { 'ws-member-ids': { $elemMatch: wsMemberId } };
+    filter[fieldsType] = { $exists: true };
     return DatabaseManager.findOne(filter, COLLECTION_FIELDS);
+  },
+
+  /**
+   * Find fields trees for specific fields type only
+   * @param fieldsType fields type like 'activity-fields'
+   * @param filter (optional) additional filter
+   * @param projections (optional) set of fields to return
+   * @return {Promise}
+   */
+  findAllPerFieldType(fieldsType, filter, projections) {
+    LoggerManager.debug('findAllPerFieldType');
+    filter = filter || {};
+    filter[fieldsType] = { $exists: true };
+    return FieldsHelper.findAll(filter, projections);
   },
 
   /**
@@ -37,20 +53,22 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findAll(filter, projections) {
-    LoggerManager.log('findAll');
+    LoggerManager.debug('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_FIELDS, projections);
   },
 
   /**
    * Replace entire collection with new a new collection of fields trees
    * @param fieldsTrees
+   * @param fieldsType
    * @return {Promise}
    */
-  replaceAll(fieldsTrees) {
+  replaceAllByFieldsType(fieldsTrees, fieldsType) {
     LoggerManager.log('replaceAll');
     if (this._isValid(fieldsTrees)) {
       fieldsTrees.forEach(this._setIdIfUndefined);
-      return DatabaseManager.replaceCollection(fieldsTrees, COLLECTION_FIELDS);
+      const filter = Utils.toMap(fieldsType, { $exists: true });
+      return DatabaseManager.replaceCollection(fieldsTrees, COLLECTION_FIELDS, filter);
     }
     return Promise.reject('Invalid Fields Tree structure. A workspace member must be linked to only one fields tree');
   },
@@ -70,7 +88,7 @@ const FieldsHelper = {
   },
 
   _setIdIfUndefined(fields) {
-    LoggerManager.log('_setIdIfUndefined');
+    LoggerManager.debug('_setIdIfUndefined');
     if (fields.id === undefined) {
       fields.id = Utils.stringToUniqueId('');
     }

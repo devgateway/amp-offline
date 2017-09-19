@@ -24,8 +24,9 @@ import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import Utils from '../utils/Utils';
 import translate from '../utils/translate';
+import * as Utils from '../utils/Utils';
+import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -36,6 +37,7 @@ export const ACTIVITY_SAVE_REJECTED = 'ACTIVITY_SAVE_REJECTED';
 export const ACTIVITY_UNLOADED = 'ACTIVITY_UNLOADED';
 export const ACTIVITY_VALIDATED = 'ACTIVITY_VALIDATED';
 export const ACTIVITY_FIELD_VALIDATED = 'ACTIVITY_FIELD_VALIDATED';
+export const ACTIVITY_UPDATE_GLOBAL_STATE = 'ACTIVITY_UPDATE_GLOBAL_STATE';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 
@@ -58,7 +60,14 @@ export function loadActivityForActivityForm(activityId) {
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
-      payload: _loadActivity({ activityId, teamMemberId: ownProps().userReducer.teamMember.id, isAF: true })
+      payload: _loadActivity({
+        activityId,
+        teamMemberId: ownProps().userReducer.teamMember.id,
+        isAF: true,
+        possibleValuesPaths: null,
+        currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
+        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager
+      })
     });
 }
 
@@ -95,18 +104,20 @@ export function saveActivity(activity) {
   };
 }
 
-function _loadActivity({ activityId, teamMemberId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
-  isAF }) {
+function _loadActivity({
+                         activityId, teamMemberId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
+                         isAF
+                       }) {
   return new Promise((resolve, reject) => {
     const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
     return Promise.all([
-      _getActivity(activityId),
-      FieldsHelper.findByWorkspaceMemberId(teamMemberId),
+      _getActivity(activityId, teamMemberId),
+      FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
       PossibleValuesHelper.findAll(pvFilter),
       isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } }, Utils.toMap(PROJECT_TITLE, 1)) : []
     ])
       .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
-        fieldsDef = fieldsDef.fields;
+        fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
         const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
@@ -129,13 +140,13 @@ function _loadActivity({ activityId, teamMemberId, possibleValuesPaths, currentW
 
 const _toNotification = (error) => new Notification({ message: error, origin: NOTIFICATION_ORIGIN_ACTIVITY });
 
-const _getActivity = (activityId) => {
+const _getActivity = (activityId, teamMemberId) => {
   // special case for the new activity
   if (activityId === NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
   return ActivityHelper.findNonRejectedById(activityId).then(activity =>
-    ActivityHydrator.hydrateActivity({ activity }));
+    ActivityHydrator.hydrateActivity({ activity, teamMemberId }));
 };
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
@@ -166,4 +177,11 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
       return savedActivity;
     });
   });
+}
+
+export function updateActivityGlobalState(setting, value) {
+  return {
+    type: ACTIVITY_UPDATE_GLOBAL_STATE,
+    actionData: Utils.toMap(setting, value)
+  };
 }

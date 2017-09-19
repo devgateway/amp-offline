@@ -12,17 +12,15 @@ import {
   SYNCUP_DIFF_LEFTOVER,
   SYNCUP_FORCE_DAYS,
   SYNCUP_NO_DATE,
-  SYNCUP_SYNC_REQUESTED_AT,
   SYNCUP_STATUS_FAIL,
-  SYNCUP_STATUS_SUCCESS
+  SYNCUP_STATUS_SUCCESS,
+  SYNCUP_SYNC_REQUESTED_AT
 } from '../../utils/Constants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import {
   loadCurrencyRatesOnStartup,
-  loadDateSettings,
   loadFMTree,
-  loadGlobalSettings,
-  loadNumberSettings
+  loadGlobalSettings
 } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
 
@@ -90,18 +88,15 @@ export default class SyncUpManager {
   static syncUpAllTypesOnDemand() {
     LoggerManager.log('syncUpAllTypesOnDemand');
     let syncResult;
+    const startDate = new Date();
     return this._startSyncUp()
       .then(result => {
         syncResult = result;
+        syncResult.dateStarted = startDate.toISOString();
         return this._saveMainSyncUpLog(result);
       })
       .then(this._postSyncUp)
-      .then(() => {
-        if (syncResult.errors.length) {
-          return Promise.reject(syncResult.errors.join('. '));
-        }
-        return syncResult;
-      });
+      .then(() => syncResult);
   }
 
   /**
@@ -150,8 +145,6 @@ export default class SyncUpManager {
     const restart = true;
     return Promise.all([
       loadAllLanguages(restart),
-      loadDateSettings(),
-      loadNumberSettings(),
       loadGlobalSettings(),
       loadFMTree(),
       loadCurrencyRatesOnStartup(),

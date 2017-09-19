@@ -1,6 +1,5 @@
 import * as PossibleValuesHelper from './PossibleValuesHelper';
 import * as FieldsHelper from './FieldsHelper';
-import store from '../../index';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../activity/PossibleValuesManager';
 import {
@@ -10,6 +9,7 @@ import {
 } from '../../utils/constants/FieldPathConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../util/LoggerManager';
+import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -207,19 +207,17 @@ export default class ActivityHydrator {
     // Note: 926 activities are hydrated in 0.2s, where a significant time is consumed by promises
     return new Promise((resolve, reject) => {
       if (teamMemberId === undefined) {
-        teamMemberId = store.getState().userReducer.teamMember ? store.getState().userReducer.teamMember.id : undefined;
-        if (teamMemberId === undefined) {
-          reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
-        }
+        reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
       }
-      return FieldsHelper.findByWorkspaceMemberId(teamMemberId).then((fieldsDef) => {
-        if (fieldsDef === null) {
-          throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
-        } else {
-          const hydrator = new ActivityHydrator(fieldsDef.fields);
-          return hydrator.hydrateActivities(activities, fieldPaths).then(resolve).catch(reject);
-        }
-      }).catch(reject);
+      return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS)
+        .then((fieldsDef) => {
+          if (fieldsDef === null) {
+            throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
+          } else {
+            const hydrator = new ActivityHydrator(fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS]);
+            return hydrator.hydrateActivities(activities, fieldPaths).then(resolve).catch(reject);
+          }
+        }).catch(reject);
     });
   }
 }

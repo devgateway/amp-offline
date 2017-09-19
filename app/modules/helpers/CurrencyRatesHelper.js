@@ -35,12 +35,12 @@ const CurrencyRatesHelper = {
    */
   replaceAllCurrencyRates(currencyRatesCollection) {
     LoggerManager.log('replaceAllCurrencyRates');
-    return DatabaseManager.replaceCollection(currencyRatesCollection, COLLECTION_CURRENCY_RATES, {});
+    return DatabaseManager.replaceCollection(currencyRatesCollection, COLLECTION_CURRENCY_RATES);
   },
 
   saveCurrencyRate(currencyRate) {
     LoggerManager.log('saveCurrencyRate');
-    return DatabaseManager.saveOrUpdate(currencyRate.id, currencyRate, COLLECTION_CURRENCY_RATES, {});
+    return DatabaseManager.saveOrUpdate(currencyRate.id, currencyRate, COLLECTION_CURRENCY_RATES);
   }
 };
 
