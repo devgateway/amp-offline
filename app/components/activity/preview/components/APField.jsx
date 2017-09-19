@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import { stripTags } from '../../../../utils/Utils';
 
 /**
  * Simple Field component that consists of a field title and field value
@@ -45,7 +46,7 @@ export default class APField extends Component {
     if (this.props.useInnerHTML) {
       return <div className={classNames} dangerouslySetInnerHTML={{ __html: value }} />;
     } else {
-      return <div className={classNames}>{value}</div>;
+      return <div className={classNames}>{stripTags(value)}</div>;
     }
   }
 
