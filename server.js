@@ -10,6 +10,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import StringReplacePlugin from 'string-replace-webpack-plugin';
 import { spawn } from 'child_process';
+import * as LoggerSettings from './app/utils/LoggerSettings';
 
 import config from './webpack.config.development';
 
@@ -17,16 +18,32 @@ import config from './webpack.config.development';
  to see the origin (file and line) of the log.
  Note: Dont add it to webpack.config.development because that file might be used not only for DEV.*/
 if (process.env.FORCE_LOGGER !== 'true') {
-  config.module.loaders.push({
-    test: /\.jsx?$/,
-    loader: StringReplacePlugin.replace({
-      replacements: [{ pattern: /LoggerManager.log/g, replacement: () => ('console.log') },
-        { pattern: /LoggerManager.debug/g, replacement: () => ('console.debug') },
-        { pattern: /LoggerManager.warn/g, replacement: () => ('console.warn') },
-        { pattern: /LoggerManager.error/g, replacement: () => ('console.error') }
-      ],
-    })
-  });
+  let keepDebugLogsFor = LoggerSettings.getDefaultConfig(process.env.NODE_ENV).keepDebugLogsOnlyFor;
+  if (keepDebugLogsFor) {
+    if (keepDebugLogsFor.length) {
+      keepDebugLogsFor = new RegExp(`${keepDebugLogsFor.map(f => f.replace('.', '\\.')).join('|')}$`);
+    } else {
+      keepDebugLogsFor = /\.jsx?$/;
+    }
+  }
+  config.module.loaders.push(
+    {
+      test: /\.jsx?$/,
+      loader: StringReplacePlugin.replace({
+        replacements: [{ pattern: /LoggerManager.log/g, replacement: () => ('console.log') },
+          { pattern: /LoggerManager.debug/g, replacement: () => ('console.debug') },
+          { pattern: /LoggerManager.warn/g, replacement: () => ('console.warn') },
+          { pattern: /LoggerManager.error/g, replacement: () => ('console.error') }
+        ],
+      })
+    },
+    {
+      test: /\.jsx?$/,
+      exclude: keepDebugLogsFor,
+      loader: StringReplacePlugin.replace({
+        replacements: [{ pattern: /LoggerManager.debug/g, replacement: () => ('// console.debug') }],
+      })
+    });
 }
 
 const argv = require('minimist')(process.argv.slice(2));

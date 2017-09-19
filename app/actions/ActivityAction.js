@@ -26,6 +26,7 @@ import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import translate from '../utils/translate';
 import * as Utils from '../utils/Utils';
+import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -37,6 +38,7 @@ export const ACTIVITY_UNLOADED = 'ACTIVITY_UNLOADED';
 export const ACTIVITY_VALIDATED = 'ACTIVITY_VALIDATED';
 export const ACTIVITY_FIELD_VALIDATED = 'ACTIVITY_FIELD_VALIDATED';
 export const ACTIVITY_UPDATE_GLOBAL_STATE = 'ACTIVITY_UPDATE_GLOBAL_STATE';
+export const ACTIVITY_LOADED_FOR_AF = 'ACTIVITY_LOADED_FOR_AF';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 
@@ -66,6 +68,9 @@ export function loadActivityForActivityForm(activityId) {
         possibleValuesPaths: null,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
         currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager
+      }).then(data => {
+        dispatch({ type: ACTIVITY_LOADED_FOR_AF });
+        return data;
       })
     });
 }
@@ -110,13 +115,13 @@ function _loadActivity({
   return new Promise((resolve, reject) => {
     const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
     return Promise.all([
-      _getActivity(activityId),
-      FieldsHelper.findByWorkspaceMemberId(teamMemberId),
+      _getActivity(activityId, teamMemberId),
+      FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
       PossibleValuesHelper.findAll(pvFilter),
       isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } }, Utils.toMap(PROJECT_TITLE, 1)) : []
     ])
       .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
-        fieldsDef = fieldsDef.fields;
+        fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
         const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
@@ -139,13 +144,13 @@ function _loadActivity({
 
 const _toNotification = (error) => new Notification({ message: error, origin: NOTIFICATION_ORIGIN_ACTIVITY });
 
-const _getActivity = (activityId) => {
+const _getActivity = (activityId, teamMemberId) => {
   // special case for the new activity
   if (activityId === NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
   return ActivityHelper.findNonRejectedById(activityId).then(activity =>
-    ActivityHydrator.hydrateActivity({ activity }));
+    ActivityHydrator.hydrateActivity({ activity, teamMemberId }));
 };
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
