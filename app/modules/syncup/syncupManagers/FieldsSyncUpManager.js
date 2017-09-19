@@ -1,10 +1,8 @@
-import { FIELDS_PER_WORKSPACE_MEMBER_URL, SINGLE_FIELDS_TREE_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import * as FieldsHelper from '../../helpers/FieldsHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import Notification from '../../helpers/NotificationHelper';
-import { SYNCUP_TYPE_FIELDS } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../../utils/constants/ErrorConstants';
 
@@ -16,8 +14,11 @@ import { NOTIFICATION_ORIGIN_DATABASE } from '../../../utils/constants/ErrorCons
  * @author Nadejda Mandrescu
  */
 export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
-  constructor() {
-    super(SYNCUP_TYPE_FIELDS);
+  constructor(fieldsType, singleFieldsTreeUrl, perWSFieldsUrl) {
+    super(fieldsType);
+    this._fieldsType = fieldsType;
+    this._singleFieldsTreeUrl = singleFieldsTreeUrl;
+    this._perWSFieldsUrl = perWSFieldsUrl;
     // TODO remove once AMP-25568 is done, as part of AMPOFFLINE-270
     this._useSingleTreeEP = true;
     this._doUpdate = true;
@@ -45,17 +46,14 @@ export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
   }
 
   _syncUpSingleFieldsTree() {
-    return new Promise((resolve, reject) =>
-      ConnectionHelper.doGet({ url: SINGLE_FIELDS_TREE_URL, shouldRetry: true })
-        .then((fieldsDefTree) => this._linkAllWSMembersToSingleFieldsTree(fieldsDefTree))
-        .then(resolve)
-        .catch(reject));
+    return ConnectionHelper.doGet({ url: this._singleFieldsTreeUrl, shouldRetry: true })
+        .then((fieldsDefTree) => this._linkAllWSMembersToSingleFieldsTree(fieldsDefTree));
   }
 
   _getSingleFieldsDef() {
-    return FieldsHelper.findAll({}).then(fieldDefs => {
+    return FieldsHelper.findAllPerFieldType(this._fieldsType).then(fieldDefs => {
       if (fieldDefs.length === 1) {
-        return Promise.resolve(fieldDefs[0].fields);
+        return Promise.resolve(fieldDefs[0][this._fieldsType]);
       }
       // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
       return Promise.reject(new Notification({
@@ -66,31 +64,21 @@ export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
   }
 
   _linkAllWSMembersToSingleFieldsTree(fieldsDefTree) {
-    return this._getExistingWsMemberIds(2).then(wsMemberIds => {
-      const newFieldsDef = {
-        'ws-member-ids': wsMemberIds,
-        fields: fieldsDefTree
-      };
-      return FieldsHelper.replaceAll([newFieldsDef]);
+    return this._getExistingWsMemberIds().then(wsMemberIds => {
+      const newFieldsDef = Utils.toMap('ws-member-ids', wsMemberIds);
+      newFieldsDef[this._fieldsType] = fieldsDefTree;
+      return FieldsHelper.replaceAllByFieldsType([newFieldsDef], this._fieldsType);
     });
   }
 
-  _getExistingWsMemberIds(retries) {
-    return TeamMemberHelper.findAll({}).then(wsMemberIdsMap => {
-      // workaround for the first fields sync up that may execute before wsMembers, fix AMPOFFLINE-270 or AMPOFFLINE-209
-      if (wsMemberIdsMap.length === 0 && retries > 0) {
-        /* eslint-disable no-plusplus */
-        return Utils.delay(5000).then(() => this._getExistingWsMemberIds(--retries));
-        /* eslint-enable no-plusplus */
-      }
-      return Utils.flattenToListByKey(wsMemberIdsMap, 'id');
-    });
+  _getExistingWsMemberIds() {
+    return TeamMemberHelper.findAll({}).then(wsMemberIdsMap => Utils.flattenToListByKey(wsMemberIdsMap, 'id'));
   }
 
   _syncUpFieldsTreePerWorkspaceMembers() {
     return TeamMemberHelper.findAll({}).then(wsMemberIdsMap => {
       const paramsMap = { 'ws-member-ids': Utils.flattenToListByKey(wsMemberIdsMap, 'id') };
-      return ConnectionHelper.doGet({ url: FIELDS_PER_WORKSPACE_MEMBER_URL, paramsMap, shouldRetry: true })
+      return ConnectionHelper.doGet({ url: this._perWSFieldsUrl, paramsMap, shouldRetry: true })
         .then(FieldsHelper.replaceAll);
     });
   }

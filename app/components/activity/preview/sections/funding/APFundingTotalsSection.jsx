@@ -15,6 +15,7 @@ class APFundingTotalsSection extends Component {
     fundings: PropTypes.array.isRequired,
     comparator: PropTypes.func.isRequired
   };
+
   static contextTypes = {
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     currentWorkspaceSettings: PropTypes.object.isRequired

@@ -66,7 +66,7 @@ const UserHelper = {
 
   replaceUsers(users) {
     LoggerManager.log('replaceUsers');
-    return DatabaseManager.replaceCollection(users, COLLECTION_USERS, {});
+    return DatabaseManager.replaceCollection(users, COLLECTION_USERS);
   },
 
   /**
