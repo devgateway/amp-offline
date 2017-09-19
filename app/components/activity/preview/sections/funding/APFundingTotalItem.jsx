@@ -11,7 +11,7 @@ class APFundingTotalItem extends Component {
   static propTypes = {
     value: PropTypes.number.isRequired,
     label: PropTypes.string.isRequired,
-    currency: PropTypes.string.isRequired,
+    currency: PropTypes.string,
     dontFormatNumber: PropTypes.bool,
     isPercentage: PropTypes.bool
   };
@@ -34,7 +34,7 @@ class APFundingTotalItem extends Component {
       </div>
       <div className={styles.subtotal_footer_number}>
         {`${val}
-        ${this.props.currency}`}
+        ${this.props.currency || ''}`}
       </div>
     </div>);
   }

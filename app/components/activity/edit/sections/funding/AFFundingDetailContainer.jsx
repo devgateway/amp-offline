@@ -1,12 +1,13 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { Panel, Button } from 'react-bootstrap';
+import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
+import * as Utils from '../../../../../utils/Utils';
 
 /**
  * @author Gabriel Inchauspe
@@ -18,8 +19,10 @@ export default class AFFundingDetailContainer extends Component {
   };
 
   static propTypes = {
-    funding: PropTypes.object.isRequired,
-    type: PropTypes.string.isRequired
+    fundingDetail: PropTypes.array.isRequired,
+    type: PropTypes.string.isRequired,
+    handleNewTransaction: PropTypes.func.isRequired,
+    removeFundingDetailItem: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -30,10 +33,15 @@ export default class AFFundingDetailContainer extends Component {
     };
   }
 
+  _addTransactionItem() {
+    this.props.handleNewTransaction(this.props.type);
+  }
+
   render() {
-    const fundingDetails = this.props.funding[AC.FUNDING_DETAILS]
-      .filter(fd => (fd[AC.TRANSACTION_TYPE].value === this.props.type));
-    if (fundingDetails.length > 0) {
+    const transactionTypes = Object.values(this.context.activityFieldsManager
+      .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`]);
+    if (transactionTypes.find(item => (item.value === this.props.type))) {
+      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === this.props.type));
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
@@ -58,10 +66,19 @@ export default class AFFundingDetailContainer extends Component {
           header={header} collapsible expanded={this.state.openFDC}
           onSelect={() => {
             this.setState({ openFDC: !this.state.openFDC });
-          }} >
-          {fundingDetails.map((fd, i) => (
-            <AFFundingDetailItem fundingDetail={fd} type={this.props.type} key={`${header}_${i}`} />))}
-          <Button bsStyle="primary" >{button}</Button>
+          }}>
+          {fundingDetails.map((fd) => {
+            // Add a temporal_id field so we can delete items.
+            if (!fd[AC.TEMPORAL_ID]) {
+              fd[AC.TEMPORAL_ID] = Utils.numberRandom();
+            }
+            /* Lesson learned: DO NOT use an array index as component key if later we will remove elements from
+            that array because that will confuse React. */
+            return (<AFFundingDetailItem
+              fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
+              removeFundingDetailItem={this.props.removeFundingDetailItem} />);
+          })}
+          <Button bsStyle="primary" onClick={this._addTransactionItem.bind(this)}>{button}</Button>
         </Panel>
       </div>);
     } else {
