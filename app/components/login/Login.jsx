@@ -36,9 +36,12 @@ export default class Login extends Component {
     this.setState({ email: e.target.value });
   }
 
+  processLogin(email, password) {
+    this.props.loginAction(email, password);
+  }
+
   render() {
     LoggerManager.log('render');
-    const { loginAction } = this.props;
     return (
       <div className={styles.centered_form}>
         <table>
@@ -64,7 +67,7 @@ export default class Login extends Component {
         <Button
           type="button" className={`btn btn-success ${(this.props.loginReducer.loginProcessing ? 'disabled' : '')}`}
           onClick={() => {
-            loginAction(this.state.email.toLowerCase(), this.state.password);
+            this.processLogin(this.state.email.toLowerCase(), this.state.password);
           }} text="login" />
         <hr />
         <ErrorMessage message={this.props.loginReducer.errorMessage} />

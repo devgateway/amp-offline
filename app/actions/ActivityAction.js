@@ -38,6 +38,7 @@ export const ACTIVITY_UNLOADED = 'ACTIVITY_UNLOADED';
 export const ACTIVITY_VALIDATED = 'ACTIVITY_VALIDATED';
 export const ACTIVITY_FIELD_VALIDATED = 'ACTIVITY_FIELD_VALIDATED';
 export const ACTIVITY_UPDATE_GLOBAL_STATE = 'ACTIVITY_UPDATE_GLOBAL_STATE';
+export const ACTIVITY_LOADED_FOR_AF = 'ACTIVITY_LOADED_FOR_AF';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 
@@ -67,6 +68,9 @@ export function loadActivityForActivityForm(activityId) {
         possibleValuesPaths: null,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
         currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager
+      }).then(data => {
+        dispatch({ type: ACTIVITY_LOADED_FOR_AF });
+        return data;
       })
     });
 }
