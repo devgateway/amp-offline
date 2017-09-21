@@ -31,10 +31,10 @@ const settingsSchema = {
     visible: { type: 'boolean' },
     type: { type: 'string' },
     options: { type: 'array' },
-    value: { type: ['boolean', 'string', 'integer'] },
+    value: { type: ['boolean', 'string', 'integer', 'object'] },
     'updated-at': { type: 'Date' }
   },
-  required: ['id', 'name', 'visible', 'type', 'value']
+  required: ['id', 'name', 'visible', 'type']
 };
 
 
@@ -89,12 +89,22 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   saveOrUpdateSetting(setting) {
-    LoggerManager.log('saveOrUpdateSetting');
+    LoggerManager.debug('saveOrUpdateSetting');
     // LoggerManager.log(validate(setting, settingsSchema));
     if (validate(setting, settingsSchema).valid) {
-      LoggerManager.log(`Valid setting.id = ${setting.id}`);
+      LoggerManager.debug(`Valid setting.id = ${setting.id}`);
       setting['updated-at'] = (new Date()).toISOString();
       return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
+    }
+    return Promise.reject(INVALID_FORMAT_ERROR);
+  },
+
+  saveOrUpdateCollection(settings) {
+    if (settings.every(setting => validate(setting, settingsSchema).valid)) {
+      settings.forEach(setting => {
+        setting['updated-at'] = (new Date()).toISOString();
+      });
+      return DatabaseManager.saveOrUpdateCollection(settings, COLLECTION_CLIENT_SETTINGS);
     }
     return Promise.reject(INVALID_FORMAT_ERROR);
   },
@@ -105,7 +115,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   deleteById(id) {
-    LoggerManager.log('deleteById');
+    LoggerManager.debug('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS);
   }
 

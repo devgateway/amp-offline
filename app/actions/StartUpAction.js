@@ -7,20 +7,20 @@ import ConnectionInformation from '../modules/connectivity/ConnectionInformation
 import {
   BASE_PORT,
   BASE_REST_URL,
-  CONNECTION_TIMEOUT,
   CONNECTION_FORCED_TIMEOUT,
+  CONNECTION_TIMEOUT,
   CONNECTIVITY_CHECK_INTERVAL,
   PROTOCOL,
   SERVER_URL
 } from '../utils/Constants';
 import LoggerManager from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
-import DateUtils from '../utils/DateUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
 import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
 import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
+import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -44,7 +44,8 @@ export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
 
 export function ampOfflineStartUp() {
-  return ampOfflineInit()
+  return ClientSettingsManager.initDBWithDefaults()
+    .then(ampOfflineInit)
     .then(initLanguage);
 }
 

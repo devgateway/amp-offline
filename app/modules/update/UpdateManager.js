@@ -3,35 +3,48 @@ import * as path from 'path';
 import { app } from 'electron';
 import fs from 'fs';
 import LoggerManager from '../util/LoggerManager';
-import ConnectionHelper from '../connectivity/ConnectionHelper';
+import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import { DOWNLOAD_UPDATE_BINARY_URL } from '../connectivity/AmpApiConstants';
-import { UPDATES_DIR } from '../../utils/Constants';
+import { CONTENT_DISPOSITION_HEADER, UPDATES_DIR } from '../../utils/Constants';
 
-export default class VersionUpdateManager {
+export default class UpdateManager {
 
   /**
    * Download the binary installer executable.
    */
   static downloadInstaller(id) {
     LoggerManager.log('downloadInstaller');
-    return new Promise((resolve, reject) => (
-      ConnectionHelper.doGet({
-        url: DOWNLOAD_UPDATE_BINARY_URL,
-        shouldRetry: true,
-        extraUrlParam: id
-      }).then((data) => {
-        LoggerManager.log('Save file to disk.');
-        if (!fs.existsSync(UPDATES_DIR)) {
-          fs.mkdirSync(UPDATES_DIR);
-        }
-        const fileName = `./${UPDATES_DIR}/amp-offline.exe`;
-        if (fs.existsSync(fileName)) {
-          fs.unlinkSync(fileName);
-        }
-        fs.writeFileSync(fileName, data);
-        return resolve(fileName);
-      }).catch(reject)
-    ));
+    if (!fs.existsSync(UPDATES_DIR)) {
+      fs.mkdirSync(UPDATES_DIR);
+    }
+    const fileName = `./${UPDATES_DIR}/amp-offline-installer.tmp`;
+    if (fs.existsSync(fileName)) {
+      fs.unlinkSync(fileName);
+    }
+    const writeStream = fs.createWriteStream(fileName);
+    return ConnectionHelper.doGet({
+      url: DOWNLOAD_UPDATE_BINARY_URL,
+      shouldRetry: true,
+      extraUrlParam: id,
+      writeStream
+    }).then((response) => {
+      LoggerManager.log('Save file to disk.');
+      const actualFileName = UpdateManager.getActualFileName(response);
+      if (actualFileName) {
+        fs.renameSync(fileName, actualFileName);
+      }
+      return actualFileName;
+    });
+  }
+
+  static getActualFileName(response) {
+    const { statusCode, rawHeaders } = response;
+    if (statusCode === 200) {
+      const contentDispositionIndex = rawHeaders.findIndex(header => header === CONTENT_DISPOSITION_HEADER);
+      const fileHeader = rawHeaders[contentDispositionIndex + 1].split(';').filter(e => e.includes('filename'))[0];
+      const actualFileName = fileHeader.split('=')[1];
+      return `./${UPDATES_DIR}/${actualFileName.substring(1, actualFileName.length - 1)}`;
+    }
   }
 
   /**

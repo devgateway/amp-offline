@@ -249,5 +249,10 @@
   "New Funding Item": "New Funding Item",
   "Same as Proposed Start Date": "Same as Proposed Start Date",
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
-  "Ignore": "Ignore"
+  "Ignore": "Ignore",
+  "downloadComplete": "Installer download complete",
+  "downloadInProgress": "Installer download in progress...",
+  "downloadFailed": "Installer download failed. Please try again.",
+  "updateInProgress": "AMP Offline upgrade is in progress...",
+  "updateFailed": "AMP Offline upgrade failed."
 }
