@@ -9,6 +9,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
+// if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
 if (process.env.NODE_ENV === 'development') {
   require('electron-debug')(); // eslint-disable-line global-require
   const path = require('path'); // eslint-disable-line
@@ -22,6 +23,7 @@ app.on('window-all-closed', () => {
 
 
 const installExtensions = async () => {
+  // if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
   if (process.env.NODE_ENV === 'development') {
     const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
 
