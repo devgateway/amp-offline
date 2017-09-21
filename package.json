@@ -62,12 +62,12 @@
       "package.json",
       "master-translations.en.json"
     ],
-    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "artifactName": "${name}-${version}-${arch}.${ext}",
     "win": {
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${productName}-${version}.${ext}"
+      "artifactName": "${name}-${version}.${ext}"
     },
     "linux": {
       "target": [
