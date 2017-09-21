@@ -130,10 +130,8 @@ function syncUpInProgress() {
 }
 
 function syncConnectionUnavailable() {
-  LoggerManager.debug('syncConnectionUnavailable');
-  const msg = translate('syncConnectionError');
   return {
     type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,
-    actionData: { errorMessage: msg }
+    actionData: { errorMessage: translate('AMPUnreachableError') }
   };
 }
