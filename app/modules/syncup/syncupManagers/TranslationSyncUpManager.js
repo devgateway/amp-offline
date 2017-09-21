@@ -149,7 +149,6 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   }
 
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds, isIncrementalSync) {
-    console.warn(newTranslations);
     LoggerManager.log('updateTranslationFiles');
     const fn = (lang) => {
       // We might need access to previous translations for this language.
