@@ -20,6 +20,7 @@ import {
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
   POSSIBLE_VALUES_V2_MEDIA_TYPE,
+  DOWNLOAD_UPGRADE_URL,
   CONTACT_PULL_URL,
   CONTACT_PUSH_URL,
   CONTACT_SINGLE_FIELDS_TREE_URL,
@@ -109,6 +110,10 @@ const routesConfiguration = [{
   url: FEATURE_MANAGER_URL,
   method: 'POST',
   requiredAuth: true
+}, {
+  url: DOWNLOAD_UPGRADE_URL,
+  method: 'GET',
+  isBinary: true
 }, {
   url: CONTACT_PULL_URL,
   method: 'GET',
