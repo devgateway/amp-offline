@@ -178,7 +178,6 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
             const newTextObjectLang = newTextObject[lang];
             if (newTextObjectLang) {
               copyMasterTrnFile[newTextObjectLang] = newTextObjectLang;
-              console.warn(copyMasterTrnFile[newTextObjectLang]);
             }
           });
         }
