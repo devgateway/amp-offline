@@ -122,6 +122,12 @@ const Utils = {
 
   capitalize(text: string) {
     return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
+  },
+
+  stripTags(tagString) {
+    const htmlTags = /<[^>]*>/g;
+    const noTags = tagString.replace(htmlTags, '');
+    return noTags;
   }
 
 };

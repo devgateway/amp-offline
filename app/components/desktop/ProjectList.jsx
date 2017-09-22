@@ -20,6 +20,7 @@ import {
 } from '../../utils/constants/ActivityConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
+import { stripTags } from '../../utils/Utils';
 
 export default class ProjectList extends Component {
 
@@ -40,6 +41,12 @@ export default class ProjectList extends Component {
   }
 
   static textFormatter(cell, row, extraData) {
+    if (Array.isArray(cell)) {
+      cell = cell.map(stripTags);
+    } else {
+      cell = stripTags(cell);
+    }
+    console.log(cell);
     const tooltip = <Tooltip id={`${extraData.label}-tooltip-${row.id}`}>{cell}</Tooltip>;
     return (<OverlayTrigger
       placement="bottom" overlay={tooltip}><span className={extraData.classes}>{cell}</span></OverlayTrigger>);
