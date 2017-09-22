@@ -9,8 +9,20 @@ import {
   DG_CONTACT_INFO,
   VERSION
 } from '../../utils/Constants';
+import DateUtils from '../../utils/DateUtils';
 
 export default class Home extends Component {
+  getDevInfo() {
+    const branch = __BRANCH_NAME__ !== 'master' ?
+      `${__BRANCH_NAME__} ${__COMMIT_HASH__}` :
+      '';
+
+    const releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
+    const osAndArch = `${__OS_TYPE__} ${__ARCH__}`;
+    return `AMP Offline ${VERSION} ${branch} build ${releaseDate} ${osAndArch} 
+    Developed in partnership with OECD, UNDP, WB, Government of Ethiopia and DGF`;
+  }
+
   render() {
     return (
       <div className={styles.footerContainer}>
@@ -27,8 +39,8 @@ export default class Home extends Component {
           {DG_ADDRESS_2}
           <br />
           {DG_CONTACT_INFO}
-          <br />
-          {__COMMIT_HASH__}
+          <br/>
+          {this.getDevInfo()}
         </div>
       </div>
     );

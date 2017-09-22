@@ -7,12 +7,15 @@ import StringReplacePlugin from 'string-replace-webpack-plugin';
 import path from 'path';
 import validate from 'webpack-validator';
 import webpack from 'webpack';
+import os from 'os';
 import { execSync } from 'child_process';
 import {
   dependencies as externals
 } from './app/package.json';
 
 const packageJson = require('./app/package.json');
+
+export const __BRANCH_NAME__ = JSON.stringify(execSync('git rev-parse --abbrev-ref HEAD').toString());
 
 export default validate({
   module: {
@@ -81,7 +84,11 @@ export default validate({
 
   plugins: [
     new webpack.DefinePlugin({
-      __COMMIT_HASH__: JSON.stringify(execSync('git rev-parse --short HEAD').toString())
+      __COMMIT_HASH__: JSON.stringify(execSync('git rev-parse --short HEAD').toString()),
+      __BRANCH_NAME__,
+      __BUILD_DATE__: JSON.stringify(new Date()),
+      __OS_TYPE__: JSON.stringify(os.type()),
+      __ARCH__: JSON.stringify(os.arch())
     }), new StringReplacePlugin(),
   ],
 
