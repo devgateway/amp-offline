@@ -1,5 +1,3 @@
-/* eslint react/forbid-prop-types: 0 */
-/* eslint react/jsx-space-before-closing: 0 */
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import translate from '../../utils/translate';
@@ -38,7 +36,7 @@ export default class Navbar extends Component {
     return '';
   }
 
-  extractWorkSpace(prepend) {
+  extractWorkspace(prepend) {
     LoggerManager.log('extractWorkSpace');
     if (this.props.workspaceReducer && this.props.workspaceReducer.currentWorkspace) {
       return prepend + this.props.workspaceReducer.currentWorkspace.name;
@@ -59,14 +57,11 @@ export default class Navbar extends Component {
             />
           </Link>
           <Link className={style.navbar_left_side} style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
-
           <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
-            <a className={style.navbar_right_side} >{this.extractLoggedUser('')}</a>
-            <a className={style.navbar_right_side} >{this.extractWorkSpace('')}</a>
+            <a className={style.navbar_right_side}>{this.extractLoggedUser('')}</a>
+            <a className={style.navbar_right_side}>{this.extractWorkspace('')}</a>
           </div>
-
-
         </div>
         <div className={style.main_menu}>
           <TopMenuContainer

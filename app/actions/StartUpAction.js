@@ -76,6 +76,7 @@ export function loadConnectionInformation() {
 export function getTimer() {
   return timer;
 }
+
 function scheduleConnectivityCheck() {
   return new Promise((resolve, reject) => {
     clearInterval(timer);
@@ -130,6 +131,7 @@ export function loadFMTree(id = undefined) {
 export function loadCurrencyRatesOnStartup() {
   store.dispatch(loadCurrencyRates());
 }
+
 function startUpLoaded(connectionInformation) {
   return {
     type: STATE_PARAMETERS_LOADED,

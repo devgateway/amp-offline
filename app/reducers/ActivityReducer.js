@@ -8,6 +8,7 @@ import {
   ACTIVITY_UNLOADED,
   ACTIVITY_VALIDATED,
   ACTIVITY_FIELD_VALIDATED,
+  ACTIVITY_LOADED_FOR_AF,
   ACTIVITY_UPDATE_GLOBAL_STATE
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
@@ -17,6 +18,7 @@ import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
 const defaultState = {
   isActivityLoading: false,
   isActivityLoaded: false,
+  isActivityLoadedForAf: false,
   isActivitySaving: false,
   isActivitySaved: false,
   activity: undefined,
@@ -55,6 +57,8 @@ const activityReducer = (state = defaultState, action: Object) => {
       };
     case ACTIVITY_LOAD_REJECTED:
       return { ...defaultState, errorMessage: action.payload };
+    case ACTIVITY_LOADED_FOR_AF:
+      return { ...state, isActivityLoadedForAf: true };
     case STATE_CHANGE_LANGUAGE: {
       let activityFieldsManager = state.activityFieldsManager;
       if (activityFieldsManager) {
