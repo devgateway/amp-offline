@@ -46,10 +46,9 @@ export default class ProjectList extends Component {
     } else {
       cell = stripTags(cell);
     }
-    console.log(cell);
     const tooltip = <Tooltip id={`${extraData.label}-tooltip-${row.id}`}>{cell}</Tooltip>;
     return (<OverlayTrigger
-      placement="bottom" overlay={tooltip}><span className={extraData.classes}>{cell}</span></OverlayTrigger>);
+      placement="left" overlay={tooltip}><span className={extraData.classes}>{cell}</span></OverlayTrigger>);
   }
 
   static projectNameFormatter(cell, row, extraData) {
