@@ -27,10 +27,12 @@ export default class AFFundingContainer extends Component {
     super(props);
     LoggerManager.debug('constructor');
     this.state = {
-      funding: this.props.funding
+      funding: this.props.funding,
+      stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS]
     };
     this._addTransactionItem = this._addTransactionItem.bind(this);
     this._removeTransactionItem = this._removeTransactionItem.bind(this);
+    this._removeFundingDetailItem = this._removeFundingDetailItem.bind(this);
   }
 
   _addTransactionItem(type) {
@@ -61,6 +63,15 @@ export default class AFFundingContainer extends Component {
     this.setState({ funding: newFunding });
   }
 
+  _removeFundingDetailItem(id) {
+    LoggerManager.debug('_removeFundingDetailItem');
+    // TODO: Display a confirm dialog to delete the funding item.
+    const newFunding = this.state.stateFundingDetail;
+    const index = this.state.stateFundingDetail.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
+    newFunding.splice(index, 1);
+    this.setState({ stateFundingDetail: newFunding });
+  }
+
   render() {
     // TODO: Implement 'MTEF Projections' table when available for sync.
     return (<div>
@@ -83,17 +94,22 @@ export default class AFFundingContainer extends Component {
           </Row>
         </Grid>
       </FormGroup>
-      <AFFundingClassificationPanel
-        funding={this.state.funding} />
+      <AFFundingClassificationPanel funding={this.state.funding} />
       <AFFundingDetailContainer
-        funding={this.state.funding} type={VC.COMMITMENTS}
-        handleNewTransaction={this._addTransactionItem} handleRemoveTransaction={this._removeTransactionItem} />
+        fundingDetail={this.state.stateFundingDetail}
+        type={VC.COMMITMENTS}
+        removeFundingDetailItem={this._removeFundingDetailItem}
+        handleNewTransaction={this._addTransactionItem} />
       <AFFundingDetailContainer
-        funding={this.state.funding} type={VC.DISBURSEMENTS}
-        handleNewTransaction={this._addTransactionItem} handleRemoveTransaction={this._removeTransactionItem} />
+        fundingDetail={this.state.stateFundingDetail}
+        type={VC.DISBURSEMENTS}
+        removeFundingDetailItem={this._removeFundingDetailItem}
+        handleNewTransaction={this._addTransactionItem} />
       <AFFundingDetailContainer
-        funding={this.state.funding} type={VC.EXPENDITURES}
-        handleNewTransaction={this._addTransactionItem} handleRemoveTransaction={this._removeTransactionItem} />
+        fundingDetail={this.state.stateFundingDetail}
+        type={VC.EXPENDITURES}
+        removeFundingDetailItem={this._removeFundingDetailItem}
+        handleNewTransaction={this._addTransactionItem} />
     </div>);
   }
 }
