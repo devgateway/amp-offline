@@ -40,9 +40,15 @@ export default class ProjectList extends Component {
   }
 
   static textFormatter(cell, row, extraData) {
+    if (Array.isArray(cell)) {
+      cell = cell.map((item, index) => {
+        if (index < cell.length - 1) return `${item}, `;
+        else return item;
+      });
+    }
     const tooltip = <Tooltip id={`${extraData.label}-tooltip-${row.id}`}>{cell}</Tooltip>;
     return (<OverlayTrigger
-      placement="bottom" overlay={tooltip}><span className={extraData.classes}>{cell}</span></OverlayTrigger>);
+      placement="left" overlay={tooltip}><span className={extraData.classes}>{cell}</span></OverlayTrigger>);
   }
 
   static projectNameFormatter(cell, row, extraData) {
