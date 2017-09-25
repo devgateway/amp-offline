@@ -60,6 +60,11 @@ export default class NumberUtils {
     return formatted;
   }
 
+  static formattedStringToRawNumber(numberString) {
+    LoggerManager.debug('formattedStringToRawNumber');
+    return numeral(numberString).value();
+  }
+
   static calculateInThousands(number) {
     LoggerManager.log('calculateInThousands');
     switch (GlobalSettingsManager.getSettingByKey(GS_AMOUNTS_IN_THOUSANDS)) {
