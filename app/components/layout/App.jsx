@@ -3,6 +3,7 @@ import LoggerManager from '../../modules/util/LoggerManager';
 import styles from './App.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
+import UpdateTrigger from '../update/UpdateTrigger';
 
 export default class App extends Component {
 
@@ -41,6 +42,7 @@ export default class App extends Component {
           </div>
         </div>
         <Footer />
+        <UpdateTrigger />
       </div>
     );
   }
