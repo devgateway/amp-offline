@@ -42,10 +42,7 @@ export default class ProjectList extends Component {
 
   static textFormatter(cell, row, extraData) {
     if (Array.isArray(cell)) {
-      cell = cell.map((item, index) => {
-        if (index < cell.length - 1) return `${stripTags(item)},`;
-        else return stripTags(item);
-      });
+      cell = cell.map(stripTags);
     } else {
       cell = stripTags(cell);
     }
