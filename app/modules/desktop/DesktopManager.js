@@ -9,7 +9,11 @@ import {
   FUNDINGS,
   FUNDING_DETAILS,
   TRANSACTION_TYPE,
-  ADJUSTMENT_TYPE
+  ADJUSTMENT_TYPE,
+  STARTED_APPROVED_STATUS,
+  APPROVED_STATUS,
+  STARTED_STATUS,
+  EDITED_STATUS
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -90,13 +94,13 @@ const DesktopManager = {
 
   getActivityIsNew(item) {
     if (item[IS_DRAFT]) {
-      if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'edited') {
+      if (item[APPROVAL_STATUS] === APPROVED_STATUS || item[APPROVAL_STATUS] === EDITED_STATUS) {
         return false;
       } else {
         return true;
       }
     } else {
-      if (item[APPROVAL_STATUS] === 'started') {
+      if (item[APPROVAL_STATUS] === STARTED_STATUS) {
         return true;
       }
       return false;
@@ -131,7 +135,7 @@ const DesktopManager = {
     let status = '';
     if (item[IS_DRAFT]) {
       status = ACTIVITY_STATUS_DRAFT;
-    } else if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'startedapproved') {
+    } else if (item[APPROVAL_STATUS] === APPROVED_STATUS || item[APPROVAL_STATUS] === STARTED_APPROVED_STATUS) {
       status = ACTIVITY_STATUS_VALIDATED;
     } else {
       status = ACTIVITY_STATUS_UNVALIDATED;

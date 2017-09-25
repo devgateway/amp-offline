@@ -166,6 +166,14 @@ export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
 
+/** Validation status **/
+export const STARTED_APPROVED_STATUS = 'startedapproved';
+export const APPROVED_STATUS = 'approved';
+export const STARTED_STATUS = 'started';
+export const EDITED_STATUS = 'edited';
+export const NOT_APPROVED = 'not_approved';
+export const REJECTED_STATUS = 'rejected';
+
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
 }

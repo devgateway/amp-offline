@@ -312,29 +312,29 @@ function getApprovalStatusFilter(id) {
     case 0:// Existing Un-validated - This will show all the activities that
       // have been approved at least once and have since been edited
       // and not validated.
-      options = ['edited', 'not_approved', 'rejected'];
+      options = [AC.EDITED_STATUS, AC.NOT_APPROVED, AC.REJECTED_STATUS];
       isDraft = false;
       break;
 
     case 1:// New Draft - This will show all the activities that have never
       // been approved and are saved as drafts.
-      options = ['started', 'startedapproved'];
+      options = [AC.STARTED_STATUS, AC.STARTED_APPROVED_STATUS];
       break;
 
     case 2:// New Un-validated - This will show all activities that are new
       // and have never been approved by the workspace manager.
-      options = ['started'];
+      options = [AC.STARTED_STATUS];
       isDraft = false;
       break;
 
     case 3:// existing draft. This is because when you filter by Existing
       // Unvalidated you get draft activites that were edited and
       // saved as draft
-      options = ['edited', 'approved'];
+      options = [AC.EDITED_STATUS, AC.APPROVED_STATUS];
       break;
 
     case 4:// Validated Activities
-      options = ['approved', 'startedapproved'];
+      options = [AC.APPROVED_STATUS, AC.STARTED_APPROVED_STATUS];
       isDraft = false;
       break;
     default:
