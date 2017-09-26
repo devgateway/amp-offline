@@ -174,6 +174,16 @@ export const EDITED_STATUS = 'edited';
 export const NOT_APPROVED = 'not_approved';
 export const REJECTED_STATUS = 'rejected';
 
+/** WS validation **/
+export const WS_VALIDATION_OFF = 'validationOff';
+export const WS_VALIDATION_ALL_EDIT = 'allEdits';
+export const WS_VALIDATION_NEW_ONLY = 'newOnly';
+export const WS_VALIDATION_FIELD = 'validation';
+
+/** Roles **/
+export const ROLE_TEAM_MEMBER_HEAD = 'team_head';
+export const ROLE_TEAM_MEMBER_APPROVED = 'approver';
+
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
 }
