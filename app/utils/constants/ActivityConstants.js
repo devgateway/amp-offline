@@ -180,9 +180,10 @@ export const WS_VALIDATION_ALL_EDIT = 'allEdits';
 export const WS_VALIDATION_NEW_ONLY = 'newOnly';
 export const WS_VALIDATION_FIELD = 'validation';
 
-/** Roles **/
-export const ROLE_TEAM_MEMBER_HEAD = 'team_head';
-export const ROLE_TEAM_MEMBER_APPROVED = 'approver';
+/** Roles (from WorkspaceMemberRoleConstants.java) **/
+export const ROLE_TEAM_MEMBER_WS_MANAGER = '1';
+export const ROLE_TEAM_MEMBER_WS_MEMBER = '2';
+export const ROLE_TEAM_MEMBER_WS_APPROVER = '3';
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

@@ -23,9 +23,8 @@ export default class ActivityStatusValidation {
     return WSSettingsHelpers.findByWorkspaceId(teamMember['workspace-id']).then(wsData => {
       const wsValidationType = wsData[AC.WS_VALIDATION_FIELD];
       if (projectValidationEnabled === 'On' && wsValidationType !== AC.WS_VALIDATION_OFF) {
-        // TODO: find the amp_team_member_role.
-        const role = { [AC.ROLE_TEAM_MEMBER_HEAD]: true, [AC.ROLE_TEAM_MEMBER_APPROVED]: true };
-        const teamLeadFlag = role[AC.ROLE_TEAM_MEMBER_HEAD] || role[AC.ROLE_TEAM_MEMBER_APPROVED];
+        const teamLeadFlag = teamMember['role-id'] === AC.ROLE_TEAM_MEMBER_WS_MANAGER
+          || teamMember['role-id'] === AC.ROLE_TEAM_MEMBER_WS_APPROVER;
         if (teamLeadFlag) {
           if (dehydratedActivity[AC.IS_DRAFT]) {
             if (rejected) {
@@ -79,6 +78,7 @@ export default class ActivityStatusValidation {
           }
         }
       } else {
+        // Validation is OF in GS activity approved.
         if (isNew) {
           newStatus = AC.STARTED_APPROVED_STATUS;
         } else {
