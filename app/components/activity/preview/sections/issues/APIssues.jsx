@@ -6,6 +6,7 @@ import styles from './APIssues.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APMeasure from './APMeasure';
+import translate from '../../../../../utils/translate';
 
 /**
  * @author Gabriel Inchauspe
@@ -24,7 +25,7 @@ class APIssues extends Component {
   }
 
   _buildIssues() {
-    const content = [];
+    let content = [];
     this.props.activity[AC.ISSUES].forEach((issue) => {
       let date = '';
       if (this.props.activityFieldsManager.isFieldPathEnabled(`${AC.ISSUES}~${AC.ISSUE_DATE}`)) {
@@ -35,6 +36,9 @@ class APIssues extends Component {
         content.push(<APMeasure activityFieldsManager={this.props.activityFieldsManager} measure={measure} />);
       });
     });
+    if (content.length === 0) {
+      content = (<div className={styles.nodata}>{translate('No Data')}</div>);
+    }
     return content;
   }
 
@@ -42,7 +46,7 @@ class APIssues extends Component {
     if (this.props.activityFieldsManager.isFieldPathEnabled(AC.ISSUES)) {
       return <div>{this._buildIssues()}</div>;
     } else {
-      return null;
+      return <div className={styles.nodata}>{translate('No Data')}</div>;
     }
   }
 }

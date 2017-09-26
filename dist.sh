@@ -9,7 +9,7 @@ rm -r dist
 DIST_CMD="
     npm run build &&
     npm run package-win-64 && rename 's/.exe/-64.exe/' dist/*.exe &&
-    chown -R $(id -u):$(id -g) dist node_modules"
+    chown -R $(id -u):$(id -g) ."
 
 docker run --rm -t -v ${PWD}:/project \
 	-v amp-client-electron:/root/.electron \
