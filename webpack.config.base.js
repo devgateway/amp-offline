@@ -15,8 +15,6 @@ import {
 
 const packageJson = require('./app/package.json');
 
-export const __BRANCH_NAME__ = JSON.stringify(execSync('git rev-parse --abbrev-ref HEAD').toString());
-
 export default validate({
   module: {
     loaders: [{
@@ -85,7 +83,8 @@ export default validate({
   plugins: [
     new webpack.DefinePlugin({
       __COMMIT_HASH__: JSON.stringify(execSync('git rev-parse --short HEAD').toString()),
-      __BRANCH_NAME__,
+      __BRANCH_NAME__: JSON.stringify(execSync('git rev-parse --abbrev-ref HEAD').toString()),
+      __PR_NR__: process.env.PR_NR,
       __BUILD_DATE__: JSON.stringify(new Date()),
       __OS_TYPE__: JSON.stringify(os.type()),
       __ARCH__: JSON.stringify(os.arch())
