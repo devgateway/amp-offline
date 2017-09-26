@@ -78,8 +78,8 @@ class APFundingTotalsSection extends Component {
     }
     if (sumOfActualDisbursements !== 0 && sumOfPlannedDisbursements !== 0) {
       content.push(<APFundingTotalItem
-        key="planned-disbursement-key"
-        value={parseInt((sumOfPlannedDisbursements / sumOfActualDisbursements) * 100, 10)}
+        currency={translate(this._wsCurrency)} key="planned-disbursement-key"
+        value={parseInt((sumOfActualDisbursements / sumOfActualCommitments) * 100, 10)}
         label={translate('Delivery Rate')} dontFormatNumber={false} isPercentage />);
     }
     return content;
