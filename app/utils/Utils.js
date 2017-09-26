@@ -123,6 +123,7 @@ const Utils = {
   capitalize(text: string) {
     return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
   }
+
 };
 
 module.exports = Utils;
