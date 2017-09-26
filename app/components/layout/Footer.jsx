@@ -12,14 +12,19 @@ import {
 import DateUtils from '../../utils/DateUtils';
 
 export default class Home extends Component {
-  getDevInfo() {
-    const branch = __BRANCH_NAME__ !== 'master' ?
-      `${__BRANCH_NAME__} ${__COMMIT_HASH__}` :
-      '';
+  static getDevInfo() {
+    let branchOrPr = null;
+    if (__BRANCH_NAME__ !== 'master') {
+      if (__PR_NR__) {
+        branchOrPr = `PR #${__PR_NR__}`;
+      } else {
+        branchOrPr = `${__BRANCH_NAME__} ${__COMMIT_HASH__}`;
+      }
+    }
 
     const releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
     const osAndArch = `${__OS_TYPE__} ${__ARCH__}`;
-    return `AMP Offline ${VERSION} ${branch} build ${releaseDate} ${osAndArch} 
+    return `AMP Offline ${VERSION} ${branchOrPr} build ${releaseDate} ${osAndArch} 
     Developed in partnership with OECD, UNDP, WB, Government of Ethiopia and DGF`;
   }
 
@@ -39,8 +44,8 @@ export default class Home extends Component {
           {DG_ADDRESS_2}
           <br />
           {DG_CONTACT_INFO}
-          <br/>
-          {this.getDevInfo()}
+          <br />
+          {this.constructor.getDevInfo()}
         </div>
       </div>
     );
