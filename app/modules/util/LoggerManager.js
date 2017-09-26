@@ -1,7 +1,7 @@
 import bunyan from 'bunyan';
-import fs from 'fs';
-import { LOG_FILE_NAME, LOG_DIR, LOG_FILE_EXTENSION } from '../../utils/Constants';
+import { LOG_DIR, LOG_FILE_EXTENSION, LOG_FILE_NAME } from '../../utils/Constants';
 import LoggerSettings from '../../utils/LoggerSettings';
+import FileManager from './FileManager';
 
 /* To understand the levels: https://github.com/trentm/node-bunyan#levels
  * 30: info
@@ -14,12 +14,10 @@ export default class LoggerManager {
   static initialize() {
     console.log('initialize');
     const settings = LoggerSettings.getDefaultConfig(process.env.NODE_ENV);
-    // Create directory.
-    if (!fs.existsSync(LOG_DIR)) {
-      fs.mkdirSync(LOG_DIR);
-    }
+    FileManager.createDataDir(LOG_DIR);
     const date = new Date();
-    const file = `${LOG_DIR}/${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
+    let file = `${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
+    file = FileManager.getFullPath(LOG_DIR, file);
     const log = bunyan.createLogger({
       name: 'amp',
       streams: [{ level: settings.level, path: file }
