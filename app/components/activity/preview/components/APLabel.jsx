@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import translate from '../../../../utils/translate';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-import { stripTags } from '../../../../utils/Utils';
 
 export default class APLabel extends Component {
 
@@ -23,7 +22,7 @@ export default class APLabel extends Component {
   getContent() {
     const label = (this.props.dontTranslate === true ? this.props.label : translate(this.props.label));
     const labelClass = (this.props.labelClass ? this.props.labelClass : '');
-    return (<div className={labelClass} ><span>{stripTags(label)}</span>{this.props.separator ? <hr /> : ''}</div>);
+    return (<div className={labelClass} ><span>{label}</span>{this.props.separator ? <hr /> : ''}</div>);
   }
 
   tooltip() {

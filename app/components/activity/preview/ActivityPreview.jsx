@@ -13,7 +13,6 @@ import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTota
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 import LoggerManager from '../../../modules/util/LoggerManager';
 import edit from '../../../assets/images/edit_icon.svg';
-import { stripTags } from '../../../utils/Utils';
 
 /**
  * Activity Preview main container
@@ -87,7 +86,7 @@ export default class ActivityPreview extends Component {
     return (
       <div className={styles.preview_container}>
         <div className={styles.preview_header} >
-          <span className={styles.preview_title} >{stripTags(activity[AC.PROJECT_TITLE])}</span>
+          <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
           <span className={styles.preview_icons} >
             <ul>
               <Link to={`/activity/edit/${activity.id}`}>
