@@ -14,7 +14,8 @@ import {
   CREATED_ON,
   MODIFIED_BY,
   PROJECT_TITLE,
-  TEAM
+  TEAM,
+  WORKSPACE_ID
 } from '../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY, NOTIFICATION_SEVERITY_INFO } from '../utils/constants/ErrorConstants';
@@ -157,7 +158,7 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
     const modifiedOn = (new Date()).toISOString();
     if (!dehydratedActivity[TEAM]) {
-      dehydratedActivity[TEAM] = teamMember['workspace-id'];
+      dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
     }
     if (!dehydratedActivity[CREATED_BY]) {
       dehydratedActivity[CREATED_BY] = teamMember.id;
@@ -168,7 +169,6 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
 
-    // TODO: Agregar parámetro 'rejected'.
     return ActivityStatusValidation.getStatus(dehydratedActivity, teamMember, false).then(status => {
       dehydratedActivity[APPROVAL_STATUS] = status;
       return ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {

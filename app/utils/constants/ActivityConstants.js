@@ -186,6 +186,10 @@ export const ROLE_TEAM_MEMBER_WS_MANAGER = 1;
 export const ROLE_TEAM_MEMBER_WS_MEMBER = 2;
 export const ROLE_TEAM_MEMBER_WS_APPROVER = 3;
 
+/** Other fields **/
+export const WORKSPACE_ID = 'workspace-id';
+export const ROLE_ID = 'role-id';
+
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
 }
