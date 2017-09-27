@@ -1,37 +1,62 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import { ACTIVITY_PREVIEW_URL, ACTIVITY_EDIT_URL, ACTIVITY_STATUS_UNVALIDATED } from '../../utils/Constants';
+import {
+  ACTIVITY_PREVIEW_URL,
+  ACTIVITY_EDIT_URL,
+  ACTIVITY_STATUS_UNVALIDATED,
+} from '../../utils/Constants';
+import { WS_ACCESS_TYPE_MANAGEMENT } from '../../utils/constants/ActivityConstants';
 import translate from '../../utils/translate';
 import styles from './IconFormatter.css';
 
 export default class IconFormatter extends Component {
 
   static propTypes = {
-    row: PropTypes.object.isRequired
+    row: PropTypes.object.isRequired,
+    teamLeadFlag: PropTypes.bool.isRequired,
+    crossTeamWS: PropTypes.bool.isRequired,
+    wsAccessType: PropTypes.string.isRequired,
+    teamId: PropTypes.number.isRequired,
+    activityTeamId: PropTypes.number.isRequired
   };
 
   render() {
     // TODO: These links could be dispatch to some action too if needed.
-    const editLink = `${ACTIVITY_EDIT_URL}/${this.props.row.id}`;
-    const viewLink = `${ACTIVITY_PREVIEW_URL}/${this.props.row.id}`;
-    let edit;
-    let view;
+    const editUrl = `${ACTIVITY_EDIT_URL}/${this.props.row.id}`;
+    const viewUrl = `${ACTIVITY_PREVIEW_URL}/${this.props.row.id}`;
+    const editLink = (<Link to={editUrl} title={translate('clickToEditActivity')}>
+      <img className={styles.edit_icon} alt="edit" />
+    </Link>);
+    const validateLink = (<Link to={editUrl} title={translate('clickToValidateActivity')}>
+      <img className={styles.validate_icon} alt="validate" />
+    </Link>);
+    const viewLink = (<Link to={viewUrl} title={translate('clickToPreviewActivity')}>
+      <img className={styles.view_icon} alt="view" />
+    </Link>);
+    let showEditValidate;
+    let showView;
     if (this.props.row.edit) {
       if (this.props.row.status === ACTIVITY_STATUS_UNVALIDATED) {
-        edit = (<Link to={editLink} title={translate('clickToValidateActivity')}>
-          <img className={styles.validate_icon} alt="validate" />
-        </Link>);
+        if (this.props.crossTeamWS && this.props.teamLeadFlag) {
+          if (this.props.wsAccessType !== WS_ACCESS_TYPE_MANAGEMENT) {
+            showEditValidate = validateLink;
+          } else {
+            showEditValidate = editLink;
+          }
+        } else if (!this.props.crossTeamWS
+          && this.props.teamId === this.props.activityTeamId
+          && this.props.teamLeadFlag) {
+          showEditValidate = validateLink;
+        } else {
+          showEditValidate = editLink;
+        }
       } else {
-        edit = (<Link to={editLink} title={translate('clickToEditActivity')}>
-          <img className={styles.edit_icon} alt="edit" />
-        </Link>);
+        showEditValidate = editLink;
       }
     }
     if (this.props.row.view) {
-      view = (<Link to={viewLink} title={translate('clickToPreviewActivity')}>
-        <img className={styles.view_icon} alt="view" />
-      </Link>);
+      showView = viewLink;
     }
-    return (edit || view ? (<div>{edit}{view}</div>) : <span />);
+    return (showEditValidate || showView ? (<div>{showEditValidate}{showView}</div>) : <span />);
   }
 }
