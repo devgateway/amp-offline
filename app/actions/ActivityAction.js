@@ -7,7 +7,6 @@ import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
 import {
-  APPROVAL_STATUS,
   CLIENT_CREATED_ON,
   CLIENT_UPDATED_ON,
   CREATED_BY,
@@ -169,9 +168,8 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
 
-    return ActivityStatusValidation.getStatus(dehydratedActivity, teamMember, false).then(status => {
-      dehydratedActivity[APPROVAL_STATUS] = status;
-      return ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {
+    return ActivityStatusValidation.statusValidation(dehydratedActivity, teamMember, false).then(() => (
+      ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {
         dispatch(addMessage(new Notification({
           message: translate('activitySavedMsg'),
           origin: NOTIFICATION_ORIGIN_ACTIVITY,
@@ -182,8 +180,8 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
         checkIfShouldSyncBeforeLogout();
         // DO NOT return anything else! It is recorded by the reducer and refreshes AF when you choose to stay in AF
         return savedActivity;
-      });
-    });
+      })
+    ));
   });
 }
 
