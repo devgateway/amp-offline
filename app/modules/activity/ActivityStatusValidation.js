@@ -8,7 +8,7 @@ import WSSettingsHelpers from '../../modules/helpers/WSSettingsHelper';
 import WorkspaceHelper from '../../modules/helpers/WorkspaceHelper';
 
 /**
- * Replicate activity validation logic from AMP ActivityUtil.setActivityStatus()
+ * Replicate activity validation logic from AMP's ActivityUtil.setActivityStatus()
  * @author ginchauspe.
  */
 export default class ActivityStatusValidation {
@@ -82,7 +82,7 @@ export default class ActivityStatusValidation {
             }
           }
         } else {
-          // Validation is OF in GS activity approved.
+          // Validation is OFF in GS activity approved.
           if (isNew) {
             dehydratedActivity[AC.APPROVAL_STATUS] = AC.STARTED_APPROVED_STATUS;
           } else {
