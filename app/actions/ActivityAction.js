@@ -170,7 +170,6 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
 
     // TODO: Agregar parámetro 'rejected'.
     return ActivityStatusValidation.getStatus(dehydratedActivity, teamMember, false).then(status => {
-      debugger
       dehydratedActivity[APPROVAL_STATUS] = status;
       return ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {
         dispatch(addMessage(new Notification({
