@@ -43,19 +43,23 @@ class AFFunding extends Component {
   }
 
   _getAcronym(sourceRole) {
-    switch (sourceRole.value) {
-      case VC.DONOR_AGENCY:
-        return translate(VC.ACRONYM_DONOR_ORGANIZATION);
-      case VC.BENEFICIARY_AGENCY:
-        return translate(VC.ACRONYM_BENEFICIARY_AGENCY);
-      case VC.IMPLEMENTING_AGENCY:
-        return translate(VC.ACRONYM_IMPLEMENTING_AGENCY);
-      case VC.EXECUTING_AGENCY:
-        return translate(VC.ACRONYM_EXECUTING_AGENCY);
-      case VC.RESPONSIBLE_ORGANIZATION:
-        return translate(VC.ACRONYM_RESPONSIBLE_ORGANIZATION);
-      default:
-        return null;
+    if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
+      switch (sourceRole.value) {
+        case VC.DONOR_AGENCY:
+          return translate(VC.ACRONYM_DONOR_ORGANIZATION);
+        case VC.BENEFICIARY_AGENCY:
+          return translate(VC.ACRONYM_BENEFICIARY_AGENCY);
+        case VC.IMPLEMENTING_AGENCY:
+          return translate(VC.ACRONYM_IMPLEMENTING_AGENCY);
+        case VC.EXECUTING_AGENCY:
+          return translate(VC.ACRONYM_EXECUTING_AGENCY);
+        case VC.RESPONSIBLE_ORGANIZATION:
+          return translate(VC.ACRONYM_RESPONSIBLE_ORGANIZATION);
+        default:
+          return null;
+      }
+    } else {
+      return translate(VC.ACRONYM_DONOR_ORGANIZATION);
     }
   }
 
@@ -69,10 +73,12 @@ class AFFunding extends Component {
         extra_info: value.extra_info,
         'translated-value': value['translated-value']
       };
-      // Find the 'Donor' org type.
-      const donorList = this.context.activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
-      const donorOrg = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
-      fundingItem[AC.SOURCE_ROLE] = donorOrg;
+      // Find the 'Donor' org type if enabled.
+      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
+        const donorList = this.context.activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
+        const donorOrg = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
+        fundingItem[AC.SOURCE_ROLE] = donorOrg;
+      }
       fundingItem[AC.FUNDING_DETAILS] = [];
       fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
       fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
@@ -98,17 +104,26 @@ class AFFunding extends Component {
         }
         return groups;
       });
-      return groups.map((funding) => (
-        <Tab
+      return groups.map((funding) => {
+        // If source_role is disabled then the role is always "Donor".
+        let sourceRole;
+        if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
+          sourceRole = funding[AC.SOURCE_ROLE];
+        } else {
+          const options = this.context.activityFieldsManager
+            .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
+          sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
+        }
+        return (<Tab
           eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
           title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
           <AFFundingDonorSection
             fundings={this.state.fundingList}
             organization={funding[AC.FUNDING_DONOR_ORG_ID]}
-            role={funding[AC.SOURCE_ROLE]}
+            role={sourceRole}
           />
-        </Tab>
-      ));
+        </Tab>);
+      });
     }
     return null;
   }
