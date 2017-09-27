@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import { ACTIVITY_PREVIEW_URL, ACTIVITY_EDIT_URL } from '../../utils/Constants';
+import { ACTIVITY_PREVIEW_URL, ACTIVITY_EDIT_URL, ACTIVITY_STATUS_UNVALIDATED } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import styles from './IconFormatter.css';
 
@@ -17,15 +17,21 @@ export default class IconFormatter extends Component {
     let edit;
     let view;
     if (this.props.row.edit) {
-      edit = (<Link to={editLink} title={translate('clickToEditActivity')}>
-        <img className={styles.edit_icon} alt="edit" />
-      </Link>);
+      if (this.props.row.status === ACTIVITY_STATUS_UNVALIDATED) {
+        edit = (<Link to={editLink} title={translate('clickToValidateActivity')}>
+          <img className={styles.validate_icon} alt="validate" />
+        </Link>);
+      } else {
+        edit = (<Link to={editLink} title={translate('clickToEditActivity')}>
+          <img className={styles.edit_icon} alt="edit" />
+        </Link>);
+      }
     }
     if (this.props.row.view) {
       view = (<Link to={viewLink} title={translate('clickToPreviewActivity')}>
         <img className={styles.view_icon} alt="view" />
       </Link>);
     }
-    return (edit || view ? (<div>{ edit }{ view }</div>) : <span />);
+    return (edit || view ? (<div>{edit}{view}</div>) : <span />);
   }
 }
