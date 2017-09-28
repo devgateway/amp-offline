@@ -25,3 +25,5 @@ export const STATES_SUCCESS = [SUCCESS, NO_CHANGES];
 export const STATES_PARTIAL_SUCCESS = [SUCCESS, PARTIAL, NO_CHANGES];
 /** Sync up ended states, no matter successfully or not */
 export const STATES_FINISH = [SUCCESS, PARTIAL, FAIL, DEPENDENCY_FAIL, NO_CHANGES, ABORTED];
+/** Sync up was prevented to start */
+export const STATES_PREVENTED = [DEPENDENCY_FAIL, ABORTED];
