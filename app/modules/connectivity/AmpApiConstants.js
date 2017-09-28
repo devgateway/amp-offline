@@ -34,6 +34,7 @@ export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2
 
 export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
 
+export const DOWNLOAD_UPGRADE_URL = '/amp/download-upgrade'; // TODO: this url will change for sure.
 export const PLATFORM_WINDOWS = 'windows';
 export const PLATFORM_MAC_OS = 'osx';
 export const PLATFORM_REDHAT = 'redhat';

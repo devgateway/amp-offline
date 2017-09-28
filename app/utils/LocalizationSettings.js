@@ -9,10 +9,7 @@ const defaultI18NextConfig = {
           'translations'
         ],
         defaultNS: 'translations',
-        fallbackNS: 'common',
-        backend: {
-          loadPath: './lang/{{ns}}.{{lng}}.json'
-        }
+        fallbackNS: 'common'
       },
       production: {
         lng: 'en',
@@ -22,10 +19,7 @@ const defaultI18NextConfig = {
           'translations'
         ],
         defaultNS: 'translations',
-        fallbackNS: 'common',
-        backend: {
-          loadPath: './lang/{{ns}}.{{lng}}.json'
-        }
+        fallbackNS: 'common'
       },
       test: {
         lng: 'en',
@@ -36,9 +30,6 @@ const defaultI18NextConfig = {
         ],
         defaultNS: 'translations',
         fallbackNS: 'common',
-        backend: {
-          loadPath: './lang/{{ns}}.{{lng}}.json'
-        }
       }
     }
   }

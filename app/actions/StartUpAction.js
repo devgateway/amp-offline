@@ -76,6 +76,7 @@ export function loadConnectionInformation() {
 export function getTimer() {
   return timer;
 }
+
 function scheduleConnectivityCheck() {
   return new Promise((resolve, reject) => {
     clearInterval(timer);
@@ -93,10 +94,13 @@ export function loadGlobalSettings() {
   LoggerManager.log('loadGlobalSettings');
   const gsPromise = GlobalSettingsHelper.findAll({}).then(gsList => {
     const gsData = {};
-    gsList.forEach(gs => {
-      gsData[gs.key] = gs.value;
-    });
-    GlobalSettingsManager.setGlobalSettings(gsData);
+    // update default GS settings to those from the store only if any available in the store
+    if (gsList.length) {
+      gsList.forEach(gs => {
+        gsData[gs.key] = gs.value;
+      });
+      GlobalSettingsManager.setGlobalSettings(gsData);
+    }
     NumberUtils.createLanguage();
     return gsData;
   });
@@ -130,6 +134,7 @@ export function loadFMTree(id = undefined) {
 export function loadCurrencyRatesOnStartup() {
   store.dispatch(loadCurrencyRates());
 }
+
 function startUpLoaded(connectionInformation) {
   return {
     type: STATE_PARAMETERS_LOADED,
