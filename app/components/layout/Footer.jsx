@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import React, { Component } from 'react';
+import os from 'os';
 import translate from '../../utils/translate';
 import styles from './Footer.css';
 import {
@@ -26,7 +27,7 @@ export default class Home extends Component {
       releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
     }
 
-    const osAndArch = `${__OS_TYPE__} ${__ARCH__}`;
+    const osAndArch = `${os.type()} ${os.arch()}`;
     return `${VERSION} ${branchOrPr} ${translate('build')} ${releaseDate} ${osAndArch}`;
   }
 
