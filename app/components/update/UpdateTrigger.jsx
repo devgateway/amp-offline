@@ -37,8 +37,7 @@ class UpdateTrigger extends Component {
     newVersion: PropTypes.string,
     onConfirmationAlert: PropTypes.func.isRequired,
     proceedToUpdateDownload: PropTypes.bool,
-    checkForUpdates: PropTypes.bool,
-    goToDownloadPage: PropTypes.func.isRequired
+    checkForUpdates: PropTypes.bool
   };
 
   constructor(props) {
@@ -64,8 +63,8 @@ class UpdateTrigger extends Component {
       // we'll show the alert if it is a forced update on each detection
       // TODO we may need to check it quicker immediately on startup or screen navigation
       let isShowAlert = props.forceToUpdate;
-      if (this.state.newVersion !== this.props.newVersion) {
-        this.setState({ newVersion: this.props.newVersion });
+      if (this.state.newVersion !== props.newVersion) {
+        this.setState({ newVersion: props.newVersion });
         // if it's first detection of a new update since the app was started, then we'll show it at least once
         // TODO add more rules how often to remind about non mandatory update
         isShowAlert = true;

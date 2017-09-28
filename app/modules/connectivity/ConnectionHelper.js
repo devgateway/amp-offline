@@ -60,7 +60,7 @@ const ConnectionHelper = {
     if (bbPromise) {
       bbPromise.timeout(requestPromiseForcedTimeout);
     }
-    // TODO different streaming timeout policy
+    // TODO I tried lower timeout for streaming and it seems to ignore it -> check how exactly to handle
     return requestPromise
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
       .catch(reason => {
@@ -84,7 +84,11 @@ const ConnectionHelper = {
     if (writeStream) {
       return new Promise((resolve, reject) => {
         request(requestConfig)
-          .on('response', resolve)
+          .on('response', (response) => {
+            writeStream
+              .on('finish', () => resolve(response))
+              .on('error', reject);
+          })
           .on('error', reject)
           .pipe(writeStream);
       });

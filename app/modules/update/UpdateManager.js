@@ -1,11 +1,11 @@
 import * as child from 'child_process';
 import * as path from 'path';
 import { app } from 'electron';
-import fs from 'fs';
 import LoggerManager from '../util/LoggerManager';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import { DOWNLOAD_UPDATE_BINARY_URL } from '../connectivity/AmpApiConstants';
-import { CONTENT_DISPOSITION_HEADER, UPDATES_DIR } from '../../utils/Constants';
+import { CONTENT_DISPOSITION_HEADER, UPDATES_DIR, UPDATE_TMP_FILE } from '../../utils/Constants';
+import FileManager from '../util/FileManager';
 
 export default class UpdateManager {
 
@@ -14,14 +14,10 @@ export default class UpdateManager {
    */
   static downloadInstaller(id) {
     LoggerManager.log('downloadInstaller');
-    if (!fs.existsSync(UPDATES_DIR)) {
-      fs.mkdirSync(UPDATES_DIR);
-    }
-    const fileName = `./${UPDATES_DIR}/amp-offline-installer.tmp`;
-    if (fs.existsSync(fileName)) {
-      fs.unlinkSync(fileName);
-    }
-    const writeStream = fs.createWriteStream(fileName);
+    const installerTmpFile = FileManager.getFullPath(UPDATES_DIR, UPDATE_TMP_FILE);
+    FileManager.createDataDir(UPDATES_DIR);
+    FileManager.deleteFile(installerTmpFile);
+    const writeStream = FileManager.createWriteStream(UPDATES_DIR, UPDATE_TMP_FILE);
     return ConnectionHelper.doGet({
       url: DOWNLOAD_UPDATE_BINARY_URL,
       shouldRetry: true,
@@ -31,7 +27,7 @@ export default class UpdateManager {
       LoggerManager.log('Save file to disk.');
       const actualFileName = UpdateManager.getActualFileName(response);
       if (actualFileName) {
-        fs.renameSync(fileName, actualFileName);
+        FileManager.renameSync(installerTmpFile, UPDATES_DIR, actualFileName);
       }
       return actualFileName;
     });
@@ -43,7 +39,7 @@ export default class UpdateManager {
       const contentDispositionIndex = rawHeaders.findIndex(header => header === CONTENT_DISPOSITION_HEADER);
       const fileHeader = rawHeaders[contentDispositionIndex + 1].split(';').filter(e => e.includes('filename'))[0];
       const actualFileName = fileHeader.split('=')[1];
-      return `./${UPDATES_DIR}/${actualFileName.substring(1, actualFileName.length - 1)}`;
+      return actualFileName.substring(1, actualFileName.length - 1);
     }
   }
 
@@ -67,10 +63,12 @@ export default class UpdateManager {
       detached: true,
       stdio: 'ignore'
     };
-    if (!fs.existsSync(installPath)) {
-      LoggerManager.error(`Cant find file ${installPath}, update will stop.`);
+    if (!FileManager.existsSync(UPDATES_DIR, installPath)) {
+      const fullFilePath = FileManager.getFullPath(UPDATES_DIR, installPath);
+      LoggerManager.error(`Cant find file ${fullFilePath}, update will stop.`);
       return false;
     }
+    installPath = FileManager.getFullPath(UPDATES_DIR, installPath);
     try {
       (0, (child).spawn)(installPath, args, spawnOptions).unref();
       app.quit();

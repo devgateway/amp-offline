@@ -73,6 +73,7 @@
       "artifactName": "${productName}-${version}.${ext}"
     },
     "linux": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
       "target": [
         "deb",
         "rpm"
