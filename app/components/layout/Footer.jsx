@@ -14,25 +14,31 @@ import DateUtils from '../../utils/DateUtils';
 export default class Home extends Component {
   static getDevInfo() {
     let branchOrPr = null;
+    let releaseDate = '';
     if (__BRANCH_NAME__ !== 'master') {
+      releaseDate = __BUILD_DATE__;
       if (__PR_NR__) {
         branchOrPr = `PR #${__PR_NR__}`;
       } else {
         branchOrPr = `${__BRANCH_NAME__} ${__COMMIT_HASH__}`;
       }
+    } else {
+      releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
     }
 
-    const releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
     const osAndArch = `${__OS_TYPE__} ${__ARCH__}`;
-    return `AMP Offline ${VERSION} ${branchOrPr} build ${releaseDate} ${osAndArch} 
-    Developed in partnership with OECD, UNDP, WB, Government of Ethiopia and DGF`;
+    return `${VERSION} ${branchOrPr} ${translate('build')} ${releaseDate} ${osAndArch}`;
   }
 
   render() {
     return (
       <div className={styles.footerContainer}>
         <footer className={[styles.footer, styles.footerText].join(' ')}>
-          <p>{translate('amp-offline')} {VERSION} {translate('amp-footer')}</p>
+          <p>
+            {translate('amp-offline')} {this.constructor.getDevInfo()}
+            <br />
+            {translate('amp-footer')}
+          </p>
         </footer>
         <div className={[styles.footerText, styles.footerImageContainer].join(' ')}>
           <img className={styles.footerImage} alt={'footer'} />
@@ -44,8 +50,6 @@ export default class Home extends Component {
           {DG_ADDRESS_2}
           <br />
           {DG_CONTACT_INFO}
-          <br />
-          {this.constructor.getDevInfo()}
         </div>
       </div>
     );
