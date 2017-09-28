@@ -17,9 +17,8 @@ import LoggerManager from '../../modules/util/LoggerManager';
 const ConnectionHelper = {
 
   doGet({ url, paramsMap, shouldRetry, extraUrlParam }) {
-    LoggerManager.log('doGet');
+    LoggerManager.debug('doGet');
     const method = 'GET';
-    // Modify the call to use ES6 destructuring
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
     return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
   },
@@ -34,11 +33,18 @@ const ConnectionHelper = {
    * @return {Promise}
    */
   doPost({ url, paramsMap, body, shouldRetry, extraUrlParam }) {
-    LoggerManager.log('doPost');
+    LoggerManager.debug('doPost');
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
+  },
+
+  doPut({ url, paramsMap, body, shouldRetry, extraUrlParam }) {
+    LoggerManager.debug('doPut');
+    const method = 'PUT';
+    const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
   },
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry) {

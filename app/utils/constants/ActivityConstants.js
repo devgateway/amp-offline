@@ -141,17 +141,24 @@ export const FINANCING_ID = 'financing_id';
 export const DISBURSEMENT_ORDER_ID = 'disbursement_order_id';
 export const PLEDGE = 'pledge';
 export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
+export const REPORTING_DATE = 'reporting_date';
+export const RECIPIENT_ROLE = 'recipient_role';
+export const TEMPORAL_ID = '_temporal_id';
+
+// Activity labels (usually those that don't come as part of Fields Def EP)
+export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
+export const SAME_AS_PROPOSED_APPROVAL_DATE_LABEL = 'Same as Proposed Approval Date';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
   [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification' },
-  { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs' },
-  { key: 'APPlanning', hash: '#APPlanning', value: 'Planning' },
-  { key: 'APLocation', hash: '#APLocation', value: 'Location' },
-  { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan' },
-  { key: 'APProgram', hash: '#APProgram', value: 'Program' },
-  { key: 'APSector', hash: '#APSector', value: 'Sectors' },
-  { key: 'APFunding', hash: '#APFunding', value: 'Funding' }];
+    { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs' },
+    { key: 'APPlanning', hash: '#APPlanning', value: 'Planning' },
+    { key: 'APLocation', hash: '#APLocation', value: 'Location' },
+    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan' },
+    { key: 'APProgram', hash: '#APProgram', value: 'Program' },
+    { key: 'APSector', hash: '#APSector', value: 'Sectors' },
+    { key: 'APFunding', hash: '#APFunding', value: 'Funding' }];
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;

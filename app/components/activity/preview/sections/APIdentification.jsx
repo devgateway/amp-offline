@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
-import { APInternalIdsFromIdentification } from './APInternalIds';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
 
@@ -26,7 +25,6 @@ class APIdentification extends Component {
     return (
       <div>
         {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true))}
-        <APInternalIdsFromIdentification key="APInternalIdsFromIdentification" showIfEmpty />
       </div>
     );
   }

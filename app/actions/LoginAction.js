@@ -5,9 +5,10 @@ import { LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import ActivitiesPushToAMPManager from '../modules/syncup/syncupManagers/ActivitiesPushToAMPManager';
 import { checkIfToForceSyncUp } from './SyncUpAction';
-import { ampStartUp } from './StartUpAction';
+import { ampOfflineInit } from './StartUpAction';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
 import LoggerManager from '../modules/util/LoggerManager';
+import { isMandatoryUpdate, STATE_CHECK_FOR_UPDATES } from './UpdateAction';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -21,7 +22,9 @@ export const STATE_LOGOUT = 'STATE_LOGOUT';
 export function loginAction(email: string, password: string) {
   LoggerManager.log('loginAction');
   return (dispatch, ownProps) => {
-    if (ownProps().loginReducer.loginProcessing === false) {
+    if (isMandatoryUpdate()) {
+      dispatch({ type: STATE_CHECK_FOR_UPDATES });
+    } else if (ownProps().loginReducer.loginProcessing === false) {
       dispatch(sendingRequest());
       const isAmpAvailable = (ownProps().ampConnectionStatusReducer.status
         && ownProps().ampConnectionStatusReducer.status.isAmpAvailable);
@@ -105,5 +108,5 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
     actionData: { isInactivityTimeout }
   });
   UrlUtils.forwardTo(LOGIN_URL);
-  return ampStartUp();
+  return ampOfflineInit();
 }

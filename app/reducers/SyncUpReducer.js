@@ -6,7 +6,9 @@ import {
   STATE_SYNCUP_COMPLETED,
   STATE_SYNCUP_FAILED,
   STATE_SYNCUP_FORCED,
+  STATE_SYNCUP_CONNECTION_UNAVAILABLE,
   STATE_SYNCUP_DISMISSED,
+  STATE_SYNCUP_LOG_LOADED
 } from '../actions/SyncUpAction';
 import { STATE_LOGOUT_DISMISS_TO_SYNC } from '../actions/LoginAction';
 import LoggerManager from '../modules/util/LoggerManager';
@@ -15,7 +17,7 @@ const defaultState = {
   loadingSyncHistory: false,
   syncUpInProgress: false,
   errorMessage: '',
-  historyData: {},
+  historyData: [],
   forceSyncUp: false,
   lastSuccessfulSyncUp: undefined,
   didUserSuccessfulSyncUp: false,
@@ -43,7 +45,7 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
     case STATE_SYNCUP_COMPLETED:
       return Object.assign({}, state, {
         syncUpInProgress: false,
-        syncUpResutls: action.actionData,
+        syncUpResults: action.actionData,
         errorMessage: '',
         forceSyncUp: false,
         forceSyncUpMessage: ''
@@ -72,10 +74,16 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
         syncUpRejected: false,
         syncUpAccepted: false
       });
+    case STATE_SYNCUP_CONNECTION_UNAVAILABLE:
+      return Object.assign({}, state, {
+        errorMessage: action.actionData.errorMessage
+      });
     case STATE_SYNCUP_DISMISSED:
       return { ...state, syncUpRejected: true };
     case STATE_LOGOUT_DISMISS_TO_SYNC:
       return { ...state, syncUpAccepted: true };
+    case STATE_SYNCUP_LOG_LOADED:
+      return { ...state, historyData: state.historyData.concat(action.actionData) };
     default:
       return state;
   }
