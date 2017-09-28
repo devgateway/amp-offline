@@ -21,12 +21,17 @@ export function connectivityCheck() {
   // we should introduce a manager here to keep the actions simple
   const url = URL_CONNECTIVITY_CHECK_EP;
   const paramsMap = { 'amp-offline-version': VERSION };
-  return Promise.all([ConnectionHelper.doGet({ url, paramsMap }), _getLastConnectivityStatus()])
-    .then(([data, lastConnectivityStatus]) => _processResult(data, lastConnectivityStatus))
+  let lastConnectivityStatus;
+  return _getLastConnectivityStatus()
+    .then(status => {
+      lastConnectivityStatus = status;
+      return ConnectionHelper.doGet({ url, paramsMap });
+    })
+    .then(data => _processResult(data, lastConnectivityStatus))
     .then(_saveConnectivityStatus)
     .catch(error => {
       LoggerManager.error(`Couldn't check the connection status. Error: ${error}`);
-      return _processResult(null);
+      return _processResult(null, lastConnectivityStatus);
     });
 }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
+import { Modal } from 'react-bootstrap';
 import translate from '../../utils/translate';
 import ConnectivityStatus from '../../modules/connectivity/ConnectivityStatus';
 import ErrorMessage from '../common/ErrorMessage';
@@ -72,8 +73,17 @@ export default class Update extends Component {
     return (
       <div>
         {errorMessage && <ErrorMessage message={errorMessage} />}
-        {this.getFileDownloadProgress()}
-        {this.getInstallerUpdateProgress()}
+        <Modal show={!errorMessage}>
+          <Modal.Header>
+            <Modal.Title>{translate('updateInProgress')}</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            {translate('dontStopUpdateWarning')}
+            {this.getFileDownloadProgress()}
+            {this.getInstallerUpdateProgress()}
+          </Modal.Body>
+        </Modal>
       </div>);
   }
 }

@@ -18,6 +18,7 @@ import {
   STATE_DOWNLOAD_UPDATE_DISMISSED
 } from '../../actions/UpdateAction';
 import { STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
+import { VERSION } from '../../utils/Constants';
 
 /**
  * Update trigger component to be loaded on every page in order to notify any updates if available and discard
@@ -43,7 +44,7 @@ class UpdateTrigger extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      newVersion: this.props.newVersion,
+      newVersion: VERSION,
       updateInstallerPath: null
     };
   }

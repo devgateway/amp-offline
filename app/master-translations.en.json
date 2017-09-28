@@ -250,6 +250,7 @@
   "Same as Proposed Start Date": "Same as Proposed Start Date",
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
   "Ignore": "Ignore",
+  "dontStopUpdateWarning": "AMP Offline is currently being updated. Please do not close the application.",
   "downloadComplete": "Installer download complete",
   "downloadInProgress": "Installer download in progress...",
   "downloadFailed": "Installer download failed. Please try again.",
