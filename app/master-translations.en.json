@@ -275,5 +275,6 @@
   "Internal ID": "Internal ID",
   "Edit Activity Form": "Edit Activity Form",
   "Quick Links": "Quick Links",
-  "Not Implemented": "Not Implemented"
+  "Not Implemented": "Not Implemented",
+  "unexpectedError": "An unexpected error occurred. Please collect logs, note your actions and contact the administrator."
 }

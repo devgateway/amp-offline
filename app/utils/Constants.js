@@ -34,7 +34,7 @@ export const COLLECTION_CURRENCY_RATES = 'currency-rates';
 export const COLLECTION_FEATURE_MANAGER = 'feature-manager';
 export const COLLECTION_CONTACTS = 'contacts';
 
-export const DB_FILE_PREFIX = './database/';
+export const DB_FILE_PREFIX = 'database';
 export const DB_FILE_EXTENSION = '.db';
 // TODO: Find a better way to store the key.
 export const AKEY = 'key';
@@ -43,10 +43,10 @@ export const DB_AUTOCOMPACT_INTERVAL_MILISECONDS = 60000;
 export const DB_DEFAULT_QUERY_LIMIT = 999999999;
 
 export const LANGUAGE_ENGLISH = 'en';
-export const FS_LOCALES_DIRECTORY = './lang/';
+export const FS_LOCALES_DIRECTORY = 'lang';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
-export const APP_DIRECTORY = './app/';
+export const APP_DIRECTORY = 'app';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -95,8 +95,8 @@ export const RATE_SAME_CURRENCY = 1;
 export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
 export const VERSION = '1.0.0';
-export const AMP_COUNTRY_LOGO = './assets/ampCountryFlag.png';
-export const ASSEST_DIRECTORY = './assets';
+export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
+export const ASSEST_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
 // Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
 export const
