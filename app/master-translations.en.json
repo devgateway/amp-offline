@@ -86,7 +86,7 @@
   "noFieldsDef": "No fields definition found",
   "Error": "Error",
   "Warning": "Warning",
-  "tooOldSyncWarning": "The app has not been synced in 14 days. You may not proceed until data has been synced.",
+  "tooOldSyncWarning": "The app has not been synced successfully in 14 days. You may not proceed until data has been synced.",
   "syncWarning": "Please sync prior to working with the app for the latest data and avoid version conflicts when uploading data.",
   "lastSuccessfulSyncupDate": "Last successful sync up was was done on %date%",
   "allPreviousSyncUpFailed": "All previous sync up failed.",
