@@ -21,7 +21,7 @@
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register -r babel-polyfill ./app/main.development",
     "postinstall": "concurrently \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "dev": "npm run hot-server -- --start-hot",
-    "package": "npm run build && cross-env PR_NR=0 build --publish never",
+    "package": "npm run build && build --publish never",
     "package-win-32": "build --win --ia32",
     "package-win-64": "build --win --x64",
     "package-linux": "build --linux --x64 --ia32",
@@ -70,7 +70,7 @@
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${env.PR_NR}-${productName}-${version}.${ext}"
+      "artifactName": "${productName}-${version}.${ext}"
     },
     "linux": {
       "target": [
