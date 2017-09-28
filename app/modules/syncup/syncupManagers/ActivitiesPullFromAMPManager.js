@@ -41,6 +41,16 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
     return merged;
   }
 
+  static mergeDetails(...details) {
+    const result = Utils.toMap(SYNCUP_DETAILS_SYNCED, []);
+    result[SYNCUP_DETAILS_UNSYNCED] = [];
+    details.forEach(detail => {
+      result[SYNCUP_DETAILS_SYNCED].push(...(detail[SYNCUP_DETAILS_SYNCED] || []));
+      result[SYNCUP_DETAILS_UNSYNCED].push(...(detail[SYNCUP_DETAILS_UNSYNCED] || []));
+    });
+    return result;
+  }
+
 
   removeEntries() {
     const ampIdsFilter = Utils.toMap(AC.AMP_ID, { $in: this.diff.removed });
