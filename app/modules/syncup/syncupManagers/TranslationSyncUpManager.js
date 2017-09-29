@@ -1,4 +1,3 @@
-import fs from 'fs';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import LanguageHelper from '../../helpers/LanguageHelper';
 import {
@@ -19,9 +18,7 @@ import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../../utils/constants/Err
 import TranslationManager from '../../util/TranslationManager';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import LoggerManager from '../../util/LoggerManager';
-
-const MASTER_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_MASTER_TRANSLATIONS_FILE}.`;
-const LOCAL_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_TRANSLATIONS_FILE}.`;
+import FileManager from '../../util/FileManager';
 
 /* eslint-disable class-methods-use-this */
 
@@ -80,10 +77,6 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     ));
   }
 
-  static getFileNameForLang(lang) {
-    return `${LOCAL_LANGUAGE_FILE}${lang}.json`;
-  }
-
   /**
    * Check if we have a valid translations file for a given language.
    * @param lang
@@ -92,9 +85,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   static detectSynchronizedTranslationFile(lang) {
     LoggerManager.log('detectSynchronizedTranslationFile');
     let ret = false;
-    const fileName = TranslationSyncUpManager.getFileNameForLang(lang);
-    if (fs.existsSync(fileName)) {
-      const stats = fs.statSync(fileName);
+    const stats = FileManager.statSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`);
+    if (stats) {
       const fileSize = stats.size;
       if (fileSize > 10) { // Just to test the file has something in it.
         ret = true;
@@ -106,8 +98,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   // TODO: use lastSyncDate when calling the EP.
   syncUpTranslations(langs) {
     LoggerManager.log('syncUpTranslations');
-    const masterTrnFileName = `${MASTER_LANGUAGE_FILE}${LANGUAGE_ENGLISH}.json`;
-    const originalMasterTrnFile = JSON.parse(fs.readFileSync(masterTrnFileName, 'utf8'));
+    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+    const originalMasterTrnFile = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
     const langIds = langs.map(value => value.id);
     /* In the first syncup we send all translations to the POST endpoint and for incremental syncups we call
      the GET endpoint. In both cases we will match the response with the "original text" from the master-file,
@@ -155,8 +147,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       const oldTranslationFileExists = TranslationSyncUpManager.detectSynchronizedTranslationFile(lang);
       let oldTrnFile;
       if (oldTranslationFileExists) {
-        const fileName = TranslationSyncUpManager.getFileNameForLang(lang);
-        oldTrnFile = JSON.parse(fs.readFileSync(fileName, 'utf8'));
+        oldTrnFile = JSON.parse(FileManager
+          .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
       }
       const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
       return new Promise((resolve, reject) => {
@@ -173,14 +165,12 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
         });
 
         // Overwrite local file for this language with the new translations from server.
-        const localTrnFile = TranslationSyncUpManager.getFileNameForLang(lang);
-        fs.writeFile(localTrnFile, JSON.stringify(copyMasterTrnFile), (err) => {
-          if (err) {
-            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }));
-          } else {
-            resolve(copyMasterTrnFile);
-          }
-        });
+        const localTrnFile = `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`;
+        return FileManager.writeDataFile(JSON.stringify(copyMasterTrnFile), FS_LOCALES_DIRECTORY, localTrnFile)
+          .then(() => resolve(copyMasterTrnFile))
+          .catch(err =>
+            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }))
+          );
       });
     };
 
