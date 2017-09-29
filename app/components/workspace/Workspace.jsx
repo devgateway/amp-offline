@@ -13,7 +13,6 @@ export default class WorkspacePage extends Component {
 
   static propTypes = {
     workspaceList: PropTypes.array,
-    userReducer: PropTypes.object.isRequired,
     workspaceReducer: PropTypes.object.isRequired,
     loadWorkspaces: PropTypes.func.isRequired,
     selectWorkspace: PropTypes.func.isRequired
@@ -44,7 +43,7 @@ export default class WorkspacePage extends Component {
 
   componentWillMount() {
     LoggerManager.log('componentWillMount');
-    this.props.loadWorkspaces(this.props.userReducer.userData.id);
+    this.props.loadWorkspaces();
   }
 
   componentWillReceiveProps(nextProps) {
