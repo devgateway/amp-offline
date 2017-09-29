@@ -92,7 +92,7 @@ export default class WorkspacePage extends Component {
     LoggerManager.log('render');
     return (
       <div className={styles.workspaces_container}>
-        <h2 className={styles.title}><Span text="workspaceTitle" /></h2>
+        <h2 className={styles.title}><Span text={translate('workspaceTitle')} /></h2>
         <hr />
         {this.selectContentElementToDraw()}
       </div>
