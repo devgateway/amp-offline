@@ -1,14 +1,14 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, hashHistory, Route, IndexRoute } from 'react-router';
+import { hashHistory, IndexRoute, Route, Router } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import configureStore from './store/configureStore';
 import './app.global.css';
 import AppPage from './containers/AppPage';
 import LoginPage from './containers/LoginPage';
 import DesktopPage from './containers/DesktopPage';
-import { ActivityPreviewPage, ActivityFormPage } from './containers/ActivityPage';
+import { ActivityFormPage, ActivityPreviewPage } from './containers/ActivityPage';
 import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './components/syncUp/SyncUp';
 import SyncUpSummaryPage from './containers/SyncUpSummaryPage';
@@ -17,8 +17,10 @@ import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
+import { didSetupComplete } from './actions/SetupAction';
 import LoggerManager from './modules/util/LoggerManager';
 import { LOGIN_URL, SYNCUP_URL } from './utils/Constants';
+import SetupPage from './containers/SetupPage';
 
 LoggerManager.log('index');
 const store = configureStore();
@@ -35,6 +37,7 @@ function checkAuth(nextState, replaceState) {
     replaceState({ nextPathname: nextState.location.pathname }, SYNCUP_URL);
   }
 }
+
 initializeLanguageDirectory();
 
 initializeI18Next().then(() =>
@@ -43,7 +46,7 @@ initializeI18Next().then(() =>
       <Provider store={store}>
         <Router history={history} store={store}>
           <Route path="/" component={AppPage}>
-            <IndexRoute component={LoginPage} dispatch={store.dispatch} />
+            <IndexRoute component={didSetupComplete() ? LoginPage : SetupPage} dispatch={store.dispatch} />
             <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
             <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} store={store} />
             <Route path="/syncUpSummary/:id" component={SyncUpSummaryPage} onEnter={checkAuth} />

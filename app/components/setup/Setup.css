@@ -1,0 +1,9 @@
+.centered {
+    margin: auto;
+    width: 300px;
+    padding-top: 45%;
+}
+
+.row {
+    padding-top: 10px;
+}

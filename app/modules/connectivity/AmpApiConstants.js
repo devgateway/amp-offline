@@ -25,6 +25,7 @@ export const CONTACT_PUSH_URL = '/contact';
 export const CONTACT_SINGLE_FIELDS_TREE_URL = '/contact/fields';
 export const CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL = '/contact/ws-member-fields';
 export const CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS = '/contact/field/values';
+export const AMP_REGISTRY_SETTINGS_URL = 'https://amp-registry.ampsite.net/amp-registry';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
