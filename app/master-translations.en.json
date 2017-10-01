@@ -252,6 +252,6 @@
   "Username or password are invalid": "Username or password are invalid",
   "Same as Proposed Start Date": "Same as Proposed Start Date",
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
-  "Ignore": "Ignore",
-  "unexpectedError": "An unexpected error occurred. Please collect logs, note your actions and contact the administrator."
+  "unexpectedError": "An unexpected error occurred. Please collect logs, note your actions and contact the administrator.",
+  "financing_id": "Financing Id"
 }
