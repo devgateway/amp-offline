@@ -4,16 +4,17 @@ import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VAL
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import {
-  IS_DRAFT,
-  APPROVAL_STATUS,
-  FUNDINGS,
-  FUNDING_DETAILS,
-  TRANSACTION_TYPE,
   ADJUSTMENT_TYPE,
-  STARTED_APPROVED_STATUS,
+  APPROVAL_STATUS,
   APPROVED_STATUS,
+  DONOR_ORGANIZATION,
+  EDITED_STATUS,
+  FUNDING_DETAILS,
+  FUNDINGS,
+  IS_DRAFT,
+  STARTED_APPROVED_STATUS,
   STARTED_STATUS,
-  EDITED_STATUS
+  TRANSACTION_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -113,17 +114,24 @@ const DesktopManager = {
 
   getActivityAmounts(item, trnType, currentWorkspaceSettings, currencyRatesManager) {
     let amount = 0;
-    item[FUNDINGS].forEach((funding) => (
-      funding[FUNDING_DETAILS].forEach((fd) => {
-        if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
-          amount += currencyRatesManager.convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
-        }
-      })
-    ));
+    if (item[FUNDINGS]) {
+      item[FUNDINGS].forEach((funding) => (
+        funding[FUNDING_DETAILS].forEach((fd) => {
+          if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
+            amount += currencyRatesManager
+              .convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
+          }
+        })
+      ));
+    }
     return amount;
   },
+
   getActivityDonors(item) {
-    return item.donor_organization.map((donor) => (donor.organization.value));
+    if (item[DONOR_ORGANIZATION]) {
+      return item[DONOR_ORGANIZATION].map((donor) => (donor.organization.value));
+    }
+    return [];
   },
 
   getActivityIsSynced(/* item */) {

@@ -15,10 +15,10 @@ export default class ActivityStatusValidation {
 
   static statusValidation(dehydratedActivity, teamMember, rejected) {
     LoggerManager.debug('statusValidation');
-    const isNew = false; // TODO: define how to differentiate new from edited activity.
+    const isNew = (dehydratedActivity.id === undefined && dehydratedActivity[AC.INTERNAL_ID] === undefined);
     const projectValidationEnabled = GlobalSettingsManager.getSettingByKey(GSC.PROJECTS_VALIDATION);
     const isSameWorkspace = teamMember[AC.WORKSPACE_ID] === dehydratedActivity[AC.TEAM];
-    return WorkspaceHelper.findById(teamMember[AC.WORKSPACE_ID]).then(workspace => (
+    return WorkspaceHelper.findById(teamMember[AC.WORKSPACE_ID]).then(workspace =>
       WSSettingsHelpers.findByWorkspaceId(teamMember[AC.WORKSPACE_ID]).then(workspaceSettings => {
         const wsValidationType = workspaceSettings[AC.WS_VALIDATION_FIELD];
         const isCrossTeamValidation = workspace[AC.CROSS_TEAM_VALIDATION];
@@ -93,7 +93,6 @@ export default class ActivityStatusValidation {
         }
         return dehydratedActivity[AC.APPROVAL_STATUS];
       })
-    ));
+    );
   }
-
 }

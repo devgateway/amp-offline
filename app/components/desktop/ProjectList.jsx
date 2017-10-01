@@ -40,7 +40,7 @@ export default class ProjectList extends Component {
         cell={cell}
         row={row}
         activityTeamId={row[AC.TEAM]}
-        teamId={this.props.userReducer.teamMember.id}
+        teamId={this.props.userReducer.teamMember[AC.WORKSPACE_ID]}
         teamLeadFlag={teamLeadFlag}
         wsAccessType={this.props.workspaceReducer.currentWorkspace[AC.ACCESS_TYPE]}
         crossTeamWS={this.props.workspaceReducer.currentWorkspace[AC.CROSS_TEAM_VALIDATION]} />
