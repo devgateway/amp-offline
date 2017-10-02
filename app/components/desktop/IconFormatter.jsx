@@ -12,7 +12,10 @@ import styles from './IconFormatter.css';
 export default class IconFormatter extends Component {
 
   static propTypes = {
-    row: PropTypes.object.isRequired,
+    id: PropTypes.number.isRequired,
+    edit: PropTypes.bool.isRequired,
+    status: PropTypes.string.isRequired,
+    view: PropTypes.bool.isRequired,
     teamLeadFlag: PropTypes.bool.isRequired,
     crossTeamWS: PropTypes.bool.isRequired,
     wsAccessType: PropTypes.string.isRequired,
@@ -22,8 +25,8 @@ export default class IconFormatter extends Component {
 
   render() {
     // TODO: These links could be dispatch to some action too if needed.
-    const editUrl = `${ACTIVITY_EDIT_URL}/${this.props.row.id}`;
-    const viewUrl = `${ACTIVITY_PREVIEW_URL}/${this.props.row.id}`;
+    const editUrl = `${ACTIVITY_EDIT_URL}/${this.props.id}`;
+    const viewUrl = `${ACTIVITY_PREVIEW_URL}/${this.props.id}`;
     const editLink = (<Link to={editUrl} title={translate('clickToEditActivity')}>
       <img className={styles.edit_icon} alt="edit" />
     </Link>);
@@ -35,8 +38,8 @@ export default class IconFormatter extends Component {
     </Link>);
     let showEditValidate;
     let showView;
-    if (this.props.row.edit) {
-      if (this.props.row.status === ACTIVITY_STATUS_UNVALIDATED) {
+    if (this.props.edit) {
+      if (this.props.status === ACTIVITY_STATUS_UNVALIDATED) {
         if (this.props.crossTeamWS && this.props.teamLeadFlag) {
           if (this.props.wsAccessType !== WS_ACCESS_TYPE_MANAGEMENT) {
             showEditValidate = validateLink;
@@ -54,7 +57,7 @@ export default class IconFormatter extends Component {
         showEditValidate = editLink;
       }
     }
-    if (this.props.row.view) {
+    if (this.props.view) {
       showView = viewLink;
     }
     return (showEditValidate || showView ? (<div>{showEditValidate}{showView}</div>) : <span />);

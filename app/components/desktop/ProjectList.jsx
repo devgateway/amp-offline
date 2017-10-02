@@ -39,7 +39,7 @@ export default class ProjectList extends Component {
     return (
       <IconFormatter
         cell={cell}
-        row={row}
+        id={row.id} edit={row.edit} view={row.view} status={row.status}
         activityTeamId={row[AC.TEAM]}
         teamId={this.props.userReducer.teamMember[WC.WORKSPACE_ID]}
         teamLeadFlag={teamLeadFlag}
