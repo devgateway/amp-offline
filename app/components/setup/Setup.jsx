@@ -2,16 +2,14 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import * as styles from './Setup.css';
-import { LOGIN_URL } from '../../utils/Constants';
+import { OTHER_ID } from '../../utils/Constants';
 import * as URLUtils from '../../utils/URLUtils';
 import ErrorMessage from '../common/ErrorMessage';
 import AFOption from '../activity/edit/components/AFOption';
 import AFDropDown from '../activity/edit/components/AFDropDown';
 import translate from '../../utils/translate';
 
-/* eslint-disable class-methods-use-this */
-
-const OTHER_ID = 999888777;
+/* eslint-disable class-methods-use-this, react/sort-comp */
 
 /**
  * First time application setup
@@ -39,7 +37,7 @@ export default class Setup extends Component {
     this.state = {
       countryOptions: [],
       selectedOptionId: undefined,
-      customValue: null,
+      customValue: undefined,
       isCustom: false,
       isValid: false
     };
@@ -54,21 +52,33 @@ export default class Setup extends Component {
   }
 
   onNewProps(props) {
-    if (props.isSetupComplete) {
-      URLUtils.forwardTo(LOGIN_URL);
-    } else if (!(props.isSetupOptionsLoaded || props.isSetupOptionsLoading || props.isSetupOptionsLoadFailed)) {
+    if (!(props.isSetupOptionsLoaded || props.isSetupOptionsLoading || props.isSetupOptionsLoadFailed)) {
       props.loadSetupOptions();
-    } else if (props.setupOptions) {
+    } else if (props.setupOptions && !this.state.countryOptions.length) {
       const { lang, defaultLang, languageList, setupOptions } = props;
-      const otherOption = { id: OTHER_ID, name: languageList.map(code => translate('Other', code)), urls: [] };
-      this.setupOptionsAndOther = setupOptions.concat([otherOption]);
-      const countryOptions = this.setupOptionsAndOther.map(option => new AFOption({
-        id: option.id,
-        value: option.name[defaultLang] || option.name[lang] || option.name[0],
-        'translated-value': option.name
-      }));
+      setupOptions.push(this.getCustomOption(languageList));
+      const countryOptions = this.toAFOptions(setupOptions, defaultLang, lang);
       this.setState({ countryOptions });
     }
+  }
+
+  getCustomOption(languageList) {
+    return {
+      id: OTHER_ID,
+      name: languageList.reduce((resultMap, code) => {
+        resultMap[code] = translate('Other', code);
+        return resultMap;
+      }, {}),
+      urls: []
+    };
+  }
+
+  toAFOptions(registryOptions, defaultLang, lang) {
+    return registryOptions.map(option => new AFOption({
+      id: option.id,
+      value: option.name[defaultLang] || option.name[lang] || option.name[0],
+      'translated-value': option.name
+    }));
   }
 
   onOptionChange(option) {
@@ -86,7 +96,7 @@ export default class Setup extends Component {
 
   getSelectedOption() {
     const { selectedOptionId } = this.state;
-    return selectedOptionId && this.setupOptionsAndOther.find(o => o.id === selectedOptionId);
+    return selectedOptionId && this.state.countryOptions.find(o => o.id === selectedOptionId);
   }
 
   isCustomValueValid(customValue) {
@@ -106,6 +116,7 @@ export default class Setup extends Component {
   }
 
   render() {
+    // TODO add retry options load if there is no connectivity
     const { errorMessage } = this.props;
     return (<div className={styles.centered}>
       <div>

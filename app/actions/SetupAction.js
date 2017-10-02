@@ -1,5 +1,6 @@
 import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
+import TranslationManager from '../modules/util/TranslationManager';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -14,13 +15,11 @@ export function checkIfSetupComplete() {
   // TODO update once AMPOFFLINE-692 is merged
   // const setupCompleteSettingPromise = ClientSettingsHelper.findSettingByName();
   const setupCompleteSettingPromise = Promise.resolve(false);
-  return (dispatch) => {
-    dispatch({
-      type: STATE_SETUP_STATUS,
-      payload: setupCompleteSettingPromise
-    });
-    return setupCompleteSettingPromise;
-  };
+  store.dispatch({
+    type: STATE_SETUP_STATUS,
+    payload: setupCompleteSettingPromise
+  });
+  return setupCompleteSettingPromise;
 }
 
 export function didSetupComplete() {
@@ -31,7 +30,12 @@ export function setupComplete(/* settings */) {
   // TODO save the settings once AMPOFFLINE-692 is merged
   // TODO prepare settings
   // const saveSetupSettingsPromise = ClientSettingsHelper.saveOrUpdateSetting(settings).then(() => true);
-  const saveSetupSettingsPromise = Promise.resolve(true);
+  const saveSetupSettingsPromise = Promise.resolve(true)
+    .then((result) => {
+      // cleanup temporary setup translations
+      TranslationManager.removeAllTranslationFiles();
+      return result;
+    });
   return (dispatch) => dispatch({
     type: STATE_SETUP_STATUS,
     payload: saveSetupSettingsPromise
