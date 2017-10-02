@@ -41,7 +41,7 @@ export default class NotificationHelper {
     LoggerManager.error(`${this.message} - ${this.internalCode} - ${this.origin}`);
   }
 
-  processMessageParams(message) {
+  processMessageParams(message, fromAPI) {
     /* We need to be sure the message param (it can be a String, Object, Array inside an Object, etc
      * is shown correctly to the user. */
     let retMessage = null;
@@ -52,11 +52,15 @@ export default class NotificationHelper {
       } else if (message instanceof Object) {
         const fields = Object.keys(message);
         if (fields && message[fields[0]] && !isNaN(fields[0])) {
-          retMessage = this.processMessageParams(message[fields[0]][0]);
+          retMessage = this.processMessageParams(message[fields[0]][0], true);
         } else {
           retMessage = stringifyObject(message, { inlineCharacterLimit: 200 });
         }
       } else {
+        // In order to translate some error messages from the API we need to sanitize it first.
+        if (fromAPI && message.charAt(0) === '(' && message.charAt(message.length - 1) === ')') {
+          message = message.substring(1, message.length - 1);
+        }
         retMessage = translate(message);
       }
     } catch (err) {

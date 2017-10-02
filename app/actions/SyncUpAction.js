@@ -71,7 +71,8 @@ export function startSyncUp(historyData) {
         return newHistoryData;
       })
     ).catch((err) => {
-      const actionData = { errorMessage: err };
+      LoggerManager.error(err);
+      const actionData = { errorMessage: translate('defaultSyncError') };
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
@@ -129,10 +130,8 @@ function syncUpInProgress() {
 }
 
 function syncConnectionUnavailable() {
-  LoggerManager.debug('syncConnectionUnavailable');
-  const msg = translate('syncConnectionError');
   return {
     type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,
-    actionData: { errorMessage: msg }
+    actionData: { errorMessage: translate('AMPUnreachableError') }
   };
 }
