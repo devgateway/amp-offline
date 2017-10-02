@@ -1,4 +1,5 @@
 import * as AC from '../../utils/constants/ActivityConstants';
+import * as VC from '../../utils/constants/ValueConstants';
 import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
@@ -312,29 +313,29 @@ function getApprovalStatusFilter(id) {
     case 0:// Existing Un-validated - This will show all the activities that
       // have been approved at least once and have since been edited
       // and not validated.
-      options = [AC.EDITED_STATUS, AC.NOT_APPROVED, AC.REJECTED_STATUS];
+      options = [VC.EDITED_STATUS, VC.NOT_APPROVED, VC.REJECTED_STATUS];
       isDraft = false;
       break;
 
     case 1:// New Draft - This will show all the activities that have never
       // been approved and are saved as drafts.
-      options = [AC.STARTED_STATUS, AC.STARTED_APPROVED_STATUS];
+      options = [VC.STARTED_STATUS, VC.STARTED_APPROVED_STATUS];
       break;
 
     case 2:// New Un-validated - This will show all activities that are new
       // and have never been approved by the workspace manager.
-      options = [AC.STARTED_STATUS];
+      options = [VC.STARTED_STATUS];
       isDraft = false;
       break;
 
     case 3:// existing draft. This is because when you filter by Existing
       // Unvalidated you get draft activites that were edited and
       // saved as draft
-      options = [AC.EDITED_STATUS, AC.APPROVED_STATUS];
+      options = [VC.EDITED_STATUS, VC.APPROVED_STATUS];
       break;
 
     case 4:// Validated Activities
-      options = [AC.APPROVED_STATUS, AC.STARTED_APPROVED_STATUS];
+      options = [VC.APPROVED_STATUS, VC.STARTED_APPROVED_STATUS];
       isDraft = false;
       break;
     default:

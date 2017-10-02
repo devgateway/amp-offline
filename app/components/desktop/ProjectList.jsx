@@ -15,6 +15,7 @@ import {
 } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
 import * as AC from '../../utils/constants/ActivityConstants';
+import * as WC from '../../utils/constants/WorkspaceConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
 
@@ -33,17 +34,17 @@ export default class ProjectList extends Component {
   }
 
   static iconFormatter(cell, row) {
-    const teamLeadFlag = this.props.userReducer.teamMember[AC.ROLE_ID] === AC.ROLE_TEAM_MEMBER_WS_MANAGER
-      || this.props.userReducer.teamMember[AC.ROLE_ID] === AC.ROLE_TEAM_MEMBER_WS_APPROVER;
+    const teamLeadFlag = this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_MANAGER
+      || this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_APPROVER;
     return (
       <IconFormatter
         cell={cell}
         row={row}
         activityTeamId={row[AC.TEAM]}
-        teamId={this.props.userReducer.teamMember[AC.WORKSPACE_ID]}
+        teamId={this.props.userReducer.teamMember[WC.WORKSPACE_ID]}
         teamLeadFlag={teamLeadFlag}
-        wsAccessType={this.props.workspaceReducer.currentWorkspace[AC.ACCESS_TYPE]}
-        crossTeamWS={this.props.workspaceReducer.currentWorkspace[AC.CROSS_TEAM_VALIDATION]} />
+        wsAccessType={this.props.workspaceReducer.currentWorkspace[WC.ACCESS_TYPE]}
+        crossTeamWS={this.props.workspaceReducer.currentWorkspace[WC.CROSS_TEAM_VALIDATION]} />
     );
   }
 

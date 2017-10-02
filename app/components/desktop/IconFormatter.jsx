@@ -5,7 +5,7 @@ import {
   ACTIVITY_EDIT_URL,
   ACTIVITY_STATUS_UNVALIDATED,
 } from '../../utils/Constants';
-import { WS_ACCESS_TYPE_MANAGEMENT } from '../../utils/constants/ActivityConstants';
+import { WS_ACCESS_TYPE_MANAGEMENT } from '../../utils/constants/WorkspaceConstants';
 import translate from '../../utils/translate';
 import styles from './IconFormatter.css';
 

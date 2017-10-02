@@ -4,17 +4,7 @@ import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VAL
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import {
-  ADJUSTMENT_TYPE,
-  APPROVAL_STATUS,
-  APPROVED_STATUS,
-  DONOR_ORGANIZATION,
-  EDITED_STATUS,
-  FUNDING_DETAILS,
-  FUNDINGS,
-  IS_DRAFT,
-  STARTED_APPROVED_STATUS,
-  STARTED_STATUS,
-  TRANSACTION_TYPE
+  ADJUSTMENT_TYPE, APPROVAL_STATUS, DONOR_ORGANIZATION, FUNDING_DETAILS, FUNDINGS, IS_DRAFT, TRANSACTION_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -22,7 +12,10 @@ import {
   FUNDING_CURRENCY_PATH,
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
-import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
+import {
+  ACTUAL, COMMITMENTS, DISBURSEMENTS, APPROVED_STATUS, EDITED_STATUS, STARTED_APPROVED_STATUS,
+  STARTED_STATUS
+} from '../../utils/constants/ValueConstants';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import LoggerManager from '../../modules/util/LoggerManager';
 
