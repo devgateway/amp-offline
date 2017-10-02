@@ -2,12 +2,13 @@
 
 import rp from 'request-promise';
 import RequestConfig from './RequestConfig';
-import ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
+import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import Notification from '../helpers/NotificationHelper';
-import { MAX_RETRY_ATEMPTS, ERRORS_TO_RETRY, ERROR_NO_AMP_SERVER } from '../../utils/Constants';
+import { ERRORS_NO_AMP_SERVER, ERRORS_TO_RETRY, MAX_RETRY_ATEMPTS } from '../../utils/Constants';
 import {
-  NOTIFICATION_ORIGIN_API_SECURITY,
-  NOTIFICATION_ORIGIN_API_NETWORK
+  ERROR_CODE_NO_CONNECTIVITY,
+  NOTIFICATION_ORIGIN_API_NETWORK,
+  NOTIFICATION_ORIGIN_API_SECURITY
 } from '../../utils/constants/ErrorConstants';
 import store from '../../index';
 import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
@@ -114,17 +115,19 @@ const ConnectionHelper = {
               // If we couldn't relogin online automatically then we logout completely and forward to login page.
               store.dispatch(logoutAction());
             }
-            return this._reportError(null, NOTIFICATION_ORIGIN_API_SECURITY, authError);
+            return this._reportError(null, NOTIFICATION_ORIGIN_API_SECURITY, null, authError);
           });
       } else {
         // Being here means the server might not be accessible.
-        const message = error && error.code === ERROR_NO_AMP_SERVER ? translate('AMPUnreachableError') :
+        const isAMPunreachable = error && ERRORS_NO_AMP_SERVER.includes(error.code);
+        const errorCode = isAMPunreachable ? ERROR_CODE_NO_CONNECTIVITY : undefined;
+        const message = isAMPunreachable ? translate('AMPUnreachableError') :
           error || (body && body.error) || translate('unknownNetworkError');
         // We need to detect statusCode 403 to throw a security error.
         const origin = (response && response.statusCode === 403)
           ? NOTIFICATION_ORIGIN_API_SECURITY
           : NOTIFICATION_ORIGIN_API_NETWORK;
-        return this._reportError(message, origin);
+        return this._reportError(message, origin, errorCode);
       }
     } else if (!response.complete) {
       return this._reportError(translate('corruptedResponse'), NOTIFICATION_ORIGIN_API_NETWORK);
@@ -133,8 +136,8 @@ const ConnectionHelper = {
     }
   },
 
-  _reportError(message, origin, errorObject) {
-    return Promise.reject(ErrorNotificationHelper.createNotification({ message, origin, errorObject }));
+  _reportError(message, origin, errorCode, errorObject) {
+    return Promise.reject(ErrorNotificationHelper.createNotification({ message, origin, errorCode, errorObject }));
   }
 
 };
