@@ -1,9 +1,15 @@
 .centered {
-    margin: auto;
+    margin: 0 auto;
     width: 300px;
-    padding-top: 45%;
+    position: fixed;
+    top: 45%;
+    left: 40%;
 }
 
 .row {
     padding-top: 10px;
+}
+
+.cell {
+    padding-right: 10px;
 }

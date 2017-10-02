@@ -2,6 +2,9 @@
   "amp-title": "Aid Management Platform",
   "Choose One": "Choose One",
   "Other": "Other",
+  "Reload options": "Reload options",
   "Configure": "Configure",
-  "customHint": "Please enter AMP application URL. You can copy it from the AMP Client downloaded page. Please refer to User Manual for more help."
+  "noConnectionToRegistry": "AMP Registry app is unreachable. You can chose 'Other' option to set the URL manually or try to reload the countries options list.",
+  "customHint": "Please enter AMP application URL. You can copy it from the AMP Client downloaded page. Please refer to User Manual for more help.",
+  "timeoutError": "Connection timeout. Please check your internet connection."
 }

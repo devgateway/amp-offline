@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import * as styles from './Setup.css';
-import { OTHER_ID } from '../../utils/Constants';
+import { LOGIN_URL, OTHER_ID } from '../../utils/Constants';
 import * as URLUtils from '../../utils/URLUtils';
 import ErrorMessage from '../common/ErrorMessage';
 import AFOption from '../activity/edit/components/AFOption';
@@ -35,9 +35,10 @@ export default class Setup extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      retryOptionsLoad: false,
       countryOptions: [],
       selectedOptionId: undefined,
-      customValue: undefined,
+      customValue: '',
       isCustom: false,
       isValid: false
     };
@@ -52,12 +53,19 @@ export default class Setup extends Component {
   }
 
   onNewProps(props) {
-    if (!(props.isSetupOptionsLoaded || props.isSetupOptionsLoading || props.isSetupOptionsLoadFailed)) {
-      props.loadSetupOptions();
-    } else if (props.setupOptions && !this.state.countryOptions.length) {
+    const { isSetupOptionsLoaded, isSetupOptionsLoading, isSetupOptionsLoadFailed, loadSetupOptions } = props;
+    const optionsCount = this.state.countryOptions.length;
+    if (props.isSetupComplete) {
+      URLUtils.forwardTo(LOGIN_URL);
+    } else if (!(isSetupOptionsLoaded || isSetupOptionsLoading || isSetupOptionsLoadFailed)) {
+      loadSetupOptions();
+    } else if ((isSetupOptionsLoaded && optionsCount < 2) || (isSetupOptionsLoadFailed && optionsCount < 1)) {
       const { lang, defaultLang, languageList, setupOptions } = props;
-      setupOptions.push(this.getCustomOption(languageList));
-      const countryOptions = this.toAFOptions(setupOptions, defaultLang, lang);
+      let options = [this.getCustomOption(languageList)];
+      if (isSetupOptionsLoaded) {
+        options = setupOptions.concat(options);
+      }
+      const countryOptions = this.toAFOptions(options, defaultLang, lang);
       this.setState({ countryOptions });
     }
   }
@@ -91,7 +99,10 @@ export default class Setup extends Component {
   onCustomOptionChange(e) {
     const customValue = e.target.value;
     const isValid = this.isCustomValueValid(customValue);
-    this.setState({ customValue, isValid });
+    const countryOptions = [...this.state.countryOptions];
+    const customOption = countryOptions.find(o => o.id === OTHER_ID);
+    customOption.urls = [customValue.trim()];
+    this.setState({ customValue, isValid, countryOptions });
   }
 
   getSelectedOption() {
@@ -115,23 +126,35 @@ export default class Setup extends Component {
     </div>);
   }
 
+  renderRetryButton() {
+    return (<Button bsStyle="primary" onClick={() => this.props.loadSetupOptions()}>
+      {translate('Reload options')}
+    </Button>);
+  }
+
   render() {
-    // TODO add retry options load if there is no connectivity
-    const { errorMessage } = this.props;
+    const { errorMessage, isSetupOptionsLoadFailed, setupComplete } = this.props;
+    const { isCustom } = this.state;
+    const displayError = isSetupOptionsLoadFailed && !isCustom ? translate('noConnectionToRegistry') : errorMessage;
     return (<div className={styles.centered}>
       <div>
         <AFDropDown options={this.state.countryOptions} onChange={this.onOptionChange.bind(this)} />
       </div>
-      {this.state.isCustom && this.renderCustomOption()}
+      {isCustom && this.renderCustomOption()}
       <div className={styles.row}>
-        <Button
-          disabled={!this.state.isValid} bsStyle="success"
-          onClick={() => this.props.setupComplete(this.getSelectedOption())}>
-          {translate('Configure')}
-        </Button>
+        <span className={styles.cell}>
+          <Button
+            disabled={!this.state.isValid} bsStyle="success"
+            onClick={() => setupComplete(this.getSelectedOption())}>
+            {translate('Configure')}
+          </Button>
+        </span>
+        <span className={styles.cell}>
+          {isSetupOptionsLoadFailed && this.renderRetryButton()}
+        </span>
       </div>
       <div className={styles.row}>
-        {errorMessage && <ErrorMessage message={errorMessage} />}
+        {displayError && <ErrorMessage message={displayError} />}
       </div>
     </div>);
   }

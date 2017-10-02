@@ -1,6 +1,8 @@
 import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
 import TranslationManager from '../modules/util/TranslationManager';
+import { SETUP_URL } from '../utils/Constants';
+import * as URLUtils from '../utils/URLUtils';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -20,6 +22,12 @@ export function checkIfSetupComplete() {
     payload: setupCompleteSettingPromise
   });
   return setupCompleteSettingPromise;
+}
+
+export function doSetupFirst() {
+  if (!didSetupComplete()) {
+    URLUtils.forwardTo(SETUP_URL);
+  }
 }
 
 export function didSetupComplete() {

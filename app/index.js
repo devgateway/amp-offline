@@ -16,7 +16,6 @@ import UpdatePage from './containers/UpdatePage';
 import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
-import { didSetupComplete } from './actions/SetupAction';
 import LoggerManager from './modules/util/LoggerManager';
 import { LOGIN_URL, SYNCUP_URL } from './utils/Constants';
 import SetupPage from './containers/SetupPage';
@@ -42,7 +41,8 @@ ampOfflineStartUp().then(() =>
     <Provider store={store}>
       <Router history={history} store={store}>
         <Route path="/" component={AppPage}>
-          <IndexRoute component={didSetupComplete() ? LoginPage : SetupPage} dispatch={store.dispatch} />
+          <IndexRoute component={LoginPage} dispatch={store.dispatch} />
+          <Route path="/setup" component={SetupPage} store={store} />
           <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
           <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} store={store} />
           <Route path="/syncUpSummary/:id" component={SyncUpSummaryPage} onEnter={checkAuth} />
