@@ -15,6 +15,13 @@ import WorkspaceHelper from '../../modules/helpers/WorkspaceHelper';
  */
 export default class ActivityStatusValidation {
 
+  /**
+   * As close as possible to AMP's code.
+   * @param dehydratedActivity
+   * @param teamMember
+   * @param rejected: might not be used in Offline, keeping just in case we implement the use case.
+   * @returns {Promise.<TResult>}
+   */
   static statusValidation(dehydratedActivity, teamMember, rejected) {
     LoggerManager.debug('statusValidation');
     const isNew = (dehydratedActivity.id === undefined && dehydratedActivity[AC.INTERNAL_ID] === undefined);
