@@ -50,3 +50,5 @@ export const STARTED_STATUS = 'started';
 export const EDITED_STATUS = 'edited';
 export const NOT_APPROVED = 'not_approved';
 export const REJECTED_STATUS = 'rejected';
+
+export const ON_BUDGET = 'On Budget';
