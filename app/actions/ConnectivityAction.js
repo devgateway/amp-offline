@@ -87,6 +87,6 @@ function _getLastConnectivityStatus() {
 function _saveConnectivityStatus(status) {
   return ClientSettingsHelper.findSettingByName(LAST_CONNECTIVITY_STATUS).then(statusSetting => {
     statusSetting.value = status;
-    return ClientSettingsHelper.saveOrUpdateSetting(statusSetting);
+    return ClientSettingsHelper.saveOrUpdateSetting(statusSetting).then(() => status);
   });
 }
