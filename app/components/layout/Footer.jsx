@@ -17,14 +17,14 @@ export default class Home extends Component {
     let branchOrPr = null;
     let releaseDate = '';
     if (__BRANCH_NAME__ !== 'master') {
-      releaseDate = DateUtils.createFormattedDate(__BUILD_DATE__);
+      releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
       if (__PR_NR__) {
         branchOrPr = `PR #${__PR_NR__}`;
       } else {
         branchOrPr = `${__BRANCH_NAME__} ${__COMMIT_HASH__}`;
       }
     } else {
-      releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
+      releaseDate = DateUtils.createFormattedDate(__BUILD_DATE__);
     }
 
     const osAndArch = `${os.type()} ${os.arch()}`;
