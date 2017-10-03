@@ -17,7 +17,7 @@ export default class Home extends Component {
     let branchOrPr = null;
     let releaseDate = '';
     if (__BRANCH_NAME__ !== 'master') {
-      releaseDate = __BUILD_DATE__;
+      releaseDate = DateUtils.createFormattedDate(__BUILD_DATE__);
       if (__PR_NR__) {
         branchOrPr = `PR #${__PR_NR__}`;
       } else {
@@ -37,7 +37,6 @@ export default class Home extends Component {
         <footer className={[styles.footer, styles.footerText].join(' ')}>
           <p>
             {translate('amp-offline')} {this.constructor.getDevInfo()}
-            <br />
             {translate('amp-footer')}
           </p>
         </footer>
