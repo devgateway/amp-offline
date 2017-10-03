@@ -51,6 +51,7 @@ export function startSyncUp(historyData) {
   /* Save current syncup redux state because this might be a "forced" syncup and we dont want
    the user to be able to leave the page if this syncup fails. */
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
+    URLUtils.forwardTo('/syncUp');
     store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
 
