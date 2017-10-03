@@ -45,7 +45,8 @@ export function selectWorkspace(wsId) {
   );
 }
 
-export function loadWorkspaces(userId) {
+export function loadWorkspaces() {
+  const userId = store.getState().userReducer.userData.id;
   LoggerManager.log('loadWorkspaces');
   return (dispatch) => {
     dispatch({ type: STATE_WORKSPACE_LOADING });

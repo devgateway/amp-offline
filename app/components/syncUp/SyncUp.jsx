@@ -159,7 +159,7 @@ class SyncUp extends Component {
         <div className={styles.display_inline}>
           <Button
             type="button"
-            text="Start Sync Up"
+            text={translate('Start Sync Up')}
             className={classes({
               'btn btn-success': true,
               disabled: loadingSyncHistory || syncUpInProgress
