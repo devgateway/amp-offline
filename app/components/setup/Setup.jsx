@@ -8,6 +8,7 @@ import ErrorMessage from '../common/ErrorMessage';
 import AFOption from '../activity/edit/components/AFOption';
 import AFDropDown from '../activity/edit/components/AFDropDown';
 import translate from '../../utils/translate';
+import AFLabel from '../activity/edit/components/AFLabel';
 
 /* eslint-disable class-methods-use-this, react/sort-comp */
 
@@ -127,7 +128,7 @@ export default class Setup extends Component {
   }
 
   renderRetryButton() {
-    return (<Button bsStyle="primary" onClick={() => this.props.loadSetupOptions()}>
+    return (<Button bsStyle="success" onClick={() => this.props.loadSetupOptions()}>
       {translate('Reload options')}
     </Button>);
   }
@@ -138,6 +139,7 @@ export default class Setup extends Component {
     const displayError = isSetupOptionsLoadFailed && !isCustom ? translate('noConnectionToRegistry') : errorMessage;
     return (<div className={styles.centered}>
       <div>
+        <AFLabel value={translate('setupFor')} required className={styles.label} />
         <AFDropDown options={this.state.countryOptions} onChange={this.onOptionChange.bind(this)} />
       </div>
       {isCustom && this.renderCustomOption()}
