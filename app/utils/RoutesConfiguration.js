@@ -11,6 +11,7 @@ import {
   CONTACT_PUSH_URL,
   CONTACT_SINGLE_FIELDS_TREE_URL,
   DOWNLOAD_UPGRADE_URL,
+  DOWNLOAD_UPDATE_BINARY_URL,
   FEATURE_MANAGER_URL,
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
@@ -118,6 +119,10 @@ const routesConfiguration = [{
   requiredAuth: true
 }, {
   url: DOWNLOAD_UPGRADE_URL,
+  method: 'GET',
+  isBinary: true
+}, {
+  url: DOWNLOAD_UPDATE_BINARY_URL,
   method: 'GET',
   isBinary: true
 }, {

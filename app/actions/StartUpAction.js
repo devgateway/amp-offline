@@ -19,6 +19,7 @@ import * as FMHelper from '../modules/helpers/FMHelper';
 import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
 import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
+import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import { initializeI18Next, initializeLanguageDirectory } from '../modules/util/TranslationManager';
 import { checkIfSetupComplete } from './SetupAction';
 
@@ -44,11 +45,12 @@ export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
 
 export function ampOfflineStartUp() {
-  return checkIfSetupComplete()
-    .then((isSetupComplete => {
+  return ClientSettingsManager.initDBWithDefaults()
+    .then(checkIfSetupComplete)
+    .then(isSetupComplete => {
       initializeLanguageDirectory(isSetupComplete);
       return initializeI18Next();
-    }))
+    })
     .then(ampOfflineInit)
     .then(initLanguage);
 }

@@ -1,6 +1,8 @@
 /* eslint no-nested-ternary: 0*/
 
 import rp from 'request-promise';
+import request from 'request';
+import Promise from 'bluebird';
 import RequestConfig from './RequestConfig';
 import ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import Notification from '../helpers/NotificationHelper';
@@ -16,11 +18,11 @@ import LoggerManager from '../../modules/util/LoggerManager';
 
 const ConnectionHelper = {
 
-  doGet({ url, paramsMap, shouldRetry, extraUrlParam }) {
+  doGet({ url, paramsMap, shouldRetry, extraUrlParam, writeStream }) {
     LoggerManager.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
+    return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
   /**
@@ -30,41 +32,35 @@ const ConnectionHelper = {
    * @param body
    * @param shouldRetry
    * @param extraUrlParam
+   * @param writeStream
    * @return {Promise}
    */
-  doPost({ url, paramsMap, body, shouldRetry, extraUrlParam }) {
+  doPost({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
     LoggerManager.debug('doPost');
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
-  doPut({ url, paramsMap, body, shouldRetry, extraUrlParam }) {
+  doPut({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
     LoggerManager.debug('doPut');
     const method = 'PUT';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry);
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
-  _doMethod(requestConfig, maxRetryAttempts, shouldRetry) {
+  _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
     LoggerManager.log('_doMethod ');
     LoggerManager.log(requestConfig.url);
-    const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry };
+    const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
     const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
-    const requestPromise = rp(requestConfig);
-    const bbPromise = requestPromise.promise();
-    /*
-    // doesn't seem to be needed
-    const cancelIfStillPending = () => {
-      if (bbPromise.isPending()) {
-        requestPromise.cancel();
-      }
-      return null;
-    };
-     Utils.delay(requestPromiseForcedTimeout).then(cancelIfStillPending).catch(cancelIfStillPending);
-    */
-    bbPromise.timeout(requestPromiseForcedTimeout);
+    const requestPromise = this._buildRequestPromise(requestConfig, writeStream);
+    const bbPromise = requestPromise.promise && requestPromise.promise();
+    if (bbPromise) {
+      bbPromise.timeout(requestPromiseForcedTimeout);
+    }
+    // TODO I tried lower timeout for streaming and it seems to ignore it -> check how exactly to handle
     return requestPromise
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
       .catch(reason => {
@@ -74,14 +70,30 @@ const ConnectionHelper = {
         return this._processResultOrRetry({ ...resultRetryConfig, ...this._reasonToProcess(reason) });
       })
       .finally(() => {
-        if (bbPromise.isCancelled()) {
+        if (bbPromise && bbPromise.isCancelled()) {
           if (shouldRetry && maxRetryAttempts) {
-            return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry);
+            return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
           } else {
             return this._reportError(translate('timeoutError'), NOTIFICATION_ORIGIN_API_NETWORK);
           }
         }
       });
+  },
+
+  _buildRequestPromise(requestConfig, writeStream) {
+    if (writeStream) {
+      return new Promise((resolve, reject) => {
+        request(requestConfig)
+          .on('response', (response) => {
+            writeStream
+              .on('finish', () => resolve(response))
+              .on('error', reject);
+          })
+          .on('error', reject)
+          .pipe(writeStream);
+      });
+    }
+    return rp(requestConfig);
   },
 
   _reasonToProcess(reason) {
@@ -92,21 +104,21 @@ const ConnectionHelper = {
     };
   },
 
-  _processResultOrRetry({ error, response, body, requestConfig, maxRetryAttempts, shouldRetry }) {
-    if (error || !(response && response.statusCode >= 200 && response.statusCode < 400) || body.error) {
+  _processResultOrRetry({ error, response, body, requestConfig, maxRetryAttempts, shouldRetry, writeStream }) {
+    if (error || !(response && response.statusCode >= 200 && response.statusCode < 400) || (body && body.error)) {
       const shouldRetryOnError = ERRORS_TO_RETRY.filter((value) => (
         value === (error ? error.code : (body ? body.error : 'unknownNetworkError'))
       ));
       if (shouldRetryOnError.length > 0) {
         if (maxRetryAttempts > 0 && shouldRetry) {
-          return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry);
+          return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
         } else {
           return this._reportError(translate('timeoutError'), NOTIFICATION_ORIGIN_API_NETWORK);
         }
       } else if (response && response.statusCode === 401) {
         // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
         return store.dispatch(loginAutomaticallyAction())
-          .then(() => this._doMethod(requestConfig))
+          .then(() => this._doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream))
           .catch((reason) => {
             const authResponse = reason.response;
             const authError = (authResponse && authResponse.body && authResponse.body.error) || reason.error;
@@ -126,10 +138,10 @@ const ConnectionHelper = {
           : NOTIFICATION_ORIGIN_API_NETWORK;
         return this._reportError(message, origin);
       }
-    } else if (!response.complete) {
+    } else if (response && !response.complete) {
       return this._reportError(translate('corruptedResponse'), NOTIFICATION_ORIGIN_API_NETWORK);
     } else {
-      return body;
+      return writeStream ? response : body;
     }
   },
 
