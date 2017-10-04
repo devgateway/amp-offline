@@ -8,7 +8,6 @@ import AFPrograms from './AFPrograms';
 import AFSectors from './AFSectors';
 import AFOrganizations from './AFOrganizations';
 import AFFunding from './AFFunding';
-import AFComponents from './AFComponents';
 
 /**
  * Loads AF section

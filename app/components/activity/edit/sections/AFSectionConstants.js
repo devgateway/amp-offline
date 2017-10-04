@@ -22,8 +22,7 @@ export const RELATED_DOCUMENTS = 'Related Documents';
 export const LINE_MINISTRY_OBSERVATIONS = 'Line Ministry Observations';
 export const BUDGET_STRUCTURE = 'Budget Structure';
 export const GPI = 'GPI';
-// TODO fix name and translation
-export const AID_EFFECTIVENESS = 'Aid Effectivenes';
+export const AID_EFFECTIVENESS = 'Aid Effectiveness';
 
 // TODO add sections FM check, for now returing only Niger enabled sections
 export const SECTIONS = [
