@@ -23,19 +23,19 @@ export default class App extends Component {
   };
 
   render() {
-    LoggerManager.log('render');
-
-
+    LoggerManager.debug('render');
     return (
       <div className={'outerContainer'}>
         <div className={styles.wrap}>
-          <div className={styles.header}><Navbar
-            userReducer={this.props.userReducer}
-            loginReducer={this.props.loginReducer}
-            workspaceReducer={this.props.workspaceReducer}
-            workspaceList={this.props.workspaceReducer.workspaceList} menuOnClickHandler={this.props.selectWorkspace}
-            translationReducer={this.props.translationReducer}
-          />
+          <div className={styles.header}>
+            <Navbar
+              userReducer={this.props.userReducer}
+              loginReducer={this.props.loginReducer}
+              workspaceReducer={this.props.workspaceReducer}
+              workspaceList={this.props.workspaceReducer.workspaceList}
+              menuOnClickHandler={this.props.selectWorkspace}
+              translationReducer={this.props.translationReducer}
+            />
           </div>
           <div className={styles.content}>
             {this.props.children}
