@@ -22,6 +22,11 @@ export default class App extends Component {
     store: React.PropTypes.object.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.disableUpdates = +process.env.DISABLE_UPDATE;
+  }
+
   render() {
     LoggerManager.debug('render');
     return (
@@ -42,7 +47,7 @@ export default class App extends Component {
           </div>
         </div>
         <Footer />
-        <UpdateTrigger />
+        {!this.disableUpdates && <UpdateTrigger />}
       </div>
     );
   }
