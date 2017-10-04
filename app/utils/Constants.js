@@ -15,6 +15,7 @@ export const LOGIN_URL = '/';
 export const DESKTOP_URL = '/desktop';
 export const DESKTOP_CURRENT_URL = '/desktop/current';
 export const SYNCUP_URL = '/syncUp';
+export const SYNCUP_SUMMARY_URL = '/syncUpSummary';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
 export const UPDATE_URL = '/update';

@@ -7,6 +7,9 @@ import LoggerManager from '../modules/util/LoggerManager';
 import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as AC from '../utils/constants/ActivityConstants';
+import { isForceSyncUp } from './SyncUpAction';
+import { SYNCUP_URL } from '../utils/Constants';
+import * as URLUtils from '../utils/URLUtils';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_CONFIGURING_WORKSPACE_FILTER = 'STATE_CONFIGURING_WORKSPACE_FILTER';
@@ -19,6 +22,12 @@ export const STATE_WORKSPACE_ERROR = 'STATE_WORKSPACE_ERROR';
 // TODO: THIS must be properly integrated through AMPOFFLINE-147
 export function selectWorkspace(wsId) {
   LoggerManager.log('selectWorkspace');
+  if (isForceSyncUp()) {
+    URLUtils.forwardTo(SYNCUP_URL);
+    return (dispatch) => {
+      dispatch({ });
+    };
+  }
   // We dont get userId as param because that messes up the onClickHandler used also in main menu.
   const userId = store.getState().userReducer.userData.id;
   return (dispatch) => (
