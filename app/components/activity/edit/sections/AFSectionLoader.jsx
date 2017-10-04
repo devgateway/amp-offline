@@ -33,8 +33,8 @@ const loadSection = (sectionName) => {
       return <AFOrganizations />;
     case SC.FUNDING:
       return <AFFunding />;
-    case SC.COMPONENTS:
-      return <AFComponents />;
+    /* case SC.COMPONENTS:
+      return <AFComponents />; */
     default:
       return 'Not Implemented';
   }
