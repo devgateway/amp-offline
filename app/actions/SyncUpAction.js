@@ -8,6 +8,7 @@ import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import { connectivityCheck } from './ConnectivityAction';
+import { ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -51,8 +52,8 @@ export function startSyncUp(historyData) {
   /* Save current syncup redux state because this might be a "forced" syncup and we dont want
    the user to be able to leave the page if this syncup fails. */
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
-    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
+    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
 
     return SyncUpManager.syncUpAllTypesOnDemand()
       .then((log) => {
@@ -69,8 +70,8 @@ export function startSyncUp(historyData) {
       }
     ).catch((err) => {
       LoggerManager.error(err);
-      const actionData = { errorMessage: translate('defaultSyncError') };
-      store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
+      const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY ? err.message : translate('defaultSyncError');
+      store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage } });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });

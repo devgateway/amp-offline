@@ -7,7 +7,8 @@ export const CONNECTION_TIMEOUT = 25000;
 export const CONNECTION_FORCED_TIMEOUT = CONNECTION_TIMEOUT + 5000;
 export const MAX_RETRY_ATEMPTS = 5;
 export const ERRORS_TO_RETRY = ['ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNRESET', 'EAI_AGAIN'];
-export const ERROR_NO_AMP_SERVER = 'ECONNREFUSED';
+export const ERRORS_NO_AMP_SERVER = ['ECONNREFUSED', 'ENETUNREACH', 'ENOENT', 'ENOTFOUND', 'ENETDOWN', 'EHOSTDOWN',
+  'EHOSTUNREACH', 'ENONET'];
 export const CONNECTIVITY_CHECK_INTERVAL = '60000'; // 1 minutes
 
 export const WORKSPACE_URL = '/workspace';
@@ -127,3 +128,7 @@ export const INTERNAL_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 // currently supported max & min years in AMP, i.e. from 1970-01-01 till 2050-12-31
 export const MIN_SUPPORTED_YEAR = 1970;
 export const MAX_SUPPORTED_YEAR = 2050;
+
+export const UPDATES_DIR = 'updates';
+export const CONTENT_DISPOSITION_HEADER = 'Content-Disposition';
+export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
