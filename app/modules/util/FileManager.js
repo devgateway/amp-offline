@@ -77,6 +77,16 @@ const FileManager = {
   },
 
   /**
+   * Creates a write stream
+   * @param pathParts
+   * @return {*}
+   */
+  createWriteStream(...pathParts) {
+    const fullPath = this.getFullPath(...pathParts);
+    return fs.createWriteStream(fullPath);
+  },
+
+  /**
    * Reads a text file synchronously
    * @param pathParts
    * @return {*}
@@ -113,6 +123,16 @@ const FileManager = {
   copyDataFileSync(fromPath, ...toPathParts) {
     const fullPath = this.getFullPath(...toPathParts);
     fs.copySync(fromPath, fullPath);
+  },
+
+  /**
+   * Renames synchronously
+   * @param fromPath full source path
+   * @param toPathParts relative paths parts of the destination
+   */
+  renameSync(fromPath, ...toPathParts) {
+    const fullPath = this.getFullPath(...toPathParts);
+    fs.renameSync(fromPath, fullPath);
   },
 
   /**

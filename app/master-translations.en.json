@@ -252,7 +252,13 @@
   "Same as Proposed Start Date": "Same as Proposed Start Date",
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
   "unexpectedError": "An unexpected error occurred. Please collect logs, note your actions and contact the administrator.",
-  "defaultSyncError": "There was an error while attempting to sync. Please try again.",
   "deleteFundingItem": "Do you really want to delete this funding item?",
-  "deleteFundingTransactionItem": "Do you really want to delete this funding transaction item?"
+  "deleteFundingTransactionItem": "Do you really want to delete this funding transaction item?",
+  "dontStopUpdateWarning": "AMP Offline is currently being updated. Please do not close the application.",
+  "downloadComplete": "Installer download complete",
+  "downloadInProgress": "Installer download in progress...",
+  "downloadFailed": "Installer download failed. Please try again.",
+  "updateInProgress": "AMP Offline upgrade is in progress...",
+  "updateFailed": "AMP Offline upgrade failed.",
+  "defaultSyncError": "There was an error while attempting to sync. Please try again."
 }
