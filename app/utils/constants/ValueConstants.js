@@ -42,3 +42,5 @@ export const ACRONYM_EXECUTING_AGENCY = 'EA';
 export const ACRONYM_IMPLEMENTING_AGENCY = 'IA';
 export const ACRONYM_BENEFICIARY_AGENCY = 'BA';
 export const ACRONYM_RESPONSIBLE_ORGANIZATION = 'RO';
+
+export const ON_BUDGET = 'On Budget';

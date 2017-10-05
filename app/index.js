@@ -18,7 +18,7 @@ import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 import LoggerManager from './modules/util/LoggerManager';
-import { LOGIN_URL, SYNCUP_URL } from './utils/Constants';
+import { LOGIN_URL, SYNCUP_SUMMARY, SYNCUP_URL } from './utils/Constants';
 
 LoggerManager.log('index');
 const store = configureStore();
@@ -29,9 +29,11 @@ const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_URL];
 
 function checkAuth(nextState, replaceState) {
   LoggerManager.log('checkAuth');
+  const nextPath = nextState.location.pathname;
   if (!auth.loggedIn()) {
     replaceState({ nextPathname: nextState.location.pathname }, '/');
-  } else if (!ignoreForceSyncUpFor.includes(nextState.location.pathname) && isForceSyncUp()) {
+  } else if (!ignoreForceSyncUpFor.includes(nextPath) && !nextPath.startsWith(SYNCUP_SUMMARY) && isForceSyncUp()) {
+    LoggerManager.warn('Redirecting to sync up page');
     replaceState({ nextPathname: nextState.location.pathname }, SYNCUP_URL);
   }
 }

@@ -427,7 +427,7 @@ const DatabaseManager = {
         });
   },
 
-  findAll(example, collectionName, projections) {
+  findAll(example = {}, collectionName, projections) {
     LoggerManager.log('findAll');
     return this.findAllWithProjections(example, collectionName, projections);
   },
