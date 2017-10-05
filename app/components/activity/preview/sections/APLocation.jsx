@@ -37,10 +37,10 @@ class APLocation extends Component {
     topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0]))} </td>);
     content = content.filter(el => el !== undefined);
     let table = null;
-    if ((this.props.activity.implementation_level
-      && this.props.activity.implementation_level.value !== 'National')
-      || (this.props.activity.implentation_location
-      && this.props.activity.implementation_location !== 'Country')) {
+    if ((this.props.activity[IMPLEMENTATION_LEVEL]
+      && this.props.activity[IMPLEMENTATION_LEVEL].value !== 'National')
+      || (this.props.activity[IMPLEMENTATION_LOCATION]
+      && this.props.activity[IMPLEMENTATION_LOCATION].value !== 'Country')) {
       table = (<table className={styles.box_table2}>
         <tbody>
           {content}
@@ -56,7 +56,6 @@ class APLocation extends Component {
       {table}
     </div>);
   }
-
 }
 
 export default Section(APLocation, 'Location', true, 'APLocation');
