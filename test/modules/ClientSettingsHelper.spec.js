@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha';
 import * as actions from '../../app/modules/helpers/ClientSettingsHelper';
+import { removeIdFromItem } from '../../app/utils/Utils';
 
 const chaiAsPromised = require('chai-as-promised');
 const chai = require('chai');
@@ -21,13 +22,26 @@ const validSetting = {
 
 const validSettingNoOptions = {
   id: '_testSettingId10_',
-  name: 'Number free text setting',
+  name: 'Number as free text setting',
   description: 'Testing no options',
   visible: false,
   type: 'number',
   value: 50,
   'updated-at': undefined
 };
+
+const validSettingAsObject = {
+  id: '_testSettingId10_',
+  name: 'Connectivity status',
+  description: 'Testing object value',
+  visible: false,
+  type: 'object',
+  value: {
+    ampVersion: '3.0'
+  },
+  'updated-at': undefined
+};
+
 const invalidSettings = [
   {
     id: '_testSettingId2_',
@@ -112,13 +126,21 @@ describe('@@ ClientSettingsHelper @@', () => {
   // positive
   describe('saveOrUpdateSetting', () =>
     it('should save the valid setting', () =>
-      expect(actions.saveOrUpdateSetting(validSetting)).to.eventually.deep.equal(validSetting)
+      expect(actions.saveOrUpdateSetting(validSetting).then(removeIdFromItem)).to.eventually.deep.equal(validSetting)
     )
   );
 
   describe('saveOrUpdateSetting', () =>
-    it('should save the valid setting', () =>
-      expect(actions.saveOrUpdateSetting(validSettingNoOptions)).to.eventually.deep.equal(validSettingNoOptions)
+    it('should save the valid setting with no options', () =>
+      expect(actions.saveOrUpdateSetting(validSettingNoOptions).then(removeIdFromItem))
+        .to.eventually.deep.equal(validSettingNoOptions)
+    )
+  );
+
+  describe('saveOrUpdateSetting', () =>
+    it('should save the valid object setting', () =>
+      expect(actions.saveOrUpdateSetting(validSettingAsObject)
+        .then(removeIdFromItem)).to.eventually.deep.equal(validSettingAsObject)
     )
   );
 
