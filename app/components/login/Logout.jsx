@@ -1,6 +1,6 @@
+/* eslint-disable jsx-a11y/href-no-hash */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
 import translate from '../../utils/translate';
 import { SYNCUP_URL } from '../../utils/Constants';
 import {
