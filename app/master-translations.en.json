@@ -215,7 +215,6 @@
   "Add Expenditures": "Add Expenditures",
   "activitySavedMsg": "Your changes have been successfully saved. In order to see your changes in the AMP please sync.",
   "CurrencyRatesNotInitialized": "Currency rates not initialized",
-  "syncConnectionError": "No connection available. Please try again later",
   "BA": "BA",
   "DO": "DO",
   "EA": "EA",
@@ -253,5 +252,12 @@
   "Same as Proposed Start Date": "Same as Proposed Start Date",
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
   "Ignore": "Ignore",
-  "unexpectedError": "An unexpected error occurred. Please collect logs, note your actions and contact the administrator."
+  "unexpectedError": "An unexpected error occurred. Please collect logs, note your actions and contact the administrator.",
+  "dontStopUpdateWarning": "AMP Offline is currently being updated. Please do not close the application.",
+  "downloadComplete": "Installer download complete",
+  "downloadInProgress": "Installer download in progress...",
+  "downloadFailed": "Installer download failed. Please try again.",
+  "updateInProgress": "AMP Offline upgrade is in progress...",
+  "updateFailed": "AMP Offline upgrade failed.",
+  "defaultSyncError": "There was an error while attempting to sync. Please try again."
 }
