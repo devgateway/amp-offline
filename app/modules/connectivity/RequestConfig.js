@@ -153,4 +153,4 @@ const RequestConfig = {
   }
 };
 
-module.exports = RequestConfig;
+export default RequestConfig;
