@@ -56,7 +56,7 @@ class Logout extends React.Component {
       return (
         <a
           className={style.navbar_right_side}
-          href={''}
+          href="#"
           onClick={this.onLogout.bind(this)}>{translate('logoff')}
         </a>
       );
