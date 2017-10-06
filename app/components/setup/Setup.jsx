@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable react/sort-comp */
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
@@ -9,8 +11,8 @@ import AFOption from '../activity/edit/components/AFOption';
 import AFDropDown from '../activity/edit/components/AFDropDown';
 import translate from '../../utils/translate';
 import AFLabel from '../activity/edit/components/AFLabel';
-
-/* eslint-disable class-methods-use-this, react/sort-comp */
+import InProgress from '../common/InProgress';
+import SetupManager from '../../modules/setup/SetupManager';
 
 /**
  * First time application setup
@@ -37,7 +39,9 @@ export default class Setup extends Component {
     super(props);
     this.state = {
       retryOptionsLoad: false,
+      isTestingConnectivity: false,
       countryOptions: [],
+      rawOptions: [],
       selectedOptionId: undefined,
       customValue: '',
       isCustom: false,
@@ -62,24 +66,15 @@ export default class Setup extends Component {
       loadSetupOptions();
     } else if ((isSetupOptionsLoaded && optionsCount < 2) || (isSetupOptionsLoadFailed && optionsCount < 1)) {
       const { lang, defaultLang, languageList, setupOptions } = props;
-      let options = [this.getCustomOption(languageList)];
+      let rawOptions = [SetupManager.getCustomOption(languageList)];
       if (isSetupOptionsLoaded) {
-        options = setupOptions.concat(options);
+        rawOptions = setupOptions.concat(rawOptions);
       }
-      const countryOptions = this.toAFOptions(options, defaultLang, lang);
-      this.setState({ countryOptions });
+      const countryOptions = this.toAFOptions(rawOptions, defaultLang, lang);
+      this.setState({ countryOptions, rawOptions });
+    } else if (props.errorMessage) {
+      this.setState({ isTestingConnectivity: false });
     }
-  }
-
-  getCustomOption(languageList) {
-    return {
-      id: OTHER_ID,
-      name: languageList.reduce((resultMap, code) => {
-        resultMap[code] = translate('Other', code);
-        return resultMap;
-      }, {}),
-      urls: []
-    };
   }
 
   toAFOptions(registryOptions, defaultLang, lang) {
@@ -100,19 +95,35 @@ export default class Setup extends Component {
   onCustomOptionChange(e) {
     const customValue = e.target.value;
     const isValid = this.isCustomValueValid(customValue);
-    const countryOptions = [...this.state.countryOptions];
-    const customOption = countryOptions.find(o => o.id === OTHER_ID);
-    customOption.urls = [customValue.trim()];
-    this.setState({ customValue, isValid, countryOptions });
-  }
-
-  getSelectedOption() {
-    const { selectedOptionId } = this.state;
-    return selectedOptionId && this.state.countryOptions.find(o => o.id === selectedOptionId);
+    this.setState({ customValue, isValid });
   }
 
   isCustomValueValid(customValue) {
     return URLUtils.isValidUrl(customValue);
+  }
+
+  onConfigure() {
+    this.setState({ isTestingConnectivity: true });
+    const selectedOption = this.getSelectedRawOption();
+    const { isCustom, customValue } = this.state;
+    if (isCustom) {
+      selectedOption.urls = [customValue];
+    }
+    this.props.setupComplete(selectedOption);
+  }
+
+  getSelectedRawOption() {
+    const { selectedOptionId } = this.state;
+    return selectedOptionId && this.state.rawOptions.find(o => o.id === selectedOptionId);
+  }
+
+  getLoadingMessage() {
+    if (this.props.isSetupOptionsLoading) {
+      return translate('loadingOptions');
+    }
+    if (this.state.isTestingConnectivity) {
+      return translate('testingConnectivity');
+    }
   }
 
   renderCustomOption() {
@@ -127,15 +138,12 @@ export default class Setup extends Component {
     </div>);
   }
 
-  renderRetryButton() {
-    return (<Button bsStyle="success" onClick={() => this.props.loadSetupOptions()}>
-      {translate('Reload options')}
-    </Button>);
-  }
-
   render() {
-    const { errorMessage, isSetupOptionsLoadFailed, setupComplete } = this.props;
-    const { isCustom } = this.state;
+    const { errorMessage, isSetupOptionsLoading, isSetupOptionsLoadFailed, isSetupComplete, loadSetupOptions } =
+      this.props;
+    const { isCustom, isValid, isTestingConnectivity } = this.state;
+    const inProgress = isSetupOptionsLoading || isSetupComplete || isTestingConnectivity;
+    const hideProgress = !(isSetupOptionsLoading || isTestingConnectivity);
     const displayError = isSetupOptionsLoadFailed && !isCustom ? translate('noConnectionToRegistry') : errorMessage;
     return (<div className={styles.centered}>
       <div>
@@ -145,18 +153,23 @@ export default class Setup extends Component {
       {isCustom && this.renderCustomOption()}
       <div className={styles.row}>
         <span className={styles.cell}>
-          <Button
-            disabled={!this.state.isValid} bsStyle="success"
-            onClick={() => setupComplete(this.getSelectedOption())}>
+          <Button disabled={!isValid || inProgress} bsStyle="success" onClick={() => this.onConfigure()}>
             {translate('Configure')}
           </Button>
         </span>
         <span className={styles.cell}>
-          {isSetupOptionsLoadFailed && this.renderRetryButton()}
+          {isSetupOptionsLoadFailed &&
+          (<Button disabled={inProgress} bsStyle="success" onClick={() => loadSetupOptions()}>
+            {translate('Reload options')}
+          </Button>)
+          }
         </span>
       </div>
       <div className={styles.row}>
         {displayError && <ErrorMessage message={displayError} />}
+      </div>
+      <div className={styles.row} hidden={hideProgress}>
+        <InProgress title={this.getLoadingMessage()} />
       </div>
     </div>);
   }

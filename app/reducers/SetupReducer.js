@@ -26,7 +26,7 @@ export default function setupReducer(state = defaultState, action: Object) {
   switch (action.type) {
     case STATE_SETUP_STATUS_PENDING:
     case STATE_SETUP_STATUS_REJECTED:
-      return { ...state, isSetupComplete: false };
+      return { ...state, isSetupComplete: false, errorMessage: action.payload };
     case STATE_SETUP_STATUS_FULFILLED:
       return { ...state, isSetupComplete: action.payload };
     case STATE_SETUP_OPTIONS_PENDING:

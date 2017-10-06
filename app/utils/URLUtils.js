@@ -15,7 +15,21 @@ const urlUtils = {
   },
 
   isValidUrl(url) {
+    return !!this.matchUrl(this.normalizeUrl(url));
+  },
+
+  matchUrl(url) {
     return url && (typeof url === 'string') && url.match(URL_PATTERN);
+  },
+
+  normalizeUrl(url) {
+    if (url) {
+      url = url.trim();
+      while (url.endsWith('/')) {
+        url = url.substr(0, url.length - 1);
+      }
+    }
+    return url;
   }
 
 };
