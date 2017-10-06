@@ -33,7 +33,7 @@ export default class FeatureManager {
     LoggerManager.debug('isFMSettingEnabled');
     // store.getState().startUpReducer.fmTree;
     if (this._fmTree) {
-      let lastFMSubTree = this._fmTree.fmTree;
+      let lastFMSubTree = this._fmTree;
       // ignore first "/" to exclude empty string from the split
       const segments = fmPath.substring(1).split('/');
       const foundLastFMSubTree = segments.every(segment => {

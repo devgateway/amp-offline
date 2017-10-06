@@ -122,7 +122,7 @@ export function loadFMTree(id = undefined) {
   const fmPromise = FMHelper.findAll(dbFilter)
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))
     .then(fmTree => {
-      FeatureManager.setFMTree(fmTree);
+      FeatureManager.setFMTree(fmTree.fmTree);
       return fmTree;
     });
   store.dispatch({
