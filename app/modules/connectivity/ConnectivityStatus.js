@@ -1,4 +1,17 @@
+/**
+ * Connectivity status
+ *
+ * @author Nadejda Mandrescu
+ */
 export default class ConnectivityStatus {
+  /**
+   * Deserialize connectivity status from JSON
+   * @param json
+   */
+  static deserialize(json) {
+    return Object.assign(new ConnectivityStatus(), json);
+  }
+
   /**
    * Stores AMP connectivity & compatibility status, usually filled in when connection is successfully established
    * @param isAmpAvailable
@@ -39,7 +52,7 @@ export default class ConnectivityStatus {
   /**
    * @returns {String} AMP version
    */
-  get getAmpVersion() {
+  get ampVersion() {
     return this._ampVersion;
   }
 

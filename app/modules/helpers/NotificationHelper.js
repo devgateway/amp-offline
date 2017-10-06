@@ -15,11 +15,12 @@ export default class NotificationHelper {
    *
    * @param message
    * @param origin
+   * @param errorCode
    * @param errorObject
    * @param severity
    */
   constructor({
-    message, origin, errorObject,
+    message, origin, errorCode, errorObject,
     severity = constants.NOTIFICATION_SEVERITY_ERROR
   }) {
     LoggerManager.log('constructor');
@@ -28,7 +29,9 @@ export default class NotificationHelper {
       this.internalCode = errorObject.internalCode;
       this.origin = errorObject.origin;
       this.severity = errorObject.severity;
+      this.errorCode = errorObject.errorCode || errorCode;
     } else {
+      this.errorCode = errorCode;
       if (message) {
         this.message = this.processMessageParams(message);
       }
@@ -41,7 +44,7 @@ export default class NotificationHelper {
     LoggerManager.error(`${this.message} - ${this.internalCode} - ${this.origin}`);
   }
 
-  processMessageParams(message) {
+  processMessageParams(message, fromAPI) {
     /* We need to be sure the message param (it can be a String, Object, Array inside an Object, etc
      * is shown correctly to the user. */
     let retMessage = null;
@@ -52,11 +55,15 @@ export default class NotificationHelper {
       } else if (message instanceof Object) {
         const fields = Object.keys(message);
         if (fields && message[fields[0]] && !isNaN(fields[0])) {
-          retMessage = this.processMessageParams(message[fields[0]][0]);
+          retMessage = this.processMessageParams(message[fields[0]][0], true);
         } else {
           retMessage = stringifyObject(message, { inlineCharacterLimit: 200 });
         }
       } else {
+        // In order to translate some error messages from the API we need to sanitize it first.
+        if (fromAPI && message.charAt(0) === '(' && message.charAt(message.length - 1) === ')') {
+          message = message.substring(1, message.length - 1);
+        }
         retMessage = translate(message);
       }
     } catch (err) {
@@ -100,5 +107,13 @@ export default class NotificationHelper {
 
   set severity(severity) {
     this._severity = severity;
+  }
+
+  set errorCode(errorCode) {
+    this._errorCode = errorCode;
+  }
+
+  get errorCode() {
+    return this._errorCode;
   }
 }

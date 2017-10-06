@@ -34,6 +34,8 @@ export const LOCATION_PERCENTAGE = 'location_percentage';
 export const IMPLEMENTATION_LOCATION = 'implementation_location';
 export const IMPLEMENTATION_LEVEL = 'implementation_level';
 export const APPROVAL_STATUS = 'approval_status';
+export const APPROVED_BY = 'approved_by';
+export const APPROVAL_DATE = 'approval_date';
 export const TYPE_OF_ASSISTANCE = 'type_of_assistance';
 export const EXPENDITURE_CLASS = 'expenditure_class';
 export const FUNDING_DETAILS = 'funding_details';
@@ -144,6 +146,7 @@ export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
 export const REPORTING_DATE = 'reporting_date';
 export const RECIPIENT_ROLE = 'recipient_role';
 export const TEMPORAL_ID = '_temporal_id';
+export const MINISTRY_CODE = 'ministry_code';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
