@@ -1,4 +1,5 @@
 import * as ValueConstants from './ValueConstants';
+import * as FMC from './FeatureManagerConstants';
 import { capitalize } from '../Utils';
 
 /**
@@ -154,14 +155,22 @@ export const SAME_AS_PROPOSED_APPROVAL_DATE_LABEL = 'Same as Proposed Approval D
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
-  [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification' },
-    { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs' },
-    { key: 'APPlanning', hash: '#APPlanning', value: 'Planning' },
-    { key: 'APLocation', hash: '#APLocation', value: 'Location' },
-    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan' },
+  [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification', fmPath: FMC.ACTIVITY_IDENTIFICATION },
+    { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs', sectionPath: ACTIVITY_INTERNAL_IDS },
+    { key: 'APPlanning', hash: '#APPlanning', value: 'Planning', fmPath: FMC.ACTIVITY_PROJECT_ID_AND_PLANNING },
+    { key: 'APLocation', hash: '#APLocation', value: 'Location', sectionPath: LOCATIONS },
+    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan', sectionPath: NATIONAL_PLAN_OBJECTIVE },
     { key: 'APProgram', hash: '#APProgram', value: 'Program' },
     { key: 'APSector', hash: '#APSector', value: 'Sectors' },
-    { key: 'APFunding', hash: '#APFunding', value: 'Funding' }];
+    {
+      key: 'APFundingSources',
+      hash: '#APFundingSources',
+      value: 'Funding Sources',
+      sectionPath: TOTAL_NUMBER_OF_FUNDING_SOURCES
+    },
+    { key: 'APFunding', hash: '#APFunding', value: 'Funding' },
+    { key: 'APRelatedOrganizations', hash: '#APRelatedOrganizations', value: 'Related Organizations' },
+    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES }];
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;
