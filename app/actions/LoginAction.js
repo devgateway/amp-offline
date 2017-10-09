@@ -110,3 +110,13 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
   UrlUtils.forwardTo(LOGIN_URL);
   return ampOfflineInit();
 }
+
+export function changePasswordOnline() {
+  LoggerManager.log('changePasswordOnline');
+  alert('changePasswordOnline');
+}
+
+export function solveLoginProblemsOnline() {
+  LoggerManager.log('solveLoginProblemsOnline');
+  alert('solveLoginProblemsOnline');
+}
