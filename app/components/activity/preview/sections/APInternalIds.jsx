@@ -1,14 +1,17 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import Tablify from '../components/Tablify';
 import Section from './Section';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../utils/translate';
-import { ACTIVITY_INTERNAL_IDS, ACTIVITY_INTERNAL_IDS_COLS } from '../../../../utils/constants/ActivityConstants';
-import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
+import {
+  ACTIVITY_INTERNAL_IDS_COLS
+} from '../../../../utils/constants/ActivityConstants';
+import {
+  ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH,
+  ACTIVITY_INTERNAL_IDS_ORGANIZATION_PATH
+} from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
 import LoggerManager from '../../../../modules/util/LoggerManager';
-
-/* eslint-disable class-methods-use-this */
 
 /**
  * Organizations and project ids section
@@ -16,8 +19,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
  */
 const APInternalIdsSection = (isSeparateSection) => class extends Component {
   static propTypes = {
-    activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    buildSimpleField: PropTypes.func.isRequired,
     showIfEmpty: PropTypes.bool/* only makes sense if isSeparateSection is true, will render
                                   if there are no org ids*/
   };
@@ -27,30 +29,11 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     LoggerManager.log('constructor');
   }
 
-  _getActInternalIdContent(actIntId, showInternalId) {
-    let intId;
-    if (showInternalId) {
-      intId = <span>{actIntId.internalId}</span>;
-    }
-    return (
-      <div key={actIntId.organization.value}>
-        <span>[{ actIntId.organization.value }]</span>
-        { intId }
-      </div>);
-  }
-
   buildContent() {
-    let orgIds;
-    if (this.props.activityFieldsManager.isFieldPathEnabled(ACTIVITY_INTERNAL_IDS)) {
-      const showInternalId = this.props.activityFieldsManager.isFieldPathEnabled(
-        ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH);
-      orgIds = [];
-      const actIntIds = this.props.activityFieldsManager.getValue(this.props.activity, ACTIVITY_INTERNAL_IDS);
-      if (actIntIds && actIntIds.length > 0) {
-        actIntIds.forEach(actIntId => orgIds.push(this._getActInternalIdContent(actIntId, showInternalId)));
-      }
-    }
-    return orgIds && orgIds.length > 0 ? orgIds : null;
+    const content = [];
+    content.push(this.props.buildSimpleField(ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH, true, new Set([-1]), false));
+    content.push(this.props.buildSimpleField(ACTIVITY_INTERNAL_IDS_ORGANIZATION_PATH, true, new Set([-1]), false));
+    return content;
   }
 
   render() {
@@ -71,7 +54,6 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     }
     return content;
   }
-
 };
 
 export const APInternalIds = Section(APInternalIdsSection(true), 'Agency Internal IDs', true, 'APInternalIds');
