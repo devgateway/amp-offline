@@ -7,6 +7,7 @@ import LoggerManager from '../modules/util/LoggerManager';
  * @param lng (optional) the language to which to translate. If missing, then the currently set language is used.
  */
 export default (k, lng) => {
+  // if lng === undefined, then i18next will ignore { lng: undefined } and will use the currently set language
   let ret = i18next.t(k, { lng });
   if (ret === undefined) {
     ret = k;
