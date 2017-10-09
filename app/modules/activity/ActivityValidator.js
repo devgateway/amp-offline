@@ -1,5 +1,11 @@
 /* eslint-disable class-methods-use-this */
-import { HIERARCHICAL_VALUE, PROJECT_TITLE } from '../../utils/constants/ActivityConstants';
+import {
+  HIERARCHICAL_VALUE,
+  PROJECT_TITLE,
+  APPROVAL_DATE,
+  APPROVAL_STATUS,
+  APPROVED_BY
+} from '../../utils/constants/ActivityConstants';
 import { DO_NOT_HYDRATE_FIELDS_LIST } from '../../utils/constants/FieldPathConstants';
 import { GS_DEFAULT_NUMBER_FORMAT, DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
@@ -20,6 +26,7 @@ export default class ActivityValidator {
     this._possibleValuesMap = activityFieldsManager.possibleValuesMap;
     this._activityFieldsManager = activityFieldsManager;
     this._otherProjectTitles = new Set(otherProjectTitles);
+    this.excludedFields = [APPROVAL_DATE, APPROVAL_STATUS, APPROVED_BY];
   }
 
   areAllConstraintsMet(activity, asDraft, fieldPathsToSkipSet) {
@@ -109,7 +116,10 @@ export default class ActivityValidator {
 
   _validateRequiredField(objects, fieldDef, fieldPath, asDraft, isList, errors) {
     LoggerManager.log('_validateRequiredField');
-    const isRequired = fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft);
+    let isRequired = fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft);
+    if (this.excludedFields.filter(f => (fieldDef.field_name === f)).length > 0) {
+      isRequired = false;
+    }
     if (isRequired) {
       objects.forEach(obj => {
         this.processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
