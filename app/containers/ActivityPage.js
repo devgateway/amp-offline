@@ -9,7 +9,8 @@ const mapStateToProps = (state) => {
   LoggerManager.log('mapStateToProps');
   return {
     activityReducer: state.activityReducer,
-    userReducer: state.userReducer
+    userReducer: state.userReducer,
+    workspaceReducer: state.workspaceReducer
   };
 };
 
