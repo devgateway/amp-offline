@@ -8,11 +8,6 @@ import path from 'path';
 import validate from 'webpack-validator';
 import webpack from 'webpack';
 import { execSync } from 'child_process';
-import {
-  dependencies as externals
-} from './app/package.json';
-
-const packageJson = require('./app/package.json');
 
 export default validate({
   module: {
@@ -85,5 +80,5 @@ export default validate({
     }), new StringReplacePlugin(),
   ],
 
-  externals: Object.keys(externals || {})
+  externals: {}
 });
