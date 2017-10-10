@@ -147,10 +147,21 @@ export const REPORTING_DATE = 'reporting_date';
 export const RECIPIENT_ROLE = 'recipient_role';
 export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
+export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
+export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
 export const SAME_AS_PROPOSED_APPROVAL_DATE_LABEL = 'Same as Proposed Approval Date';
+
+// Activity validation rules
+export const DEPENDENCY_IMPLEMENTATION_LEVEL_PRESENT = 'implementation_level_present';
+export const DEPENDENCY_IMPLEMENTATION_LEVEL_VALID = 'implementation_level_valid';
+export const DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT = 'implementation_location_present';
+export const DEPENDENCY_IMPLEMENTATION_LOCATION_VALID = 'implementation_location_valid';
+export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
+export const DEPENDENCY_ON_BUDGET = 'on_budget';
+
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =

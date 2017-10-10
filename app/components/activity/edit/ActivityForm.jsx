@@ -99,7 +99,7 @@ export default class ActivityForm extends Component {
   componentWillReceiveProps(nextProps) {
     const { activityFieldsManager, otherProjectTitles, activity, savedActivity } = nextProps.activityReducer;
     if (activityFieldsManager) {
-      this.activityValidator = new ActivityValidator(activityFieldsManager, otherProjectTitles);
+      this.activityValidator = new ActivityValidator(activity, activityFieldsManager, otherProjectTitles);
       this.sections = SECTIONS.map(name => {
         const fmPath = SECTIONS_FM_PATH[name];
         if (!fmPath || activityFieldsManager.isFieldPathEnabled(fmPath)) {
@@ -114,6 +114,7 @@ export default class ActivityForm extends Component {
         this.props.loadActivityForActivityForm(savedActivity.id);
       } else {
         this.activity = activity;
+        this.activityValidator.activity = activity;
         this._selectSection(IDENTIFICATION);
       }
     }
