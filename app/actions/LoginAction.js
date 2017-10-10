@@ -1,4 +1,5 @@
 /* eslint flowtype-errors/show-errors: 0 */
+import { shell } from 'electron';
 import store from '../index';
 import UrlUtils from '../utils/URLUtils';
 import { LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
@@ -9,6 +10,7 @@ import { ampOfflineInit } from './StartUpAction';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
 import LoggerManager from '../modules/util/LoggerManager';
 import { isMandatoryUpdate, STATE_CHECK_FOR_UPDATES } from './UpdateAction';
+import * as AAC from '../modules/connectivity/AmpApiConstants';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -18,6 +20,8 @@ export const STATE_LOGOUT_ASK_TO_SYNC = 'STATE_LOGOUT_ASK_TO_SYNC';
 export const STATE_LOGOUT_DISMISS_TO_SYNC = 'STATE_LOGOUT_DISMISS_TO_SYNC';
 export const STATE_LOGOUT_DISMISS = 'STATE_LOGOUT_DISMISS';
 export const STATE_LOGOUT = 'STATE_LOGOUT';
+export const STATE_CHANGE_PASSWORD_ONLINE = 'STATE_CHANGE_PASSWORD_ONLINE';
+export const STATE_RESET_PASSWORD_ONLINE = 'STATE_RESET_PASSWORD_ONLINE';
 
 export function loginAction(email: string, password: string) {
   LoggerManager.log('loginAction');
@@ -112,11 +116,21 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
 }
 
 export function changePasswordOnline() {
-  LoggerManager.log('changePasswordOnline');
-  alert('changePasswordOnline');
+  return (dispatch) => {
+    LoggerManager.log('changePasswordOnline');
+    const routeConfiguration = RequestConfig._getRouteConfiguration('GET', AAC.CHANGE_PASSWORD_URL);
+    const fullBaseUrl = RequestConfig._getFullBaseUrl(AAC.CHANGE_PASSWORD_URL, routeConfiguration);
+    shell.openExternal(fullBaseUrl);
+    dispatch({ type: STATE_CHANGE_PASSWORD_ONLINE });
+  };
 }
 
-export function solveLoginProblemsOnline() {
-  LoggerManager.log('solveLoginProblemsOnline');
-  alert('solveLoginProblemsOnline');
+export function resetPasswordOnline() {
+  return (dispatch) => {
+    LoggerManager.log('resetPasswordOnline');
+    const routeConfiguration = RequestConfig._getRouteConfiguration('GET', AAC.RESET_PASSWORD_URL);
+    const fullBaseUrl = RequestConfig._getFullBaseUrl(AAC.RESET_PASSWORD_URL, routeConfiguration);
+    shell.openExternal(fullBaseUrl);
+    dispatch({ type: STATE_RESET_PASSWORD_ONLINE });
+  };
 }

@@ -16,7 +16,7 @@ export default class Login extends Component {
     loginAction: PropTypes.func.isRequired,
     loginReducer: PropTypes.object.isRequired,
     changePasswordOnline: PropTypes.func.isRequired,
-    solveLoginProblemsOnline: PropTypes.func.isRequired
+    resetPasswordOnline: PropTypes.func.isRequired
 
   };
 
@@ -77,7 +77,7 @@ export default class Login extends Component {
         <hr />
         <LoginTroubleshootingLinks
           changePasswordOnline={this.props.changePasswordOnline}
-          solveLoginProblemsOnline={this.props.solveLoginProblemsOnline} />
+          resetPasswordOnline={this.props.resetPasswordOnline} />
         <hr />
         <ErrorMessage message={this.props.loginReducer.errorMessage} />
       </div>
