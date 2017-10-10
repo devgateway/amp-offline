@@ -129,15 +129,48 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     ));
   }
 
+  /**
+   * Incremental/Partial Syncup will do up to 2 calls: 1st to the POST endpoint ONLY IF the master
+   * translations file has new entries NOT PRESENT in the '/lang/translations.en.json' file and
+   * 2nd to the GET endpoint with last-sync-time parameter.
+   * @param langIds
+   * @param originalMasterTrnFile
+   */
   doIncrementalSyncup(langIds, originalMasterTrnFile) {
     LoggerManager.log('doIncrementalSyncup');
-    return ConnectionHelper.doGet({
+    return this.pushNewEntriesToAMP(langIds, originalMasterTrnFile).then(() => ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
       paramsMap: { translations: langIds.join('|'), [LAST_SYNC_TIME_PARAM]: this._lastSyncTimestamp }
     }).then((newTranslations) => (
       this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
-    ));
+    )));
+  }
+
+  /**
+   * During development we add new entries to the master translations file, we need to send those entries to AMP for
+   * future syncup.
+   * IMPORTANTE NOTE: Remember that doIncrementalSyncup() and pushNewEntriesToAMP() will be executed ONLY if some
+   * translation marked as 'ampoffline' on AMP have changed since last sync.
+   * @param langIds
+   * @param originalMasterTrnFile
+   * @returns {*}
+   */
+  pushNewEntriesToAMP(langIds, originalMasterTrnFile) {
+    const localTrnFileInLangDir = JSON.parse(FileManager
+      .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`));
+    const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
+    if (diffKeys.length > 0) {
+      const diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
+      return ConnectionHelper.doPost({
+        shouldRetry: true,
+        url: POST_TRANSLATIONS_URL,
+        body: diffTexts,
+        paramsMap: { translations: langIds.join('|') }
+      });
+    } else {
+      return Promise.resolve();
+    }
   }
 
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
