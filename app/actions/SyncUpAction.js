@@ -8,6 +8,7 @@ import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import { connectivityCheck } from './ConnectivityAction';
+import { ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -73,8 +74,8 @@ export function startSyncUp(historyData) {
       })
     ).catch((err) => {
       LoggerManager.error(err);
-      const actionData = { errorMessage: translate('defaultSyncError') };
-      store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
+      const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY ? err.message : translate('defaultSyncError');
+      store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage } });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });

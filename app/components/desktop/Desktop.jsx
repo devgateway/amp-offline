@@ -46,7 +46,7 @@ export default class Desktop extends Component {
             currentWorkspaceSettings={this.props.workspaceReducer.currentWorkspaceSettings}
             translationReducer={this.props.translationReducer}
           />
-          <TabsContainer tabsData={this.props.desktopReducer.tabsData} />
+          <TabsContainer tabsData={this.props.desktopReducer.tabsData} {...this.props} />
         </div>
       );
     }

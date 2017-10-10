@@ -31,6 +31,7 @@
   "goback": "Go Back",
   "clickToPreviewActivity": "Click to preview the activity",
   "clickToEditActivity": "Click to edit the activity",
+  "clickToValidateActivity": "Click to validate the activity",
   "customTextForEmptyData": "Empty data.",
   "newDraftLegend": "New Draft. These are new activities that have been saved as drafts.",
   "newUnvalidatedLegend": "New Unvalidated. These are new activities that have never been approved by the workspace manager.",
@@ -253,5 +254,11 @@
   "Same as Proposed Approval Date": "Same as Proposed Approval Date",
   "Ignore": "Ignore",
   "unexpectedError": "An unexpected error occurred. Please collect logs, note your actions and contact the administrator.",
+  "dontStopUpdateWarning": "AMP Offline is currently being updated. Please do not close the application.",
+  "downloadComplete": "Installer download complete",
+  "downloadInProgress": "Installer download in progress...",
+  "downloadFailed": "Installer download failed. Please try again.",
+  "updateInProgress": "AMP Offline upgrade is in progress...",
+  "updateFailed": "AMP Offline upgrade failed.",
   "defaultSyncError": "There was an error while attempting to sync. Please try again."
 }

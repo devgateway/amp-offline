@@ -15,11 +15,12 @@ export default class NotificationHelper {
    *
    * @param message
    * @param origin
+   * @param errorCode
    * @param errorObject
    * @param severity
    */
   constructor({
-    message, origin, errorObject,
+    message, origin, errorCode, errorObject,
     severity = constants.NOTIFICATION_SEVERITY_ERROR
   }) {
     LoggerManager.log('constructor');
@@ -28,7 +29,9 @@ export default class NotificationHelper {
       this.internalCode = errorObject.internalCode;
       this.origin = errorObject.origin;
       this.severity = errorObject.severity;
+      this.errorCode = errorObject.errorCode || errorCode;
     } else {
+      this.errorCode = errorCode;
       if (message) {
         this.message = this.processMessageParams(message);
       }
@@ -104,5 +107,13 @@ export default class NotificationHelper {
 
   set severity(severity) {
     this._severity = severity;
+  }
+
+  set errorCode(errorCode) {
+    this._errorCode = errorCode;
+  }
+
+  get errorCode() {
+    return this._errorCode;
   }
 }

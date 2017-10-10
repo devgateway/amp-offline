@@ -18,6 +18,7 @@ import {
   STATE_DOWNLOAD_UPDATE_DISMISSED
 } from '../../actions/UpdateAction';
 import { STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
+import { VERSION } from '../../utils/Constants';
 
 /**
  * Update trigger component to be loaded on every page in order to notify any updates if available and discard
@@ -37,14 +38,13 @@ class UpdateTrigger extends Component {
     newVersion: PropTypes.string,
     onConfirmationAlert: PropTypes.func.isRequired,
     proceedToUpdateDownload: PropTypes.bool,
-    checkForUpdates: PropTypes.bool,
-    goToDownloadPage: PropTypes.func.isRequired
+    checkForUpdates: PropTypes.bool
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      newVersion: this.props.newVersion,
+      newVersion: VERSION,
       updateInstallerPath: null
     };
   }
@@ -64,8 +64,8 @@ class UpdateTrigger extends Component {
       // we'll show the alert if it is a forced update on each detection
       // TODO we may need to check it quicker immediately on startup or screen navigation
       let isShowAlert = props.forceToUpdate;
-      if (this.state.newVersion !== this.props.newVersion) {
-        this.setState({ newVersion: this.props.newVersion });
+      if (this.state.newVersion !== props.newVersion) {
+        this.setState({ newVersion: props.newVersion });
         // if it's first detection of a new update since the app was started, then we'll show it at least once
         // TODO add more rules how often to remind about non mandatory update
         isShowAlert = true;
