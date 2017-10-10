@@ -78,7 +78,7 @@ export default class Login extends Component {
         <LoginTroubleshootingLinks
           changePasswordOnline={this.props.changePasswordOnline}
           resetPasswordOnline={this.props.resetPasswordOnline} />
-        <hr />
+        <br />
         <ErrorMessage message={this.props.loginReducer.errorMessage} />
       </div>
     );

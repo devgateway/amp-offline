@@ -2,6 +2,8 @@
 import React, { Component, PropTypes } from 'react';
 import LoggerManager from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
+import FeatureManager from '../../modules/util/FeatureManager';
+import * as FMC from '../../utils/constants/FeatureManagerConstants';
 
 export default class LoginTroubleshootingLinks extends Component {
 
@@ -19,9 +21,11 @@ export default class LoginTroubleshootingLinks extends Component {
     LoggerManager.debug('render');
     return (
       <div>
-        <a href="#" onClick={this.props.changePasswordOnline.bind(this)}>{translate('Change Password')}</a>
+        {(FeatureManager.isFMSettingEnabled(FMC.PUBLIC_VIEW_CHANGE_PASSWORD, false)) ?
+          <a href="#" onClick={this.props.changePasswordOnline.bind(this)}>{translate('Change Password')}</a> : null}
         <br />
-        <a href="#" onClick={this.props.resetPasswordOnline.bind(this)}>{translate('Trouble signing in?')}</a>
+        {(FeatureManager.isFMSettingEnabled(FMC.PUBLIC_VIEW_TROUBLE_SIGN_IN, false)) ?
+          <a href="#" onClick={this.props.resetPasswordOnline.bind(this)}>{translate('Trouble signing in?')}</a> : null}
       </div>
     );
   }
