@@ -150,6 +150,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   /**
    * During development we add new entries to the master translations file, we need to send those entries to AMP for
    * future syncup.
+   * IMPORTANTE NOTE: Remember that doIncrementalSyncup() and pushNewEntriesToAMP() will be executed ONLY if some
+   * translation marked as 'ampoffline' on AMP have changed since last sync.
    * @param langIds
    * @param originalMasterTrnFile
    * @returns {*}
