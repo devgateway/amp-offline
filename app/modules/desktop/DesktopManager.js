@@ -4,12 +4,7 @@ import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VAL
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import {
-  IS_DRAFT,
-  APPROVAL_STATUS,
-  FUNDINGS,
-  FUNDING_DETAILS,
-  TRANSACTION_TYPE,
-  ADJUSTMENT_TYPE
+  ADJUSTMENT_TYPE, APPROVAL_STATUS, DONOR_ORGANIZATION, FUNDING_DETAILS, FUNDINGS, IS_DRAFT, TRANSACTION_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -17,7 +12,10 @@ import {
   FUNDING_CURRENCY_PATH,
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
-import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
+import {
+  ACTUAL, COMMITMENTS, DISBURSEMENTS, APPROVED_STATUS, EDITED_STATUS, STARTED_APPROVED_STATUS,
+  STARTED_STATUS
+} from '../../utils/constants/ValueConstants';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import LoggerManager from '../../modules/util/LoggerManager';
 
@@ -90,13 +88,13 @@ const DesktopManager = {
 
   getActivityIsNew(item) {
     if (item[IS_DRAFT]) {
-      if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'edited') {
+      if (item[APPROVAL_STATUS] === APPROVED_STATUS || item[APPROVAL_STATUS] === EDITED_STATUS) {
         return false;
       } else {
         return true;
       }
     } else {
-      if (item[APPROVAL_STATUS] === 'started') {
+      if (item[APPROVAL_STATUS] === STARTED_STATUS) {
         return true;
       }
       return false;
@@ -109,17 +107,24 @@ const DesktopManager = {
 
   getActivityAmounts(item, trnType, currentWorkspaceSettings, currencyRatesManager) {
     let amount = 0;
-    item[FUNDINGS].forEach((funding) => (
-      funding[FUNDING_DETAILS].forEach((fd) => {
-        if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
-          amount += currencyRatesManager.convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
-        }
-      })
-    ));
+    if (item[FUNDINGS]) {
+      item[FUNDINGS].forEach((funding) => (
+        funding[FUNDING_DETAILS].forEach((fd) => {
+          if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
+            amount += currencyRatesManager
+              .convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
+          }
+        })
+      ));
+    }
     return amount;
   },
+
   getActivityDonors(item) {
-    return item.donor_organization.map((donor) => (donor.organization.value));
+    if (item[DONOR_ORGANIZATION]) {
+      return item[DONOR_ORGANIZATION].map((donor) => (donor.organization.value));
+    }
+    return [];
   },
 
   getActivityIsSynced(/* item */) {
@@ -131,7 +136,7 @@ const DesktopManager = {
     let status = '';
     if (item[IS_DRAFT]) {
       status = ACTIVITY_STATUS_DRAFT;
-    } else if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'startedapproved') {
+    } else if (item[APPROVAL_STATUS] === APPROVED_STATUS || item[APPROVAL_STATUS] === STARTED_APPROVED_STATUS) {
       status = ACTIVITY_STATUS_VALIDATED;
     } else {
       status = ACTIVITY_STATUS_UNVALIDATED;
