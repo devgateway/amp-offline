@@ -3,9 +3,15 @@ import translate from '../../utils/translate';
 import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
+import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
 import {
-  ADJUSTMENT_TYPE, APPROVAL_STATUS, DONOR_ORGANIZATION, FUNDING_DETAILS, FUNDINGS, IS_DRAFT, TRANSACTION_TYPE, ACTIVITIES_TAB_TITLE,
-  REJECTED_TAB_TITLE
+  ADJUSTMENT_TYPE,
+  APPROVAL_STATUS,
+  DONOR_ORGANIZATION,
+  FUNDING_DETAILS,
+  FUNDINGS,
+  IS_DRAFT,
+  TRANSACTION_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -14,7 +20,12 @@ import {
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
 import {
-  ACTUAL, COMMITMENTS, DISBURSEMENTS, APPROVED_STATUS, EDITED_STATUS, STARTED_APPROVED_STATUS,
+  ACTUAL,
+  APPROVED_STATUS,
+  COMMITMENTS,
+  DISBURSEMENTS,
+  EDITED_STATUS,
+  STARTED_APPROVED_STATUS,
   STARTED_STATUS
 } from '../../utils/constants/ValueConstants';
 import WorkspaceFilter from '../filters/WorkspaceFilter';

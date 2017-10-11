@@ -152,9 +152,6 @@ export const MINISTRY_CODE = 'ministry_code';
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
 export const SAME_AS_PROPOSED_APPROVAL_DATE_LABEL = 'Same as Proposed Approval Date';
 
-export const ACTIVITIES_TAB_TITLE = 'Activities';
-export const REJECTED_TAB_TITLE = 'Rejected Sync';
-
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
   [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification' },

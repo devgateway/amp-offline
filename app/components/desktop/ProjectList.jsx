@@ -16,6 +16,7 @@ import {
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
+import { REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
 
@@ -103,7 +104,7 @@ export default class ProjectList extends Component {
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
     const pagination = paginationOptions.usePagination;
-    const iconColumn = (this.props.name !== AC.REJECTED_TAB_TITLE) &&
+    const iconColumn = (this.props.name !== REJECTED_TAB_TITLE) &&
     (<TableHeaderColumn
       dataField="icon" dataFormat={ProjectList.iconFormatter.bind(this)} columnClassName={style.width_7}
       className={style.thClassName} />);
