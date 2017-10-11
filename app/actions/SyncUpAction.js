@@ -56,11 +56,8 @@ export function startSyncUp(historyData) {
     store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
 
-    return SyncUpManager.syncUpAllTypesOnDemand().then((log) =>
-      // TODO probably the way in which we will update the ui will change
-      // once we get the final version also it will change the way in which pass
-      // the historyData object
-      checkIfToForceSyncUp().then(() => {
+    return SyncUpManager.syncUpAllTypesOnDemand()
+      .then((log) => {
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
         LoggerManager.log('syncupSucessfull');
         store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
@@ -70,8 +67,8 @@ export function startSyncUp(historyData) {
           actionData: log
         });
         URLUtils.forwardTo(`/syncUpSummary/${id}`);
-        return newHistoryData;
-      })
+        return checkIfToForceSyncUp();
+      }
     ).catch((err) => {
       LoggerManager.error(err);
       const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY ? err.message : translate('defaultSyncError');

@@ -12,7 +12,6 @@ import DateUtils from '../../utils/DateUtils';
 import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
-import { SYNCUP_FORCE_DAYS, SYNCUP_SYNC_REQUESTED_AT } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
   NOTIFICATION_SEVERITY_WARNING
@@ -27,6 +26,7 @@ import {
 } from '../../actions/SyncUpAction';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
+import SyncUpManager from '../../modules/syncup/SyncUpManager';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -64,8 +64,6 @@ class SyncUp extends Component {
   }
 
   componentDidMount() {
-    const route = this.context.router.routes[this.context.router.routes.length - 1];
-    this.context.router.setRouteLeaveHook(route, this.routerWillLeave.bind(this));
     if (!this.props.currentWorkspace) {
       this.props.onSyncConfirmationAlert(this.props.syncUpReducer);
     }
@@ -85,12 +83,6 @@ class SyncUp extends Component {
     }
   }
 
-  routerWillLeave() {
-    LoggerManager.log('routerWillLeave');
-    // FFR: https://github.com/ReactTraining/react-router/blob/v3/docs/guides/ConfirmingNavigation.md
-    return !this.props.syncUpReducer.forceSyncUp || this.props.logoutConfirmed;
-  }
-
   selectContentElementToDraw() {
     LoggerManager.log('selectContentElementToDraw');
     const { syncUpReducer } = this.props;
@@ -100,7 +92,7 @@ class SyncUp extends Component {
       const { errorMessage, didUserSuccessfulSyncUp, lastSuccessfulSyncUp } = syncUpReducer;
       if (errorMessage) {
         return (
-          <div >
+          <div>
             {errorMessage && <ErrorMessage message={errorMessage} />}
           </div>
         );
@@ -151,26 +143,8 @@ class SyncUp extends Component {
   }
 }
 
-const getSyncStatusUpMessage = (syncUpReducer) => {
-  // detect message & build notification
-  let message = null;
-  if (syncUpReducer.didUserSuccessfulSyncUp) {
-    if (syncUpReducer.daysFromLastSuccessfulSyncUp > SYNCUP_FORCE_DAYS) {
-      message = translate('tooOldSyncWarning');
-    } else {
-      const successfulAt = DateUtils.createFormattedDate(syncUpReducer.lastSuccessfulSyncUp[SYNCUP_SYNC_REQUESTED_AT]);
-      message = `${translate('syncWarning')} ${translate('lastSuccessfulSyncupDate').replace('%date%', successfulAt)}`;
-    }
-  } else if (syncUpReducer.didSyncUp) {
-    message = `${translate('syncWarning')} ${translate('allPreviousSyncUpFailed')}`;
-  } else {
-    message = translate('syncWarning');
-  }
-  return message;
-};
-
 const syncConfirmationAlert = (syncUpReducer) => {
-  const message = getSyncStatusUpMessage(syncUpReducer);
+  const message = SyncUpManager.getSyncUpStatusMessage();
   const syncNotification = new Notification({
     message,
     origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
