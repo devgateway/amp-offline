@@ -53,8 +53,8 @@ export function startSyncUp(historyData) {
    the user to be able to leave the page if this syncup fails. */
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
     URLUtils.forwardTo('/syncUp');
-    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
+    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
 
     return SyncUpManager.syncUpAllTypesOnDemand()
       .then((log) => {
