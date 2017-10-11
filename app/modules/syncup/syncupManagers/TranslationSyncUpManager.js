@@ -125,7 +125,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
    * @returns {*}
    */
   pushTranslationsSyncUp(langIds, originalMasterTrnFile, isFullSync) {
-    LoggerManager.log('doPostSyncUp');
+    LoggerManager.log('pushTranslationsSyncUp');
     if (isFullSync) {
       const masterTexts = Object.values(originalMasterTrnFile);
       return this.doPostCall(langIds, masterTexts).then((newTranslations) => (
@@ -147,7 +147,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   }
 
   doPostCall(langIds, textList) {
-    LoggerManager.debug('doPostSyncUp');
+    LoggerManager.debug('doPostCall');
     return ConnectionHelper.doPost({
       shouldRetry: true,
       url: POST_TRANSLATIONS_URL,
