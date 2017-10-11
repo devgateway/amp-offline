@@ -111,22 +111,49 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       return this.doIncrementalSyncup(langIds, originalMasterTrnFile);
     } else {
       // Do full syncup.
-      return this.doFullSyncUp(langIds, originalMasterTrnFile);
+      return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile, true);
     }
   }
 
-  doFullSyncUp(langIds, originalMasterTrnFile) {
-    LoggerManager.log('doFullSyncUp');
-    // Extract text to translate from our master-file.
-    const masterTexts = Object.values(originalMasterTrnFile);
+  /**
+   * If 'isFullSync' is true this function sends text from ampoffline to AMP so these texts are marked as used on
+   * ampoffline and then receives the translations. If 'isFullSync' is false then we use the function to send only
+   * new texts added during development.
+   * @param langIds
+   * @param originalMasterTrnFile
+   * @param isFullSync
+   * @returns {*}
+   */
+  pushTranslationsSyncUp(langIds, originalMasterTrnFile, isFullSync) {
+    LoggerManager.log('doPostSyncUp');
+    if (isFullSync) {
+      const masterTexts = Object.values(originalMasterTrnFile);
+      return this.doPostCall(langIds, masterTexts).then((newTranslations) => (
+        this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
+      ));
+    } else {
+      const localTrnFileInLangDir = JSON.parse(FileManager
+        .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`));
+      const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
+      if (diffKeys.length > 0) {
+        const diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
+        return this.doPostCall(langIds, diffTexts).then((newTranslations) => (
+          this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
+        ));
+      } else {
+        return Promise.resolve();
+      }
+    }
+  }
+
+  doPostCall(langIds, textList) {
+    LoggerManager.debug('doPostSyncUp');
     return ConnectionHelper.doPost({
       shouldRetry: true,
       url: POST_TRANSLATIONS_URL,
-      body: masterTexts,
+      body: textList,
       paramsMap: { translations: langIds.join('|') }
-    }).then((newTranslations) => (
-      this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
-    ));
+    });
   }
 
   /**
@@ -138,39 +165,13 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
    */
   doIncrementalSyncup(langIds, originalMasterTrnFile) {
     LoggerManager.log('doIncrementalSyncup');
-    return this.pushNewEntriesToAMP(langIds, originalMasterTrnFile).then(() => ConnectionHelper.doGet({
+    return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile, false).then(() => ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
       paramsMap: { translations: langIds.join('|'), [LAST_SYNC_TIME_PARAM]: this._lastSyncTimestamp }
     }).then((newTranslations) => (
       this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
     )));
-  }
-
-  /**
-   * During development we add new entries to the master translations file, we need to send those entries to AMP for
-   * future syncup.
-   * IMPORTANTE NOTE: Remember that doIncrementalSyncup() and pushNewEntriesToAMP() will be executed ONLY if some
-   * translation marked as 'ampoffline' on AMP have changed since last sync.
-   * @param langIds
-   * @param originalMasterTrnFile
-   * @returns {*}
-   */
-  pushNewEntriesToAMP(langIds, originalMasterTrnFile) {
-    const localTrnFileInLangDir = JSON.parse(FileManager
-      .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`));
-    const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
-    if (diffKeys.length > 0) {
-      const diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
-      return ConnectionHelper.doPost({
-        shouldRetry: true,
-        url: POST_TRANSLATIONS_URL,
-        body: diffTexts,
-        paramsMap: { translations: langIds.join('|') }
-      });
-    } else {
-      return Promise.resolve();
-    }
   }
 
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
