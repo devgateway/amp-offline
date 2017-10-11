@@ -1,5 +1,4 @@
 /* eslint flowtype-errors/show-errors: 0 */
-import { shell } from 'electron';
 import store from '../index';
 import UrlUtils from '../utils/URLUtils';
 import { LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
@@ -118,9 +117,7 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
 export function changePasswordOnline() {
   return (dispatch) => {
     LoggerManager.log('changePasswordOnline');
-    const routeConfiguration = RequestConfig._getRouteConfiguration('GET', AAC.CHANGE_PASSWORD_URL);
-    const fullBaseUrl = RequestConfig._getFullBaseUrl(AAC.CHANGE_PASSWORD_URL, routeConfiguration);
-    shell.openExternal(fullBaseUrl);
+    UrlUtils.redirectExternalLink('GET', AAC.CHANGE_PASSWORD_URL);
     dispatch({ type: STATE_CHANGE_PASSWORD_ONLINE });
   };
 }
@@ -128,9 +125,7 @@ export function changePasswordOnline() {
 export function resetPasswordOnline() {
   return (dispatch) => {
     LoggerManager.log('resetPasswordOnline');
-    const routeConfiguration = RequestConfig._getRouteConfiguration('GET', AAC.RESET_PASSWORD_URL);
-    const fullBaseUrl = RequestConfig._getFullBaseUrl(AAC.RESET_PASSWORD_URL, routeConfiguration);
-    shell.openExternal(fullBaseUrl);
+    UrlUtils.redirectExternalLink('GET', AAC.RESET_PASSWORD_URL);
     dispatch({ type: STATE_RESET_PASSWORD_ONLINE });
   };
 }
