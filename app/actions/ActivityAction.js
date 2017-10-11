@@ -14,8 +14,9 @@ import {
   MODIFIED_BY,
   PROJECT_TITLE,
   TEAM,
-  WORKSPACE_ID
+  AMP_ID
 } from '../utils/constants/ActivityConstants';
+import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY, NOTIFICATION_SEVERITY_INFO } from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
@@ -148,8 +149,8 @@ const _getActivity = (activityId, teamMemberId) => {
   if (activityId === NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
-  return ActivityHelper.findNonRejectedById(activityId).then(activity =>
-    ActivityHydrator.hydrateActivity({ activity, teamMemberId }));
+  return ActivityHelper.findAll({ id: activityId }).then(activity =>
+    ActivityHydrator.hydrateActivity({ activity: activity[0], teamMemberId }));
 };
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
