@@ -10,7 +10,6 @@ import {
 import URLUtils from '../../utils/URLUtils';
 import {
   logoutAction,
-  STATE_LOGOUT_DISMISS_TO_SYNC,
   STATE_LOGOUT_REQUESTED
 } from '../../actions/LoginAction';
 import Notification from '../../modules/helpers/NotificationHelper';
