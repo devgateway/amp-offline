@@ -4,7 +4,14 @@ import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VAL
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import {
-  ADJUSTMENT_TYPE, APPROVAL_STATUS, DONOR_ORGANIZATION, FUNDING_DETAILS, FUNDINGS, IS_DRAFT, TRANSACTION_TYPE
+  ADJUSTMENT_TYPE,
+  APPROVAL_STATUS,
+  DONOR_ORGANIZATION,
+  FUNDING_DETAILS,
+  FUNDINGS,
+  IS_DRAFT,
+  TRANSACTION_TYPE,
+  REJECTED_ID
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -79,7 +86,7 @@ const DesktopManager = {
           currencyRatesManager),
         actualCommitments: this.getActivityAmounts(item, COMMITMENTS, currentWorkspaceSettings, currencyRatesManager),
         view: true,
-        edit: this.getActivityCanEdit(item),
+        edit: this.getActivityCanEdit(item) && !item[REJECTED_ID],
         new: this.getActivityIsNew(item)
       })
     ));
