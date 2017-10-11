@@ -13,8 +13,7 @@ import {
   CREATED_ON,
   MODIFIED_BY,
   PROJECT_TITLE,
-  TEAM,
-  AMP_ID
+  TEAM
 } from '../utils/constants/ActivityConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
