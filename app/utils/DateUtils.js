@@ -3,30 +3,11 @@
  */
 import Moment from 'moment';
 import LoggerManager from '../modules/util/LoggerManager';
-import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
-import store from '../index';
 import { API_DATE_FORMAT } from './Constants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
+import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 
 export default class DateUtils {
-
-  static getConfigFromDB() {
-    LoggerManager.log('getConfigFromDB');
-    const data = {
-      dateFormat: 'DD/MM/YYYY'
-    };
-
-    return new Promise((resolve, reject) => (
-      GlobalSettingsHelper.findByKey(DEFAULT_DATE_FORMAT))
-      .then((dbDateFormat) => {
-        if (dbDateFormat != null) {
-          data.dateFormat = dbDateFormat.value;
-        }
-        return resolve(data);
-      }).catch(reject)
-    );
-  }
-
   /**
    * Configures the global locale to be used by the Moment library, e.g. in the Date Picker
    * @param lang
@@ -51,12 +32,21 @@ export default class DateUtils {
   }
 
   static getGSDateFormat() {
-    return store.getState().startUpReducer.gsDateData.dateFormat.toUpperCase();
+    return GlobalSettingsManager.getSettingByKey(DEFAULT_DATE_FORMAT).toUpperCase();
+  }
+
+  static getDateTimeFormat() {
+    const dateFormat = this.getGSDateFormat();
+    return `${dateFormat} H:mm:ss`;
   }
 
   static createFormattedDate(date) {
     LoggerManager.log('createFormattedDate');
     return DateUtils.formatDate(date, DateUtils.getGSDateFormat());
+  }
+
+  static createFormattedDateTime(date) {
+    return DateUtils.formatDate(date, DateUtils.getDateTimeFormat());
   }
 
   static duration(from, to) {

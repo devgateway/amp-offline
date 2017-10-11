@@ -18,6 +18,7 @@ import LoggerManager from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
+import AFCheckbox from './AFCheckbox';
 
 /* eslint-disable class-methods-use-this */
 
@@ -36,6 +37,7 @@ class AFField extends Component {
   static propTypes = {
     fieldPath: PropTypes.string.isRequired,
     parent: PropTypes.object.isRequired,
+    id: PropTypes.string,
     filter: PropTypes.array,
     showLabel: PropTypes.bool,
     showRequired: PropTypes.bool,
@@ -47,7 +49,8 @@ class AFField extends Component {
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
-    onFieldValidation: PropTypes.func.isRequired // eslint-disable-line react/no-unused-prop-types
+    onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    extraParams: PropTypes.object
   };
 
   static defaultProps = {
@@ -58,7 +61,7 @@ class AFField extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this.fieldExists = false;
   }
 
@@ -156,6 +159,8 @@ class AFField extends Component {
         return this._getDate();
       case Types.LABEL:
         return this._getValueAsLabel();
+      case Types.CHECKBOX:
+        return this._getBoolean();
       default:
         return 'Not Implemented';
     }
@@ -170,6 +175,10 @@ class AFField extends Component {
   }
 
   _getListSelector() {
+    if (!this.fieldDef.children.find(item => item.id_only === true)) {
+      // TODO: Lists without id_only field will be addressed on AMPOFFLINE-674.
+      return null;
+    }
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
     const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
     let options = this._getOptions(optionsFieldPath);
@@ -181,7 +190,7 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} />);
+      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams} />);
   }
 
   _getOptions(fieldPath) {
@@ -220,10 +229,14 @@ class AFField extends Component {
     return (<AFDate value={this.state.value} onChange={this.onChange} />);
   }
 
+  _getBoolean() {
+    return (<AFCheckbox value={this.state.value} onChange={this.onChange} />);
+  }
+
   _getValueAsLabel() {
     let val = '';
     if (this.state.value) {
-      val = this.state.value.displayFullValue || this.state.value;
+      val = this.state.value.displayFullValue || this.state.value.value || this.state.value;
     }
     return <AFLabel value={val} />;
   }
@@ -250,7 +263,7 @@ class AFField extends Component {
     return (
       <FormGroup
         controlId={this.props.fieldPath} validationState={showValidationError ? this._getValidationState() : null}
-        className={`${styles.activity_form_control} ${this.props.className}`} >
+        className={`${styles.activity_form_control} ${this.props.className}`} id={this.props.id}>
         <span className={this.props.inline ? styles.inline_field : null}>
           {this.getLabel()}
           {this.getFieldContent()}

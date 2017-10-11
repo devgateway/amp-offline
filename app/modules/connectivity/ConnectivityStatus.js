@@ -1,16 +1,31 @@
+/**
+ * Connectivity status
+ *
+ * @author Nadejda Mandrescu
+ */
 export default class ConnectivityStatus {
+  /**
+   * Deserialize connectivity status from JSON
+   * @param json
+   */
+  static deserialize(json) {
+    return Object.assign(new ConnectivityStatus(), json);
+  }
+
   /**
    * Stores AMP connectivity & compatibility status, usually filled in when connection is successfully established
    * @param isAmpAvailable
    * @param isAmpClientEnabled
    * @param isAmpCompatible
    * @param ampVersion
+   * @param latestAmpOffline
    */
-  constructor(isAmpAvailable, isAmpClientEnabled, isAmpCompatible, ampVersion) {
+  constructor(isAmpAvailable, isAmpClientEnabled, isAmpCompatible, ampVersion, latestAmpOffline) {
     this._isAmpAvailable = isAmpAvailable;
     this._isAmpClientEnabled = isAmpClientEnabled;
     this._isAmpCompatible = isAmpCompatible;
     this._ampVersion = ampVersion;
+    this._latestAmpOffline = latestAmpOffline;
   }
 
   /**
@@ -37,8 +52,15 @@ export default class ConnectivityStatus {
   /**
    * @returns {String} AMP version
    */
-  get getAmpVersion() {
+  get ampVersion() {
     return this._ampVersion;
+  }
+
+  /**
+   * @returns {Object} Data to upgrade the current installation (if available).
+   */
+  get latestAmpOffline() {
+    return this._latestAmpOffline;
   }
 }
 

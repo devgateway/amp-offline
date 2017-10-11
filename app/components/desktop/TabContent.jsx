@@ -20,7 +20,7 @@ export default class TabsContainer extends Component {
     // This is to avoid an error in the winston when we switch WS while being in the desktop page.
     if (content) {
       return (
-        <ProjectList projects={content.projects} name={content.name} />
+        <ProjectList projects={content.projects} name={content.name} {...this.props} />
       );
     }
     return null;

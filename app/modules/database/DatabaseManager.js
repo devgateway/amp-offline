@@ -13,6 +13,7 @@ import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
+import FileManager from '../util/FileManager';
 
 // NeDB API is based on callbacks and not promises. Disabling always-return to avoid encapsulating each into a promise
 /* eslint-disable promise/always-return */
@@ -38,8 +39,7 @@ const DatabaseManager = {
     LoggerManager.log('_getCollection');
     return new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
-        filename: DB_FILE_PREFIX + name
-        + DB_FILE_EXTENSION
+        filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
       if (process.env.NODE_ENV === 'production') {
         /* newOptions.afterSerialization = self.encryptData;
@@ -261,10 +261,10 @@ const DatabaseManager = {
     });
   },
 
-  _replaceAll(collectionData, collectionName, options, resolve, reject) {
+  _replaceAll(collectionData, collectionName, filter = {}, resolve, reject) {
     LoggerManager.log('_replaceAll');
-    DatabaseManager._getCollection(collectionName, options).then((collection) => {
-      collection.remove({}, { multi: true }, (err) => {
+    DatabaseManager._getCollection(collectionName, {}).then((collection) => {
+      collection.remove(filter, { multi: true }, (err) => {
         if (err === null) {
           collection.insert(collectionData, (err2, newDocs) => {
             if (err2 === null && newDocs.length === collectionData.length) {
@@ -297,14 +297,14 @@ const DatabaseManager = {
    * Replace entire collection with the new set of data
    * @param collectionData
    * @param collectionName
-   * @param options
+   * @param filter
    */
-  replaceCollection(collectionData, collectionName, options) {
+  replaceCollection(collectionData, collectionName, filter) {
     return new Promise((resolve, reject) => {
       const replaceAll = DatabaseManager._replaceAll
         .bind(null, collectionData)
         .bind(null, collectionName)
-        .bind(null, options)
+        .bind(null, filter)
         .bind(null, resolve)
         .bind(null, reject);
       DatabaseManager.queuePromise(replaceAll);
@@ -427,7 +427,7 @@ const DatabaseManager = {
         });
   },
 
-  findAll(example, collectionName, projections) {
+  findAll(example = {}, collectionName, projections) {
     LoggerManager.log('findAll');
     return this.findAllWithProjections(example, collectionName, projections);
   },

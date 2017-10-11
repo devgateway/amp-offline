@@ -11,12 +11,14 @@ import DesktopPage from './containers/DesktopPage';
 import { ActivityPreviewPage, ActivityFormPage } from './containers/ActivityPage';
 import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './components/syncUp/SyncUp';
+import SyncUpSummaryPage from './containers/SyncUpSummaryPage';
+import UpdatePage from './containers/UpdatePage';
 import auth from './modules/security/Auth';
-import { ampStartUp } from './actions/StartUpAction';
+import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 import LoggerManager from './modules/util/LoggerManager';
-import { LOGIN_URL, SYNCUP_URL } from './utils/Constants';
+import { LOGIN_URL, SYNCUP_SUMMARY, SYNCUP_URL } from './utils/Constants';
 
 LoggerManager.log('index');
 const store = configureStore();
@@ -27,16 +29,18 @@ const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_URL];
 
 function checkAuth(nextState, replaceState) {
   LoggerManager.log('checkAuth');
+  const nextPath = nextState.location.pathname;
   if (!auth.loggedIn()) {
     replaceState({ nextPathname: nextState.location.pathname }, '/');
-  } else if (!ignoreForceSyncUpFor.includes(nextState.location.pathname) && isForceSyncUp()) {
+  } else if (!ignoreForceSyncUpFor.includes(nextPath) && !nextPath.startsWith(SYNCUP_SUMMARY) && isForceSyncUp()) {
+    LoggerManager.warn('Redirecting to sync up page');
     replaceState({ nextPathname: nextState.location.pathname }, SYNCUP_URL);
   }
 }
 initializeLanguageDirectory();
 
 initializeI18Next().then(() =>
-  ampStartUp().then(() =>
+  ampOfflineStartUp().then(() =>
     render(
       <Provider store={store}>
         <Router history={history} store={store}>
@@ -44,12 +48,15 @@ initializeI18Next().then(() =>
             <IndexRoute component={LoginPage} dispatch={store.dispatch} />
             <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
             <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} store={store} />
+            <Route path="/syncUpSummary/:id" component={SyncUpSummaryPage} onEnter={checkAuth} />
+            <Route path="/syncUpSummary" component={SyncUpSummaryPage} onEnter={checkAuth} />
             <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
             <Route path="/desktop/current" component={DesktopPage} onEnter={checkAuth} store={store} />
             <Route
               path="/activity/preview/:activityId" component={ActivityPreviewPage} onEnter={checkAuth} store={store} />
             <Route
               path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store} />
+            <Route path="/update" component={UpdatePage} store={store} />
           </Route>
         </Router>
       </Provider>,

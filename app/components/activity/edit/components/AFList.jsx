@@ -31,7 +31,7 @@ export default class AFList extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this.options = {
       onDeleteRow: this.onDeleteRow.bind(this),
       withoutNoDataText: true
@@ -125,8 +125,6 @@ export default class AFList extends Component {
   }
 
   columnFormatter(editable, cell) {
-    // TODO we use TableHeaderColumn.columnClassName to do the same thing.
-    // If won't be needed for anything else, then this method can be removed.
     if (editable) {
       return (<span className={styles.editable} >{cell}</span>);
     }
@@ -207,7 +205,8 @@ export default class AFList extends Component {
         if (rowId === content.length) {
           content.push({ rowData, cells: [] });
         }
-        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId) || rowData[childFieldName];
+        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId)
+          || rowData[childFieldName] || Math.random();
         const value = (<AFField
           fieldPath={fieldPath} parent={rowData} type={fieldType} showLabel={false} className={className} inline
           showRequired={editable} onAfterUpdate={this._afterSaveCell.bind(this, rowData, childFieldName)} />);

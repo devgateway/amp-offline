@@ -3,6 +3,7 @@ import LoggerManager from '../../modules/util/LoggerManager';
 import styles from './App.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
+import UpdateTrigger from '../update/UpdateTrigger';
 
 export default class App extends Component {
 
@@ -21,9 +22,13 @@ export default class App extends Component {
     store: React.PropTypes.object.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.disableUpdates = +process.env.DISABLE_UPDATE;
+  }
+
   render() {
     LoggerManager.log('render');
-
 
     return (
       <div className={'outerContainer'}>
@@ -41,6 +46,7 @@ export default class App extends Component {
           </div>
         </div>
         <Footer />
+        {!this.disableUpdates && <UpdateTrigger />}
       </div>
     );
   }

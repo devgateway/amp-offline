@@ -17,9 +17,15 @@ export const TEST_URL = '/test/testjsonauth';
 export const ACTIVITY_IMPORT_URL = '/activity';
 export const ACTIVITY_EXPORT_URL = '/activity/project';
 // TODO remove as part of AMPOFFLINE-270
-export const SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
-export const FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
-export const POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
+export const ACTIVITY_SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
+export const ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
+export const ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
+export const CONTACT_PULL_URL = '/contact';
+export const CONTACT_PUSH_URL = '/contact';
+export const CONTACT_SINGLE_FIELDS_TREE_URL = '/contact/fields';
+export const CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL = '/contact/ws-member-fields';
+export const CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS = '/contact/field/values';
+export const DOWNLOAD_UPDATE_BINARY_URL = '/amp/amp-offline-release';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
@@ -29,6 +35,7 @@ export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2
 
 export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
 
+export const DOWNLOAD_UPGRADE_URL = '/amp/download-upgrade'; // TODO: this url will change for sure.
 export const PLATFORM_WINDOWS = 'windows';
 export const PLATFORM_MAC_OS = 'osx';
 export const PLATFORM_REDHAT = 'redhat';

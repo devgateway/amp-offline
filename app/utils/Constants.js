@@ -7,7 +7,8 @@ export const CONNECTION_TIMEOUT = 25000;
 export const CONNECTION_FORCED_TIMEOUT = CONNECTION_TIMEOUT + 5000;
 export const MAX_RETRY_ATEMPTS = 5;
 export const ERRORS_TO_RETRY = ['ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNRESET', 'EAI_AGAIN'];
-export const ERROR_NO_AMP_SERVER = 'ECONNREFUSED';
+export const ERRORS_NO_AMP_SERVER = ['ECONNREFUSED', 'ENETUNREACH', 'ENOENT', 'ENOTFOUND', 'ENETDOWN', 'EHOSTDOWN',
+  'EHOSTUNREACH', 'ENONET'];
 export const CONNECTIVITY_CHECK_INTERVAL = '60000'; // 1 minutes
 
 export const WORKSPACE_URL = '/workspace';
@@ -15,8 +16,10 @@ export const LOGIN_URL = '/';
 export const DESKTOP_URL = '/desktop';
 export const DESKTOP_CURRENT_URL = '/desktop/current';
 export const SYNCUP_URL = '/syncUp';
+export const SYNCUP_SUMMARY = '/syncUpSummary';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
+export const UPDATE_URL = '/update';
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_WORKPACES = 'workspaces';
@@ -31,8 +34,9 @@ export const COLLECTION_LANGS = 'languages';
 export const COLLECTION_WS_SETTINGS = 'workspace-settings';
 export const COLLECTION_CURRENCY_RATES = 'currency-rates';
 export const COLLECTION_FEATURE_MANAGER = 'feature-manager';
+export const COLLECTION_CONTACTS = 'contacts';
 
-export const DB_FILE_PREFIX = './database/';
+export const DB_FILE_PREFIX = 'database';
 export const DB_FILE_EXTENSION = '.db';
 // TODO: Find a better way to store the key.
 export const AKEY = 'key';
@@ -41,10 +45,10 @@ export const DB_AUTOCOMPACT_INTERVAL_MILISECONDS = 60000;
 export const DB_DEFAULT_QUERY_LIMIT = 999999999;
 
 export const LANGUAGE_ENGLISH = 'en';
-export const FS_LOCALES_DIRECTORY = './lang/';
+export const FS_LOCALES_DIRECTORY = 'lang';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
-export const APP_DIRECTORY = './app/';
+export const APP_DIRECTORY = 'app';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -66,8 +70,12 @@ export const SYNCUP_TYPE_FEATURE_MANAGER = 'feature-manager';
 export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
 export const SYNCUP_TYPE_ACTIVITIES_PULL = 'activities';
 export const SYNCUP_TYPE_ACTIVITIES_PUSH = 'activities-push';
-export const SYNCUP_TYPE_FIELDS = 'fields';
-export const SYNCUP_TYPE_POSSIBLE_VALUES = 'possible-values-fields';
+export const SYNCUP_TYPE_ACTIVITY_FIELDS = 'activity-fields';
+export const SYNCUP_TYPE_CONTACTS_PULL = 'contacts';
+export const SYNCUP_TYPE_CONTACTS_PUSH = 'contacts-push';
+export const SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES = 'activity-possible-values-fields';
+export const SYNCUP_TYPE_CONTACT_FIELDS = 'contact-fields';
+export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fields';
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
@@ -75,6 +83,8 @@ export const SYNCUP_SYNC_REQUESTED_AT = 'sync-date';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
 export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
 export const SYNCUP_DEPENDENCY_CHECK_INTERVAL = 10;
+export const SYNCUP_DETAILS_SYNCED = 'synced';
+export const SYNCUP_DETAILS_UNSYNCED = 'unsynced';
 
 export const ACTIVITY_STATUS_DRAFT = 'ACTIVITY_STATUS_DRAFT';
 export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';
@@ -87,8 +97,8 @@ export const RATE_SAME_CURRENCY = 1;
 export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
 export const VERSION = '1.0.0';
-export const AMP_COUNTRY_LOGO = './assets/ampCountryFlag.png';
-export const ASSEST_DIRECTORY = './assets';
+export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
+export const ASSEST_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
 // Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
 export const
@@ -118,3 +128,7 @@ export const INTERNAL_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 // currently supported max & min years in AMP, i.e. from 1970-01-01 till 2050-12-31
 export const MIN_SUPPORTED_YEAR = 1970;
 export const MAX_SUPPORTED_YEAR = 2050;
+
+export const UPDATES_DIR = 'updates';
+export const CONTENT_DISPOSITION_HEADER = 'Content-Disposition';
+export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
