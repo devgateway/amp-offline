@@ -2,21 +2,16 @@
 /* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import classNames from 'classnames';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
 import IconFormatter from './IconFormatter';
 import LinkFormatter from './LinkFormatter';
-import {
-  ACTIVITY_STATUS_DRAFT,
-  ACTIVITY_STATUS_UNVALIDATED,
-  ACTIVITY_STATUS_VALIDATED
-} from '../../utils/Constants';
+import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
-import { REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
 
@@ -24,7 +19,6 @@ export default class ProjectList extends Component {
 
   static propTypes = {
     projects: PropTypes.array.isRequired,
-    name: PropTypes.string.isRequired,
     userReducer: PropTypes.object.isRequired,
     workspaceReducer: PropTypes.object.isRequired
   };
@@ -104,10 +98,6 @@ export default class ProjectList extends Component {
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
     const pagination = paginationOptions.usePagination;
-    const iconColumn = (this.props.name !== REJECTED_TAB_TITLE) &&
-    (<TableHeaderColumn
-      dataField="icon" dataFormat={ProjectList.iconFormatter.bind(this)} columnClassName={style.width_7}
-      className={style.thClassName} />);
     return (
       <div className={style.container}>
         <a role="link" onClick={this.handlerClickCleanFiltered.bind(this)} className={style.clearFilters}>
@@ -117,7 +107,9 @@ export default class ProjectList extends Component {
           data={this.props.projects} striped hover pagination={pagination} options={paginationOptions}
           containerClass={style.containerTable} tableHeaderClass={style.header} thClassName={style.thClassName}
         >
-          {iconColumn}
+          <TableHeaderColumn
+            dataField="icon" dataFormat={ProjectList.iconFormatter.bind(this)} columnClassName={style.width_7}
+            className={style.thClassName} />
           <TableHeaderColumn
             dataField={AC.AMP_ID} isKey dataAlign="center" dataSort columnClassName={style.width_8}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}

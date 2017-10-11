@@ -11,6 +11,7 @@ import {
   FUNDING_DETAILS,
   FUNDINGS,
   IS_DRAFT,
+  REJECTED_ID,
   TRANSACTION_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
@@ -113,8 +114,8 @@ const DesktopManager = {
     }
   },
 
-  getActivityCanEdit(/* item */) {
-    return true; // TODO: to be implemented.
+  getActivityCanEdit(item) {
+    return !item[REJECTED_ID];
   },
 
   getActivityAmounts(item, trnType, currentWorkspaceSettings, currencyRatesManager) {
