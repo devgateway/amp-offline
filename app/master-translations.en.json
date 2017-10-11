@@ -31,6 +31,7 @@
   "goback": "Go Back",
   "clickToPreviewActivity": "Click to preview the activity",
   "clickToEditActivity": "Click to edit the activity",
+  "clickToValidateActivity": "Click to validate the activity",
   "customTextForEmptyData": "Empty data.",
   "newDraftLegend": "New Draft. These are new activities that have been saved as drafts.",
   "newUnvalidatedLegend": "New Unvalidated. These are new activities that have never been approved by the workspace manager.",

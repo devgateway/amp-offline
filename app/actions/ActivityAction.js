@@ -13,13 +13,11 @@ import {
   CREATED_ON,
   MODIFIED_BY,
   PROJECT_TITLE,
-  TEAM
+  TEAM,
+  WORKSPACE_ID
 } from '../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
-import {
-  NOTIFICATION_ORIGIN_ACTIVITY,
-  NOTIFICATION_SEVERITY_INFO
-} from '../utils/constants/ErrorConstants';
+import { NOTIFICATION_ORIGIN_ACTIVITY, NOTIFICATION_SEVERITY_INFO } from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
@@ -27,6 +25,7 @@ import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import translate from '../utils/translate';
 import * as Utils from '../utils/Utils';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
+import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -160,7 +159,7 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
     const modifiedOn = (new Date()).toISOString();
     if (!dehydratedActivity[TEAM]) {
-      dehydratedActivity[TEAM] = teamMember['workspace-id'];
+      dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
     }
     if (!dehydratedActivity[CREATED_BY]) {
       dehydratedActivity[CREATED_BY] = teamMember.id;
@@ -170,18 +169,21 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
     }
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
-    return ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {
-      dispatch(addMessage(new Notification({
-        message: translate('activitySavedMsg'),
-        origin: NOTIFICATION_ORIGIN_ACTIVITY,
-        severity: NOTIFICATION_SEVERITY_INFO
-      })));
-      // TODO this reset is useless if we choose to stay within AF when activity is saved
-      dispatch(resetDesktop());
-      checkIfShouldSyncBeforeLogout();
-      // DO NOT return anything else! It is recorded by the reducer and refreshes AF when you choose to stay in AF
-      return savedActivity;
-    });
+
+    return ActivityStatusValidation.statusValidation(dehydratedActivity, teamMember, false).then(() => (
+      ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {
+        dispatch(addMessage(new Notification({
+          message: translate('activitySavedMsg'),
+          origin: NOTIFICATION_ORIGIN_ACTIVITY,
+          severity: NOTIFICATION_SEVERITY_INFO
+        })));
+        // TODO this reset is useless if we choose to stay within AF when activity is saved
+        dispatch(resetDesktop());
+        checkIfShouldSyncBeforeLogout();
+        // DO NOT return anything else! It is recorded by the reducer and refreshes AF when you choose to stay in AF
+        return savedActivity;
+      })
+    ));
   });
 }
 
