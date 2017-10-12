@@ -232,8 +232,8 @@ export default connect(
       logoutDismissedToSync: state.loginReducer.logoutDismissedToSync,
       currentUserHistory: syncUpReducer.historyData
         .filter(datum => datum['requested-by'] === userReducer.userData.id)
-        .slice(0, NR_SYNC_HISTORY_ENTRIES)
         .sort((a, b) => new Date(a['sync-date']) - new Date(b['sync-date']))
+        .slice(0, NR_SYNC_HISTORY_ENTRIES)
     };
   },
 
