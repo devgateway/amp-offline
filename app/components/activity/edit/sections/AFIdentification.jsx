@@ -6,20 +6,40 @@ import AFField from '../components/AFField';
 import { RICH_TEXT_AREA } from '../components/AFComponentTypes';
 import { IDENTIFICATION } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
+import * as VC from '../../../../utils/constants/ValueConstants';
 import LoggerManager from '../../../../modules/util/LoggerManager';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 
 /**
  * Identification Section
  * @author Nadejda Mandrescu
  */
 class AFIdentification extends Component {
+
   static propTypes = {
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
   };
 
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
+    // Show ministry_code only when activity_budget is enabled and has value 'On Budget'.
+    const showMinistryCode = (this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
+      && this.props.activity[AC.ACTIVITY_BUDGET]
+      && this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET);
+    this.state = {
+      showMinistryCode
+    };
+    this.onActivityBudgetUpdate = this.onActivityBudgetUpdate.bind(this);
+  }
+
+  onActivityBudgetUpdate() {
+    const showMinistryCode = this.props.activity[AC.ACTIVITY_BUDGET] &&
+      this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET;
+    this.setState({
+      showMinistryCode
+    });
   }
 
   render() {
@@ -33,7 +53,7 @@ class AFIdentification extends Component {
             </Col>
           </Row>
           <Row>
-            <Col md={5} lg={5} >
+            <Col md={6} lg={6} >
               <div>
                 <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_STATUS} />
               </div>
@@ -53,9 +73,27 @@ class AFIdentification extends Component {
                 <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_SUMMARY} />
               </div>
             </Col>
-            <Col md={5} lg={5} >
+            <Col md={6} lg={6} >
               <div>
-                <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} />
+                <AFField
+                  parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET}
+                  onAfterUpdate={this.onActivityBudgetUpdate} />
+              </div>
+              <div>
+                {(this.state.showMinistryCode) ?
+                  <AFField parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} /> : null}
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6} lg={6} >
+              <div>
+                <AFField parent={this.props.activity} fieldPath={AC.DESCRIPTION} />
+              </div>
+            </Col>
+            <Col md={6} lg={6} >
+              <div>
+                <AFField parent={this.props.activity} fieldPath={AC.PROJECT_MANAGEMENT} />
               </div>
             </Col>
           </Row>

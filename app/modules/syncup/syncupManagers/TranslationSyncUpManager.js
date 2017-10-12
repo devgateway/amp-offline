@@ -1,10 +1,10 @@
-import fs from 'fs';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import LanguageHelper from '../../helpers/LanguageHelper';
 import {
   AVAILABLE_LANGUAGES_URL,
   GET_TRANSLATIONS_URL,
-  POST_TRANSLATIONS_URL
+  POST_TRANSLATIONS_URL,
+  LAST_SYNC_TIME_PARAM
 } from '../../connectivity/AmpApiConstants';
 import {
   FS_LOCALES_DIRECTORY,
@@ -18,9 +18,7 @@ import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../../utils/constants/Err
 import TranslationManager from '../../util/TranslationManager';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import LoggerManager from '../../util/LoggerManager';
-
-const MASTER_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_MASTER_TRANSLATIONS_FILE}.`;
-const LOCAL_LANGUAGE_FILE = `${FS_LOCALES_DIRECTORY}${LANGUAGE_TRANSLATIONS_FILE}.`;
+import FileManager from '../../util/FileManager';
 
 /* eslint-disable class-methods-use-this */
 
@@ -87,9 +85,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   static detectSynchronizedTranslationFile(lang) {
     LoggerManager.log('detectSynchronizedTranslationFile');
     let ret = false;
-    const fileName = `${LOCAL_LANGUAGE_FILE}${lang}.json`;
-    if (fs.existsSync(fileName)) {
-      const stats = fs.statSync(fileName);
+    const stats = FileManager.statSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`);
+    if (stats) {
       const fileSize = stats.size;
       if (fileSize > 10) { // Just to test the file has something in it.
         ret = true;
@@ -101,8 +98,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   // TODO: use lastSyncDate when calling the EP.
   syncUpTranslations(langs) {
     LoggerManager.log('syncUpTranslations');
-    const masterTrnFileName = `${MASTER_LANGUAGE_FILE}${LANGUAGE_ENGLISH}.json`;
-    const originalMasterTrnFile = JSON.parse(fs.readFileSync(masterTrnFileName, 'utf8'));
+    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+    const originalMasterTrnFile = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
     const langIds = langs.map(value => value.id);
     /* In the first syncup we send all translations to the POST endpoint and for incremental syncups we call
      the GET endpoint. In both cases we will match the response with the "original text" from the master-file,
@@ -137,7 +134,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     return ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
-      paramsMap: { translations: langIds.join('|') }
+      paramsMap: { translations: langIds.join('|'), [LAST_SYNC_TIME_PARAM]: this._lastSyncTimestamp }
     }).then((newTranslations) => (
       this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
     ));
@@ -146,6 +143,13 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
     LoggerManager.log('updateTranslationFiles');
     const fn = (lang) => {
+      // We might need access to previous translations for this language.
+      const oldTranslationFileExists = TranslationSyncUpManager.detectSynchronizedTranslationFile(lang);
+      let oldTrnFile;
+      if (oldTranslationFileExists) {
+        oldTrnFile = JSON.parse(FileManager
+          .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
+      }
       const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
       return new Promise((resolve, reject) => {
         // Iterate the master-file copy and look for translations on this language.
@@ -154,18 +158,19 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
           const newTextObject = newTranslations[textFromMaster];
           if (newTextObject && newTextObject[lang]) {
             copyMasterTrnFile[key] = newTextObject[lang];
+          } else if (oldTranslationFileExists && oldTrnFile[key]) {
+            // Check if we have a previous translation and use it.
+            copyMasterTrnFile[key] = oldTrnFile[key];
           }
         });
 
         // Overwrite local file for this language with the new translations from server.
-        const localTrnFile = `${LOCAL_LANGUAGE_FILE}${lang}.json`;
-        fs.writeFile(localTrnFile, JSON.stringify(copyMasterTrnFile), (err) => {
-          if (err) {
-            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }));
-          } else {
-            resolve(copyMasterTrnFile);
-          }
-        });
+        const localTrnFile = `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`;
+        return FileManager.writeDataFile(JSON.stringify(copyMasterTrnFile), FS_LOCALES_DIRECTORY, localTrnFile)
+          .then(() => resolve(copyMasterTrnFile))
+          .catch(err =>
+            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }))
+          );
       });
     };
 

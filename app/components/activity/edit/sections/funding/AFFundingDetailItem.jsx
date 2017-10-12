@@ -3,6 +3,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFField from '../../components/AFField';
 import * as AF from '../../components/AFComponentTypes';
@@ -15,7 +16,8 @@ import styles from './AFFundingDetailItem.css';
 export default class AFFundingDetailItem extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    currentWorkspaceSettings: PropTypes.object.isRequired
   };
 
   static propTypes = {
@@ -24,6 +26,12 @@ export default class AFFundingDetailItem extends Component {
   };
 
   render() {
+    // When adding a new item we select the default currency like in AMP.
+    if (!this.props.fundingDetail[AC.CURRENCY].id) {
+      const currency = Object.values(this.context.activityFieldsManager.possibleValuesMap[FPC.FUNDING_CURRENCY_PATH])
+        .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
+      this.props.fundingDetail[AC.CURRENCY] = currency[0];
+    }
     return (<div className={afStyles.full_width}>
       <Grid className={styles.grid}>
         <Row>

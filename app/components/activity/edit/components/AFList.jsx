@@ -26,19 +26,21 @@ export default class AFList extends Component {
     values: PropTypes.array.isRequired,
     listPath: PropTypes.string.isRequired,
     onDeleteRow: PropTypes.func,
-    onEditRow: PropTypes.func
+    onEditRow: PropTypes.func,
+    language: PropTypes.string // Needed to update header translations.
   };
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
     this.options = {
       onDeleteRow: this.onDeleteRow.bind(this),
       withoutNoDataText: true
     };
     this.state = {
       values: undefined,
-      validationError: null
+      validationError: null,
+      language: null
     };
   }
 
@@ -56,18 +58,20 @@ export default class AFList extends Component {
     this.percentageFieldPath = this.percentageFieldDef ? `${this.props.listPath}~${this.percentageFieldDef.field_name}`
       : null;
     this.setState({
-      values: this.props.values
+      values: this.props.values,
+      language: this.props.language
     });
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      values: nextProps.values
+      values: nextProps.values,
+      language: nextProps.language
     });
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.values !== this.props.values;
+    return nextProps.values !== this.props.values || nextProps.language !== this.props.language;
   }
 
   onDeleteRow(uniqueId) {
@@ -205,7 +209,8 @@ export default class AFList extends Component {
         if (rowId === content.length) {
           content.push({ rowData, cells: [] });
         }
-        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId) || rowData[childFieldName];
+        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId)
+          || rowData[childFieldName] || Math.random();
         const value = (<AFField
           fieldPath={fieldPath} parent={rowData} type={fieldType} showLabel={false} className={className} inline
           showRequired={editable} onAfterUpdate={this._afterSaveCell.bind(this, rowData, childFieldName)} />);

@@ -99,7 +99,7 @@ const RequestConfig = {
 
   _addTranslations(paramsMap) {
     let translations = store.getState().translationReducer.languageList;
-    if (translations) {
+    if (translations && translations.length > 0) {
       translations = translations.join('|');
       if (paramsMap instanceof Map) {
         paramsMap.set(TRANSLATIONS_PARAM, translations);
@@ -115,10 +115,12 @@ const RequestConfig = {
   _paramsMapToString(paramsMap) {
     paramsMap = this._addTranslations(paramsMap);
     const kv = [];
-    if (paramsMap instanceof Map) {
-      paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
-    } else {
-      Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
+    if (paramsMap) {
+      if (paramsMap instanceof Map) {
+        paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
+      } else {
+        Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
+      }
     }
     return `?${kv.join('&')}`;
   },
@@ -151,4 +153,4 @@ const RequestConfig = {
   }
 };
 
-module.exports = RequestConfig;
+export default RequestConfig;

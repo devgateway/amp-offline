@@ -13,6 +13,7 @@ import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
+import FileManager from '../util/FileManager';
 
 // NeDB API is based on callbacks and not promises. Disabling always-return to avoid encapsulating each into a promise
 /* eslint-disable promise/always-return */
@@ -38,8 +39,7 @@ const DatabaseManager = {
     LoggerManager.log('_getCollection');
     return new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
-        filename: DB_FILE_PREFIX + name
-        + DB_FILE_EXTENSION
+        filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
       if (process.env.NODE_ENV === 'production') {
         /* newOptions.afterSerialization = self.encryptData;
@@ -427,7 +427,7 @@ const DatabaseManager = {
         });
   },
 
-  findAll(example, collectionName, projections) {
+  findAll(example = {}, collectionName, projections) {
     LoggerManager.log('findAll');
     return this.findAllWithProjections(example, collectionName, projections);
   },
