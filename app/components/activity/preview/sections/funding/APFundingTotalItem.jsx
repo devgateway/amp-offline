@@ -24,10 +24,10 @@ class APFundingTotalItem extends Component {
   render() {
     LoggerManager.log('render');
     // Note: dont translate the label because it might be a phrase composed by individually translated words.
-    let val = (this.props.dontFormatNumber === false
+    let val = (this.props.dontFormatNumber
       ? this.props.value
       : rawNumberToFormattedString(this.props.value));
-    val = (this.props.isPercentage === true ? val += '%' : val);
+    val = (this.props.isPercentage === true ? `${val}%` : val);
     return (<div className={styles.subtotal_footer}>
       <div className={styles.subtotal_footer_legend}>
         {`${this.props.label}:`}
