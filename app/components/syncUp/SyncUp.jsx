@@ -176,7 +176,7 @@ class SyncUp extends Component {
                   </caption>
                   <thead>
                     <tr>
-                      <th />
+                      <th>{translate('ID')}</th>
                       <th>{translate('completedOn')}</th>
                       <th>{translate('Status')}</th>
                     </tr>
