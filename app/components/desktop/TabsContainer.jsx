@@ -36,11 +36,8 @@ export default class TabsContainer extends Component {
             />
           ))}
         </ul>
-        <TabContent
-          activeTab={this.state.activeTab}
-          data={this.props.tabsData}
-        />
-      </div >
+        <TabContent activeTab={this.state.activeTab} data={this.props.tabsData} {...this.props} />
+      </div>
     );
   }
 }
