@@ -43,4 +43,12 @@ export const ACRONYM_IMPLEMENTING_AGENCY = 'IA';
 export const ACRONYM_BENEFICIARY_AGENCY = 'BA';
 export const ACRONYM_RESPONSIBLE_ORGANIZATION = 'RO';
 
+/** Validation status **/
+export const STARTED_APPROVED_STATUS = 'startedapproved';
+export const APPROVED_STATUS = 'approved';
+export const STARTED_STATUS = 'started';
+export const EDITED_STATUS = 'edited';
+export const NOT_APPROVED = 'not_approved';
+export const REJECTED_STATUS = 'rejected';
+
 export const ON_BUDGET = 'On Budget';

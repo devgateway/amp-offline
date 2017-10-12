@@ -109,7 +109,7 @@ export default class SyncUpRunner {
   }
 
   _run(syncRunNo, prevResult) {
-    return this._prepare(SyncUpRunner.syncRunNo).catch(error => {
+    return this._prepare(syncRunNo).catch(error => {
       // normally means connectivity loss (even though connection was available when sync up button was pressed)
       LoggerManager.error(`Sync Up run #${syncRunNo} prepare error = ${error}`);
       this._aborted = true;

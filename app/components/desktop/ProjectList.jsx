@@ -14,17 +14,17 @@ import {
   ACTIVITY_STATUS_VALIDATED
 } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
-import {
-  AMP_ID,
-  PROJECT_TITLE
-} from '../../utils/constants/ActivityConstants';
+import * as AC from '../../utils/constants/ActivityConstants';
+import * as WC from '../../utils/constants/WorkspaceConstants';
 import LoggerManager from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
 
 export default class ProjectList extends Component {
 
   static propTypes = {
-    projects: PropTypes.array.isRequired
+    projects: PropTypes.array.isRequired,
+    userReducer: PropTypes.object.isRequired,
+    workspaceReducer: PropTypes.object.isRequired
   };
 
   static linkFormatter(cell, row) {
@@ -34,8 +34,17 @@ export default class ProjectList extends Component {
   }
 
   static iconFormatter(cell, row) {
+    const teamLeadFlag = this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_MANAGER
+      || this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_APPROVER;
     return (
-      <IconFormatter cell={cell} row={row} />
+      <IconFormatter
+        cell={cell}
+        id={row.id} edit={row.edit} view={row.view} status={row.status}
+        activityTeamId={row[AC.TEAM]}
+        teamId={this.props.userReducer.teamMember[WC.WORKSPACE_ID]}
+        teamLeadFlag={teamLeadFlag}
+        wsAccessType={this.props.workspaceReducer.currentWorkspace[WC.ACCESS_TYPE]}
+        crossTeamWS={this.props.workspaceReducer.currentWorkspace[WC.CROSS_TEAM_VALIDATION]} />
     );
   }
 
@@ -83,8 +92,8 @@ export default class ProjectList extends Component {
   }
 
   handlerClickCleanFiltered() {
-    this.filter[AMP_ID].cleanFiltered();
-    this.filter[PROJECT_TITLE].cleanFiltered();
+    this.filter[AC.AMP_ID].cleanFiltered();
+    this.filter[AC.PROJECT_TITLE].cleanFiltered();
   }
 
   render() {
@@ -103,17 +112,17 @@ export default class ProjectList extends Component {
           containerClass={style.containerTable} tableHeaderClass={style.header} thClassName={style.thClassName}
         >
           <TableHeaderColumn
-            dataField="icon" dataFormat={ProjectList.iconFormatter} columnClassName={style.width_7}
+            dataField="icon" dataFormat={ProjectList.iconFormatter.bind(this)} columnClassName={style.width_7}
             className={style.thClassName} />
           <TableHeaderColumn
-            dataField={AMP_ID} isKey dataAlign="center" dataSort columnClassName={style.width_8}
+            dataField={AC.AMP_ID} isKey dataAlign="center" dataSort columnClassName={style.width_8}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}
-            dataFormat={ProjectList.textFormatter} ref={AMP_ID}
-            formatExtraData={{ label: 'id' }} >
+            dataFormat={ProjectList.textFormatter} ref={AC.AMP_ID}
+            formatExtraData={{ label: 'id' }}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField={PROJECT_TITLE} dataFormat={ProjectList.projectNameFormatter} dataSort ref={PROJECT_TITLE}
+            dataField={AC.PROJECT_TITLE} dataFormat={ProjectList.projectNameFormatter} dataSort ref={AC.PROJECT_TITLE}
             columnClassName={style.width_40} formatExtraData={{ label: 'title' }}
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
             className={style.thClassName}>

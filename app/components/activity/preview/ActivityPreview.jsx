@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { Grid, Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Grid, Row, Col } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
-import { Link } from 'react-router';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
 import * as AC from '../../../utils/constants/ActivityConstants';
@@ -12,7 +11,9 @@ import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManag
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 import LoggerManager from '../../../modules/util/LoggerManager';
-import edit from '../../../assets/images/edit_icon.svg';
+import IconFormatter from '../../desktop/IconFormatter';
+import * as WC from '../../../utils/constants/WorkspaceConstants';
+import DesktopManager from '../../../modules/desktop/DesktopManager';
 
 /**
  * Activity Preview main container
@@ -36,7 +37,9 @@ export default class ActivityPreview extends Component {
     unloadActivity: PropTypes.func.isRequired,
     params: PropTypes.shape({
       activityId: PropTypes.string.isRequired
-    }).isRequired
+    }).isRequired,
+    workspaceReducer: PropTypes.object,
+    userReducer: PropTypes.object
   };
 
   static childContextTypes = {
@@ -45,12 +48,14 @@ export default class ActivityPreview extends Component {
     currentWorkspaceSettings: PropTypes.object,
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
-    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals)
+    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
+    workspaceReducer: PropTypes.object,
+    userReducer: PropTypes.object
   };
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
   }
 
   getChildContext() {
@@ -81,7 +86,8 @@ export default class ActivityPreview extends Component {
 
     const categoryKeys = AC.AP_SECTION_IDS.map(category => category.key);
 
-    const editTooltip = (<Tooltip id="editTooltip">Edit</Tooltip>);
+    const teamLeadFlag = this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_MANAGER
+      || this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_APPROVER;
 
     return (
       <div className={styles.preview_container}>
@@ -89,15 +95,13 @@ export default class ActivityPreview extends Component {
           <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
           <span className={styles.preview_icons} >
             <ul>
-              <Link to={`/activity/edit/${activity.id}`}>
-                <li>
-                  <OverlayTrigger placement="top" overlay={editTooltip}>
-                    <object type={'image/svg+xml'} data={edit} style={{ pointerEvents: 'none' }}>
-                      {translate('activityEdit')}
-                    </object>
-                  </OverlayTrigger>
-                </li>
-              </Link>
+              <IconFormatter
+                id={activity.id} edit view={false} status={DesktopManager.getActivityStatus(activity)}
+                activityTeamId={activity[AC.TEAM].id}
+                teamId={this.props.userReducer.teamMember[WC.WORKSPACE_ID]}
+                teamLeadFlag={teamLeadFlag}
+                wsAccessType={this.props.workspaceReducer.currentWorkspace[WC.ACCESS_TYPE]}
+                crossTeamWS={this.props.workspaceReducer.currentWorkspace[WC.CROSS_TEAM_VALIDATION]} />
             </ul>
           </span>
 
