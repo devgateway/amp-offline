@@ -18,16 +18,17 @@ export function loadDesktop(workspace, teamMemberId) {
       // totals
       const currentWsSettings = ownProps().workspaceReducer.currentWorkspaceSettings;
       const ratesManager = ownProps().currencyRatesReducer.currencyRatesManager;
-      DesktopManager.generateDesktopData(workspace, teamMemberId, currentWsSettings, ratesManager).then((data) => {
-        dispatch(_loadDesktop({
-          activeProjects: data.activeProjects,
-          rejectedProjects: data.rejectedProjects,
-          tabs: data.defaultTabs
-        }));
-        return UrlUtils.forwardTo(`${DESKTOP_URL}/${workspace.id}`);
-      }).catch((error) => {
-        dispatch(errorLoadDesktop(error));
-      });
+      return DesktopManager.generateDesktopData(workspace, teamMemberId, currentWsSettings, ratesManager)
+        .then((data) => {
+          dispatch(_loadDesktop({
+            activeProjects: data.activeProjects,
+            rejectedProjects: data.rejectedProjects,
+            tabs: data.defaultTabs
+          }));
+          return UrlUtils.forwardTo(`${DESKTOP_URL}/${workspace.id}`);
+        }).catch((error) => {
+          dispatch(errorLoadDesktop(error));
+        });
     }
   };
 }
