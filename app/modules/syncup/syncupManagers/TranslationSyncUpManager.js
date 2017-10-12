@@ -3,7 +3,8 @@ import LanguageHelper from '../../helpers/LanguageHelper';
 import {
   AVAILABLE_LANGUAGES_URL,
   GET_TRANSLATIONS_URL,
-  POST_TRANSLATIONS_URL
+  POST_TRANSLATIONS_URL,
+  LAST_SYNC_TIME_PARAM
 } from '../../connectivity/AmpApiConstants';
 import {
   FS_LOCALES_DIRECTORY,
@@ -133,7 +134,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     return ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
-      paramsMap: { translations: langIds.join('|') }
+      paramsMap: { translations: langIds.join('|'), [LAST_SYNC_TIME_PARAM]: this._lastSyncTimestamp }
     }).then((newTranslations) => (
       this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
     ));

@@ -152,9 +152,6 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   _pushActivity(activity) {
     LoggerManager.log('_pushActivity');
-    // TODO remove once invalid fields are ignored by AMP
-    activity = Object.assign({}, activity);
-    delete activity[AC.CLIENT_CHANGE_ID];
     return new Promise((resolve) =>
       /*
        shouldRetry: true may be problematic if the request was received but timed out
@@ -191,6 +188,11 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData))
         .then(resolve)
         .catch(reject));
+    }
+    if (!activity[AC.AMP_ID]) {
+      // update the activity with AMP ID to be matched during pull
+      activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
+      return ActivityHelper.saveOrUpdate(activity);
     }
     return Promise.resolve();
   }
