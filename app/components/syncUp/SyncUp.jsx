@@ -16,11 +16,12 @@ import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
   NOTIFICATION_SEVERITY_WARNING
 } from '../../utils/constants/ErrorConstants';
-import { STATE_LOGOUT_DISMISS_TO_SYNC, STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
+import { STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import {
+  startSyncUp,
+  startSyncUpIfConnectionAvailable,
   dismissSyncAndChooseWorkspace,
   loadSyncUpHistory,
-  startSyncUpIfConnectionAvailable,
   STATE_SYNCUP_DISMISSED
 } from '../../actions/SyncUpAction';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
@@ -157,9 +158,7 @@ const syncConfirmationAlert = (syncUpReducer) => {
   const proceedWithWorkspace = new FollowUp({
     type: STATE_SYNCUP_DISMISSED
   }, translate('Ignore'));
-  const proceedWithSync = new FollowUp({
-    type: STATE_LOGOUT_DISMISS_TO_SYNC
-  }, translate('Sync'));
+  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Sync'));
   const actions = [proceedWithSync, syncUpReducer.forceSyncUp ? proceedWithLogout : proceedWithWorkspace];
   // generate confirmation alert configuration
   return new ConfirmationAlert(syncNotification, actions, false);
