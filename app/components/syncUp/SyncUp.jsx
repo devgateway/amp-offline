@@ -54,7 +54,8 @@ class SyncUp extends Component {
     onSyncConfirmationAlert: PropTypes.func.isRequired,
     logoutConfirmed: PropTypes.bool.isRequired,
     logoutDismissedToSync: PropTypes.bool.isRequired,
-    currentUserHistory: PropTypes.object
+    currentUserHistory: PropTypes.object,
+    loadSyncUpHistory: PropTypes.func.isRequired
   };
 
   static cancelSync() {
@@ -88,7 +89,7 @@ class SyncUp extends Component {
 
   componentWillMount() {
     // TODO: this is a temporary change to be able to adjust the page; roper solution should come from AMPOFFLINE-314
-    loadSyncUpHistory();
+    this.props.loadSyncUpHistory();
   }
 
   componentDidMount() {
@@ -101,7 +102,7 @@ class SyncUp extends Component {
     if (nextProps.syncUpReducer.syncUpInProgress !== this.props.syncUpReducer.syncUpInProgress &&
       !nextProps.syncUpReducer.syncUpInProgress
     ) {
-      loadSyncUpHistory();
+      this.props.loadSyncUpHistory();
     }
     if (nextProps.syncUpReducer.syncUpRejected) {
       const { logoutConfirmed, logoutDismissedToSync } = this.props;
@@ -238,6 +239,7 @@ export default connect(
   },
 
   dispatch => ({
-    onSyncConfirmationAlert: (syncUpReducer) => dispatch(addConfirmationAlert(syncConfirmationAlert(syncUpReducer)))
+    onSyncConfirmationAlert: (syncUpReducer) => dispatch(addConfirmationAlert(syncConfirmationAlert(syncUpReducer))),
+    loadSyncUpHistory: () => dispatch(loadSyncUpHistory())
   })
 )(SyncUp);
