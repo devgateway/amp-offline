@@ -155,9 +155,6 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   _pushActivity(activity) {
     LoggerManager.log('_pushActivity');
-    // TODO remove once invalid fields are ignored by AMP
-    activity = Object.assign({}, activity);
-    delete activity[AC.CLIENT_CHANGE_ID];
     return new Promise((resolve) =>
       /*
        shouldRetry: true may be problematic if the request was received but timed out
@@ -195,10 +192,15 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         .then(resolve)
         .catch(reject));
     }
+
     // The activity may be pushed, but the connection may be lost until we pull its latest change from AMP.
     // We could simply remove client-change-id once it is pushed successfully, but we want to use it in next iteration
     // for conflicts resolution. So for now we'll flag the activity as pushed to filter it out from next push attempt.
     activity[AC.IS_PUSHED] = true;
+    if (!activity[AC.AMP_ID]) {
+      // update the activity with AMP ID to be matched during pull
+      activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
+    }
     return ActivityHelper.saveOrUpdate(activity, false);
   }
 
