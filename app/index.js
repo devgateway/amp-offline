@@ -17,7 +17,7 @@ import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import LoggerManager from './modules/util/LoggerManager';
-import { LOGIN_URL, SYNCUP_SUMMARY, SYNCUP_URL } from './utils/Constants';
+import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_URL } from './utils/Constants';
 import SetupPage from './containers/SetupPage';
 
 LoggerManager.log('index');
@@ -27,14 +27,13 @@ export default store;
 
 const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_URL];
 
-function checkAuth(nextState, replaceState) {
+function checkAuth(nextState, replace) {
   LoggerManager.log('checkAuth');
   const nextPath = nextState.location.pathname;
   if (!auth.loggedIn()) {
-    replaceState({ nextPathname: nextState.location.pathname }, '/');
-  } else if (!ignoreForceSyncUpFor.includes(nextPath) && !nextPath.startsWith(SYNCUP_SUMMARY) && isForceSyncUp()) {
-    LoggerManager.warn('Redirecting to sync up page');
-    replaceState({ nextPathname: nextState.location.pathname }, SYNCUP_URL);
+    replace({ state: { nextPathname: nextPath }, pathname: '/' });
+  } else if (!(ignoreForceSyncUpFor.includes(nextPath) || nextPath.startsWith(SYNCUP_SUMMARY_URL)) && isForceSyncUp()) {
+    replace({ state: { nextPathname: nextPath }, pathname: SYNCUP_URL });
   }
 }
 
