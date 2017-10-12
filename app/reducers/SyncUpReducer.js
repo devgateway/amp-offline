@@ -47,7 +47,6 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
         syncUpInProgress: false,
         syncUpResults: action.actionData,
         errorMessage: '',
-        forceSyncUp: false,
         forceSyncUpMessage: ''
       });
     case STATE_SYNCUP_IN_PROCESS:
@@ -61,7 +60,7 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       return Object.assign({}, state, {
         syncUpInProgress: false,
         errorMessage: action.actionData.errorMessage,
-        forceSyncUp: action.actionData.force,
+        forceSyncUp: action.actionData.forceSyncUp,
         forceSyncUpMessage: action.actionData.warnMessage
       });
     case STATE_SYNCUP_FORCED:

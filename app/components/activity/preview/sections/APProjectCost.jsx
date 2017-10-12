@@ -15,7 +15,8 @@ import DateUtils from '../../../../utils/DateUtils';
 const APProjectCost = (fieldName) => class extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFundingTotals: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -34,11 +35,18 @@ const APProjectCost = (fieldName) => class extends Component {
   render() {
     let content = null;
     if (this.props.activityFieldsManager.isFieldPathEnabled(fieldName) === true) {
-      const amount = NumberUtils.rawNumberToFormattedString(this.getFieldValue(`${fieldName}~${AC.AMOUNT}`));
-      // TODO currency conversion
-      const currency = this.getFieldValue(`${fieldName}~${AC.CURRENCY_CODE}`);
+      const currency = this.props.activityFundingTotals._currentWorkspaceSettings.currency.code;
       const date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
-      if (this.props.activity.fundings.length) {
+      let amount = 0;
+      if (this.props.activity[AC.PPC_AMOUNT] && this.props.activity[AC.PPC_AMOUNT][0]) {
+        const ppcAsFunding = this.props.activity[AC.PPC_AMOUNT][0];
+        ppcAsFunding[AC.CURRENCY] = ppcAsFunding[AC.CURRENCY_CODE];
+        ppcAsFunding[AC.TRANSACTION_AMOUNT] = ppcAsFunding[AC.AMOUNT];
+        amount = this.props.activityFundingTotals
+          ._currencyRatesManager.convertTransactionAmountToCurrency(ppcAsFunding, currency);
+        amount = NumberUtils.rawNumberToFormattedString(amount);
+      }
+      if (this.props.activity.fundings.length > 0) {
         content = (<div>
           <div className={styles.project_cost_left}>
             <span className={styles.project_cost_title}>{translate('Cost')} </span>
