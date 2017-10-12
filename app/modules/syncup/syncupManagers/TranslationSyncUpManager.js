@@ -3,8 +3,8 @@ import LanguageHelper from '../../helpers/LanguageHelper';
 import {
   AVAILABLE_LANGUAGES_URL,
   GET_TRANSLATIONS_URL,
-  POST_TRANSLATIONS_URL,
-  LAST_SYNC_TIME_PARAM
+  LAST_SYNC_TIME_PARAM,
+  POST_TRANSLATIONS_URL
 } from '../../connectivity/AmpApiConstants';
 import {
   FS_LOCALES_DIRECTORY,
@@ -132,11 +132,13 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
         this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
       ));
     } else {
+      // TODO: usar getNewTranslationsDifference().
       const localTrnFileInLangDir = JSON.parse(FileManager
         .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`));
       const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
       if (diffKeys.length > 0) {
         const diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
+        debugger
         return this.doPostCall(langIds, diffTexts).then((newTranslations) => (
           this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
         ));
@@ -154,6 +156,23 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       body: textList,
       paramsMap: { translations: langIds.join('|') }
     });
+  }
+
+  static getNewTranslationsDifference() {
+    let diffTexts = null;
+    // TODO: las 2 lineas siguientes se repiten en otra parte.
+    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+    const originalMasterTrnFile = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
+    if (TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
+      const localTrnFileName = `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+      const localTrnFileInLangDir = JSON.parse(FileManager
+        .readTextDataFileSync(FS_LOCALES_DIRECTORY, localTrnFileName));
+      const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
+      if (diffKeys.length > 0) {
+        diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
+      }
+    }
+    return diffTexts;
   }
 
   /**
