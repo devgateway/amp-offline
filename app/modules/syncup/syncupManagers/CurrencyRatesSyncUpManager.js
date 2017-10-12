@@ -2,7 +2,11 @@ import CurrencyRatesHelper from '../../helpers/CurrencyRatesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import Utils from '../../../utils/Utils';
-import { GET_FULL_EXCHANGE_RATES, GET_INCREMENTAL_EXCHANGE_RATES } from '../../connectivity/AmpApiConstants';
+import {
+  GET_FULL_EXCHANGE_RATES,
+  GET_INCREMENTAL_EXCHANGE_RATES,
+  LAST_SYNC_TIME_PARAM
+} from '../../connectivity/AmpApiConstants';
 import { SYNCUP_TYPE_EXCHANGE_RATES } from '../../../utils/Constants';
 
 /* eslint-disable class-methods-use-this */
@@ -52,7 +56,7 @@ export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpMana
    */
   _doPartialSync(currencyRates) {
     // with the timestamp we go and fetch the partial sync
-    const paramsMap = { 'last-sync-time': this._lastSyncTimestamp };
+    const paramsMap = { [LAST_SYNC_TIME_PARAM]: this._lastSyncTimestamp };
     return ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_INCREMENTAL_EXCHANGE_RATES,
