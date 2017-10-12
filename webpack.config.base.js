@@ -83,7 +83,7 @@ export default validate({
     new webpack.DefinePlugin({
       __COMMIT_HASH__: JSON.stringify(execSync('git rev-parse --short HEAD').toString()),
       __BRANCH_NAME__: JSON.stringify(execSync('git rev-parse --abbrev-ref HEAD').toString()),
-      __PR_NR__: process.env.PR_NR,
+      __PR_NR__: JSON.stringify(process.env.PR_NR),
       __BUILD_DATE__: JSON.stringify(new Date())
     }), new StringReplacePlugin(),
   ],
