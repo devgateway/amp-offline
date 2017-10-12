@@ -155,7 +155,6 @@ export default class SyncUpRunner {
         this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
         this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
         this._contactsToPush = contactsToPush;
-        this._translationsToPush = newTranslations;
         this._hasTranslationsToPush = newTranslations && newTranslations.length > 0;
         return this._getCumulativeSyncUpChanges();
       });
@@ -192,7 +191,7 @@ export default class SyncUpRunner {
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
     changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && this._hasActivitiesToPush;
     changes[SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._hasContactsToPush;
-    changes[SYNCUP_TYPE_TRANSLATIONS] = isFirstRun && this._hasTranslationsToPush;
+    changes[SYNCUP_TYPE_TRANSLATIONS] = changes[SYNCUP_TYPE_TRANSLATIONS] || this._hasTranslationsToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
       if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined

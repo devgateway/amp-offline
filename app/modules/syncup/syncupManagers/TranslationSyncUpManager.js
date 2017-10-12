@@ -138,7 +138,6 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
       if (diffKeys.length > 0) {
         const diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
-        debugger
         return this.doPostCall(langIds, diffTexts).then((newTranslations) => (
           this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
         ));
