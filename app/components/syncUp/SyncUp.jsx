@@ -182,9 +182,9 @@ class SyncUp extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentUserHistory.map((log, index) => (
+                    {currentUserHistory.map(log => (
                       <tr key={log.id}>
-                        <td>{index + 1}</td>
+                        <td>{log.id}</td>
                         <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
                         <td>{this.constructor.getLogStatus(log)}</td>
                       </tr>
