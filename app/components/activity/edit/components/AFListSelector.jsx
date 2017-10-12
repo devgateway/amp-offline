@@ -145,7 +145,7 @@ export default class AFListSelector extends Component {
         </div>
         <AFList
           onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
-          onEditRow={this.handleEditValue.bind(this)} />
+          onEditRow={this.handleEditValue.bind(this)} language={this.context.activityFieldsManager._lang} />
         <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()}>
           <FormControl.Feedback />
           <HelpBlock>{this.props.validationError}</HelpBlock>

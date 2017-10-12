@@ -25,6 +25,7 @@ import {
 } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
 import translate from '../../utils/translate';
+import DateUtils from '../../utils/DateUtils';
 
 // TODO: Evaluate in the future whats best: to have static functions or to create instances of SyncUpManager.
 export default class SyncUpManager {
@@ -212,5 +213,25 @@ export default class SyncUpManager {
     return SyncUpManager.getLastSyncInDays().then((days) =>
       (days === undefined || days > SYNCUP_BEST_BEFORE_DAYS)
     );
+  }
+
+  static getSyncUpStatusMessage() {
+    const { didUserSuccessfulSyncUp, daysFromLastSuccessfulSyncUp, lastSuccessfulSyncUp, didSyncUp } =
+      store.getState().syncUpReducer;
+    // detect message & build notification
+    let message = null;
+    if (didUserSuccessfulSyncUp) {
+      if (daysFromLastSuccessfulSyncUp > SYNCUP_FORCE_DAYS) {
+        message = translate('tooOldSyncWarning');
+      } else {
+        const successAt = DateUtils.createFormattedDate(lastSuccessfulSyncUp[SYNCUP_SYNC_REQUESTED_AT]);
+        message = `${translate('syncWarning')} ${translate('lastSuccessfulSyncupDate').replace('%date%', successAt)}`;
+      }
+    } else if (didSyncUp) {
+      message = `${translate('syncWarning')} ${translate('allPreviousSyncUpFailed')}`;
+    } else {
+      message = translate('syncWarning');
+    }
+    return message;
   }
 }

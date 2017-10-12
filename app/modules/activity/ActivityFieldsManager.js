@@ -19,7 +19,7 @@ export default class ActivityFieldsManager {
     return newActivityFieldsManager;
   }
 
-  constructor(fieldsDef, possibleValuesCollection) {
+  constructor(fieldsDef, possibleValuesCollection, currentLanguage) {
     // TODO remove cache
     LoggerManager.log('constructor');
     this._fieldsDef = fieldsDef;
@@ -28,7 +28,7 @@ export default class ActivityFieldsManager {
       this._possibleValuesMap[pv.id] = pv['possible-options'];
     });
     this._fieldPathsEnabledStatusMap = {};
-    this._lang = LANGUAGE_ENGLISH;
+    this._lang = currentLanguage || LANGUAGE_ENGLISH;
     this._defaultLang = LANGUAGE_ENGLISH;
     this.cleanup(fieldsDef);
   }
