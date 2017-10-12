@@ -1,4 +1,11 @@
 import { app, BrowserWindow, Menu, shell } from 'electron';
+import { autoUpdater } from 'electron-updater';
+
+autoUpdater.setFeedURL('http://192.168.0.107:8080/release'); // TODO use proper url
+
+autoUpdater.on('update-downloaded', () => {
+  autoUpdater.quitAndInstall();
+});
 
 let menu;
 let template;
@@ -273,4 +280,6 @@ app.on('ready', async () => {
     menu = Menu.buildFromTemplate(template);
     mainWindow.setMenu(menu);
   }
+
+  autoUpdater.checkForUpdates();
 });
