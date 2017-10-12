@@ -51,7 +51,8 @@ export function loadActivityForActivityPreview(activityId) {
         teamMemberId: ownProps().userReducer.teamMember.id,
         possibleValuesPaths: paths,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
-        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager
+        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
+        currentLanguage: ownProps().translationReducer.lang
       })
     });
 }
@@ -66,7 +67,8 @@ export function loadActivityForActivityForm(activityId) {
         isAF: true,
         possibleValuesPaths: null,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
-        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager
+        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
+        currentLanguage: ownProps().translationReducer.lang
       }).then(data => {
         dispatch({ type: ACTIVITY_LOADED_FOR_AF });
         return data;
@@ -109,7 +111,7 @@ export function saveActivity(activity) {
 
 function _loadActivity({
                          activityId, teamMemberId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
-                         isAF
+                         isAF, currentLanguage
                        }) {
   return new Promise((resolve, reject) => {
     const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
@@ -121,7 +123,7 @@ function _loadActivity({
     ])
       .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
         fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
-        const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
+        const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
         const activityWsId = activity[TEAM] && activity[TEAM].id;
