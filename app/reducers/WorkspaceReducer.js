@@ -1,10 +1,11 @@
 import {
-  STATE_SELECT_WORKSPACE,
-  STATE_WORKSPACE_LOADING,
-  STATE_WORKSPACE_LOADED,
-  STATE_WORKSPACE_ERROR,
+  STATE_CONFIGURED_WORKSPACE_FILTER,
   STATE_CONFIGURING_WORKSPACE_FILTER,
-  STATE_CONFIGURED_WORKSPACE_FILTER
+  STATE_SELECT_WORKSPACE,
+  STATE_WORKSPACE_ERROR,
+  STATE_WORKSPACE_LOAD_DENIED,
+  STATE_WORKSPACE_LOADED,
+  STATE_WORKSPACE_LOADING
 } from '../actions/WorkspaceAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -29,6 +30,11 @@ export default function workspaceReducer(state = defaultState, action: Object) {
         workspaceList: [],
         errorMessage: action.actionData
       });
+    case STATE_WORKSPACE_LOAD_DENIED: {
+      return Object.assign({}, state, {
+        workspaceLoading: false
+      });
+    }
     case STATE_SELECT_WORKSPACE:
       return Object.assign({}, state, {
         workspaceProcessing: false,
