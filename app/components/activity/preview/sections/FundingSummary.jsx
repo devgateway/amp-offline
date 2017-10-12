@@ -90,7 +90,6 @@ class FundingSummary extends Component {
   }
 
   _buildTotalFields(measuresTotals) {
-    console.warn(measuresTotals);
     const measuresOrder = [
       { trn: VC.ACTUAL_COMMITMENTS, total: true },
       { trn: VC.PLANNED_COMMITMENTS, total: true },
