@@ -59,6 +59,7 @@
       "dist/",
       "node_modules/",
       "libs/",
+      "lang/",
       "app.html",
       "main.js",
       "main.js.map",
