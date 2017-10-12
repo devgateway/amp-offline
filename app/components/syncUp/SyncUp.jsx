@@ -18,15 +18,16 @@ import {
 } from '../../utils/constants/ErrorConstants';
 import { STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import {
-  startSyncUp,
-  startSyncUpIfConnectionAvailable,
   dismissSyncAndChooseWorkspace,
   loadSyncUpHistory,
+  startSyncUp,
+  startSyncUpIfConnectionAvailable,
   STATE_SYNCUP_DISMISSED
 } from '../../actions/SyncUpAction';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
+import { SYNCUP_HISTORY_TARGET } from '../../utils/Constants';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -64,7 +65,10 @@ class SyncUp extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.currentWorkspace) {
+    const { syncUpInProgress } = this.props.syncUpReducer;
+    // history target is set only from the menu, which means explicit user navigation
+    // otherwise brought in here to suggest / require user to sync
+    if (!syncUpInProgress && this.context.router.params.target !== SYNCUP_HISTORY_TARGET) {
       this.props.onSyncConfirmationAlert(this.props.syncUpReducer);
     }
   }

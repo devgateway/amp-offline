@@ -18,14 +18,14 @@ import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
 import LoggerManager from './modules/util/LoggerManager';
-import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_URL } from './utils/Constants';
+import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_REDIRECT_URL } from './utils/Constants';
 
 LoggerManager.log('index');
 const store = configureStore();
 export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
 
-const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_URL];
+const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_REDIRECT_URL];
 
 function checkAuth(nextState, replace) {
   LoggerManager.log('checkAuth');
@@ -33,7 +33,7 @@ function checkAuth(nextState, replace) {
   if (!auth.loggedIn()) {
     replace({ state: { nextPathname: nextPath }, pathname: '/' });
   } else if (!(ignoreForceSyncUpFor.includes(nextPath) || nextPath.startsWith(SYNCUP_SUMMARY_URL)) && isForceSyncUp()) {
-    replace({ state: { nextPathname: nextPath }, pathname: SYNCUP_URL });
+    replace({ state: { nextPathname: nextPath }, pathname: SYNCUP_REDIRECT_URL });
   }
 }
 
@@ -47,7 +47,7 @@ initializeI18Next().then(() =>
           <Route path="/" component={AppPage}>
             <IndexRoute component={LoginPage} dispatch={store.dispatch} />
             <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
-            <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} store={store} />
+            <Route path="/syncUp/:target" component={SyncUpPage} onEnter={checkAuth} store={store} />
             <Route path="/syncUpSummary/:id" component={SyncUpSummaryPage} onEnter={checkAuth} />
             <Route path="/syncUpSummary" component={SyncUpSummaryPage} onEnter={checkAuth} />
             <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />

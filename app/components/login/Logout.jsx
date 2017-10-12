@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import translate from '../../utils/translate';
-import { SYNCUP_URL } from '../../utils/Constants';
+import { SYNCUP_REDIRECT_URL } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
   NOTIFICATION_SEVERITY_WARNING
@@ -90,7 +90,7 @@ export default connect(
   dispatch => ({
     onConfirmationAlert: () => dispatch(addConfirmationAlert(logoutConfirmationAlert())),
     onLogoutDismissToSync: () => {
-      URLUtils.forwardTo(SYNCUP_URL);
+      URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
     }
   })
 )(Logout);

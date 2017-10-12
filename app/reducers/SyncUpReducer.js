@@ -1,14 +1,15 @@
 import {
-  STATE_SYNCUP_SHOW_HISTORY,
-  STATE_SYNCUP_LOADING_HISTORY,
-  STATE_SYNCUP_SEARCH_FAILED,
-  STATE_SYNCUP_IN_PROCESS,
   STATE_SYNCUP_COMPLETED,
+  STATE_SYNCUP_CONNECTION_UNAVAILABLE,
+  STATE_SYNCUP_DISMISS_COMPLETE,
+  STATE_SYNCUP_DISMISSED,
   STATE_SYNCUP_FAILED,
   STATE_SYNCUP_FORCED,
-  STATE_SYNCUP_CONNECTION_UNAVAILABLE,
-  STATE_SYNCUP_DISMISSED,
-  STATE_SYNCUP_LOG_LOADED
+  STATE_SYNCUP_IN_PROCESS,
+  STATE_SYNCUP_LOADING_HISTORY,
+  STATE_SYNCUP_LOG_LOADED,
+  STATE_SYNCUP_SEARCH_FAILED,
+  STATE_SYNCUP_SHOW_HISTORY
 } from '../actions/SyncUpAction';
 import { STATE_LOGOUT_DISMISS_TO_SYNC } from '../actions/LoginAction';
 import LoggerManager from '../modules/util/LoggerManager';
@@ -79,6 +80,12 @@ export default function syncUpReducer(state: Object = defaultState, action: Obje
       });
     case STATE_SYNCUP_DISMISSED:
       return { ...state, syncUpRejected: true };
+    case STATE_SYNCUP_DISMISS_COMPLETE:
+      return {
+        ...state,
+        syncUpRejected: false,
+        syncUpAccepted: false
+      };
     case STATE_LOGOUT_DISMISS_TO_SYNC:
       return { ...state, syncUpAccepted: true };
     case STATE_SYNCUP_LOG_LOADED:
