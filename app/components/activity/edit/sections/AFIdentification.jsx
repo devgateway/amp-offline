@@ -53,7 +53,7 @@ class AFIdentification extends Component {
             </Col>
           </Row>
           <Row>
-            <Col md={5} lg={5} >
+            <Col md={6} lg={6} >
               <div>
                 <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_STATUS} />
               </div>
@@ -73,7 +73,7 @@ class AFIdentification extends Component {
                 <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_SUMMARY} />
               </div>
             </Col>
-            <Col md={5} lg={5} >
+            <Col md={6} lg={6} >
               <div>
                 <AFField
                   parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET}
@@ -82,6 +82,18 @@ class AFIdentification extends Component {
               <div>
                 {(this.state.showMinistryCode) ?
                   <AFField parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} /> : null}
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6} lg={6} >
+              <div>
+                <AFField parent={this.props.activity} fieldPath={AC.DESCRIPTION} />
+              </div>
+            </Col>
+            <Col md={6} lg={6} >
+              <div>
+                <AFField parent={this.props.activity} fieldPath={AC.PROJECT_MANAGEMENT} />
               </div>
             </Col>
           </Row>
