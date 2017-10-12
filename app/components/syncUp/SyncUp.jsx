@@ -13,7 +13,6 @@ import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
 import {
-  SYNCUP_STATUS_SUCCESS,
   NR_SYNC_HISTORY_ENTRIES
 } from '../../utils/Constants';
 import {
@@ -31,10 +30,6 @@ import {
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
-import {
-  PARTIAL,
-  STATES_PARTIAL_SUCCESS
-} from '../../modules/syncup/SyncUpUnitState';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -61,25 +56,6 @@ class SyncUp extends Component {
   static cancelSync() {
     LoggerManager.log('cancelSync');
     LoggerManager.log('To be implemented on AMPOFFLINE-208');
-  }
-
-  static getLogStatus(log) {
-    const { units } = log;
-    const allModulesPartialSuccess = units &&
-      units.every(unit =>
-        STATES_PARTIAL_SUCCESS.indexOf(unit.state) > -1);
-
-    const atLeastOneModulePartial = units &&
-      units.some(unit =>
-        unit.state === PARTIAL);
-
-    if (allModulesPartialSuccess && atLeastOneModulePartial) {
-      return translate('Partial');
-    } else if (log.status === SYNCUP_STATUS_SUCCESS) {
-      return translate('Success');
-    } else {
-      return translate('Failed');
-    }
   }
 
   constructor() {
@@ -186,7 +162,7 @@ class SyncUp extends Component {
                       <tr key={log.id}>
                         <td>{log.id}</td>
                         <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
-                        <td>{this.constructor.getLogStatus(log)}</td>
+                        <td>{log.status}</td>
                       </tr>
                     ))}
                   </tbody>
