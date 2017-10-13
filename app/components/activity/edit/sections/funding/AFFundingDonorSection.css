@@ -10,3 +10,11 @@
   display: inline-block;
   margin-left: 5px;
 }
+
+.delete {
+  background-image: url('../../../../../assets/images/ico_del.gif');
+  background-repeat: no-repeat;
+  padding: 1em;
+  position: relative;
+  top: 14px;
+}
