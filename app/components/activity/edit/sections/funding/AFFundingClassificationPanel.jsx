@@ -1,12 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { Panel, FormGroup, Col, Grid, Row } from 'react-bootstrap';
+import { Col, FormGroup, Grid, Panel, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
-import * as AF from '../../components/AFComponentTypes';
 import afStyles from '../../ActivityForm.css';
 
 /**
@@ -50,7 +49,7 @@ export default class AFFundingClassificationPanel extends Component {
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} type={AF.NUMBER} />
+                  parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} />
               </Col>
             </Row>
             <Row>
