@@ -52,8 +52,8 @@ node {
 		}
 		stage('Dist') {
 			try {
-				sh './dist.sh'
-				sh './publish.sh ${BRANCH_NAME}'
+				sh "./dist.sh ${pr}"
+				sh "./publish.sh ${BRANCH_NAME}"
 				slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
 			} catch (e) {
 				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Failed to create and publish installers for ${changePretty}")
