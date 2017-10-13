@@ -71,6 +71,7 @@
     },
     "nsis": {
       "artifactName": "${name}-${version}.${ext}"
+      "license": "license.txt"
     },
     "linux": {
       "artifactName": "${name}-${version}-${arch}.${ext}",
