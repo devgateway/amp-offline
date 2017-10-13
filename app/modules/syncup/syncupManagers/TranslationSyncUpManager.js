@@ -3,7 +3,8 @@ import LanguageHelper from '../../helpers/LanguageHelper';
 import {
   AVAILABLE_LANGUAGES_URL,
   GET_TRANSLATIONS_URL,
-  POST_TRANSLATIONS_URL
+  POST_TRANSLATIONS_URL,
+  LAST_SYNC_TIME_PARAM
 } from '../../connectivity/AmpApiConstants';
 import {
   FS_LOCALES_DIRECTORY,
@@ -133,7 +134,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     return ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
-      paramsMap: { translations: langIds.join('|') }
+      paramsMap: { translations: langIds.join('|'), [LAST_SYNC_TIME_PARAM]: this._lastSyncTimestamp }
     }).then((newTranslations) => (
       this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
     ));
@@ -142,6 +143,13 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
     LoggerManager.log('updateTranslationFiles');
     const fn = (lang) => {
+      // We might need access to previous translations for this language.
+      const oldTranslationFileExists = TranslationSyncUpManager.detectSynchronizedTranslationFile(lang);
+      let oldTrnFile;
+      if (oldTranslationFileExists) {
+        oldTrnFile = JSON.parse(FileManager
+          .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
+      }
       const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
       return new Promise((resolve, reject) => {
         // Iterate the master-file copy and look for translations on this language.
@@ -150,6 +158,9 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
           const newTextObject = newTranslations[textFromMaster];
           if (newTextObject && newTextObject[lang]) {
             copyMasterTrnFile[key] = newTextObject[lang];
+          } else if (oldTranslationFileExists && oldTrnFile[key]) {
+            // Check if we have a previous translation and use it.
+            copyMasterTrnFile[key] = oldTrnFile[key];
           }
         });
 

@@ -8,6 +8,7 @@ import LoggerManager from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import { connectivityCheck } from './ConnectivityAction';
+import { ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -51,14 +52,12 @@ export function startSyncUp(historyData) {
   /* Save current syncup redux state because this might be a "forced" syncup and we dont want
    the user to be able to leave the page if this syncup fails. */
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
-    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
+    URLUtils.forwardTo('/syncUp');
     store.dispatch(syncUpInProgress());
+    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
 
-    return SyncUpManager.syncUpAllTypesOnDemand().then((log) =>
-      // TODO probably the way in which we will update the ui will change
-      // once we get the final version also it will change the way in which pass
-      // the historyData object
-      checkIfToForceSyncUp().then(() => {
+    return SyncUpManager.syncUpAllTypesOnDemand()
+      .then((log) => {
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
         LoggerManager.log('syncupSucessfull');
         store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
@@ -68,11 +67,12 @@ export function startSyncUp(historyData) {
           actionData: log
         });
         URLUtils.forwardTo(`/syncUpSummary/${id}`);
-        return newHistoryData;
-      })
+        return checkIfToForceSyncUp();
+      }
     ).catch((err) => {
-      const actionData = { errorMessage: err };
-      store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
+      LoggerManager.error(err);
+      const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY ? err.message : translate('defaultSyncError');
+      store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage } });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });
@@ -129,10 +129,8 @@ function syncUpInProgress() {
 }
 
 function syncConnectionUnavailable() {
-  LoggerManager.debug('syncConnectionUnavailable');
-  const msg = translate('syncConnectionError');
   return {
     type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,
-    actionData: { errorMessage: msg }
+    actionData: { errorMessage: translate('AMPUnreachableError') }
   };
 }

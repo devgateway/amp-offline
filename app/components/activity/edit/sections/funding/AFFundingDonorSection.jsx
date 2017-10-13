@@ -23,7 +23,8 @@ export default class AFFundingDonorSection extends Component {
   static propTypes = {
     fundings: PropTypes.array.isRequired,
     organization: PropTypes.object.isRequired,
-    role: PropTypes.object.isRequired
+    role: PropTypes.object.isRequired,
+    removeFundingItem: PropTypes.func.isRequired
   };
 
   constructor(props, context) {
@@ -37,7 +38,6 @@ export default class AFFundingDonorSection extends Component {
       fundingList: this.props.fundings
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
-    this._removeFundingItem = this._removeFundingItem.bind(this);
   }
 
   _addNewFundingItem() {
@@ -52,15 +52,6 @@ export default class AFFundingDonorSection extends Component {
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
     const newFundingList = this.state.fundingList;
     newFundingList.push(fundingItem);
-    this.setState({ fundingList: newFundingList });
-  }
-
-  _removeFundingItem(id) {
-    LoggerManager.log('_removeFundingItem');
-    // TODO: Display a confirm dialog to delete the funding item.
-    const newFundingList = this.state.fundingList;
-    const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
-    newFundingList.splice(index, 1);
     this.setState({ fundingList: newFundingList });
   }
 
@@ -93,7 +84,7 @@ export default class AFFundingDonorSection extends Component {
           className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
         <Button
           bsSize="xsmall" bsStyle="danger"
-          onClick={this._removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING])}>
+          onClick={this.props.removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING])}>
           <Glyphicon glyph="glyphicon glyphicon-remove" />
         </Button>
       </div>

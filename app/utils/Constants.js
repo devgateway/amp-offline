@@ -7,7 +7,8 @@ export const CONNECTION_TIMEOUT = 25000;
 export const CONNECTION_FORCED_TIMEOUT = CONNECTION_TIMEOUT + 5000;
 export const MAX_RETRY_ATEMPTS = 5;
 export const ERRORS_TO_RETRY = ['ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNRESET', 'EAI_AGAIN'];
-export const ERROR_NO_AMP_SERVER = 'ECONNREFUSED';
+export const ERRORS_NO_AMP_SERVER = ['ECONNREFUSED', 'ENETUNREACH', 'ENOENT', 'ENOTFOUND', 'ENETDOWN', 'EHOSTDOWN',
+  'EHOSTUNREACH', 'ENONET'];
 export const CONNECTIVITY_CHECK_INTERVAL = '60000'; // 1 minutes
 
 export const WORKSPACE_URL = '/workspace';
@@ -15,6 +16,7 @@ export const LOGIN_URL = '/';
 export const DESKTOP_URL = '/desktop';
 export const DESKTOP_CURRENT_URL = '/desktop/current';
 export const SYNCUP_URL = '/syncUp';
+export const SYNCUP_SUMMARY_URL = '/syncUpSummary';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
 export const UPDATE_URL = '/update';
@@ -77,6 +79,8 @@ export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fiel
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
+export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';
+export const SYNCUP_STATUS_CANCELED = 'CANCELED';
 export const SYNCUP_SYNC_REQUESTED_AT = 'sync-date';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
 export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
@@ -126,3 +130,9 @@ export const INTERNAL_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 // currently supported max & min years in AMP, i.e. from 1970-01-01 till 2050-12-31
 export const MIN_SUPPORTED_YEAR = 1970;
 export const MAX_SUPPORTED_YEAR = 2050;
+
+export const UPDATES_DIR = 'updates';
+export const CONTENT_DISPOSITION_HEADER = 'Content-Disposition';
+export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
+
+export const NR_SYNC_HISTORY_ENTRIES = 20;
