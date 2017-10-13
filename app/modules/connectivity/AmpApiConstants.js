@@ -26,8 +26,6 @@ export const CONTACT_SINGLE_FIELDS_TREE_URL = '/contact/fields';
 export const CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL = '/contact/ws-member-fields';
 export const CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS = '/contact/field/values';
 export const DOWNLOAD_UPDATE_BINARY_URL = '/amp/amp-offline-release';
-export const CHANGE_PASSWORD_URL = '/aim/showChangePassword.do';
-export const RESET_PASSWORD_URL = '/aim/showEmailForm.do';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';

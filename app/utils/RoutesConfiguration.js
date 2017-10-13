@@ -25,9 +25,7 @@ import {
   CONTACT_PULL_URL,
   CONTACT_PUSH_URL,
   CONTACT_SINGLE_FIELDS_TREE_URL,
-  CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
-  CHANGE_PASSWORD_URL,
-  RESET_PASSWORD_URL
+  CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -141,16 +139,6 @@ const routesConfiguration = [{
   url: CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
   requiredAuth: true
-}, {
-  url: CHANGE_PASSWORD_URL,
-  method: 'GET',
-  requiredAuth: false,
-  regularAmpUrl: true,
-}, {
-  url: RESET_PASSWORD_URL,
-  method: 'GET',
-  requiredAuth: false,
-  regularAmpUrl: true,
 }
 ];
 
