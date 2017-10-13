@@ -5,6 +5,8 @@
   "user": "User",
   "password": "Password",
   "login": "Log In",
+  "Change Password": "Change Password",
+  "Trouble signing in?": "Trouble signing in?",
   "AMPOfflineUnavailableError": "AMP Offline is currently unavailable. Please contact the AMP Administrator.",
   "AMPUnreachableError": "AMP Server is unreachable. Please try again later.",
   "wrongPassword": "Wrong user or password.",
