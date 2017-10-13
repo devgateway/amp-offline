@@ -98,8 +98,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   // TODO: use lastSyncDate when calling the EP.
   syncUpTranslations(langs) {
     LoggerManager.log('syncUpTranslations');
-    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
-    const originalMasterTrnFile = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
+    const originalMasterTrnFile = TranslationSyncUpManager.parseMasterTrnFile();
     const langIds = langs.map(value => value.id);
     /* In the first syncup we send all translations to the POST endpoint and for incremental syncups we call
      the GET endpoint. In both cases we will match the response with the "original text" from the master-file,
@@ -157,23 +156,6 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     });
   }
 
-  static getNewTranslationsDifference() {
-    let diffTexts = null;
-    // TODO: las 2 lineas siguientes se repiten en otra parte.
-    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
-    const originalMasterTrnFile = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
-    if (TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
-      const localTrnFileName = `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
-      const localTrnFileInLangDir = JSON.parse(FileManager
-        .readTextDataFileSync(FS_LOCALES_DIRECTORY, localTrnFileName));
-      const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
-      if (diffKeys.length > 0) {
-        diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
-      }
-    }
-    return diffTexts;
-  }
-
   /**
    * Incremental/Partial Syncup will do up to 2 calls: 1st to the POST endpoint ONLY IF the master
    * translations file has new entries NOT PRESENT in the '/lang/translations.en.json' file and
@@ -229,5 +211,25 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     // If we have more than one language we make the process in parallel to save time.
     const promises = langIds.map(fn);
     return Promise.all(promises);
+  }
+
+  static parseMasterTrnFile() {
+    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+    return JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
+  }
+
+  static getNewTranslationsDifference() {
+    let diffTexts = null;
+    const originalMasterTrnFile = TranslationSyncUpManager.parseMasterTrnFile();
+    if (TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
+      const localTrnFileName = `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+      const localTrnFileInLangDir = JSON.parse(FileManager
+        .readTextDataFileSync(FS_LOCALES_DIRECTORY, localTrnFileName));
+      const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
+      if (diffKeys.length > 0) {
+        diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
+      }
+    }
+    return diffTexts;
   }
 }
