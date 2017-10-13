@@ -32,7 +32,7 @@ export default class AFFundingClassificationPanel extends Component {
 
   render() {
     // TODO: Add 'agreement' with the same component than locations + a restriction to have only 1 value at the time,
-    // this field is not yet implemented on possible-values.
+    // this field is not yet implemented on possible-values (and is not used in Chad).
     return (<div className={afStyles.full_width}>
       <Panel
         header={translate('Funding Classification')} collapsible expanded={this.state.openFCP}

@@ -71,7 +71,8 @@
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${productName}-${version}.${ext}"
+      "artifactName": "${productName}-${version}.${ext}",
+      "license": "license.txt"
     },
     "linux": {
       "artifactName": "${productName}-${version}-${arch}.${ext}",

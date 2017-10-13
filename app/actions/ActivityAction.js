@@ -11,11 +11,12 @@ import {
   CLIENT_UPDATED_ON,
   CREATED_BY,
   CREATED_ON,
+  IS_PUSHED,
   MODIFIED_BY,
   PROJECT_TITLE,
-  TEAM,
-  WORKSPACE_ID
+  TEAM
 } from '../utils/constants/ActivityConstants';
+import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY, NOTIFICATION_SEVERITY_INFO } from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
@@ -169,9 +170,10 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
     }
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
+    delete dehydratedActivity[IS_PUSHED];
 
     return ActivityStatusValidation.statusValidation(dehydratedActivity, teamMember, false).then(() => (
-      ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {
+      ActivityHelper.saveOrUpdate(dehydratedActivity, true).then((savedActivity) => {
         dispatch(addMessage(new Notification({
           message: translate('activitySavedMsg'),
           origin: NOTIFICATION_ORIGIN_ACTIVITY,
