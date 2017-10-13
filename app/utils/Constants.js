@@ -79,6 +79,8 @@ export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fiel
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
+export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';
+export const SYNCUP_STATUS_CANCELED = 'CANCELED';
 export const SYNCUP_SYNC_REQUESTED_AT = 'sync-date';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
 export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
@@ -132,3 +134,5 @@ export const MAX_SUPPORTED_YEAR = 2050;
 export const UPDATES_DIR = 'updates';
 export const CONTENT_DISPOSITION_HEADER = 'Content-Disposition';
 export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
+
+export const NR_SYNC_HISTORY_ENTRIES = 20;
