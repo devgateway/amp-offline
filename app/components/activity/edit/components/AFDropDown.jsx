@@ -22,12 +22,12 @@ export default class AFDropDown extends Component {
     LoggerManager.log('constructor');
     this.state = {
       value: undefined,
-      propsRecieved: false
+      propsReceived: false
     };
   }
 
   componentWillMount() {
-    this.setState({ value: this.props.selectedId, propsRecieved: true });
+    this.setState({ value: this.props.selectedId, propsReceived: true });
   }
 
   componentDidUpdate(prevProps) {
@@ -57,7 +57,7 @@ export default class AFDropDown extends Component {
   }
 
   render() {
-    if (!this.state.propsRecieved) {
+    if (!this.state.propsReceived) {
       return null;
     }
     const defaultOption = <option key={-1} value={-1} >{translate('Choose One')}</option>;
