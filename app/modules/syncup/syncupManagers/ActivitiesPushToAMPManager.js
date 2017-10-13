@@ -124,7 +124,10 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     LoggerManager.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
-    return ActivityHelper.findAllNonRejectedModifiedOnClient(modifiedBySpecificWSMembers);
+    // search where IS_PUSHED is set to see why
+    const notStalePush = Utils.toMap(AC.IS_PUSHED, { $ne: true });
+    const filter = { $and: [modifiedBySpecificWSMembers, notStalePush] };
+    return ActivityHelper.findAllNonRejectedModifiedOnClient(filter);
   }
 
   /**
@@ -189,12 +192,16 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         .then(resolve)
         .catch(reject));
     }
+
+    // The activity may be pushed, but the connection may be lost until we pull its latest change from AMP.
+    // We could simply remove client-change-id once it is pushed successfully, but we want to use it in next iteration
+    // for conflicts resolution. So for now we'll flag the activity as pushed to filter it out from next push attempt.
+    activity[AC.IS_PUSHED] = true;
     if (!activity[AC.AMP_ID]) {
       // update the activity with AMP ID to be matched during pull
       activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
-      return ActivityHelper.saveOrUpdate(activity);
     }
-    return Promise.resolve();
+    return ActivityHelper.saveOrUpdate(activity, false);
   }
 
   _updateDetails({ activity, pushResult, errorData }) {
@@ -202,6 +209,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const detail = Utils.toMap(AC.PROJECT_TITLE, activity[AC.PROJECT_TITLE]);
     detail[AC.AMP_ID] = (pushResult && pushResult[AC.AMP_ID]) || activity[AC.AMP_ID];
     detail.id = (pushResult && pushResult[AC.INTERNAL_ID]) || activity.id;
+    LoggerManager.log(`Activity push ${detailType} ${detail[AC.AMP_ID] || activity.id}`);
     this._details[detailType].push(detail);
   }
 

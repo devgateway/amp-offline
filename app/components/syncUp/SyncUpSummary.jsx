@@ -53,7 +53,7 @@ class SyncUpSummary extends PureComponent {
           </div>
           <div className="col-md-8">
             {status}
-            {status === SYNCUP_STATUS_FAIL && errors.map(msg =>
+            {errors.map(msg =>
               <ErrorMessage message={msg.toString()} />
             )}
           </div>

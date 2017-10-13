@@ -37,7 +37,8 @@ describe('@@ ActivityHelper @@', () => {
 
   describe('saveOrUpdate', () =>
     it('should save initial activity', () =>
-      expect(actions.saveOrUpdate(newOfflineActivity)).to.eventually.deep.equal(newOfflineActivity)
+      expect(actions.saveOrUpdate(newOfflineActivity).then(Utils.removeIdFromItem))
+        .to.eventually.deep.equal(newOfflineActivity)
     )
   );
 
