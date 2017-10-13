@@ -6,9 +6,7 @@ import {
   STATE_LOGOUT_ASK_TO_SYNC,
   STATE_LOGOUT_DISMISS,
   STATE_LOGOUT_DISMISS_TO_SYNC,
-  STATE_LOGOUT_REQUESTED,
-  STATE_CHANGE_PASSWORD_ONLINE,
-  STATE_RESET_PASSWORD_ONLINE
+  STATE_LOGOUT_REQUESTED
 } from '../actions/LoginAction';
 import LoggerManager from '../modules/util/LoggerManager';
 
@@ -67,10 +65,6 @@ export default function loginReducer(state: Object = defaultState, action: Objec
         logoutConfirmed: false,
         isInactivityTimeout: false
       });
-    case STATE_CHANGE_PASSWORD_ONLINE:
-      return Object.assign({}, state);
-    case STATE_RESET_PASSWORD_ONLINE:
-      return Object.assign({}, state);
     default:
       return state;
   }
