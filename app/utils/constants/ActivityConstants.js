@@ -96,6 +96,7 @@ export const LAST_IMPORTED_BY = 'last_imported_by';
 export const CLIENT_CHANGE_ID = 'client-change-id';
 export const CLIENT_CREATED_ON = 'client-created-on';
 export const CLIENT_UPDATED_ON = 'client-updated-on';
+export const IS_PUSHED = 'is-pushed';
 export const PROJECT_COMMENTS = 'project_comments';
 export const LESSONS_LEARNED = 'lessons_learned';
 export const PROJECT_IMPACT = 'project_impact';

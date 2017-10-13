@@ -11,11 +11,13 @@ import ErrorMessage from '../common/ErrorMessage';
 import styles from './SyncUpSummary.css';
 import { AMP_ID } from '../../utils/constants/ActivityConstants';
 import Utils from '../../utils/Utils';
+import SyncUpManager from '../../modules/syncup/SyncUpManager';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
-    errorMessage: PropTypes.string
+    errorMessage: PropTypes.string,
+    forceSyncUp: PropTypes.bool
   };
 
   static listActivities(activities) {
@@ -51,7 +53,7 @@ class SyncUpSummary extends PureComponent {
           </div>
           <div className="col-md-8">
             {status}
-            {status === SYNCUP_STATUS_FAIL && errors.map(msg =>
+            {errors.map(msg =>
               <ErrorMessage message={msg.toString()} />
             )}
           </div>
@@ -93,13 +95,17 @@ class SyncUpSummary extends PureComponent {
   }
 
   render() {
-    const { data, errorMessage } = this.props;
+    const { data, errorMessage, forceSyncUp } = this.props;
+    const forceSyncUpError = forceSyncUp ? SyncUpManager.getSyncUpStatusMessage() : null;
     if (data) {
       const { status, errors, dateStarted } = data;
       const pulled = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).details;
       const pushed = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).details;
       const synced = (pulled.synced || []).concat(pushed.synced || []);
       const unsynced = (pulled.unsynced || []).concat(pushed.unsynced || []);
+      if (forceSyncUpError) {
+        errors.push(forceSyncUpError);
+      }
       return this.constructor.report({
         status,
         errors,
@@ -111,7 +117,7 @@ class SyncUpSummary extends PureComponent {
     } else if (errorMessage) {
       return this.constructor.report({
         status: SYNCUP_STATUS_FAIL,
-        errors: [errorMessage],
+        errors: forceSyncUpError ? [errorMessage, forceSyncUpError] : [errorMessage],
         dateStarted: 'n/a',
         dateFinished: 'n/a',
         syncedActivities: 'n/a',
