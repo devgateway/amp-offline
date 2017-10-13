@@ -1,6 +1,6 @@
 /* https://css-tricks.com/snippets/css/sticky-footer/ */
 .footer, .container:after {
-  height: 30px;
+  height: 45px;
 }
 
 .footer {
