@@ -21,6 +21,7 @@ import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
 import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
+import ElectronUpdaterManager from '../modules/update/ElectronUpdaterManager';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
@@ -46,7 +47,8 @@ const STATE_FM = 'STATE_FM';
 export function ampOfflineStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(ampOfflineInit)
-    .then(initLanguage);
+    .then(initLanguage)
+    .then(() => ElectronUpdaterManager.init());
 }
 
 export function ampOfflineInit() {

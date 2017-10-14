@@ -11,6 +11,7 @@ import {
   STATE_LAST_UPDATE_DATA_REJECTED,
   STATE_UPDATE_FAILED,
   STATE_UPDATE_PENDING,
+  STATE_UPDATE_PROGRESS_DETAILS,
   STATE_UPDATE_STARTED
 } from '../actions/UpdateAction';
 import { STATE_LOGOUT_REQUESTED } from '../actions/LoginAction';
@@ -25,6 +26,7 @@ const defaultState = {
   errorMessage: undefined,
   downloadingUpdate: false,
   downloadedUpdate: false,
+  progressData: undefined,
   fullUpdateFileName: undefined,
   installingUpdate: false,
   installUpdateFailed: false
@@ -88,6 +90,11 @@ export default function updateReducer(state = defaultState, action: Object) {
         ...state,
         installingUpdate: true,
         installUpdateFailed: false
+      };
+    case STATE_UPDATE_PROGRESS_DETAILS:
+      return {
+        ...state,
+        progressData: action.actionData
       };
     case STATE_UPDATE_FAILED:
       return {

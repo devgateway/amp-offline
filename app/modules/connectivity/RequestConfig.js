@@ -33,9 +33,7 @@ const RequestConfig = {
    in case we don't want to send id we dont have to send null or nothing*/
   getRequestConfig({ method, url, paramsMap, body, extraUrlParam }) {
     const routeConfiguration = this._getRouteConfiguration(method, url);
-    const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
-    const urlParams = this._paramsMapToString(paramsMap);
-    const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
+    const fullUrl = this.getFullURL({ method, url, paramsMap, body, extraUrlParam });
     const headers = {
       'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${this._getExtendedUserAgent(navigator.userAgent)}`
     };
@@ -72,6 +70,25 @@ const RequestConfig = {
       requestConfig.body = body;
     }
     return requestConfig;
+  },
+
+  getFullURL({ method, url, paramsMap, extraUrlParam }) {
+    const routeConfiguration = this._getRouteConfiguration(method, url);
+    const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
+    const urlParams = this._paramsMapToString(paramsMap, routeConfiguration);
+    return fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
+  },
+
+  // TODO once AMPOFFLINE-144 is merged, reuse the arch from there
+  getArch() {
+    const userAgentLowerCase = navigator.userAgent.toLowerCase();
+    let arch = os.arch();
+    if (ARCH64_NODE_OS_OPTIONS.has(arch) || ARCH64_USER_AGENT_OPTIONS.some(a64 => userAgentLowerCase.includes(a64))) {
+      arch = ARCH64;
+    } else {
+      arch = ARCH32;
+    }
+    return arch;
   },
 
   _getExtendedUserAgent(userAgent) {
@@ -112,8 +129,10 @@ const RequestConfig = {
     return paramsMap;
   },
 
-  _paramsMapToString(paramsMap) {
-    paramsMap = this._addTranslations(paramsMap);
+  _paramsMapToString(paramsMap, routeConfiguration) {
+    if (routeConfiguration.translations !== false) {
+      paramsMap = this._addTranslations(paramsMap);
+    }
     const kv = [];
     if (paramsMap) {
       if (paramsMap instanceof Map) {
@@ -122,7 +141,7 @@ const RequestConfig = {
         Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
       }
     }
-    return `?${kv.join('&')}`;
+    return kv.length ? `?${kv.join('&')}` : '';
   },
 
   _getFullBaseUrl(url, routeConfiguration) {
