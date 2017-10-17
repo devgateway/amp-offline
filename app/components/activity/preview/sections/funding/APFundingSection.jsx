@@ -9,6 +9,7 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import fundingStyles from './APFundingSection.css';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
+import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
 
 /**
  * Total Number of Fundings section
@@ -21,6 +22,9 @@ class APFundingSection extends Component {
     buildSimpleField: PropTypes.func.isRequired
   };
 
+  static contextTypes = {
+    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -78,7 +82,7 @@ class APFundingSection extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    LoggerManager.debug('render');
     const fundingList = [];
     let counter = 1;
     this.props.activity.fundings.forEach((funding) => {
