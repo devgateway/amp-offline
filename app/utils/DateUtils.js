@@ -26,6 +26,11 @@ export default class DateUtils {
   }
 
   static formatDate(date, format) {
+    /* NOTE: Depending on the country where the app is ran the timezone part of the string (ie: +0000) can cause the
+    * formatted date to be +1/-1 days, so we remove it from the string with a regex. */
+    if (date) {
+      date = date.replace(/[+|-][0-9]{4}/g, '');
+    }
     const formattedDate = Moment(date).isValid() ?
       Moment(date).format(format) : date;
     return formattedDate;
