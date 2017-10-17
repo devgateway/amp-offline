@@ -98,7 +98,7 @@ class APFundingSection extends Component {
       <APProposedProjectCost sectionPath={AC.PPC_AMOUNT} titleClass={fundingStyles.section_header} />
       <APRevisedProjectCost sectionPath={AC.RPC_AMOUNT} />
       <div>{fundingList}</div>
-      <div><APFundingTotalsSection fundings={this.props.activity.fundings} comparator={this._compareFundings} /></div>
+      <div><APFundingTotalsSection /></div>
       <div className={fundingStyles.clear} />
     </div>);
   }

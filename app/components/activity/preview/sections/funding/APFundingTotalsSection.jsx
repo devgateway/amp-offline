@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import translate from '../../../../../utils/translate';
 import APFundingTotalItem from './APFundingTotalItem';
@@ -12,11 +11,6 @@ import Utils from '../../../../../utils/Utils';
  * @author Gabriel Inchauspe
  */
 class APFundingTotalsSection extends Component {
-
-  static propTypes = {
-    fundings: PropTypes.array.isRequired,
-    comparator: PropTypes.func.isRequired
-  };
 
   static contextTypes = {
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
