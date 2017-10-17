@@ -2,7 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import Section from '../Section';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
-import { APProposedProjectCost, APRevisedProjectCost } from '../APProjectCost';
+import { APProposedProjectCost } from '../APProjectCost';
 import APFundingOrganizationSection from './APFundingOrganizationSection';
 import APFundingTotalsSection from './APFundingTotalsSection';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -96,7 +96,6 @@ class APFundingSection extends Component {
     return (<div className={fundingStyles.container}>
       <div className={fundingStyles.byline}>{getAmountsInThousandsMessage()}</div>
       <APProposedProjectCost sectionPath={AC.PPC_AMOUNT} titleClass={fundingStyles.section_header} />
-      <APRevisedProjectCost sectionPath={AC.RPC_AMOUNT} />
       <div>{fundingList}</div>
       <div><APFundingTotalsSection /></div>
       <div className={fundingStyles.clear} />
