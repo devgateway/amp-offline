@@ -100,7 +100,7 @@ export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
 export const VERSION = '1.0.0';
 export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
-export const ASSEST_DIRECTORY = 'assets';
+export const ASSETS_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
 // Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
 export const
