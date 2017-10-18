@@ -15,7 +15,9 @@ import {
   SYNCUP_DETAILS_UNSYNCED,
   SYNCUP_DIFF_LEFTOVER,
   SYNCUP_NO_DATE,
+  SYNCUP_STATUS_CANCELED,
   SYNCUP_STATUS_FAIL,
+  SYNCUP_STATUS_PARTIAL,
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
@@ -245,8 +247,8 @@ export default class SyncUpRunner {
     const latestDiff = wasSynUpPrevented ? originalDiff : syncUpManager.getDiffLeftover();
     this._syncUpDiffLeftOver.setDiff(type, latestDiff);
     const unitLeftOver = this._syncUpDiffLeftOver.getSyncUpDiff(type);
-    const status = unitLeftOver ? SYNCUP_STATUS_FAIL : SYNCUP_STATUS_SUCCESS;
     const state = this._getStateOrSetBasedOnLeftOver(type, originalDiff, unitLeftOver, syncUpManager.done);
+    const status = SS.STATE_TO_STATUS[state] || SYNCUP_STATUS_FAIL;
     if (!error && syncUpManager.errors && syncUpManager.errors.length) {
       error = syncUpManager.errors.join('. ');
     }
@@ -307,22 +309,21 @@ export default class SyncUpRunner {
    * @private
    */
   _updateResultFor2ndRunDiffFailure(syncUp1Result, error) {
-    let syncUpStatus = syncUp1Result.status;
     syncUp1Result.units.forEach(unit => {
       if (unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH) {
         const pullNeeded = {};
         pullNeeded[SYNCUP_DETAILS_UNSYNCED] = (unit.details && unit.details[SYNCUP_DETAILS_SYNCED]) || [];
         if (pullNeeded[SYNCUP_DETAILS_UNSYNCED].length) {
-          unit.status = SYNCUP_STATUS_FAIL;
-          syncUpStatus = SYNCUP_STATUS_FAIL;
-          unit.state = this._getStateIf2ndRunChangesWereExpected(unit.state);
-          unit.details = ActivitiesPullFromAMPManager.mergeDetails(unit.details, pullNeeded);
+          const activitiesPull = syncUp1Result.units.find(u => u.type === SYNCUP_TYPE_ACTIVITIES_PULL);
+          activitiesPull.state = this._getStateIf2ndRunChangesWereExpected(unit.state);
+          activitiesPull.status = SS.STATE_TO_STATUS[activitiesPull.state];
+          activitiesPull.details = ActivitiesPullFromAMPManager.mergeDetails(activitiesPull.details, pullNeeded);
         }
       } else if (unit.type === SYNCUP_TYPE_CONTACTS_PUSH && this._hasContactsToPush) {
         // TODO AMPOFFLINE-758 detect if new contacts were pushed and changes were expected
       }
     });
-    syncUp1Result.status = syncUpStatus;
+    syncUp1Result.status = this._getStatus(syncUp1Result.units);
     if (error) {
       syncUp1Result.errors.push(error);
     }
@@ -342,18 +343,37 @@ export default class SyncUpRunner {
     LoggerManager.log('_buildResult');
     // build status for any remaining type
     this._remainingSyncUpTypes.forEach(type => this._buildUnitResult(this._syncUpCollection.get(type)));
-    // now compute the final result
-    const successful = Object.keys(this._syncUpDiffLeftOver.syncUpDiff).length === 0;
-    LoggerManager.log(`SyncUp ${successful ? 'OK' : 'Fail'}`);
-    const status = successful ? SYNCUP_STATUS_SUCCESS : SYNCUP_STATUS_FAIL;
-    const syncUpDiff = successful ? null : this._syncUpDiffLeftOver.syncUpDiff;
     const unitsResult = Array.from(this._unitsResult.values());
+    const status = this._getStatus(unitsResult);
+    LoggerManager.log(`SyncUp ${status}`);
+    const syncUpDiff = status === SYNCUP_STATUS_SUCCESS ? null : this._syncUpDiffLeftOver.syncUpDiff;
     if (unitsResult.length) {
       errors = this._collectErrors(unitsResult, errors);
     }
     return SyncUpRunner.buildResult({
       status, userId: this._userId, units: unitsResult, errors, syncUpDiff, syncTimestamp: this._currentTimestamp
     });
+  }
+
+  _getStatus(unitsResult: Array) {
+    unitsResult = unitsResult.filter(unitResult => unitResult.state !== SS.NO_CHANGES);
+    // if all are reported with NO_CHANGES, then all are mapped to SUCCESS
+    if (unitsResult.length === 0) {
+      return SYNCUP_STATUS_SUCCESS;
+    }
+    // now check the statuses for available changes
+    const unitsStatuses: Set =
+      unitsResult.reduce((statuses: Set, unitResult) => statuses.add(unitResult.state), new Set());
+    if (unitsStatuses.has(SYNCUP_STATUS_CANCELED)) {
+      return SYNCUP_STATUS_CANCELED;
+    }
+    if (unitsStatuses.has(SYNCUP_STATUS_FAIL) && unitsStatuses.size === 1) {
+      return SYNCUP_STATUS_FAIL;
+    }
+    if (unitsStatuses.has(SYNCUP_STATUS_SUCCESS) && unitsStatuses.size === 1) {
+      return SYNCUP_STATUS_SUCCESS;
+    }
+    return SYNCUP_STATUS_PARTIAL;
   }
 
   static buildResult({ status, userId, units, errors, syncUpDiff, syncTimestamp }) {
