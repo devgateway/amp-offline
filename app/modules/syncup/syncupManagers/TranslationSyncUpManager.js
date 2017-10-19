@@ -110,39 +110,29 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       return this.doIncrementalSyncup(langIds, originalMasterTrnFile);
     } else {
       // Do full syncup.
-      return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile, true);
+      return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile);
     }
   }
 
   /**
-   * If 'isFullSync' is true this function sends text from ampoffline to AMP so these texts are marked as used on
-   * ampoffline and then receives the translations. If 'isFullSync' is false then we use the function to send only
+   * If 'is full sync' this function sends all text from ampoffline to AMP so these texts are marked as used on
+   * ampoffline and then receives the translations. Else we use the function to send only
    * new texts added during development.
    * @param langIds
    * @param originalMasterTrnFile
-   * @param isFullSync
    * @returns {*}
    */
-  pushTranslationsSyncUp(langIds, originalMasterTrnFile, isFullSync) {
+  pushTranslationsSyncUp(langIds, originalMasterTrnFile) {
     LoggerManager.log('pushTranslationsSyncUp');
-    if (isFullSync) {
-      const masterTexts = Object.values(originalMasterTrnFile);
-      return this.doPostCall(langIds, masterTexts).then((newTranslations) => (
+    // On full sync diffKeys is the complete originalMasterTrnFile.
+    const diffKeys = TranslationSyncUpManager.getNewTranslationsDifference();
+    if (diffKeys.length > 0) {
+      const diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
+      return this.doPostCall(langIds, diffTexts).then((newTranslations) => (
         this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
       ));
     } else {
-      // TODO: usar getNewTranslationsDifference().
-      const localTrnFileInLangDir = JSON.parse(FileManager
-        .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`));
-      const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
-      if (diffKeys.length > 0) {
-        const diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
-        return this.doPostCall(langIds, diffTexts).then((newTranslations) => (
-          this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
-        ));
-      } else {
-        return Promise.resolve();
-      }
+      return Promise.resolve();
     }
   }
 
@@ -165,7 +155,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
    */
   doIncrementalSyncup(langIds, originalMasterTrnFile) {
     LoggerManager.log('doIncrementalSyncup');
-    return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile, false).then(() => ConnectionHelper.doGet({
+    return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile).then(() => ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
       paramsMap: { translations: langIds.join('|'), [LAST_SYNC_TIME_PARAM]: this._lastSyncTimestamp }
@@ -218,8 +208,12 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     return JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
   }
 
+  /**
+   * Return new texts or the whole file in case of full sync.
+   * @returns {*}
+   */
   static getNewTranslationsDifference() {
-    let diffTexts = null;
+    let diffTexts = [];
     const originalMasterTrnFile = TranslationSyncUpManager.parseMasterTrnFile();
     if (TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
       const localTrnFileName = `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
@@ -229,6 +223,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       if (diffKeys.length > 0) {
         diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
       }
+    } else {
+      diffTexts = Object.values(originalMasterTrnFile);
     }
     return diffTexts;
   }
