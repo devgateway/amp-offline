@@ -1,11 +1,8 @@
 import { autoUpdater } from 'electron-updater';
 import { IS_DEV_MODE, IS_RENDERER_PROCESS } from '../util/ElectronApp';
-import LoggerManager from '../util/LoggerManager';
 import { VERSION } from '../../utils/Constants';
 
 const { remote } = require('electron');
-
-const logger = process.env.NODE_ENV === 'development' ? console : LoggerManager;
 
 let electronUpdater;
 
@@ -38,7 +35,6 @@ const ElectronUpdater = {
       } else {
         electronUpdater = remote.getGlobal('electronUpdater');
         // attach to tne new Logger, since in dev mode renderer console goes to chromium
-        electronUpdater.logger = logger;
         electronUpdater.currentVersion = VERSION;
         if (IS_DEV_MODE) {
           electronUpdater.currentVersion = VERSION;
@@ -49,7 +45,6 @@ const ElectronUpdater = {
   },
 
   _init() {
-    autoUpdater.logger = logger;
     autoUpdater.autoDownload = false;
     global.electronUpdater = autoUpdater;
     // TODO see why methods are not accessible in renderer process, workaround until then with:
