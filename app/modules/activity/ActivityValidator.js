@@ -281,7 +281,7 @@ export default class ActivityValidator {
     const repeating = new Set();
     const unique = new Set();
     values.forEach(item => {
-      const value = item[fieldName][HIERARCHICAL_VALUE];
+      const value = item[fieldName][HIERARCHICAL_VALUE] || item[fieldName]._value;
       if (unique.has(value)) {
         repeating.add(value);
       } else {
@@ -298,7 +298,8 @@ export default class ActivityValidator {
   noMultipleValuesValidator(values, fieldName) {
     LoggerManager.log('noMultipleValuesValidator');
     if (values && values.length > 1) {
-      return translate('multipleValuesNotAllowed').replace('%fieldName%', fieldName);
+      const friendlyFieldName = this._activityFieldsManager.getFieldLabelTranslation(fieldName);
+      return translate('multipleValuesNotAllowed').replace('%fieldName%', friendlyFieldName || fieldName);
     }
     return true;
   }
