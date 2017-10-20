@@ -41,7 +41,7 @@ const DatabaseManager = {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
-      confirm(`${process.env.MANUAL_BRANCH} - ${process.env.BRANCH}`);
+      LoggerManager.warn(`branches: ${process.env.MANUAL_BRANCH} - ${process.env.BRANCH}`);
       if (process.env.ENCRYPT_DB === 'true') {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
