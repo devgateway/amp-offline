@@ -7,7 +7,7 @@ rm -r dist
 # installer supporting 32 and 64 bit architectures.
 # Last step changes ownership of the installers from root:root to user that launched this script.
 DIST_CMD="
-    npm run build &&
+    npm run build --git_branch=$2 &&
     npm run package-win-64 && rename 's/.exe/-64.exe/' dist/*.exe;
     chown -R $(id -u):$(id -g) ."
 

@@ -41,9 +41,10 @@ const DatabaseManager = {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
-      if (process.env.NODE_ENV === 'production') {
-        /* newOptions.afterSerialization = self.encryptData;
-         newOptions.beforeDeserialization = self.decryptData;*/
+      alert(process.env.MANUAL_BRANCH + '-' + process.env.BRANCH);
+      if (process.env.ENCRYPT_DB === 'true') {
+        newOptions.afterSerialization = this.encryptData;
+        newOptions.beforeDeserialization = this.decryptData;
       }
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
     });
@@ -412,19 +413,19 @@ const DatabaseManager = {
     const projections = Object.assign({ _id: 0 });
     return DatabaseManager.findAllWithProjectionsAndOtherCriteria(
       example, collectionName, projections, sortCriteria, 0, 1)
-        .then((docs) => {
-          switch (docs.length) {
-            case 0:
-              return null;
-            case 1:
-              return docs[0];
-            default:
-              return Promise.reject(new Notification({
-                message: 'moreThanOneResultFound',
-                origin: NOTIFICATION_ORIGIN_DATABASE
-              }));
-          }
-        });
+      .then((docs) => {
+        switch (docs.length) {
+          case 0:
+            return null;
+          case 1:
+            return docs[0];
+          default:
+            return Promise.reject(new Notification({
+              message: 'moreThanOneResultFound',
+              origin: NOTIFICATION_ORIGIN_DATABASE
+            }));
+        }
+      });
   },
 
   findAll(example = {}, collectionName, projections) {
@@ -458,7 +459,7 @@ const DatabaseManager = {
   },
 
   findAllWithProjectionsAndOtherCriteria(example, collectionName, projections, sort = { id: 1 }, skip = 0,
-    limit = DB_DEFAULT_QUERY_LIMIT) {
+                                         limit = DB_DEFAULT_QUERY_LIMIT) {
     LoggerManager.log('findAllWithProjectionsAndOtherCriteria');
     return new Promise((resolve, reject) => {
       const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(

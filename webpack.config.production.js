@@ -5,6 +5,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import validate from 'webpack-validator';
+import { execSync } from 'child_process';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import merge from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -63,7 +64,10 @@ const config = validate(merge(baseConfig, {
 
     // NODE_ENV should be production so that modules do not perform certain development checks
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      'process.env.ENCRYPT_DB': JSON.stringify('true'),
+      'process.env.MANUAL_BRANCH': JSON.stringify(execSync('git rev-parse --abbrev-ref HEAD').toString()),
+      'process.env.BRANCH': JSON.stringify(process.env.git_branch)
     }),
 
     // Minify without warning messages and IE8 support
