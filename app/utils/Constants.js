@@ -1,3 +1,5 @@
+const pkg = require('../../package.json');
+
 export const SERVER_URL = '__SERVER_URL__';
 export const BASE_REST_URL = '/rest';
 export const PROTOCOL = '__SERVER_PROTOCOL__';
@@ -80,6 +82,8 @@ export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fiel
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
+export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';
+export const SYNCUP_STATUS_CANCELED = 'CANCELED';
 export const SYNCUP_SYNC_REQUESTED_AT = 'sync-date';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
 export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
@@ -97,7 +101,7 @@ export const DEFAULT_CURRENCY = 'USD';
 export const RATE_SAME_CURRENCY = 1;
 export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
-export const VERSION = '1.0.0';
+export const VERSION = pkg.version;
 export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
 export const ASSEST_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
@@ -133,3 +137,5 @@ export const MAX_SUPPORTED_YEAR = 2050;
 export const UPDATES_DIR = 'updates';
 export const CONTENT_DISPOSITION_HEADER = 'Content-Disposition';
 export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
+
+export const NR_SYNC_HISTORY_ENTRIES = 20;

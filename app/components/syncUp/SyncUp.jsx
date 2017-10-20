@@ -13,6 +13,9 @@ import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
 import {
+  NR_SYNC_HISTORY_ENTRIES
+} from '../../utils/Constants';
+import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
   NOTIFICATION_SEVERITY_WARNING
 } from '../../utils/constants/ErrorConstants';
@@ -46,7 +49,9 @@ class SyncUp extends Component {
     currentWorkspace: PropTypes.object,
     onSyncConfirmationAlert: PropTypes.func.isRequired,
     logoutConfirmed: PropTypes.bool.isRequired,
-    logoutDismissedToSync: PropTypes.bool.isRequired
+    logoutDismissedToSync: PropTypes.bool.isRequired,
+    currentUserHistory: PropTypes.object,
+    loadSyncUpHistory: PropTypes.func.isRequired
   };
 
   static cancelSync() {
@@ -61,7 +66,7 @@ class SyncUp extends Component {
 
   componentWillMount() {
     // TODO: this is a temporary change to be able to adjust the page; roper solution should come from AMPOFFLINE-314
-    loadSyncUpHistory();
+    this.props.loadSyncUpHistory();
   }
 
   componentDidMount() {
@@ -77,7 +82,7 @@ class SyncUp extends Component {
     if (nextProps.syncUpReducer.syncUpInProgress !== this.props.syncUpReducer.syncUpInProgress &&
       !nextProps.syncUpReducer.syncUpInProgress
     ) {
-      loadSyncUpHistory();
+      this.props.loadSyncUpHistory();
     }
     if (nextProps.syncUpReducer.syncUpRejected) {
       const { logoutConfirmed, logoutDismissedToSync } = this.props;
@@ -120,7 +125,7 @@ class SyncUp extends Component {
 
   render() {
     LoggerManager.log('render');
-    const { syncUpReducer } = this.props;
+    const { syncUpReducer, currentUserHistory } = this.props;
     const { loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (
       <div className={styles.container}>
@@ -140,6 +145,36 @@ class SyncUp extends Component {
         </div>
         <hr />
         {this.selectContentElementToDraw()}
+
+        {!!currentUserHistory.length &&
+          <div className="container">
+            <div className="row">
+              <div className="col-sm-12">
+                <table className="table table-stripped">
+                  <caption>
+                    <h3>{translate('History')}</h3>
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>{translate('ID')}</th>
+                      <th>{translate('completedOn')}</th>
+                      <th>{translate('Status')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentUserHistory.map(log => (
+                      <tr key={log.id}>
+                        <td>{log.id}</td>
+                        <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
+                        <td>{log.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
 
         <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync} />
       </div>
@@ -169,13 +204,22 @@ const syncConfirmationAlert = (syncUpReducer) => {
 };
 
 export default connect(
-  state => ({
-    syncUpReducer: state.syncUpReducer,
-    currentWorkspace: state.workspaceReducer.currentWorkspace,
-    logoutConfirmed: state.loginReducer.logoutConfirmed,
-    logoutDismissedToSync: state.loginReducer.logoutDismissedToSync
-  }),
+  state => {
+    const { syncUpReducer, userReducer } = state;
+    return {
+      syncUpReducer,
+      currentWorkspace: state.workspaceReducer.currentWorkspace,
+      logoutConfirmed: state.loginReducer.logoutConfirmed,
+      logoutDismissedToSync: state.loginReducer.logoutDismissedToSync,
+      currentUserHistory: syncUpReducer.historyData
+        .filter(datum => datum['requested-by'] === userReducer.userData.id)
+        .sort((a, b) => new Date(b['sync-date']) - new Date(a['sync-date']))
+        .slice(0, NR_SYNC_HISTORY_ENTRIES)
+    };
+  },
+
   dispatch => ({
-    onSyncConfirmationAlert: (syncUpReducer) => dispatch(addConfirmationAlert(syncConfirmationAlert(syncUpReducer)))
+    onSyncConfirmationAlert: (syncUpReducer) => dispatch(addConfirmationAlert(syncConfirmationAlert(syncUpReducer))),
+    loadSyncUpHistory: () => dispatch(loadSyncUpHistory())
   })
 )(SyncUp);
