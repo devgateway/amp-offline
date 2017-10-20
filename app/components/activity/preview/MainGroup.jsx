@@ -51,7 +51,9 @@ export default class MainGroup extends Component {
       <APFundingSources sectionPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} fieldValueClass={styles.box_field_value} />
       <APFundingSection
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} sectionPath={AC.FUNDINGS} />
-      <APRelatedOrganizations />
+      <APRelatedOrganizations
+        fieldNameClass={styles.sector_title} fieldValueClass={''}
+        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APIssues sectionPath={AC.ISSUES} />
     </div>);
   }
