@@ -18,6 +18,16 @@ import * as Utils from '../../utils/Utils';
 const TranslationManager = {
 
   /**
+   * Initializes translations
+   * @param isSetupComplete
+   * @return {*}
+   */
+  initializeTranslations(isSetupComplete) {
+    this.initializeLanguageDirectory(isSetupComplete);
+    return this.initializeI18Next();
+  },
+
+  /**
    * We have to create the folder that will contain each translation file because it cant be done
    * when we package the app.
    */

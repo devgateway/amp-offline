@@ -2,16 +2,7 @@
 import store from '../index';
 import { connectivityCheck } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
-import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
-import {
-  BASE_PORT,
-  BASE_REST_URL,
-  CONNECTION_FORCED_TIMEOUT,
-  CONNECTION_TIMEOUT,
-  CONNECTIVITY_CHECK_INTERVAL,
-  PROTOCOL,
-  SERVER_URL
-} from '../utils/Constants';
+import { CONNECTIVITY_CHECK_INTERVAL } from '../utils/Constants';
 import LoggerManager from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
@@ -20,7 +11,7 @@ import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
 import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
-import { initializeI18Next, initializeLanguageDirectory } from '../modules/util/TranslationManager';
+import TranslationManager from '../modules/util/TranslationManager';
 import { checkIfSetupComplete, loadConnectionInformation } from './SetupAction';
 
 export const TIMER_START = 'TIMER_START';
@@ -44,10 +35,7 @@ const STATE_FM = 'STATE_FM';
 export function ampOfflineStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(checkIfSetupComplete)
-    .then(isSetupComplete => {
-      initializeLanguageDirectory(isSetupComplete);
-      return initializeI18Next();
-    })
+    .then(isSetupComplete => TranslationManager.initializeTranslations(isSetupComplete))
     .then(ampOfflineInit)
     .then(initLanguage);
 }

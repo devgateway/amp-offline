@@ -96,10 +96,10 @@ const SetupManager = {
         setupConfigSetting.value = setupConfig;
         return ClientSettingsHelper.saveOrUpdateSetting(setupConfigSetting);
       })
-      .then(setupConfigSetting => {
+      .then(() => {
         // cleanup temporary setup translations
         TranslationManager.removeAllTranslationFiles();
-        return setupConfigSetting;
+        return TranslationManager.initializeTranslations(true);
       });
   }
 

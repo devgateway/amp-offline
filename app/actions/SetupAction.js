@@ -82,11 +82,10 @@ function testConnectivity(setupConfig) {
   let lastIndex = 0;
   return setupConfig.urls.reduce((currentPromise, url, index) => {
     url = URLUtils.normalizeUrl(url);
-    setupConfig.urls[index] = url;
     return currentPromise
-      .then((connectivityStatus) => {
+      .then(({ connectivityStatus }) => {
         lastIndex = index;
-        if (index > 0 && connectivityStatus.isAmpAvailable) {
+        if (connectivityStatus && connectivityStatus.isAmpAvailable) {
           // at least one url worked, halt here
           return Promise.resolve(connectivityStatus);
         }
@@ -94,20 +93,28 @@ function testConnectivity(setupConfig) {
       })
       .catch(() => testAMPUrl(url));
   }, Promise.resolve())
-    .then((connectivityStatus) => {
-      if (connectivityStatus.isAmpAvailable) {
+    .then(({ connectivityStatus, fixedUrl }) => {
+      if (connectivityStatus && connectivityStatus.isAmpAvailable) {
         // set the good url to be the first one to use
+        setupConfig.urls[lastIndex] = fixedUrl;
         const goodUrl = setupConfig.urls[lastIndex];
         setupConfig.urls = [goodUrl].concat(setupConfig.urls.filter(u => u !== goodUrl));
         return Promise.resolve(goodUrl);
       }
-      return Promise.reject(translate('AMPUnreachableError'));
+      return Promise.reject(translate('urlNotWorking'));
     });
 }
 
 function testAMPUrl(url) {
-  configureConnectionInformation(SetupManager.buildConnectionInformation(url));
-  return connectivityCheck();
+  return URLUtils.getPossibleUrlSetupFixes(url).reduce((currentPromise, fixedUrl) =>
+    currentPromise.then(result => {
+      if (result && result.connectivityStatus && result.connectivityStatus.isAmpAvailable) {
+        return Promise.resolve(result);
+      }
+      configureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl));
+      return connectivityCheck().then(connectivityStatus => ({ connectivityStatus, fixedUrl }));
+    })
+  , Promise.resolve());
 }
 
 export function loadSetupOptions() {
