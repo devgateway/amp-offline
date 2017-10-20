@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable no-alert */
 import React, { Component, PropTypes } from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
 import AFSection from './AFSection';
@@ -34,6 +35,7 @@ class AFFunding extends Component {
       fundingList: []
     };
     this.handleDonorSelect = this.handleDonorSelect.bind(this);
+    this.removeFundingItem = this.removeFundingItem.bind(this);
   }
 
   componentWillMount() {
@@ -90,11 +92,12 @@ class AFFunding extends Component {
 
   addFundingTabs() {
     if (this.state.fundingList) {
-      // Group fundings for the same funding organization and role.
+      // Group fundings for the same funding organization and role (if enabled).
       const groups = [];
       this.state.fundingList.forEach(f => {
+        // If source_role is disabled i[AC.SOURCE_ROLE] will be undefined so we ignore it.
         if (!groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
-            && i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id))) {
+            && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)))) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
           groups.push({
             [AC.FUNDING_DONOR_ORG_ID]: f[AC.FUNDING_DONOR_ORG_ID],
@@ -104,28 +107,40 @@ class AFFunding extends Component {
         }
         return groups;
       });
-      return groups.map((funding) => {
-        // If source_role is disabled then the role is always "Donor".
-        let sourceRole;
-        if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
-          sourceRole = funding[AC.SOURCE_ROLE];
-        } else {
-          const options = this.context.activityFieldsManager
-            .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
-          sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
-        }
-        return (<Tab
-          eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
-          title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
-          <AFFundingDonorSection
-            fundings={this.state.fundingList}
-            organization={funding[AC.FUNDING_DONOR_ORG_ID]}
-            role={sourceRole}
-          />
-        </Tab>);
-      });
+      return groups.sort((i, j) => (i[AC.FUNDING_DONOR_ORG_ID].value > j[AC.FUNDING_DONOR_ORG_ID].value))
+        .map((funding) => {
+          // If source_role is disabled then the role is always "Donor".
+          let sourceRole;
+          if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
+            sourceRole = funding[AC.SOURCE_ROLE];
+          } else {
+            const options = this.context.activityFieldsManager
+              .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
+            sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
+          }
+          return (<Tab
+            eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
+            title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
+            <AFFundingDonorSection
+              fundings={this.state.fundingList}
+              organization={funding[AC.FUNDING_DONOR_ORG_ID]}
+              role={sourceRole}
+              removeFundingItem={this.removeFundingItem}
+            />
+          </Tab>);
+        });
     }
     return null;
+  }
+
+  removeFundingItem(id) {
+    LoggerManager.log('_removeFundingItem');
+    if (confirm(translate('deleteFundingItem'))) {
+      const newFundingList = this.state.fundingList;
+      const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      newFundingList.splice(index, 1);
+      this.setState({ fundingList: newFundingList });
+    }
   }
 
   generateOverviewTabContent() {

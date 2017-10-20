@@ -34,7 +34,8 @@ const RequestConfig = {
   getRequestConfig({ method, url, paramsMap, body, extraUrlParam }) {
     const routeConfiguration = this._getRouteConfiguration(method, url);
     const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
-    const urlParams = this._paramsMapToString(paramsMap);
+    const addTranslations = routeConfiguration.regularAmpUrl !== true;
+    const urlParams = this._paramsMapToString(paramsMap, addTranslations);
     const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
     const headers = {
       'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${this._getExtendedUserAgent(navigator.userAgent)}`
@@ -99,7 +100,7 @@ const RequestConfig = {
 
   _addTranslations(paramsMap) {
     let translations = store.getState().translationReducer.languageList;
-    if (translations) {
+    if (translations && translations.length > 0) {
       translations = translations.join('|');
       if (paramsMap instanceof Map) {
         paramsMap.set(TRANSLATIONS_PARAM, translations);
@@ -112,15 +113,20 @@ const RequestConfig = {
     return paramsMap;
   },
 
-  _paramsMapToString(paramsMap) {
-    paramsMap = this._addTranslations(paramsMap);
-    const kv = [];
-    if (paramsMap instanceof Map) {
-      paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
-    } else {
-      Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
+  _paramsMapToString(paramsMap, addTranslations) {
+    if (addTranslations) {
+      paramsMap = this._addTranslations(paramsMap);
     }
-    return `?${kv.join('&')}`;
+    const kv = [];
+    if (paramsMap) {
+      if (paramsMap instanceof Map) {
+        paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
+      } else {
+        Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
+      }
+      return `?${kv.join('&')}`;
+    }
+    return '';
   },
 
   _getFullBaseUrl(url, routeConfiguration) {
@@ -151,4 +157,4 @@ const RequestConfig = {
   }
 };
 
-module.exports = RequestConfig;
+export default RequestConfig;

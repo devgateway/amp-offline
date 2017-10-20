@@ -1,6 +1,4 @@
 import Backend from 'i18next-sync-fs-backend';
-import fs from 'fs';
-import path from 'path';
 import i18next from 'i18next';
 import {
   APP_DIRECTORY,
@@ -14,6 +12,8 @@ import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_I18NEXT } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';
 import LoggerManager from '../../modules/util/LoggerManager';
+import FileManager from './FileManager';
+import * as Utils from '../../utils/Utils';
 
 const TranslationManager = {
 
@@ -22,48 +22,33 @@ const TranslationManager = {
    * when we package the app.
    */
   initializeLanguageDirectory() {
-    LoggerManager.log('initializeLanguageDirectory');
-    let langDir = '';
-    let rootDir = '';
-    if (process.env.NODE_ENV === 'test') {
-      rootDir = `${__dirname.substring(0, __dirname.length - 'modules\\util'.length)}`;
-    } else if (process.env.NODE_ENV === 'production') {
-      // We cant trust __dirname at this point.
-      rootDir = `${process.resourcesPath.substring(0, process.resourcesPath.length - 'resources'.length)}`;
-    }
-    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
-      langDir = path.resolve(rootDir, FS_LOCALES_DIRECTORY);
-    } else {
-      langDir = FS_LOCALES_DIRECTORY;
-    }
-    // Create directory.
-    if (!fs.existsSync(langDir)) {
-      fs.mkdirSync(langDir);
-    }
+    console.log('initializeLanguageDirectory');
+    FileManager.createDataDir(FS_LOCALES_DIRECTORY);
     // Copy master translations file.
     const masterFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
     let masterTranslationsFileName;
     if (process.env.NODE_ENV === 'production') {
       masterTranslationsFileName = `${process.resourcesPath}/app.asar/${masterFileName}`;
     } else if (process.env.NODE_ENV === 'test') {
-      masterTranslationsFileName = path.resolve(APP_DIRECTORY, masterFileName);
+      masterTranslationsFileName = FileManager.getFullPath(APP_DIRECTORY, masterFileName);
     } else {
-      masterTranslationsFileName = path.resolve(APP_DIRECTORY, masterFileName);
+      masterTranslationsFileName = FileManager.getFullPath(APP_DIRECTORY, masterFileName);
     }
-    const masterTranslationsFile = JSON.parse(fs.readFileSync(masterTranslationsFileName, 'utf8'));
-    fs.writeFileSync(path.resolve(langDir, masterFileName), JSON.stringify(masterTranslationsFile));
+    FileManager.copyDataFileSync(masterTranslationsFileName, FS_LOCALES_DIRECTORY, masterFileName);
   },
 
   getListOfLocalLanguages(restart: false) {
     LoggerManager.log('getListOfLocalLanguages');
     return new Promise((resolve, reject) => {
-      const files = fs.readdirSync(FS_LOCALES_DIRECTORY);
-      const langs = files.filter((item) =>
-        item.match(/^((translations.)[a-z]{2}(.json))/ig)).map((item) => item.substr(13, 2));
+      const files = FileManager.readdirSync(FS_LOCALES_DIRECTORY);
+      const langs = Array.from(new Set(files.map(item => item.match(/^(.*(translations.)([a-z]{2})(.json))/))
+        .map(item => item[3])).values());
       // We want to reinitialize the i18next module with new local transaction files.
       if (restart) {
+        LoggerManager.log('getListOfLocalLanguages:restart');
         return this.initializeI18Next().then(() => (resolve(langs))).catch(reject);
       }
+      LoggerManager.log('getListOfLocalLanguages:resolve');
       resolve(langs);
     });
   },
@@ -74,6 +59,8 @@ const TranslationManager = {
       const settingsFile = LocalizationSettings.getDefaultConfig();
       // Load i18n config file.
       const i18nOptions = settingsFile.I18N.OPTIONS[process.env.NODE_ENV];
+      const loadPath = Utils.toMap('loadPath', FileManager.getFullPath(FS_LOCALES_DIRECTORY, '{{ns}}.{{lng}}.json'));
+      i18nOptions.backend = loadPath;
       // Check if we have to use the master config file or we have sync files for translations.
       if (!TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
         i18nOptions.ns = [LANGUAGE_MASTER_TRANSLATIONS_FILE];
@@ -107,8 +94,7 @@ const TranslationManager = {
 
   removeLanguageFile(lang) {
     LoggerManager.log('removeLanguageFile');
-    const file = `${FS_LOCALES_DIRECTORY}${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`;
-    fs.unlink(file);
+    FileManager.deleteFile(FileManager.getFullPath(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
   }
 };
 

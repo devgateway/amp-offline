@@ -61,7 +61,8 @@ class AFDateAntDesign extends Component {
   }
 
   onDateChange(date: Moment) {
-    this.handleChange(date, date ? date.toISOString() : null);
+    // Remove the 'Z' and add +0000 (not +00:00) to match API validation.
+    this.handleChange(date, date ? `${date.toISOString().substring(0, date.toISOString().length - 1)}+0000` : null);
   }
 
   handleChange(date, value) {

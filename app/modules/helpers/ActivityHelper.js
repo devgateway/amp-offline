@@ -118,15 +118,16 @@ const ActivityHelper = {
   /**
    * Saves the new activity or updates the existing
    * @param activity
+   * @param isDiffChange if this is a difference compared to AMP and should be tracked with new client change id
    * @return {Promise}
    */
-  saveOrUpdate(activity) {
+  saveOrUpdate(activity, isDiffChange) {
     LoggerManager.log('saveOrUpdate');
-    this._setOrUpdateIds(activity);
+    this._setOrUpdateIds(activity, isDiffChange);
     return DatabaseManager.saveOrUpdate(activity.id, activity, COLLECTION_ACTIVITIES);
   },
 
-  _setOrUpdateIds(activity) {
+  _setOrUpdateIds(activity, isDiffChange = false) {
     LoggerManager.log('_setOrUpdateIds');
     // if this activity version is not yet available offline
     if (activity.id === undefined) {
@@ -140,7 +141,9 @@ const ActivityHelper = {
         activity[AC.CLIENT_CHANGE_ID] = activity.id;
       }
     } else {
-      activity[AC.CLIENT_CHANGE_ID] = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
+      if (isDiffChange) {
+        activity[AC.CLIENT_CHANGE_ID] = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
+      }
       if (activity[AC.REJECTED_ID]) {
         activity.id = `${activity.id}-${activity[AC.CLIENT_CHANGE_ID]}`;
       }
@@ -151,11 +154,12 @@ const ActivityHelper = {
   /**
    * Saves a collection of activities
    * @param activities
+   * @param isDiffChange if this is a difference compared to AMP and should be tracked with new client change id
    * @return {Promise}
    */
-  saveOrUpdateCollection(activities) {
+  saveOrUpdateCollection(activities, isDiffChange) {
     LoggerManager.log('saveOrUpdateCollection');
-    activities.forEach(this._setOrUpdateIds);
+    activities.forEach(this._setOrUpdateIds, isDiffChange);
     return DatabaseManager.saveOrUpdateCollection(activities, COLLECTION_ACTIVITIES);
   },
 

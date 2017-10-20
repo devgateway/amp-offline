@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component, PropTypes } from 'react';
-import { Button, Glyphicon, Panel } from 'react-bootstrap';
+import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import LoggerManager from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
@@ -23,7 +24,8 @@ export default class AFFundingDonorSection extends Component {
   static propTypes = {
     fundings: PropTypes.array.isRequired,
     organization: PropTypes.object.isRequired,
-    role: PropTypes.object.isRequired
+    role: PropTypes.object.isRequired,
+    removeFundingItem: PropTypes.func.isRequired
   };
 
   constructor(props, context) {
@@ -37,7 +39,6 @@ export default class AFFundingDonorSection extends Component {
       fundingList: this.props.fundings
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
-    this._removeFundingItem = this._removeFundingItem.bind(this);
   }
 
   _addNewFundingItem() {
@@ -52,15 +53,6 @@ export default class AFFundingDonorSection extends Component {
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
     const newFundingList = this.state.fundingList;
     newFundingList.push(fundingItem);
-    this.setState({ fundingList: newFundingList });
-  }
-
-  _removeFundingItem(id) {
-    LoggerManager.log('_removeFundingItem');
-    // TODO: Display a confirm dialog to delete the funding item.
-    const newFundingList = this.state.fundingList;
-    const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
-    newFundingList.splice(index, 1);
     this.setState({ fundingList: newFundingList });
   }
 
@@ -91,11 +83,11 @@ export default class AFFundingDonorSection extends Component {
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
           className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
-        <Button
-          bsSize="xsmall" bsStyle="danger"
-          onClick={this._removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING])}>
-          <Glyphicon glyph="glyphicon glyphicon-remove" />
-        </Button>
+        <div className={styles.header_small_item}>
+          <a
+            onClick={this.props.removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING])}
+            className={styles.delete} href={null} />
+        </div>
       </div>
     </div>);
   }

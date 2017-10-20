@@ -5,6 +5,7 @@ import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { TEST_URL } from '../connectivity/AmpApiConstants';
 import SyncUpHelper from '../helpers/SyncUpHelper';
 import { loadAllLanguages } from '../../actions/TranslationAction';
+import { loadWorkspaces } from '../../actions/WorkspaceAction';
 import store from '../../index';
 import {
   SYNCUP_BEST_BEFORE_DAYS,
@@ -23,6 +24,8 @@ import {
   loadGlobalSettings
 } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
+import translate from '../../utils/translate';
+import DateUtils from '../../utils/DateUtils';
 
 // TODO: Evaluate in the future whats best: to have static functions or to create instances of SyncUpManager.
 export default class SyncUpManager {
@@ -91,6 +94,12 @@ export default class SyncUpManager {
     const startDate = new Date();
     return this._startSyncUp()
       .then(result => {
+        if (result && result.status === SYNCUP_STATUS_FAIL && !result.units) {
+          let error = result.errors && result.errors.length && result.errors.join(' ');
+          error = error || translate('unexpectedError');
+          LoggerManager.error(error);
+          return Promise.reject(error);
+        }
         syncResult = result;
         syncResult.dateStarted = startDate.toISOString();
         return this._saveMainSyncUpLog(result);
@@ -115,22 +124,21 @@ export default class SyncUpManager {
      and the other the local database. */
     const userId = store.getState().userReducer.userData.id;
     let syncUpRunner: SyncUpRunner;
-    return new Promise((resolve) =>
-      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), SyncUpHelper.getLastSyncUpLogWithSyncDiffTimestamp()]
-      ).then(([, lastSyncUpLog]) => {
+    return Promise.all([this.prepareNetworkForSyncUp(TEST_URL), SyncUpHelper.getLastSyncUpLogWithSyncDiffTimestamp()])
+      .then(([, lastSyncUpLog]) => {
         const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
         const syncUpDiffLeftOver = new SyncUpDiff(lastSyncUpLog[SYNCUP_DIFF_LEFTOVER]);
         syncUpRunner = new SyncUpRunner(userId, oldTimestamp, syncUpDiffLeftOver);
-        return syncUpRunner.run().then(resolve);
+        return syncUpRunner.run();
       }).catch(error => {
         // sync up runner should catch all errors and end gracefully
         // this is either an unexpected error (bug that has to be fixed) or a connectivity issue
-        console.error(`Possibly an unexpected error occurred: error = "${error}", stack = "${error.stack}"`);
+        const errorType = syncUpRunner ? 'bug / unexpected' : 'normal / expected';
+        LoggerManager.error(`A ${errorType} error occurred: error = "${error}", stack = "${error.stack}"`);
         const result = syncUpRunner ? syncUpRunner.buildResult([error])
           : SyncUpRunner.buildResult({ status: SYNCUP_STATUS_FAIL, userId, errors: [error] });
-        return resolve(result);
-      })
-    );
+        return result;
+      });
   }
 
   static _saveMainSyncUpLog(log) {
@@ -142,14 +150,19 @@ export default class SyncUpManager {
   }
 
   static _postSyncUp() {
-    const restart = true;
     return Promise.all([
-      loadAllLanguages(restart),
+      SyncUpManager.dispatchLoadAllLanguages(),
       loadGlobalSettings(),
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
-      checkIfShouldSyncBeforeLogout()
+      checkIfShouldSyncBeforeLogout(),
+      store.dispatch(loadWorkspaces())
     ]);
+  }
+
+  static dispatchLoadAllLanguages() {
+    const restart = true;
+    return store.dispatch(loadAllLanguages(restart));
   }
 
   static getSyncUpHistory() {
@@ -200,5 +213,25 @@ export default class SyncUpManager {
     return SyncUpManager.getLastSyncInDays().then((days) =>
       (days === undefined || days > SYNCUP_BEST_BEFORE_DAYS)
     );
+  }
+
+  static getSyncUpStatusMessage() {
+    const { didUserSuccessfulSyncUp, daysFromLastSuccessfulSyncUp, lastSuccessfulSyncUp, didSyncUp } =
+      store.getState().syncUpReducer;
+    // detect message & build notification
+    let message = null;
+    if (didUserSuccessfulSyncUp) {
+      if (daysFromLastSuccessfulSyncUp > SYNCUP_FORCE_DAYS) {
+        message = translate('tooOldSyncWarning');
+      } else {
+        const successAt = DateUtils.createFormattedDate(lastSuccessfulSyncUp[SYNCUP_SYNC_REQUESTED_AT]);
+        message = `${translate('syncWarning')} ${translate('lastSuccessfulSyncupDate').replace('%date%', successAt)}`;
+      }
+    } else if (didSyncUp) {
+      message = `${translate('syncWarning')} ${translate('allPreviousSyncUpFailed')}`;
+    } else {
+      message = translate('syncWarning');
+    }
+    return message;
   }
 }

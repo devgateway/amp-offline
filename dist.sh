@@ -8,12 +8,13 @@ rm -r dist
 # Last step changes ownership of the installers from root:root to user that launched this script.
 DIST_CMD="
     npm run build &&
-    npm run package-win-64 && rename 's/.exe/-64.exe/' dist/*.exe &&
-    chown -R $(id -u):$(id -g) dist node_modules"
+    npm run package-win-64 && rename 's/.exe/-64.exe/' dist/*.exe;
+    chown -R $(id -u):$(id -g) ."
 
 docker run --rm -t -v ${PWD}:/project \
 	-v amp-client-electron:/root/.electron \
 	-v amp-client-cache:/root/.cache \
+	-e PR_NR=$1 \
 	electronuserland/electron-builder:wine /bin/bash -c "$DIST_CMD"
 
 # Clean ~/.electron, execute only if really needed

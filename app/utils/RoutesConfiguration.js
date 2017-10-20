@@ -21,10 +21,13 @@ import {
   GET_INCREMENTAL_EXCHANGE_RATES,
   POSSIBLE_VALUES_V2_MEDIA_TYPE,
   DOWNLOAD_UPGRADE_URL,
+  DOWNLOAD_UPDATE_BINARY_URL,
   CONTACT_PULL_URL,
   CONTACT_PUSH_URL,
   CONTACT_SINGLE_FIELDS_TREE_URL,
-  CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS
+  CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  CHANGE_PASSWORD_URL,
+  RESET_PASSWORD_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -115,6 +118,10 @@ const routesConfiguration = [{
   method: 'GET',
   isBinary: true
 }, {
+  url: DOWNLOAD_UPDATE_BINARY_URL,
+  method: 'GET',
+  isBinary: true
+}, {
   url: CONTACT_PULL_URL,
   method: 'GET',
   requiredAuth: true
@@ -134,6 +141,16 @@ const routesConfiguration = [{
   url: CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
   requiredAuth: true
+}, {
+  url: CHANGE_PASSWORD_URL,
+  method: 'GET',
+  requiredAuth: false,
+  regularAmpUrl: true,
+}, {
+  url: RESET_PASSWORD_URL,
+  method: 'GET',
+  requiredAuth: false,
+  regularAmpUrl: true,
 }
 ];
 
