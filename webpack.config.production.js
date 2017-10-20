@@ -65,9 +65,8 @@ const config = validate(merge(baseConfig, {
     // NODE_ENV should be production so that modules do not perform certain development checks
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
-      'process.env.ENCRYPT_DB': JSON.stringify('true'),
       'process.env.MANUAL_BRANCH': JSON.stringify(execSync('git rev-parse --abbrev-ref HEAD').toString()),
-      'process.env.BRANCH': JSON.stringify(process.env.GIT_BRANCH)
+      'process.env.GIT_BRANCH': JSON.stringify(process.env.GIT_BRANCH)
     }),
 
     // Minify without warning messages and IE8 support
