@@ -12,9 +12,7 @@ import DateUtils from '../../utils/DateUtils';
 import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
-import {
-  NR_SYNC_HISTORY_ENTRIES
-} from '../../utils/Constants';
+import { NR_SYNC_HISTORY_ENTRIES, SYNCUP_HISTORY_TARGET } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
   NOTIFICATION_SEVERITY_WARNING
@@ -30,7 +28,6 @@ import {
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
-import { SYNCUP_HISTORY_TARGET } from '../../utils/Constants';
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -147,33 +144,33 @@ class SyncUp extends Component {
         {this.selectContentElementToDraw()}
 
         {!!currentUserHistory.length &&
-          <div className="container">
-            <div className="row">
-              <div className="col-sm-12">
-                <table className="table table-stripped">
-                  <caption>
-                    <h3>{translate('History')}</h3>
-                  </caption>
-                  <thead>
-                    <tr>
-                      <th>{translate('ID')}</th>
-                      <th>{translate('completedOn')}</th>
-                      <th>{translate('Status')}</th>
+        <div className="container">
+          <div className="row">
+            <div className="col-sm-12">
+              <table className="table table-stripped">
+                <caption>
+                  <h3>{translate('History')}</h3>
+                </caption>
+                <thead>
+                  <tr>
+                    <th>{translate('ID')}</th>
+                    <th>{translate('completedOn')}</th>
+                    <th>{translate('Status')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentUserHistory.map(log => (
+                    <tr key={log.id}>
+                      <td>{log.id}</td>
+                      <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
+                      <td>{log.status}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {currentUserHistory.map(log => (
-                      <tr key={log.id}>
-                        <td>{log.id}</td>
-                        <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
-                        <td>{log.status}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
+        </div>
         }
 
         <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync} />
