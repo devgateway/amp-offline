@@ -47,6 +47,7 @@ export const AGREEMENT_TITLE = 'title';
 export const PROJECT_CATEGORY = 'project_category';
 export const PROJECT_IMPLEMENTING_UNIT = 'project_implementing_unit';
 export const ORGANIZATION = 'organization';
+export const PERCENTAGE = 'percentage';
 export const AMP_ORGANIZATION_ROLE_ID = 'amp_organization_role_id';
 export const ROLE = 'role';
 export const EXECUTING_AGENCY = 'executing_agency';
