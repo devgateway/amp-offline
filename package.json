@@ -1,8 +1,8 @@
 {
   "name": "amp-offline",
   "productName": "AMP Offline",
-  "version": "0.0.2",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Offline desktop version of the AMP portal.",
   "main": "main.js",
   "scripts": {
     "test-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
@@ -55,36 +55,32 @@
         }
       ]
     },
+    "directories": {
+      "buildResources": "resources"
+    },
     "files": [
-      "dist/",
-      "node_modules/",
-      "libs/",
-      "lang/",
-      "app.html",
-      "main.js",
-      "main.js.map",
-      "package.json",
-      "master-translations.en.json"
+      {
+        "from": "app",
+        "filter": ["dist/**/*", "libs/**/*", "lang/**/*", "app.html", "main.js", "main.js.map", "master-translations.en.json"]
+      },
+      "package.json"
     ],
-    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "artifactName": "${name}-${version}-${arch}.${ext}",
     "win": {
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${productName}-${version}.${ext}",
+      "artifactName": "${name}-${version}.${ext}",
       "license": "license.txt"
     },
     "linux": {
-      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "artifactName": "${name}-${version}-${arch}.${ext}",
       "target": [
         "deb",
         "rpm"
-      ]
+      ],
+      "category": "Network"
     }
-  },
-  "directories": {
-    "buildResources": "resources",
-    "output": "release"
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"
@@ -158,9 +154,7 @@
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.1",
     "webpack-merge": "^0.15.0",
-    "webpack-validator": "^2.2.9"
-  },
-  "dependencies": {
+    "webpack-validator": "^2.2.9",
     "antd": "^2.12.1",
     "babel-plugin-webpack-alias": "^2.1.2",
     "bluebird": "^3.4.6",
@@ -197,6 +191,8 @@
     "stringify-object": "^3.1.0",
     "text-encoding": "^0.6.4",
     "underscore": "^1.8.3"
+  },
+  "dependencies": {
   },
   "devEngines": {
     "node": ">=6.x",

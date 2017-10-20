@@ -5,6 +5,7 @@ import Span from '../i18n/Span';
 import Button from '../i18n/Button';
 import LoggerManager from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
+import LoginTroubleshootingLinks from './LoginTroubleshootingLinks';
 import { doSetupFirst } from '../../actions/SetupAction';
 
 export default class Login extends Component {
@@ -14,7 +15,10 @@ export default class Login extends Component {
     // This React component receives the login function to be dispatched as a prop,
     // so it doesnt have to know about the implementation.
     loginAction: PropTypes.func.isRequired,
-    loginReducer: PropTypes.object.isRequired
+    loginReducer: PropTypes.object.isRequired,
+    changePasswordOnline: PropTypes.func.isRequired,
+    resetPasswordOnline: PropTypes.func.isRequired
+
   };
 
   constructor() {
@@ -76,6 +80,10 @@ export default class Login extends Component {
             this.processLogin(this.state.email.toLowerCase(), this.state.password);
           }} text={translate('login')} />
         <hr />
+        <LoginTroubleshootingLinks
+          changePasswordOnline={this.props.changePasswordOnline}
+          resetPasswordOnline={this.props.resetPasswordOnline} />
+        <br />
         <ErrorMessage message={this.props.loginReducer.errorMessage} />
       </div>
     );

@@ -6,6 +6,7 @@ import {
   AMP_COUNTRY_FLAG,
   AMP_REGISTRY_SETTINGS_URL,
   AVAILABLE_LANGUAGES_URL,
+  CHANGE_PASSWORD_URL,
   CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
   CONTACT_PULL_URL,
   CONTACT_PUSH_URL,
@@ -21,6 +22,7 @@ import {
   LOGIN_URL,
   POSSIBLE_VALUES_V2_MEDIA_TYPE,
   POST_TRANSLATIONS_URL,
+  RESET_PASSWORD_URL,
   SYNC_URL,
   TEST_URL,
   URL_CONNECTIVITY_CHECK_EP,
@@ -145,6 +147,16 @@ const routesConfiguration = [{
   url: CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
   requiredAuth: true
+}, {
+  url: CHANGE_PASSWORD_URL,
+  method: 'GET',
+  requiredAuth: false,
+  regularAmpUrl: true,
+}, {
+  url: RESET_PASSWORD_URL,
+  method: 'GET',
+  requiredAuth: false,
+  regularAmpUrl: true,
 }
 ];
 

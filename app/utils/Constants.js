@@ -1,3 +1,5 @@
+const pkg = require('../../package.json');
+
 export const SERVER_URL = '__SERVER_URL__';
 export const BASE_REST_URL = '/rest';
 export const PROTOCOL = '__SERVER_PROTOCOL__';
@@ -99,7 +101,7 @@ export const DEFAULT_CURRENCY = 'USD';
 export const RATE_SAME_CURRENCY = 1;
 export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
-export const VERSION = '1.0.0';
+export const VERSION = pkg.version;
 export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
 export const ASSEST_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';

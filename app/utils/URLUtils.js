@@ -1,5 +1,7 @@
+import { shell } from 'electron';
 import { history } from '../index';
 import LoggerManager from '../modules/util/LoggerManager';
+import * as RequestConfig from '../modules/connectivity/RequestConfig';
 
 const URL_PATTERN = /^(https?):\/\/(www\.)?([-a-zA-Z0-9@%._+~#=]{2,256})(:[0-9]{2,5})?\b([-a-zA-Z0-9@%_+.~#?&//=]*)$/;
 
@@ -12,6 +14,12 @@ const urlUtils = {
 
   goBack() {
     history.goBack();
+  },
+
+  redirectExternalLink(method, url) {
+    LoggerManager.log('redirectExternalLink');
+    const externalUrl = RequestConfig.getRequestConfig({ method, url }).url;
+    shell.openExternal(externalUrl);
   },
 
   isValidUrl(url) {
