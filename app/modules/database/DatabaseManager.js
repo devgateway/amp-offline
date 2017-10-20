@@ -41,7 +41,7 @@ const DatabaseManager = {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
-      alert(process.env.MANUAL_BRANCH + '-' + process.env.BRANCH);
+      alert(`${process.env.MANUAL_BRANCH} - ${process.env.BRANCH}`);
       if (process.env.ENCRYPT_DB === 'true') {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
@@ -458,8 +458,8 @@ const DatabaseManager = {
     }).catch(reject);
   },
 
-  findAllWithProjectionsAndOtherCriteria(example, collectionName, projections, sort = { id: 1 }, skip = 0,
-                                         limit = DB_DEFAULT_QUERY_LIMIT) {
+  findAllWithProjectionsAndOtherCriteria(example, collectionName, projections
+    , sort = { id: 1 }, skip = 0, limit = DB_DEFAULT_QUERY_LIMIT) {
     LoggerManager.log('findAllWithProjectionsAndOtherCriteria');
     return new Promise((resolve, reject) => {
       const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(
