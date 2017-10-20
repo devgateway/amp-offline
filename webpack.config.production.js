@@ -67,7 +67,7 @@ const config = validate(merge(baseConfig, {
       'process.env.NODE_ENV': JSON.stringify('production'),
       'process.env.ENCRYPT_DB': JSON.stringify('true'),
       'process.env.MANUAL_BRANCH': JSON.stringify(execSync('git rev-parse --abbrev-ref HEAD').toString()),
-      'process.env.BRANCH': JSON.stringify(process.env.git_branch)
+      'process.env.BRANCH': JSON.stringify(process.env.GIT_BRANCH)
     }),
 
     // Minify without warning messages and IE8 support
