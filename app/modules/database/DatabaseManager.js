@@ -7,7 +7,9 @@ import {
   DB_DEFAULT_QUERY_LIMIT,
   DB_FILE_EXTENSION,
   DB_FILE_PREFIX,
-  AKEY
+  AKEY,
+  MASTER_BRANCH,
+  DEVELOP_BRANCH
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
@@ -44,8 +46,8 @@ const DatabaseManager = {
       /* Encrypt the DB when current branch is master|develop only.
       MANUAL_BRANCH is the branch of the sources directory, used only when compiling locally.
       JENKINS_BRANCH is the branch used by Jenkins to compile the app. */
-      if (process.env.JENKINS_BRANCH === 'master' || process.env.JENKINS_BRANCH === 'develop'
-        || process.env.MANUAL_BRANCH === 'master' || process.env.MANUAL_BRANCH === 'develop') {
+      if (process.env.JENKINS_BRANCH === MASTER_BRANCH || process.env.JENKINS_BRANCH === DEVELOP_BRANCH
+        || process.env.MANUAL_BRANCH === MASTER_BRANCH || process.env.MANUAL_BRANCH === DEVELOP_BRANCH) {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
       }

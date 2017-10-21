@@ -138,3 +138,6 @@ export const CONTENT_DISPOSITION_HEADER = 'Content-Disposition';
 export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
 
 export const NR_SYNC_HISTORY_ENTRIES = 20;
+
+export const MASTER_BRANCH = 'master';
+export const DEVELOP_BRANCH = 'develop';
