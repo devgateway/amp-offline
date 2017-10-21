@@ -42,9 +42,9 @@ const DatabaseManager = {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
       /* Encrypt the DB when current branch is master|develop only.
-      MANUAL_BRANCH is used only when compiling locally.
-      GIT_BRANCH is the branch used by Jenkins to compile the app. */
-      if (process.env.GIT_BRANCH === 'master' || process.env.GIT_BRANCH === 'develop'
+      MANUAL_BRANCH is the branch of the sources directory, used only when compiling locally.
+      JENKINS_BRANCH is the branch used by Jenkins to compile the app. */
+      if (process.env.JENKINS_BRANCH === 'master' || process.env.JENKINS_BRANCH === 'develop'
         || process.env.MANUAL_BRANCH === 'master' || process.env.MANUAL_BRANCH === 'develop') {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;

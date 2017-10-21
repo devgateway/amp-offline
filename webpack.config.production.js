@@ -66,7 +66,7 @@ const config = validate(merge(baseConfig, {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
       'process.env.MANUAL_BRANCH': JSON.stringify(execSync('git rev-parse --abbrev-ref HEAD').toString()),
-      'process.env.GIT_BRANCH': JSON.stringify(process.env.GIT_BRANCH)
+      'process.env.JENKINS_BRANCH': JSON.stringify(process.env.JENKINS_BRANCH)
     }),
 
     // Minify without warning messages and IE8 support

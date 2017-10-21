@@ -16,7 +16,7 @@ echo $DIST_CMD
 docker run --rm -t -v ${PWD}:/project \
 	-v amp-client-electron:/root/.electron \
 	-v amp-client-cache:/root/.cache \
-	-e PR_NR=$1 -e GIT_BRANCH=$2 \
+	-e PR_NR=$1 -e JENKINS_BRANCH=$2 \
 	electronuserland/electron-builder:wine /bin/bash -c "$DIST_CMD"
 
 # Clean ~/.electron, execute only if really needed
