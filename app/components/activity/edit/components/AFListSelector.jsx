@@ -48,7 +48,8 @@ export default class AFListSelector extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.dividePercentage = this.dividePercentage.bind(this);
     this.state = {
-      values: []
+      values: [],
+      showSearch: true
     };
   }
 
@@ -61,6 +62,14 @@ export default class AFListSelector extends Component {
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
     this.setUniqueIdsAndUpdateState(this.props.selectedOptions || []);
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.validationError && newProps.validationError.indexOf('stores multiple values') > -1) {
+      this.setState({ showSearch: false });
+    } else {
+      this.setState({ showSearch: true });
+    }
   }
 
   setUniqueIdsAndUpdateState(values) {
@@ -160,7 +169,9 @@ export default class AFListSelector extends Component {
     return (<div>
       {this._renderTable()}
       <div className={`${searchDisplayStyle} ${styles.searchContainer}`}>
-        <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
+        {this.state.showSearch ?
+          <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
+          : null}
         <Button
           onClick={this.dividePercentage.bind(this)} bsStyle="success" bsClass={btnStyle}
           disabled={this.state.values.length === 0} hidden={this.percentageFieldDef === undefined}>
