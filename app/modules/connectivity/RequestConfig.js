@@ -34,7 +34,8 @@ const RequestConfig = {
   getRequestConfig({ method, url, paramsMap, body, extraUrlParam }) {
     const routeConfiguration = this._getRouteConfiguration(method, url);
     const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
-    const urlParams = this._paramsMapToString(paramsMap);
+    const addTranslations = routeConfiguration.regularAmpUrl !== true;
+    const urlParams = this._paramsMapToString(paramsMap, addTranslations);
     const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
     const headers = {
       'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${this._getExtendedUserAgent(navigator.userAgent)}`
@@ -112,8 +113,10 @@ const RequestConfig = {
     return paramsMap;
   },
 
-  _paramsMapToString(paramsMap) {
-    paramsMap = this._addTranslations(paramsMap);
+  _paramsMapToString(paramsMap, addTranslations) {
+    if (addTranslations) {
+      paramsMap = this._addTranslations(paramsMap);
+    }
     const kv = [];
     if (paramsMap) {
       if (paramsMap instanceof Map) {
@@ -121,8 +124,9 @@ const RequestConfig = {
       } else {
         Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
       }
+      return `?${kv.join('&')}`;
     }
-    return `?${kv.join('&')}`;
+    return '';
   },
 
   _getFullBaseUrl(url, routeConfiguration) {

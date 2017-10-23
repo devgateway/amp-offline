@@ -33,24 +33,30 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
   render() {
     const title = listTitle ? translate(listTitle) : null;
     const items = this.props.activity[listField];
-    let content = (<APField
-      key={listField} title={title} value={translate('No Data')} separator={false} inline={this.props.tablify === true}
-      fieldNameClass={this.props.fieldNameClass} fieldValueClass={styles.nodata} />);
+    let content = null;
     const isListEnabled = this.props.activityFieldsManager.isFieldPathEnabled(listField) === true;
-    if (isListEnabled && items && items.length) {
-      content = items.map(item => {
-        const hierarchicalValue = item[valueField][HIERARCHICAL_VALUE];
-        const key = Utils.stringToUniqueId(hierarchicalValue);
-        return (<APPercentageField
-          key={key} title={hierarchicalValue} value={item[percentageField]}
-          titleClass={this.props.percentTitleClass} valueClass={this.props.percentValueClass} />);
-      });
-      if (this.props.tablify) {
-        content = <Tablify content={content} columns={this.props.columns} />;
-      }
+    if (isListEnabled) {
       content = (<APField
-        key={listField} title={title} value={content} separator={false} inline={this.props.tablify === true}
-        fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
+        key={listField} title={title} value={translate('No Data')} separator={false}
+        inline={this.props.tablify === true}
+        fieldNameClass={this.props.fieldNameClass} fieldValueClass={styles.nodata} />);
+      if (items && items.length) {
+        content = items.map(item => {
+          const value = item[valueField][HIERARCHICAL_VALUE]
+            ? item[valueField][HIERARCHICAL_VALUE]
+            : item[valueField].value;
+          const key = Utils.stringToUniqueId(value);
+          return (<APPercentageField
+            key={key} title={value} value={item[percentageField]}
+            titleClass={this.props.percentTitleClass} valueClass={this.props.percentValueClass} />);
+        });
+        if (this.props.tablify) {
+          content = <Tablify content={content} columns={this.props.columns} />;
+        }
+        content = (<APField
+          key={listField} title={title} value={content} separator={false} inline={this.props.tablify === true}
+          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
+      }
     }
     return content;
   }
