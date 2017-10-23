@@ -39,12 +39,15 @@ export default class Update extends Component {
   }
 
   getFileDownloadProgress() {
-    const { downloadingUpdate, downloadedUpdate, installingUpdate } = this.props;
+    const { downloadingUpdate, downloadedUpdate, installingUpdate, progressData } = this.props;
     if (downloadedUpdate || installingUpdate) {
       return <div>{`${translate('downloadComplete')}`}</div>;
     }
     if (downloadingUpdate) {
-      return <InProgress title={translate('downloadInProgress')} value={this.getProgressPercentage()} />;
+      const percent = (progressData && progressData.percent) || 0;
+      let progressMessage = progressData && progressData.message && progressData.message.substring(0, 100);
+      progressMessage = progressMessage || translate('downloadInProgress');
+      return <InProgress title={progressMessage} value={percent} />;
     }
     return <div>{translate('downloadFailed')}</div>;
   }
@@ -60,13 +63,8 @@ export default class Update extends Component {
     return null;
   }
 
-  getProgressPercentage() {
-    return (this.props.progressData && this.props.progressData.percent) || 100;
-  }
-
   render() {
-    const { errorMessage, progressData } = this.props;
-    const progressMessage = progressData && progressData.message && progressData.message.substring(0, 50);
+    const { errorMessage } = this.props;
     const anyErrorMessage = errorMessage || this.state.errorMessage;
     return (
       <div>
@@ -78,7 +76,6 @@ export default class Update extends Component {
 
           <Modal.Body>
             <div>{translate('dontStopUpdateWarning')}</div>
-            <div>{progressMessage}</div>
             {this.getFileDownloadProgress()}
             {this.getInstallerUpdateProgress()}
           </Modal.Body>

@@ -274,6 +274,6 @@ app.on('ready', async () => {
     menu = Menu.buildFromTemplate(template);
     mainWindow.setMenu(menu);
 
-    ElectronUpdater.getElectronUpdater().logger.log('ElectronUpdater initialized');
+    ElectronUpdater.getElectronUpdater();
   }
 });

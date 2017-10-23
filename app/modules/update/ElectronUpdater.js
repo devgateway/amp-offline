@@ -1,9 +1,11 @@
 import { autoUpdater } from 'electron-updater';
 import { IS_DEV_MODE, IS_RENDERER_PROCESS } from '../util/ElectronApp';
 import { VERSION } from '../../utils/Constants';
+import LoggerManager from '../util/LoggerManager';
 
 const { remote } = require('electron');
 
+const logger = IS_DEV_MODE ? console : LoggerManager;
 let electronUpdater;
 
 /**
@@ -32,13 +34,11 @@ const ElectronUpdater = {
     if (!electronUpdater) {
       if (!IS_RENDERER_PROCESS) {
         electronUpdater = this._init();
+        global.electronUpdater = autoUpdater;
       } else {
         electronUpdater = remote.getGlobal('electronUpdater');
-        // attach to tne new Logger, since in dev mode renderer console goes to chromium
+        // in dev mode it detects Chromium version, instead of the apps version
         electronUpdater.currentVersion = VERSION;
-        if (IS_DEV_MODE) {
-          electronUpdater.currentVersion = VERSION;
-        }
       }
     }
     return electronUpdater;
@@ -46,11 +46,12 @@ const ElectronUpdater = {
 
   _init() {
     autoUpdater.autoDownload = false;
-    global.electronUpdater = autoUpdater;
     // TODO see why methods are not accessible in renderer process, workaround until then with:
     Object.getOwnPropertyNames(autoUpdater).filter(n => typeof autoUpdater[n] === 'function').forEach(method => {
       global.electronUpdater[method] = autoUpdater[method];
     });
+    autoUpdater.logger = logger;
+    logger.log('ElectronUpdater initialized');
     return autoUpdater;
   }
 };
