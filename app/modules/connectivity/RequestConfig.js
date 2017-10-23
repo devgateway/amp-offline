@@ -130,7 +130,9 @@ const RequestConfig = {
   },
 
   _paramsMapToString(paramsMap, routeConfiguration) {
-    if (routeConfiguration.translations !== false) {
+    const { regularAmpUrl, translations } = routeConfiguration;
+    const addTranslations = regularAmpUrl !== true && translations !== false;
+    if (addTranslations) {
       paramsMap = this._addTranslations(paramsMap);
     }
     const kv = [];

@@ -41,7 +41,7 @@
     "promise/no-native": 0,
     "react/jsx-no-bind": "off",
     "react/forbid-prop-types": 0,
-    "react/no-did-mount-set-state": 2, 
+    "react/no-did-mount-set-state": 2,
     "react/jsx-closing-bracket-location": 0,
     "react/jsx-filename-extension": [
       "error",
@@ -77,7 +77,7 @@
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": "../webpack.config.eslint.js"
+        "config": "webpack.config.eslint.js"
       }
     }
   }
