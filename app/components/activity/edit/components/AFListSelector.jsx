@@ -156,7 +156,7 @@ export default class AFListSelector extends Component {
   }
 
   render() {
-    const searchDisplayStyle = this.noMultipleValues && this.state.values.length > 1 ? styles.hidden : styles.inline;
+    const searchDisplayStyle = this.noMultipleValues && this.state.values.length > 0 ? styles.hidden : styles.inline;
     const btnStyle = `${this.percentageFieldDef ? styles.dividePercentage : styles.hidden} btn btn-success`;
     return (<div>
       {this._renderTable()}
