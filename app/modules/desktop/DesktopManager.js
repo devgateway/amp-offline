@@ -3,8 +3,16 @@ import translate from '../../utils/translate';
 import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
+import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
 import {
-  ADJUSTMENT_TYPE, APPROVAL_STATUS, DONOR_ORGANIZATION, FUNDING_DETAILS, FUNDINGS, IS_DRAFT, TRANSACTION_TYPE
+  ADJUSTMENT_TYPE,
+  APPROVAL_STATUS,
+  DONOR_ORGANIZATION,
+  FUNDING_DETAILS,
+  FUNDINGS,
+  IS_DRAFT,
+  REJECTED_ID,
+  TRANSACTION_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -13,7 +21,12 @@ import {
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
 import {
-  ACTUAL, COMMITMENTS, DISBURSEMENTS, APPROVED_STATUS, EDITED_STATUS, STARTED_APPROVED_STATUS,
+  ACTUAL,
+  APPROVED_STATUS,
+  COMMITMENTS,
+  DISBURSEMENTS,
+  EDITED_STATUS,
+  STARTED_APPROVED_STATUS,
   STARTED_STATUS
 } from '../../utils/constants/ValueConstants';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
@@ -101,8 +114,8 @@ const DesktopManager = {
     }
   },
 
-  getActivityCanEdit(/* item */) {
-    return true; // TODO: to be implemented.
+  getActivityCanEdit(item) {
+    return !item[REJECTED_ID];
   },
 
   getActivityAmounts(item, trnType, currentWorkspaceSettings, currencyRatesManager) {
@@ -154,7 +167,7 @@ const DesktopManager = {
     const defaultTabs = [
       {
         id: 0,
-        name: 'Activities',
+        name: ACTIVITIES_TAB_TITLE,
         isActive: true,
         projects: projectsWithLinks,
         sorting: null,
@@ -162,7 +175,7 @@ const DesktopManager = {
       },
       {
         id: 1,
-        name: 'Rejected Sync',
+        name: REJECTED_TAB_TITLE,
         isActive: false,
         projects: rejected,
         sorting: null,
