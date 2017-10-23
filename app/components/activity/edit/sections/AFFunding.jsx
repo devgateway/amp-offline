@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable no-alert */
 import React, { Component, PropTypes } from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
 import AFSection from './AFSection';
@@ -134,11 +135,12 @@ class AFFunding extends Component {
 
   removeFundingItem(id) {
     LoggerManager.log('_removeFundingItem');
-    // TODO: Display a confirm dialog to delete the funding item.
-    const newFundingList = this.state.fundingList;
-    const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
-    newFundingList.splice(index, 1);
-    this.setState({ fundingList: newFundingList });
+    if (confirm(translate('deleteFundingItem'))) {
+      const newFundingList = this.state.fundingList;
+      const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      newFundingList.splice(index, 1);
+      this.setState({ fundingList: newFundingList });
+    }
   }
 
   generateOverviewTabContent() {

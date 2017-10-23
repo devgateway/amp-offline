@@ -2,17 +2,13 @@
 /* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import classNames from 'classnames';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
 import IconFormatter from './IconFormatter';
 import LinkFormatter from './LinkFormatter';
-import {
-  ACTIVITY_STATUS_DRAFT,
-  ACTIVITY_STATUS_UNVALIDATED,
-  ACTIVITY_STATUS_VALIDATED
-} from '../../utils/Constants';
+import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
