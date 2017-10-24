@@ -85,15 +85,18 @@ export default class CKEditor extends Component {
     };
     this.editorName = CKEDITOR.replace(this.placeholder, configuration).name;
     this.toggle = false;
+    const editor = CKEDITOR.instances[this.editorName];
+    editor.on('blur', () => {
+      if (this.props.onChange) {
+        const data = editor.getData();
+        this.props.onChange(data);
+      }
+    });
   }
 
   _hide() {
     this.toggle = false;
     const editor = CKEDITOR.instances[this.editorName];
-    const data = editor.getData();
-    if (this.props.onChange) {
-      this.props.onChange(data);
-    }
     // this is a workaround for https://dev.ckeditor.com/ticket/16825 issue that is planned to be fixed in 4.7.0
     editor.focusManager.blur(true);
     editor.destroy(true);
