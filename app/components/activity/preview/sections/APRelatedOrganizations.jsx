@@ -1,70 +1,45 @@
+/* eslint-disable react/no-unused-prop-types */
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import {
+  DONOR_ORGANIZATION,
   EXECUTING_AGENCY,
   CONTRACTING_AGENCY,
   BENEFICIARY_AGENCY,
   IMPLEMENTING_AGENCY,
   RESPONSIBLE_ORGANIZATION,
-  AMP_ORGANIZATION_ROLE_ID
+  ORGANIZATION,
+  PERCENTAGE
 } from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
-import styles from './APRelatedOrganizations.css';
-import APLabel from '../components/APLabel';
-import translate from '../../../../utils/translate';
+import APPercentageList from '../components/APPercentageList';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+
+const DO = APPercentageList(DONOR_ORGANIZATION, ORGANIZATION, PERCENTAGE, 'Donor Organization');
+const RO = APPercentageList(RESPONSIBLE_ORGANIZATION, ORGANIZATION, PERCENTAGE, 'Responsible Organization');
+const CA = APPercentageList(CONTRACTING_AGENCY, ORGANIZATION, PERCENTAGE, 'Contracting Agency');
+const BE = APPercentageList(BENEFICIARY_AGENCY, ORGANIZATION, PERCENTAGE, 'Beneficiary Agency');
+const IE = APPercentageList(IMPLEMENTING_AGENCY, ORGANIZATION, PERCENTAGE, 'Implementing Agency');
+const EA = APPercentageList(EXECUTING_AGENCY, ORGANIZATION, PERCENTAGE, 'Executing Agency');
 
 /**
  * @author Gabriel Inchauspe
  */
 class APRelatedOrganizations extends Component {
   static propTypes = {
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
   };
 
-  constructor(props) {
-    super(props);
-    LoggerManager.log('constructor');
-    this.orgTypes = [RESPONSIBLE_ORGANIZATION,
-      CONTRACTING_AGENCY,
-      BENEFICIARY_AGENCY,
-      IMPLEMENTING_AGENCY,
-      EXECUTING_AGENCY];
-  }
-
-  _build() {
-    // TODO: translate the organization type (AMPOFFLINE-477).
-    const content = [];
-    this.orgTypes.forEach(orgType => {
-      if (this.props.activity[orgType] && this.props.activity[orgType].length > 0) {
-        const subcontent = [];
-        subcontent.push(<APLabel label={orgType} key={orgType} labelClass={styles.organization_title} />);
-        this.props.activity[orgType].forEach(org => {
-          subcontent.push(<APLabel
-            label={org.organization.value}
-            labelClass={styles.organization}
-            key={org[AMP_ORGANIZATION_ROLE_ID]}
-            />);
-        });
-        content.push(<div className={styles.organization_box}>{subcontent}</div>);
-      }
-    });
-    if (content.length % 2 === 1) {
-      content.push(<div className={styles.organization_placeholder} />);
-    }
-    return content;
-  }
-
   render() {
-    let content = this._build();
-    let container = true;
-    if (content.length === 0) {
-      content = (<div className={styles.nodata}>{translate('No Data')}</div>);
-      container = false;
-    }
-    return (<div className={container && styles.organization_container}>
-      {content}
+    return (<div>
+      <DO key="do-org-list" {...this.props} />
+      <RO key="ro-org-list" {...this.props} />
+      <CA key="ca-org-list" {...this.props} />
+      <BE key="be-org-list" {...this.props} />
+      <IE key="ie-org-list" {...this.props} />
+      <EA key="ea-org-list" {...this.props} />
     </div>);
   }
 }
 
-export default Section(APRelatedOrganizations, 'Related Organizations');
+export default Section(APRelatedOrganizations, 'Related Organizations', true, 'APRelatedOrganizations');

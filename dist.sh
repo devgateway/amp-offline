@@ -8,7 +8,7 @@ rm -r dist
 # Last step changes ownership of the installers from root:root to user that launched this script.
 DIST_CMD="
     npm run build &&
-    npm run package-win-64 && rename 's/.exe/-64.exe/' dist/*.exe &&
+    npm run package-win-64 && rename 's/.exe/-64.exe/' dist/*.exe;
     chown -R $(id -u):$(id -g) ."
 
 docker run --rm -t -v ${PWD}:/project \
