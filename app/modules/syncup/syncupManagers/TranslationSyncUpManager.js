@@ -124,10 +124,9 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
    */
   pushTranslationsSyncUp(langIds, originalMasterTrnFile) {
     LoggerManager.log('pushTranslationsSyncUp');
-    // On full sync diffKeys is the complete originalMasterTrnFile.
-    const diffKeys = TranslationSyncUpManager.getNewTranslationsDifference();
-    if (diffKeys.length > 0) {
-      const diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
+    // On full sync diffTexts is the complete originalMasterTrnFile.
+    const diffTexts = TranslationSyncUpManager.getNewTranslationsDifference();
+    if (diffTexts.length > 0) {
       return this.doPostCall(langIds, diffTexts).then((newTranslations) => (
         this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
       ));
