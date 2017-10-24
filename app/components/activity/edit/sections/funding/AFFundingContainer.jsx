@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable no-alert */
 import React, { Component, PropTypes } from 'react';
 import { FormGroup, Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -9,6 +10,7 @@ import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
+import translate from '../../../../../utils/translate';
 
 /**
  * @author Gabriel Inchauspe
@@ -31,7 +33,6 @@ export default class AFFundingContainer extends Component {
       stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS]
     };
     this._addTransactionItem = this._addTransactionItem.bind(this);
-    this._removeTransactionItem = this._removeTransactionItem.bind(this);
     this._removeFundingDetailItem = this._removeFundingDetailItem.bind(this);
   }
 
@@ -54,22 +55,14 @@ export default class AFFundingContainer extends Component {
     this.setState({ funding: newFunding });
   }
 
-  _removeTransactionItem(id) {
-    LoggerManager.debug('_removeTransactionItem');
-    // TODO: Display a confirm dialog to delete the item.
-    const newFunding = this.state.funding;
-    const index = this.state.fundingList.findIndex((item) => (item[AC.id] === id));
-    newFunding[AC.FUNDING_DETAILS].splice(index, 1);
-    this.setState({ funding: newFunding });
-  }
-
   _removeFundingDetailItem(id) {
     LoggerManager.debug('_removeFundingDetailItem');
-    // TODO: Display a confirm dialog to delete the funding item.
-    const newFunding = this.state.stateFundingDetail;
-    const index = this.state.stateFundingDetail.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
-    newFunding.splice(index, 1);
-    this.setState({ stateFundingDetail: newFunding });
+    if (confirm(translate('deleteFundingTransactionItem'))) {
+      const newFunding = this.state.stateFundingDetail;
+      const index = this.state.stateFundingDetail.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
+      newFunding.splice(index, 1);
+      this.setState({ stateFundingDetail: newFunding });
+    }
   }
 
   render() {
