@@ -6,8 +6,10 @@ import afStyles from '../ActivityForm.css';
 import { LABEL } from './AFComponentTypes';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import AFField from './AFField';
+
+const logger = new Logger('AF List');
 
 /* eslint-disable class-methods-use-this */
 
@@ -32,7 +34,7 @@ export default class AFList extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
     this.options = {
       onDeleteRow: this.onDeleteRow.bind(this),
       withoutNoDataText: true

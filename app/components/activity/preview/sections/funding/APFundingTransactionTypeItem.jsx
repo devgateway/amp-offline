@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
@@ -7,6 +7,8 @@ import styles from './APFundingTransactionTypeItem.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import APLabel from '../../components/APLabel';
+
+const logger = new Logger('AP Funding transaction type item');
 
 /**
  * @author Gabriel Inchauspe
@@ -25,7 +27,7 @@ class APFundingTransactionTypeItem extends Component {
 
   constructor(props, context) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this._currency = context.currentWorkspaceSettings.currency.code;
   }
 
@@ -67,7 +69,7 @@ class APFundingTransactionTypeItem extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     return (<div className={styles.table_container} >
       <div>{this._drawHeader()}</div>
       <div>{this._drawDetail()}</div>

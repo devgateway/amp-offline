@@ -3,10 +3,12 @@ import { connect } from 'react-redux';
 import ActivityPreview from '../components/activity/preview/ActivityPreview';
 import ActivityForm from '../components/activity/edit/ActivityForm';
 import * as ActivityAction from '../actions/ActivityAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('Activity page');
 
 const mapStateToProps = (state) => {
-  LoggerManager.log('mapStateToProps');
+  logger.log('mapStateToProps');
   return {
     activityReducer: state.activityReducer,
     userReducer: state.userReducer,
@@ -15,7 +17,7 @@ const mapStateToProps = (state) => {
 };
 
 function mapDispatchToProps(dispatch, ownProps) {
-  LoggerManager.log('mapDispatchToProps');
+  logger.log('mapDispatchToProps');
   return bindActionCreators(ActivityAction, dispatch, ownProps);
 }
 

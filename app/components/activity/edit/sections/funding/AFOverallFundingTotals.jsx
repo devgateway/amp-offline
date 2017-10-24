@@ -3,11 +3,13 @@ import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
+
+const logger = new Logger('AF overall funding totals');
 
 /**
  * @author Gabriel Inchauspe
@@ -25,7 +27,7 @@ export default class AFOverallFundingTotals extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.options = {
       withoutNoDataText: true
     };

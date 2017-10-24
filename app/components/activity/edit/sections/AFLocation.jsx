@@ -16,7 +16,9 @@ import { addMessage } from '../../../../actions/NotificationAction';
 import { createNotification } from '../../../../modules/helpers/ErrorNotificationHelper';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorConstants';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF locatin');
 
 /**
  * Location Section
@@ -31,7 +33,7 @@ class AFLocation extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       implementationLevel: null,
       implementationLocation: null,
@@ -50,7 +52,7 @@ class AFLocation extends Component {
     if (this.defaultCountry === null) {
       const message = translate('defaultCountryError');
       this.props.onAddMessage(createNotification({ message, origin: NOTIFICATION_ORIGIN_ACTIVITY }));
-      LoggerManager.error(message);
+      logger.error(message);
     }
     this.setState({
       implementationLevel: this.props.activity[IMPLEMENTATION_LEVEL],

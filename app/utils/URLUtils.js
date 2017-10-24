@@ -1,12 +1,14 @@
 import { shell } from 'electron';
 import { history } from '../index';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
+
+const logger = new Logger('URL utils');
 
 const urlUtils = {
 
   forwardTo(location) {
-    LoggerManager.log(`forwardTo( ${location} )`);
+    logger.log(`forwardTo( ${location} )`);
     history.push(location);
   },
 
@@ -15,7 +17,7 @@ const urlUtils = {
   },
 
   redirectExternalLink(method, url) {
-    LoggerManager.log('redirectExternalLink');
+    logger.log('redirectExternalLink');
     const externalUrl = RequestConfig.getRequestConfig({ method, url }).url;
     shell.openExternal(externalUrl);
   }

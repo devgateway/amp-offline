@@ -9,10 +9,12 @@ import APNationalPlanObjective from './sections/APNationalPlanObjective';
 import APProgram from './sections/APProgram';
 import APSector from './sections/APSector';
 import APFundingSources from './sections/APFundingSources';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import Logger from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
 import APRelatedOrganizations from './sections/APRelatedOrganizations';
 import APIssues from './sections/issues/APIssues';
+
+const logger = new Logger('AP Main group');
 
 /**
  * Main content
@@ -22,7 +24,7 @@ export default class MainGroup extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

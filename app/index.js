@@ -17,10 +17,12 @@ import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import { initializeI18Next, initializeLanguageDirectory } from './modules/util/TranslationManager';
-import LoggerManager from './modules/util/LoggerManager';
+import Logger from './modules/util/LoggerManager';
 import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_URL } from './utils/Constants';
 
-LoggerManager.log('index');
+const logger = new Logger('Index');
+
+logger.log('index');
 const store = configureStore();
 export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
@@ -28,7 +30,7 @@ export default store;
 const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_URL];
 
 function checkAuth(nextState, replace) {
-  LoggerManager.log('checkAuth');
+  logger.log('checkAuth');
   const nextPath = nextState.location.pathname;
   if (!auth.loggedIn()) {
     replace({ state: { nextPathname: nextPath }, pathname: '/' });
@@ -62,5 +64,5 @@ initializeI18Next().then(() =>
       </Provider>,
       document.getElementById('root')
     )
-  ).catch((err) => (LoggerManager.error(err)))
-).catch((err) => (LoggerManager.error(err)));
+  ).catch((err) => (logger.error(err)))
+).catch((err) => (logger.error(err)));

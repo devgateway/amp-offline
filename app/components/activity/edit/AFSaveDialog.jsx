@@ -2,8 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { Modal, FormGroup, Radio, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import translate from '../../../utils/translate';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import Logger from '../../../modules/util/LoggerManager';
 import * as styles from './AFSaveDialog.css';
+
+const logger = new Logger('AF save dialog');
 
 /*
    Takes a function and a delay(in ms) and returns a debouncing function that will only
@@ -35,7 +37,7 @@ export default class AFSaveDialog extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       showDialog: false,
       goToDesktop: true,

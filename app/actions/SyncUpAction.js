@@ -4,7 +4,7 @@ import { WORKSPACE_URL } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import { connectivityCheck } from './ConnectivityAction';
@@ -22,6 +22,8 @@ export const STATE_SYNCUP_CONNECTION_UNAVAILABLE = 'STATE_SYNCUP_CONNECTION_UNAV
 export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
 export const STATE_CONNECTION_CHECK_IN_PROGRESS = 'STATE_CONNECTION_CHECK_IN_PROGRESS';
 export const STATE_SYNCUP_LOG_LOADED = 'STATE_SYNCUP_LOG_LOADED';
+
+const logger = new Logger('Syncup action');
 
 export function loadSyncUpHistory() {
   LoggerManager.log('getSyncUpHistory');

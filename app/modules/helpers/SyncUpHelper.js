@@ -18,34 +18,36 @@
  */
 import DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_SYNCUP_LOG, SYNCUP_DATETIME_FIELD } from '../../utils/Constants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
+
+const logger = new Logger('Syncup helper');
 
 const SyncUpHelper = {
 
   findSyncUpByExample(example) {
-    LoggerManager.log('findSyncUpByExample');
+    logger.log('findSyncUpByExample');
     return DatabaseManager.findOne(example, COLLECTION_SYNCUP_LOG);
   },
 
   findAllSyncUpByExample(example) {
-    LoggerManager.log('findSyncUpByExample');
+    logger.log('findSyncUpByExample');
     return DatabaseManager.findAll(example, COLLECTION_SYNCUP_LOG);
   },
 
   saveOrUpdateSyncUp(syncupData) {
-    LoggerManager.log('saveOrUpdateSyncUp');
+    logger.log('saveOrUpdateSyncUp');
     return DatabaseManager.saveOrUpdate(syncupData.id, syncupData, COLLECTION_SYNCUP_LOG, {});
   },
 
   getLatestId(example = {}) {
-    LoggerManager.log('saveOrUpdateSyncUp');
+    logger.log('saveOrUpdateSyncUp');
     return DatabaseManager.findAll(example, COLLECTION_SYNCUP_LOG, { id: 1 }).then(ids =>
       Math.max(...[0].concat(ids.map(idObj => idObj.id))));
   },
 
   saveOrUpdateSyncUpCollection(syncupData) {
-    LoggerManager.log('saveOrUpdateSyncUpCollection');
+    logger.log('saveOrUpdateSyncUpCollection');
     return DatabaseManager.saveOrUpdateCollection(syncupData, COLLECTION_SYNCUP_LOG);
   },
 
@@ -53,7 +55,7 @@ const SyncUpHelper = {
    * Retrieves the latest sync up log
    */
   getLastSyncUpLog() {
-    LoggerManager.log('getLastSyncUpLog');
+    logger.log('getLastSyncUpLog');
     return SyncUpHelper.getLatestId().then(id => {
       if (id === 0) {
         return {};

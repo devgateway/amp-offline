@@ -13,7 +13,7 @@ import {
   PROTOCOL,
   SERVER_URL
 } from '../utils/Constants';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
@@ -43,6 +43,8 @@ export const STATE_FM_FULFILLED = 'STATE_FM_FULFILLED';
 export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
 
+const logger = new Logger('Startup action');
+
 export function ampOfflineStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(ampOfflineInit)
@@ -60,7 +62,7 @@ export function ampOfflineInit() {
 
 export function loadConnectionInformation() {
   return new Promise((resolve, reject) => {
-    LoggerManager.log('ampStartUp');
+    logger.log('ampStartUp');
     store.dispatch(sendingRequest());
     // TODO we will have a module that will return this from storage, hardcoded in this first commit
     const connectionInformation = new ConnectionInformation(SERVER_URL, BASE_REST_URL,
@@ -92,7 +94,7 @@ function scheduleConnectivityCheck() {
  * @return {Promise}
  */
 export function loadGlobalSettings() {
-  LoggerManager.log('loadGlobalSettings');
+  logger.log('loadGlobalSettings');
   const gsPromise = GlobalSettingsHelper.findAll({}).then(gsList => {
     const gsData = {};
     // update default GS settings to those from the store only if any available in the store
@@ -117,7 +119,7 @@ export function loadGlobalSettings() {
  * @param id FM tree ID. If not specified, the first one will be used (Iteration 1 countries)
  */
 export function loadFMTree(id = undefined) {
-  LoggerManager.log('loadFMTree');
+  logger.log('loadFMTree');
   const dbFilter = id ? { id } : {};
   const fmPromise = FMHelper.findAll(dbFilter)
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))
@@ -146,7 +148,7 @@ function startUpLoaded(connectionInformation) {
 // TODO: Use this function somewhere.
 /* eslint no-unused-vars: 0 */
 function startUpFailed(err) {
-  LoggerManager.log('startUpFailed');
+  logger.log('startUpFailed');
   return {
     type: STATE_PARAMETERS_FAILED,
     actionData: { errorMessage: err }
@@ -154,7 +156,7 @@ function startUpFailed(err) {
 }
 
 function sendingRequest() {
-  LoggerManager.log('sendingRequest');
+  logger.log('sendingRequest');
   return {
     type: STATE_PARAMETERS_LOADING
   };

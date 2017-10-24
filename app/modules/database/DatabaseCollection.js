@@ -1,7 +1,9 @@
 /* eslint func-names: 0 */
 import _ from 'underscore';
 import BluebirdQueue from 'bluebird-queue';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Database connection');
 
 // https://addyosmani.com/resources/essentialjsdesignpatterns/book/#singletonpatternjavascript
 const DatabaseCollection = (function () {
@@ -15,22 +17,22 @@ const DatabaseCollection = (function () {
     return {
       // Public methods and variables
       checkIfCollectionIsOpen(name) {
-        LoggerManager.log('checkIfCollectionIsOpen');
+        logger.log('checkIfCollectionIsOpen');
         const list = _.find(collections, (item) => item.name === name);
-        LoggerManager.debug(list);
+        logger.debug(list);
         return list;
       },
 
       insertCollection(name, datastore) {
-        LoggerManager.log('insertCollection');
+        logger.log('insertCollection');
         collections.push({ name, nedbDatastore: datastore });
-        LoggerManager.debug(collections);
+        logger.debug(collections);
       },
 
       removeCollection(name) {
-        LoggerManager.log('removeCollection');
+        logger.log('removeCollection');
         collections = _.without(collections, _.findWhere(collections, { name }));
-        LoggerManager.debug(collections);
+        logger.debug(collections);
       },
 
       /**
@@ -40,7 +42,7 @@ const DatabaseCollection = (function () {
        * @param reject
        */
       addPromiseAndProcess(task) {
-        LoggerManager.log('addPromiseAndProcess');
+        logger.log('addPromiseAndProcess');
         queue.addNow(task);
       }
     };
@@ -48,18 +50,18 @@ const DatabaseCollection = (function () {
 
   return {
     getInstance() {
-      LoggerManager.log('getInstance');
+      logger.log('getInstance');
       if (!instance) {
-        LoggerManager.log('New instance.');
+        logger.log('New instance.');
         instance = init();
       } else {
-        LoggerManager.log('Reuse instance.');
+        logger.log('Reuse instance.');
       }
       return instance;
     },
 
     constructor() {
-      LoggerManager.log('constructor');
+      logger.log('constructor');
       return false;
     }
   };

@@ -11,9 +11,11 @@ import TranslationSyncUpManager from '../syncup/syncupManagers/TranslationSyncUp
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_I18NEXT } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import FileManager from './FileManager';
 import * as Utils from '../../utils/Utils';
+
+const logger = new Logger('Translation manager');
 
 const TranslationManager = {
 
@@ -38,23 +40,23 @@ const TranslationManager = {
   },
 
   getListOfLocalLanguages(restart: false) {
-    LoggerManager.log('getListOfLocalLanguages');
+    logger.log('getListOfLocalLanguages');
     return new Promise((resolve, reject) => {
       const files = FileManager.readdirSync(FS_LOCALES_DIRECTORY);
       const langs = Array.from(new Set(files.map(item => item.match(/^(.*(translations.)([a-z]{2})(.json))/))
         .map(item => item[3])).values());
       // We want to reinitialize the i18next module with new local transaction files.
       if (restart) {
-        LoggerManager.log('getListOfLocalLanguages:restart');
+        logger.log('getListOfLocalLanguages:restart');
         return this.initializeI18Next().then(() => (resolve(langs))).catch(reject);
       }
-      LoggerManager.log('getListOfLocalLanguages:resolve');
+      logger.log('getListOfLocalLanguages:resolve');
       resolve(langs);
     });
   },
 
   initializeI18Next() {
-    LoggerManager.log('initializeI18Next');
+    logger.log('initializeI18Next');
     return new Promise((resolve, reject) => {
       const settingsFile = LocalizationSettings.getDefaultConfig();
       // Load i18n config file.
@@ -80,7 +82,7 @@ const TranslationManager = {
   },
 
   changeLanguage(lang) {
-    LoggerManager.log('changeLanguage');
+    logger.log('changeLanguage');
     return new Promise((resolve, reject) => {
       i18next.changeLanguage(lang, (err) => {
         if (err) {
@@ -93,7 +95,7 @@ const TranslationManager = {
   },
 
   removeLanguageFile(lang) {
-    LoggerManager.log('removeLanguageFile');
+    logger.log('removeLanguageFile');
     FileManager.deleteFile(FileManager.getFullPath(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
   }
 };
