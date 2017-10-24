@@ -10,7 +10,6 @@ import {
 import URLUtils from '../../utils/URLUtils';
 import {
   logoutAction,
-  STATE_LOGOUT_DISMISS_TO_SYNC,
   STATE_LOGOUT_REQUESTED
 } from '../../actions/LoginAction';
 import Notification from '../../modules/helpers/NotificationHelper';
@@ -19,6 +18,7 @@ import ConfirmationAlert from '../notifications/confirmationAlert';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import style from '../layout/Navbar.css';
 import LoggerManager from '../../modules/util/LoggerManager';
+import { startSyncUp } from '../../actions/SyncUpAction';
 
 /* eslint-disable class-methods-use-this */
 
@@ -75,9 +75,7 @@ const logoutConfirmationAlert = () => {
     type: STATE_LOGOUT_REQUESTED,
     actionData: { logoutConfirmed: true }
   }, translate('logout'));
-  const proceedWithSync = new FollowUp({
-    type: STATE_LOGOUT_DISMISS_TO_SYNC
-  }, translate('Sync'));
+  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Sync'));
   const actions = [proceedWithLogout, proceedWithSync];
   return new ConfirmationAlert(logoutNotification, actions, true);
 };
