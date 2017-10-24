@@ -5,7 +5,6 @@
 import path from 'path';
 import webpack from 'webpack';
 import validate from 'webpack-validator';
-import { execSync } from 'child_process';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import merge from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
