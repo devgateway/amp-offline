@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
