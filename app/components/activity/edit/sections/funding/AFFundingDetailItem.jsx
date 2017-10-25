@@ -43,7 +43,7 @@ export default class AFFundingDetailItem extends Component {
           <Col md={3} lg={3}>
             <AFField
               parent={this.props.fundingDetail}
-              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} type={AF.NUMBER} />
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} type={AF.NUMBER} min={0} />
           </Col>
           <Col md={3} lg={3}>
             <AFField
@@ -60,7 +60,7 @@ export default class AFFundingDetailItem extends Component {
           <Col md={3} lg={3}>
             <AFField
               parent={this.props.fundingDetail}
-              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} type={AF.NUMBER} />
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} />
           </Col>
           <Col md={3} lg={3}>
             <a
