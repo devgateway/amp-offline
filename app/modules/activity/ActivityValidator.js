@@ -378,20 +378,21 @@ export default class ActivityValidator {
   _validateDependencies(objects, errors, fieldPath, fieldDef) {
     const dependencies = fieldDef.dependencies;
     if (dependencies && dependencies.length) {
+      const hasLocations = this._hasLocations();
       // reporting some dependency errors only for the top objects
-      if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LEVEL_PRESENT)) {
+      if (hasLocations && dependencies.includes(DEPENDENCY_IMPLEMENTATION_LEVEL_PRESENT)) {
         this.processValidationResult(this._activity, errors, LOCATIONS, this._validateImplementationLevelPresent());
       }
       if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LEVEL_VALID)) {
         this.processValidationResult(this._activity, errors, LOCATIONS, this._validateImplementationLevelValid());
       }
-      if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT)) {
+      if (hasLocations && dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT)) {
         this.processValidationResult(this._activity, errors, LOCATIONS, this._validateImplementationLocationPresent());
       }
       objects.forEach(obj => {
         const value = this._getValue(obj, fieldDef, this._wasHydrated(fieldPath));
         if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_VALID)) {
-          this.processValidationResult(obj, errors, fieldPath, this._validateImplementationLevelValid());
+          this.processValidationResult(obj, errors, fieldPath, this._validateImplementationLocationValid());
         }
         if (dependencies.includes(DEPENDENCY_ON_BUDGET)) {
           // TODO based on AMP-27099 outcome, we may need to switch back to _validateOnBudgetRequiredOtherwiseNotAllowed
@@ -402,6 +403,11 @@ export default class ActivityValidator {
         }
       });
     }
+  }
+
+  _hasLocations() {
+    return this._activity[LOCATIONS] && this._activity[LOCATIONS].length && this._activity[LOCATIONS]
+      .some(ampLoc => !!ampLoc.location);
   }
 
   _getImplementationLevelId() {
