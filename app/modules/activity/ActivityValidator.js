@@ -91,6 +91,10 @@ export default class ActivityValidator {
   validateField(obj, asDraft, fieldDef, fieldPath) {
     this._initGenericErrors();
     // normally we fieldPath includes fieldDef field name, but checking it just in case
+    if (fieldDef === null || fieldDef === undefined) {
+      console.warn(fieldPath); // TODO: remove.
+      fieldDef = '';
+    }
     if (fieldPath.endsWith(fieldDef.field_name)) {
       if (fieldPath === fieldDef.field_name) {
         fieldPath = '';

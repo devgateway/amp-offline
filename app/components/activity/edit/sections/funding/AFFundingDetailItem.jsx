@@ -48,7 +48,7 @@ export default class AFFundingDetailItem extends Component {
           <Col md={3} lg={3}>
             <AFField
               parent={this.props.fundingDetail}
-              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} />
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject />
           </Col>
           <Col md={3} lg={3}>
             <AFField
