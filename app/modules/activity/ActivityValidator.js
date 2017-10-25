@@ -109,12 +109,13 @@ export default class ActivityValidator {
 
   _validateValueIfRequired(value, asDraft, fieldDef) {
     const isRequired = (fieldDef.required === 'Y' || (fieldDef.required === 'ND' && asDraft === false));
-    return this._validateRequired(value, isRequired);
+    return this._validateRequired(value, isRequired, fieldDef.field_type);
   }
 
-  _validateRequired(value, isRequired) {
+  _validateRequired(value, isRequired, type) {
     const invalidValue = isRequired &&
-      (value === undefined || value === null || value === '' || (value.length !== undefined && value.length === 0));
+      (value === undefined || value === null || value === '' || (value.length !== undefined && value.length === 0)
+        || ((type === 'float' || type === 'long') && value === 0));
     return invalidValue ? translate('requiredField') : true;
   }
 
@@ -126,7 +127,8 @@ export default class ActivityValidator {
     }
     if (isRequired) {
       objects.forEach(obj => {
-        this.processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
+        this.processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true
+          , fieldDef.field_type));
       });
     }
   }
