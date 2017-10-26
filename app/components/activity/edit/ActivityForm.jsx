@@ -295,7 +295,7 @@ export default class ActivityForm extends Component {
   }
 
   render() {
-    if (this.props.activityReducer.isActivityLoaded) {
+    if (this.props.activityReducer.isActivityLoaded && this.activity) {
       return this._renderActivity();
     }
     // TODO report errors if not loading and not loaded

@@ -56,7 +56,7 @@ export default class NumberUtils {
   }
 
   static rawNumberToFormattedString(number, forceUnits = false) {
-    logger.log('rawNumberToFormattedString');
+    logger.debug('rawNumberToFormattedString');
     const formatted = numeral(forceUnits ? number : NumberUtils.calculateInThousands(number))
       .format(GlobalSettingsManager.getSettingByKey(GS_DEFAULT_NUMBER_FORMAT));
     return formatted;
@@ -68,7 +68,7 @@ export default class NumberUtils {
   }
 
   static calculateInThousands(number) {
-    logger.log('calculateInThousands');
+    logger.debug('calculateInThousands');
     switch (GlobalSettingsManager.getSettingByKey(GS_AMOUNTS_IN_THOUSANDS)) {
       case GS_AMOUNT_OPTION_IN_UNITS:
         return number;
@@ -84,7 +84,7 @@ export default class NumberUtils {
   }
 
   static getAmountsInThousandsMessage() {
-    logger.log('getAmountsInThousandsMessage');
+    logger.debug('getAmountsInThousandsMessage');
     switch (GlobalSettingsManager.getSettingByKey(GS_AMOUNTS_IN_THOUSANDS)) {
       case GS_AMOUNT_OPTION_IN_UNITS:
         return translate('Amounts in Units');
