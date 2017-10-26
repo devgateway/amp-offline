@@ -1,5 +1,4 @@
 import bunyan from 'bunyan';
-import fs from 'fs';
 import path from 'path';
 import {
   LOG_DIR,
@@ -21,14 +20,13 @@ export default class LoggerManager {
     if (!this.bunyanLog) {
       console.log('initialize');
       const settings = LoggerSettings.getDefaultConfig(process.env.NODE_ENV);
+      const logDirFullPath = FileManager.createDataDir(LOG_DIR);
 
-      fs.readdirSync(
-        FileManager.createDataDir(LOG_DIR)
-      )
+      FileManager.readdirSync(logDirFullPath)
         .sort()
         .reverse()
         .slice(NR_LOG_FILES)
-        .forEach(filename => fs.unlink(path.join(LOG_DIR, filename)));
+        .forEach(filename => FileManager.deleteFile(path.join(logDirFullPath, filename)));
 
       const date = new Date();
       let file = `${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
