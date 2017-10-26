@@ -6,14 +6,17 @@ export default class ConnectionInformation {
    * @param protocol usually will be HTTPS
    * @param basePort usually will be 443
    * @param timeout request timeout
+   * @param forcedTimeout
+   * @param isFullUrl specifies if serverUrl is already a full url that doesn't need to be reconstructed
    */
-  constructor(serverUrl, baseRestUrl, protocol, basePort, timeout, forcedTimeout) {
+  constructor(serverUrl, baseRestUrl, protocol, basePort, timeout, forcedTimeout, isFullUrl) {
     this._serverUrl = serverUrl;
     this._baseRestUrl = baseRestUrl;
     this._protocol = protocol;
     this._basePort = basePort;
     this._timeout = timeout;
     this._forcedTimeout = forcedTimeout;
+    this._isFullUrl = isFullUrl;
   }
 
   /**
@@ -29,6 +32,9 @@ export default class ConnectionInformation {
    * @returns {string}
    */
   getFullUrl() {
+    if (this.isFullUrl) {
+      return this.serverUrl;
+    }
     return `${this.protocol}://${this.serverUrl}${this.getPort()}`;
   }
 
@@ -54,6 +60,10 @@ export default class ConnectionInformation {
 
   get forcedTimeout() {
     return this._forcedTimeout;
+  }
+
+  get isFullUrl() {
+    return this._isFullUrl;
   }
 
   getPort() {
