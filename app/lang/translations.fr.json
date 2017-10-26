@@ -1,0 +1,15 @@
+{
+  "amp-title": "Plateforme de Gestion de l'Aide",
+  "Choose One": "Choisir une option",
+  "Other": "Autre",
+  "loadingOptions": "Chargement des options de configuration...",
+  "Reload options": "Options de rechargement",
+  "testingConnectivity": "Vérification de la connexion...",
+  "Configure": "Configurer",
+  "setupFor": "Configurer pour",
+  "wrongSetup": "Paramètres de configuration de pays incorrects. Veuillez réessayer.",
+  "urlNotWorking": "AMP Server est inaccessible ou URL erronée.",
+  "noConnectionToRegistry": "L'application AMP Registry n'est pas accessible. Vous pouvez choisir l'option 'Autre' pour définir l'URL directement ou essayer de recharger la liste des options des pays.",
+  "customHint": "Entrez l'URL de l'application AMP. Vous pouvez le copier à partir de la page de téléchargement du client AMP. Veuillez vous reporter au Manuel de l'utilisateur pour plus d'aide.",
+  "timeoutError": "Délai de connection dépassé. Vérifiez votre connexion Internet."
+}

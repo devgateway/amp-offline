@@ -28,6 +28,9 @@ export const CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS = '/contact/field/values';
 export const DOWNLOAD_UPDATE_BINARY_URL = '/amp/amp-offline-release';
 export const CHANGE_PASSWORD_URL = '/aim/showChangePassword.do';
 export const RESET_PASSWORD_URL = '/aim/showEmailForm.do';
+export const AMP_REGISTRY_SETTINGS_URL = 'https://amp-registry.ampsite.net/amp-registry';
+export const PP_SUFFIX = '/portal';
+export const AMP_SUFFIX = '/aim';
 
 /** OTHER */
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
