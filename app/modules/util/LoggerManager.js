@@ -22,7 +22,7 @@ export default class LoggerManager {
       const settings = LoggerSettings.getDefaultConfig(process.env.NODE_ENV);
       const logDirFullPath = FileManager.createDataDir(LOG_DIR);
 
-      FileManager.readdirSync(logDirFullPath)
+      FileManager.readdirSync(LOG_DIR)
         .sort()
         .reverse()
         .slice(NR_LOG_FILES)
