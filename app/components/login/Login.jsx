@@ -6,6 +6,7 @@ import Button from '../i18n/Button';
 import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
 import LoginTroubleshootingLinks from './LoginTroubleshootingLinks';
+import { doSetupFirst } from '../../actions/SetupAction';
 
 const logger = new Logger('login');
 
@@ -33,6 +34,10 @@ export default class Login extends Component {
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+  }
+
+  componentWillMount() {
+    doSetupFirst();
   }
 
   handlePasswordChange(e) {

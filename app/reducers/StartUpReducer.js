@@ -7,13 +7,10 @@ import {
   STATE_GS_NUMBERS_LOADED,
   STATE_GS_PENDING,
   STATE_GS_REJECTED,
-  STATE_PARAMETERS_FAILED,
-  STATE_PARAMETERS_LOADED,
-  STATE_PARAMETERS_LOADING
+  STATE_PARAMETERS_FAILED
 } from '../actions/StartUpAction';
-import Logger from '../modules/util/LoggerManager';
-
-const logger = new Logger('Startup reducer');
+import LoggerManager from '../modules/util/LoggerManager';
+import { STATE_PARAMETERS_LOADED, STATE_PARAMETERS_LOADING } from '../actions/SetupAction';
 
 const defaultState = {
   connectionInformation: undefined,
@@ -29,7 +26,7 @@ const defaultState = {
 };
 
 export default function startUpReducer(state = defaultState, action: Object) {
-  logger.log('startUpReducer');
+  LoggerManager.log('startUpReducer');
 
   switch (action.type) {
     case STATE_PARAMETERS_LOADED:
