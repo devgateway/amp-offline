@@ -92,7 +92,7 @@ const DesktopManager = {
           currencyRatesManager),
         actualCommitments: this.getActivityAmounts(item, COMMITMENTS, currentWorkspaceSettings, currencyRatesManager),
         view: true,
-        edit: this.getActivityCanEdit(item),
+        edit: this.getActivityCanEdit(item) && !item[REJECTED_ID],
         new: this.getActivityIsNew(item)
       })
     ));

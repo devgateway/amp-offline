@@ -1,0 +1,15 @@
+{
+  "amp-title": "Aid Management Platform",
+  "Choose One": "Choose One",
+  "Other": "Other",
+  "loadingOptions": "Loading setup options...",
+  "Reload options": "Reload options",
+  "testingConnectivity": "Checking connection...",
+  "Configure": "Configure",
+  "setupFor": "Configure for",
+  "wrongSetup": "Wrong country setup settings. Please try again.",
+  "urlNotWorking": "AMP Server is unreachable or wrong URL.",
+  "noConnectionToRegistry": "AMP Registry app is unreachable. You can chose 'Other' option to set the URL directly or try to reload the countries options list.",
+  "customHint": "Please enter AMP application URL. You can copy it from the AMP Client downloaded page. Please refer to User Manual for more help.",
+  "timeoutError": "Connection timeout. Please check your internet connection."
+}
