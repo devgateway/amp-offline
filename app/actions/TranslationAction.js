@@ -17,8 +17,8 @@ export function setLanguage(lang: string) {
   LoggerManager.log('setLanguage');
   DateUtils.setCurrentLang(lang);
   return (dispatch, ownProps) => new Promise((resolve, reject) => TranslationManager.changeLanguage(lang).then(() => {
-    dispatch(language(lang));
     PossibleValuesManager.setLangState({ lang, defaultLang: ownProps().translationReducer.defaultLang });
+    dispatch(language(lang));
     return resolve(lang);
   }).catch(reject));
 }
