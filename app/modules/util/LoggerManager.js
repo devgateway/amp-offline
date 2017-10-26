@@ -21,11 +21,14 @@ export default class LoggerManager {
     if (!this.bunyanLog) {
       console.log('initialize');
       const settings = LoggerSettings.getDefaultConfig(process.env.NODE_ENV);
-      FileManager.createDataDir(LOG_DIR);
 
-      fs.readdirSync(LOG_DIR).sort().reverse().slice(NR_LOG_FILES)
-        .forEach(filename =>
-                 fs.unlink(path.join(LOG_DIR, filename)));
+      fs.readdirSync(
+        FileManager.createDataDir(LOG_DIR)
+      )
+        .sort()
+        .reverse()
+        .slice(NR_LOG_FILES)
+        .forEach(filename => fs.unlink(path.join(LOG_DIR, filename)));
 
       const date = new Date();
       let file = `${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
