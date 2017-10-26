@@ -13,7 +13,7 @@ const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
 class MenuUtils {
 
   constructor() {
-    LoggerManager.log('constructor');
+    LoggerManager.debug('constructor');
   }
 
   buildMenu(loggedIn, menu, onClickHandler, workspaceReducer, menuOnClickHandler, languageList) {
@@ -77,7 +77,7 @@ class MenuUtils {
 }
 
 export function handleClick(info) {
-  LoggerManager.log('handleClick');
+  LoggerManager.debug('handleClick');
   if (info.item.props.route) { // if it doesn't have a route, we invoke a ClickHandler
     UrlUtils.forwardTo(info.item.props.route);
   } else if (info.item.props.onItemClickHandler) {
