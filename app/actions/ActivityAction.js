@@ -151,8 +151,8 @@ const _getActivity = (activityId, teamMemberId) => {
   if (activityId === NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
-  return ActivityHelper.findNonRejectedById(activityId).then(activity =>
-    ActivityHydrator.hydrateActivity({ activity, teamMemberId }));
+  return ActivityHelper.findAll({ id: activityId }).then(activity =>
+    ActivityHydrator.hydrateActivity({ activity: activity[0], teamMemberId }));
 };
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
