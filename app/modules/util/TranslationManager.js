@@ -57,7 +57,7 @@ const TranslationManager = {
   },
 
   getListOfLocalLanguages(restart: false) {
-    Logger.log('getListOfLocalLanguages');
+    logger.log('getListOfLocalLanguages');
     return new Promise((resolve, reject) => {
       const langs = TranslationManager.getListOfLocales();
       // We want to reinitialize the i18next module with new local transaction files.
@@ -75,7 +75,7 @@ const TranslationManager = {
   },
 
   initializeI18Next() {
-    Logger.log('initializeI18Next');
+    logger.log('initializeI18Next');
     return new Promise((resolve, reject) => {
       const settingsFile = LocalizationSettings.getDefaultConfig();
       // Load i18n config file.
@@ -102,7 +102,7 @@ const TranslationManager = {
   },
 
   changeLanguage(lang) {
-    Logger.log('changeLanguage');
+    logger.log('changeLanguage');
     return new Promise((resolve, reject) => {
       i18next.changeLanguage(lang, (err) => {
         if (err) {
@@ -119,7 +119,7 @@ const TranslationManager = {
   },
 
   removeLanguageFile(lang) {
-    Logger.log('removeLanguageFile');
+    logger.log('removeLanguageFile');
     FileManager.deleteFile(FileManager.getFullPath(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
   }
 };

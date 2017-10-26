@@ -41,7 +41,7 @@ export function didSetupComplete() {
 }
 
 export function loadConnectionInformation() {
-  Logger.log('loadConnectionInformation');
+  logger.log('loadConnectionInformation');
   store.dispatch({ type: STATE_PARAMETERS_LOADING });
   return SetupManager.getConnectionInformation()
     .then(configureOnLoad);

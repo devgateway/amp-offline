@@ -22,7 +22,7 @@ import SetupPage from './containers/SetupPage';
 
 const logger = new Logger('index');
 
-Logger.log('index');
+logger.log('index');
 const store = configureStore();
 export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
@@ -30,7 +30,7 @@ export default store;
 const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_URL];
 
 function checkAuth(nextState, replace) {
-  Logger.log('checkAuth');
+  logger.log('checkAuth');
   const nextPath = nextState.location.pathname;
   if (!auth.loggedIn()) {
     replace({ state: { nextPathname: nextPath }, pathname: '/' });
@@ -62,4 +62,4 @@ ampOfflineStartUp().then(() =>
     </Provider>,
     document.getElementById('root')
   )
-).catch((err) => (Logger.error(err)));
+).catch((err) => (logger.error(err)));

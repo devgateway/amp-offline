@@ -70,7 +70,7 @@ function scheduleConnectivityCheck() {
  * @return {Promise}
  */
 export function loadGlobalSettings() {
-  Logger.log('loadGlobalSettings');
+  logger.log('loadGlobalSettings');
   const gsPromise = GlobalSettingsHelper.findAll({}).then(gsList => {
     const gsData = {};
     // update default GS settings to those from the store only if any available in the store
@@ -95,7 +95,7 @@ export function loadGlobalSettings() {
  * @param id FM tree ID. If not specified, the first one will be used (Iteration 1 countries)
  */
 export function loadFMTree(id = undefined) {
-  Logger.log('loadFMTree');
+  logger.log('loadFMTree');
   const dbFilter = id ? { id } : {};
   const fmPromise = FMHelper.findAll(dbFilter)
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))
@@ -117,7 +117,7 @@ export function loadCurrencyRatesOnStartup() {
 // TODO: Use this function somewhere.
 /* eslint no-unused-vars: 0 */
 function startUpFailed(err) {
-  Logger.log('startUpFailed');
+  logger.log('startUpFailed');
   return {
     type: STATE_PARAMETERS_FAILED,
     actionData: { errorMessage: err }

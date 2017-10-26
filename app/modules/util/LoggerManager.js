@@ -40,22 +40,22 @@ export default class LoggerManager {
   }
 
   constructor(module) {
-    this.logger = this.constructor.getBunyanLog().child({ module });
+    this.logger_ = this.constructor.getBunyanLog().child({ module });
   }
 
   log(message) {
-    this.logger.info(message);
+    this.logger_.info(message);
   }
 
   debug(message) {
-    this.logger.debug(message);
+    this.logger_.debug(message);
   }
 
   warn(message) {
-    this.logger.warn(message);
+    this.logger_.warn(message);
   }
 
   error(message) {
-    this.logger.error(message);
+    this.logger_.error(message);
   }
 }

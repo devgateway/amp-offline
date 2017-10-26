@@ -29,6 +29,7 @@ if (process.env.FORCE_LOGGER !== 'true') {
   config.module.loaders.push(
     {
       test: /\.jsx?$/,
+      exclude: /node_modules/,
       loader: StringReplacePlugin.replace({
         replacements: [{ pattern: /logger.log/g, replacement: () => ('console.log') },
           { pattern: /logger.debug/g, replacement: () => ('console.debug') },
@@ -39,7 +40,7 @@ if (process.env.FORCE_LOGGER !== 'true') {
     },
     {
       test: /\.jsx?$/,
-      exclude: keepDebugLogsFor,
+      exclude: (keepDebugLogsFor || []).concat(/node_modules/),
       loader: StringReplacePlugin.replace({
         replacements: [{ pattern: /logger.debug/g, replacement: () => ('// console.debug') }],
       })
