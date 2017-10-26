@@ -66,7 +66,6 @@ export default class ActivityForm extends Component {
   constructor(props) {
     super(props);
     LoggerManager.log('constructor');
-    this.activity = undefined;
     this.showSaveDialog = false;
     this._toggleQuickLinks = this._toggleQuickLinks.bind(this);
   }
@@ -84,9 +83,15 @@ export default class ActivityForm extends Component {
   }
 
   componentWillMount() {
-    this.props.loadActivityForActivityForm(this.props.params.activityId);
+    this.init(this.props.params.activityId);
+  }
+
+  init(activityId) { // eslint-disable-line react/sort-comp
+    this.activity = undefined;
+    this.props.loadActivityForActivityForm(activityId);
     this.setState({
-      isNewActivity: this.props.params.activityId === NEW_ACTIVITY_ID,
+      activityId,
+      isNewActivity: activityId === NEW_ACTIVITY_ID,
       quickLinksExpanded: true,
       currentSection: undefined,
       content: undefined,
@@ -98,6 +103,13 @@ export default class ActivityForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { activityFieldsManager, otherProjectTitles, activity, savedActivity } = nextProps.activityReducer;
+    const activityId = nextProps.params && nextProps.params.activityId;
+    // normally it means "Add Activity" was called from within AF, otherwise activityId must not change
+    if (this.state.activityId !== undefined && activityId !== undefined && this.state.activityId !== activityId) {
+      this.props.unloadActivity();
+      this.init(activityId);
+      return;
+    }
     if (activityFieldsManager) {
       this.activityValidator = new ActivityValidator(activityFieldsManager, otherProjectTitles);
       this.sections = SECTIONS.map(name => {
@@ -293,7 +305,7 @@ export default class ActivityForm extends Component {
   }
 
   render() {
-    if (this.props.activityReducer.isActivityLoaded) {
+    if (this.props.activityReducer.isActivityLoaded && this.activity) {
       return this._renderActivity();
     }
     // TODO report errors if not loading and not loaded

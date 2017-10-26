@@ -5,6 +5,7 @@
 
 export const UPDATE_INSTALLER_PATH = 'Update Installer Path';
 export const LAST_CONNECTIVITY_STATUS = 'Last Connectivity Status';
+export const SETUP_CONFIG = 'Setup Config';
 
 export const SETTING_TYPE_BOOLEAN = 'boolean';
 export const SETTING_TYPE_STRING = 'string';
