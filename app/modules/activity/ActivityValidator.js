@@ -115,7 +115,7 @@ export default class ActivityValidator {
   _validateRequired(value, isRequired, type) {
     const invalidValue = isRequired &&
       (value === undefined || value === null || value === '' || (value.length !== undefined && value.length === 0)
-        || ((type === 'float' || type === 'long') && value === 0));
+        || ((type === 'float' || type === 'long') && value <= 0));
     return invalidValue ? translate('requiredField') : true;
   }
 
