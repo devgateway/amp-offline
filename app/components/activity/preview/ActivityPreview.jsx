@@ -104,7 +104,8 @@ export default class ActivityPreview extends Component {
           <span className={styles.preview_icons} >
             <ul>
               <IconFormatter
-                id={activity.id} edit view={false} status={DesktopManager.getActivityStatus(activity)}
+                id={activity.id} edit={!activity[AC.REJECTED_ID]} view={false}
+                status={DesktopManager.getActivityStatus(activity)}
                 activityTeamId={activity[AC.TEAM].id}
                 teamId={this.props.userReducer.teamMember[WC.WORKSPACE_ID]}
                 teamLeadFlag={teamLeadFlag}
