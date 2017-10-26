@@ -11,9 +11,11 @@ import TranslationSyncUpManager from '../syncup/syncupManagers/TranslationSyncUp
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_I18NEXT } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import FileManager from './FileManager';
 import * as Utils from '../../utils/Utils';
+
+const logger = new Logger('Translation manager');
 
 const TranslationManager = {
 
@@ -55,7 +57,7 @@ const TranslationManager = {
   },
 
   getListOfLocalLanguages(restart: false) {
-    LoggerManager.log('getListOfLocalLanguages');
+    Logger.log('getListOfLocalLanguages');
     return new Promise((resolve, reject) => {
       const langs = TranslationManager.getListOfLocales();
       // We want to reinitialize the i18next module with new local transaction files.
@@ -73,7 +75,7 @@ const TranslationManager = {
   },
 
   initializeI18Next() {
-    LoggerManager.log('initializeI18Next');
+    Logger.log('initializeI18Next');
     return new Promise((resolve, reject) => {
       const settingsFile = LocalizationSettings.getDefaultConfig();
       // Load i18n config file.
@@ -100,7 +102,7 @@ const TranslationManager = {
   },
 
   changeLanguage(lang) {
-    LoggerManager.log('changeLanguage');
+    Logger.log('changeLanguage');
     return new Promise((resolve, reject) => {
       i18next.changeLanguage(lang, (err) => {
         if (err) {
@@ -117,7 +119,7 @@ const TranslationManager = {
   },
 
   removeLanguageFile(lang) {
-    LoggerManager.log('removeLanguageFile');
+    Logger.log('removeLanguageFile');
     FileManager.deleteFile(FileManager.getFullPath(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
   }
 };

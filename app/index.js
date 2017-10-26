@@ -16,11 +16,13 @@ import UpdatePage from './containers/UpdatePage';
 import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
-import LoggerManager from './modules/util/LoggerManager';
+import Logger from './modules/util/LoggerManager';
 import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_URL } from './utils/Constants';
 import SetupPage from './containers/SetupPage';
 
-LoggerManager.log('index');
+const logger = new Logger('index');
+
+Logger.log('index');
 const store = configureStore();
 export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
@@ -28,7 +30,7 @@ export default store;
 const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_URL];
 
 function checkAuth(nextState, replace) {
-  LoggerManager.log('checkAuth');
+  Logger.log('checkAuth');
   const nextPath = nextState.location.pathname;
   if (!auth.loggedIn()) {
     replace({ state: { nextPathname: nextPath }, pathname: '/' });
@@ -60,4 +62,4 @@ ampOfflineStartUp().then(() =>
     </Provider>,
     document.getElementById('root')
   )
-).catch((err) => (LoggerManager.error(err)));
+).catch((err) => (Logger.error(err)));

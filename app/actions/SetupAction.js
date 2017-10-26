@@ -2,7 +2,7 @@ import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
 import { LANGUAGE_ENGLISH, SETUP_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import { connectivityCheck } from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
@@ -18,6 +18,8 @@ export const STATE_SETUP_OPTIONS_REJECTED = 'STATE_SETUP_OPTIONS_REJECTED';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
+
+const logger = new Logger('Setup action');
 
 export function checkIfSetupComplete() {
   const setupCompleteSettingPromise = SetupManager.didSetupComplete();
@@ -39,7 +41,7 @@ export function didSetupComplete() {
 }
 
 export function loadConnectionInformation() {
-  LoggerManager.log('loadConnectionInformation');
+  Logger.log('loadConnectionInformation');
   store.dispatch({ type: STATE_PARAMETERS_LOADING });
   return SetupManager.getConnectionInformation()
     .then(configureOnLoad);
