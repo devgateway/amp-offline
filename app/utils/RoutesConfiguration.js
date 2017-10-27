@@ -4,6 +4,7 @@ import {
   ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
   ACTIVITY_SINGLE_FIELDS_TREE_URL,
   AMP_COUNTRY_FLAG,
+  AMP_REGISTRY_SETTINGS_URL,
   AVAILABLE_LANGUAGES_URL,
   CHANGE_PASSWORD_URL,
   CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
@@ -32,6 +33,11 @@ import {
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
+  url: AMP_REGISTRY_SETTINGS_URL,
+  isFull: true,
+  method: 'GET',
+  requiresAuth: false
+}, {
   url: GET_WORKSPACES_URL,
   method: 'GET',
   requiresAuth: true

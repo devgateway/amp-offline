@@ -1,21 +1,9 @@
 import request from 'request';
-import os from 'os';
 import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
-import {
-  ARCH32,
-  ARCH64,
-  ARCH64_NODE_OS_OPTIONS,
-  ARCH64_USER_AGENT_OPTIONS,
-  PARAM_AMPOFFLINE_AGENT,
-  PLATFORM_DEBIAN,
-  PLATFORM_MAC_OS,
-  PLATFORM_REDHAT,
-  PLATFORM_WINDOWS,
-  TRANSLATIONS_PARAM
-} from './AmpApiConstants';
+import { PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
 
@@ -92,25 +80,7 @@ const RequestConfig = {
   },
 
   _getExtendedUserAgent(userAgent) {
-    const userAgentLowerCase = userAgent.toLowerCase();
-    let platform = os.platform().toLowerCase();
-    if (platform === 'darwin') {
-      platform = PLATFORM_MAC_OS;
-    } else if (platform === 'win32') {
-      platform = PLATFORM_WINDOWS;
-    } else if (platform === 'linux') {
-      if (userAgentLowerCase.includes('red hat')) {
-        platform = PLATFORM_REDHAT;
-      } else {
-        platform = PLATFORM_DEBIAN;
-      }
-    }
-    let arch = os.arch();
-    if (ARCH64_NODE_OS_OPTIONS.has(arch) || ARCH64_USER_AGENT_OPTIONS.some(a64 => userAgentLowerCase.includes(a64))) {
-      arch = ARCH64;
-    } else {
-      arch = ARCH32;
-    }
+    const { platform, arch } = Utils.getPlatformDetails();
     return `(${platform}; ${arch}) ${userAgent}`;
   },
 
@@ -147,6 +117,9 @@ const RequestConfig = {
   },
 
   _getFullBaseUrl(url, routeConfiguration) {
+    if (routeConfiguration.isFull) {
+      return url;
+    }
     // if the route is regularAMPUrl we fetch the ROOT for amp
     // if not we get the REST url
     return routeConfiguration.regularAmpUrl ?

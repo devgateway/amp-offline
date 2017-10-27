@@ -2,17 +2,7 @@
 import store from '../index';
 import { connectivityCheck } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
-import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
-// this is temporal will be stored in settings
-import {
-  BASE_PORT,
-  BASE_REST_URL,
-  CONNECTION_FORCED_TIMEOUT,
-  CONNECTION_TIMEOUT,
-  CONNECTIVITY_CHECK_INTERVAL,
-  PROTOCOL,
-  SERVER_URL
-} from '../utils/Constants';
+import { CONNECTIVITY_CHECK_INTERVAL } from '../utils/Constants';
 import LoggerManager from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
@@ -21,11 +11,9 @@ import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
 import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
+import TranslationManager from '../modules/util/TranslationManager';
+import { checkIfSetupComplete, loadConnectionInformation } from './SetupAction';
 import ElectronUpdaterManager from '../modules/update/ElectronUpdaterManager';
-
-export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
-export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
-export const STATE_PARAMETERS_FAILED = 'STATE_PARAMETERS_FAILED';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -33,6 +21,7 @@ export const TIMER_STOP = 'TIMER_STOP';
 // we keep the timer as a variable in case we want to be able to stop it
 let timer;
 
+export const STATE_PARAMETERS_FAILED = 'STATE_PARAMETERS_FAILED';
 export const STATE_GS_NUMBERS_LOADED = 'STATE_GS_NUMBERS_LOADED';
 export const STATE_GS_DATE_LOADED = 'STATE_GS_DATE_LOADED';
 export const STATE_GS_PENDING = 'STATE_GS_PENDING';
@@ -46,6 +35,8 @@ const STATE_FM = 'STATE_FM';
 
 export function ampOfflineStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
+    .then(checkIfSetupComplete)
+    .then(isSetupComplete => TranslationManager.initializeTranslations(isSetupComplete))
     .then(ampOfflineInit)
     .then(initLanguage)
     .then(() => ElectronUpdaterManager.init());
@@ -60,32 +51,17 @@ export function ampOfflineInit() {
     .then(loadCurrencyRatesOnStartup);
 }
 
-export function loadConnectionInformation() {
-  return new Promise((resolve, reject) => {
-    LoggerManager.log('ampStartUp');
-    store.dispatch(sendingRequest());
-    // TODO we will have a module that will return this from storage, hardcoded in this first commit
-    const connectionInformation = new ConnectionInformation(SERVER_URL, BASE_REST_URL,
-      PROTOCOL, BASE_PORT, CONNECTION_TIMEOUT, CONNECTION_FORCED_TIMEOUT);
-    store.dispatch(startUpLoaded(connectionInformation));
-    //  It is dispatch here so its called right away. since for default it is
-    // Scheduled every x(configured) minutes, we need to check whether amp is on line or not right away
-    connectivityCheck();
-    return resolve();
-  });
-}
-
 // exporting timer from a function since we cannot export let
 export function getTimer() {
   return timer;
 }
 
 function scheduleConnectivityCheck() {
-  return new Promise((resolve, reject) => {
+  return connectivityCheck().then(() => {
     clearInterval(timer);
     timer = setInterval(() => connectivityCheck(), CONNECTIVITY_CHECK_INTERVAL);
     store.dispatch({ type: TIMER_START });
-    return resolve();
+    return Promise.resolve();
   });
 }
 
@@ -138,13 +114,6 @@ export function loadCurrencyRatesOnStartup() {
   store.dispatch(loadCurrencyRates());
 }
 
-function startUpLoaded(connectionInformation) {
-  return {
-    type: STATE_PARAMETERS_LOADED,
-    actionData: { connectionInformation }
-  };
-}
-
 // TODO: Use this function somewhere.
 /* eslint no-unused-vars: 0 */
 function startUpFailed(err) {
@@ -152,12 +121,5 @@ function startUpFailed(err) {
   return {
     type: STATE_PARAMETERS_FAILED,
     actionData: { errorMessage: err }
-  };
-}
-
-function sendingRequest() {
-  LoggerManager.log('sendingRequest');
-  return {
-    type: STATE_PARAMETERS_LOADING
   };
 }
