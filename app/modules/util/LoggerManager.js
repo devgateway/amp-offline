@@ -48,7 +48,7 @@ export default class LoggerManager {
     this.logger_.info(message);
   }
 
-  static info(message) {
+  info(message) {
     this.logger_.info(message);
   }
 
