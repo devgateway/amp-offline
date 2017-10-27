@@ -185,6 +185,11 @@ const Utils = {
       arch = ARCH32;
     }
     return { platform, arch };
+  },
+
+  getISODateWithZone() {
+    const date = new Date();
+    return `${date.toISOString().substring(0, date.toISOString().length - 1)}+0000`;
   }
 };
 
