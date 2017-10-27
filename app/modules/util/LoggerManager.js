@@ -48,6 +48,10 @@ export default class LoggerManager {
     this.logger_.info(message);
   }
 
+  static info(message) {
+    this.logger_.info(message);
+  }
+
   debug(message) {
     this.logger_.debug(message);
   }

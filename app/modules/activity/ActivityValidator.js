@@ -22,11 +22,13 @@ import { DO_NOT_HYDRATE_FIELDS_LIST } from '../../utils/constants/FieldPathConst
 import { DEFAULT_DATE_FORMAT, GS_DEFAULT_NUMBER_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
 import translate from '../../utils/translate';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
 import ActivityFieldsManager from './ActivityFieldsManager';
 import { ON_BUDGET } from '../../utils/constants/ValueConstants';
+
+const logger = new Logger('Activity validator');
 
 /**
  * Activity Validator
@@ -34,7 +36,7 @@ import { ON_BUDGET } from '../../utils/constants/ValueConstants';
  */
 export default class ActivityValidator {
   constructor(activity, activityFieldsManager: ActivityFieldsManager, otherProjectTitles: Array) {
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this._activity = activity;
     this._fieldsDef = activityFieldsManager.fieldsDef;
     this._possibleValuesMap = activityFieldsManager.possibleValuesMap;
@@ -48,7 +50,7 @@ export default class ActivityValidator {
   }
 
   areAllConstraintsMet(activity, asDraft, fieldPathsToSkipSet) {
-    LoggerManager.log('areAllConstraintsMet');
+    logger.log('areAllConstraintsMet');
     const errors = [];
     this._initGenericErrors();
     this._areAllConstraintsMet([activity], this._fieldsDef, asDraft, undefined, fieldPathsToSkipSet, errors);
@@ -56,7 +58,7 @@ export default class ActivityValidator {
   }
 
   _areAllConstraintsMet(objects, fieldsDef, asDraft, currentPath, fieldPathsToSkipSet, errors) {
-    LoggerManager.log('_areAllConstraintsMet');
+    logger.log('_areAllConstraintsMet');
     fieldsDef.forEach(fd => {
       const fieldPath = `${currentPath ? `${currentPath}~` : ''}${fd.field_name}`;
       this._clearErrorState(objects, fieldPath);
@@ -153,7 +155,7 @@ export default class ActivityValidator {
   }
 
   _validateRequiredField(objects, fieldDef, fieldPath, asDraft, isList, errors) {
-    LoggerManager.log('_validateRequiredField');
+    logger.log('_validateRequiredField');
     let isRequired = fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft);
     if (this.excludedFields.filter(f => (fieldDef.field_name === f)).length > 0) {
       isRequired = false;
@@ -178,7 +180,7 @@ export default class ActivityValidator {
   }
 
   _validateValue(objects, fieldDef, fieldPath, isList, errors) {
-    LoggerManager.log('_validateValue');
+    logger.log('_validateValue');
     const fieldLabel = this._activityFieldsManager.getFieldLabelTranslation(fieldPath);
     const wasHydrated = this._wasHydrated(fieldPath);
     const stringLengthError = translate('stringTooLong').replace('%fieldName%', fieldLabel);
@@ -268,7 +270,7 @@ export default class ActivityValidator {
   }
 
   projectTitleValidator(value) {
-    LoggerManager.log('projectTitleValidator');
+    logger.log('projectTitleValidator');
     return !this._otherProjectTitles.has(value) || this.invalidTitle;
   }
 
@@ -279,7 +281,7 @@ export default class ActivityValidator {
    * @return {String|boolean} String if an error detected, true if valid
    */
   percentValueValidator(value, fieldPath) {
-    LoggerManager.log('percentValueValidator');
+    logger.log('percentValueValidator');
     let validationError = null;
     value = Number(value);
     // using the same messages as in AMP
@@ -304,7 +306,7 @@ export default class ActivityValidator {
    * @return {String|boolean}
    */
   totalPercentageValidator(values, fieldName) {
-    LoggerManager.log('totalPercentageValidator');
+    logger.log('totalPercentageValidator');
     let validationError = null;
     const totalPercentage = values.reduce((totPercentage, val) => {
       totPercentage += val[fieldName] === +val[fieldName] ? val[fieldName] : 0;
@@ -323,7 +325,7 @@ export default class ActivityValidator {
    * @return {String|boolean}
    */
   uniqueValuesValidator(values, fieldName) {
-    LoggerManager.log('uniqueValuesValidator');
+    logger.log('uniqueValuesValidator');
     let validationError = null;
     const repeating = new Set();
     const unique = new Set();
@@ -343,7 +345,7 @@ export default class ActivityValidator {
   }
 
   noMultipleValuesValidator(values, fieldName) {
-    LoggerManager.log('noMultipleValuesValidator');
+    logger.log('noMultipleValuesValidator');
     if (values && values.length > 1) {
       return translate('multipleValuesNotAllowed').replace('%fieldName%', fieldName);
     }
@@ -351,7 +353,7 @@ export default class ActivityValidator {
   }
 
   noParentChildMixing(values, fieldPath, noParentChildMixingFieldName) {
-    LoggerManager.log('noParentChildMixing');
+    logger.log('noParentChildMixing');
     const options = this._possibleValuesMap[fieldPath];
     const uniqueRoots = new Set(values.map(v => v[noParentChildMixingFieldName].id));
     const childrenMixedWithParents = [];
