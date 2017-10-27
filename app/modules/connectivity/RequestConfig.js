@@ -67,18 +67,6 @@ const RequestConfig = {
     return fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
   },
 
-  // TODO once AMPOFFLINE-144 is merged, reuse the arch from there
-  getArch() {
-    const userAgentLowerCase = navigator.userAgent.toLowerCase();
-    let arch = os.arch();
-    if (ARCH64_NODE_OS_OPTIONS.has(arch) || ARCH64_USER_AGENT_OPTIONS.some(a64 => userAgentLowerCase.includes(a64))) {
-      arch = ARCH64;
-    } else {
-      arch = ARCH32;
-    }
-    return arch;
-  },
-
   _getExtendedUserAgent(userAgent) {
     const { platform, arch } = Utils.getPlatformDetails();
     return `(${platform}; ${arch}) ${userAgent}`;

@@ -19,8 +19,8 @@ const autoUpdater = ElectronUpdater.getElectronUpdater();
  */
 export default class ElectronUpdaterManager {
 
-  static init() {
-    LoggerManager.log('init');
+  static _init() {
+    LoggerManager.log('_init');
     const url = this._getURL();
     autoUpdater.setFeedURL(url);
   }
@@ -29,14 +29,14 @@ export default class ElectronUpdaterManager {
     return RequestConfig.getFullURL({
       method: 'GET',
       url: ELECTRON_UPDATER_CHECK_URL,
-      extraUrlParam: RequestConfig.getArch()
+      extraUrlParam: Utils.getPlatformDetails().arch
     });
   }
 
   static getUpdater(progressUpdateFunc) {
     LoggerManager.log('getUpdater');
     try {
-      this.init();
+      this._init();
       return new ElectronUpdaterManager(progressUpdateFunc);
     } catch (errorObject) {
       LoggerManager.error(`${errorObject}`);

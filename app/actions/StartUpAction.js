@@ -38,8 +38,7 @@ export function ampOfflineStartUp() {
     .then(checkIfSetupComplete)
     .then(isSetupComplete => TranslationManager.initializeTranslations(isSetupComplete))
     .then(ampOfflineInit)
-    .then(initLanguage)
-    .then(() => ElectronUpdaterManager.init());
+    .then(initLanguage);
 }
 
 export function ampOfflineInit() {
