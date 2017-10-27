@@ -21,10 +21,7 @@ const RequestConfig = {
    in case we don't want to send id we dont have to send null or nothing*/
   getRequestConfig({ method, url, paramsMap, body, extraUrlParam }) {
     const routeConfiguration = this._getRouteConfiguration(method, url);
-    const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
-    const addTranslations = routeConfiguration.regularAmpUrl !== true;
-    const urlParams = this._paramsMapToString(paramsMap, addTranslations);
-    const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
+    const fullUrl = this.getFullURL({ method, url, paramsMap, body, extraUrlParam });
     const headers = {
       'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${this._getExtendedUserAgent(navigator.userAgent)}`
     };
@@ -63,6 +60,13 @@ const RequestConfig = {
     return requestConfig;
   },
 
+  getFullURL({ method, url, paramsMap, extraUrlParam }) {
+    const routeConfiguration = this._getRouteConfiguration(method, url);
+    const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
+    const urlParams = this._paramsMapToString(paramsMap, routeConfiguration);
+    return fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
+  },
+
   _getExtendedUserAgent(userAgent) {
     const { platform, arch } = Utils.getPlatformDetails();
     return `(${platform}; ${arch}) ${userAgent}`;
@@ -83,7 +87,9 @@ const RequestConfig = {
     return paramsMap;
   },
 
-  _paramsMapToString(paramsMap, addTranslations) {
+  _paramsMapToString(paramsMap, routeConfiguration) {
+    const { regularAmpUrl, translations } = routeConfiguration;
+    const addTranslations = regularAmpUrl !== true && translations !== false;
     if (addTranslations) {
       paramsMap = this._addTranslations(paramsMap);
     }
@@ -94,9 +100,8 @@ const RequestConfig = {
       } else {
         Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
       }
-      return `?${kv.join('&')}`;
     }
-    return '';
+    return kv.length ? `?${kv.join('&')}` : '';
   },
 
   _getFullBaseUrl(url, routeConfiguration) {
