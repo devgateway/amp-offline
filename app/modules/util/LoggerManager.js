@@ -30,6 +30,10 @@ export default class LoggerManager {
     this.bunyanLog.info(message);
   }
 
+  static info(message) {
+    this.bunyanLog.info(message);
+  }
+
   static debug(message) {
     this.bunyanLog.debug(message);
   }
