@@ -139,7 +139,8 @@ export default class ActivityHydrator {
     if (LOCATION_PATH === possibleValues.id || PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
       return PossibleValuesManager.buildHierarchicalData(options, selectedId);
     }
-    return Object.assign({}, options[selectedId]);
+    const selectedOption = options[selectedId];
+    return selectedOption && Object.assign({}, selectedOption);
   }
 
   // old mechanism for locations, using v1 API

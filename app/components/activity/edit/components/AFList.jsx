@@ -132,7 +132,7 @@ export default class AFList extends Component {
 
   columnFormatter(editable, cell) {
     if (editable) {
-      return (<span className={styles.editable} >{cell}</span>);
+      return (<span className={styles.editable}>{cell}</span>);
     }
     return cell.toString();
   }
@@ -166,7 +166,7 @@ export default class AFList extends Component {
           key={childFieldName} dataField={childFieldName} columnTitle editable={{ readOnly: !editable, validator }}
           dataFormat={this.getDataFormat.bind(this, editable, fieldPath)}
           customEditor={{ getElement: this.getCustomEditor.bind(this, fieldPath) }}
-          columnClassName={this.getCellClass.bind(this, editable, required)} >
+          columnClassName={this.getCellClass.bind(this, editable, required)}>
           {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);
     }));
@@ -181,10 +181,10 @@ export default class AFList extends Component {
     };
     // there is no one click row removal, we'll simulate with select
     return (<div>
-      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()} >
+      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()}>
         <BootstrapTable
           data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
-          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
+          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName}>
           {columns}
         </BootstrapTable>
         <FormControl.Feedback />
@@ -221,30 +221,30 @@ export default class AFList extends Component {
       });
     });
     return (
-      <div className="react-bs-table react-bs-table-bordered" >
-        <table className="table table-bordered table-hover" >
-          <tbody className="react-bs-container-body" >
-            <tr >
+      <div className="react-bs-table react-bs-table-bordered">
+        <table className="table table-bordered table-hover">
+          <tbody className="react-bs-container-body">
+            <tr>
               {headers.map(header =>
-                (<th className={styles.thClassName} style={collWidth} key={header} >{header}</th >))}
+                (<th className={styles.thClassName} style={collWidth} key={header}>{header}</th>))}
               <th className={`${styles.thDelete} ${styles.thClassName}`} />
-            </tr >
+            </tr>
             {content.map(row => (
               <tr key={row.rowData.uniqueId}>
                 {row.cells.map(cell => (
-                  <td key={cell.key} className={styles.cell} >{cell.value}</td >
+                  <td key={cell.key} className={styles.cell}>{cell.value}</td>
                 ))}
-                <td className={styles.thDelete} >
+                <td className={styles.thDelete}>
                   <a
-                    onClick={this.onDeleteRow.bind(this, row.rowData.uniqueId)} className={styles.delete} href={null} >
-                    <span >&nbsp;</span >
-                  </a >
-                </td >
-              </tr >
+                    onClick={this.onDeleteRow.bind(this, row.rowData.uniqueId)} className={styles.delete} href={null}>
+                    <span>&nbsp;</span>
+                  </a>
+                </td>
+              </tr>
             ))}
-          </tbody >
-        </table >
-      </div >
+          </tbody>
+        </table>
+      </div>
     );
   }
 

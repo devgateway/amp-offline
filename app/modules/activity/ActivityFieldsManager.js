@@ -136,6 +136,30 @@ export default class ActivityFieldsManager {
     return fieldsDef;
   }
 
+  getFieldPathsByDependencies(dependencies) {
+    const fieldPaths = [];
+    this._getFieldPathsByDependencies(dependencies, this._fieldsDef, '', fieldPaths);
+    return fieldPaths;
+  }
+
+  _getFieldPathsByDependencies(dependencies, fieldsDef, currentPath, fieldPaths: Array) {
+    if (!(fieldsDef instanceof Array)) {
+      fieldsDef = fieldsDef.children;
+    }
+    fieldsDef.forEach(fd => {
+      const hasDependency = fd.dependencies && fd.dependencies.some(dep => dependencies.includes(dep));
+      if (fd.children || hasDependency) {
+        const fieldPath = `${currentPath}${fd.field_name}`;
+        if (hasDependency) {
+          fieldPaths.push(fieldPath);
+        }
+        if (fd.children) {
+          this._getFieldPathsByDependencies(dependencies, fd.children, `${fieldPath}~`, fieldPaths);
+        }
+      }
+    });
+  }
+
   getValue(object, fieldPath) {
     return ActivityFieldsManager.getValue(object, fieldPath);
   }
