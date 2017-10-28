@@ -4,15 +4,15 @@ import Update from '../components/update/Update';
 import * as UpdateAction from '../actions/UpdateAction';
 
 function mapStateToProps({ updateReducer, ampConnectionStatusReducer }, { params }) {
-  const { errorMessage, fullUpdateFileName, downloadingUpdate, downloadedUpdate, installingUpdate, installUpdateFailed }
+  const { errorMessage, downloadingUpdate, downloadedUpdate, installingUpdate, installUpdateFailed, progressData }
   = updateReducer;
   return {
     errorMessage,
-    fullUpdateFileName,
     downloadingUpdate,
     downloadedUpdate,
     installingUpdate,
     installUpdateFailed,
+    progressData,
     ...params,
     connectivityStatus: ampConnectionStatusReducer.status
   };

@@ -9,10 +9,12 @@ import {
 } from '../../../../utils/constants/ActivityConstants';
 import styles from '../ActivityPreview.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 
 const PrimaryProgramList = APPercentageList(PRIMARY_PROGRAMS, PROGRAM, PROGRAM_PERCENTAGE, 'Primary Program');
 const SecondaryProgramList = APPercentageList(SECONDARY_PROGRAMS, PROGRAM, PROGRAM_PERCENTAGE, 'Secondary Program');
+
+const logger = new Logger('AP Program');
 
 /**
  * Activity Preview Program section
@@ -28,7 +30,7 @@ class APProgram extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

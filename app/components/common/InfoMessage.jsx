@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { Alert, Fade } from 'react-bootstrap';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Info message');
 
 /**
  * Simple Info Message
@@ -20,7 +22,7 @@ export default class InfoMessage extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       show: true
     };
