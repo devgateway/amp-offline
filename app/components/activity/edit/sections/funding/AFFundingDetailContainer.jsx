@@ -3,11 +3,13 @@ import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
 import * as Utils from '../../../../../utils/Utils';
+
+const logger = new Logger('AF funding detail container');
 
 /**
  * @author Gabriel Inchauspe
@@ -27,7 +29,7 @@ export default class AFFundingDetailContainer extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       openFDC: false
     };

@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Loading component');
 
 export default class Loading extends Component {
 
   constructor() {
     super();
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     return (
       <div>
         <span>Loading...</span>

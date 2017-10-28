@@ -17,7 +17,7 @@ import {
   SYNCUP_STATUS_SUCCESS,
   SYNCUP_SYNC_REQUESTED_AT
 } from '../../utils/Constants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import {
   loadCurrencyRatesOnStartup,
   loadFMTree,
@@ -26,6 +26,8 @@ import {
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
 import translate from '../../utils/translate';
 import DateUtils from '../../utils/DateUtils';
+
+const logger = new Logger('Syncup manager');
 
 // TODO: Evaluate in the future whats best: to have static functions or to create instances of SyncUpManager.
 export default class SyncUpManager {
@@ -38,7 +40,7 @@ export default class SyncUpManager {
    * @private
    */
   static sortByLastSyncDateDesc(a, b) {
-    LoggerManager.log('_sortByLastSyncDateDesc');
+    logger.log('_sortByLastSyncDateDesc');
     return (a[SYNCUP_DATETIME_FIELD] > b[SYNCUP_DATETIME_FIELD]
       ? -1
       : a[SYNCUP_DATETIME_FIELD] < b[SYNCUP_DATETIME_FIELD] ? 1 : 0);
@@ -49,7 +51,7 @@ export default class SyncUpManager {
    * @returns {Promise}
    */
   static getLastSuccessfulSyncUp() {
-    LoggerManager.log('getLastSuccessfulSyncUp');
+    logger.log('getLastSuccessfulSyncUp');
     return new Promise((resolve, reject) => (
       SyncUpHelper.findAllSyncUpByExample({
         status: SYNCUP_STATUS_SUCCESS
@@ -69,7 +71,7 @@ export default class SyncUpManager {
    * Retrieves the latest sync up log
    */
   static getLastSyncUpLog() {
-    LoggerManager.log('getLastSyncUpLog');
+    logger.log('getLastSyncUpLog');
     return SyncUpHelper.getLatestId().then(id => {
       if (id === 0) {
         return {};
@@ -79,7 +81,7 @@ export default class SyncUpManager {
   }
 
   static getLastSyncUpIdForCurrentUser() {
-    LoggerManager.log('getLastSyncUpLog');
+    logger.log('getLastSyncUpLog');
     const user = store.getState().userReducer.userData;
     return SyncUpHelper.getLatestId({ 'requested-by': user.id });
   }
@@ -89,7 +91,7 @@ export default class SyncUpManager {
    * and then call the EPs from the types that need to be synced.
    */
   static syncUpAllTypesOnDemand() {
-    LoggerManager.log('syncUpAllTypesOnDemand');
+    logger.log('syncUpAllTypesOnDemand');
     let syncResult;
     const startDate = new Date();
     return this._startSyncUp()
@@ -97,7 +99,7 @@ export default class SyncUpManager {
         if (result && result.status === SYNCUP_STATUS_FAIL && !result.units) {
           let error = result.errors && result.errors.length && result.errors.join(' ');
           error = error || translate('unexpectedError');
-          LoggerManager.error(error);
+          logger.error(error);
           return Promise.reject(error);
         }
         syncResult = result;
@@ -114,12 +116,12 @@ export default class SyncUpManager {
    * @returns {*}
    */
   static prepareNetworkForSyncUp() {
-    LoggerManager.log('prepareNetworkForSyncUp');
+    logger.log('prepareNetworkForSyncUp');
     return ConnectionHelper.doGet({ url: TEST_URL });
   }
 
   static _startSyncUp() {
-    LoggerManager.log('_startSyncUp');
+    logger.log('_startSyncUp');
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     const userId = store.getState().userReducer.userData.id;
@@ -134,7 +136,7 @@ export default class SyncUpManager {
         // sync up runner should catch all errors and end gracefully
         // this is either an unexpected error (bug that has to be fixed) or a connectivity issue
         const errorType = syncUpRunner ? 'bug / unexpected' : 'normal / expected';
-        LoggerManager.error(`A ${errorType} error occurred: error = "${error}", stack = "${error.stack}"`);
+        logger.error(`A ${errorType} error occurred: error = "${error}", stack = "${error.stack}"`);
         const result = syncUpRunner ? syncUpRunner.buildResult([error])
           : SyncUpRunner.buildResult({ status: SYNCUP_STATUS_FAIL, userId, errors: [error] });
         return result;
@@ -142,7 +144,7 @@ export default class SyncUpManager {
   }
 
   static _saveMainSyncUpLog(log) {
-    LoggerManager.log('_saveMainSyncUpLog');
+    logger.log('_saveMainSyncUpLog');
     return SyncUpHelper.getLatestId().then(id => {
       log.id = id + 1;
       return SyncUpHelper.saveOrUpdateSyncUp(log);
@@ -166,12 +168,12 @@ export default class SyncUpManager {
   }
 
   static getSyncUpHistory() {
-    LoggerManager.log('getSyncUpHistory');
+    logger.log('getSyncUpHistory');
     return SyncUpHelper.findAllSyncUpByExample({});
   }
 
   static getLastSyncInDays() {
-    LoggerManager.log('getLastSyncInDays');
+    logger.log('getLastSyncInDays');
     return new Promise((resolve, reject) => (
       SyncUpManager.getLastSuccessfulSyncUp().then(lastSync => {
         if (lastSync && lastSync['sync-date']) {
@@ -189,7 +191,7 @@ export default class SyncUpManager {
    * Check if the last syncup is too old or there is not user data in storage, also set the message.
    */
   static checkIfToForceSyncUp() {
-    LoggerManager.log('checkIfToForceSyncUp');
+    logger.log('checkIfToForceSyncUp');
     return Promise.all([SyncUpManager.getLastSyncInDays(), SyncUpManager.getLastSuccessfulSyncUp(),
       SyncUpManager.getLastSyncUpIdForCurrentUser()])
       .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser]) => {
@@ -209,7 +211,7 @@ export default class SyncUpManager {
   }
 
   static isWarnSyncUp() {
-    LoggerManager.log('isWarnSyncUp');
+    logger.log('isWarnSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) =>
       (days === undefined || days > SYNCUP_BEST_BEFORE_DAYS)
     );

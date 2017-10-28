@@ -29,19 +29,20 @@ if (process.env.FORCE_LOGGER !== 'true') {
   config.module.loaders.push(
     {
       test: /\.jsx?$/,
+      exclude: /node_modules/,
       loader: StringReplacePlugin.replace({
-        replacements: [{ pattern: /LoggerManager.log/g, replacement: () => ('console.log') },
-          { pattern: /LoggerManager.debug/g, replacement: () => ('console.debug') },
-          { pattern: /LoggerManager.warn/g, replacement: () => ('console.warn') },
-          { pattern: /LoggerManager.error/g, replacement: () => ('console.error') }
+        replacements: [{ pattern: /logger.log/g, replacement: () => ('console.log') },
+          { pattern: /logger.debug/g, replacement: () => ('console.debug') },
+          { pattern: /logger.warn/g, replacement: () => ('console.warn') },
+          { pattern: /logger.error/g, replacement: () => ('console.error') }
         ],
       })
     },
     {
       test: /\.jsx?$/,
-      exclude: keepDebugLogsFor,
+      exclude: (keepDebugLogsFor || []).concat(/node_modules/),
       loader: StringReplacePlugin.replace({
-        replacements: [{ pattern: /LoggerManager.debug/g, replacement: () => ('// console.debug') }],
+        replacements: [{ pattern: /logger.debug/g, replacement: () => ('// console.debug') }],
       })
     });
 }

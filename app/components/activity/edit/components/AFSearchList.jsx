@@ -3,7 +3,9 @@ import { Button, FormControl, Panel } from 'react-bootstrap';
 import styles from './AFSearchList.css';
 import AFOption from './AFOption';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF search list');
 
 // similar to AMP
 const HIERARCHY_LEVEL_PADDING_CHAR = ' ';
@@ -23,7 +25,7 @@ export default class AFSearchList extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.applyFilter = this.applyFilter.bind(this);
     this.state = {
       filter: '',

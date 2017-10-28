@@ -2,7 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import styles from './ActivityPreview.css';
 import FundingSummary from './sections/FundingSummary';
 import AdditionalInfo from './sections/AdditionalInfo';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import Logger from '../../../modules/util/LoggerManager';
+
+const logger = new Logger('Summary group');
 
 /**
  * Activty summary information
@@ -16,7 +18,7 @@ export default class SummaryGroup extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

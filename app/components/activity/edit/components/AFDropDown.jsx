@@ -2,7 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { FormControl } from 'react-bootstrap';
 import AFOption from './AFOption';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF Dropdown');
 
 /**
  * Activity Form dropdown component
@@ -20,7 +22,7 @@ export default class AFDropDown extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       value: undefined,
       propsReceived: false

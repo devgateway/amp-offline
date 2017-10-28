@@ -3,12 +3,14 @@ import { COLLECTION_GLOBAL_SETTINGS } from '../../utils/Constants';
 import { NOTIFICATION_ORIGIN_WRONG_METHOD_USAGE } from '../../utils/constants/ErrorConstants';
 
 import { stringToId } from '../../utils/Utils';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Global settings helper');
 
 const GlobalSettingsHelper = {
 
   saveGlobalSetting(setting) {
-    LoggerManager.log('saveGlobalSetting');
+    logger.log('saveGlobalSetting');
     if (Object.keys(setting).length > 1) {
       throw new Notification({ message: 'MoreThanOneRecord', origin: NOTIFICATION_ORIGIN_WRONG_METHOD_USAGE });
     }
@@ -19,7 +21,7 @@ const GlobalSettingsHelper = {
     return DatabaseManager.saveOrUpdate(teamMember.id, teamMember, COLLECTION_GLOBAL_SETTINGS, {});
   },
   saveGlobalSettings(settings) {
-    LoggerManager.log('saveOrUpdateGlobalSetting');
+    logger.log('saveOrUpdateGlobalSetting');
     // The normal structure of GS is {key|value} so we need to convert to {id|key|value}
     // for each element on settingsList.
     const newList = [];
@@ -35,7 +37,7 @@ const GlobalSettingsHelper = {
    * @returns {Promise}
    */
   findById(id) {
-    LoggerManager.log('findGlobalSettingById');
+    logger.log('findGlobalSettingById');
     return this.findSetting({ id });
   },
   /**
@@ -44,7 +46,7 @@ const GlobalSettingsHelper = {
    * @returns {Promise}
    */
   findByKey(key) {
-    LoggerManager.log('findSettingByName');
+    logger.log('findSettingByName');
     return this.findSetting({ key });
   },
   /**
@@ -53,7 +55,7 @@ const GlobalSettingsHelper = {
    * @returns {Promise}
    */
   findSetting(filter) {
-    LoggerManager.log('findSetting');
+    logger.log('findSetting');
     return DatabaseManager.findOne(filter, COLLECTION_GLOBAL_SETTINGS);
   },
   _convertGlobalSetting(settings, key) {
@@ -70,12 +72,12 @@ const GlobalSettingsHelper = {
    * @returns {Promise}
    */
   deleteById(gsSettingsId) {
-    LoggerManager.log('deleteByIdWSSettings');
+    logger.log('deleteByIdWSSettings');
     return DatabaseManager.removeById(gsSettingsId, COLLECTION_GLOBAL_SETTINGS);
   },
 
   findAll(filter, projections) {
-    LoggerManager.log('findAll');
+    logger.log('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_GLOBAL_SETTINGS, projections);
   },
 };

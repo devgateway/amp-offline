@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import styles from './APFundingTransactionTypeItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
+
+const logger = new Logger('AP Funding total item');
 
 /**
  * @author Gabriel Inchauspe
@@ -18,11 +20,11 @@ class APFundingTotalItem extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     // Note: dont translate the label because it might be a phrase composed by individually translated words.
     let val = (this.props.dontFormatNumber
       ? this.props.value

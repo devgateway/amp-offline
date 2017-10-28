@@ -3,7 +3,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingContainer from './AFFundingContainer';
@@ -11,6 +11,8 @@ import AFField from '../../components/AFField';
 import styles from './AFFundingDonorSection.css';
 import * as Types from '../../components/AFComponentTypes';
 import * as Utils from '../../../../../utils/Utils';
+
+const logger = new Logger('AF funding donor section');
 
 /**
  * @author Gabriel Inchauspe
@@ -30,7 +32,7 @@ export default class AFFundingDonorSection extends Component {
 
   constructor(props, context) {
     super(props, context);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     // We manage the open/close state of these panels or they will have problems when nested panels.
     const openFundingsState = [];
     this._filterFundings(this.props.fundings).map(() => (openFundingsState.push(false)));
@@ -42,7 +44,7 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _addNewFundingItem() {
-    LoggerManager.log('_addNewFundingItem');
+    logger.log('_addNewFundingItem');
     // Since Funding Item belongs to a "Funding Tab" we can inherit that info.
     const fundingItem = {};
     fundingItem[AC.FUNDING_DONOR_ORG_ID] = this.props.organization;

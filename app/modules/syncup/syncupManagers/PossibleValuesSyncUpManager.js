@@ -1,7 +1,9 @@
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import PossibleValuesHelper from '../../helpers/PossibleValuesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
+
+const logger = new Logger('Possible values syncup manager');
 
 /* eslint-disable class-methods-use-this */
 
@@ -18,7 +20,7 @@ export default class PossibleValuesSyncUpManager extends AbstractAtomicSyncUpMan
   }
 
   doAtomicSyncUp(fieldPaths) {
-    LoggerManager.log('doAtomicSyncUp');
+    logger.log('doAtomicSyncUp');
     return ConnectionHelper.doPost({ url: this._url, body: fieldPaths, shouldRetry: true })
       .then(possibleValuesCollection => {
         const newPossibleValues = this.preparePossibleValues(possibleValuesCollection);

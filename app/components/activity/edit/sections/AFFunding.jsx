@@ -6,13 +6,15 @@ import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../utils/constants/ValueConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
 import Utils from '../../../../utils/Utils';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+
+const logger = new Logger('AF funding');
 
 /**
  * Funding Section
@@ -27,7 +29,7 @@ class AFFunding extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
     this.state = {
       fundingList: []
     };
@@ -63,7 +65,7 @@ class AFFunding extends Component {
   }
 
   handleDonorSelect(value) {
-    LoggerManager.debug('handleDonorSelect');
+    logger.debug('handleDonorSelect');
     if (value) {
       const fundingItem = {};
       fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
@@ -133,7 +135,7 @@ class AFFunding extends Component {
   }
 
   removeFundingItem(id) {
-    LoggerManager.log('_removeFundingItem');
+    logger.log('_removeFundingItem');
     if (confirm(translate('deleteFundingItem'))) {
       const newFundingList = this.state.fundingList;
       const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));

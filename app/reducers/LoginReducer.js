@@ -10,7 +10,9 @@ import {
   STATE_CHANGE_PASSWORD_ONLINE,
   STATE_RESET_PASSWORD_ONLINE
 } from '../actions/LoginAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('Login reducer');
 
 const defaultState = {
   loggedIn: false,
@@ -29,7 +31,7 @@ const defaultState = {
  * @returns {*}
  */
 export default function loginReducer(state: Object = defaultState, action: Object) {
-  LoggerManager.log('LoginReducer');
+  logger.log('LoginReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {
