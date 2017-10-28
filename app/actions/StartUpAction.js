@@ -3,7 +3,7 @@ import store from '../index';
 import { connectivityCheck } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
 import { CONNECTIVITY_CHECK_INTERVAL } from '../utils/Constants';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
@@ -32,6 +32,8 @@ export const STATE_FM_PENDING = 'STATE_FM_PENDING';
 export const STATE_FM_FULFILLED = 'STATE_FM_FULFILLED';
 export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
+
+const logger = new Logger('Startup action');
 
 export function ampOfflineStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
@@ -69,7 +71,7 @@ function scheduleConnectivityCheck() {
  * @return {Promise}
  */
 export function loadGlobalSettings() {
-  LoggerManager.log('loadGlobalSettings');
+  logger.log('loadGlobalSettings');
   const gsPromise = GlobalSettingsHelper.findAll({}).then(gsList => {
     const gsData = {};
     // update default GS settings to those from the store only if any available in the store
@@ -94,7 +96,7 @@ export function loadGlobalSettings() {
  * @param id FM tree ID. If not specified, the first one will be used (Iteration 1 countries)
  */
 export function loadFMTree(id = undefined) {
-  LoggerManager.log('loadFMTree');
+  logger.log('loadFMTree');
   const dbFilter = id ? { id } : {};
   const fmPromise = FMHelper.findAll(dbFilter)
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))
@@ -116,7 +118,7 @@ export function loadCurrencyRatesOnStartup() {
 // TODO: Use this function somewhere.
 /* eslint no-unused-vars: 0 */
 function startUpFailed(err) {
-  LoggerManager.log('startUpFailed');
+  logger.log('startUpFailed');
   return {
     type: STATE_PARAMETERS_FAILED,
     actionData: { errorMessage: err }

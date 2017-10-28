@@ -9,10 +9,12 @@ import {
 } from '../../../../utils/constants/ActivityConstants';
 import styles from './APSector.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 
 const PrimarySectorList = APPercentageList(PRIMARY_SECTORS, SECTOR, SECTOR_PERCENTAGE, 'Primary Sector');
 const SecondarySectorList = APPercentageList(SECONDARY_SECTORS, SECTOR, SECTOR_PERCENTAGE, 'Secondary Sector');
+
+const logger = new Logger('AP sector');
 
 /**
  * Activity Preview Sector section
@@ -28,7 +30,7 @@ class APSector extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

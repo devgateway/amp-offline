@@ -1,11 +1,12 @@
 import { autoUpdater } from 'electron-updater';
 import { IS_DEV_MODE, IS_RENDERER_PROCESS } from '../util/ElectronApp';
 import { VERSION } from '../../utils/Constants';
-import LoggerManager from '../util/LoggerManager';
+import Logger from '../util/LoggerManager';
 
 const { remote } = require('electron');
 
-const logger = IS_DEV_MODE ? console : LoggerManager;
+const logger = IS_DEV_MODE ? console : new Logger('Electron updater');
+
 let electronUpdater;
 
 /**

@@ -18,7 +18,9 @@ import {
   SYNCUP_TYPE_WORKSPACES
 } from '../../utils/Constants';
 import { throwSyncUpError } from './syncupManagers/SyncUpManagerInterface';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Syncup diff');
 
 /* eslint-disable class-methods-use-this */
 
@@ -131,7 +133,7 @@ export default class SyncUpDiff {
       }
       return false;
     }
-    LoggerManager.error(`Diff check reached unexpected use case: diff1 = "${diff1}", diff2 = "${diff2}". 
+    logger.error(`Diff check reached unexpected use case: diff1 = "${diff1}", diff2 = "${diff2}". 
     Possibly a bug. Fallback to false.`);
     return false;
   }

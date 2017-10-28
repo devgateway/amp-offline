@@ -7,8 +7,10 @@ import { RICH_TEXT_AREA } from '../components/AFComponentTypes';
 import { IDENTIFICATION } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../utils/constants/ValueConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+
+const logger = new Logger('AF identification');
 
 /**
  * Identification Section
@@ -23,7 +25,7 @@ class AFIdentification extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     // Show ministry_code only when activity_budget is enabled and has value 'On Budget'.
     const showMinistryCode = (this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
       && this.props.activity[AC.ACTIVITY_BUDGET]

@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import { FormGroup, Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
@@ -12,6 +12,8 @@ import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import translate from '../../../../../utils/translate';
 import Utils from '../../../../../utils/Utils';
+
+const logger = new Logger('AF funding container');
 
 /**
  * @author Gabriel Inchauspe
@@ -28,7 +30,7 @@ export default class AFFundingContainer extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
     this.state = {
       funding: this.props.funding,
       stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS]
@@ -38,7 +40,7 @@ export default class AFFundingContainer extends Component {
   }
 
   _addTransactionItem(type) {
-    LoggerManager.debug('_addTransactionItem');
+    logger.debug('_addTransactionItem');
     const fundingDetailItem = {};
     fundingDetailItem[AC.REPORTING_DATE] = Utils.getISODateWithZone();
     const trnTypeList = this.context.activityFieldsManager
@@ -57,7 +59,7 @@ export default class AFFundingContainer extends Component {
   }
 
   _removeFundingDetailItem(id) {
-    LoggerManager.debug('_removeFundingDetailItem');
+    logger.debug('_removeFundingDetailItem');
     if (confirm(translate('deleteFundingTransactionItem'))) {
       const newFunding = this.state.stateFundingDetail;
       const index = this.state.stateFundingDetail.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
