@@ -4,10 +4,12 @@ import * as AC from '../../utils/constants/ActivityConstants';
 import * as VC from '../../utils/constants/ValueConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
 import * as GSC from '../../utils/constants/GlobalSettingsConstants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
 import WSSettingsHelpers from '../../modules/helpers/WSSettingsHelper';
 import WorkspaceHelper from '../../modules/helpers/WorkspaceHelper';
+
+const logger = new Logger('Activity status validation');
 
 /**
  * Replicate activity validation logic from AMP's ActivityUtil.setActivityStatus()
@@ -23,7 +25,7 @@ export default class ActivityStatusValidation {
    * @returns {Promise.<TResult>}
    */
   static statusValidation(dehydratedActivity, teamMember, rejected) {
-    LoggerManager.debug('statusValidation');
+    logger.debug('statusValidation');
     const isNew = (dehydratedActivity.id === undefined && dehydratedActivity[AC.INTERNAL_ID] === undefined);
     const projectValidationEnabled = GlobalSettingsManager.getSettingByKey(GSC.PROJECTS_VALIDATION);
     const isSameWorkspace = teamMember[WC.WORKSPACE_ID] === dehydratedActivity[AC.TEAM];

@@ -17,8 +17,10 @@ import Notification from '../../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../../utils/constants/ErrorConstants';
 import TranslationManager from '../../util/TranslationManager';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
 import FileManager from '../../util/FileManager';
+
+const logger = new Logger('Translations syncup manager');
 
 /* eslint-disable class-methods-use-this */
 
@@ -47,7 +49,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   }
 
   syncUpLangList() {
-    LoggerManager.log('syncUpLangList');
+    logger.log('syncUpLangList');
     return new Promise((resolve, reject) => (
       ConnectionHelper.doGet({ url: AVAILABLE_LANGUAGES_URL, shouldRetry: true }).then((langs) => (
         // Replace the list of available languages first.
@@ -64,7 +66,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   }
 
   removeDisabledLanguageFiles(langs) {
-    LoggerManager.log('removeDisabledLanguageFiles');
+    logger.log('removeDisabledLanguageFiles');
     const restart = false;
     return new Promise((resolve, reject) => (
       TranslationManager.getListOfLocalLanguages(restart).then((existingLangs) => {
@@ -83,7 +85,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
    * @returns {boolean}
    */
   static detectSynchronizedTranslationFile(lang) {
-    LoggerManager.log('detectSynchronizedTranslationFile');
+    logger.log('detectSynchronizedTranslationFile');
     let ret = false;
     const stats = FileManager.statSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`);
     if (stats) {
@@ -97,7 +99,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
 
   // TODO: use lastSyncDate when calling the EP.
   syncUpTranslations(langs) {
-    LoggerManager.log('syncUpTranslations');
+    logger.log('syncUpTranslations');
     const originalMasterTrnFile = TranslationSyncUpManager.parseMasterTrnFile();
     const langIds = langs.map(value => value.id);
     /* In the first syncup we send all translations to the POST endpoint and for incremental syncups we call
@@ -123,7 +125,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
    * @returns {*}
    */
   pushTranslationsSyncUp(langIds, originalMasterTrnFile) {
-    LoggerManager.log('pushTranslationsSyncUp');
+    logger.log('pushTranslationsSyncUp');
     // On full sync diffTexts is the complete originalMasterTrnFile.
     const diffTexts = TranslationSyncUpManager.getNewTranslationsDifference();
     if (diffTexts.length > 0) {
@@ -136,7 +138,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   }
 
   doPostCall(langIds, textList) {
-    LoggerManager.debug('doPostCall');
+    logger.debug('doPostCall');
     return ConnectionHelper.doPost({
       shouldRetry: true,
       url: POST_TRANSLATIONS_URL,
@@ -153,7 +155,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
    * @param originalMasterTrnFile
    */
   doIncrementalSyncup(langIds, originalMasterTrnFile) {
-    LoggerManager.log('doIncrementalSyncup');
+    logger.log('doIncrementalSyncup');
     return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile).then(() => ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
@@ -164,7 +166,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   }
 
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
-    LoggerManager.log('updateTranslationFiles');
+    logger.log('updateTranslationFiles');
     const fn = (lang) => {
       // We might need access to previous translations for this language.
       const oldTranslationFileExists = TranslationSyncUpManager.detectSynchronizedTranslationFile(lang);

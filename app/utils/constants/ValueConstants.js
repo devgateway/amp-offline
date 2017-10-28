@@ -52,3 +52,6 @@ export const NOT_APPROVED = 'not_approved';
 export const REJECTED_STATUS = 'rejected';
 
 export const ON_BUDGET = 'On Budget';
+
+export const INTERNATIONAL = 'International';
+export const COUNTRY = 'Country';
