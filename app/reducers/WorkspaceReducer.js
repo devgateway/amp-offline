@@ -7,7 +7,9 @@ import {
   STATE_WORKSPACE_LOADED,
   STATE_WORKSPACE_LOADING
 } from '../actions/WorkspaceAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('Workspace reducer');
 
 const defaultState = {
   workspaceLoading: false,
@@ -17,7 +19,7 @@ const defaultState = {
 };
 
 export default function workspaceReducer(state = defaultState, action: Object) {
-  LoggerManager.log('WorkspaceReducer');
+  logger.log('WorkspaceReducer');
   switch (action.type) {
     case STATE_WORKSPACE_LOADED:
       return Object.assign({}, state, {
@@ -62,7 +64,7 @@ export default function workspaceReducer(state = defaultState, action: Object) {
         workspaceFilter: action.actionData
       });
     default:
-      LoggerManager.log(`default state: ${action.type}`);
+      logger.log(`default state: ${action.type}`);
       return state;
   }
 }

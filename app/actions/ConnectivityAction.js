@@ -3,7 +3,7 @@ import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
 import { URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
 import { VERSION } from '../utils/Constants';
 import store from '../index';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import { LAST_CONNECTIVITY_STATUS } from '../utils/constants/ClientSettingsConstants';
 
@@ -11,12 +11,14 @@ export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_U
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
 export const MANDATORY_UPDATE = 'mandatory_update';
 
+const logger = new Logger('Connectivity action');
+
 /**
  * Checks and updates the connectivity status
  * @returns ConnectivityStatus
  */
 export function connectivityCheck() {
-  LoggerManager.log('connectivityCheck');
+  logger.log('connectivityCheck');
   store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
   // we should introduce a manager here to keep the actions simple
   const url = URL_CONNECTIVITY_CHECK_EP;
@@ -30,7 +32,7 @@ export function connectivityCheck() {
     .then(data => _processResult(data, lastConnectivityStatus))
     .then(_saveConnectivityStatus)
     .catch(error => {
-      LoggerManager.error(`Couldn't check the connection status. Error: ${error}`);
+      logger.error(`Couldn't check the connection status. Error: ${error}`);
       return _processResult(null, lastConnectivityStatus);
     });
 }

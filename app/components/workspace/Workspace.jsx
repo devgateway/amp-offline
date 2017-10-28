@@ -6,8 +6,10 @@ import WorkspaceList from './WorkspaceList';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import { WORKSPACES_GROUPS } from '../../utils/constants/WorkspaceGroupsConstants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
+
+const logger = new Logger('Workspace');
 
 export default class WorkspacePage extends Component {
 
@@ -19,7 +21,7 @@ export default class WorkspacePage extends Component {
   };
 
   static drawWorkspaceList(workspaceList, selectWorkspace) {
-    LoggerManager.log('drawWorkspaceList');
+    logger.log('drawWorkspaceList');
     if (workspaceList.length > 0) {
       return (<WorkspaceList
         workspaceList={workspaceList}
@@ -31,7 +33,7 @@ export default class WorkspacePage extends Component {
   }
 
   constructor() {
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     super();
 
     this.state = {
@@ -42,19 +44,19 @@ export default class WorkspacePage extends Component {
   }
 
   componentWillMount() {
-    LoggerManager.log('componentWillMount');
+    logger.log('componentWillMount');
     this.props.loadWorkspaces();
   }
 
   componentWillReceiveProps(nextProps) {
-    LoggerManager.log('componentWillReceiveProps');
+    logger.log('componentWillReceiveProps');
     if (!nextProps.workspaceReducer.workspaceLoading && !this.state.showWorkspaces) {
       this.setState({ showWorkspaces: true });
     }
   }
 
   selectContentElementToDraw() {
-    LoggerManager.log('selectContentElementToDraw');
+    logger.log('selectContentElementToDraw');
     if (this.props.workspaceReducer.workspaceLoading !== false || this.state.showWorkspaces === false) {
       return <Loading />;
     }
@@ -66,7 +68,7 @@ export default class WorkspacePage extends Component {
   }
 
   splitWorkspaceByGroups() {
-    LoggerManager.log('splitWorkspaceByGroups');
+    logger.log('splitWorkspaceByGroups');
     const workspacesByGroup = [];
     if (this.props.workspaceReducer.workspaceList.length > 0) {
       WORKSPACES_GROUPS.forEach((wgValue) => {
@@ -89,7 +91,7 @@ export default class WorkspacePage extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     return (
       <div className={styles.workspaces_container}>
         <h2 className={styles.title}><Span text={translate('workspaceTitle')} /></h2>

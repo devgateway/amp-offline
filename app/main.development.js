@@ -1,4 +1,5 @@
 import { app, BrowserWindow, Menu, shell } from 'electron';
+import ElectronUpdater from './modules/update/ElectronUpdater';
 
 let menu;
 let template;
@@ -272,5 +273,7 @@ app.on('ready', async () => {
     }];
     menu = Menu.buildFromTemplate(template);
     mainWindow.setMenu(menu);
+
+    ElectronUpdater.getElectronUpdater();
   }
 });

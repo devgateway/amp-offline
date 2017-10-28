@@ -2,7 +2,7 @@
  * Created by Gabriel on 20/04/2017.
  */
 import numeral from 'numeral';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import {
   GS_AMOUNT_OPTION_IN_BILLIONS,
   GS_AMOUNT_OPTION_IN_MILLIONS,
@@ -17,10 +17,12 @@ import Utils from './Utils';
 import translate from './translate';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 
+const logger = new Logger('Number utils');
+
 export default class NumberUtils {
 
   static createLanguage() {
-    LoggerManager.log('buildLocale');
+    logger.log('buildLocale');
     const localeName = `locale_${Utils.stringToUniqueId('')}`;
     numeral.register('locale', localeName, {
       delimiters: {
@@ -54,19 +56,19 @@ export default class NumberUtils {
   }
 
   static rawNumberToFormattedString(number, forceUnits = false) {
-    LoggerManager.debug('rawNumberToFormattedString');
+    logger.debug('rawNumberToFormattedString');
     const formatted = numeral(forceUnits ? number : NumberUtils.calculateInThousands(number))
       .format(GlobalSettingsManager.getSettingByKey(GS_DEFAULT_NUMBER_FORMAT));
     return formatted;
   }
 
   static formattedStringToRawNumber(numberString) {
-    LoggerManager.debug('formattedStringToRawNumber');
+    logger.debug('formattedStringToRawNumber');
     return numeral(numberString).value();
   }
 
   static calculateInThousands(number) {
-    LoggerManager.debug('calculateInThousands');
+    logger.debug('calculateInThousands');
     switch (GlobalSettingsManager.getSettingByKey(GS_AMOUNTS_IN_THOUSANDS)) {
       case GS_AMOUNT_OPTION_IN_UNITS:
         return number;
@@ -82,7 +84,7 @@ export default class NumberUtils {
   }
 
   static getAmountsInThousandsMessage() {
-    LoggerManager.debug('getAmountsInThousandsMessage');
+    logger.debug('getAmountsInThousandsMessage');
     switch (GlobalSettingsManager.getSettingByKey(GS_AMOUNTS_IN_THOUSANDS)) {
       case GS_AMOUNT_OPTION_IN_UNITS:
         return translate('Amounts in Units');

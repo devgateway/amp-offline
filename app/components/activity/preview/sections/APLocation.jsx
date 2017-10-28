@@ -8,10 +8,12 @@ import {
   IMPLEMENTATION_LEVEL,
   IMPLEMENTATION_LOCATION
 } from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import styles from '../ActivityPreview.css';
 
 const APLocationsList = APPercentageList(LOCATIONS, LOCATION, LOCATION_PERCENTAGE);
+
+const logger = new Logger('AP location');
 
 /**
  * Activity Preview Locations section
@@ -25,7 +27,7 @@ class APLocation extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

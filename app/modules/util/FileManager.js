@@ -1,8 +1,7 @@
 import fs from 'fs-extra';
+import { ELECTRON_APP } from './ElectronApp';
 
-const { remote } = require('electron');
-
-const app = remote && remote.app;
+const app = ELECTRON_APP;
 
 let rootPath;
 

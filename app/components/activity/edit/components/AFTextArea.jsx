@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { FormControl } from 'react-bootstrap';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF text area');
 
 /**
  * Activity Form Text Area component
@@ -15,7 +17,7 @@ export default class AFTextArea extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       value: null
     };
