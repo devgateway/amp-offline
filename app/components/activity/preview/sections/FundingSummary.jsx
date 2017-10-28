@@ -7,9 +7,11 @@ import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import FeatureManager from '../../../../modules/util/FeatureManager';
 import NumberUtils from '../../../../utils/NumberUtils';
+
+const logger = new Logger('Funding summary');
 
 /* eslint-disable class-methods-use-this */
 
@@ -27,7 +29,7 @@ class FundingSummary extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   /**

@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import styles from './App.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
 import UpdateTrigger from '../update/UpdateTrigger';
+
+const logger = new Logger('App(layout)');
 
 export default class App extends Component {
 
@@ -28,7 +30,7 @@ export default class App extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
 
     return (
       <div className={'outerContainer'}>

@@ -11,8 +11,9 @@ import {
   CONTACT_PULL_URL,
   CONTACT_PUSH_URL,
   CONTACT_SINGLE_FIELDS_TREE_URL,
-  DOWNLOAD_UPGRADE_URL,
   DOWNLOAD_UPDATE_BINARY_URL,
+  DOWNLOAD_UPGRADE_URL,
+  ELECTRON_UPDATER_CHECK_URL,
   FEATURE_MANAGER_URL,
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
@@ -127,6 +128,11 @@ const routesConfiguration = [{
   url: DOWNLOAD_UPDATE_BINARY_URL,
   method: 'GET',
   isBinary: true
+}, {
+  url: ELECTRON_UPDATER_CHECK_URL,
+  method: 'GET',
+  requiredAuth: false,
+  translations: false,
 }, {
   url: CONTACT_PULL_URL,
   method: 'GET',

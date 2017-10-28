@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import ProjectList from './ProjectList';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Tab content');
 
 export default class TabsContainer extends Component {
 
@@ -11,11 +13,11 @@ export default class TabsContainer extends Component {
 
   constructor() {
     super();
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     const content = this.props.data.find(item => item.id === this.props.activeTab);
     // This is to avoid an error in the winston when we switch WS while being in the desktop page.
     if (content) {

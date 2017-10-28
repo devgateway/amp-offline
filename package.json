@@ -18,7 +18,8 @@
     "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile",
     "build": "npm run build-main && npm run build-renderer",
     "start": "cross-env NODE_ENV=production ELECTRON_ENABLE_LOGGING=1 electron ./app/",
-    "start-hot": "cross-env HOT=1 NODE_ENV=development DISABLE_UPDATE=1 USE_TEST_AMP_URL=1 electron -r babel-register -r babel-polyfill ./app/main.development",
+    "start-hot-update-main-debug": "cross-env HOT=1 NODE_ENV=development DISABLE_UPDATE=0 APPIMAGE=./update USE_TEST_AMP_URL=1 electron --inspect-brk=5858 -r babel-register -r babel-polyfill ./app/main.development",
+    "start-hot": "cross-env HOT=1 NODE_ENV=development DISABLE_UPDATE=1 APPIMAGE=./update USE_TEST_AMP_URL=1 electron -r babel-register -r babel-polyfill ./app/main.development",
     "postinstall": "concurrently \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "dev": "npm run hot-server -- --start-hot",
     "package": "npm run build && build --publish never",
@@ -38,22 +39,7 @@
     "appId": "dg.AmpOffline",
     "mac": {
       "category": "public.app-category.tools",
-      "target": "dmg"
-    },
-    "dmg": {
-      "contents": [
-        {
-          "x": 410,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 130,
-          "y": 150,
-          "type": "file"
-        }
-      ]
+      "target": "zip"
     },
     "directories": {
       "buildResources": "resources"
@@ -61,7 +47,15 @@
     "files": [
       {
         "from": "app",
-        "filter": ["dist/**/*", "libs/**/*", "lang/**/*", "app.html", "main.js", "main.js.map", "master-translations.en.json"]
+        "filter": [
+          "dist/**/*",
+          "libs/**/*",
+          "lang/**/*",
+          "app.html",
+          "main.js",
+          "main.js.map",
+          "master-translations.en.json"
+        ]
       },
       "package.json"
     ],
@@ -76,8 +70,7 @@
     "linux": {
       "artifactName": "${name}-${version}-${arch}.${ext}",
       "target": [
-        "deb",
-        "rpm"
+        "AppImage"
       ],
       "category": "Network"
     }
@@ -87,9 +80,9 @@
   },
   "homepage": "",
   "author": {
-    "name": "DG",
-    "email": "something@developmentgateway.org",
-    "url": "http://"
+    "name": "Development Gateway",
+    "email": "info@developmentgateway.org",
+    "url": "http://www.developmentgateway.org"
   },
   "devDependencies": {
     "asar": "^0.12.3",
@@ -163,6 +156,7 @@
     "crypto-js": "^3.1.8",
     "electron-debug": "^1.0.1",
     "electron-mocha": "^3.4.0",
+    "electron-updater": "^2.12.1",
     "font-awesome": "^4.7.0",
     "fs-extra": "^2.0.0",
     "i18next": "^4.1.1",

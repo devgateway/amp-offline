@@ -1,4 +1,6 @@
-import LoggerManager from './LoggerManager';
+import Logger from './LoggerManager';
+
+const logger = new Logger('Feature manager');
 
 /**
  * Feature Manager
@@ -30,7 +32,7 @@ export default class FeatureManager {
   }
 
   isFMSettingEnabled(fmPath, onlyLastSegment) {
-    LoggerManager.debug('isFMSettingEnabled');
+    logger.debug('isFMSettingEnabled');
     // store.getState().startUpReducer.fmTree;
     if (this._fmTree) {
       let lastFMSubTree = this._fmTree;
