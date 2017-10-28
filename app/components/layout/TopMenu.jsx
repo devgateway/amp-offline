@@ -1,6 +1,8 @@
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Top menu');
 
 // Use named export for unconnected component (for tests)
 export class TopMenu extends Component {
@@ -17,11 +19,11 @@ export class TopMenu extends Component {
 
   constructor() {
     super();
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     return this.props.builder(this.props.loggedIn,
       this.props.menu,
       this.props.onClick,
@@ -33,12 +35,12 @@ export class TopMenu extends Component {
 
 // We link this component with Redux to detect when the language changes.
 const mapStateToProps = (state) => {
-  LoggerManager.log('mapStateToProps');
+  logger.log('mapStateToProps');
   return state;
 };
 
 const mapDispatchToProps = () => {
-  LoggerManager.log('mapDispatchToProps');
+  logger.log('mapDispatchToProps');
   return {};
 };
 

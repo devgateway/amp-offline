@@ -1,7 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 import PossibleValuesManager from './PossibleValuesManager';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Activity fields manager');
 
 /**
  * This is a helper class for checking fields status, getting field options translations and the like.
@@ -21,7 +23,7 @@ export default class ActivityFieldsManager {
 
   constructor(fieldsDef, possibleValuesCollection, currentLanguage) {
     // TODO remove cache
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this._fieldsDef = fieldsDef;
     this._possibleValuesMap = {};
     possibleValuesCollection.forEach(pv => {

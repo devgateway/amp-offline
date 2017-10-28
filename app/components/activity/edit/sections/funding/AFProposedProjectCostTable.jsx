@@ -2,12 +2,14 @@
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
+
+const logger = new Logger('AF proposed project cost table');
 
 /**
  * @author Gabriel Inchauspe
@@ -24,7 +26,7 @@ export default class AFProposedProjectCostTable extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.options = {
       withoutNoDataText: true
     };
