@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import Section from '../Section';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import { APProposedProjectCost } from '../APProjectCost';
 import APFundingOrganizationSection from './APFundingOrganizationSection';
 import APFundingTotalsSection from './APFundingTotalsSection';
@@ -10,6 +10,8 @@ import fundingStyles from './APFundingSection.css';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
 import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
+
+const logger = new Logger('AP funding section');
 
 /**
  * Total Number of Fundings section
@@ -28,7 +30,7 @@ class APFundingSection extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _compareFundings(f1, f2) {
@@ -82,7 +84,7 @@ class APFundingSection extends Component {
   }
 
   render() {
-    LoggerManager.debug('render');
+    logger.debug('render');
     const fundingList = [];
     let counter = 1;
     this.props.activity.fundings.forEach((funding) => {

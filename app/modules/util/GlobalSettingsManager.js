@@ -1,10 +1,12 @@
-import LoggerManager from './LoggerManager';
+import Logger from './LoggerManager';
 import {
   DEFAULT_DATE_FORMAT,
   GS_AMOUNT_OPTION_IN_UNITS, GS_AMOUNTS_IN_THOUSANDS, GS_DEFAULT_DECIMAL_SEPARATOR, GS_DEFAULT_GROUPING_SEPARATOR,
   GS_DEFAULT_NUMBER_FORMAT
 } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
+
+const logger = new Logger('Global settings manager');
 
 const DEFAULT_GLOBAL_SETTINGS = {
   decimalSeparator: '.',
@@ -52,7 +54,7 @@ export default class GlobalSettingsManager {
   }
 
   getSettingByKey(key) {
-    LoggerManager.debug('getSettingByKey');
+    logger.debug('getSettingByKey');
     return this._globalSettings && this._globalSettings[key];
   }
 }

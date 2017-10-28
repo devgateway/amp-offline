@@ -8,7 +8,9 @@ import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 // import PossibleValuesManager from '../activity/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Activity filter');
 
 /**
  * Activity Filter class
@@ -26,7 +28,7 @@ export default class ActivityFilter {
   }
 
   getDBFilter() {
-    LoggerManager.log('getDBFilter');
+    logger.log('getDBFilter');
     const self = this;
     return new Promise((resolve, reject) => {
       if (self._dbFilter === undefined && self._filters) {
@@ -41,7 +43,7 @@ export default class ActivityFilter {
   }
 
   _prepareFilter() {
-    LoggerManager.log('_prepareFilter');
+    logger.log('_prepareFilter');
     return Promise.all([
       this._getWorkspaces(),
       GlobalSettingsHelper.findByKey(FILTER_BY_DATE_HIDE_PROJECTS),
@@ -60,7 +62,7 @@ export default class ActivityFilter {
   }
 
   _getWorkspaces() {
-    LoggerManager.log('_getWorkspaces');
+    logger.log('_getWorkspaces');
     return GlobalSettingsHelper.findByKey(SHOW_WORKSPACE_FILTER_KEY).then((showWSFilterInTeamWS) => {
       if ((showWSFilterInTeamWS && showWSFilterInTeamWS.value === 'true') || this._isComputed) {
         return this._filters.workspaces;
@@ -74,7 +76,7 @@ export default class ActivityFilter {
    * @private
    */
   _generateFilter() {
-    LoggerManager.log('_generateFilter');
+    logger.log('_generateFilter');
     this._tmpFilter = (this._wsIds && this._wsIds.length > 0) ? Utils.toMap(AC.TEAM, { $in: this._wsIds }) : {};
 
     // note that some filters were not replicated since they are obsolete (AMP-25215)
@@ -107,7 +109,7 @@ export default class ActivityFilter {
   }
 
   _addGeneralFilters() {
-    LoggerManager.log('_addGeneralFilters');
+    logger.log('_addGeneralFilters');
     this._addValueFilter(AC.ARCHIVED, getEqOrNe(this._filters.showArchived), 'showArchived', null, true);
     this._addValueFilter(AC.HUMANITARIAN_AID, '$in', 'humanitarianAid', null,
       listToBoolean(this._filters.humanitarianAid));
@@ -124,7 +126,7 @@ export default class ActivityFilter {
   }
 
   _addDateFilters() {
-    LoggerManager.log('_addDateFilters');
+    logger.log('_addDateFilters');
     this._addYearFilter(AC.ACTUAL_APPROVAL_DATE, 'actualAppYear');
 
     // both 'toXXX' and filter dates timestamps are zeros, so it should work. But caution if smt changes
@@ -142,7 +144,7 @@ export default class ActivityFilter {
   }
 
   _addSectorFilters() {
-    LoggerManager.log('_addSectorFilters');
+    logger.log('_addSectorFilters');
     /* TODO: this is a bug, but for consistency keeping the same filters. Iteration 2+, AMPOFFLINE-180
      When sector "A" from level 1 is selected, then filter saves all descendants (e.g. A1, A2, etc.) automatically.
      Thus when a new sector, e.g. A101 is added to "A", then it will be filtered out from results.
@@ -155,7 +157,7 @@ export default class ActivityFilter {
   }
 
   _addProgramFilters() {
-    LoggerManager.log('_addProgramFilters');
+    logger.log('_addProgramFilters');
     // TODO: expand with descendants program filters once the full programs tree is available, AMPOFFLINE-378
     this._addListMapValueFilter(AC.NATIONAL_PLAN_OBJECTIVE, AC.PROGRAM, '$in', 'nationalPlanningObjectives');
     this._addListMapValueFilter(AC.PRIMARY_PROGRAMS, AC.PROGRAM, '$in', 'primaryPrograms');
@@ -163,7 +165,7 @@ export default class ActivityFilter {
   }
 
   _addOrgsFilters() {
-    LoggerManager.log('_addOrgsFilters');
+    logger.log('_addOrgsFilters');
     /* TODO: add donorTypes, donorGroups and contractingAgencyGroups filters, iteration 2+, AMPOFFLINE-380
      once we have an EP providing their options to get the mappings based on activities orgs */
 
@@ -176,7 +178,7 @@ export default class ActivityFilter {
   }
 
   _addFundingsFilter() {
-    LoggerManager.log('_addFundingsFilter');
+    logger.log('_addFundingsFilter');
     const fundings = {};
     this._addValueFilter(AC.FINANCING_INSTRUMENT, '$in', 'financingInstruments', fundings);
     this._addValueFilter(AC.FUNDING_STATUS, '$in', 'fundingStatus', fundings);
@@ -200,7 +202,7 @@ export default class ActivityFilter {
   }
 
   _getFundingDetails() {
-    LoggerManager.log('_getFundingDetails');
+    logger.log('_getFundingDetails');
     let result;
     const details = {};
     if (this._dateFilterHidesProjects) {
@@ -293,7 +295,7 @@ export default class ActivityFilter {
   }
 
   _addApprovalStatusFilter(filterName) {
-    LoggerManager.log('_addApprovalStatusFilter');
+    logger.log('_addApprovalStatusFilter');
     if (this._filters[filterName]) {
       const approvalStatuses = this._filters[filterName];
       const approvalStatusFilter = [];
@@ -305,7 +307,7 @@ export default class ActivityFilter {
 }
 
 function getApprovalStatusFilter(id) {
-  LoggerManager.log('getApprovalStatusFilter');
+  logger.log('getApprovalStatusFilter');
   // based on AmpARFilter.buildApprovalStatusQuery(int, boolean)
   let options;
   let isDraft = true;

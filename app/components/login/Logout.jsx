@@ -19,8 +19,12 @@ import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import style from '../layout/Navbar.css';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import { startSyncUp } from '../../actions/SyncUpAction';
+
+const logger = new Logger('Logout');
+
+/* eslint-disable class-methods-use-this */
 
 class Logout extends React.Component {
 
@@ -52,7 +56,7 @@ class Logout extends React.Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     if (this.props.loggedIn) {
       return (
         <div className={style.logout_container}>

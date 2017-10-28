@@ -5,10 +5,12 @@ import style from './Navbar.css';
 import TopMenuContainer from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import { AMP_COUNTRY_LOGO, DESKTOP_CURRENT_URL } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
 import NotificationsContainer from '../notifications';
+
+const logger = new Logger('Navbar');
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -25,11 +27,11 @@ export default class Navbar extends Component {
 
   constructor() {
     super();
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   extractLoggedUser(prepend) {
-    LoggerManager.log('extractLoggedUser');
+    logger.log('extractLoggedUser');
     if (this.props.userReducer instanceof Object && this.props.userReducer.userData instanceof Object) {
       return prepend + this.props.userReducer.userData.email;
     }
@@ -37,7 +39,7 @@ export default class Navbar extends Component {
   }
 
   extractWorkspace(prepend) {
-    LoggerManager.log('extractWorkSpace');
+    logger.log('extractWorkSpace');
     if (this.props.workspaceReducer && this.props.workspaceReducer.currentWorkspace) {
       return prepend + this.props.workspaceReducer.currentWorkspace.name;
     }
@@ -45,7 +47,7 @@ export default class Navbar extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     return (
       <div className={style.container}>
         <div className={style.navbar}>

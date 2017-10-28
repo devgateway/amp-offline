@@ -1,24 +1,26 @@
 import WorkspaceFilterBuilder from '../filters/WorkspaceFilter';
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Workspace manager');
 
 const WorkspaceManager = {
   /**
    * @returns {Promise}
    */
   getWorkspaceFilter(workspace) {
-    LoggerManager.log('getWorkspaceFilter');
+    logger.log('getWorkspaceFilter');
     const wsFilterBuilder = new WorkspaceFilterBuilder(workspace);
     return wsFilterBuilder.getDBFilter();
   },
 
   findWorkspaceById(wsId) {
-    LoggerManager.log('findWorkspaceById');
+    logger.log('findWorkspaceById');
     return WorkspaceHelper.findById(wsId);
   },
 
   findAllWorkspacesForUser(userId) {
-    LoggerManager.log('findAllWorkspacesForUser');
+    logger.log('findAllWorkspacesForUser');
     return WorkspaceHelper.findAllByUserId(userId, { id: 1, name: 1, 'workspace-group': 1 });
   }
 };
