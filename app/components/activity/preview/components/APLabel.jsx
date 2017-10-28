@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AP Label');
 
 export default class APLabel extends Component {
 
@@ -16,7 +18,7 @@ export default class APLabel extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   getContent() {

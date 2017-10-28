@@ -1,8 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import styles from './APActor.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+
+const logger = new Logger('AP actor');
 
 /**
  * @author Gabriel Inchauspe
@@ -17,7 +19,7 @@ export default class APActors extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

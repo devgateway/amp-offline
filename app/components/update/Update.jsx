@@ -14,20 +14,19 @@ import InProgress from '../common/InProgress';
 export default class Update extends Component {
   static propTypes = {
     errorMessage: PropTypes.string,
-    fullUpdateFileName: PropTypes.string,
     downloadingUpdate: PropTypes.bool.isRequired,
     downloadedUpdate: PropTypes.bool.isRequired,
     installingUpdate: PropTypes.bool.isRequired,
     installUpdateFailed: PropTypes.bool.isRequired,
     dismissUpdate: PropTypes.func.isRequired,
     downloadUpdate: PropTypes.func.isRequired,
-    installUpdate: PropTypes.func.isRequired,
+    progressData: PropTypes.object,
     connectivityStatus: PropTypes.instanceOf(ConnectivityStatus).isRequired
   };
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { errorMessage: undefined };
   }
 
   componentWillMount() {
@@ -35,24 +34,20 @@ export default class Update extends Component {
     this.props.downloadUpdate(id);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { fullUpdateFileName, downloadedUpdate, installingUpdate, installUpdateFailed, installUpdate } = nextProps;
-    if (fullUpdateFileName && downloadedUpdate && !installingUpdate && !installUpdateFailed) {
-      installUpdate(fullUpdateFileName);
-    }
-  }
-
   componentWillUnmount() {
     this.props.dismissUpdate();
   }
 
   getFileDownloadProgress() {
-    const { fullUpdateFileName, downloadingUpdate, downloadedUpdate } = this.props;
-    if (fullUpdateFileName && downloadedUpdate) {
-      return <div>{`${translate('downloadComplete')}: ${fullUpdateFileName}`}</div>;
+    const { downloadingUpdate, downloadedUpdate, installingUpdate, progressData } = this.props;
+    if (downloadedUpdate || installingUpdate) {
+      return <div>{`${translate('downloadComplete')}`}</div>;
     }
     if (downloadingUpdate) {
-      return <InProgress title={translate('downloadInProgress')} />;
+      const percent = (progressData && progressData.percent) || 0;
+      let progressMessage = progressData && progressData.message && progressData.message.substring(0, 100);
+      progressMessage = progressMessage || translate('downloadInProgress');
+      return <InProgress title={progressMessage} value={percent} />;
     }
     return <div>{translate('downloadFailed')}</div>;
   }
@@ -70,16 +65,17 @@ export default class Update extends Component {
 
   render() {
     const { errorMessage } = this.props;
+    const anyErrorMessage = errorMessage || this.state.errorMessage;
     return (
       <div>
-        {errorMessage && <ErrorMessage message={errorMessage} />}
-        <Modal show={!errorMessage}>
+        {anyErrorMessage && <ErrorMessage message={anyErrorMessage} />}
+        <Modal show={!anyErrorMessage}>
           <Modal.Header>
             <Modal.Title>{translate('updateInProgress')}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
-            {translate('dontStopUpdateWarning')}
+            <div>{translate('dontStopUpdateWarning')}</div>
             {this.getFileDownloadProgress()}
             {this.getInstallerUpdateProgress()}
           </Modal.Body>

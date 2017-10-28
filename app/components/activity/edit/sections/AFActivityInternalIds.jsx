@@ -6,7 +6,9 @@ import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { ACTIVITY_INTERNAL_IDS } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF activity internal ids');
 
 /**
  * Activity Internal IDs section
@@ -20,7 +22,7 @@ class AFActivityInternalIds extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

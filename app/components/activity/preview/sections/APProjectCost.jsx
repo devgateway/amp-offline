@@ -4,9 +4,11 @@ import styles from '../ActivityPreview.css';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import NumberUtils from '../../../../utils/NumberUtils';
 import DateUtils from '../../../../utils/DateUtils';
+
+const logger = new Logger('AP project cost');
 
 /**
  * Activity Preview Proposed Project Cost section
@@ -21,7 +23,7 @@ const APProjectCost = (fieldName) => class extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   getFieldValue(fieldPath) {

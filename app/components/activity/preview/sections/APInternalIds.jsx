@@ -6,7 +6,9 @@ import translate from '../../../../utils/translate';
 import { ACTIVITY_INTERNAL_IDS, ACTIVITY_INTERNAL_IDS_COLS } from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AP Internal ids');
 
 /* eslint-disable class-methods-use-this */
 
@@ -24,7 +26,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _getActInternalIdContent(actIntId, showInternalId) {
