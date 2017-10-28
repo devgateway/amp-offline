@@ -2,8 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
 import styles from './CKEditor.css';
 import translate from '../../utils/translate';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+
+const logger = new Logger('CK Editor');
 
 /**
  * TODO (iteration 2+) check if we can download full version via npm or the right customization to include unde libs.
@@ -30,7 +32,7 @@ export default class CKEditor extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       value: null,
       show: false
@@ -69,7 +71,7 @@ export default class CKEditor extends Component {
 
   _show() {
     if (!CKEDITOR) {
-      LoggerManager.error('CKEditor not found');
+      logger.error('CKEditor not found');
       return;
     }
 

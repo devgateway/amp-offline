@@ -3,9 +3,11 @@ import Section from './Section';
 import APField from '../components/APField';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
+
+const logger = new Logger('AP Additional info');
 
 /**
  * Additional Info summary section
@@ -23,7 +25,7 @@ class AdditionalInfo extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _getWorkspaceLeadData() {

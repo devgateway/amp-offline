@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import * as AC from '../../../../utils/constants/ActivityConstants';
+
+const logger = new Logger('AP funding sources');
 
 /**
  * Total Number of Funding Sources section
@@ -14,7 +16,7 @@ class APFundingSources extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

@@ -11,7 +11,9 @@ import {
   ACTIVITY_INTERNAL_IDS_ORGANIZATION_PATH
 } from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AP Internal ids');
 
 /**
  * Organizations and project ids section
@@ -26,7 +28,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   buildContent() {

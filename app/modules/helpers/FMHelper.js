@@ -1,7 +1,9 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_FEATURE_MANAGER } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('FM Helper');
 
 /**
  * A simplified helper for using Feature Manager storage for loading, searching, saving and deleting FM entries.
@@ -15,7 +17,7 @@ const FMHelper = {
    * @return {Promise}
    */
   findById(id) {
-    LoggerManager.log('findById');
+    logger.log('findById');
     const filter = { id };
     return DatabaseManager.findOne(filter, COLLECTION_FEATURE_MANAGER);
   },
@@ -27,7 +29,7 @@ const FMHelper = {
    * @return {Promise}
    */
   findAll(filterRule, projections) {
-    LoggerManager.log('findAll');
+    logger.log('findAll');
     return DatabaseManager.findAll(filterRule, COLLECTION_FEATURE_MANAGER, projections);
   },
 
@@ -37,7 +39,7 @@ const FMHelper = {
    * @return {Promise}
    */
   saveOrUpdate(fmTree) {
-    LoggerManager.log('saveOrUpdate');
+    logger.log('saveOrUpdate');
     this._setIdIfNotDefined([fmTree]);
     return DatabaseManager.saveOrUpdate(fmTree.id, fmTree, COLLECTION_FEATURE_MANAGER);
   },
@@ -48,7 +50,7 @@ const FMHelper = {
    * @return {Promise}
    */
   saveOrUpdateCollection(fmTrees) {
-    LoggerManager.log('saveOrUpdateCollection');
+    logger.log('saveOrUpdateCollection');
     this._setIdIfNotDefined(fmTrees);
     return DatabaseManager.saveOrUpdateCollection(fmTrees, COLLECTION_FEATURE_MANAGER);
   },
@@ -68,7 +70,7 @@ const FMHelper = {
    * @return {Promise}
    */
   replaceAll(fmTrees) {
-    LoggerManager.log('replaceAll');
+    logger.log('replaceAll');
     return DatabaseManager.replaceCollection(fmTrees, COLLECTION_FEATURE_MANAGER);
   },
 
@@ -78,7 +80,7 @@ const FMHelper = {
    * @return {Promise}
    */
   removeById(id) {
-    LoggerManager.log('removeById');
+    logger.log('removeById');
     return DatabaseManager.removeById(id, COLLECTION_FEATURE_MANAGER);
   },
 
@@ -88,7 +90,7 @@ const FMHelper = {
    * @return {Promise}
    */
   removeAll(filter) {
-    LoggerManager.log('removeAll');
+    logger.log('removeAll');
     return DatabaseManager.removeAll(filter, COLLECTION_FEATURE_MANAGER);
   }
 };

@@ -8,7 +8,9 @@ import {
 import * as Utils from '../../../utils/Utils';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
+
+const logger = new Logger('Activities pull from AMP manager');
 
 /* eslint-disable class-methods-use-this */
 
@@ -98,7 +100,7 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
   }
 
   onPullError(error, ampId) {
-    LoggerManager.error(`Activity amp-id=${ampId} pull error: ${error}`);
+    logger.error(`Activity amp-id=${ampId} pull error: ${error}`);
     return this._updateDetails(ampId, null, error);
   }
 
