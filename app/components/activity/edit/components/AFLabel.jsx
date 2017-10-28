@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Glyphicon, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import * as styles from '../ActivityForm.css';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF label');
 
 /* eslint-disable class-methods-use-this */
 
@@ -21,7 +23,7 @@ export default class AFLabel extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _renderTooltip() {

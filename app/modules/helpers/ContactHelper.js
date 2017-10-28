@@ -1,8 +1,10 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CONTACTS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import { CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID } from '../../utils/constants/ContactConstants';
+
+const logger = new Logger('Contact helper');
 
 /**
  * A simplified helper for using contacts storage for loading, searching / filtering, saving and deleting contacts.
@@ -11,19 +13,19 @@ import { CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID } from '../../ut
 const ContactHelper = {
 
   findContactById(id) {
-    LoggerManager.debug('findContactById');
+    logger.debug('findContactById');
     const filterRule = { id };
     return ContactHelper.findContact(filterRule);
   },
 
   findContactByInternalId(internalId) {
-    LoggerManager.debug('findContactById');
+    logger.debug('findContactById');
     const filterRule = Utils.toMap(INTERNAL_ID, internalId);
     return ContactHelper.findContact(filterRule);
   },
 
   findContact(filterRule) {
-    LoggerManager.debug('findContact');
+    logger.debug('findContact');
     return DatabaseManager.findOne(filterRule, COLLECTION_CONTACTS);
   },
 
@@ -33,13 +35,13 @@ const ContactHelper = {
    * @return {Promise}
    */
   findAllContactsModifiedOnClient(filterRule = {}) {
-    LoggerManager.debug('findAllContactsModifiedOnClient');
+    logger.debug('findAllContactsModifiedOnClient');
     filterRule[CLIENT_CHANGE_ID] = { $exists: true };
     return ContactHelper.findAllContacts(filterRule);
   },
 
   findAllContacts(filterRule, projections) {
-    LoggerManager.debug('findAllContacts');
+    logger.debug('findAllContacts');
     return DatabaseManager.findAll(filterRule, COLLECTION_CONTACTS, projections);
   },
 
@@ -71,7 +73,7 @@ const ContactHelper = {
    * @returns {Promise}
    */
   saveOrUpdateContact(contact) {
-    LoggerManager.log('saveOrUpdateContact');
+    logger.log('saveOrUpdateContact');
     ContactHelper._setOrUpdateIds(contact);
     return DatabaseManager.saveOrUpdate(contact.id, contact, COLLECTION_CONTACTS);
   },
@@ -82,13 +84,13 @@ const ContactHelper = {
   },
 
   saveOrUpdateContactCollection(contacts) {
-    LoggerManager.log('saveOrUpdateContactCollection');
+    logger.log('saveOrUpdateContactCollection');
     contacts.forEach(contact => { ContactHelper._setOrUpdateIds(contact); });
     return DatabaseManager.saveOrUpdateCollection(contacts, COLLECTION_CONTACTS);
   },
 
   replaceContacts(contacts) {
-    LoggerManager.log('replaceContact');
+    logger.log('replaceContact');
     return DatabaseManager.replaceCollection(contacts, COLLECTION_CONTACTS);
   },
 
@@ -98,18 +100,18 @@ const ContactHelper = {
    * @returns {Promise}
    */
   deleteContactById(id) {
-    LoggerManager.log('deleteContactById');
+    logger.log('deleteContactById');
     return DatabaseManager.removeById(id, COLLECTION_CONTACTS);
   },
 
   deleteContactByInternalId(internalId) {
-    LoggerManager.log('deleteContactByInternalId');
+    logger.log('deleteContactByInternalId');
     const filterRule = Utils.toMap(INTERNAL_ID, internalId);
     return DatabaseManager.removeAll(filterRule, COLLECTION_CONTACTS);
   },
 
   removeAllByIds(ids) {
-    LoggerManager.log('removeAllByIds');
+    logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
     return DatabaseManager.removeAll(idsFilter, COLLECTION_CONTACTS);
   }

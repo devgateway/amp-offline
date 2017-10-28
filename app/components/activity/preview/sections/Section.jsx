@@ -10,8 +10,10 @@ import {
   RICH_TEXT_FIELDS
 } from '../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
+
+const logger = new Logger('AP section');
 
 /**
  * Generic activity preview section class
@@ -45,7 +47,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   /**

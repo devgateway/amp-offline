@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import AFSection from './AFSection';
 import { COMPONENTS } from './AFSectionConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF components');
 
 /**
  * Components Section
@@ -11,7 +13,7 @@ class AFComponents extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {
