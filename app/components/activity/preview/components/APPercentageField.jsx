@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import styles from '../ActivityPreview.css';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import NumberUtils from '../../../../utils/NumberUtils';
+
+const logger = new Logger('AP percentage field');
 
 /**
  * Percentage Field component
@@ -17,7 +19,7 @@ export default class APPercentageField extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

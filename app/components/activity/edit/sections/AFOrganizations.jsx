@@ -4,8 +4,10 @@ import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { ORGANIZATIONS } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
+
+const logger = new Logger('AF organizations');
 
 /**
  * Organizations Section
@@ -19,7 +21,7 @@ class AFOrganizations extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

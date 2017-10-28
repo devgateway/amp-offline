@@ -26,6 +26,7 @@ export const CONTACT_SINGLE_FIELDS_TREE_URL = '/contact/fields';
 export const CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL = '/contact/ws-member-fields';
 export const CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS = '/contact/field/values';
 export const DOWNLOAD_UPDATE_BINARY_URL = '/amp/amp-offline-release';
+export const ELECTRON_UPDATER_CHECK_URL = '/amp/offline';
 export const CHANGE_PASSWORD_URL = '/aim/showChangePassword.do';
 export const RESET_PASSWORD_URL = '/aim/showEmailForm.do';
 export const AMP_REGISTRY_SETTINGS_URL = 'https://amp-registry.ampsite.net/amp-registry';

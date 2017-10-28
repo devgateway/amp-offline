@@ -2,7 +2,9 @@ import SyncUpManagerInterface, { throwSyncUpError } from './SyncUpManagerInterfa
 import { CONNECTION_FORCED_TIMEOUT } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
+
+const logger = new Logger('Batch pull syncup manager interface');
 
 /* eslint-disable class-methods-use-this */
 
@@ -92,7 +94,7 @@ export default class BatchPullSyncUpManagerInterface extends SyncUpManagerInterf
       while (this.resultStack.length > 0) {
         const entry = this.resultStack.shift();
         if (entry === PULL_END) {
-          LoggerManager.log(`${this.type} PULL_END flag reached on results stack.`);
+          logger.log(`${this.type} PULL_END flag reached on results stack.`);
           this.done = true;
           next = () => Promise.resolve();
         } else {

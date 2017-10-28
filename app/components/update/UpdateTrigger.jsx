@@ -90,7 +90,7 @@ const updateConfirmationAlert = (forceUpdate) => {
   });
   const proceedWithDownload = new FollowUp({
     type: STATE_DOWNLOAD_UPDATE_CONFIRMED
-  }, translate('Download'));
+  }, translate('DownloadUpdate'));
   const ignoreSuggestion = new FollowUp({
     type: STATE_DOWNLOAD_UPDATE_DISMISSED
   }, translate('Cancel'));

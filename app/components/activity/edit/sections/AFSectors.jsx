@@ -5,7 +5,9 @@ import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { SECTORS } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF sectors');
 
 /**
  * Sectors Section
@@ -19,7 +21,7 @@ class AFSectors extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

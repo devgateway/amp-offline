@@ -14,11 +14,13 @@ import PossibleValuesManager from '../../../../modules/activity/PossibleValuesMa
 import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import { reportFieldValidation } from '../../../../actions/ActivityAction';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
 import AFCheckbox from './AFCheckbox';
+
+const logger = new Logger('AF field');
 
 /* eslint-disable class-methods-use-this */
 
@@ -61,7 +63,7 @@ class AFField extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
     this.fieldExists = false;
   }
 
@@ -197,7 +199,7 @@ class AFField extends Component {
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
     if (options === null) {
       // TODO throw error but continue to render (?)
-      LoggerManager.error(`Options not found for ${this.props.fieldPath}`);
+      logger.error(`Options not found for ${this.props.fieldPath}`);
       return [];
     }
     return PossibleValuesManager.setVisibility(options, fieldPath, this.props.filter);

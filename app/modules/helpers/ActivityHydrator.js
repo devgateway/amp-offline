@@ -8,8 +8,10 @@ import {
   PATHS_WITH_TREE_STRUCTURE
 } from '../../utils/constants/FieldPathConstants';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
-import LoggerManager from '../util/LoggerManager';
+import Logger from '../util/LoggerManager';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
+
+const logger = new Logger('Activity hydrator');
 
 /* eslint-disable class-methods-use-this */
 
@@ -94,7 +96,7 @@ export default class ActivityHydrator {
     const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
     if (fieldDef === undefined) {
       const warn = `Field definition not found for: ${possibleValues['field-path'].slice(0, pathIndex + 1).join('~')}`;
-      LoggerManager.warn(warn);
+      logger.warn(warn);
       return;
     }
     const isList = fieldDef.field_type === 'list';
@@ -137,7 +139,8 @@ export default class ActivityHydrator {
     if (LOCATION_PATH === possibleValues.id || PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
       return PossibleValuesManager.buildHierarchicalData(options, selectedId);
     }
-    return Object.assign({}, options[selectedId]);
+    const selectedOption = options[selectedId];
+    return selectedOption && Object.assign({}, selectedOption);
   }
 
   // old mechanism for locations, using v1 API
@@ -174,7 +177,7 @@ export default class ActivityHydrator {
         possibleValuesCollection.forEach(pv => missing.delete(pv.id));
         // TODO once we have notification system, to flag if some possible values are not found, but not to block usage
         if (missing.size > 0) {
-          LoggerManager.error(`Field paths not found: ${missing.toJSON()}`);
+          logger.error(`Field paths not found: ${missing.toJSON()}`);
         }
       }
       return possibleValuesCollection;
