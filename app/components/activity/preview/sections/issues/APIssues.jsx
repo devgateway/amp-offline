@@ -1,12 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import Section from '../Section';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APIssues.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APMeasure from './APMeasure';
 import translate from '../../../../../utils/translate';
+
+const logger = new Logger('AP issues');
 
 /**
  * @author Gabriel Inchauspe
@@ -21,7 +23,7 @@ class APIssues extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _buildIssues() {

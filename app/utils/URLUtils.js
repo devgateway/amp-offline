@@ -1,15 +1,17 @@
 import { shell } from 'electron';
 import { history } from '../index';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
 import { AMP_SUFFIX, PP_SUFFIX } from '../modules/connectivity/AmpApiConstants';
 
 const URL_PATTERN = /^(https?):\/\/(www\.)?([-a-zA-Z0-9@%._+~#=]{2,256})(:[0-9]{2,5})?\b([-a-zA-Z0-9@%_+.~#?&//=]*)$/;
 
+const logger = new Logger('URL utils');
+
 const urlUtils = {
 
   forwardTo(location) {
-    LoggerManager.log(`forwardTo( ${location} )`);
+    logger.log(`forwardTo( ${location} )`);
     history.push(location);
   },
 
@@ -18,7 +20,7 @@ const urlUtils = {
   },
 
   redirectExternalLink(method, url) {
-    LoggerManager.log('redirectExternalLink');
+    logger.log('redirectExternalLink');
     const externalUrl = RequestConfig.getRequestConfig({ method, url }).url;
     shell.openExternal(externalUrl);
   },

@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { FormControl } from 'react-bootstrap';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
+
+const logger = new Logger('AF number');
 
 /**
  * Activity Form Number component
@@ -19,7 +21,7 @@ export default class AFNumber extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       value: ''
     };

@@ -2,15 +2,17 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import App from '../components/layout/App';
 import * as WorkspaceActions from '../actions/WorkspaceAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('App Page');
 
 function mapStateToProps(state) {
-  LoggerManager.log('mapStateToProps');
+  logger.log('mapStateToProps');
   return state;
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-  LoggerManager.log('mapDispatchToProps');
+  logger.log('mapDispatchToProps');
   return bindActionCreators(WorkspaceActions, dispatch, ownProps);
 }
 

@@ -6,12 +6,14 @@ import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_AUTHENTICATION } from '../../utils/constants/ErrorConstants';
 import { hexBufferToString } from '../../utils/Utils';
 import { DIGEST_ALGORITHM_SHA256 } from '../../utils/Constants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('auth');
 
 export default class Auth {
 
   static onlineLogin(email, password) {
-    LoggerManager.log('login');
+    logger.log('login');
     const url = LOGIN_URL;
     const body = {
       username: email,
@@ -36,7 +38,7 @@ export default class Auth {
 
   static secureHash(password, salt, iterations) {
     return new Promise((resolve, reject) => {
-      LoggerManager.log('secureHash');
+      logger.log('secureHash');
       // https://blog.engelke.com/2015/02/14/deriving-keys-from-passwords-with-webcrypto/
       const saltBuffer = Buffer.from(salt, 'utf8');
       const passphraseKey = Buffer.from(password, 'utf8');
@@ -77,7 +79,7 @@ export default class Auth {
    * @returns {Promise.<TResult>|*}
    */
   static sha(password, algorithm) {
-    LoggerManager.log('sha');
+    logger.log('sha');
     // Transform the string into an arraybuffer.
     const buffer = new encoding.TextEncoder('utf-8').encode(password);
     return window.crypto.subtle.digest(algorithm, buffer).then((hash) => hexBufferToString(hash));

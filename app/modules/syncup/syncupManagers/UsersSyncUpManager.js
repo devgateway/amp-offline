@@ -3,7 +3,9 @@ import * as UserHelper from '../../helpers/UserHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { USER_PROFILE_URL } from '../../connectivity/AmpApiConstants';
 import { SYNCUP_TYPE_USERS } from '../../../utils/Constants';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
+
+const logger = new Logger('User syncup manager');
 
 /* eslint-disable class-methods-use-this */
 
@@ -22,7 +24,7 @@ export default class UsersSyncUpManager extends AbstractAtomicSyncUpManager {
    * @returns {Promise}
    */
   doAtomicSyncUp({ saved, removed }) {
-    LoggerManager.log('syncUpUsers');
+    logger.log('syncUpUsers');
     this.diff = { saved, removed };
     return new Promise((resolve, reject) =>
       Promise.all([

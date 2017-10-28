@@ -1,6 +1,8 @@
 import { STATE_AMP_CONNECTION_STATUS_UPDATE,
   STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING } from '../actions/ConnectivityAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('AMP Connection status reducer');
 
 const defaultState = {
   status: undefined,
@@ -8,7 +10,7 @@ const defaultState = {
 };
 
 export default function ampConnectionStatusReducer(state = defaultState, action: Object) {
-  LoggerManager.log('AmpConnectionStatusReducer');
+  logger.log('AmpConnectionStatusReducer');
 
   switch (action.type) {
     case STATE_AMP_CONNECTION_STATUS_UPDATE:

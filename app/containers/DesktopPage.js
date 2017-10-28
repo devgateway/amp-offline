@@ -2,15 +2,17 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Desktop from '../components/desktop/Desktop';
 import * as DesktopActions from '../actions/DesktopAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('Desktop page');
 
 function mapStateToProps(state) {
-  LoggerManager.log('mapStateToProps');
+  logger.log('mapStateToProps');
   return state;
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-  LoggerManager.log('mapDispatchToProps');
+  logger.log('mapDispatchToProps');
   return bindActionCreators(DesktopActions, dispatch, ownProps);
 }
 
