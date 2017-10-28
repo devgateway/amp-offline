@@ -2,7 +2,7 @@
 import { CancellationToken } from 'electron-updater';
 import ElectronUpdater from './ElectronUpdater';
 import RequestConfig from '../connectivity/RequestConfig';
-import LoggerManager from '../util/LoggerManager';
+import Logger from '../util/LoggerManager';
 import { ELECTRON_UPDATER_CHECK_URL } from '../connectivity/AmpApiConstants';
 import * as Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_UPDATE } from '../../utils/constants/ErrorConstants';
@@ -12,6 +12,8 @@ import NumberUtils from '../../utils/NumberUtils';
 
 const autoUpdater = ElectronUpdater.getElectronUpdater();
 
+const logger = new Logger('Electron update manager');
+
 /**
  * Update Manager based on 'electron-updater'
  *
@@ -20,7 +22,7 @@ const autoUpdater = ElectronUpdater.getElectronUpdater();
 export default class ElectronUpdaterManager {
 
   static _init() {
-    LoggerManager.log('_init');
+    logger.log('_init');
     const url = this._getURL();
     autoUpdater.setFeedURL(url);
   }
@@ -34,25 +36,25 @@ export default class ElectronUpdaterManager {
   }
 
   static getUpdater(progressUpdateFunc) {
-    LoggerManager.log('getUpdater');
+    logger.log('getUpdater');
     try {
       this._init();
       return new ElectronUpdaterManager(progressUpdateFunc);
     } catch (errorObject) {
-      LoggerManager.error(`${errorObject}`);
+      logger.error(`${errorObject}`);
       return Promise.reject(new Notification({ origin: NOTIFICATION_ORIGIN_UPDATE, errorObject }));
     }
   }
 
   constructor(progressUpdateFunc) {
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.cancellationToken = new CancellationToken();
     this.progressUpdateFunc = progressUpdateFunc;
   }
 
   downloadUpdate() {
-    LoggerManager.log('downloadUpdate');
-    LoggerManager.log(`current version: ${autoUpdater.currentVersion}`);
+    logger.log('downloadUpdate');
+    logger.log(`current version: ${autoUpdater.currentVersion}`);
     return new Promise((resolve, reject) => {
       try {
         autoUpdater.on('error', (ev, error) => {
@@ -63,7 +65,7 @@ export default class ElectronUpdaterManager {
           this._reportError(translate('updateNA'), reject);
         });
         autoUpdater.on('update-available', (ev) => {
-          LoggerManager.log(`update-available: ${JSON.stringify(ev)}`);
+          logger.log(`update-available: ${JSON.stringify(ev)}`);
           this._sendUpdates({ message: translate('updateConfirmed'), downloadingUpdate: true });
           autoUpdater.downloadUpdate();
         });
@@ -72,13 +74,13 @@ export default class ElectronUpdaterManager {
           this._sendUpdates({ message, percent: progress.percent });
         });
         autoUpdater.on('update-downloaded', () => {
-          LoggerManager.log('update-downloaded');
+          logger.log('update-downloaded');
           this._sendUpdates(translate('downloadComplete'));
           return resolve();
         });
         autoUpdater.checkForUpdates();
       } catch (error) {
-        LoggerManager.error('Unexpected error');
+        logger.error('Unexpected error');
         this._reportError(error, reject);
       }
     });
@@ -101,7 +103,7 @@ export default class ElectronUpdaterManager {
   }
 
   startUpdate() {
-    LoggerManager.log('startUpdate');
+    logger.log('startUpdate');
     return new Promise((resolve, reject) => {
       autoUpdater.on('error', (ev, error) => {
         this._reportError(error, reject);
@@ -117,7 +119,7 @@ export default class ElectronUpdaterManager {
 
   _reportError(error, reject) {
     const message = JSON.stringify(error);
-    LoggerManager.error(message);
+    logger.error(message);
     this._sendUpdates({ message });
     return reject(error);
   }

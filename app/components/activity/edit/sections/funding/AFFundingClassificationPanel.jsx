@@ -2,11 +2,13 @@
 import React, { Component, PropTypes } from 'react';
 import { Col, FormGroup, Grid, Panel, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
+
+const logger = new Logger('AF Funding classication panel');
 
 /**
  * @author Gabriel Inchauspe
@@ -23,7 +25,7 @@ export default class AFFundingClassificationPanel extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       openFCP: false
     };

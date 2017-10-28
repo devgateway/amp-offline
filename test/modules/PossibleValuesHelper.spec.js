@@ -1,6 +1,8 @@
 import { describe, it } from 'mocha';
 import actions from '../../app/modules/helpers/PossibleValuesHelper';
-import LoggerManager from '../../app/modules/util/LoggerManager';
+import Logger from '../../app/modules/util/LoggerManager';
+
+const logger = new Logger('Possible values helper');
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -113,7 +115,7 @@ describe('@@ PossibleValuesHelper @@', () => {
         invalidPV = actions.transformToClientUsage(Object.entries(invalidPV)[0]);
         missingId = actions.transformToClientUsage(Object.entries(missingId)[0]);
         mixedValidInvalid = [invalidPV, missingId];
-        LoggerManager.log(JSON.stringify(treeOptions));
+        logger.log(JSON.stringify(treeOptions));
       }).to.not.throw(Error)
     )
   );

@@ -1,7 +1,9 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_FIELDS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Fields helper');
 
 /**
  * A simplified helper for 'Workspace Settings' storage for loading, searching / filtering and saving ws settings.
@@ -14,7 +16,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findById(id) {
-    LoggerManager.debug('findById');
+    logger.debug('findById');
     const filter = { id };
     return DatabaseManager.findOne(filter, COLLECTION_FIELDS);
   },
@@ -26,7 +28,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findByWorkspaceMemberIdAndType(wsMemberId, fieldsType) {
-    LoggerManager.debug('findByWorkspaceMemberIdAndType');
+    logger.debug('findByWorkspaceMemberIdAndType');
     const filter = { 'ws-member-ids': { $elemMatch: wsMemberId } };
     filter[fieldsType] = { $exists: true };
     return DatabaseManager.findOne(filter, COLLECTION_FIELDS);
@@ -40,7 +42,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findAllPerFieldType(fieldsType, filter, projections) {
-    LoggerManager.debug('findAllPerFieldType');
+    logger.debug('findAllPerFieldType');
     filter = filter || {};
     filter[fieldsType] = { $exists: true };
     return FieldsHelper.findAll(filter, projections);
@@ -53,7 +55,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   findAll(filter, projections) {
-    LoggerManager.debug('findAll');
+    logger.debug('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_FIELDS, projections);
   },
 
@@ -64,7 +66,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   replaceAllByFieldsType(fieldsTrees, fieldsType) {
-    LoggerManager.log('replaceAll');
+    logger.log('replaceAll');
     if (this._isValid(fieldsTrees)) {
       fieldsTrees.forEach(this._setIdIfUndefined);
       const filter = Utils.toMap(fieldsType, { $exists: true });
@@ -88,7 +90,7 @@ const FieldsHelper = {
   },
 
   _setIdIfUndefined(fields) {
-    LoggerManager.debug('_setIdIfUndefined');
+    logger.debug('_setIdIfUndefined');
     if (fields.id === undefined) {
       fields.id = Utils.stringToUniqueId('');
     }
@@ -100,7 +102,7 @@ const FieldsHelper = {
    * @return {Promise}
    */
   deleteById(id) {
-    LoggerManager.log('deleteById');
+    logger.log('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_FIELDS);
   }
 };

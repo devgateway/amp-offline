@@ -2,7 +2,9 @@ import { validate } from 'jsonschema';
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
 import Notification from './NotificationHelper';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Client settings helper');
 
 const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT' });
 
@@ -46,7 +48,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSettingById(id) {
-    LoggerManager.log('findSettingById');
+    logger.log('findSettingById');
     return this.findSetting({ id });
   },
 
@@ -56,7 +58,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSettingByName(name) {
-    LoggerManager.log('findSettingByName');
+    logger.log('findSettingByName');
     return this.findSetting({ name });
   },
 
@@ -66,7 +68,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSetting(filter) {
-    LoggerManager.log('findSetting');
+    logger.log('findSetting');
     return DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS);
   },
 
@@ -75,7 +77,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findAllVisibleSettings() {
-    LoggerManager.log('findAllVisibleSettings');
+    logger.log('findAllVisibleSettings');
     return this.findAll({ visible: true });
   },
 
@@ -89,10 +91,10 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   saveOrUpdateSetting(setting) {
-    LoggerManager.debug('saveOrUpdateSetting');
-    // LoggerManager.log(validate(setting, settingsSchema));
+    logger.debug('saveOrUpdateSetting');
+    // logger.log(validate(setting, settingsSchema));
     if (validate(setting, settingsSchema).valid) {
-      LoggerManager.debug(`Valid setting.id = ${setting.id}`);
+      logger.debug(`Valid setting.id = ${setting.id}`);
       setting['updated-at'] = (new Date()).toISOString();
       return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
     }
@@ -115,7 +117,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   deleteById(id) {
-    LoggerManager.debug('deleteById');
+    logger.debug('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS);
   }
 

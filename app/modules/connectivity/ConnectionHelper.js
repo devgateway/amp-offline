@@ -15,12 +15,14 @@ import {
 import store from '../../index';
 import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
 import translate from '../../utils/translate';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Connection helper');
 
 const ConnectionHelper = {
 
   doGet({ url, paramsMap, shouldRetry, extraUrlParam, writeStream }) {
-    LoggerManager.debug('doGet');
+    logger.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
     return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
@@ -37,7 +39,7 @@ const ConnectionHelper = {
    * @return {Promise}
    */
   doPost({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
-    LoggerManager.debug('doPost');
+    logger.debug('doPost');
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
@@ -45,15 +47,15 @@ const ConnectionHelper = {
   },
 
   doPut({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
-    LoggerManager.debug('doPut');
+    logger.debug('doPut');
     const method = 'PUT';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
     return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
-    LoggerManager.log('_doMethod ');
-    LoggerManager.log(requestConfig.url);
+    logger.log('_doMethod ');
+    logger.log(requestConfig.url);
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
     const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
     const requestPromise = this._buildRequestPromise(requestConfig, writeStream);

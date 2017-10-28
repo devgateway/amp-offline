@@ -1,5 +1,7 @@
 import i18next from 'i18next';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('translate');
 
 /**
  * Translates a message to the current language or to the specified one
@@ -11,7 +13,7 @@ export default (k, lng) => {
   let ret = i18next.t(k, { lng });
   if (ret === undefined) {
     ret = k;
-    LoggerManager.error(`Missing translation for: ${k}`);
+    logger.error(`Missing translation for: ${k}`);
   }
   // console.log(`translate ${k}  ${ret}`);
   return ret;
