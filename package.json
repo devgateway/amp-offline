@@ -61,7 +61,16 @@
     "files": [
       {
         "from": "app",
-        "filter": ["dist/**/*", "libs/**/*", "lang/**/*", "app.html", "main.js", "main.js.map", "master-translations.en.json"]
+        "filter": [
+          "dist/**/*",
+          "libs/**/*",
+          "lang/**/*",
+          "static/**/*",
+          "app.html",
+          "main.js",
+          "main.js.map",
+          "master-translations.en.json"
+        ]
       },
       "package.json"
     ],

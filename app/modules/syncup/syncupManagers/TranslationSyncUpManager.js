@@ -131,6 +131,11 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
 
   doIncrementalSyncup(langIds, originalMasterTrnFile) {
     LoggerManager.log('doIncrementalSyncup');
+    if (!this._lastSyncTimestamp) {
+      // this for the first time sync up since we do full syncup of translations during setup for better UX
+      LoggerManager.warn('Skipping incremental sync up since no timestamp available yet. Should be the first sync up.');
+      return Promise.resolve();
+    }
     return ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
