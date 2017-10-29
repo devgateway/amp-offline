@@ -3,9 +3,12 @@ import AmpAssetSyncUpManager from './syncupManagers/AmpAssetSyncUpManager';
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
 import { DEFAULT_SETUP_COMPLETE } from '../../utils/constants/ClientSettingsConstants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import SyncUpManager from './SyncUpManager';
 import { loadFMTree } from '../../actions/StartUpAction';
+import { IS_DEV_MODE } from '../util/ElectronApp';
+
+const logger = new Logger('SetupSyncUpManager.js');
 
 /**
  * Simple Sync Up Manager for the initial setup, before the real sync up is done. No detailed sync up status is tracked.
@@ -21,17 +24,17 @@ const SetupSyncUpManager = {
    * @return {Promise.<TResult>}
    */
   syncUpMinimumData() {
-    LoggerManager.log('syncUpMinimumData');
+    logger.log('syncUpMinimumData');
     return Promise.all([SyncUpManager.getLastSyncUpLog(), ClientSettingsHelper.findSettingById(DEFAULT_SETUP_COMPLETE)])
       .then(([lastSyncUpLog, setupCompleteSetting]) => {
         if (lastSyncUpLog.id || setupCompleteSetting.value) {
-          LoggerManager.log('Minimum data pre-sync not needed.');
+          logger.log('Minimum data pre-sync not needed.');
           return Promise.resolve();
         }
         return SetupSyncUpManager._doMinimumDataSyncUp(setupCompleteSetting);
       })
       .catch(error => {
-        LoggerManager.error(`Could not sync up minimum data: ${error}`);
+        logger.error(`Could not sync up minimum data: ${error}`);
       });
   },
 
@@ -42,12 +45,14 @@ const SetupSyncUpManager = {
    * more complicated and bugs prone. Once it will be needed, we can add more granular pre-sync of some data.
    */
   _doMinimumDataSyncUp(setupCompleteSetting) {
-    LoggerManager.debug('_doMinimumDataSyncUp');
-    return Promise.all([
+    logger.debug('_doMinimumDataSyncUp');
+    const presync = !IS_DEV_MODE || +process.env.PRE_SYNC;
+    const syncUpPromise = !presync ? Promise.resolve() : Promise.all([
       new TranslationSyncUpManager().doSyncUp(),
       new AmpAssetSyncUpManager().doSyncUp(true),
       new FMSyncUpManager().doSyncUp(true),
-    ]).then(() => {
+    ]);
+    return syncUpPromise.then(() => {
       setupCompleteSetting.value = true;
       return ClientSettingsHelper.saveOrUpdateSetting(setupCompleteSetting);
     }).then(SetupSyncUpManager._postSyncUp);

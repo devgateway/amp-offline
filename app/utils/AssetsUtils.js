@@ -10,7 +10,9 @@ import {
   TRANSPARENT_FLAG
 } from './Constants';
 import FileManager from '../modules/util/FileManager';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('AssetsUtils.js');
 
 const AssetsUtils = {
   loadImage(img) {
@@ -24,10 +26,10 @@ const AssetsUtils = {
   },
 
   setDefaultFlag() {
-    LoggerManager.debug('setDefaultFlag');
+    logger.debug('setDefaultFlag');
     if (!FileManager.existsSync(ASSETS_DIRECTORY, AMP_COUNTRY_LOGO)) {
       const defaultFlagPath = FileManager.getFullPathForBuiltInResources(STATIC_DIR, IMAGES_DIR, AMP_COUNTRY_LOGO);
-      LoggerManager.debug(`defaultFlagPath=${defaultFlagPath}`);
+      logger.debug(`defaultFlagPath=${defaultFlagPath}`);
       FileManager.createDataDir(ASSETS_DIRECTORY);
       FileManager.copyDataFileSync(defaultFlagPath, ASSETS_DIRECTORY, AMP_COUNTRY_LOGO);
     }

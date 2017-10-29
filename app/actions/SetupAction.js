@@ -51,7 +51,7 @@ export function didSetupComplete() {
 }
 
 export function configureDefaults(isSetupComplete) {
-  LoggerManager.log(`configureDefaults with isSetupComplete=${isSetupComplete}`);
+  logger.log(`configureDefaults with isSetupComplete=${isSetupComplete}`);
   const setupDefaultsPromise = SetupManager.setDefaults(isSetupComplete);
   store.dispatch({
     type: STATE_SETUP_DEFAULTS,
