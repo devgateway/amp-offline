@@ -1,7 +1,9 @@
 import BatchPullSyncUpManagerInterface from './BatchPullSyncUpManagerInterface';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
 import DateUtils from '../../../utils/DateUtils';
 import { throwSyncUpError } from './SyncUpManagerInterface';
+
+const logger = new Logger('Batch pull saved and removed syncup manager');
 
 /**
  * An extension for Batch Pull for units with sync diff defined as { saved , removed } entries
@@ -42,16 +44,16 @@ export default class BatchPullSavedAndRemovedSyncUpManager extends BatchPullSync
   getDiffLeftover() {
     if (this.syncStartedAt) {
       const duration = DateUtils.duration(this.syncStartedAt, new Date());
-      LoggerManager.log(`${this.type} pull duration = ${duration}`);
-      LoggerManager.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
+      logger.log(`${this.type} pull duration = ${duration}`);
+      logger.log(`saved = ${this.diff.saved.length}, removed = ${this.diff.removed.length}`);
       this.diff.saved = this.diff.saved.filter(entry => !this.pulled.has(entry));
-      LoggerManager.log(`unsynced = ${this.diff.saved.length}`);
+      logger.log(`unsynced = ${this.diff.saved.length}`);
     }
     return this.diff;
   }
 
   pullStart() {
-    LoggerManager.log(`pull ${this.type}`);
+    logger.log(`pull ${this.type}`);
     return Promise.all([this.removeEntries(), this.pullNewEntries()]);
   }
 }

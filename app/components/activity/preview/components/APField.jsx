@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AP field');
 
 /**
  * Simple Field component that consists of a field title and field value
@@ -34,7 +36,7 @@ export default class APField extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.useSeparator = this.props.separator !== false;
     this.displayClass = this.props.inline === true ? styles.inline : styles.block;
   }

@@ -2,7 +2,9 @@ import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
 import * as Utils from '../../utils/Utils';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('User helper');
 
 /**
  * This helper is for User functions only.
@@ -18,23 +20,23 @@ const UserHelper = {
    * @returns {Promise}
    */
   findByEmail(email) {
-    LoggerManager.log('findByEmail');
+    logger.log('findByEmail');
     const example = { email };
     return this.findUserByExample(example);
   },
 
   findUserByExample(example) {
-    LoggerManager.log('findUserByExample');
+    logger.log('findUserByExample');
     return DatabaseManager.findOne(example, COLLECTION_USERS);
   },
 
   findAllUsersByExample(example, projections) {
-    LoggerManager.log('findUserByExample');
+    logger.log('findUserByExample');
     return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
   },
 
   findAllClientRegisteredUsersByExample(example, projections) {
-    LoggerManager.log('findAllClientRegisteredUsersByExample');
+    logger.log('findAllClientRegisteredUsersByExample');
     example.registeredOnClient = { $exists: true };
     return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
   },
@@ -50,22 +52,22 @@ const UserHelper = {
    * @returns {Promise}
    */
   saveOrUpdateUser(userData) {
-    LoggerManager.log('saveOrUpdateUser');
+    logger.log('saveOrUpdateUser');
     return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS);
   },
 
   generateAMPOfflineHashFromPassword(password) {
-    LoggerManager.log('generateAMPOfflineHashFromPassword');
+    logger.log('generateAMPOfflineHashFromPassword');
     return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
   },
 
   saveOrUpdateUserCollection(usersData) {
-    LoggerManager.log('saveOrUpdateUserCollection');
+    logger.log('saveOrUpdateUserCollection');
     return DatabaseManager.saveOrUpdateCollection(usersData, COLLECTION_USERS);
   },
 
   replaceUsers(users) {
-    LoggerManager.log('replaceUsers');
+    logger.log('replaceUsers');
     return DatabaseManager.replaceCollection(users, COLLECTION_USERS);
   },
 
@@ -75,7 +77,7 @@ const UserHelper = {
    * @returns {Promise}
    */
   deleteUserById(userId) {
-    LoggerManager.log('deleteUserById');
+    logger.log('deleteUserById');
     return DatabaseManager.removeById(userId, COLLECTION_USERS);
   }
 };

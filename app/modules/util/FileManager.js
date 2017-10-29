@@ -1,10 +1,9 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 
-const { remote } = require('electron');
-
-const app = remote && remote.app;
+const app = ELECTRON_APP;
 
 let dataPath;
 let resourcesPath;

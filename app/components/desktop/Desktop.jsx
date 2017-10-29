@@ -4,8 +4,10 @@ import React, { Component, PropTypes } from 'react';
 import TopArea from '../desktop/TopArea';
 import TabsContainer from './TabsContainer';
 import UrlUtils from '../../utils/URLUtils';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import Loading from '../common/Loading';
+
+const logger = new Logger('Desktop');
 
 export default class Desktop extends Component {
 
@@ -19,7 +21,7 @@ export default class Desktop extends Component {
   };
 
   componentDidMount() {
-    LoggerManager.log('componentDidMount');
+    logger.log('componentDidMount');
     // Check if a workspace has been selected.
     if (!this.props.workspaceReducer.currentWorkspace) {
       UrlUtils.forwardTo('/workspace');
@@ -27,7 +29,7 @@ export default class Desktop extends Component {
   }
 
   componentWillUpdate() {
-    LoggerManager.log('componentWillUpdateaaa');
+    logger.log('componentWillUpdateaaa');
     if (!this.props.desktopReducer.loaded && !this.props.desktopReducer.isLoadingDesktop) {
       // Check if we need to load the list of projects.
       this.props.loadDesktop(this.props.workspaceReducer.currentWorkspace, this.props.userReducer.teamMember.id);
@@ -35,7 +37,7 @@ export default class Desktop extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     if (!this.props.desktopReducer.loaded || this.props.desktopReducer.isLoadingDesktop) {
       return <Loading />;
     } else {

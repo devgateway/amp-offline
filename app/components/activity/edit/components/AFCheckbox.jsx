@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
 import { Checkbox } from 'react-bootstrap';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF checkbox');
 
 /**
  * Activity Form Checkbox component
@@ -15,7 +17,7 @@ export default class AFCheckbox extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       value: ''
     };
