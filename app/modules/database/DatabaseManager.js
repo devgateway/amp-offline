@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
@@ -7,7 +8,9 @@ import {
   DB_DEFAULT_QUERY_LIMIT,
   DB_FILE_EXTENSION,
   DB_FILE_PREFIX,
-  AKEY
+  AKEY,
+  MASTER_BRANCH,
+  DEVELOP_BRANCH
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
@@ -43,9 +46,16 @@ const DatabaseManager = {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
-      if (process.env.NODE_ENV === 'production') {
-        /* newOptions.afterSerialization = self.encryptData;
-         newOptions.beforeDeserialization = self.decryptData;*/
+      /* Encrypt the DB when current branch is master|develop only.
+      __BRANCH_NAME__ is the branch of the sources directory, used only when compiling locally.
+      JENKINS_BRANCH is the branch used by Jenkins to compile the app. */
+      // Remove extra spaces/returns on these strings.
+      const sanitizedBranchName = __BRANCH_NAME__ ? __BRANCH_NAME__.trim() : '';
+      const sanitizedJenkinsName = process.env.JENKINS_BRANCH ? process.env.JENKINS_BRANCH.trim() : '';
+      if (sanitizedJenkinsName === MASTER_BRANCH || sanitizedJenkinsName === DEVELOP_BRANCH
+        || MASTER_BRANCH === sanitizedBranchName || DEVELOP_BRANCH === sanitizedBranchName) {
+        newOptions.afterSerialization = this.encryptData;
+        newOptions.beforeDeserialization = this.decryptData;
       }
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
     });
@@ -414,19 +424,19 @@ const DatabaseManager = {
     const projections = Object.assign({ _id: 0 });
     return DatabaseManager.findAllWithProjectionsAndOtherCriteria(
       example, collectionName, projections, sortCriteria, 0, 1)
-        .then((docs) => {
-          switch (docs.length) {
-            case 0:
-              return null;
-            case 1:
-              return docs[0];
-            default:
-              return Promise.reject(new Notification({
-                message: 'moreThanOneResultFound',
-                origin: NOTIFICATION_ORIGIN_DATABASE
-              }));
-          }
-        });
+      .then((docs) => {
+        switch (docs.length) {
+          case 0:
+            return null;
+          case 1:
+            return docs[0];
+          default:
+            return Promise.reject(new Notification({
+              message: 'moreThanOneResultFound',
+              origin: NOTIFICATION_ORIGIN_DATABASE
+            }));
+        }
+      });
   },
 
   findAll(example = {}, collectionName, projections) {
@@ -459,8 +469,8 @@ const DatabaseManager = {
     }).catch(reject);
   },
 
-  findAllWithProjectionsAndOtherCriteria(example, collectionName, projections, sort = { id: 1 }, skip = 0,
-    limit = DB_DEFAULT_QUERY_LIMIT) {
+  findAllWithProjectionsAndOtherCriteria(example, collectionName, projections
+    , sort = { id: 1 }, skip = 0, limit = DB_DEFAULT_QUERY_LIMIT) {
     logger.log('findAllWithProjectionsAndOtherCriteria');
     return new Promise((resolve, reject) => {
       const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(

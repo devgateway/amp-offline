@@ -8,7 +8,8 @@ import {
   DG_ADDRESS_1,
   DG_ADDRESS_2,
   DG_CONTACT_INFO,
-  VERSION
+  VERSION,
+  MASTER_BRANCH
 } from '../../utils/Constants';
 import DateUtils from '../../utils/DateUtils';
 
@@ -16,7 +17,7 @@ export default class Home extends Component {
   static getDevInfo() {
     let branchOrPr = null;
     let releaseDate = '';
-    if (__BRANCH_NAME__ !== 'master') {
+    if (__BRANCH_NAME__ !== MASTER_BRANCH) {
       releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
       if (__PR_NR__) {
         branchOrPr = `PR #${__PR_NR__}`;
