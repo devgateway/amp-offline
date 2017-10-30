@@ -1,8 +1,7 @@
 import fs from 'fs-extra';
+import { ELECTRON_APP } from './ElectronApp';
 
-const { remote } = require('electron');
-
-const app = remote && remote.app;
+const app = ELECTRON_APP;
 
 let rootPath;
 
@@ -163,7 +162,15 @@ const FileManager = {
    * @return {*}
    */
   readdirSync(...pathParts) {
-    const fullPath = this.getFullPath(...pathParts);
+    return this.readdirSyncFullPath(this.getFullPath(...pathParts));
+  },
+
+  /**
+   * Lists files from the folder synchronously
+   * @param full folder path
+   * @return {*}
+   */
+  readdirSyncFullPath(fullPath) {
     return fs.readdirSync(fullPath);
   },
 

@@ -25,12 +25,16 @@ import {
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
-  SYNCUP_TYPE_EXCHANGE_RATES
+  SYNCUP_TYPE_EXCHANGE_RATES,
+  SYNCUP_TYPE_TRANSLATIONS
 } from '../../utils/Constants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
 import ContactHelper from '../helpers/ContactHelper';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
+import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
+
+const logger = new Logger('Syncup runner');
 
 /* eslint-disable class-methods-use-this */
 
@@ -80,7 +84,7 @@ export default class SyncUpRunner {
    * @param syncUpDiffLeftOver the leftover from previous sync up (if any)
    */
   constructor(userId, lastTimestamp, syncUpDiffLeftOver: SyncUpDiff) {
-    LoggerManager.log('SyncUpRunner');
+    logger.log('SyncUpRunner');
     this._userId = userId;
     this._lastTimestamp = lastTimestamp;
     this._syncUpDiffLeftOver = syncUpDiffLeftOver;
@@ -99,7 +103,7 @@ export default class SyncUpRunner {
    * Initiates the sync up process
    */
   run() {
-    LoggerManager.log('run');
+    logger.log('run');
     this._selfBindMethods();
     return this._run(SyncUpRunner._SYNC_RUN_1).then(result => {
       // if we could not even request the sync diff EP or if the sync up is aborted, then no need to start the 2nd run
@@ -113,7 +117,7 @@ export default class SyncUpRunner {
   _run(syncRunNo, prevResult) {
     return this._prepare(syncRunNo).catch(error => {
       // normally means connectivity loss (even though connection was available when sync up button was pressed)
-      LoggerManager.error(`Sync Up run #${syncRunNo} prepare error = ${error}`);
+      logger.error(`Sync Up run #${syncRunNo} prepare error = ${error}`);
       this._aborted = true;
       if (syncRunNo === SyncUpRunner._SYNC_RUN_1) {
         // on 1st Run return generic result
@@ -136,7 +140,7 @@ export default class SyncUpRunner {
    * @private
    */
   _prepare(syncRunNo) {
-    LoggerManager.log('_prepare');
+    logger.log('_prepare');
     this._syncUpConfig = new SyncUpConfig();
     this._syncUpCollection = this._syncUpConfig.syncUpCollection;
     this._syncUpDependency = this._syncUpConfig.syncUpDependencies;
@@ -147,24 +151,26 @@ export default class SyncUpRunner {
     this._syncRunNo = syncRunNo;
 
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
-      ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient()])
-      .then(([ampIds, userIds, activitiesToPush, contactsToPush]) => {
+      ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
+      TranslationSyncupManager.getNewTranslationsDifference()])
+      .then(([ampIds, userIds, activitiesToPush, contactsToPush, newTranslations]) => {
         this._ampIds = ampIds;
         this._registeredUserIds = userIds;
         this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
         this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
         this._contactsToPush = contactsToPush;
+        this._hasTranslationsToPush = newTranslations && newTranslations.length > 0;
         return this._getCumulativeSyncUpChanges();
       });
   }
 
   _getCumulativeSyncUpChanges() {
-    LoggerManager.log('_getCumulativeSyncUpChanges');
+    logger.log('_getCumulativeSyncUpChanges');
     return this._getWhatChangedInAMP().then(this._mergeToLeftOverAndUpdateNoChanges);
   }
 
   _getWhatChangedInAMP() {
-    LoggerManager.log('_getWhatChangedInAMP');
+    logger.log('_getWhatChangedInAMP');
     const body = { 'user-ids': this._registeredUserIds };
     // Don't send the date param at all on first-sync.
     if (this._lastTimestamp && this._lastTimestamp !== SYNCUP_NO_DATE) {
@@ -179,7 +185,7 @@ export default class SyncUpRunner {
   }
 
   _mergeToLeftOverAndUpdateNoChanges(changes) {
-    LoggerManager.log('_mergeToLeftOverAndUpdateNoChanges');
+    logger.log('_mergeToLeftOverAndUpdateNoChanges');
     const isFirstRun = this._syncRunNo === SyncUpRunner._SYNC_RUN_1;
     // TODO: remove this flag once AMP-25568 is done
     changes[SYNCUP_TYPE_ACTIVITY_FIELDS] = true;
@@ -189,6 +195,7 @@ export default class SyncUpRunner {
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
     changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && this._hasActivitiesToPush;
     changes[SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._hasContactsToPush;
+    changes[SYNCUP_TYPE_TRANSLATIONS] = changes[SYNCUP_TYPE_TRANSLATIONS] || this._hasTranslationsToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
       if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined
@@ -225,7 +232,7 @@ export default class SyncUpRunner {
       unitPromise = syncUpManager.doSyncUp(this._syncUpDiffLeftOver.getSyncUpDiff(type))
         .then(() => this._buildUnitResult(syncUpManager))
         .catch(error => {
-          LoggerManager.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${error.stack}"`);
+          logger.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${error.stack}"`);
           // We are not rolling back any data saved until here. We collect the leftover and resume the next sync from
           // where we left up to the latest. Dependencies will manage other units.
           return this._buildUnitResult(syncUpManager, error);
@@ -241,7 +248,7 @@ export default class SyncUpRunner {
 
   _buildUnitResult(syncUpManager: SyncUpManagerInterface, error) {
     const type = syncUpManager.type;
-    LoggerManager.log(`_buildUnitResult: ${type}`);
+    logger.log(`_buildUnitResult: ${type}`);
     const originalDiff = this._syncUpDiffLeftOver.getSyncUpDiff(type);
     const wasSynUpPrevented = SS.STATES_PREVENTED.includes(this._syncUpDependency.getState(type));
     const latestDiff = wasSynUpPrevented ? originalDiff : syncUpManager.getDiffLeftover();
@@ -285,7 +292,7 @@ export default class SyncUpRunner {
         if (done) {
           state = SS.SUCCESS;
         } else {
-          LoggerManager.error(`Unexpected use case for "${type}" that was not skipped through expected means, has no
+          logger.error(`Unexpected use case for "${type}" that was not skipped through expected means, has no
           leftover, but still is not done. Possibly a bug. Fallback to FAIL state.`);
           state = SS.STATES_PENDING.includes(state) ? SS.FAIL : state;
         }
@@ -340,12 +347,12 @@ export default class SyncUpRunner {
   }
 
   buildResult(errors) {
-    LoggerManager.log('_buildResult');
+    logger.log('_buildResult');
     // build status for any remaining type
     this._remainingSyncUpTypes.forEach(type => this._buildUnitResult(this._syncUpCollection.get(type)));
     const unitsResult = Array.from(this._unitsResult.values());
     const status = this._getStatus(unitsResult);
-    LoggerManager.log(`SyncUp ${status}`);
+    logger.log(`SyncUp ${status}`);
     const syncUpDiff = status === SYNCUP_STATUS_SUCCESS ? null : this._syncUpDiffLeftOver.syncUpDiff;
     if (unitsResult.length) {
       errors = this._collectErrors(unitsResult, errors);

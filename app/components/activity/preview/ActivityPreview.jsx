@@ -10,10 +10,12 @@ import APStatusBar from './sections/APStatusBar';
 import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
 import * as WC from '../../../utils/constants/WorkspaceConstants';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
+
+const logger = new Logger('Activity preview');
 
 /**
  * Activity Preview main container
@@ -55,7 +57,7 @@ export default class ActivityPreview extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
   }
 
   getChildContext() {
@@ -96,7 +98,8 @@ export default class ActivityPreview extends Component {
           <span className={styles.preview_icons} >
             <ul>
               <IconFormatter
-                id={activity.id} edit view={false} status={DesktopManager.getActivityStatus(activity)}
+                id={activity.id} edit={!activity[AC.REJECTED_ID]} view={false}
+                status={DesktopManager.getActivityStatus(activity)}
                 activityTeamId={activity[AC.TEAM].id}
                 teamId={this.props.userReducer.teamMember[WC.WORKSPACE_ID]}
                 teamLeadFlag={teamLeadFlag}

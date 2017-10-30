@@ -1,9 +1,11 @@
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../utils/constants/ActivityConstants';
 import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import ActivityFieldsManager from './ActivityFieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+
+const logger = new Logger('Possible values manager');
 
 /**
  * Possible Values manager that allows to fill in additional information and transformations
@@ -63,7 +65,7 @@ export default class PossibleValuesManager {
 
   static _fillHierarchicalDepth(options, option) {
     if (!option) {
-      LoggerManager.error(`option is unspecified: ${option}`);
+      logger.error(`option is unspecified: ${option}`);
       return 0;
     }
     let depth = option[HIERARCHICAL_VALUE_DEPTH];

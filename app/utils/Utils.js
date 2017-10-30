@@ -1,3 +1,15 @@
+import os from 'os';
+import {
+  ARCH32,
+  ARCH64,
+  ARCH64_NODE_OS_OPTIONS,
+  ARCH64_USER_AGENT_OPTIONS,
+  PLATFORM_DEBIAN,
+  PLATFORM_MAC_OS,
+  PLATFORM_REDHAT,
+  PLATFORM_WINDOWS
+} from '../modules/connectivity/AmpApiConstants';
+
 const Utils = {
 
   stringToId(string: string) {
@@ -122,8 +134,58 @@ const Utils = {
 
   capitalize(text: string) {
     return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
-  }
+  },
 
+  /**
+   * Show in the highest unit or exact unit if such is given
+   * @param bytes
+   * @param exactUnit
+   * @return {{value: string, label: string}}
+   */
+  simplifyDataSize(bytes, exactUnit) {
+    const convertTo = ['Bytes', 'KB', 'MB', 'GB'];
+    let value = bytes;
+    const label = convertTo.find(unit => {
+      if ((value / 1024 < 1 && !exactUnit) || (exactUnit === unit)) {
+        return true;
+      }
+      value /= 1024.0;
+      return false;
+    });
+    return { value, label };
+  },
+
+  /**
+   * Get runtime platform details. Sample:
+   * {
+   *  platform: 'debian',
+   *  arch: 64
+   * }
+   * @return {*}
+   */
+  getPlatformDetails() {
+    const userAgent = navigator.userAgent;
+    const userAgentLowerCase = userAgent.toLowerCase();
+    let platform = os.platform().toLowerCase();
+    if (platform === 'darwin') {
+      platform = PLATFORM_MAC_OS;
+    } else if (platform === 'win32') {
+      platform = PLATFORM_WINDOWS;
+    } else if (platform === 'linux') {
+      if (userAgentLowerCase.includes('red hat')) {
+        platform = PLATFORM_REDHAT;
+      } else {
+        platform = PLATFORM_DEBIAN;
+      }
+    }
+    let arch = os.arch();
+    if (ARCH64_NODE_OS_OPTIONS.has(arch) || ARCH64_USER_AGENT_OPTIONS.some(a64 => userAgentLowerCase.includes(a64))) {
+      arch = ARCH64;
+    } else {
+      arch = ARCH32;
+    }
+    return { platform, arch };
+  }
 };
 
 module.exports = Utils;

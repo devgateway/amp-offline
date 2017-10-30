@@ -1,7 +1,7 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import UrlUtils from '../utils/URLUtils';
 import DesktopManager from '../modules/desktop/DesktopManager';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import { DESKTOP_URL } from '../utils/Constants';
 
 export const STATE_DESKTOP_LOADING = 'STATE_DESKTOP_LOADING';
@@ -9,8 +9,10 @@ export const STATE_DESKTOP_LOADED = 'STATE_DESKTOP_LOADED';
 export const STATE_DESKTOP_ERROR = 'STATE_DESKTOP_ERROR';
 export const STATE_DESKTOP_RESET = 'STATE_DESKTOP_RESET';
 
+const logger = new Logger('Desktop action');
+
 export function loadDesktop(workspace, teamMemberId) {
-  LoggerManager.log('loadDesktop');
+  logger.log('loadDesktop');
   return (dispatch, ownProps) => {
     if (ownProps().desktopReducer.isLoadingDesktop === false) {
       dispatch(sendingRequest());
@@ -34,7 +36,7 @@ export function loadDesktop(workspace, teamMemberId) {
 }
 
 export function resetDesktop() {
-  LoggerManager.log('resetDesktop');
+  logger.log('resetDesktop');
   return (dispatch) => {
     dispatch({ type: STATE_DESKTOP_RESET });
   };
@@ -52,7 +54,7 @@ function errorLoadDesktop(error) {
 }
 
 function sendingRequest() {
-  LoggerManager.log('sendingRequestLoadingDesktop');
+  logger.log('sendingRequestLoadingDesktop');
   return {
     type: STATE_DESKTOP_LOADING
   };

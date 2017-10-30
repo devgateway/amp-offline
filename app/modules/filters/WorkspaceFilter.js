@@ -2,8 +2,10 @@ import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
 import * as AC from '../../utils/constants/ActivityConstants';
 import ActivityFilter from './ActivityFilter';
-import LoggerManager from '../util/LoggerManager';
 import { IS_COMPUTED, IS_PRIVATE } from '../../utils/constants/WorkspaceConstants';
+import Logger from '../util/LoggerManager';
+
+const logger = new Logger('Workspace filter');
 
 /**
  * Workspace Filter class
@@ -27,7 +29,7 @@ export default class WorkspaceFilterBuilder {
    * @returns {Promise}
    */
   getDBFilter() {
-    LoggerManager.log('getDBFilter');
+    logger.log('getDBFilter');
     if (!this._workspace) {
       return Promise.resolve({});
     }
@@ -61,7 +63,7 @@ export default class WorkspaceFilterBuilder {
    * @private
    */
   _generateDBFilter() {
-    LoggerManager.log('_generateDBFilter');
+    logger.log('_generateDBFilter');
     // initialise the team filter (no special Management workspaces rules are needed)
     const teamFilter = Utils.toMap(AC.TEAM, this._workspace.id);
     // non-computed workspace filter
@@ -87,7 +89,7 @@ export default class WorkspaceFilterBuilder {
   }
 
   _getComputedOrgsFilter() {
-    LoggerManager.log('_getComputedOrgsFilter');
+    logger.log('_getComputedOrgsFilter');
     let computedOrgsFilter;
     const orgIds = this._workspace.organizations;
     if (orgIds && orgIds.length > 0) {
@@ -127,7 +129,7 @@ export default class WorkspaceFilterBuilder {
     wsIds.reduce((promise, wsId) =>
       promise.then(() => new Promise(() => {
         if (!processedWsIds.has(wsId)) {
-          LoggerManager.log(wsId);
+          logger.log(wsId);
           processedWsIds.add(wsId);
 
           WorkspaceHelper.findAll({ 'parent-workspace-id': wsId }, { id: 1 }).then(childWsIds => {
@@ -138,10 +140,10 @@ export default class WorkspaceFilterBuilder {
         return processedWsIds;
       }),
       Promise.resolve(processedWsIds)).then(() => {
-        LoggerManager.log('done');
+        logger.log('done');
         return processedWsIds;
       }, (e) => {
-        LoggerManager.error(e);
+        logger.error(e);
         reject(e);
       })
     ));
