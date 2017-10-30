@@ -9,8 +9,7 @@ import {
   DB_FILE_EXTENSION,
   DB_FILE_PREFIX,
   AKEY,
-  MASTER_BRANCH,
-  DEVELOP_BRANCH
+  MASTER_BRANCH
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
@@ -52,8 +51,7 @@ const DatabaseManager = {
       // Remove extra spaces/returns on these strings.
       const sanitizedBranchName = __BRANCH_NAME__ ? __BRANCH_NAME__.trim() : '';
       const sanitizedJenkinsName = process.env.JENKINS_BRANCH ? process.env.JENKINS_BRANCH.trim() : '';
-      if (sanitizedJenkinsName === MASTER_BRANCH || sanitizedJenkinsName === DEVELOP_BRANCH
-        || MASTER_BRANCH === sanitizedBranchName || DEVELOP_BRANCH === sanitizedBranchName) {
+      if (sanitizedJenkinsName === MASTER_BRANCH || MASTER_BRANCH === sanitizedBranchName) {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
       }
