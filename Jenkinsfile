@@ -52,7 +52,7 @@ node {
 		}
 		stage('Dist') {
 			try {
-				sh "./dist.sh ${pr}"
+				sh "./dist.sh ${pr} ${branch}"
 				sh "./publish.sh ${BRANCH_NAME}"
 				slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
 			} catch (e) {

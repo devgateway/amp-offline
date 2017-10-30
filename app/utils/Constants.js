@@ -146,3 +146,5 @@ export const OTHER_ID = 999999999;
 export const NR_SYNC_HISTORY_ENTRIES = 20;
 export const NR_LOG_FILES = 100;
 
+export const MASTER_BRANCH = 'master';
+export const DEVELOP_BRANCH = 'develop';
