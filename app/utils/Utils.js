@@ -144,7 +144,7 @@ const Utils = {
     }
     return '';
   },
-  
+
   /**
    * Show in the highest unit or exact unit if such is given
    * @param bytes
