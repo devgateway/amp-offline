@@ -7,7 +7,9 @@ import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsMa
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AP percentage list');
 
 /**
  * Activity Preview Locations section
@@ -27,7 +29,7 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

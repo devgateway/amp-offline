@@ -1,11 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import translate from '../../../../../utils/translate';
 import APFundingTotalItem from './APFundingTotalItem';
 import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
 import Utils from '../../../../../utils/Utils';
+
+const logger = new Logger('AP funding totals section');
 
 /**
  * @author Gabriel Inchauspe
@@ -20,7 +22,7 @@ class APFundingTotalsSection extends Component {
 
   constructor(props, context) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this._wsCurrency = context.currentWorkspaceSettings.currency.code;
   }
 

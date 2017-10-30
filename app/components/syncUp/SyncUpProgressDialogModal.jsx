@@ -1,8 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { Modal } from 'react-bootstrap';
 // import Button from '../i18n/Button';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
+
+const logger = new Logger('Syncup progress dialog modal');
 
 export default class SyncUpProgressDialogModal extends Component {
 
@@ -12,7 +14,7 @@ export default class SyncUpProgressDialogModal extends Component {
   };
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     return (
       <div className="static-modal">
         <Modal show={this.props.show}>

@@ -3,8 +3,10 @@ import { SYNCUP_TYPE_FEATURE_MANAGER } from '../../../utils/Constants';
 import { FEATURE_MANAGER_URL } from '../../connectivity/AmpApiConstants';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import * as FMPaths from '../../../utils/constants/FeatureManagerConstants';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
 import FMHelper from '../../helpers/FMHelper';
+
+const logger = new Logger('FM sync up manager');
 
 /* eslint-disable class-methods-use-this */
 
@@ -19,7 +21,7 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
   }
 
   doAtomicSyncUp() {
-    LoggerManager.log('doAtomicSyncUp');
+    logger.log('doAtomicSyncUp');
     const body = this._getRequestBody();
     return ConnectionHelper.doPost({ url: FEATURE_MANAGER_URL, body, shouldRetry: true })
       .then((fmTree) => FMHelper.replaceAll([this._prepareData(fmTree)]));

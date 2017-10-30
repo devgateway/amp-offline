@@ -1,10 +1,12 @@
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APMeasure.css';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APActor from './APActor';
+
+const logger = new Logger('AP measure');
 
 /**
  * @author Gabriel Inchauspe
@@ -19,7 +21,7 @@ export default class APMeasures extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _buildMeasure() {

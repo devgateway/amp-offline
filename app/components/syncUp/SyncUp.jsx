@@ -6,7 +6,7 @@ import ErrorMessage from '../common/ErrorMessage';
 import InfoMessage from '../common/InfoMessage';
 import Loading from '../common/Loading';
 import Button from '../i18n/Button';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
 import DateUtils from '../../utils/DateUtils';
 import translate from '../../utils/translate';
@@ -28,6 +28,8 @@ import {
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
+
+const logger = new Logger('Syncup component');
 
 // opposite of `pluck`, provided an object, returns a function that accepts a string
 // and returns the corresponding field of that object
@@ -52,13 +54,13 @@ class SyncUp extends Component {
   };
 
   static cancelSync() {
-    LoggerManager.log('cancelSync');
-    LoggerManager.log('To be implemented on AMPOFFLINE-208');
+    logger.log('cancelSync');
+    logger.log('To be implemented on AMPOFFLINE-208');
   }
 
   constructor() {
     super();
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   componentWillMount() {
@@ -90,7 +92,7 @@ class SyncUp extends Component {
   }
 
   selectContentElementToDraw() {
-    LoggerManager.log('selectContentElementToDraw');
+    logger.log('selectContentElementToDraw');
     const { syncUpReducer } = this.props;
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
       return <Loading />;
@@ -121,7 +123,7 @@ class SyncUp extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     const { syncUpReducer, currentUserHistory } = this.props;
     const { loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (

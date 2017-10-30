@@ -3,7 +3,9 @@ import * as styles from '../ActivityForm.css';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF section');
 
 /* eslint-disable class-methods-use-this */
 
@@ -21,7 +23,7 @@ const AFSection = (ComposedSection, SectionTitle) => class extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

@@ -12,7 +12,9 @@ import {
   STATE_SYNCUP_SHOW_HISTORY
 } from '../actions/SyncUpAction';
 import { STATE_LOGOUT_DISMISS_TO_SYNC } from '../actions/LoginAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('Syncup reducer');
 
 const defaultState = {
   loadingSyncHistory: false,
@@ -29,7 +31,7 @@ const defaultState = {
 };
 
 export default function syncUpReducer(state: Object = defaultState, action: Object) {
-  LoggerManager.log('SyncUpReducer');
+  logger.log('SyncUpReducer');
   switch (action.type) {
     case STATE_SYNCUP_SHOW_HISTORY:
       return Object.assign({}, state, { loadingSyncHistory: false, historyData: action.actionData, });

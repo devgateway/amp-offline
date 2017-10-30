@@ -137,6 +137,25 @@ const Utils = {
   },
 
   /**
+   * Show in the highest unit or exact unit if such is given
+   * @param bytes
+   * @param exactUnit
+   * @return {{value: string, label: string}}
+   */
+  simplifyDataSize(bytes, exactUnit) {
+    const convertTo = ['Bytes', 'KB', 'MB', 'GB'];
+    let value = bytes;
+    const label = convertTo.find(unit => {
+      if ((value / 1024 < 1 && !exactUnit) || (exactUnit === unit)) {
+        return true;
+      }
+      value /= 1024.0;
+      return false;
+    });
+    return { value, label };
+  },
+
+  /**
    * Get runtime platform details. Sample:
    * {
    *  platform: 'debian',

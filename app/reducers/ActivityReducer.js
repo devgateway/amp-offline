@@ -12,8 +12,10 @@ import {
   ACTIVITY_UPDATE_GLOBAL_STATE
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
+
+const logger = new Logger('Activity reducer');
 
 const defaultState = {
   isActivityLoading: false,
@@ -36,7 +38,7 @@ const defaultState = {
 };
 
 const activityReducer = (state = defaultState, action: Object) => {
-  LoggerManager.log('activityReducer');
+  logger.log('activityReducer');
   switch (action.type) {
     case ACTIVITY_UNLOADED:
       return { ...defaultState };

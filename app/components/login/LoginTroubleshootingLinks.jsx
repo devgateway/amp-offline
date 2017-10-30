@@ -1,9 +1,11 @@
 /* eslint jsx-a11y/href-no-hash: 0 */
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
 import FeatureManager from '../../modules/util/FeatureManager';
 import * as FMC from '../../utils/constants/FeatureManagerConstants';
+
+const logger = new Logger('Login troubleshooting links');
 
 export default class LoginTroubleshootingLinks extends Component {
 
@@ -14,11 +16,11 @@ export default class LoginTroubleshootingLinks extends Component {
 
   constructor() {
     super();
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
   }
 
   render() {
-    LoggerManager.debug('render');
+    logger.debug('render');
     return (
       <div>
         {(FeatureManager.isFMSettingEnabled(FMC.PUBLIC_VIEW_CHANGE_PASSWORD, false)) ?

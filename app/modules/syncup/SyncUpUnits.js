@@ -1,4 +1,6 @@
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Syncup units');
 
 /**
  * SyncUp units storage
@@ -6,7 +8,7 @@ import LoggerManager from '../../modules/util/LoggerManager';
  */
 export default class SyncUpUnits {
   constructor() {
-    LoggerManager.log('SyncUpUnits');
+    logger.log('SyncUpUnits');
     this._units = [];
     this._errors = [];
   }

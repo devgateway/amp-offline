@@ -1,11 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import styles from './APComponents.css';
 import translate from '../../../../utils/translate';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+
+const logger = new Logger('AP Components');
 
 /**
  * @author Gabriel Inchauspe
@@ -69,7 +71,7 @@ class APComponents extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _buildComponents() {

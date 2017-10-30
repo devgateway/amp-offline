@@ -3,7 +3,7 @@ import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
 import WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
 import store from '../index';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as AC from '../utils/constants/ActivityConstants';
@@ -20,9 +20,11 @@ export const STATE_WORKSPACE_LOADED = 'STATE_WORKSPACE_LOADED';
 export const STATE_WORKSPACE_ERROR = 'STATE_WORKSPACE_ERROR';
 export const STATE_WORKSPACE_LOAD_DENIED = 'STATE_WORKSPACE_LOAD_DENIED';
 
+const logger = new Logger('Workspace action');
+
 // TODO: THIS must be properly integrated through AMPOFFLINE-147
 export function selectWorkspace(wsId) {
-  LoggerManager.log('selectWorkspace');
+  logger.log('selectWorkspace');
   // adding this check here to avoid doing significant changes in the ws selection workflow just before the release
   // TODO prepare ws load from the desktop component
   if (isForceSyncUp()) {
@@ -48,7 +50,7 @@ export function selectWorkspace(wsId) {
           })
         )
       ).catch((err) => {
-        LoggerManager.error(err);
+        logger.error(err);
         dispatch({ type: STATE_WORKSPACE_ERROR, actionData: err.toString() });
       })
     ))
@@ -57,13 +59,13 @@ export function selectWorkspace(wsId) {
 
 export function loadWorkspaces() {
   const userId = store.getState().userReducer.userData.id;
-  LoggerManager.log('loadWorkspaces');
+  logger.log('loadWorkspaces');
   return (dispatch) => {
     dispatch({ type: STATE_WORKSPACE_LOADING });
     return WorkspaceManager.findAllWorkspacesForUser(userId).then((workspaces) => (
       dispatch({ type: STATE_WORKSPACE_LOADED, actionData: workspaces })
     )).catch((err) => {
-      LoggerManager.error(err);
+      logger.error(err);
       return dispatch({ type: STATE_WORKSPACE_ERROR, actionData: err });
     });
   };

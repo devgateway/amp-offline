@@ -4,12 +4,14 @@ import { Popover, OverlayTrigger } from 'react-bootstrap';
 import classNames from 'classnames';
 import style from './Legends.css';
 import translate from '../../utils/translate';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Legends');
 
 export default class Legends extends Component {
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     const legendSpan = classNames('glyphicon', 'glyphicon-info-sign', style.info_icon);
     const overlayPopover = (<Popover id="legendPopover">
       <div className={style.container}>
