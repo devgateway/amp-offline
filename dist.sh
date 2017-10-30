@@ -11,10 +11,12 @@ DIST_CMD="
     npm run package-win-64 && rename 's/.exe/-64.exe/' dist/*.exe;
     chown -R $(id -u):$(id -g) ."
 
+echo $DIST_CMD
+
 docker run --rm -t -v ${PWD}:/project \
 	-v amp-client-electron:/root/.electron \
 	-v amp-client-cache:/root/.cache \
-	-e PR_NR=$1 \
+	-e PR_NR=$1 -e JENKINS_BRANCH=$2 \
 	electronuserland/electron-builder:wine /bin/bash -c "$DIST_CMD"
 
 # Clean ~/.electron, execute only if really needed

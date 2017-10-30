@@ -3,8 +3,8 @@ import LanguageHelper from '../../helpers/LanguageHelper';
 import {
   AVAILABLE_LANGUAGES_URL,
   GET_TRANSLATIONS_URL,
-  POST_TRANSLATIONS_URL,
-  LAST_SYNC_TIME_PARAM
+  LAST_SYNC_TIME_PARAM,
+  POST_TRANSLATIONS_URL
 } from '../../connectivity/AmpApiConstants';
 import {
   FS_LOCALES_DIRECTORY,
@@ -100,8 +100,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   // TODO: use lastSyncDate when calling the EP.
   syncUpTranslations(langs) {
     logger.log('syncUpTranslations');
-    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
-    const originalMasterTrnFile = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
+    const originalMasterTrnFile = TranslationSyncUpManager.parseMasterTrnFile();
     const langIds = langs.map(value => value.id);
     /* In the first syncup we send all translations to the POST endpoint and for incremental syncups we call
      the GET endpoint. In both cases we will match the response with the "original text" from the master-file,
@@ -113,33 +112,57 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       return this.doIncrementalSyncup(langIds, originalMasterTrnFile);
     } else {
       // Do full syncup.
-      return this.doFullSyncUp(langIds, originalMasterTrnFile);
+      return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile);
     }
   }
 
-  doFullSyncUp(langIds, originalMasterTrnFile) {
-    logger.log('doFullSyncUp');
-    // Extract text to translate from our master-file.
-    const masterTexts = Object.values(originalMasterTrnFile);
+  /**
+   * If 'is full sync' this function sends all text from ampoffline to AMP so these texts are marked as used on
+   * ampoffline and then receives the translations. Else we use the function to send only
+   * new texts added during development.
+   * @param langIds
+   * @param originalMasterTrnFile
+   * @returns {*}
+   */
+  pushTranslationsSyncUp(langIds, originalMasterTrnFile) {
+    logger.log('pushTranslationsSyncUp');
+    // On full sync diffTexts is the complete originalMasterTrnFile.
+    const diffTexts = TranslationSyncUpManager.getNewTranslationsDifference();
+    if (diffTexts.length > 0) {
+      return this.doPostCall(langIds, diffTexts).then((newTranslations) => (
+        this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
+      ));
+    } else {
+      return Promise.resolve();
+    }
+  }
+
+  doPostCall(langIds, textList) {
+    logger.debug('doPostCall');
     return ConnectionHelper.doPost({
       shouldRetry: true,
       url: POST_TRANSLATIONS_URL,
-      body: masterTexts,
+      body: textList,
       paramsMap: { translations: langIds.join('|') }
-    }).then((newTranslations) => (
-      this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
-    ));
+    });
   }
 
+  /**
+   * Incremental/Partial Syncup will do up to 2 calls: 1st to the POST endpoint ONLY IF the master
+   * translations file has new entries NOT PRESENT in the '/lang/translations.en.json' file and
+   * 2nd to the GET endpoint with last-sync-time parameter.
+   * @param langIds
+   * @param originalMasterTrnFile
+   */
   doIncrementalSyncup(langIds, originalMasterTrnFile) {
     logger.log('doIncrementalSyncup');
-    return ConnectionHelper.doGet({
+    return this.pushTranslationsSyncUp(langIds, originalMasterTrnFile).then(() => ConnectionHelper.doGet({
       shouldRetry: true,
       url: GET_TRANSLATIONS_URL,
       paramsMap: { translations: langIds.join('|'), [LAST_SYNC_TIME_PARAM]: this._lastSyncTimestamp }
     }).then((newTranslations) => (
       this.updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds)
-    ));
+    )));
   }
 
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
@@ -179,5 +202,31 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     // If we have more than one language we make the process in parallel to save time.
     const promises = langIds.map(fn);
     return Promise.all(promises);
+  }
+
+  static parseMasterTrnFile() {
+    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+    return JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
+  }
+
+  /**
+   * Return new texts or the whole file in case of full sync.
+   * @returns {*}
+   */
+  static getNewTranslationsDifference() {
+    let diffTexts = [];
+    const originalMasterTrnFile = TranslationSyncUpManager.parseMasterTrnFile();
+    if (TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
+      const localTrnFileName = `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+      const localTrnFileInLangDir = JSON.parse(FileManager
+        .readTextDataFileSync(FS_LOCALES_DIRECTORY, localTrnFileName));
+      const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
+      if (diffKeys.length > 0) {
+        diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
+      }
+    } else {
+      diffTexts = Object.values(originalMasterTrnFile);
+    }
+    return diffTexts;
   }
 }
