@@ -144,3 +144,7 @@ export const NR_LOG_FILES = 100;
 
 export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';
+export const RELEASE_BRANCH_REGEX = /release\//;
+// TODO remove
+export const TMP_RELEASE_BRANCH = 'task/AMPOFFLINE-845/default-user-and-pwd';
+export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX, TMP_RELEASE_BRANCH];

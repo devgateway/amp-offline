@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
@@ -8,14 +7,14 @@ import {
   DB_DEFAULT_QUERY_LIMIT,
   DB_FILE_EXTENSION,
   DB_FILE_PREFIX,
-  AKEY,
-  MASTER_BRANCH
+  AKEY
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Database manager');
 
@@ -49,9 +48,7 @@ const DatabaseManager = {
       __BRANCH_NAME__ is the branch of the sources directory, used only when compiling locally.
       JENKINS_BRANCH is the branch used by Jenkins to compile the app. */
       // Remove extra spaces/returns on these strings.
-      const sanitizedBranchName = __BRANCH_NAME__ ? __BRANCH_NAME__.trim() : '';
-      const sanitizedJenkinsName = process.env.JENKINS_BRANCH ? process.env.JENKINS_BRANCH.trim() : '';
-      if (sanitizedJenkinsName === MASTER_BRANCH || MASTER_BRANCH === sanitizedBranchName) {
+      if (Utils.isReleaseBranch()) {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
       }

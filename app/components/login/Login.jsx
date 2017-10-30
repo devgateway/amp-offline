@@ -7,6 +7,7 @@ import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
 import LoginTroubleshootingLinks from './LoginTroubleshootingLinks';
 import { doSetupFirst } from '../../actions/SetupAction';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('login');
 
@@ -27,7 +28,7 @@ export default class Login extends Component {
     super();
     logger.log('constructor');
 
-    this.state = {
+    this.state = Utils.isReleaseBranch() ? {} : {
       email: 'testuser@amp.org',
       password: 'password'
     };

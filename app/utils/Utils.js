@@ -9,6 +9,7 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
+import { RELEASE_BRANCHES } from './Constants';
 
 const Utils = {
 
@@ -185,7 +186,31 @@ const Utils = {
       arch = ARCH32;
     }
     return { platform, arch };
+  },
+
+  /* eslint-disable no-undef */
+  getBranch() {
+    return (process.env.JENKINS_BRANCH || __BRANCH_NAME__ || '').trim();
+  },
+
+  getPR() {
+    return __PR_NR__;
+  },
+
+  getBuildDate() {
+    return __BUILD_DATE__;
+  },
+
+  getCommitHash() {
+    return __COMMIT_HASH__;
+  },
+  /* eslint-disable no-undef */
+
+  isReleaseBranch() {
+    const branch = this.getBranch();
+    return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
   }
+
 };
 
 module.exports = Utils;
