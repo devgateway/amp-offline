@@ -2,10 +2,12 @@
  * Created by Anya on 24/04/2017.
  */
 import Moment from 'moment';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import { API_DATE_FORMAT } from './Constants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
+
+const logger = new Logger('Date utils');
 
 export default class DateUtils {
   /**
@@ -41,7 +43,7 @@ export default class DateUtils {
   }
 
   static createFormattedDate(date) {
-    LoggerManager.log('createFormattedDate');
+    logger.log('createFormattedDate');
     return DateUtils.formatDate(date, DateUtils.getGSDateFormat());
   }
 

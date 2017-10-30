@@ -3,12 +3,14 @@ import React, { Component, PropTypes } from 'react';
 import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as AF from '../../components/AFComponentTypes';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
 import afStyles from '../../ActivityForm.css';
+
+const logger = new Logger('AF project cost');
 
 /**
  * @author Gabriel Inchauspe
@@ -25,7 +27,7 @@ export default class AFProjectCost extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {

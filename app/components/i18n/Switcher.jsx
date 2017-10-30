@@ -2,7 +2,9 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { setLanguage } from '../../actions/TranslationAction';
 import styles from './i18n.css';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Switcher component');
 
 class Switcher extends React.Component {
 
@@ -12,7 +14,7 @@ class Switcher extends React.Component {
   }
 
   changeLanguage(lang) {
-    LoggerManager.log('changeLanguage');
+    logger.log('changeLanguage');
     this.props.onChangeLanguage(lang);
   }
 
@@ -34,12 +36,12 @@ class Switcher extends React.Component {
 /* TODO: Check if is possible to move this section with Redux code to a new TranslationContainer. We did it this way
  because we dont have a router on index.js, then we cant load this container automatically. */
 const mapStateToProps = (state) => {
-  LoggerManager.log('mapStateToProps');
+  logger.log('mapStateToProps');
   return state;
 };
 
 const mapDispatchToProps = (dispatch) => {
-  LoggerManager.log('mapDispatchToProps');
+  logger.log('mapDispatchToProps');
   return {
     onChangeLanguage: (lan) => {
       dispatch(setLanguage(lan));

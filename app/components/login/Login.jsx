@@ -3,9 +3,12 @@ import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import Button from '../i18n/Button';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
 import LoginTroubleshootingLinks from './LoginTroubleshootingLinks';
+import { doSetupFirst } from '../../actions/SetupAction';
+
+const logger = new Logger('login');
 
 export default class Login extends Component {
 
@@ -22,7 +25,7 @@ export default class Login extends Component {
 
   constructor() {
     super();
-    LoggerManager.log('constructor');
+    logger.log('constructor');
 
     this.state = {
       email: 'testuser@amp.org',
@@ -31,6 +34,10 @@ export default class Login extends Component {
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+  }
+
+  componentWillMount() {
+    doSetupFirst();
   }
 
   handlePasswordChange(e) {
@@ -46,7 +53,7 @@ export default class Login extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     return (
       <div className={styles.centered_form}>
         <table>

@@ -6,18 +6,20 @@ import { setLanguage } from '../actions/TranslationAction';
 import store from '../index';
 import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
 import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('Menu utils');
 
 const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
 
 class MenuUtils {
 
   constructor() {
-    LoggerManager.log('constructor');
+    logger.debug('constructor');
   }
 
   buildMenu(loggedIn, menu, onClickHandler, workspaceReducer, menuOnClickHandler, languageList) {
-    LoggerManager.log('buildMenu');
+    logger.log('buildMenu');
     const { workspaceList } = workspaceReducer;
     const firstLevelEntries = [];
     const newMenu = cloneDeep(menu);
@@ -77,7 +79,7 @@ class MenuUtils {
 }
 
 export function handleClick(info) {
-  LoggerManager.log('handleClick');
+  logger.debug('handleClick');
   if (info.item.props.route) { // if it doesn't have a route, we invoke a ClickHandler
     UrlUtils.forwardTo(info.item.props.route);
   } else if (info.item.props.onItemClickHandler) {
@@ -88,7 +90,7 @@ export function handleClick(info) {
 }
 
 function generateTree(object, key, level, node, loggedIn, menuOnClickHandler) {
-  // LoggerManager.log('generateTree');
+  // logger.log('generateTree');
   const newNode = Object.assign({}, node);
   if (object.nodes) {
     newNode[level] = [];
@@ -124,7 +126,7 @@ function _getTitle(object, key) {
 
 // Export function so we can access it from outside (ie: from MenuUtil.spec.js).
 export function toShow(isPublic, loggedIn) {
-  // LoggerManager.log('toShow');
+  // logger.log('toShow');
   /* Truth table:
    * true, true --> true
    * true, false --> true

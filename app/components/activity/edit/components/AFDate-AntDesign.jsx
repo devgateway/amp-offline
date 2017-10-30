@@ -30,7 +30,9 @@ import { DatePicker, LocaleProvider } from 'antd';
 import * as ADLocales from './AntDesignLocales';
 import { MIN_SUPPORTED_YEAR, MAX_SUPPORTED_YEAR } from '../../../../utils/Constants';
 import DateUtils from '../../../../utils/DateUtils';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF date and design');
 
 /* eslint-disable class-methods-use-this */
 
@@ -52,7 +54,7 @@ class AFDateAntDesign extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.gsDateFormat = DateUtils.getGSDateFormat();
     this.state = {
       value: props.value,

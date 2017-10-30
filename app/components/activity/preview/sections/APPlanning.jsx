@@ -3,7 +3,9 @@ import Section from './Section';
 import Tablify from '../components/Tablify';
 import styles from '../ActivityPreview.css';
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AP Planning');
 
 /**
  * Activity Preview Planning section
@@ -16,7 +18,7 @@ class APPlanning extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {
