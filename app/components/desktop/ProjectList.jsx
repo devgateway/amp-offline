@@ -12,9 +12,11 @@ import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VAL
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
 import { stripTags } from '../../utils/Utils';
+
+const logger = new Logger('Project list');
 
 export default class ProjectList extends Component {
 
@@ -96,7 +98,7 @@ export default class ProjectList extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#style
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);

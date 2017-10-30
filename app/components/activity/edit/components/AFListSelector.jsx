@@ -9,8 +9,10 @@ import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsMa
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import * as Utils from '../../../../utils/Utils';
+
+const logger = new Logger('AF list selector');
 
 /* eslint-disable class-methods-use-this */
 
@@ -42,7 +44,7 @@ export default class AFListSelector extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
     this.handleAddValue = this.handleAddValue.bind(this);
     this.handleRemoveValue = this.handleRemoveValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -61,6 +63,7 @@ export default class AFListSelector extends Component {
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
     this.setUniqueIdsAndUpdateState(this.props.selectedOptions || []);
+    this.noMultipleValues = this.listDef.multiple_values !== true;
   }
 
   setUniqueIdsAndUpdateState(values) {

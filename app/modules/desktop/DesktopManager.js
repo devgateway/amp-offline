@@ -30,12 +30,14 @@ import {
   STARTED_STATUS
 } from '../../utils/constants/ValueConstants';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Desktop manager');
 
 const DesktopManager = {
 
   generateDesktopData(workspace, teamMemberId, currentWorkspaceSettings, currencyRatesManager) {
-    LoggerManager.log('generateDesktopData');
+    logger.log('generateDesktopData');
     return new Promise((resolve, reject) =>
       WorkspaceFilter.getDBFilter(workspace).then(wsFilter =>
         this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
@@ -56,7 +58,7 @@ const DesktopManager = {
   },
 
   generateOneTabData(wsFilter, teamMemberId, fn, currentWorkspaceSettings, currencyRatesManager) {
-    LoggerManager.log('generateOneTabData');
+    logger.log('generateOneTabData');
     return new Promise((resolve, reject) => (
       fn.call(ActivityHelper, wsFilter)
         .then((activities) => (
@@ -72,7 +74,7 @@ const DesktopManager = {
   },
 
   hydrateActivities(activities, teamMemberId) {
-    LoggerManager.log('hydrateActivities');
+    logger.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
       fieldPaths: [DONOR_ORGANIZATIONS_PATH, ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, FUNDING_CURRENCY_PATH],
@@ -81,7 +83,7 @@ const DesktopManager = {
   },
 
   convertActivitiesToGridStructure(hydratedActivities, currentWorkspaceSettings, currencyRatesManager) {
-    LoggerManager.log('convertActivitiesToGridStructure');
+    logger.log('convertActivitiesToGridStructure');
     const forGrid = hydratedActivities.map((item) => (
       Object.assign({}, item, {
         key: item.id,
@@ -92,7 +94,7 @@ const DesktopManager = {
           currencyRatesManager),
         actualCommitments: this.getActivityAmounts(item, COMMITMENTS, currentWorkspaceSettings, currencyRatesManager),
         view: true,
-        edit: this.getActivityCanEdit(item),
+        edit: this.getActivityCanEdit(item) && !item[REJECTED_ID],
         new: this.getActivityIsNew(item)
       })
     ));

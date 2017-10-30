@@ -1,6 +1,8 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CURRENCY_RATES } from '../../utils/Constants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Currency rates helper');
 
 /**
  * A simplified helper for 'Currency rates' storage for loading, searching / filtering and saving Currency Rates.
@@ -14,7 +16,7 @@ const CurrencyRatesHelper = {
    * @returns {Promise}
    */
   findByFromAndTo(currencyFrom, currencyTo) {
-    LoggerManager.log('findByFromAndTo');
+    logger.log('findByFromAndTo');
     const filter = { 'currency-pair': { to: currencyTo, from: currencyFrom } };
 
     return DatabaseManager.findOne(filter, COLLECTION_CURRENCY_RATES);
@@ -25,7 +27,7 @@ const CurrencyRatesHelper = {
    * @returns {Promise}
    */
   findAll(filter) {
-    LoggerManager.log('findAll');
+    logger.log('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_CURRENCY_RATES);
   },
   /**
@@ -34,12 +36,12 @@ const CurrencyRatesHelper = {
    * @returns {Promise}
    */
   replaceAllCurrencyRates(currencyRatesCollection) {
-    LoggerManager.log('replaceAllCurrencyRates');
+    logger.log('replaceAllCurrencyRates');
     return DatabaseManager.replaceCollection(currencyRatesCollection, COLLECTION_CURRENCY_RATES);
   },
 
   saveCurrencyRate(currencyRate) {
-    LoggerManager.log('saveCurrencyRate');
+    logger.log('saveCurrencyRate');
     return DatabaseManager.saveOrUpdate(currencyRate.id, currencyRate, COLLECTION_CURRENCY_RATES);
   }
 };

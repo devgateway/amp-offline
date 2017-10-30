@@ -22,6 +22,7 @@ export const SYNCUP_SUMMARY_URL = '/syncUpSummary';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
 export const UPDATE_URL = '/update';
+export const SETUP_URL = '/setup';
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_WORKPACES = 'workspaces';
@@ -137,4 +138,9 @@ export const UPDATES_DIR = 'updates';
 export const CONTENT_DISPOSITION_HEADER = 'Content-Disposition';
 export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
 
+export const OTHER_ID = 999999999;
 export const NR_SYNC_HISTORY_ENTRIES = 20;
+export const NR_LOG_FILES = 100;
+
+export const MASTER_BRANCH = 'master';
+export const DEVELOP_BRANCH = 'develop';

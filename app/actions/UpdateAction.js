@@ -6,6 +6,7 @@ import { MANDATORY_UPDATE } from './ConnectivityAction';
 import UpdateManager from '../modules/update/UpdateManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import { UPDATE_INSTALLER_PATH } from '../utils/constants/ClientSettingsConstants';
+import ElectronUpdaterManager from '../modules/update/ElectronUpdaterManager';
 
 export const STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING = 'STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING';
 export const STATE_DOWNLOAD_UPDATE_CONFIRMED = 'STATE_DOWNLOAD_UPDATE_CONFIRMED';
@@ -21,6 +22,7 @@ export const STATE_LAST_UPDATE_DATA_FULFILLED = 'STATE_LAST_UPDATE_DATA_FULFILLE
 export const STATE_LAST_UPDATE_DATA_REJECTED = 'STATE_LAST_UPDATE_DATA_REJECTED';
 const STATE_LAST_UPDATE_DATA = 'STATE_LAST_UPDATE_DATA';
 export const STATE_UPDATE_STARTED = 'STATE_UPDATE_STARTED';
+export const STATE_UPDATE_PROGRESS_DETAILS = 'STATE_UPDATE_PROGRESS_DETAILS';
 export const STATE_UPDATE_FAILED = 'STATE_UPDATE_FAILED';
 
 export function goToDownloadPage() {
@@ -77,13 +79,26 @@ export function initUpdateData() {
   return updateDataPromise;
 }
 
-export function downloadUpdate(id) {
+export function downloadUpdate(/* id */) {
   // TODO check if the update can be interrupted => avoid re-download on next update attempt (remember file per version)
-  const downloadPromise = UpdateManager.downloadInstaller(id);
+  // const downloadPromise = UpdateManager.downloadInstaller(id);
+  const updater: ElectronUpdaterManager = ElectronUpdaterManager.getUpdater(updateProgress);
+  const downloadPromise = updater.downloadUpdate();
+  downloadPromise.then(() => {
+    store.dispatch({ type: STATE_UPDATE_STARTED });
+    return updater.startUpdate();
+  }).catch(error => store.dispatch({
+    type: STATE_UPDATE_FAILED,
+    errorMessage: error.toString()
+  }));
   return dispatch => dispatch({
     type: STATE_DOWNLOAD_UPDATE,
     payload: downloadPromise
   });
+}
+
+function updateProgress(data) {
+  store.dispatch({ type: STATE_UPDATE_PROGRESS_DETAILS, actionData: data });
 }
 
 /**
