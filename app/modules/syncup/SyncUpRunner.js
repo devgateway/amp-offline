@@ -25,12 +25,14 @@ import {
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
-  SYNCUP_TYPE_EXCHANGE_RATES
+  SYNCUP_TYPE_EXCHANGE_RATES,
+  SYNCUP_TYPE_TRANSLATIONS
 } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
 import ContactHelper from '../helpers/ContactHelper';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
+import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
 
 const logger = new Logger('Syncup runner');
 
@@ -149,13 +151,15 @@ export default class SyncUpRunner {
     this._syncRunNo = syncRunNo;
 
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
-      ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient()])
-      .then(([ampIds, userIds, activitiesToPush, contactsToPush]) => {
+      ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
+      TranslationSyncupManager.getNewTranslationsDifference()])
+      .then(([ampIds, userIds, activitiesToPush, contactsToPush, newTranslations]) => {
         this._ampIds = ampIds;
         this._registeredUserIds = userIds;
         this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
         this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
         this._contactsToPush = contactsToPush;
+        this._hasTranslationsToPush = newTranslations && newTranslations.length > 0;
         return this._getCumulativeSyncUpChanges();
       });
   }
@@ -191,6 +195,7 @@ export default class SyncUpRunner {
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
     changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && this._hasActivitiesToPush;
     changes[SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._hasContactsToPush;
+    changes[SYNCUP_TYPE_TRANSLATIONS] = changes[SYNCUP_TYPE_TRANSLATIONS] || this._hasTranslationsToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
       if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined
