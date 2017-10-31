@@ -2,13 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import { FormControl } from 'react-bootstrap';
 import Logger from '../../../../modules/util/LoggerManager';
 
-const logger = new Logger('AF text area');
+const logger = new Logger('AF input');
 
 /**
  * Activity Form Text Area component
- * @author Nadejda Mandrescu
+ * @author ginchauspe
  */
-export default class AFTextArea extends Component {
+export default class AFInput extends Component {
   static propTypes = {
     value: PropTypes.string,
     maxLength: PropTypes.number,
@@ -39,6 +39,7 @@ export default class AFTextArea extends Component {
   }
 
   render() {
-    return <FormControl componentClass="textarea" value={this.state.value} onChange={this.handleChange.bind(this)} />;
+    return (<FormControl
+      componentClass="input" value={this.state.value} onChange={this.handleChange.bind(this)} />);
   }
 }

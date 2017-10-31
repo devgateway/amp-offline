@@ -7,6 +7,7 @@ import ActivityFieldsManager from '../../../../../modules/activity/ActivityField
 import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
+import { INPUT_TYPE } from '../../components/AFComponentTypes';
 
 const logger = new Logger('AF Funding classication panel');
 
@@ -51,7 +52,7 @@ export default class AFFundingClassificationPanel extends Component {
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} rows={1} />
+                  parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} type={INPUT_TYPE} />
               </Col>
             </Row>
             <Row>
