@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 import { FormControl } from 'react-bootstrap';
+import AFTextArea from './AFTextArea';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AF input');
@@ -8,38 +9,18 @@ const logger = new Logger('AF input');
  * Activity Form Text Area component
  * @author ginchauspe
  */
-export default class AFInput extends Component {
-  static propTypes = {
-    value: PropTypes.string,
-    maxLength: PropTypes.number,
-    onChange: PropTypes.func
-  };
+export default class AFInput extends AFTextArea {
 
   constructor(props) {
     super(props);
     logger.log('constructor');
     this.state = {
-      value: null
+      value: ''
     };
-  }
-
-  componentWillMount() {
-    this.setState({ value: this.props.value });
-  }
-
-  handleChange(e) {
-    let value = e.target.value;
-    if (value) {
-      if (this.props.maxLength !== undefined && value.length > this.props.maxLength) {
-        value = value.substring(0, this.props.maxLength);
-      }
-    }
-    this.props.onChange(value ? value.trim() : value);
-    this.setState({ value });
   }
 
   render() {
     return (<FormControl
-      componentClass="input" value={this.state.value} onChange={this.handleChange.bind(this)} />);
+      componentClass="input" type="text" value={this.state.value} onChange={this.handleChange.bind(this)} />);
   }
 }
