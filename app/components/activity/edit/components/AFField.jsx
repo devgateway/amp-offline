@@ -52,7 +52,8 @@ class AFField extends Component {
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
     onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    extraParams: PropTypes.object
+    extraParams: PropTypes.object,
+    rows: PropTypes.number
   };
 
   static defaultProps = {
@@ -218,7 +219,8 @@ class AFField extends Component {
 
   _getTextArea() {
     return (<AFTextArea
-      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />);
+      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange}
+      rows={this.props.rows} />);
   }
 
   _getNumber() {

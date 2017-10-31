@@ -51,7 +51,7 @@ export default class AFFundingClassificationPanel extends Component {
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} />
+                  parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} rows={1} />
               </Col>
             </Row>
             <Row>
