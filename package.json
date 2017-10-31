@@ -51,6 +51,7 @@
           "dist/**/*",
           "libs/**/*",
           "lang/**/*",
+          "static/**/*",
           "app.html",
           "main.js",
           "main.js.map",
@@ -70,7 +71,8 @@
     "linux": {
       "artifactName": "${name}-${version}-${arch}.${ext}",
       "target": [
-        "AppImage"
+        "deb",
+        "rpm"
       ],
       "category": "Network"
     }
