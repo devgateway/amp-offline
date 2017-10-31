@@ -97,7 +97,7 @@ class SyncUpSummary extends PureComponent {
     return {
       synced: details.synced || [],
       unsynced: details.unsynced || []
-    }
+    };
   }
 
   render() {
