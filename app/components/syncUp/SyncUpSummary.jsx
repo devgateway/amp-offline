@@ -20,21 +20,16 @@ class SyncUpSummary extends PureComponent {
     forceSyncUp: PropTypes.bool
   };
 
-  static listActivities(activities) {
-    if (Array.isArray(activities) && activities.length) {
-      return activities.map((activity) => {
-        const id = activity[AMP_ID];
-        const { project_title: title } = activity;
-        return (
-          <div key={id || Utils.stringToId(title)}>
-            {id} {title && `(${title})`}
-          </div>
-        );
-      }
+  static listActivities(activities, source) {
+    return activities.map((activity) => {
+      const id = activity[AMP_ID];
+      const { project_title: title } = activity;
+      return (
+        <div key={id || Utils.stringToId(title)}>
+          [Source: {source}] {id} {title && `(${title})`}
+        </div>
       );
-    } else {
-      return translate('None');
-    }
+    });
   }
 
   static report({
@@ -94,15 +89,26 @@ class SyncUpSummary extends PureComponent {
     );
   }
 
+  getActivitiesByType(type) {
+    const { details } = this.props.data.units.find(
+      unit => unit.type === type
+    );
+
+    return {
+      synced: details.synced || [],
+      unsynced: details.unsynced || []
+    }
+  }
+
   render() {
     const { data, errorMessage, forceSyncUp } = this.props;
     const forceSyncUpError = forceSyncUp ? SyncUpManager.getSyncUpStatusMessage() : null;
     if (data) {
       const { status, errors, dateStarted } = data;
-      const pulled = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).details;
-      const pushed = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).details;
-      const synced = (pulled.synced || []).concat(pushed.synced || []);
-      const unsynced = (pulled.unsynced || []).concat(pushed.unsynced || []);
+      const { listActivities } = this.constructor;
+      const fallbackToNone = arr => arr.length ? arr : translate('None');
+      const pulled = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PULL);
+      const pushed = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PUSH);
       if (forceSyncUpError) {
         errors.push(forceSyncUpError);
       }
@@ -111,8 +117,12 @@ class SyncUpSummary extends PureComponent {
         errors,
         dateStarted: createFormattedDateTime(dateStarted),
         dateFinished: createFormattedDateTime(data['sync-date']),
-        syncedActivities: this.constructor.listActivities(synced),
-        unsyncedActivities: this.constructor.listActivities(unsynced)
+        syncedActivities: fallbackToNone(
+          listActivities(pushed.synced, translate('amp-offline')).concat(
+          listActivities(pulled.synced, translate('AMP')))),
+        unsyncedActivities: fallbackToNone(
+          listActivities(pushed.unsynced, translate('amp-offline')).concat(
+          listActivities(pulled.unsynced, translate('AMP'))))
       });
     } else if (errorMessage) {
       return this.constructor.report({
