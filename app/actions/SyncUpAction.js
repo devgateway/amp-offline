@@ -4,7 +4,7 @@ import { WORKSPACE_URL } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import { connectivityCheck } from './ConnectivityAction';
@@ -23,8 +23,10 @@ export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
 export const STATE_CONNECTION_CHECK_IN_PROGRESS = 'STATE_CONNECTION_CHECK_IN_PROGRESS';
 export const STATE_SYNCUP_LOG_LOADED = 'STATE_SYNCUP_LOG_LOADED';
 
+const logger = new Logger('Syncup action');
+
 export function loadSyncUpHistory() {
-  LoggerManager.log('getSyncUpHistory');
+  logger.log('getSyncUpHistory');
   return (dispatch) => {
     if (store.getState().syncUpReducer.loadingSyncHistory === false) {
       SyncUpManager.getSyncUpHistory().then((data) => (
@@ -48,7 +50,7 @@ export function startSyncUpIfConnectionAvailable() {
 }
 
 export function startSyncUp(historyData) {
-  LoggerManager.log('startSyncUp');
+  logger.log('startSyncUp');
   /* Save current syncup redux state because this might be a "forced" syncup and we dont want
    the user to be able to leave the page if this syncup fails. */
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
@@ -59,7 +61,7 @@ export function startSyncUp(historyData) {
     return SyncUpManager.syncUpAllTypesOnDemand()
       .then((log) => {
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
-        LoggerManager.log('syncupSucessfull');
+        logger.log('syncupSucessfull');
         store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
         const { id } = log;
         store.dispatch({
@@ -70,7 +72,7 @@ export function startSyncUp(historyData) {
         return checkIfToForceSyncUp();
       }
     ).catch((err) => {
-      LoggerManager.error(err);
+      logger.error(err);
       const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY ? err.message : translate('defaultSyncError');
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage } });
       URLUtils.forwardTo('/syncUpSummary');
@@ -99,7 +101,7 @@ export function dismissSyncAndChooseWorkspace() {
 }
 
 function syncUpSearchHistoryOk(data) {
-  LoggerManager.log(`syncUpSearchHistoryOk: ${JSON.stringify(data)}`);
+  logger.log(`syncUpSearchHistoryOk: ${JSON.stringify(data)}`);
   return {
     type: STATE_SYNCUP_SHOW_HISTORY,
     actionData: data
@@ -107,7 +109,7 @@ function syncUpSearchHistoryOk(data) {
 }
 
 function syncUpSearchHistoryFailed(err) {
-  LoggerManager.log(`STATE_SYNCUP_SEARCH_FAILED: ${err}`);
+  logger.log(`STATE_SYNCUP_SEARCH_FAILED: ${err}`);
   return {
     type: STATE_SYNCUP_SEARCH_FAILED,
     actionData: { errorMessage: err }
@@ -115,14 +117,14 @@ function syncUpSearchHistoryFailed(err) {
 }
 
 function sendingRequest() {
-  LoggerManager.debug('sendingRequest');
+  logger.debug('sendingRequest');
   return {
     type: STATE_SYNCUP_LOADING_HISTORY
   };
 }
 
 function syncUpInProgress() {
-  LoggerManager.debug('sendingRequest');
+  logger.debug('sendingRequest');
   return {
     type: STATE_SYNCUP_IN_PROCESS
   };

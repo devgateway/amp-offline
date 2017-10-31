@@ -2,8 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { Modal, FormGroup, Radio, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import translate from '../../../utils/translate';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import Logger from '../../../modules/util/LoggerManager';
 import * as styles from './AFSaveDialog.css';
+
+const logger = new Logger('AF save dialog');
 
 /*
    Takes a function and a delay(in ms) and returns a debouncing function that will only
@@ -35,7 +37,7 @@ export default class AFSaveDialog extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       showDialog: false,
       goToDesktop: true,
@@ -131,10 +133,10 @@ export default class AFSaveDialog extends Component {
           </FormGroup>
         </Modal.Body>
         <Modal.Footer className={styles.save_as_draft_footer}>
-          <Button onClick={this.proceed.bind(this)} {...buttonProps}>
+          <Button onClick={this.proceed.bind(this)} className={styles.save_as_draft_button} {...buttonProps}>
             {this.getProceedContent()}
           </Button>
-          <Button onClick={this.close.bind(this)} {...buttonProps}>
+          <Button onClick={this.close.bind(this)} className={styles.save_as_draft_button} {...buttonProps}>
             {translate('Cancel')}
           </Button>
         </Modal.Footer>

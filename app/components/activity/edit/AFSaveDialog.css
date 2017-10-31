@@ -20,6 +20,11 @@
 
 .save_as_draft_footer_proceed{
   color: white;
+  display: block;
+}
+
+.save_as_draft_button {
+  padding: 0;
 }
 
 .save_as_draft_footer_proceed:hover{

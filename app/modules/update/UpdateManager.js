@@ -1,11 +1,13 @@
 import * as child from 'child_process';
 import * as path from 'path';
 import { app } from 'electron';
-import LoggerManager from '../util/LoggerManager';
+import Logger from '../util/LoggerManager';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import { DOWNLOAD_UPDATE_BINARY_URL } from '../connectivity/AmpApiConstants';
 import { CONTENT_DISPOSITION_HEADER, UPDATES_DIR, UPDATE_TMP_FILE } from '../../utils/Constants';
 import FileManager from '../util/FileManager';
+
+const logger = new Logger('Update manager');
 
 export default class UpdateManager {
 
@@ -13,7 +15,7 @@ export default class UpdateManager {
    * Download the binary installer executable.
    */
   static downloadInstaller(id) {
-    LoggerManager.log('downloadInstaller');
+    logger.log('downloadInstaller');
     const installerTmpFile = FileManager.getFullPath(UPDATES_DIR, UPDATE_TMP_FILE);
     FileManager.createDataDir(UPDATES_DIR);
     FileManager.deleteFile(installerTmpFile);
@@ -24,7 +26,7 @@ export default class UpdateManager {
       extraUrlParam: id,
       writeStream
     }).then((response) => {
-      LoggerManager.log('Save file to disk.');
+      logger.log('Save file to disk.');
       const actualFileName = UpdateManager.getActualFileName(response);
       if (actualFileName) {
         FileManager.renameSync(installerTmpFile, UPDATES_DIR, actualFileName);
@@ -49,7 +51,7 @@ export default class UpdateManager {
    * @returns {boolean}
    */
   static runInstaller(installPath) {
-    LoggerManager.log('runInstaller');
+    logger.log('runInstaller');
     const isSilent = true;
     if (this.quitAndInstallCalled) {
       return false;
@@ -65,7 +67,7 @@ export default class UpdateManager {
     };
     if (!FileManager.existsSync(UPDATES_DIR, installPath)) {
       const fullFilePath = FileManager.getFullPath(UPDATES_DIR, installPath);
-      LoggerManager.error(`Cant find file ${fullFilePath}, update will stop.`);
+      logger.error(`Cant find file ${fullFilePath}, update will stop.`);
       return false;
     }
     installPath = FileManager.getFullPath(UPDATES_DIR, installPath);
@@ -76,16 +78,16 @@ export default class UpdateManager {
       // yes, such errors dispatched not as error event
       // https://github.com/electron-userland/electron-builder/issues/1129
       if (e.code === 'UNKNOWN') {
-        LoggerManager.error('UNKNOWN error code on spawn, will be executed again using elevate');
+        logger.error('UNKNOWN error code on spawn, will be executed again using elevate');
         try {
           (0, (child).spawn)(path.join(process.resourcesPath, 'elevate.exe'), [installPath].concat(args), spawnOptions)
             .unref();
           app.quit();
         } catch (e2) {
-          LoggerManager.error(e2);
+          logger.error(e2);
         }
       } else {
-        LoggerManager.error(e);
+        logger.error(e);
       }
     }
     return true;

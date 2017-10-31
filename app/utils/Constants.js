@@ -22,6 +22,7 @@ export const SYNCUP_SUMMARY_URL = '/syncUpSummary';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
 export const UPDATE_URL = '/update';
+export const SETUP_URL = '/setup';
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_WORKPACES = 'workspaces';
@@ -102,7 +103,7 @@ export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
 export const VERSION = pkg.version;
 export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
-export const ASSEST_DIRECTORY = 'assets';
+export const ASSETS_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
 // Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
 export const
@@ -137,4 +138,9 @@ export const UPDATES_DIR = 'updates';
 export const CONTENT_DISPOSITION_HEADER = 'Content-Disposition';
 export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
 
+export const OTHER_ID = 999999999;
 export const NR_SYNC_HISTORY_ENTRIES = 20;
+export const NR_LOG_FILES = 100;
+
+export const MASTER_BRANCH = 'master';
+export const DEVELOP_BRANCH = 'develop';

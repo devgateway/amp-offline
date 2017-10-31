@@ -1,9 +1,11 @@
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import { SYNCUP_TYPE_CONTACTS_PUSH } from '../../../utils/Constants';
 import ContactHelper from '../../helpers/ContactHelper';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
 import { CONTACT_PUSH_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
+
+const logger = new Logger('Contacts push sync up manager');
 
 /**
  * Pushes new and modified contacts to AMP
@@ -36,7 +38,7 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _pushContacts(contacts) {
-    LoggerManager.debug('_pushContacts');
+    logger.debug('_pushContacts');
     this.diff = contacts.map(contact => contact.id);
     if (!contacts) {
       return Promise.resolve();
@@ -73,7 +75,7 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
     }
     const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
     if (errorData) {
-      LoggerManager.error(errorData);
+      logger.error(errorData);
       this.addError(errorData);
     } else if (isNewContact) {
       // TODO AMPOFFLINE-706 update activities references
