@@ -5,7 +5,7 @@ import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { TEST_URL } from '../connectivity/AmpApiConstants';
 import SyncUpHelper from '../helpers/SyncUpHelper';
 import { loadAllLanguages } from '../../actions/TranslationAction';
-import { loadWorkspaces } from '../../actions/WorkspaceAction';
+import { loadWorkspaces, reloadSelectedWorkspace } from '../../actions/WorkspaceAction';
 import store from '../../index';
 import {
   SYNCUP_BEST_BEFORE_DAYS,
@@ -158,7 +158,8 @@ export default class SyncUpManager {
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
       checkIfShouldSyncBeforeLogout(),
-      store.dispatch(loadWorkspaces())
+      store.dispatch(loadWorkspaces()),
+      reloadSelectedWorkspace()
     ]);
   }
 
