@@ -281,11 +281,7 @@ const DatabaseManager = {
     logger.log('updateCollectionFields');
     return new Promise((resolve, reject) => {
       const updateCollectionFieldsFunc = DatabaseManager._updateCollectionFields
-        .bind(null, collectionName)
-        .bind(null, filter)
-        .bind(null, fieldsModifier)
-        .bind(null, resolve)
-        .bind(null, reject);
+        .bind(null, collectionName, filter, fieldsModifier, resolve, reject);
       DatabaseManager.queuePromise(updateCollectionFieldsFunc);
     });
   },
