@@ -106,7 +106,7 @@ class SyncUpSummary extends PureComponent {
     if (data) {
       const { status, errors, dateStarted } = data;
       const { listActivities } = this.constructor;
-      const fallbackToNone = arr => arr.length ? arr : translate('None');
+      const fallbackToNone = arr => (arr.length ? arr : translate('None'));
       const pulled = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PULL);
       const pushed = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PUSH);
       if (forceSyncUpError) {
