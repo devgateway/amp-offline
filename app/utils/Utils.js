@@ -190,6 +190,9 @@ const Utils = {
 
   /* eslint-disable no-undef */
   getBranch() {
+    // __BRANCH_NAME__ is detected when compiling locally.
+    // JENKINS_BRANCH is detected when compiling through Jenkins.
+    // Remove extra spaces/returns on these strings.
     return (process.env.JENKINS_BRANCH || __BRANCH_NAME__ || '').trim();
   },
 

@@ -44,10 +44,7 @@ const DatabaseManager = {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
-      /* Encrypt the DB when current branch is master|develop only.
-      __BRANCH_NAME__ is the branch of the sources directory, used only when compiling locally.
-      JENKINS_BRANCH is the branch used by Jenkins to compile the app. */
-      // Remove extra spaces/returns on these strings.
+      // Encrypt the DB only when built from a release branch
       if (Utils.isReleaseBranch()) {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
