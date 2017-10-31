@@ -1019,5 +1019,165 @@
   "modified_by": 190,
   "total_number_of_funding_sources": null,
   "team": 1
+},
+{
+  "project_management": null,
+  "internal_id": 1035,
+  "amp_id": "872833352",
+  "project_title": "Appui à la politique sectorielle de l'eau 9ème FED - phase 2",
+  "description": null,
+  "objective": null,
+  "document_space": null,
+  "is_draft": false,
+  "last_imported_at": null,
+  "last_imported_by": null,
+  "original_completion_date": "2015-12-31T00:00:00.000+0200",
+  "primary_sectors": [],
+  "secondary_sectors": [
+    {
+      "sector": 6,
+      "sector_percentage": 100
+    }
+  ],
+  "locations": [
+    {
+      "location": 3,
+      "location_percentage": 100
+    }
+  ],
+  "donor_organization": [
+    {
+      "organization": 66
+    }
+  ],
+  "responsible_organization": [
+    {
+      "organization": 105
+    }
+  ],
+  "executing_agency": [],
+  "activity_internal_ids": [],
+  "fundings": [
+    {
+      "donor_organization_id": 66,
+      "crs_transaction_number": null,
+      "financing_id": null,
+      "funding_terms_code": null,
+      "planned_start_date": null,
+      "planned_completion_date": null,
+      "actual_start_date": null,
+      "actual_completion_date": null,
+      "original_completion_date": null,
+      "last_audit_date": null,
+      "reporting_date": null,
+      "language": null,
+      "version": null,
+      "cal_type": null,
+      "comments": null,
+      "signature_date": null,
+      "funding_details": [
+        {
+          "fiscal_year": null,
+          "fiscal_quarter": null,
+          "transaction_type": 0,
+          "adjustment_type": 272,
+          "expenditure_class": null,
+          "transaction_date": "2014-01-01T00:00:00.000+0200",
+          "transaction_date_2": null,
+          "reporting_date": "2014-11-30T05:08:39.567+0200",
+          "updated_date": "2014-11-30T05:08:39.567+0200",
+          "transaction_amount": 12736588705,
+          "thousands_transaction_amount": null,
+          "language": null,
+          "version": null,
+          "calendar_type": null,
+          "currency": 98,
+          "reporting_organization": null,
+          "fixed_exchange_rate": null,
+          "fixed_base_currency": null,
+          "disbursement_order_rejected": null,
+          "capital_spending_percentage": null,
+          "recipient_organization": null,
+          "recipient_role": null,
+          "expenditure_category": null,
+          "disbursement_order_id": null
+        },
+        {
+          "fiscal_year": null,
+          "fiscal_quarter": null,
+          "transaction_type": 1,
+          "adjustment_type": 271,
+          "expenditure_class": null,
+          "transaction_date": "2014-07-01T00:00:00.000+0300",
+          "transaction_date_2": null,
+          "reporting_date": "2014-11-30T05:09:43.115+0200",
+          "updated_date": "2014-11-30T05:09:43.115+0200",
+          "transaction_amount": 84367070,
+          "thousands_transaction_amount": null,
+          "language": null,
+          "version": null,
+          "calendar_type": null,
+          "currency": 98,
+          "reporting_organization": null,
+          "fixed_exchange_rate": null,
+          "fixed_base_currency": null,
+          "disbursement_order_rejected": null,
+          "capital_spending_percentage": null,
+          "recipient_organization": null,
+          "recipient_role": null,
+          "expenditure_category": null,
+          "disbursement_order_id": null
+        }
+      ],
+      "active_list": [],
+      "type_of_assistance": 2169,
+      "financing_instrument": 2139,
+      "funding_status": 2135,
+      "group_versioned_funding": 1417341996636
+    }
+  ],
+  "issues": [],
+  "team": 4,
+  "ppc_amount": [
+    {
+      "amount": 12736588705,
+      "currency_code": "XAF",
+      "funding_date": "2014-01-01T00:00:00.000+0200"
+    }
+  ],
+  "donor_contact": [],
+  "project_coordinator_contact": [],
+  "sector_ministry_contact": [],
+  "components": [],
+  "proposed_start_date": null,
+  "actual_start_date": "2007-10-04T00:00:00.000+0300",
+  "proposed_approval_date": null,
+  "actual_approval_date": null,
+  "actual_completion_date": null,
+  "created_by": 12,
+  "creation_date": "2014-11-30T05:10:53.929+0200",
+  "update_date": "2015-04-20T04:36:28.223+0300",
+  "iati_last_update_date": null,
+  "approved_by": 12,
+  "approval_date": "2015-04-20T04:36:28.230+0300",
+  "approval_status": "approved",
+  "archived": null,
+  "activity_status": 2124,
+  "activity_budget": 262,
+  "implementation_level": 70,
+  "implementation_location": 76,
+  "ministry_code": null,
+  "national_plan_objective": [
+    {
+      "program_percentage": 100,
+      "program": 54
+    }
+  ],
+  "primary_programs": [],
+  "activity_group": {
+    "version": 0
+  },
+  "modified_by": 12,
+  "id": 1035
 }
 ]
