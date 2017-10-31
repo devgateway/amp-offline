@@ -17,8 +17,8 @@ const activities = require('./activities.json');
 const workspaces = require('./workspaces.json');
 
 const gs1 = {};
-gs1[GSC.SHOW_WORKSPACE_FILTER_KEY] = true;
-gs1[GSC.FILTER_BY_DATE_HIDE_PROJECTS] = false;
+gs1[GSC.SHOW_WORKSPACE_FILTER_KEY] = 'true';
+gs1[GSC.FILTER_BY_DATE_HIDE_PROJECTS] = 'false';
 
 const NO_WORKSPACE_FILTERS_WS_ID = 1;
 const WORKSPACE_FILTERS_AS_FILTERS_WS_ID = 16;
@@ -78,7 +78,7 @@ describe('@@ WorkspaceFilter @@', () => {
     it('should match activities by computed workspace that uses child orgs', () =>
       expect(WorkspaceHelper.findById(WORKSPACE_FILTERS_AS_CHILD_ORGS_WS_ID).then(workspace =>
         WorkspaceManager.getWorkspaceFilter(workspace).then(dbFilter => ActivityHelper.findAll(dbFilter, { id: 1 }))))
-        .to.eventually.deep.have.same.members([{ id: 1170 }, { id: 912 }])
+        .to.eventually.deep.have.same.members([{ id: 1170 }, { id: 912 }, { id: 1035 }])
     )
   );
 
