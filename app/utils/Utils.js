@@ -137,6 +137,15 @@ const Utils = {
     return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
   },
 
+  stripTags(tagString) {
+    if (tagString) {
+      const htmlTags = /<[^>]*>/g;
+      const noTags = tagString.replace(htmlTags, '');
+      return noTags;
+    }
+    return '';
+  },
+
   /**
    * Show in the highest unit or exact unit if such is given
    * @param bytes

@@ -14,6 +14,7 @@ import * as AC from '../../utils/constants/ActivityConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
 import Logger from '../../modules/util/LoggerManager';
 import NumberUtils from '../../utils/NumberUtils';
+import { stripTags } from '../../utils/Utils';
 
 const logger = new Logger('Project list');
 
@@ -49,9 +50,11 @@ export default class ProjectList extends Component {
   static textFormatter(cell, row, extraData) {
     if (Array.isArray(cell)) {
       cell = cell.map((item, index) => {
-        if (index < cell.length - 1) return `${item}, `;
-        else return item;
+        if (index < cell.length - 1) return `${stripTags(item)}, `;
+        else return stripTags(item);
       });
+    } else {
+      cell = stripTags(cell);
     }
     const tooltip = <Tooltip id={`${extraData.label}-tooltip-${row.id}`}>{cell}</Tooltip>;
     return (<OverlayTrigger
