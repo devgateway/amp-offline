@@ -14,6 +14,7 @@ import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Database manager');
 
@@ -43,9 +44,10 @@ const DatabaseManager = {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
-      if (process.env.NODE_ENV === 'production') {
-        /* newOptions.afterSerialization = self.encryptData;
-         newOptions.beforeDeserialization = self.decryptData;*/
+      // Encrypt the DB only when built from a release branch
+      if (Utils.isReleaseBranch()) {
+        newOptions.afterSerialization = this.encryptData;
+        newOptions.beforeDeserialization = this.decryptData;
       }
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
     });
@@ -414,19 +416,19 @@ const DatabaseManager = {
     const projections = Object.assign({ _id: 0 });
     return DatabaseManager.findAllWithProjectionsAndOtherCriteria(
       example, collectionName, projections, sortCriteria, 0, 1)
-        .then((docs) => {
-          switch (docs.length) {
-            case 0:
-              return null;
-            case 1:
-              return docs[0];
-            default:
-              return Promise.reject(new Notification({
-                message: 'moreThanOneResultFound',
-                origin: NOTIFICATION_ORIGIN_DATABASE
-              }));
-          }
-        });
+      .then((docs) => {
+        switch (docs.length) {
+          case 0:
+            return null;
+          case 1:
+            return docs[0];
+          default:
+            return Promise.reject(new Notification({
+              message: 'moreThanOneResultFound',
+              origin: NOTIFICATION_ORIGIN_DATABASE
+            }));
+        }
+      });
   },
 
   findAll(example = {}, collectionName, projections) {
@@ -459,8 +461,8 @@ const DatabaseManager = {
     }).catch(reject);
   },
 
-  findAllWithProjectionsAndOtherCriteria(example, collectionName, projections, sort = { id: 1 }, skip = 0,
-    limit = DB_DEFAULT_QUERY_LIMIT) {
+  findAllWithProjectionsAndOtherCriteria(example, collectionName, projections
+    , sort = { id: 1 }, skip = 0, limit = DB_DEFAULT_QUERY_LIMIT) {
     logger.log('findAllWithProjectionsAndOtherCriteria');
     return new Promise((resolve, reject) => {
       const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(

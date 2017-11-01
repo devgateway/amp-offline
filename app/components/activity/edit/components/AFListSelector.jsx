@@ -63,6 +63,7 @@ export default class AFListSelector extends Component {
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
     this.setUniqueIdsAndUpdateState(this.props.selectedOptions || []);
+    this.noMultipleValues = this.listDef.multiple_values !== true;
   }
 
   setUniqueIdsAndUpdateState(values) {
