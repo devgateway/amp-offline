@@ -1,12 +1,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable jsx-a11y/anchor-has-content */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
 import AFField from '../../components/AFField';
-import * as AF from '../../components/AFComponentTypes';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
 
@@ -43,7 +43,7 @@ export default class AFFundingDetailItem extends Component {
           <Col md={3} lg={3}>
             <AFField
               parent={this.props.fundingDetail}
-              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} type={AF.NUMBER} min={0} />
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} />
           </Col>
           <Col md={3} lg={3}>
             <AFField

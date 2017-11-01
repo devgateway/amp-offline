@@ -113,9 +113,6 @@ export default class ActivityValidator {
     let fieldPath = mainFieldPath;
     this._initGenericErrors();
     // normally we fieldPath includes fieldDef field name, but checking it just in case
-    if (fieldDef === null || fieldDef === undefined) {
-      fieldDef = '';
-    }
     if (fieldPath.endsWith(fieldDef.field_name)) {
       if (fieldPath === fieldDef.field_name) {
         fieldPath = '';
@@ -148,13 +145,12 @@ export default class ActivityValidator {
 
   _validateValueIfRequired(value, asDraft, fieldDef) {
     const isRequired = (fieldDef.required === 'Y' || (fieldDef.required === 'ND' && asDraft === false));
-    return this._validateRequired(value, isRequired, fieldDef.field_type);
+    return this._validateRequired(value, isRequired);
   }
 
-  _validateRequired(value, isRequired, type) {
+  _validateRequired(value, isRequired) {
     const invalidValue = isRequired &&
-      (value === undefined || value === null || value === '' || (value.length !== undefined && value.length === 0)
-        || ((type === 'float' || type === 'long') && value <= 0));
+      (value === undefined || value === null || value === '' || (value.length !== undefined && value.length === 0));
     return invalidValue ? translate('requiredField') : true;
   }
 
@@ -166,8 +162,7 @@ export default class ActivityValidator {
     }
     if (isRequired) {
       objects.forEach(obj => {
-        this.processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true
-          , fieldDef.field_type));
+        this.processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
       });
     }
   }

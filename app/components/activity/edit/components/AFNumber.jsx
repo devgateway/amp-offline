@@ -23,12 +23,12 @@ export default class AFNumber extends Component {
     super(props);
     logger.log('constructor');
     this.state = {
-      value: ''
+      value: undefined
     };
   }
 
   componentWillMount() {
-    this.setState({ value: this.props.value || '' });
+    this.setState({ value: this.props.value });
   }
 
   validate(value) {
