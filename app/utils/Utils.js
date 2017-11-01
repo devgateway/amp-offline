@@ -221,11 +221,6 @@ const Utils = {
   isReleaseBranch() {
     const branch = this.getBranch();
     return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
-  },
-
-  getISODateWithZone() {
-    const date = new Date();
-    return `${date.toISOString().substring(0, date.toISOString().length - 1)}+0000`;
   }
 };
 

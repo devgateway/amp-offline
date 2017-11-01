@@ -59,4 +59,13 @@ export default class DateUtils {
     return `${minutes} min ${seconds} sec`;
   }
 
+  /**
+   * Remove the 'Z' and add +0000 (not +00:00) to match API validation.
+   * @param date
+   * @returns {string}
+   */
+  static getISODateForAPI(date) {
+    date = date || new Date();
+    return `${date.toISOString().substring(0, date.toISOString().length - 1)}+0000`;
+  }
 }
