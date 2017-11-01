@@ -114,7 +114,6 @@ export default class ActivityValidator {
     this._initGenericErrors();
     // normally we fieldPath includes fieldDef field name, but checking it just in case
     if (fieldDef === null || fieldDef === undefined) {
-      console.warn(fieldPath); // TODO: remove.
       fieldDef = '';
     }
     if (fieldPath.endsWith(fieldDef.field_name)) {
