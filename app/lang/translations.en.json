@@ -1,5 +1,12 @@
 {
   "amp-title": "Aid Management Platform",
+  "amp-footer": "Developed in partnership with OECD, UNDP, WB, Government of Ethiopia and DG",
+  "amp-offline": "AMP Offline",
+  "TOOLS": "TOOLS",
+  "Change Language": "Change Language",
+  "HELP": "HELP",
+  "AMP Offline Help": "AMP Offline Help",
+  "About": "About",
   "Choose One": "Choose One",
   "Other": "Other",
   "loadingOptions": "Loading setup options...",

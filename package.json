@@ -5,21 +5,21 @@
   "description": "Offline desktop version of the AMP portal.",
   "main": "main.js",
   "scripts": {
-    "test-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
-    "test-electron-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.electron-mocha.js",
-    "test-store": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.store.js",
+    "test-mocha": "env-cmd --no-override test mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
+    "test-electron-mocha": "env-cmd --no-override test electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.electron-mocha.js",
+    "test-store": "env-cmd --no-override test electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.store.js",
     "test": "npm run test-mocha && npm run test-electron-mocha && npm run test-store",
     "test-watch": "npm test -- --watch",
     "test-mocha-watch": "npm run test-mocha -- --watch",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --retries 2 --compilers js:babel-register --require ./test/setup.js ./test/e2e.js",
     "lint": "eslint --ignore-path .gitignore --ignore-pattern libs/ --ext .jsx,.js --format=node_modules/eslint-formatter-pretty app test *.js",
-    "hot-server": "cross-env NODE_ENV=development FORCE_LOGGER=false node --max_old_space_size=2096 -r babel-register server.js",
-    "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --profile",
-    "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile",
+    "hot-server": "env-cmd --no-override development node --max_old_space_size=2096 -r babel-register server.js",
+    "build-main": "env-cmd --no-override production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --profile",
+    "build-renderer": "env-cmd --no-override production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile",
     "build": "npm run build-main && npm run build-renderer",
     "start": "cross-env NODE_ENV=production ELECTRON_ENABLE_LOGGING=1 electron ./app/",
-    "start-hot-update-main-debug": "cross-env HOT=1 NODE_ENV=development DISABLE_UPDATE=0 APPIMAGE=./update USE_TEST_AMP_URL=1 electron --inspect-brk=5858 -r babel-register -r babel-polyfill ./app/main.development",
-    "start-hot": "cross-env HOT=1 NODE_ENV=development DISABLE_UPDATE=1 APPIMAGE=./update USE_TEST_AMP_URL=1 electron -r babel-register -r babel-polyfill ./app/main.development",
+    "start-hot-update-main-debug": "env-cmd --no-override development electron --inspect-brk=5858 -r babel-register -r babel-polyfill ./app/main.development",
+    "start-hot": "env-cmd --no-override development electron -r babel-register -r babel-polyfill ./app/main.development",
     "postinstall": "concurrently \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "dev": "npm run hot-server -- --start-hot",
     "package": "npm run build && build --publish never",
@@ -51,6 +51,7 @@
           "dist/**/*",
           "libs/**/*",
           "lang/**/*",
+          "static/**/*",
           "app.html",
           "main.js",
           "main.js.map",
@@ -70,7 +71,8 @@
     "linux": {
       "artifactName": "${name}-${version}-${arch}.${ext}",
       "target": [
-        "AppImage"
+        "deb",
+        "rpm"
       ],
       "category": "Network"
     }
@@ -157,6 +159,7 @@
     "electron-debug": "^1.0.1",
     "electron-mocha": "^3.4.0",
     "electron-updater": "^2.12.1",
+    "env-cmd": "^7.0.0",
     "font-awesome": "^4.7.0",
     "fs-extra": "^2.0.0",
     "i18next": "^4.1.1",
