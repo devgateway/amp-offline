@@ -24,7 +24,7 @@ if (process.env.FORCE_LOGGER !== 'true') {
   } else {
     keepDebugLogsFor = [];
   }
-  keepDebugLogsFor = new RegExp(`${keepDebugLogsFor.map(f => f.replace('.', '\\.')).join('|')}|node_modules/.*$`);
+  keepDebugLogsFor = new RegExp(`${keepDebugLogsFor.map(f => f.replace('.', '\\.')).join('|')}|node_modules.*$`);
   config.module.loaders.push(
     {
       test: /\.jsx?$/,
