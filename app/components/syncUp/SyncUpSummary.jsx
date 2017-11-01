@@ -46,48 +46,50 @@ class SyncUpSummary extends PureComponent {
     unsyncedActivities
   }) {
     return (
-      <div className="container">
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Status')}
+      <div>
+        {errors.map(msg =>
+          <ErrorMessage message={msg.toString()} />
+        )}
+        <div className="container">
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Status')}
+            </div>
+            <div className="col-md-8">
+              {status}
+            </div>
           </div>
-          <div className="col-md-8">
-            {status}
-            {errors.map(msg =>
-              <ErrorMessage message={msg.toString()} />
-            )}
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Started')}
+            </div>
+            <div className="col-md-8">
+              {dateStarted}
+            </div>
           </div>
-        </div>
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Started')}
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Finished')}
+            </div>
+            <div className="col-md-8">
+              {dateFinished}
+            </div>
           </div>
-          <div className="col-md-8">
-            {dateStarted}
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Synced projects')}
+            </div>
+            <div className="col-md-8">
+              {syncedActivities}
+            </div>
           </div>
-        </div>
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Finished')}
-          </div>
-          <div className="col-md-8">
-            {dateFinished}
-          </div>
-        </div>
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Synced projects')}
-          </div>
-          <div className="col-md-8">
-            {syncedActivities}
-          </div>
-        </div>
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Failed projects')}
-          </div>
-          <div className="col-md-8">
-            {unsyncedActivities}
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Failed projects')}
+            </div>
+            <div className="col-md-8">
+              {unsyncedActivities}
+            </div>
           </div>
         </div>
       </div>
