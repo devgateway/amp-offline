@@ -196,7 +196,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-chad-future-v3-0-tc9.ampsite.net",
+    "ampServerUrl": "amp-chad-develop-tc9.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   }
