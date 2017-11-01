@@ -148,3 +148,5 @@ export const NR_LOG_FILES = 100;
 
 export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';
+export const RELEASE_BRANCH_REGEX = /release\//;
+export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];
