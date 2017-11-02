@@ -73,9 +73,7 @@ app.on('ready', async () => {
     });
   }
 
-  if (process.platform !== 'darwin') {
-    ElectronUpdater.getElectronUpdater();
-  }
+  ElectronUpdater.getElectronUpdater();
 
   mainWindow.setMenu(null);
 });
