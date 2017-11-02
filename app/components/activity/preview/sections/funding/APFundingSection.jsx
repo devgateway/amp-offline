@@ -87,14 +87,16 @@ class APFundingSection extends Component {
     logger.debug('render');
     const fundingList = [];
     let counter = 1;
-    this.props.activity.fundings.forEach((funding) => {
-      const item = (<APFundingOrganizationSection
-        funding={funding} key={funding[AC.AMP_FUNDING_ID]}
-        counter={counter} comparator={this._compareFundings}
-        buildSimpleField={this.props.buildSimpleField} />);
-      fundingList.push(item);
-      counter += 1;
-    });
+    if (this.props.activity.fundings) {
+      this.props.activity.fundings.forEach((funding) => {
+        const item = (<APFundingOrganizationSection
+          funding={funding} key={funding[AC.AMP_FUNDING_ID]}
+          counter={counter} comparator={this._compareFundings}
+          buildSimpleField={this.props.buildSimpleField} />);
+        fundingList.push(item);
+        counter += 1;
+      });
+    }
     return (<div className={fundingStyles.container}>
       <div className={fundingStyles.byline}>{getAmountsInThousandsMessage()}</div>
       <APProposedProjectCost sectionPath={AC.PPC_AMOUNT} titleClass={fundingStyles.section_header} />

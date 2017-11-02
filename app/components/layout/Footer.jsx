@@ -1,35 +1,35 @@
-/* eslint-disable no-undef */
 import React, { Component } from 'react';
 import os from 'os';
 import translate from '../../utils/translate';
 import styles from './Footer.css';
 import {
-  DG_COMPANY_NAME,
   DG_ADDRESS_1,
   DG_ADDRESS_2,
+  DG_COMPANY_NAME,
   DG_CONTACT_INFO,
-  VERSION,
-  MASTER_BRANCH
+  VERSION
 } from '../../utils/Constants';
 import DateUtils from '../../utils/DateUtils';
+import * as Utils from '../../utils/Utils';
 
 export default class Home extends Component {
   static getDevInfo() {
-    let branchOrPr = null;
+    let branchOrPr = '';
     let releaseDate = '';
-    if (__BRANCH_NAME__ !== MASTER_BRANCH) {
-      releaseDate = DateUtils.createFormattedDateTime(__BUILD_DATE__);
-      if (__PR_NR__) {
-        branchOrPr = `PR #${__PR_NR__}`;
+    if (!Utils.isReleaseBranch()) {
+      const prNr = Utils.getPR();
+      releaseDate = DateUtils.createFormattedDateTime(Utils.getBuildDate());
+      if (prNr) {
+        branchOrPr = ` PR #${prNr}`;
       } else {
-        branchOrPr = `${__BRANCH_NAME__} ${__COMMIT_HASH__}`;
+        branchOrPr = ` ${Utils.getBranch()} ${Utils.getCommitHash()}`;
       }
     } else {
-      releaseDate = DateUtils.createFormattedDate(__BUILD_DATE__);
+      releaseDate = DateUtils.createFormattedDate(Utils.getBuildDate());
     }
 
     const osAndArch = `${os.type()} ${os.arch()}`;
-    return `${VERSION} ${branchOrPr} ${translate('build')} ${releaseDate} ${osAndArch}`;
+    return `${VERSION}${branchOrPr} ${translate('build')} ${releaseDate} ${osAndArch}`;
   }
 
   render() {
@@ -37,8 +37,7 @@ export default class Home extends Component {
       <div className={styles.footerContainer}>
         <footer className={[styles.footer, styles.footerText].join(' ')}>
           <p>
-            {translate('amp-offline')} {this.constructor.getDevInfo()}
-            {translate('amp-footer')}
+            {translate('amp-offline')} {this.constructor.getDevInfo()} {translate('amp-footer')}
           </p>
         </footer>
         <div className={[styles.footerText, styles.footerImageContainer].join(' ')}>

@@ -1,15 +1,14 @@
-import ConnectionHelper from '../../connectivity/ConnectionHelper';
+/* eslint-disable class-methods-use-this */
+import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { AMP_COUNTRY_FLAG } from '../../connectivity/AmpApiConstants';
 import { AMP_COUNTRY_LOGO, ASSETS_DIRECTORY, SYNCUP_TYPE_ASSETS } from '../../../utils/Constants';
 import FileManager from '../../util/FileManager';
 
-/* eslint-disable class-methods-use-this */
-
 /**
  * Class to hold sync mechanism for amp assets
  */
-export default class AmpAssetManager extends AbstractAtomicSyncUpManager {
+export default class AmpAssetSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
     super(SYNCUP_TYPE_ASSETS);
