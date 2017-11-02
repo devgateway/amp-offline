@@ -31,6 +31,7 @@ const settingsSchema = {
     id: { type: 'string' },
     name: { type: 'string' },
     visible: { type: 'boolean' },
+    public: { type: 'public' },
     type: { type: 'string' },
     options: { type: 'array' },
     value: { type: ['boolean', 'string', 'integer', 'object'] },
@@ -76,9 +77,10 @@ const ClientSettingsHelper = {
    * Find all visible settings
    * @returns {Promise}
    */
-  findAllVisibleSettings() {
+  findAllVisibleSettings(filter = {}) {
     logger.log('findAllVisibleSettings');
-    return this.findAll({ visible: true });
+    filter.visible = true;
+    return this.findAll(filter);
   },
 
   findAll(filter) {

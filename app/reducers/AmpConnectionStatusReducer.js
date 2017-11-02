@@ -6,7 +6,7 @@ const logger = new Logger('AMP Connection status reducer');
 
 const defaultState = {
   status: undefined,
-  updateInProgress: true
+  updateInProgress: false
 };
 
 export default function ampConnectionStatusReducer(state = defaultState, action: Object) {

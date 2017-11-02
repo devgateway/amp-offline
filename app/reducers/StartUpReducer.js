@@ -10,7 +10,7 @@ import {
   STATE_PARAMETERS_FAILED
 } from '../actions/StartUpAction';
 import Logger from '../modules/util/LoggerManager';
-import { STATE_PARAMETERS_LOADED, STATE_PARAMETERS_LOADING } from '../actions/SetupAction';
+import { STATE_PARAMETERS_LOADED, STATE_PARAMETERS_LOADING } from '../actions/ConnectivityAction';
 
 const logger = new Logger('Startup reducer');
 

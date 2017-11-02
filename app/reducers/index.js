@@ -13,6 +13,7 @@ import notificationReducer from './NotificationReducer';
 import currencyRatesReducer from './CurrencyRatesReducer';
 import updateReducer from './UpdateReducer';
 import setupReducer from './SetupReducer';
+import settingReducer from './SettingReducer';
 import { STATE_LOGOUT } from '../actions/LoginAction';
 
 const combinedReducers = combineReducers({
@@ -29,7 +30,8 @@ const combinedReducers = combineReducers({
   notificationReducer,
   currencyRatesReducer,
   updateReducer,
-  setupReducer
+  setupReducer,
+  settingReducer
 });
 
 const rootReducer = (state, action) => {

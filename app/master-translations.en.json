@@ -295,8 +295,8 @@
   "deleteFundingItem": "Do you really want to delete this funding item?",
   "deleteFundingTransactionItem": "Do you really want to delete this funding transaction item?",
   "dontStopUpdateWarning": "AMP Offline is currently being updated. Please do not close the application.",
-  "updateConfirmed" : "Update availability reconfirmed.",
-  "updateNA" : "Update not available.",
+  "updateConfirmed": "Update availability reconfirmed.",
+  "updateNA": "Update not available.",
   "downloadComplete": "Installer download complete",
   "downloadInProgress": "Installer download in progress...",
   "downloadProgressDetails": "Downloaded %transferred%/%total% %unit% (%percent%%) at %speed%...",
@@ -312,5 +312,16 @@
   "updateInProgress": "AMP Offline upgrade is in progress...",
   "updateFailed": "AMP Offline upgrade failed.",
   "defaultSyncError": "There was an error while attempting to sync. Please try again.",
-  "build": "build"
+  "build": "build",
+  "ampServerUrl": "AMP Server URL",
+  "testingConnectivity": "Checking connection...",
+  "connectionUp": "AMP Server is reachable.",
+  "connectionDown": "AMP Server is unreachable.",
+  "urlNotWorking": "AMP Server is unreachable or wrong URL.",
+  "Save": "Save",
+  "validUrlRequired": "Please provide at least one working AMP Server URL.",
+  "invalidUrl": "Invalid URL",
+  "duplicateUrl": "Duplicate URL",
+  "settingsSaveSuccess": "Settings were saved successfully.",
+  "settingsSaveError": "Settings could not be saved."
 }

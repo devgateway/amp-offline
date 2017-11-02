@@ -7,6 +7,7 @@ import store from '../index';
 import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
 import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
 import Logger from '../modules/util/LoggerManager';
+import { didSetupComplete } from '../actions/SetupAction';
 
 const logger = new Logger('Menu utils');
 
@@ -22,6 +23,7 @@ class MenuUtils {
     logger.log('buildMenu');
     const { workspaceList } = workspaceReducer;
     const firstLevelEntries = [];
+    const isSetupComplete = didSetupComplete();
     const newMenu = cloneDeep(menu);
 
     // Dynamic list of workspaces.
@@ -60,8 +62,8 @@ class MenuUtils {
       // Iterate first level items.
       Object.keys(newMenu.menu).forEach((key) => {
         const firstLevelObject = newMenu.menu[key];
-        if (toShow(firstLevelObject.public, loggedIn)) {
-          const structure = generateTree(firstLevelObject, key, 0, [], loggedIn, menuOnClickHandler);
+        if (toShow(firstLevelObject, loggedIn, isSetupComplete)) {
+          const structure = generateTree(firstLevelObject, key, 0, [], loggedIn, isSetupComplete, menuOnClickHandler);
           firstLevelEntries.push(structure);
         }
       });
@@ -89,15 +91,16 @@ export function handleClick(info) {
   }
 }
 
-function generateTree(object, key, level, node, loggedIn, menuOnClickHandler) {
+function generateTree(object, key, level, node, loggedIn, isSetupComplete, menuOnClickHandler) {
   // logger.log('generateTree');
   const newNode = Object.assign({}, node);
   if (object.nodes) {
     newNode[level] = [];
-    if (toShow(object.public, loggedIn)) {
+    if (toShow(object, loggedIn, isSetupComplete)) {
       Object.keys(object.nodes).forEach((key2) => {
-        if (toShow(object.nodes[key2].public, loggedIn)) {
-          newNode[level].push(generateTree(object.nodes[key2], key2, level + 1, newNode, loggedIn, menuOnClickHandler));
+        if (toShow(object.nodes[key2], loggedIn, isSetupComplete)) {
+          newNode[level].push(generateTree(object.nodes[key2], key2, level + 1, newNode, loggedIn,
+            isSetupComplete, menuOnClickHandler));
         }
       });
     }
@@ -125,15 +128,8 @@ function _getTitle(object, key) {
 }
 
 // Export function so we can access it from outside (ie: from MenuUtil.spec.js).
-export function toShow(isPublic, loggedIn) {
-  // logger.log('toShow');
-  /* Truth table:
-   * true, true --> true
-   * true, false --> true
-   * false, true --> true
-   * false, false --> false
-   * */
-  return isPublic || loggedIn;
+export function toShow(menu, loggedIn, isSetupComplete) {
+  return (menu.public || loggedIn) && (menu.beforeSetup || isSetupComplete);
 }
 
 export default MenuUtils;
