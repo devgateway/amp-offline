@@ -9,6 +9,7 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
+import { RELEASE_BRANCHES } from './Constants';
 
 const Utils = {
 
@@ -136,6 +137,15 @@ const Utils = {
     return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
   },
 
+  stripTags(tagString) {
+    if (tagString) {
+      const htmlTags = /<[^>]*>/g;
+      const noTags = tagString.replace(htmlTags, '');
+      return noTags;
+    }
+    return '';
+  },
+
   /**
    * Show in the highest unit or exact unit if such is given
    * @param bytes
@@ -185,7 +195,34 @@ const Utils = {
       arch = ARCH32;
     }
     return { platform, arch };
+  },
+
+  /* eslint-disable no-undef */
+  getBranch() {
+    // __BRANCH_NAME__ is detected when compiling locally.
+    // JENKINS_BRANCH is detected when compiling through Jenkins.
+    // Remove extra spaces/returns on these strings.
+    return (process.env.JENKINS_BRANCH || __BRANCH_NAME__ || '').trim();
+  },
+
+  getPR() {
+    return __PR_NR__;
+  },
+
+  getBuildDate() {
+    return __BUILD_DATE__;
+  },
+
+  getCommitHash() {
+    return __COMMIT_HASH__;
+  },
+  /* eslint-disable no-undef */
+
+  isReleaseBranch() {
+    const branch = this.getBranch();
+    return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
   }
+
 };
 
 module.exports = Utils;

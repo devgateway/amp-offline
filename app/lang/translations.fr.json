@@ -1,5 +1,12 @@
 {
   "amp-title": "Plateforme de Gestion de l'Aide",
+  "amp-footer": "Développé en partenariat avec l’OCDE, le PNUD, la Banque mondiale, le gouvernement de l’Ethiopie et Developmnent Gateway",
+  "amp-offline": "Hors Ligne PGA",
+  "TOOLS": "OUTILS",
+  "Change Language": "Choix de la langue",
+  "HELP": "AIDE",
+  "AMP Offline Help": "Aide Hors Ligne PGA",
+  "About": "À propos de la PGA",
   "Choose One": "Choisir une option",
   "Other": "Autre",
   "loadingOptions": "Chargement des options de configuration...",
