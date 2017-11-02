@@ -358,14 +358,12 @@
   padding-bottom: 5px;
   border-left: 1px solid #ebebeb;
   border-bottom: 1px solid #ebebeb;
-  height: 41px;
 }
 
 .tablify_outer_cell {
   display: inline-block;
   padding-bottom: 5px;
   border-bottom: 1px solid #ebebeb;
-  vertical-align: top;
 }
 
 .nodata {

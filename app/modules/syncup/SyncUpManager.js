@@ -6,7 +6,7 @@ import { TEST_URL } from '../connectivity/AmpApiConstants';
 import SyncUpHelper from '../helpers/SyncUpHelper';
 import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import { loadAllLanguages } from '../../actions/TranslationAction';
-import { loadWorkspaces } from '../../actions/WorkspaceAction';
+import { loadWorkspaces, reloadSelectedWorkspace } from '../../actions/WorkspaceAction';
 import store from '../../index';
 import {
   NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM,
@@ -164,7 +164,8 @@ export default class SyncUpManager {
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
       checkIfShouldSyncBeforeLogout(),
-      store.dispatch(loadWorkspaces())
+      store.dispatch(loadWorkspaces()),
+      reloadSelectedWorkspace()
     ]);
   }
 

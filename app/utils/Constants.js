@@ -17,7 +17,8 @@ export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';
 export const DESKTOP_URL = '/desktop';
 export const DESKTOP_CURRENT_URL = '/desktop/current';
-export const SYNCUP_URL = '/syncUp';
+export const SYNCUP_REDIRECT_URL = '/syncUp/sync';
+export const SYNCUP_HISTORY_TARGET = 'history';
 export const SYNCUP_SUMMARY_URL = '/syncUpSummary';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
@@ -51,7 +52,11 @@ export const LANGUAGE_ENGLISH = 'en';
 export const FS_LOCALES_DIRECTORY = 'lang';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
+
+export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
+export const STATIC_DIR = 'static';
+export const IMAGES_DIR = 'images';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -148,3 +153,5 @@ export const NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM = NR_SYNC_HISTORY_ENTRIES;
 
 export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';
+export const RELEASE_BRANCH_REGEX = /release\//;
+export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];

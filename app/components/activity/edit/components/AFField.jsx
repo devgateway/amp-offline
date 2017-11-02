@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import AFLabel from './AFLabel';
+import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
 import AFDropDown from './AFDropDown';
 import AFOption from './AFOption';
@@ -163,6 +164,8 @@ class AFField extends Component {
         return this._getValueAsLabel();
       case Types.CHECKBOX:
         return this._getBoolean();
+      case Types.INPUT_TYPE:
+        return this._getInput();
       default:
         return 'Not Implemented';
     }
@@ -219,6 +222,10 @@ class AFField extends Component {
   _getTextArea() {
     return (<AFTextArea
       value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />);
+  }
+
+  _getInput() {
+    return <AFInput value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />;
   }
 
   _getNumber() {

@@ -28,9 +28,13 @@ export default class DateUtils {
   }
 
   static formatDate(date, format) {
-    const formattedDate = Moment(date).isValid() ?
-      Moment(date).format(format) : date;
-    return formattedDate;
+    if (date !== undefined && date !== null) {
+      const formattedDate = Moment(date).isValid() ? Moment(date).format(format) : date;
+      return formattedDate;
+    } else {
+      // otherwise undefined date is converted to today.
+      return '';
+    }
   }
 
   static getGSDateFormat() {
