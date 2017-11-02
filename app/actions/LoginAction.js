@@ -1,7 +1,7 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import store from '../index';
 import UrlUtils from '../utils/URLUtils';
-import { LOGIN_URL, SYNCUP_URL } from '../utils/Constants';
+import { LOGIN_URL, SYNCUP_REDIRECT_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import ActivitiesPushToAMPManager from '../modules/syncup/syncupManagers/ActivitiesPushToAMPManager';
 import { checkIfToForceSyncUp } from './SyncUpAction';
@@ -38,7 +38,7 @@ export function loginAction(email: string, password: string) {
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
-        return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(SYNCUP_URL));
+        return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(SYNCUP_REDIRECT_URL));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
