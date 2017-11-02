@@ -16,7 +16,7 @@ class APFundingItem extends Component {
 
   static propTypes = {
     item: PropTypes.object.isRequired,
-    wsCurrency: PropTypes.object.isRequired
+    wsCurrency: PropTypes.string.isRequired
   };
   static contextTypes = {
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager)
