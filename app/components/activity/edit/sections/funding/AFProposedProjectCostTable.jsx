@@ -17,8 +17,10 @@ const logger = new Logger('AF proposed project cost table');
 export default class AFProposedProjectCostTable extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
-    currentWorkspaceSettings: PropTypes.object.isRequired,
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+  };
+
+  static propTypes = {
     activity: PropTypes.object.isRequired
   };
 
@@ -31,7 +33,7 @@ export default class AFProposedProjectCostTable extends Component {
   }
 
   render() {
-    if (this.context.activityFieldsManager.isFieldPathEnabled(AC.PPC_AMOUNT)) {
+    if (this.props.activity[AC.PPC_AMOUNT]) {
       /* IMPORTANT: Since we want to mimic the AF that shows inputs on tables not only when the user clicks the
        cell, then is easier to set editable={false} and use our AFField components inside dateFormat, this way
        we dont need to have a fake input for displaying and then extra code for editing (plus many other advantages). */
@@ -40,7 +42,7 @@ export default class AFProposedProjectCostTable extends Component {
         columns.push(<TableHeaderColumn
           dataField={AC.AMOUNT} editable={false} key={AC.AMOUNT}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
+            parent={this.props.activity[AC.PPC_AMOUNT][0]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.AMOUNT}`}
             type={Types.NUMBER} showLabel={false} readonly />)} >{translate('Amount')}</TableHeaderColumn>);
       }
@@ -49,7 +51,7 @@ export default class AFProposedProjectCostTable extends Component {
           dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
           editable={false}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
+            parent={this.props.activity[AC.PPC_AMOUNT][0]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
             type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
       }
@@ -57,20 +59,15 @@ export default class AFProposedProjectCostTable extends Component {
         columns.push(<TableHeaderColumn
           dataField={AC.FUNDING_DATE} editable={false} key={AC.FUNDING_DATE}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
+            parent={this.props.activity[AC.PPC_AMOUNT][0]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`}
             type={Types.DATE} showLabel={false} />)} >{translate('Date')}</TableHeaderColumn>);
       }
-      // Create empty row for new activities.
-      this.context.activity[AC.PPC_AMOUNT] = this.context.activity[AC.PPC_AMOUNT]
-        || [{ [AC.AMOUNT]: null,
-          [AC.CURRENCY_CODE]: this.context.currentWorkspaceSettings.currency.code,
-          [AC.FUNDING_DATE]: null }];
       return (<div>
         <span><label htmlFor="ppc_table" >{translate('Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} hover data={this.context.activity[AC.PPC_AMOUNT]} >
+          thClassName={styles.thClassName} hover data={this.props.activity[AC.PPC_AMOUNT]} >
           {columns}
         </BootstrapTable>
       </div>);
