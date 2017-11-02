@@ -48,7 +48,7 @@ const APProjectCost = (fieldName) => class extends Component {
           ._currencyRatesManager.convertTransactionAmountToCurrency(ppcAsFunding, currency);
         amount = NumberUtils.rawNumberToFormattedString(amount);
       }
-      if (this.props.activity.fundings.length > 0) {
+      if (this.props.activity.fundings && this.props.activity.fundings.length > 0) {
         content = (<div>
           <div className={styles.project_cost_left}>
             <span className={styles.project_cost_title}>{translate('Cost')} </span>
