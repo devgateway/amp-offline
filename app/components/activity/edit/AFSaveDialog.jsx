@@ -133,10 +133,10 @@ export default class AFSaveDialog extends Component {
           </FormGroup>
         </Modal.Body>
         <Modal.Footer className={styles.save_as_draft_footer}>
-          <Button onClick={this.proceed.bind(this)} {...buttonProps}>
+          <Button onClick={this.proceed.bind(this)} className={styles.save_as_draft_button} {...buttonProps}>
             {this.getProceedContent()}
           </Button>
-          <Button onClick={this.close.bind(this)} {...buttonProps}>
+          <Button onClick={this.close.bind(this)} className={styles.save_as_draft_button} {...buttonProps}>
             {translate('Cancel')}
           </Button>
         </Modal.Footer>

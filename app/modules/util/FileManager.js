@@ -1,9 +1,12 @@
 import fs from 'fs-extra';
+import path from 'path';
 import { ELECTRON_APP } from './ElectronApp';
+import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 
 const app = ELECTRON_APP;
 
-let rootPath;
+let dataPath;
+let resourcesPath;
 
 /**
  * System File Manager that is intented to handle proper root directory detection in dev & prod mode. It servers as a
@@ -17,15 +20,29 @@ const FileManager = {
    * @return {string}
    */
   getDataPath() {
-    // development
-    if (!rootPath) {
+    if (!dataPath) {
       if (process.env.NODE_ENV === 'production') {
-        rootPath = app.getPath('userData');
+        dataPath = app.getPath('userData');
       } else {
-        rootPath = '.';
+        dataPath = '.';
       }
     }
-    return rootPath;
+    return dataPath;
+  },
+
+  /**
+   * Provides the root path of the prebuilt resources root directory like master language file, static resources
+   * @return {string}
+   */
+  getResourcesPath() {
+    if (!resourcesPath) {
+      if (process.env.NODE_ENV === 'production') {
+        resourcesPath = path.join(process.resourcesPath, ASAR_DIR);
+      } else {
+        resourcesPath = APP_DIRECTORY;
+      }
+    }
+    return resourcesPath;
   },
 
   /**
@@ -34,8 +51,17 @@ const FileManager = {
    * @return {string}
    */
   getFullPath(...pathParts) {
-    return `${this.getDataPath()}/${pathParts.join('/')}`;
+    return path.join(this.getDataPath(), pathParts.join('/'));
   },
+
+  /**
+   * Builds the full path for built-in resources
+   * @param pathParts
+   */
+  getFullPathForBuiltInResources(...pathParts) {
+    return path.join(this.getResourcesPath(), pathParts.join('/'));
+  },
+
 
   /**
    * Creates a data directory synchronously if it doesn't exist

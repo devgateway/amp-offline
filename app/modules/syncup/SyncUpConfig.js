@@ -6,7 +6,7 @@ import WorkspaceSettingsSyncUpManager from './syncupManagers/WorkspaceSettingsSy
 import GlobalSettingsSyncUpManager from './syncupManagers/GlobalSettingsSyncUpManager';
 import TranslationSyncUpManager from './syncupManagers/TranslationSyncUpManager';
 import ActivityPossibleValuesSyncUpManager from './syncupManagers/ActivityPossibleValuesSyncUpManager';
-import AmpAssetManager from './syncupManagers/AmpAssetManager';
+import AmpAssetManager from './syncupManagers/AmpAssetSyncUpManager';
 import ActivityFieldsSyncUpManager from './syncupManagers/ActivityFieldsSyncUpManager';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';

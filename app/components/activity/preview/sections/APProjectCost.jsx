@@ -51,7 +51,7 @@ const APProjectCost = (fieldName) => class extends Component {
           ._currencyRatesManager.convertTransactionAmountToCurrency(ppcAsFunding, currency);
         amount = NumberUtils.rawNumberToFormattedString(amount);
       }
-      if (this.props.activity.fundings.length > 0 && showPPC) {
+      if (this.props.activity.fundings && this.props.activity.fundings.length > 0 && showPPC) {
         let date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
         date = date ? date[0] : null;
         date = date ? DateUtils.createFormattedDate(date) : translate('No Data');

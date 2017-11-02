@@ -50,14 +50,14 @@ export default class WorkspacePage extends Component {
 
   componentWillReceiveProps(nextProps) {
     logger.log('componentWillReceiveProps');
-    if (!nextProps.workspaceReducer.workspaceLoading && !this.state.showWorkspaces) {
+    if (!nextProps.workspaceReducer.workspacesLoading && !this.state.showWorkspaces) {
       this.setState({ showWorkspaces: true });
     }
   }
 
   selectContentElementToDraw() {
     logger.log('selectContentElementToDraw');
-    if (this.props.workspaceReducer.workspaceLoading !== false || this.state.showWorkspaces === false) {
+    if (this.props.workspaceReducer.workspacesLoading !== false || this.state.showWorkspaces === false) {
       return <Loading />;
     }
     if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
