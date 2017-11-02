@@ -12,19 +12,17 @@ import DateUtils from '../../utils/DateUtils';
 import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
-import {
-  NR_SYNC_HISTORY_ENTRIES
-} from '../../utils/Constants';
+import { NR_SYNC_HISTORY_ENTRIES, SYNCUP_HISTORY_TARGET } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
   NOTIFICATION_SEVERITY_WARNING
 } from '../../utils/constants/ErrorConstants';
 import { STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import {
-  startSyncUp,
-  startSyncUpIfConnectionAvailable,
   dismissSyncAndChooseWorkspace,
   loadSyncUpHistory,
+  startSyncUp,
+  startSyncUpIfConnectionAvailable,
   STATE_SYNCUP_DISMISSED
 } from '../../actions/SyncUpAction';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
@@ -71,7 +69,10 @@ class SyncUp extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.currentWorkspace) {
+    const { syncUpInProgress } = this.props.syncUpReducer;
+    // history target is set only from the menu, which means explicit user navigation
+    // otherwise brought in here to suggest / require user to sync
+    if (!syncUpInProgress && this.context.router.params.target !== SYNCUP_HISTORY_TARGET) {
       this.props.onSyncConfirmationAlert(this.props.syncUpReducer);
     }
   }
@@ -145,33 +146,33 @@ class SyncUp extends Component {
         {this.selectContentElementToDraw()}
 
         {!!currentUserHistory.length &&
-          <div className="container">
-            <div className="row">
-              <div className="col-sm-12">
-                <table className="table table-stripped">
-                  <caption>
-                    <h3>{translate('History')}</h3>
-                  </caption>
-                  <thead>
-                    <tr>
-                      <th>{translate('ID')}</th>
-                      <th>{translate('completedOn')}</th>
-                      <th>{translate('Status')}</th>
+        <div className="container">
+          <div className="row">
+            <div className="col-sm-12">
+              <table className="table table-stripped">
+                <caption>
+                  <h3>{translate('History')}</h3>
+                </caption>
+                <thead>
+                  <tr>
+                    <th>{translate('ID')}</th>
+                    <th>{translate('completedOn')}</th>
+                    <th>{translate('Status')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentUserHistory.map(log => (
+                    <tr key={log.id}>
+                      <td>{log.id}</td>
+                      <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
+                      <td>{log.status}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {currentUserHistory.map(log => (
-                      <tr key={log.id}>
-                        <td>{log.id}</td>
-                        <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
-                        <td>{log.status}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
+        </div>
         }
 
         <SyncUpProgressDialogModal show={this.props.syncUpReducer.syncUpInProgress} onClick={SyncUp.cancelSync} />

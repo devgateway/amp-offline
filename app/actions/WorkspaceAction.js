@@ -8,7 +8,7 @@ import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as AC from '../utils/constants/ActivityConstants';
 import { isForceSyncUp } from './SyncUpAction';
-import { SYNCUP_URL } from '../utils/Constants';
+import { SYNCUP_REDIRECT_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
@@ -29,7 +29,7 @@ export function selectWorkspace(wsId) {
   // adding this check here to avoid doing significant changes in the ws selection workflow just before the release
   // TODO prepare ws load from the desktop component
   if (isForceSyncUp()) {
-    URLUtils.forwardTo(SYNCUP_URL);
+    URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
     return dispatch => dispatch({ type: STATE_WORKSPACE_LOAD_DENIED });
   }
   return (dispatch) => loadWorkspaceData(wsId).then(({ workspace, teamMember }) =>

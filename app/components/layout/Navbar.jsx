@@ -59,8 +59,8 @@ export default class Navbar extends Component {
             />
             <a className={style.navbar_left_side}>{translate('amp-title')}</a>
           </Link>
-          <Logout loggedIn={this.props.loginReducer.loggedIn} translationReducer={this.props.translationReducer} />
           <div className={style.userInfo}>
+            <Logout loggedIn={this.props.loginReducer.loggedIn} translationReducer={this.props.translationReducer} />
             <a className={style.navbar_right_side}>{this.extractLoggedUser('')}</a>
             <a className={style.navbar_right_side}>{this.extractWorkspace('')}</a>
           </div>
