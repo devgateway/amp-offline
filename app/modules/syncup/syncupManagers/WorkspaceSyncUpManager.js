@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import { GET_WORKSPACES_URL } from '../../connectivity/AmpApiConstants';
 import WorkspaceHelper from '../../helpers/WorkspaceHelper';
@@ -7,8 +8,9 @@ import Logger from '../../util/LoggerManager';
 
 const logger = new Logger('Workspace syncup manager');
 
-/* eslint-disable class-methods-use-this */
-
+/**
+ * Workspace Sync Up Manager
+ */
 export default class WorkspaceSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
@@ -17,10 +19,9 @@ export default class WorkspaceSyncUpManager extends AbstractAtomicSyncUpManager 
 
   doAtomicSyncUp() {
     logger.log('syncUpWorkspaces');
-    // The userSync we can modify this call to only retrieve
     return ConnectionHelper.doGet({
       url: GET_WORKSPACES_URL,
-      paramsMap: { management: false, private: false },
+      paramsMap: { management: false, private: true },
       shouldRetry: true
     }).then((data) => WorkspaceHelper.replaceWorkspaces(data));
   }

@@ -16,6 +16,8 @@ import {
   SERVER_URL
 } from '../../utils/Constants';
 import ConnectionInformation from '../connectivity/ConnectionInformation';
+import AssetsUtils from '../../utils/AssetsUtils';
+import SetupSyncUpManager from '../syncup/SetupSyncUpManager';
 
 /**
  * Setup Manager
@@ -100,7 +102,16 @@ const SetupManager = {
         // cleanup temporary setup translations
         TranslationManager.removeAllTranslationFiles();
         return TranslationManager.initializeTranslations(true);
-      });
+      })
+      .then(SetupSyncUpManager.syncUpMinimumData);
+  },
+
+  setDefaults(isSetupComplete) {
+    AssetsUtils.setDefaultFlag();
+    if (isSetupComplete) {
+      return SetupSyncUpManager.syncUpMinimumData();
+    }
+    return Promise.resolve();
   }
 
 };
