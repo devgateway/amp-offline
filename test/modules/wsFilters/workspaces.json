@@ -451,5 +451,39 @@
     "workspace-filters": {
       "fromActivityStartDate": "2010-01-01T00:00:00.000+0200"
     }
+  },
+  {
+    "id": 33,
+    "name": "IATI Import",
+    "workspace-group": "Autre",
+    "workspace-lead-id": 108,
+    "add-activity": true,
+    "is-computed": false,
+    "hide-draft": false,
+    "is-cross-team-validation": false,
+    "use-filter": true,
+    "access-type": "Team",
+    "is-private": true,
+    "permission-strategy": "Full Access"
+  },
+  {
+    "id": 4,
+    "name": "Espace Equipe PGA - All Activities",
+    "workspace-group": "Government",
+    "workspace-lead-id": 33,
+    "add-activity": true,
+    "is-computed": true,
+    "hide-draft": false,
+    "is-cross-team-validation": false,
+    "use-filter": true,
+    "parent-workspace-id": 8,
+    "access-type": "Team",
+    "is-private": false,
+    "workspace-filters": {
+      "justSearch": false,
+      "selectedActivityPledgesSettings": -1,
+      "showArchived": false,
+      "workspaceonly": false
+    }
   }
 ]

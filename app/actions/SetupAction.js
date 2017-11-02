@@ -16,6 +16,10 @@ const STATE_SETUP_OPTIONS = 'STATE_SETUP_OPTIONS';
 export const STATE_SETUP_OPTIONS_PENDING = 'STATE_SETUP_OPTIONS_PENDING';
 export const STATE_SETUP_OPTIONS_FULFILLED = 'STATE_SETUP_OPTIONS_FULFILLED';
 export const STATE_SETUP_OPTIONS_REJECTED = 'STATE_SETUP_OPTIONS_REJECTED';
+const STATE_SETUP_DEFAULTS = 'STATE_SETUP_DEFAULTS';
+export const STATE_SETUP_DEFAULTS_PENDING = 'STATE_SETUP_DEFAULTS_PENDING';
+export const STATE_SETUP_DEFAULTS_FULFILLED = 'STATE_SETUP_DEFAULTS_FULFILLED';
+export const STATE_SETUP_DEFAULTS_REJECTED = 'STATE_SETUP_DEFAULTS_REJECTED';
 const STATE_URL_TEST_RESULT = 'STATE_URL_TEST_RESULT';
 export const STATE_URL_TEST_RESULT_PENDING = 'STATE_URL_TEST_RESULT_PENDING';
 export const STATE_URL_TEST_RESULT_FULFILLED = 'STATE_URL_TEST_RESULT_FULFILLED';
@@ -31,13 +35,28 @@ export function checkIfSetupComplete() {
 }
 
 export function doSetupFirst() {
-  if (!didSetupComplete()) {
+  const isSetupComplete = didSetupComplete();
+  const defaultsPromise = configureDefaults(isSetupComplete);
+  if (!isSetupComplete) {
     URLUtils.forwardTo(SETUP_URL);
   }
+  return defaultsPromise;
 }
 
 export function didSetupComplete() {
-  return store.getState().setupReducer.isSetupComplete;
+  const { setupReducer, loginReducer } = store.getState();
+  // setup state is not yet reinitialized due to logout reset, however logging out means setup step was completed
+  return setupReducer.isSetupComplete || loginReducer.logoutConfirmed;
+}
+
+export function configureDefaults(isSetupComplete) {
+  logger.log(`configureDefaults with isSetupComplete=${isSetupComplete}`);
+  const setupDefaultsPromise = SetupManager.setDefaults(isSetupComplete);
+  store.dispatch({
+    type: STATE_SETUP_DEFAULTS,
+    payload: setupDefaultsPromise
+  });
+  return setupDefaultsPromise;
 }
 
 export function configureOnLoad() {

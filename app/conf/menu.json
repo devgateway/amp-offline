@@ -40,7 +40,7 @@
     },
     "SYNC": {
       "public": false,
-      "route": "/syncUp"
+      "route": "/syncUp/history"
     },
     "HELP": {
       "public": true,

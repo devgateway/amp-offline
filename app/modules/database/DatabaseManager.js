@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
@@ -8,14 +7,14 @@ import {
   DB_DEFAULT_QUERY_LIMIT,
   DB_FILE_EXTENSION,
   DB_FILE_PREFIX,
-  AKEY,
-  MASTER_BRANCH
+  AKEY
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Database manager');
 
@@ -45,13 +44,8 @@ const DatabaseManager = {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
-      /* Encrypt the DB when current branch is master|develop only.
-      __BRANCH_NAME__ is the branch of the sources directory, used only when compiling locally.
-      JENKINS_BRANCH is the branch used by Jenkins to compile the app. */
-      // Remove extra spaces/returns on these strings.
-      const sanitizedBranchName = __BRANCH_NAME__ ? __BRANCH_NAME__.trim() : '';
-      const sanitizedJenkinsName = process.env.JENKINS_BRANCH ? process.env.JENKINS_BRANCH.trim() : '';
-      if (sanitizedJenkinsName === MASTER_BRANCH || MASTER_BRANCH === sanitizedBranchName) {
+      // Encrypt the DB only when built from a release branch
+      if (Utils.isReleaseBranch()) {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
       }
@@ -269,6 +263,34 @@ const DatabaseManager = {
         }
       });
     });
+  },
+
+  /**
+   * Updates a collection based on the fields modifier rule
+   * @param filter the filter to apply so that only matched documents are updated
+   * @param fieldsModifier the fields modifier rule
+   * @param collectionName
+   */
+  updateCollectionFields(filter, fieldsModifier, collectionName) {
+    logger.log('updateCollectionFields');
+    return new Promise((resolve, reject) => {
+      const updateCollectionFieldsFunc = DatabaseManager._updateCollectionFields
+        .bind(null, collectionName, filter, fieldsModifier, resolve, reject);
+      DatabaseManager.queuePromise(updateCollectionFieldsFunc);
+    });
+  },
+
+  _updateCollectionFields(collectionName, filter, fieldsModifier, resolve, reject) {
+    logger.log('_updateCollectionFields');
+    DatabaseManager._getCollection(collectionName, {}).then((collection) => {
+      collection.update(filter, fieldsModifier, { multi: true }, (err, numAffected) => {
+        if (err === null) {
+          resolve(numAffected);
+        } else {
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+        }
+      });
+    }).catch(reject);
   },
 
   _replaceAll(collectionData, collectionName, filter = {}, resolve, reject) {
