@@ -85,7 +85,7 @@ export default class AFOverallFundingTotals extends Component {
 
   _buildGroups(fundings) {
     const groups = [];
-    if(fundings) {
+    if (fundings) {
       fundings.forEach((item) => {
         item[AC.FUNDING_DETAILS].forEach(item2 => {
           const amount = this.context.currencyRatesManager
