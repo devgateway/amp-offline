@@ -42,17 +42,18 @@ export default class Tablify extends Component {
   }
 
   render() {
-    const cellWidth = `${(100 / this.props.columns)}%`;
+    const columns = this.props.columns >= this.props.content.length ? this.props.content.length : this.props.columns;
+    const cellWidth = `${(100 / columns)}%`;
     const cellwidthStyle = {
       width: cellWidth
     };
-    const rows = Math.ceil(this.props.content.length / this.props.columns);
+    const rows = Math.ceil(this.props.content.length / columns);
     const tableContent = [];
     for (let i = 0; i < rows; i++) {
       const rowContent = [];
       rowContent.push(<div style={cellwidthStyle} className={styles.tablify_outer_cell}>
         {this.props.content.pop()}</div>);
-      for (let j = 1; j < this.props.columns; j++) {
+      for (let j = 1; j < this.props.columns && this.props.content.length > 0; j++) {
         rowContent.push(<div style={cellwidthStyle} className={styles.tablify_inner_cell}>
           {this.props.content.pop()}</div>);
       }
