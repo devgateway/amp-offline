@@ -33,7 +33,7 @@ class APLocation extends Component {
   render() {
     let content = [<APLocationsList
       key="locations-list" {...this.props}
-      percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />];
+      percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} tablify={false} />];
     const topContent = [];
     topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LEVEL, true, new Set([0]))} </td>);
     topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0]))} </td>);

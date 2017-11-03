@@ -28,9 +28,13 @@ export default class DateUtils {
   }
 
   static formatDate(date, format) {
-    const formattedDate = Moment(date).isValid() ?
-      Moment(date).format(format) : date;
-    return formattedDate;
+    if (date !== undefined && date !== null) {
+      const formattedDate = Moment(date).isValid() ? Moment(date).format(format) : date;
+      return formattedDate;
+    } else {
+      // otherwise undefined date is converted to today.
+      return '';
+    }
   }
 
   static getGSDateFormat() {
@@ -49,6 +53,25 @@ export default class DateUtils {
 
   static createFormattedDateTime(date) {
     return DateUtils.formatDate(date, DateUtils.getDateTimeFormat());
+  }
+
+  /**
+   * Gets a date from future or past relative to the current moment
+   * @param durationStr the duration to add/substract from the current moment
+   * @param isAdd if true, then adds the duration (default to false)
+   * @return {moment.Moment}
+   */
+  static getDateFromNow(durationStr: string, isAdd = false) {
+    const duration = Moment.duration(durationStr);
+    if (Moment.isDuration(duration)) {
+      if (isAdd) {
+        return Moment().add(duration);
+      }
+      return Moment().subtract(duration);
+    }
+    const error = `Invalid duration format: ${durationStr}`;
+    logger.error(error);
+    throw new Error(error);
   }
 
   static duration(from, to) {
