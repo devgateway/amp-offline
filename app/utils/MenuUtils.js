@@ -20,7 +20,7 @@ class MenuUtils {
   }
 
   buildMenu(loggedIn, menu, onClickHandler, workspaceReducer, menuOnClickHandler, languageList) {
-    logger.log('buildMenu');
+    logger.debug('buildMenu');
     const { workspaceList } = workspaceReducer;
     const firstLevelEntries = [];
     const isSetupComplete = didSetupComplete();

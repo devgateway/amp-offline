@@ -29,6 +29,7 @@ export const STATE_URL_TEST_RESULT_REJECTED = 'STATE_URL_TEST_RESULT_REJECTED';
 const logger = new Logger('Setup action');
 
 export function checkIfSetupComplete() {
+  logger.log('checkIfSetupComplete');
   const setupCompleteSettingPromise = SetupManager.didSetupComplete();
   store.dispatch({
     type: STATE_SETUP_STATUS,
@@ -38,6 +39,7 @@ export function checkIfSetupComplete() {
 }
 
 export function doSetupFirst() {
+  logger.log('doSetupFirst');
   const isSetupComplete = didSetupComplete();
   const defaultsPromise = configureDefaults(isSetupComplete);
   if (!isSetupComplete) {
@@ -63,6 +65,7 @@ export function configureDefaults(isSetupComplete) {
 }
 
 export function configureOnLoad() {
+  logger.log('configureOnLoad');
   return SetupManager.getConnectionInformation().then((connectionInformation: ConnectionInformation) => {
     const isTestingEnv = +process.env.USE_TEST_AMP_URL;
     if (isTestingEnv && !didSetupComplete()) {
@@ -75,6 +78,7 @@ export function configureOnLoad() {
 }
 
 export function setupComplete(setupConfig) {
+  logger.log('setupComplete');
   const saveSetupSettingsPromise = configureAndTestConnectivity(setupConfig)
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
     .then(() => true);

@@ -39,7 +39,7 @@ const DatabaseManager = {
   // VERY IMPORTANT 5: We might need to have a queue of pending operations on each collection to avoid conflicts.
 
   _getCollection(name) {
-    logger.log('_getCollection');
+    logger.debug('_getCollection');
     return new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
@@ -54,13 +54,13 @@ const DatabaseManager = {
   },
 
   getCollection(name, options) {
-    logger.log('getCollection');
+    logger.debug('getCollection');
     const getCollectionFunc = this._getCollection.bind(null, name).bind(null, options);
     this.queuePromise(getCollectionFunc);
   },
 
   _openOrGetDatastore(name, options) {
-    logger.log('_openOrGetDatastore');
+    logger.debug('_openOrGetDatastore');
     const auxDBCollection = DatabaseCollection.getInstance().checkIfCollectionIsOpen(name);
     return new Promise((resolve, reject) => {
       if (auxDBCollection !== undefined) {
@@ -410,7 +410,7 @@ const DatabaseManager = {
   },
 
   findOne(example, collectionName) {
-    logger.log('findOne');
+    logger.debug('findOne');
     const projections = Object.assign({ _id: 0 });
     return new Promise((resolve, reject) => {
       DatabaseManager.findAll(example, collectionName, projections).then((docs) => {
@@ -440,7 +440,7 @@ const DatabaseManager = {
    * @return {Promise}
    */
   findTheFirstOne(example, sortCriteria, collectionName) {
-    logger.log('findTheFirstOne');
+    logger.debug('findTheFirstOne');
     const projections = Object.assign({ _id: 0 });
     return DatabaseManager.findAllWithProjectionsAndOtherCriteria(
       example, collectionName, projections, sortCriteria, 0, 1)
@@ -460,12 +460,12 @@ const DatabaseManager = {
   },
 
   findAll(example = {}, collectionName, projections) {
-    logger.log('findAll');
+    logger.debug('findAll');
     return this.findAllWithProjections(example, collectionName, projections);
   },
 
   findAllWithProjections(example, collectionName, projections) {
-    logger.log('findAllWithProjections');
+    logger.debug('findAllWithProjections');
     return new Promise((resolve, reject) => {
       const findAllWithProjectionsFunc = this._findAllWithProjections.bind(null, example)
         .bind(null, collectionName)
@@ -477,7 +477,7 @@ const DatabaseManager = {
   },
 
   _findAllWithProjections(example, collectionName, projections, resolve, reject) {
-    logger.log('findAllWithProjections');
+    logger.debug('findAllWithProjections');
     const newProjections = Object.assign({ _id: 0 }, projections);
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.find(example, newProjections, (err, docs) => {
@@ -491,7 +491,7 @@ const DatabaseManager = {
 
   findAllWithProjectionsAndOtherCriteria(example, collectionName, projections
     , sort = { id: 1 }, skip = 0, limit = DB_DEFAULT_QUERY_LIMIT) {
-    logger.log('findAllWithProjectionsAndOtherCriteria');
+    logger.debug('findAllWithProjectionsAndOtherCriteria');
     return new Promise((resolve, reject) => {
       const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(
         null, example, collectionName, projections, sort, skip, limit, resolve, reject);
@@ -500,7 +500,7 @@ const DatabaseManager = {
   },
 
   _findAllWithProjectionsAndOtherCriteria(example, collectionName, projections, sort, skip, limit, resolve, reject) {
-    logger.log('_findAllWithProjectionsAndOtherCriteria');
+    logger.debug('_findAllWithProjectionsAndOtherCriteria');
     const newProjections = Object.assign({ _id: 0 }, projections);
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.find(example, newProjections).sort(sort).skip(skip).limit(limit)
@@ -514,7 +514,7 @@ const DatabaseManager = {
   },
 
   count(example, collectionName) {
-    logger.log('count');
+    logger.debug('count');
     return new Promise((resolve, reject) => {
       const countFunc = this._count.bind(null, example)
         .bind(null, collectionName)
@@ -525,7 +525,7 @@ const DatabaseManager = {
   },
 
   _count(example, collectionName, resolve, reject) {
-    logger.log('_count');
+    logger.debug('_count');
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.count(example, (err, count) => {
         if (err !== null) {
@@ -548,7 +548,7 @@ const DatabaseManager = {
   },
 
   createIndex(datastore, options, callback) {
-    logger.log('createIndex');
+    logger.debug('createIndex');
     const newOptions = Object.assign({}, options, {
       fieldName: 'id',
       unique: true
@@ -564,7 +564,7 @@ const DatabaseManager = {
    * @param reject Idem for catching an error.
    */
   queuePromise(task) {
-    logger.log('queuePromise');
+    logger.debug('queuePromise');
     DatabaseCollection.getInstance().addPromiseAndProcess(task);
   }
 };

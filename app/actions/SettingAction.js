@@ -34,8 +34,10 @@ export function loadSettings() {
 }
 
 export function saveSettings(settings) {
+  logger.log('saveSettings');
   const promise = ClientSettingsHelper.saveOrUpdateCollection(settings).then((result) => {
     const setupSetting = settings.find(setting => setting.id === CSC.SETUP_CONFIG);
+    logger.log('Configure the latest setup for connectivity');
     configureAndTestConnectivity(setupSetting.value);
     return result;
   });
@@ -51,6 +53,7 @@ export function saveSettings(settings) {
 }
 
 function saveConfirmation(isSuccess, error) {
+  logger.debug('saveConfirmation');
   const severity = isSuccess ? NOTIFICATION_SEVERITY_INFO : NOTIFICATION_SEVERITY_ERROR;
   const message = `${translate(isSuccess ? 'settingsSaveSuccess' : 'settingsSaveError')}`;
   const logFunc = isSuccess ? logger.log : logger.error;

@@ -16,7 +16,7 @@ const defaultState = {
 };
 
 export default function translationReducer(state: Object = defaultState, action: Object) {
-  logger.log('translation');
+  logger.debug('translation');
   switch (action.type) {
     case STATE_CHANGE_LANGUAGE:
       return Object.assign({}, state, {

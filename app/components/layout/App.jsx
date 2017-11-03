@@ -30,7 +30,7 @@ export default class App extends Component {
   }
 
   render() {
-    logger.log('render');
+    logger.debug('render');
 
     return (
       <div className={'outerContainer'}>

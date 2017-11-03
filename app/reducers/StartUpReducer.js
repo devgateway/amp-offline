@@ -28,7 +28,7 @@ const defaultState = {
 };
 
 export default function startUpReducer(state = defaultState, action: Object) {
-  logger.log('startUpReducer');
+  logger.debug('startUpReducer');
 
   switch (action.type) {
     case STATE_PARAMETERS_LOADED:

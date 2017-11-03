@@ -10,7 +10,7 @@ const defaultState = {
 };
 
 export default function ampConnectionStatusReducer(state = defaultState, action: Object) {
-  logger.log('AmpConnectionStatusReducer');
+  logger.debug('AmpConnectionStatusReducer');
 
   switch (action.type) {
     case STATE_AMP_CONNECTION_STATUS_UPDATE:
