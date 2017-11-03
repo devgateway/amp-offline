@@ -1,4 +1,6 @@
 /* eslint-disable jsx-a11y/href-no-hash */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable react/no-unused-prop-types */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import translate from '../../utils/translate';
@@ -22,8 +24,6 @@ import { startSyncUp } from '../../actions/SyncUpAction';
 
 const logger = new Logger('Logout');
 
-/* eslint-disable class-methods-use-this */
-
 class Logout extends React.Component {
 
   static propTypes = {
@@ -32,7 +32,8 @@ class Logout extends React.Component {
     logoutConfirmed: PropTypes.bool,
     logoutDismissedToSync: PropTypes.bool,
     onConfirmationAlert: PropTypes.func.isRequired,
-    onLogoutDismissToSync: PropTypes.func.isRequired
+    onLogoutDismissToSync: PropTypes.func.isRequired,
+    translationReducer: PropTypes.object
   };
 
   componentDidUpdate() {
@@ -59,7 +60,7 @@ class Logout extends React.Component {
         <a
           className={style.navbar_right_side}
           href="#"
-          onClick={this.onLogout.bind(this)}>{translate('logoff')}
+          onClick={this.onLogout.bind(this)}>{translate('logout')}
         </a>
       );
     }
