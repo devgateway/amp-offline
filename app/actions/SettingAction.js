@@ -53,11 +53,9 @@ export function saveSettings(settings) {
 }
 
 function saveConfirmation(isSuccess, error) {
-  logger.debug('saveConfirmation');
+  logger.log(`saveConfirmation isSuccess=${isSuccess}, error=${error}`);
   const severity = isSuccess ? NOTIFICATION_SEVERITY_INFO : NOTIFICATION_SEVERITY_ERROR;
   const message = `${translate(isSuccess ? 'settingsSaveSuccess' : 'settingsSaveError')}`;
-  const logFunc = isSuccess ? logger.log : logger.error;
-  logFunc(`${message}: ${error || 'no error'}`);
   const notification = new Notification({ message, severity, origin: NOTIFICATION_ORIGIN_SETTINGS });
   return (dispatch) => dispatch(addMessage(notification));
 }
