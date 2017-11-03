@@ -42,7 +42,7 @@ class AFFunding extends Component {
 
   componentWillMount() {
     this.state = {
-      fundingList: this.props.activity.fundings
+      fundingList: this.props.activity.fundings || []
     };
   }
 

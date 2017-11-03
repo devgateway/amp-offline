@@ -265,6 +265,34 @@ const DatabaseManager = {
     });
   },
 
+  /**
+   * Updates a collection based on the fields modifier rule
+   * @param filter the filter to apply so that only matched documents are updated
+   * @param fieldsModifier the fields modifier rule
+   * @param collectionName
+   */
+  updateCollectionFields(filter, fieldsModifier, collectionName) {
+    logger.log('updateCollectionFields');
+    return new Promise((resolve, reject) => {
+      const updateCollectionFieldsFunc = DatabaseManager._updateCollectionFields
+        .bind(null, collectionName, filter, fieldsModifier, resolve, reject);
+      DatabaseManager.queuePromise(updateCollectionFieldsFunc);
+    });
+  },
+
+  _updateCollectionFields(collectionName, filter, fieldsModifier, resolve, reject) {
+    logger.log('_updateCollectionFields');
+    DatabaseManager._getCollection(collectionName, {}).then((collection) => {
+      collection.update(filter, fieldsModifier, { multi: true }, (err, numAffected) => {
+        if (err === null) {
+          resolve(numAffected);
+        } else {
+          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+        }
+      });
+    }).catch(reject);
+  },
+
   _replaceAll(collectionData, collectionName, filter = {}, resolve, reject) {
     logger.log('_replaceAll');
     DatabaseManager._getCollection(collectionName, {}).then((collection) => {
