@@ -44,9 +44,11 @@ const APProjectCost = (fieldName) => class extends Component {
         const ppcAsFunding = this.props.activity[AC.PPC_AMOUNT][0];
         ppcAsFunding[AC.CURRENCY] = ppcAsFunding[AC.CURRENCY_CODE];
         ppcAsFunding[AC.TRANSACTION_AMOUNT] = ppcAsFunding[AC.AMOUNT];
-        amount = this.props.activityFundingTotals
-          ._currencyRatesManager.convertTransactionAmountToCurrency(ppcAsFunding, currency);
-        amount = NumberUtils.rawNumberToFormattedString(amount);
+        if (ppcAsFunding[AC.CURRENCY] && ppcAsFunding[AC.TRANSACTION_AMOUNT]) {
+          amount = this.props.activityFundingTotals
+            ._currencyRatesManager.convertTransactionAmountToCurrency(ppcAsFunding, currency);
+          amount = NumberUtils.rawNumberToFormattedString(amount);
+        }
       }
       if (this.props.activity.fundings && this.props.activity.fundings.length > 0) {
         content = (<div>

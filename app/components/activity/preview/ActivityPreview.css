@@ -5,14 +5,14 @@
 }
 
 .preview_title {
-    margin-left: 10px;
-    background-color: #FFFFFF;
-    color: #000000;
-    font-size: 1.5em;
-    font-weight: bold;
-    padding: 5px;
-    height: auto;
-    display: inline-block;
+  margin-left: 10px;
+  background-color: #FFFFFF;
+  color: #000000;
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 5px;
+  height: auto;
+  display: inline-block;
 }
 
 .preview_icons {
@@ -43,22 +43,22 @@
 }
 
 .preview_status_container {
-    margin-left: 10px;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f5faff;
+  margin-left: 10px;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f5faff;
 }
 
 .preview_status_title {
-    display: inline-block !important;
-    margin-left: 10px;
-    margin-right: 5px;
+  display: inline-block !important;
+  margin-left: 10px;
+  margin-right: 5px;
 }
 
 .preview_status_detail {
-    display: inline-block !important;
-    font-family: 'open_sansextrabold', sans-serif;
-    margin-right: 20px;
+  display: inline-block !important;
+  font-family: 'open_sansextrabold', sans-serif;
+  margin-right: 20px;
 }
 
 .status_title_class {
@@ -76,35 +76,35 @@
 }
 
 .preview_categories ul {
-    columns: 5;
-    column-rule: 1px solid #ebebeb;
-    line-height: 150%;
+  columns: 5;
+  column-rule: 1px solid #ebebeb;
+  line-height: 150%;
 }
 
 .preview_categories ul li {
-    list-style-type: none;
-    font-size: 0.9em;
-    font-weight: bold;
-    color: #778293;
-    margin-left: 20px;
-    padding-left: 4px;
-    cursor: pointer;
+  list-style-type: none;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #778293;
+  margin-left: 20px;
+  padding-left: 4px;
+  cursor: pointer;
 }
 
 .preview_categories ul li:hover {
-    color: #1d2531;
-    background-color: #f8f8f8;
-    position: relative;
+  color: #1d2531;
+  background-color: #f8f8f8;
+  position: relative;
 }
 
 .preview_categories ul li:hover:after {
-    content: url('../../../assets/images/arrow.svg');
-    height: 14px;
-    width: 14px;
-    display: block;
-    position: absolute;
-    left: -13px;
-    top: 2px;
+  content: url('../../../assets/images/arrow.svg');
+  height: 14px;
+  width: 14px;
+  display: block;
+  position: absolute;
+  left: -13px;
+  top: 2px;
 }
 
 .preview_category_selected {
@@ -114,21 +114,21 @@
 }
 
 .preview_category_selected:after {
-    content: url('../../../assets/images/arrow.svg');
-    height: 14px;
-    width: 14px;
-    display: block;
-    position: absolute;
-    left: -13px;
-    top: 2px;
+  content: url('../../../assets/images/arrow.svg');
+  height: 14px;
+  width: 14px;
+  display: block;
+  position: absolute;
+  left: -13px;
+  top: 2px;
 }
 
 .preview_content {
-    vertical-align: top;
+  vertical-align: top;
 }
 
 .preview_summary {
-    width: 300px;
+  width: 300px;
 }
 
 .summary_container {
@@ -137,24 +137,24 @@
 }
 
 .summary_section_title {
-    background-color: #3a84b3;
-    color: #FFFFFF;
-    font-size: 1.3em;
-    margin-bottom: 15px;
-    margin-top: 30px;
-    padding-top: 15px;
-    padding-bottom: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    display: block;
+  background-color: #3a84b3;
+  color: #FFFFFF;
+  font-size: 1.3em;
+  margin-bottom: 15px;
+  margin-top: 30px;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  display: block;
 }
 
 .summary_section_group {
-    background-color: #f5faff;
-    margin-top: 15px;
-    padding-bottom: 10px;
+  background-color: #f5faff;
+  margin-top: 15px;
+  padding-bottom: 10px;
 }
 
 .summary_field_name {
@@ -198,7 +198,7 @@
 }
 
 .box_container {
-    border: 1px solid #ebebeb;
+  border: 1px solid #ebebeb;
 }
 
 .box_table {
@@ -324,15 +324,15 @@
 }
 
 .inline {
-    display: inline;
+  display: inline;
 }
 
 .block {
-    display: block;
+  display: block;
 }
 
 .alignRight {
-    text-align: right;
+  text-align: right;
 }
 
 .paddingBottom {
@@ -371,4 +371,12 @@
   padding-bottom: 10px;
   vertical-align: top;
   font-weight: bold;
+}
+
+.top_warning_text {
+  color: red;
+  margin-left: 10px;
+  padding: 5px;
+  display: inline-block;
+  width: 100%;
 }
