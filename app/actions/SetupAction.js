@@ -2,6 +2,7 @@ import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
 import { LANGUAGE_ENGLISH, SETUP_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
+import Logger from '../modules/util/LoggerManager';
 import { configureConnectionInformation, connectivityCheck, isConnectivityCheckInProgress } from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
@@ -24,6 +25,8 @@ const STATE_URL_TEST_RESULT = 'STATE_URL_TEST_RESULT';
 export const STATE_URL_TEST_RESULT_PENDING = 'STATE_URL_TEST_RESULT_PENDING';
 export const STATE_URL_TEST_RESULT_FULFILLED = 'STATE_URL_TEST_RESULT_FULFILLED';
 export const STATE_URL_TEST_RESULT_REJECTED = 'STATE_URL_TEST_RESULT_REJECTED';
+
+const logger = new Logger('Setup action');
 
 export function checkIfSetupComplete() {
   const setupCompleteSettingPromise = SetupManager.didSetupComplete();

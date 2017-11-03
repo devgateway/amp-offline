@@ -62,7 +62,7 @@ class URLSettings extends Component {
     const urls = (setting && setting.value.urls) || [];
     this.state = {
       dataSource: urls.map(url => ({
-        id: Utils.stringToId(url),
+        id: Utils.stringToUniqueId(url),
         url,
         availability: {
           isAvailable: undefined,
@@ -92,7 +92,10 @@ class URLSettings extends Component {
           urlDs.availability.errorMessage = errorMessage;
         }
         const newDataSource = dataSource.filter(ds => ds.id === urlDs.id || ds.url !== urlDs.url);
-        if (newDataSource.length !== dataSource.length || isChanged) {
+        // cannot rely on validator, see this.validateValue
+        if (newDataSource.length !== dataSource.length) {
+          this.handleChange(newDataSource);
+        } else if (isChanged) {
           this.setState({ dataSource: newDataSource });
         }
       }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
-import AFTextArea from '../activity/edit/components/AFTextArea';
+import AFInput from '../activity/edit/components/AFInput';
 import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('URL Insert Modal');
@@ -50,7 +50,7 @@ export default class URLInsertModal extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <AFTextArea value={this.state.value} onChange={this.handleChange.bind(this)} />
+        <AFInput value={this.state.value} onChange={this.handleChange.bind(this)} />
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onModalClose}>

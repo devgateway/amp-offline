@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import Settings from '../components/settings/Settings';
 import * as SettingAction from '../actions/SettingAction';
 
-function mapStateToProps({ settingReducer, setupReducer }) {
+function mapStateToProps({ settingReducer, setupReducer, translationReducer }) {
   const { isSettingsLoading, isSettingsLoaded, settings, errorMessage, isSettingsSaving, isSettingsSaved }
     = settingReducer;
   const { urlTestResult, isUrlTestInProgress } = setupReducer;
@@ -15,7 +15,8 @@ function mapStateToProps({ settingReducer, setupReducer }) {
     settings,
     errorMessage,
     isUrlTestInProgress,
-    urlTestResult
+    urlTestResult,
+    lang: translationReducer.lang
   };
 }
 

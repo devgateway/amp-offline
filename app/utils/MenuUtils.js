@@ -51,6 +51,7 @@ class MenuUtils {
       languageList.forEach(value => (langNodes[value] = {
         objId: value,
         public: true,
+        beforeSetup: true,
         onItemClickHandler: ((lang) => {
           store.dispatch(setLanguage(lang));
         })

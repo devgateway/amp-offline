@@ -44,7 +44,8 @@ export function ampOfflineStartUp() {
 
 export function ampOfflineInit() {
   store.dispatch(loadAllLanguages());
-  return loadConnectionInformation()
+  return checkIfSetupComplete()
+    .then(loadConnectionInformation)
     .then(scheduleConnectivityCheck)
     .then(loadGlobalSettings)
     .then(() => loadFMTree())
