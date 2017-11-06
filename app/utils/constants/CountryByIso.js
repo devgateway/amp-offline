@@ -170,7 +170,7 @@ export const COUNTRY_BY_ISO2 = {
   MZ: 'Mozambique',
   NA: 'Namibia',
   NC: 'New Caledonia',
-  NE: 'Niger',
+  NE: 'NIGER',
   NF: 'Norfolk Island',
   NG: 'Nigeria',
   NI: 'Nicaragua',
