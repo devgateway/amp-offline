@@ -11,7 +11,7 @@ import tabStyle from '../desktop/ProjectList.css';
 import appStyle from '../layout/App.css';
 import AmpTooltip from '../common/AmpTooltip';
 import * as URLUtils from '../../utils/URLUtils';
-import { testUrlByKeepingCurrentSetup } from '../../actions/SetupAction';
+import { testUrlByKeepingCurrentSetup, testUrlResultProcessed } from '../../actions/SetupAction';
 import URLInsertModal from './URLInsertModal';
 
 const logger = new Logger('List Setting');
@@ -26,6 +26,7 @@ class URLSettings extends Component {
     setting: PropTypes.object,
     urlTestResult: PropTypes.object,
     onUrlTest: PropTypes.func.isRequired,
+    onUrlTestResult: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired
   };
 
@@ -78,10 +79,11 @@ class URLSettings extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { urlTestResult } = nextProps;
+    const { urlTestResult, onUrlTestResult } = nextProps;
     const { dataSource } = this.state;
     const { url, goodUrl, errorMessage } = urlTestResult || {};
     if (url) {
+      onUrlTestResult(url);
       const urlDs = dataSource.find(ds => ds.url === url);
       if (urlDs) {
         const isAvailable = !!goodUrl;
@@ -183,6 +185,7 @@ export default connect(
     urlTestResult: state.setupReducer.urlTestResult
   }),
   dispatch => ({
-    onUrlTest: (url) => dispatch(testUrlByKeepingCurrentSetup(url))
+    onUrlTest: (url) => dispatch(testUrlByKeepingCurrentSetup(url)),
+    onUrlTestResult: (url) => dispatch(testUrlResultProcessed(url))
   })
 )(URLSettings);

@@ -25,6 +25,7 @@ const STATE_URL_TEST_RESULT = 'STATE_URL_TEST_RESULT';
 export const STATE_URL_TEST_RESULT_PENDING = 'STATE_URL_TEST_RESULT_PENDING';
 export const STATE_URL_TEST_RESULT_FULFILLED = 'STATE_URL_TEST_RESULT_FULFILLED';
 export const STATE_URL_TEST_RESULT_REJECTED = 'STATE_URL_TEST_RESULT_REJECTED';
+export const STATE_URL_TEST_RESULT_PROCESSED = 'STATE_URL_TEST_RESULT_PROCESSED';
 
 const logger = new Logger('Setup action');
 
@@ -114,6 +115,13 @@ export function testUrlByKeepingCurrentSetup(url) {
   return (dispatch) => dispatch({
     type: STATE_URL_TEST_RESULT,
     payload: promise
+  });
+}
+
+export function testUrlResultProcessed(url) {
+  return (disaptch) => disaptch({
+    type: STATE_URL_TEST_RESULT_PROCESSED,
+    actionData: { url }
   });
 }
 

@@ -10,6 +10,7 @@ import {
   STATE_SETUP_STATUS_REJECTED,
   STATE_URL_TEST_RESULT_FULFILLED,
   STATE_URL_TEST_RESULT_PENDING,
+  STATE_URL_TEST_RESULT_PROCESSED,
   STATE_URL_TEST_RESULT_REJECTED
 } from '../actions/SetupAction';
 
@@ -86,6 +87,15 @@ export default function setupReducer(state = defaultState, action: Object) {
         isUrlTestInProgress: false,
         urlTestResult: { errorMessage: action.payload }
       };
+    case STATE_URL_TEST_RESULT_PROCESSED: {
+      const { urlTestResult, isUrlTestInProgress } = state;
+      const urlTestResultState = !isUrlTestInProgress && urlTestResult && urlTestResult.url &&
+      urlTestResult.url === action.actionData.url ? undefined : urlTestResult;
+      return {
+        ...state,
+        urlTestResult: urlTestResultState
+      };
+    }
     default:
       return state;
   }
