@@ -53,7 +53,8 @@ class AFField extends Component {
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
     onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    extraParams: PropTypes.object
+    extraParams: PropTypes.object,
+    defaultValueAsEmptyObject: PropTypes.bool
   };
 
   static defaultProps = {
@@ -176,7 +177,7 @@ class AFField extends Component {
     const selectedId = this.state.value ? this.state.value.id : null;
     return (<AFDropDown
       options={afOptions} onChange={this.onChange} selectedId={selectedId}
-      className={this.props.className} />);
+      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject} />);
   }
 
   _getListSelector() {

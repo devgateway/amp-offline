@@ -222,7 +222,6 @@ const Utils = {
     const branch = this.getBranch();
     return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
   }
-
 };
 
 module.exports = Utils;
