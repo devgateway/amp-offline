@@ -12,7 +12,7 @@ import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
-import { checkIfSetupComplete } from './SetupAction';
+import { checkIfSetupComplete, configureDefaults } from './SetupAction';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -37,7 +37,10 @@ const logger = new Logger('Startup action');
 export function ampOfflineStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(checkIfSetupComplete)
-    .then(isSetupComplete => TranslationManager.initializeTranslations(isSetupComplete))
+    .then(isSetupComplete =>
+      TranslationManager.initializeTranslations(isSetupComplete)
+        .then(() => configureDefaults(isSetupComplete))
+    )
     .then(ampOfflineInit)
     .then(initLanguage);
 }
