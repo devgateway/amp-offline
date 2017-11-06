@@ -52,7 +52,8 @@ class AFLocation extends Component {
     const { globalSettings } = this.props;
     if (globalSettings) {
       const iso2 = globalSettings[DEFAULT_COUNTRY] ? globalSettings[DEFAULT_COUNTRY].toUpperCase() : null;
-      this.defaultCountry = COUNTRY_BY_ISO2[iso2] ? COUNTRY_BY_ISO2[iso2].toUpperCase() : null;
+      // TODO prioritize AMPOFFLINE-593 other than Niger or Chad country starts using AMP Offline
+      this.defaultCountry = COUNTRY_BY_ISO2[iso2] ? COUNTRY_BY_ISO2[iso2] : null;
     }
     if (this.defaultCountry === null) {
       const message = translate('defaultCountryError');
