@@ -20,7 +20,8 @@ const HIERARCHY_LEVEL_PADDING_SIZE = 2;
 export default class AFSearchList extends Component {
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
-    onSearchSelect: PropTypes.func.isRequired
+    onSearchSelect: PropTypes.func.isRequired,
+    placeholder: PropTypes.string
   };
 
   constructor(props) {
@@ -87,7 +88,7 @@ export default class AFSearchList extends Component {
   }
 
   render() {
-    const placeHolderText = `${translate('Search')}...`;
+    const placeHolderText = this.props.placeholder || `${translate('Search')}...`;
     const options = React.Children.toArray(this.state.values.map(option =>
       <Button
         key={option.id} onMouseDown={this.handleSelect.bind(this, option.id)} bsClass={styles.item}
