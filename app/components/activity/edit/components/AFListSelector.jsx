@@ -4,7 +4,6 @@ import styles from './AFListSelector.css';
 import AFList from './AFList';
 import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
-import AFLabel from './AFLabel';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import * as AC from '../../../../utils/constants/ActivityConstants';
@@ -143,9 +142,6 @@ export default class AFListSelector extends Component {
     const params = this.props.extraParams || {};
     if (params['no-table'] !== true) {
       return (<div>
-        <div>
-          <AFLabel value={translate(this.searchLabel)} />
-        </div>
         <AFList
           onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
           onEditRow={this.handleEditValue.bind(this)} language={this.context.activityFieldsManager._lang} />
@@ -163,7 +159,9 @@ export default class AFListSelector extends Component {
     return (<div>
       {this._renderTable()}
       <div className={`${searchDisplayStyle} ${styles.searchContainer}`}>
-        <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
+        <AFSearchList
+          onSearchSelect={this.handleAddValue} options={this.props.options}
+          placeholder={translate(this.searchLabel)} />
         <Button
           onClick={this.dividePercentage.bind(this)} bsStyle="success" bsClass={btnStyle}
           disabled={this.state.values.length === 0} hidden={this.percentageFieldDef === undefined}>
