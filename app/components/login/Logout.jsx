@@ -1,8 +1,10 @@
+/* eslint-disable jsx-a11y/href-no-hash */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable react/no-unused-prop-types */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
 import translate from '../../utils/translate';
-import { SYNCUP_URL } from '../../utils/Constants';
+import { SYNCUP_REDIRECT_URL } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
   NOTIFICATION_SEVERITY_WARNING
@@ -22,8 +24,6 @@ import { startSyncUp } from '../../actions/SyncUpAction';
 
 const logger = new Logger('Logout');
 
-/* eslint-disable class-methods-use-this */
-
 class Logout extends React.Component {
 
   static propTypes = {
@@ -32,7 +32,8 @@ class Logout extends React.Component {
     logoutConfirmed: PropTypes.bool,
     logoutDismissedToSync: PropTypes.bool,
     onConfirmationAlert: PropTypes.func.isRequired,
-    onLogoutDismissToSync: PropTypes.func.isRequired
+    onLogoutDismissToSync: PropTypes.func.isRequired,
+    translationReducer: PropTypes.object
   };
 
   componentDidUpdate() {
@@ -56,11 +57,11 @@ class Logout extends React.Component {
     logger.log('render');
     if (this.props.loggedIn) {
       return (
-        <div className={style.logout_container} >
-          <Button className={style.navbar_right_side} bsStyle="link" onClick={this.onLogout.bind(this)} >
-            {translate('logoff')}
-          </Button >
-        </div >
+        <a
+          className={style.navbar_right_side}
+          href="#"
+          onClick={this.onLogout.bind(this)}>{translate('logout')}
+        </a>
       );
     }
     return null;
@@ -92,7 +93,7 @@ export default connect(
   dispatch => ({
     onConfirmationAlert: () => dispatch(addConfirmationAlert(logoutConfirmationAlert())),
     onLogoutDismissToSync: () => {
-      URLUtils.forwardTo(SYNCUP_URL);
+      URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
     }
   })
 )(Logout);

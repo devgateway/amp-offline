@@ -91,9 +91,13 @@ export default class ActivityPreview extends Component {
     const teamLeadFlag = this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_MANAGER
       || this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_APPROVER;
 
+    const privateWSWarning = this.props.workspaceReducer.currentWorkspace[WC.IS_PRIVATE]
+      ? translate('privateWorkspaceWarning') : '';
+
     return (
       <div className={styles.preview_container}>
         <div className={styles.preview_header} >
+          <span className={styles.top_warning_text}>{privateWSWarning}</span>
           <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
           <span className={styles.preview_icons} >
             <ul>

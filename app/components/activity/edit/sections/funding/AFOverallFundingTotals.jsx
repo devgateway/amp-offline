@@ -85,25 +85,27 @@ export default class AFOverallFundingTotals extends Component {
 
   _buildGroups(fundings) {
     const groups = [];
-    fundings.forEach((item) => {
-      item[AC.FUNDING_DETAILS].forEach(item2 => {
-        const amount = this.context.currencyRatesManager
-          .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
-        const auxFd = {
-          adjType: item2[AC.ADJUSTMENT_TYPE],
-          trnType: item2[AC.TRANSACTION_TYPE],
-          key: item2.id,
-          currency: this.context.currentWorkspaceSettings.currency.code,
-          amount
-        };
-        const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id);
-        if (!group) {
-          groups.push(auxFd);
-        } else {
-          group.amount += auxFd.amount;
-        }
+    if (fundings) {
+      fundings.forEach((item) => {
+        item[AC.FUNDING_DETAILS].forEach(item2 => {
+          const amount = this.context.currencyRatesManager
+            .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
+          const auxFd = {
+            adjType: item2[AC.ADJUSTMENT_TYPE],
+            trnType: item2[AC.TRANSACTION_TYPE],
+            key: item2.id,
+            currency: this.context.currentWorkspaceSettings.currency.code,
+            amount
+          };
+          const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id);
+          if (!group) {
+            groups.push(auxFd);
+          } else {
+            group.amount += auxFd.amount;
+          }
+        });
       });
-    });
+    }
     return groups;
   }
 
