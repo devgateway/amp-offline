@@ -41,8 +41,7 @@ class AFLocation extends Component {
     logger.log('constructor');
     this.state = {
       implementationLevel: null,
-      implementationLocation: null,
-      searchReady: false
+      implementationLocation: null
     };
     this.defaultCountry = null;
     this.onImplLevelOrImplLocChange = this.onImplLevelOrImplLocChange.bind(this);
@@ -67,9 +66,13 @@ class AFLocation extends Component {
   }
 
   onImplLevelOrImplLocChange() {
+    const implementationLocation = this.props.activity[IMPLEMENTATION_LOCATION];
+    if (implementationLocation !== this.state.implementationLocation) {
+      this.props.activity[LOCATIONS] = undefined;
+    }
     this.setState({
       implementationLevel: this.props.activity[IMPLEMENTATION_LEVEL],
-      implementationLocation: this.props.activity[IMPLEMENTATION_LOCATION],
+      implementationLocation
     });
   }
 
