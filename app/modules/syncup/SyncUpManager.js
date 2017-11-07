@@ -4,10 +4,14 @@ import SyncUpRunner from './SyncUpRunner';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { TEST_URL } from '../connectivity/AmpApiConstants';
 import SyncUpHelper from '../helpers/SyncUpHelper';
+import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import { loadAllLanguages } from '../../actions/TranslationAction';
-import { loadWorkspaces } from '../../actions/WorkspaceAction';
+import { loadWorkspaces, reloadSelectedWorkspace } from '../../actions/WorkspaceAction';
 import store from '../../index';
 import {
+  NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM,
+  NR_SYNC_HISTORY_ENTRIES,
+  OLD_SYNC_LOGS_DURATION_ISO_8601,
   SYNCUP_BEST_BEFORE_DAYS,
   SYNCUP_DATETIME_FIELD,
   SYNCUP_DIFF_LEFTOVER,
@@ -15,17 +19,18 @@ import {
   SYNCUP_NO_DATE,
   SYNCUP_STATUS_FAIL,
   SYNCUP_STATUS_SUCCESS,
-  SYNCUP_SYNC_REQUESTED_AT
+  SYNCUP_SYNC_REQUESTED_AT,
+  SYNCUP_SYNC_REQUESTED_BY
 } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
-import {
-  loadCurrencyRatesOnStartup,
-  loadFMTree,
-  loadGlobalSettings
-} from '../../actions/StartUpAction';
+import { loadCurrencyRatesOnStartup, loadFMTree, loadGlobalSettings } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
 import translate from '../../utils/translate';
 import DateUtils from '../../utils/DateUtils';
+import * as Utils from '../../utils/Utils';
+import * as UserHelper from '../helpers/UserHelper';
+import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorConstants';
+import { addMessage } from '../../actions/NotificationAction';
 
 const logger = new Logger('Syncup manager');
 
@@ -83,7 +88,7 @@ export default class SyncUpManager {
   static getLastSyncUpIdForCurrentUser() {
     logger.log('getLastSyncUpLog');
     const user = store.getState().userReducer.userData;
-    return SyncUpHelper.getLatestId({ 'requested-by': user.id });
+    return SyncUpHelper.getLatestId(Utils.toMap(SYNCUP_SYNC_REQUESTED_BY, user.id));
   }
 
   /**
@@ -153,12 +158,14 @@ export default class SyncUpManager {
 
   static _postSyncUp() {
     return Promise.all([
+      SyncUpManager.cleanupOldSyncUpLogs(),
       SyncUpManager.dispatchLoadAllLanguages(),
       loadGlobalSettings(),
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
       checkIfShouldSyncBeforeLogout(),
-      store.dispatch(loadWorkspaces())
+      store.dispatch(loadWorkspaces()),
+      reloadSelectedWorkspace()
     ]);
   }
 
@@ -235,5 +242,59 @@ export default class SyncUpManager {
       message = translate('syncWarning');
     }
     return message;
+  }
+
+  static cleanupOldSyncUpLogs() {
+    logger.log('cleanupOldSyncUpLogs');
+    return SyncUpManager._deleteOldSyncUpLogs()
+      .then(SyncUpManager._deleteOldDetails)
+      .catch(errorObject => {
+        // no need to reject and interrupt other actions, just log and notify
+        logger.error(`Could not properly cleanup old sync up logs: ${errorObject}`);
+        const notification = new ErrorNotificationHelper({ errorObject, origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS });
+        store.dispatch(addMessage(notification));
+      });
+  }
+
+  static _deleteOldSyncUpLogs() {
+    logger.log('_deleteOldSyncUpLogs');
+    return SyncUpManager._getMustKeepSyncUpLogsIds().then(syncUpLogIdsToKeep => {
+      const dateStr = DateUtils.getDateFromNow(OLD_SYNC_LOGS_DURATION_ISO_8601).toISOString();
+      const filter = { $and: [{ id: { $nin: syncUpLogIdsToKeep } }, { dateStarted: { $lt: dateStr } }] };
+      return SyncUpHelper.deleteSyncUpLogs(filter);
+    });
+  }
+
+  static _getMustKeepSyncUpLogsIds() {
+    return Promise.all([
+      SyncUpHelper.getLastSyncUpLogs(NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM, { id: 1 })
+        .then(logs => Utils.flattenToListByKey(logs, 'id')),
+      SyncUpManager._getUserMustKeepSyncUpLogIds()
+    ]).then(([logsToKeepIds, mustKeepLogIds]) => logsToKeepIds.concat(mustKeepLogIds));
+  }
+
+  static _getUserMustKeepSyncUpLogIds() {
+    return UserHelper.findAllClientRegisteredUsersByExample({}, { id: 1 })
+      .then(registeredUsers =>
+        Promise.all(Utils.flattenToListByKey(registeredUsers, 'id').map(userId => {
+          const filter = Utils.toMap(SYNCUP_SYNC_REQUESTED_BY, userId);
+          filter.status = SYNCUP_STATUS_SUCCESS;
+          return SyncUpHelper.getLatestId(filter);
+        })));
+  }
+
+  static _deleteOldDetails() {
+    logger.log('_deleteOldDetails');
+    // We cannot user .updateCollectionFields since our details are within units collection
+    return SyncUpHelper.getLastSyncUpLogs(NR_SYNC_HISTORY_ENTRIES, { id: 1 })
+      .then(logs => Utils.flattenToListByKey(logs, 'id'))
+      .then(lastSyncUpLogIds => SyncUpHelper.findAllSyncUpByExample({ id: { $nin: lastSyncUpLogIds } }))
+      .then(oldLogs => {
+        if (oldLogs && oldLogs.length) {
+          oldLogs.forEach(oldLog => oldLog.units && oldLog.units.forEach(unit => unit && delete unit.details));
+          return SyncUpHelper.saveOrUpdateSyncUpCollection(oldLogs);
+        }
+        return Promise.resolve();
+      });
   }
 }

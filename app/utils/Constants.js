@@ -17,7 +17,8 @@ export const WORKSPACE_URL = '/workspace';
 export const LOGIN_URL = '/';
 export const DESKTOP_URL = '/desktop';
 export const DESKTOP_CURRENT_URL = '/desktop/current';
-export const SYNCUP_URL = '/syncUp';
+export const SYNCUP_REDIRECT_URL = '/syncUp/sync';
+export const SYNCUP_HISTORY_TARGET = 'history';
 export const SYNCUP_SUMMARY_URL = '/syncUpSummary';
 export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
@@ -51,7 +52,11 @@ export const LANGUAGE_ENGLISH = 'en';
 export const FS_LOCALES_DIRECTORY = 'lang';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
+
+export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
+export const STATIC_DIR = 'static';
+export const IMAGES_DIR = 'images';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -85,6 +90,7 @@ export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';
 export const SYNCUP_STATUS_CANCELED = 'CANCELED';
 export const SYNCUP_SYNC_REQUESTED_AT = 'sync-date';
+export const SYNCUP_SYNC_REQUESTED_BY = 'requested-by';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
 export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
 export const SYNCUP_DEPENDENCY_CHECK_INTERVAL = 10;
@@ -103,7 +109,7 @@ export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
 export const VERSION = pkg.version;
 export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
-export const ASSEST_DIRECTORY = 'assets';
+export const ASSETS_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
 // Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
 export const
@@ -141,4 +147,11 @@ export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
 export const OTHER_ID = 999999999;
 export const NR_SYNC_HISTORY_ENTRIES = 20;
 export const NR_LOG_FILES = 100;
+// https://en.wikipedia.org/wiki/ISO_8601#Durations, example: "P1Y2M10DT2H30M"
+export const OLD_SYNC_LOGS_DURATION_ISO_8601 = 'P6M';
+export const NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM = NR_SYNC_HISTORY_ENTRIES;
 
+export const MASTER_BRANCH = 'master';
+export const DEVELOP_BRANCH = 'develop';
+export const RELEASE_BRANCH_REGEX = /release\//;
+export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];

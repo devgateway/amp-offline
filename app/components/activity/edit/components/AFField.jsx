@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import AFLabel from './AFLabel';
+import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
 import AFDropDown from './AFDropDown';
 import AFOption from './AFOption';
@@ -52,7 +53,8 @@ class AFField extends Component {
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
     onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    extraParams: PropTypes.object
+    extraParams: PropTypes.object,
+    defaultValueAsEmptyObject: PropTypes.bool
   };
 
   static defaultProps = {
@@ -163,6 +165,8 @@ class AFField extends Component {
         return this._getValueAsLabel();
       case Types.CHECKBOX:
         return this._getBoolean();
+      case Types.INPUT_TYPE:
+        return this._getInput();
       default:
         return 'Not Implemented';
     }
@@ -173,7 +177,7 @@ class AFField extends Component {
     const selectedId = this.state.value ? this.state.value.id : null;
     return (<AFDropDown
       options={afOptions} onChange={this.onChange} selectedId={selectedId}
-      className={this.props.className} />);
+      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject} />);
   }
 
   _getListSelector() {
@@ -219,6 +223,10 @@ class AFField extends Component {
   _getTextArea() {
     return (<AFTextArea
       value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />);
+  }
+
+  _getInput() {
+    return <AFInput value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />;
   }
 
   _getNumber() {

@@ -18,14 +18,13 @@ import config from './webpack.config.development';
  to see the origin (file and line) of the log.
  Note: Dont add it to webpack.config.development because that file might be used not only for DEV.*/
 if (process.env.FORCE_LOGGER !== 'true') {
-  let keepDebugLogsFor = LoggerSettings.getDefaultConfig(process.env.NODE_ENV).keepDebugLogsOnlyFor;
+  let keepDebugLogsFor = LoggerSettings.getDefaultConfig(process.env.NODE_ENV).keepDebugLogsFor;
   if (keepDebugLogsFor) {
-    if (keepDebugLogsFor.length) {
-      keepDebugLogsFor = new RegExp(`${keepDebugLogsFor.map(f => f.replace('.', '\\.')).join('|')}$`);
-    } else {
-      keepDebugLogsFor = /\.jsx?$/;
-    }
+    keepDebugLogsFor = keepDebugLogsFor.length ? keepDebugLogsFor : ['.jsx?'];
+  } else {
+    keepDebugLogsFor = [];
   }
+  keepDebugLogsFor = new RegExp(`${keepDebugLogsFor.map(f => f.replace('.', '\\.')).join('|')}|node_modules.*$`);
   config.module.loaders.push(
     {
       test: /\.jsx?$/,
@@ -40,7 +39,7 @@ if (process.env.FORCE_LOGGER !== 'true') {
     },
     {
       test: /\.jsx?$/,
-      exclude: (keepDebugLogsFor || []).concat(/node_modules/),
+      exclude: keepDebugLogsFor,
       loader: StringReplacePlugin.replace({
         replacements: [{ pattern: /logger.debug/g, replacement: () => ('// console.debug') }],
       })
