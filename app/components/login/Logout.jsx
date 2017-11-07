@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/href-no-hash */
 /* eslint-disable class-methods-use-this */
-/* eslint-disable react/no-unused-prop-types */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import translate from '../../utils/translate';
@@ -32,8 +31,7 @@ class Logout extends React.Component {
     logoutConfirmed: PropTypes.bool,
     logoutDismissedToSync: PropTypes.bool,
     onConfirmationAlert: PropTypes.func.isRequired,
-    onLogoutDismissToSync: PropTypes.func.isRequired,
-    translationReducer: PropTypes.object
+    onLogoutDismissToSync: PropTypes.func.isRequired
   };
 
   componentDidUpdate() {
