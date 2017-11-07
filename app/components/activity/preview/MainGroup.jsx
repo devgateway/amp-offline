@@ -45,16 +45,16 @@ export default class MainGroup extends Component {
         sectionPath={AC.NATIONAL_PLAN_OBJECTIVE}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APProgram
-        fieldNameClass={styles.sector_title}
+        fieldNameClass={styles.sector_title} fmPath={FMC.ACTIVITY_PROGRAM}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APSector
-        fieldNameClass={styles.sector_title} fieldValueClass={''}
+        fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FMC.ACTIVITY_SECTORS}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APFundingSources sectionPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} fieldValueClass={styles.box_field_value} />
       <APFundingSection
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} sectionPath={AC.FUNDINGS} />
       <APRelatedOrganizations
-        fieldNameClass={styles.sector_title} fieldValueClass={''}
+        fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FMC.ACTIVITY_ORGANIZATIONS}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APIssues sectionPath={AC.ISSUES} />
     </div>);
