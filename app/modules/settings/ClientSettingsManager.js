@@ -32,4 +32,9 @@ export default class ClientSettingsManager {
     name = name || id;
     return { id, name, visible, type, value, options };
   }
+
+  static getVisibleSettings(isPublic) {
+    const filter = isPublic ? { public: true } : {};
+    return ClientSettingsHelper.findAllVisibleSettings(filter);
+  }
 }
