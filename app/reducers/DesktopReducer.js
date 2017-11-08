@@ -18,7 +18,7 @@ const defaultState = {
 };
 
 export default function desktopReducer(state = defaultState, action: Object) {
-  logger.log('desktopReducer');
+  logger.debug('desktopReducer');
   switch (action.type) {
     case STATE_DESKTOP_LOADED:
       return Object.assign({}, state, {

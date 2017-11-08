@@ -16,6 +16,7 @@ import store from '../../index';
 import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
 import translate from '../../utils/translate';
 import Logger from '../../modules/util/LoggerManager';
+import * as URLUtils from '../../utils/URLUtils';
 
 const logger = new Logger('Connection helper');
 
@@ -55,7 +56,11 @@ const ConnectionHelper = {
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
     logger.log('_doMethod ');
-    logger.log(requestConfig.url);
+    const url = requestConfig.url;
+    logger.log(url);
+    if (!URLUtils.isValidUrl(url)) {
+      return this._reportError(translate('invalidUrl'), NOTIFICATION_ORIGIN_API_NETWORK);
+    }
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
     const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
     const requestPromise = this._buildRequestPromise(requestConfig, writeStream);

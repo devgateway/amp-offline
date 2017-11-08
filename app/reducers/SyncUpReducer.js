@@ -31,7 +31,7 @@ const defaultState = {
 };
 
 export default function syncUpReducer(state: Object = defaultState, action: Object) {
-  logger.log('SyncUpReducer');
+  logger.debug('SyncUpReducer');
   switch (action.type) {
     case STATE_SYNCUP_SHOW_HISTORY:
       return Object.assign({}, state, { loadingSyncHistory: false, historyData: action.actionData, });
