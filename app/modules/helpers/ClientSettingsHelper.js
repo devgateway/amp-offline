@@ -31,6 +31,7 @@ const settingsSchema = {
     id: { type: 'string' },
     name: { type: 'string' },
     visible: { type: 'boolean' },
+    public: { type: 'public' },
     type: { type: 'string' },
     options: { type: 'array' },
     value: { type: ['boolean', 'string', 'integer', 'object'] },
@@ -48,7 +49,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSettingById(id) {
-    logger.log('findSettingById');
+    logger.debug('findSettingById');
     return this.findSetting({ id });
   },
 
@@ -58,7 +59,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSettingByName(name) {
-    logger.log('findSettingByName');
+    logger.debug('findSettingByName');
     return this.findSetting({ name });
   },
 
@@ -68,7 +69,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSetting(filter) {
-    logger.log('findSetting');
+    logger.debug('findSetting');
     return DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS);
   },
 
@@ -76,9 +77,10 @@ const ClientSettingsHelper = {
    * Find all visible settings
    * @returns {Promise}
    */
-  findAllVisibleSettings() {
-    logger.log('findAllVisibleSettings');
-    return this.findAll({ visible: true });
+  findAllVisibleSettings(filter = {}) {
+    logger.debug('findAllVisibleSettings');
+    filter.visible = true;
+    return this.findAll(filter);
   },
 
   findAll(filter) {
@@ -91,7 +93,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   saveOrUpdateSetting(setting) {
-    logger.debug('saveOrUpdateSetting');
+    logger.log('saveOrUpdateSetting');
     // logger.log(validate(setting, settingsSchema));
     if (validate(setting, settingsSchema).valid) {
       logger.debug(`Valid setting.id = ${setting.id}`);
@@ -102,6 +104,7 @@ const ClientSettingsHelper = {
   },
 
   saveOrUpdateCollection(settings) {
+    logger.log('saveOrUpdateCollection');
     if (settings.every(setting => validate(setting, settingsSchema).valid)) {
       settings.forEach(setting => {
         setting['updated-at'] = (new Date()).toISOString();

@@ -21,7 +21,7 @@ const defaultState = {
 };
 
 export default function workspaceReducer(state = defaultState, action: Object) {
-  logger.log('WorkspaceReducer');
+  logger.debug('WorkspaceReducer');
   switch (action.type) {
     case STATE_WORKSPACES_LOADING:
       return Object.assign({}, state, {
@@ -68,7 +68,7 @@ export default function workspaceReducer(state = defaultState, action: Object) {
         workspaceFilter: action.actionData
       });
     default:
-      logger.log(`default state: ${action.type}`);
+      logger.debug(`default state: ${action.type}`);
       return state;
   }
 }

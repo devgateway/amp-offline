@@ -52,3 +52,5 @@ export const ARCH64 = '64';
 export const ARCH32 = '32';
 export const ARCH64_NODE_OS_OPTIONS = new Set(['arm64', 'ppc64', 'x64']);
 export const ARCH64_USER_AGENT_OPTIONS = ['x86_64', 'amd64'];
+
+export const RESPONSE_CHECK_INTERVAL_MS = 100;

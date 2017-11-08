@@ -31,7 +31,7 @@ const defaultState = {
  * @returns {*}
  */
 export default function loginReducer(state: Object = defaultState, action: Object) {
-  logger.log('LoginReducer');
+  logger.debug('LoginReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {

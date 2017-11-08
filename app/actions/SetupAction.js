@@ -3,9 +3,11 @@ import SetupManager from '../modules/setup/SetupManager';
 import { LANGUAGE_ENGLISH, SETUP_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
 import Logger from '../modules/util/LoggerManager';
-import { connectivityCheck } from './ConnectivityAction';
+import { configureConnectionInformation, connectivityCheck, isConnectivityCheckInProgress } from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
+import * as Utils from '../utils/Utils';
+import { RESPONSE_CHECK_INTERVAL_MS } from '../modules/connectivity/AmpApiConstants';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -19,14 +21,16 @@ const STATE_SETUP_DEFAULTS = 'STATE_SETUP_DEFAULTS';
 export const STATE_SETUP_DEFAULTS_PENDING = 'STATE_SETUP_DEFAULTS_PENDING';
 export const STATE_SETUP_DEFAULTS_FULFILLED = 'STATE_SETUP_DEFAULTS_FULFILLED';
 export const STATE_SETUP_DEFAULTS_REJECTED = 'STATE_SETUP_DEFAULTS_REJECTED';
-
-
-export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
-export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
+const STATE_URL_TEST_RESULT = 'STATE_URL_TEST_RESULT';
+export const STATE_URL_TEST_RESULT_PENDING = 'STATE_URL_TEST_RESULT_PENDING';
+export const STATE_URL_TEST_RESULT_FULFILLED = 'STATE_URL_TEST_RESULT_FULFILLED';
+export const STATE_URL_TEST_RESULT_REJECTED = 'STATE_URL_TEST_RESULT_REJECTED';
+export const STATE_URL_TEST_RESULT_PROCESSED = 'STATE_URL_TEST_RESULT_PROCESSED';
 
 const logger = new Logger('Setup action');
 
 export function checkIfSetupComplete() {
+  logger.log('checkIfSetupComplete');
   const setupCompleteSettingPromise = SetupManager.didSetupComplete();
   store.dispatch({
     type: STATE_SETUP_STATUS,
@@ -36,6 +40,7 @@ export function checkIfSetupComplete() {
 }
 
 export function doSetupFirst() {
+  logger.log('doSetupFirst');
   const isSetupComplete = didSetupComplete();
   const defaultsPromise = configureDefaults(isSetupComplete);
   if (!isSetupComplete) {
@@ -60,43 +65,73 @@ export function configureDefaults(isSetupComplete) {
   return setupDefaultsPromise;
 }
 
-export function loadConnectionInformation() {
-  logger.log('loadConnectionInformation');
-  store.dispatch({ type: STATE_PARAMETERS_LOADING });
-  return SetupManager.getConnectionInformation()
-    .then(configureOnLoad);
-}
-
-function configureOnLoad(connectionInformation: ConnectionInformation) {
-  const isTestingEnv = +process.env.USE_TEST_AMP_URL;
-  if (isTestingEnv && !didSetupComplete()) {
-    const customOption = SetupManager.getCustomOption([LANGUAGE_ENGLISH]);
-    customOption.urls = [connectionInformation.getFullUrl()];
-    return store.dispatch(setupComplete(customOption));
-  } else {
-    configureConnectionInformation(connectionInformation);
-  }
-}
-
-export function configureConnectionInformation(connectionInformation) {
-  store.dispatch({
-    type: STATE_PARAMETERS_LOADED,
-    actionData: { connectionInformation }
+export function configureOnLoad() {
+  logger.log('configureOnLoad');
+  return SetupManager.getConnectionInformation().then((connectionInformation: ConnectionInformation) => {
+    const isTestingEnv = +process.env.USE_TEST_AMP_URL;
+    if (isTestingEnv && !didSetupComplete()) {
+      const customOption = SetupManager.getCustomOption([LANGUAGE_ENGLISH]);
+      customOption.urls = [connectionInformation.getFullUrl()];
+      return setupComplete(customOption);
+    }
+    return configureConnectionInformation(connectionInformation);
   });
-  return connectionInformation;
 }
 
 export function setupComplete(setupConfig) {
-  const saveSetupSettingsPromise = testConnectivity(setupConfig)
+  logger.log('setupComplete');
+  const saveSetupSettingsPromise = configureAndTestConnectivity(setupConfig)
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
     .then(() => true);
-  return (dispatch) => dispatch({
+  store.dispatch({
     type: STATE_SETUP_STATUS,
     payload: saveSetupSettingsPromise
   });
+  return saveSetupSettingsPromise;
 }
 
-function testConnectivity(setupConfig) {
+export function testUrlByKeepingCurrentSetup(url) {
+  url = URLUtils.normalizeUrl(url);
+  let promise;
+  if (!URLUtils.isValidUrl(url)) {
+    promise = Promise.resolve({ url, errorMessage: translate('urlNotWorking') });
+  } else {
+    let currentConnectionInformation;
+    promise = Utils.waitWhile(isConnectivityCheckInProgress, RESPONSE_CHECK_INTERVAL_MS)
+      .then(() => SetupManager.getConnectionInformation())
+      .then(savedConnInformation => {
+        currentConnectionInformation = savedConnInformation;
+        const dummySetup = Utils.toMap('urls', [url]);
+        return configureAndTestConnectivity(dummySetup)
+          .then(goodUrl => ({ url, goodUrl }))
+          .catch(error => ({ url, errorMessage: error }));
+      })
+      .then(result => {
+        waitConfigureConnectionInformation(currentConnectionInformation);
+        return result;
+      });
+  }
+
+  return (dispatch) => dispatch({
+    type: STATE_URL_TEST_RESULT,
+    payload: promise
+  });
+}
+
+export function testUrlResultProcessed(url) {
+  return (disaptch) => disaptch({
+    type: STATE_URL_TEST_RESULT_PROCESSED,
+    actionData: { url }
+  });
+}
+
+function waitConfigureConnectionInformation(connectionInformation) {
+  return Utils.waitWhile(isConnectivityCheckInProgress, RESPONSE_CHECK_INTERVAL_MS)
+    .then(() => configureConnectionInformation(connectionInformation))
+    .then(connectivityCheck);
+}
+
+export function configureAndTestConnectivity(setupConfig) {
   const hasUrls = setupConfig && setupConfig.urls && setupConfig.urls.length;
   if (!hasUrls) {
     return Promise.reject(translate('wrongSetup'));
@@ -129,14 +164,14 @@ function testConnectivity(setupConfig) {
 
 function testAMPUrl(url) {
   return URLUtils.getPossibleUrlSetupFixes(url).reduce((currentPromise, fixedUrl) =>
-    currentPromise.then(result => {
-      if (result && result.connectivityStatus && result.connectivityStatus.isAmpAvailable) {
-        return Promise.resolve(result);
-      }
-      configureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl));
-      return connectivityCheck().then(connectivityStatus => ({ connectivityStatus, fixedUrl }));
-    })
-  , Promise.resolve());
+      currentPromise.then(result => {
+        if (result && result.connectivityStatus && result.connectivityStatus.isAmpAvailable) {
+          return Promise.resolve(result);
+        }
+        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl))
+          .then(connectivityStatus => ({ connectivityStatus, fixedUrl }));
+      })
+    , Promise.resolve());
 }
 
 export function loadSetupOptions() {
