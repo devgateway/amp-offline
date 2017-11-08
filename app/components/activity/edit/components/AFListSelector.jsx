@@ -61,11 +61,17 @@ export default class AFListSelector extends Component {
       || `Search ${AC.toOriginalLabel(this.idOnlyField)}`;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
-    this.setUniqueIdsAndUpdateState(this.props.selectedOptions || []);
+    this.setUniqueIdsAndUpdateState(this.props.selectedOptions);
     this.noMultipleValues = this.listDef.multiple_values !== true;
   }
 
-  setUniqueIdsAndUpdateState(values) {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedOptions !== this.props.selectedOptions) {
+      this.setUniqueIdsAndUpdateState(nextProps.selectedOptions);
+    }
+  }
+
+  setUniqueIdsAndUpdateState(values = []) {
     // set unique ids even if no unique items validation is request, to have unique id for deletion
     values.forEach(value => {
       if (!value.uniqueId) {
