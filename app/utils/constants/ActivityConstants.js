@@ -1,4 +1,5 @@
 import * as ValueConstants from './ValueConstants';
+import * as FMC from './FeatureManagerConstants';
 import { capitalize } from '../Utils';
 
 /**
@@ -167,14 +168,27 @@ export const DEPENDENCY_ON_BUDGET = 'on_budget';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
-  [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification' },
-    { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs' },
-    { key: 'APPlanning', hash: '#APPlanning', value: 'Planning' },
-    { key: 'APLocation', hash: '#APLocation', value: 'Location' },
-    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan' },
-    { key: 'APProgram', hash: '#APProgram', value: 'Program' },
-    { key: 'APSector', hash: '#APSector', value: 'Sectors' },
-    { key: 'APFunding', hash: '#APFunding', value: 'Funding' }];
+  [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification', fmPath: FMC.ACTIVITY_IDENTIFICATION },
+    { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs', sectionPath: ACTIVITY_INTERNAL_IDS },
+    { key: 'APPlanning', hash: '#APPlanning', value: 'Planning', fmPath: FMC.ACTIVITY_PROJECT_ID_AND_PLANNING },
+    { key: 'APLocation', hash: '#APLocation', value: 'Location', sectionPath: LOCATIONS },
+    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan', sectionPath: NATIONAL_PLAN_OBJECTIVE },
+    { key: 'APProgram', hash: '#APProgram', value: 'Program', fmPath: FMC.ACTIVITY_PROGRAM },
+    { key: 'APSector', hash: '#APSector', value: 'Sectors', fmPath: FMC.ACTIVITY_SECTORS },
+    {
+      key: 'APFundingSources',
+      hash: '#APFundingSources',
+      value: 'Funding Sources',
+      sectionPath: TOTAL_NUMBER_OF_FUNDING_SOURCES
+    },
+    { key: 'APFunding', hash: '#APFunding', value: 'Funding', sectionPath: FUNDINGS },
+    {
+      key: 'APRelatedOrganizations',
+      hash: '#APRelatedOrganizations',
+      value: 'Related Organizations',
+      fmPath: FMC.ACTIVITY_ORGANIZATIONS
+    },
+    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES }];
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;

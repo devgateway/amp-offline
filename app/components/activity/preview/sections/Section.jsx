@@ -27,7 +27,8 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
     groupClass: PropTypes.string,
     composedClass: PropTypes.string,
     fieldNameClass: PropTypes.string,
-    fieldValueClass: PropTypes.string
+    fieldValueClass: PropTypes.string,
+    fmPath: PropTypes.string,
   };
 
   static contextTypes = {
@@ -96,6 +97,9 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
 
   render() {
     if (this.props.sectionPath && !this.context.activityFieldsManager.isFieldPathEnabled(this.props.sectionPath)) {
+      return null;
+    }
+    if (this.props.fmPath && !FeatureManager.isFMSettingEnabled(this.props.fmPath)) {
       return null;
     }
     const composedSection = (<ComposedSection
