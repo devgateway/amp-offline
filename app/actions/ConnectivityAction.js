@@ -6,12 +6,34 @@ import store from '../index';
 import Logger from '../modules/util/LoggerManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import { LAST_CONNECTIVITY_STATUS } from '../utils/constants/ClientSettingsConstants';
+import { configureOnLoad } from './SetupAction';
 
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
 export const MANDATORY_UPDATE = 'mandatory_update';
 
+export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
+export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
+
 const logger = new Logger('Connectivity action');
+
+export function isConnectivityCheckInProgress() {
+  return store.getState().ampConnectionStatusReducer.updateInProgress;
+}
+
+export function configureConnectionInformation(connectionInformation) {
+  store.dispatch({
+    type: STATE_PARAMETERS_LOADED,
+    actionData: { connectionInformation }
+  });
+  return connectionInformation;
+}
+
+export function loadConnectionInformation() {
+  logger.log('loadConnectionInformation');
+  store.dispatch({ type: STATE_PARAMETERS_LOADING });
+  return configureOnLoad();
+}
 
 /**
  * Checks and updates the connectivity status
