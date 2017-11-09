@@ -8,7 +8,10 @@ const logger = new Logger('Login page');
 
 function mapStateToProps(state) {
   logger.log('mapStateToProps');
-  return state;
+  return {
+    ...state,
+    isSetupComplete: state.setupReducer.isSetupComplete
+  };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {

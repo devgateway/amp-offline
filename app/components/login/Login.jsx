@@ -1,4 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+/* eslint-disable class-methods-use-this */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
@@ -20,13 +22,14 @@ export default class Login extends Component {
     loginAction: PropTypes.func.isRequired,
     loginReducer: PropTypes.object.isRequired,
     changePasswordOnline: PropTypes.func.isRequired,
-    resetPasswordOnline: PropTypes.func.isRequired
+    resetPasswordOnline: PropTypes.func.isRequired,
+    isSetupComplete: PropTypes.bool,
 
   };
 
-  constructor() {
-    super();
-    logger.log('constructor');
+  constructor(args) {
+    super(args);
+    logger.debug('constructor');
 
     this.state = Utils.isReleaseBranch() ? {} : {
       email: 'testuser@amp.org',
@@ -38,7 +41,18 @@ export default class Login extends Component {
   }
 
   componentWillMount() {
-    doSetupFirst();
+    this.checkIfSetupComplete(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.checkIfSetupComplete(nextProps);
+  }
+
+  checkIfSetupComplete(props) {
+    const { isSetupComplete } = props;
+    if (isSetupComplete === false) {
+      doSetupFirst();
+    }
   }
 
   handlePasswordChange(e) {
@@ -54,7 +68,11 @@ export default class Login extends Component {
   }
 
   render() {
-    logger.log('render');
+    logger.debug('render');
+    const { isSetupComplete } = this.props;
+    if (isSetupComplete !== true) {
+      return null;
+    }
     return (
       <div className={styles.centered_form}>
         <table>
