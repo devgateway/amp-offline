@@ -13,3 +13,9 @@
   padding-bottom: 45px;
   background-color: #ffffff;
 }
+
+.loading_icon {
+  width: 20px;
+  content: url('../../assets/images/ajax-loader.gif');
+  margin-left: 3px;
+}

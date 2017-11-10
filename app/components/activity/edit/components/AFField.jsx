@@ -92,6 +92,8 @@ class AFField extends Component {
       this.onChange(this.state.value, false);
     } else if (nexProps.validationResult) {
       this._processValidation(this.props.parent.errors);
+    } else if (nexProps.parent[this.fieldName] !== this.state.value) {
+      this.onChange(nexProps.parent[this.fieldName], false);
     }
   }
 
