@@ -21,7 +21,7 @@ export default class Desktop extends Component {
   };
 
   componentDidMount() {
-    logger.log('componentDidMount');
+    logger.debug('componentDidMount');
     // Check if a workspace has been selected.
     if (!this.props.workspaceReducer.currentWorkspace) {
       UrlUtils.forwardTo('/workspace');
@@ -29,7 +29,7 @@ export default class Desktop extends Component {
   }
 
   componentWillUpdate() {
-    logger.log('componentWillUpdateaaa');
+    logger.debug('componentWillUpdateaaa');
     if (!this.props.desktopReducer.loaded && !this.props.desktopReducer.isLoadingDesktop) {
       // Check if we need to load the list of projects.
       this.props.loadDesktop(this.props.workspaceReducer.currentWorkspace, this.props.userReducer.teamMember.id);
@@ -37,7 +37,7 @@ export default class Desktop extends Component {
   }
 
   render() {
-    logger.log('render');
+    logger.debug('render');
     if (!this.props.desktopReducer.loaded || this.props.desktopReducer.isLoadingDesktop) {
       return <Loading />;
     } else {
