@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styles from './ActivityPreview.css';
 import * as AC from '../../../utils/constants/ActivityConstants';
+import * as FMC from '../../../utils/constants/FeatureManagerConstants';
 import APIdentification from './sections/APIdentification';
 import { APInternalIds } from './sections/APInternalIds';
 import APPlanning from './sections/APPlanning';
@@ -30,10 +31,11 @@ export default class MainGroup extends Component {
   render() {
     // TODO (iteration 2+) hide sections that are not directly connected to a single field (e.g. planning, program)
     return (<div className={styles.main_group_container}>
-      <APIdentification />
+      <APIdentification fmPath={FMC.ACTIVITY_IDENTIFICATION} />
       <APInternalIds
         sectionPath={AC.ACTIVITY_INTERNAL_IDS} />
       <APPlanning
+        fmPath={FMC.ACTIVITY_PROJECT_ID_AND_PLANNING}
         inline={false}
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
       <APLocation
@@ -43,16 +45,16 @@ export default class MainGroup extends Component {
         sectionPath={AC.NATIONAL_PLAN_OBJECTIVE}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APProgram
-        fieldNameClass={styles.sector_title}
+        fieldNameClass={styles.sector_title} fmPath={FMC.ACTIVITY_PROGRAM}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APSector
-        fieldNameClass={styles.sector_title} fieldValueClass={''}
+        fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FMC.ACTIVITY_SECTORS}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
-      <APFundingSources fieldValueClass={styles.box_field_value} />
+      <APFundingSources sectionPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} fieldValueClass={styles.box_field_value} />
       <APFundingSection
-        fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
+        fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} sectionPath={AC.FUNDINGS} />
       <APRelatedOrganizations
-        fieldNameClass={styles.sector_title} fieldValueClass={''}
+        fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FMC.ACTIVITY_ORGANIZATIONS}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APIssues sectionPath={AC.ISSUES} />
     </div>);
