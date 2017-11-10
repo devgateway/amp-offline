@@ -1,5 +1,6 @@
 /* eslint react/jsx-space-before-closing: 0 */
 /* eslint react/forbid-prop-types: 0 */
+/* eslint react/no-string-refs: 0 */
 import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
@@ -93,8 +94,8 @@ export default class ProjectList extends Component {
   }
 
   handlerClickCleanFiltered() {
-    this.filter[AC.AMP_ID].cleanFiltered();
-    this.filter[AC.PROJECT_TITLE].cleanFiltered();
+    this.refs[AC.AMP_ID].cleanFiltered();
+    this.refs[AC.PROJECT_TITLE].cleanFiltered();
   }
 
   render() {
