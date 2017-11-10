@@ -17,20 +17,20 @@ const DatabaseCollection = (function () {
     return {
       // Public methods and variables
       checkIfCollectionIsOpen(name) {
-        logger.log('checkIfCollectionIsOpen');
+        logger.debug('checkIfCollectionIsOpen');
         const list = _.find(collections, (item) => item.name === name);
         logger.debug(list);
         return list;
       },
 
       insertCollection(name, datastore) {
-        logger.log('insertCollection');
+        logger.debug('insertCollection');
         collections.push({ name, nedbDatastore: datastore });
         logger.debug(collections);
       },
 
       removeCollection(name) {
-        logger.log('removeCollection');
+        logger.debug('removeCollection');
         collections = _.without(collections, _.findWhere(collections, { name }));
         logger.debug(collections);
       },
@@ -42,7 +42,7 @@ const DatabaseCollection = (function () {
        * @param reject
        */
       addPromiseAndProcess(task) {
-        logger.log('addPromiseAndProcess');
+        logger.debug('addPromiseAndProcess');
         queue.addNow(task);
       }
     };
@@ -50,12 +50,12 @@ const DatabaseCollection = (function () {
 
   return {
     getInstance() {
-      logger.log('getInstance');
+      logger.debug('getInstance');
       if (!instance) {
         logger.log('New instance.');
         instance = init();
       } else {
-        logger.log('Reuse instance.');
+        logger.debug('Reuse instance.');
       }
       return instance;
     },

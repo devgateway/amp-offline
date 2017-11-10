@@ -27,11 +27,11 @@ export default class Navbar extends Component {
 
   constructor() {
     super();
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   extractLoggedUser(prepend) {
-    logger.log('extractLoggedUser');
+    logger.debug('extractLoggedUser');
     if (this.props.userReducer instanceof Object && this.props.userReducer.userData instanceof Object) {
       return prepend + this.props.userReducer.userData.email;
     }
@@ -39,7 +39,7 @@ export default class Navbar extends Component {
   }
 
   extractWorkspace(prepend) {
-    logger.log('extractWorkSpace');
+    logger.debug('extractWorkSpace');
     if (this.props.workspaceReducer && this.props.workspaceReducer.currentWorkspace) {
       return prepend + this.props.workspaceReducer.currentWorkspace.name;
     }
@@ -47,7 +47,7 @@ export default class Navbar extends Component {
   }
 
   render() {
-    logger.log('render');
+    logger.debug('render');
     return (
       <div className={style.container}>
         <div className={style.navbar}>

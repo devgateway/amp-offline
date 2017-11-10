@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as MenuUtils from '../../app/utils/MenuUtils';
 
 describe('@@ MenuUtils @@', () => {
+  // TODO do we need these tests? Note that .toShow changed and this test will fail once enabled to run
   it('should allow when logged in -> func toShow ', () => {
     expect(MenuUtils.toShow(true, true)).to.equal(true);
   });
