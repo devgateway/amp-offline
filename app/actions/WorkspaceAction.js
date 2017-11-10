@@ -73,9 +73,18 @@ export function loadWorkspaces() {
   logger.log('loadWorkspaces');
   return (dispatch) => {
     dispatch({ type: STATE_WORKSPACES_LOADING });
-    return WorkspaceManager.findAllWorkspacesForUser(userId).then((workspaces) => (
-      dispatch({ type: STATE_WORKSPACES_LOADED, actionData: workspaces })
-    )).catch((err) => {
+    return WorkspaceManager.findAllWorkspacesForUser(userId).then((workspaces) => {
+      workspaces = workspaces ? workspaces.sort((a, b) => {
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        }
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return -1;
+        }
+        return 0;
+      }) : [];
+      return dispatch({ type: STATE_WORKSPACES_LOADED, actionData: workspaces });
+    }).catch((err) => {
       logger.error(err);
       return dispatch({ type: STATE_WORKSPACES_ERROR, actionData: err });
     });
