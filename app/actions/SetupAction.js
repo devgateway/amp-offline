@@ -41,12 +41,7 @@ export function checkIfSetupComplete() {
 
 export function doSetupFirst() {
   logger.log('doSetupFirst');
-  const isSetupComplete = didSetupComplete();
-  const defaultsPromise = configureDefaults(isSetupComplete);
-  if (!isSetupComplete) {
-    URLUtils.forwardTo(SETUP_URL);
-  }
-  return defaultsPromise;
+  URLUtils.forwardTo(SETUP_URL);
 }
 
 export function didSetupComplete() {
@@ -72,22 +67,30 @@ export function configureOnLoad() {
     if (isTestingEnv && !didSetupComplete()) {
       const customOption = SetupManager.getCustomOption([LANGUAGE_ENGLISH]);
       customOption.urls = [connectionInformation.getFullUrl()];
-      return setupComplete(customOption);
+      const setupCompletePromise = configureAndSaveSetup(customOption);
+      store.dispatch(notifySetupComplete(setupCompletePromise));
+      return setupCompletePromise;
     }
     return configureConnectionInformation(connectionInformation);
   });
 }
 
 export function setupComplete(setupConfig) {
+  return (dispatch) => dispatch(notifySetupComplete(configureAndSaveSetup(setupConfig)));
+}
+
+function configureAndSaveSetup(setupConfig) {
   logger.log('setupComplete');
-  const saveSetupSettingsPromise = configureAndTestConnectivity(setupConfig)
+  return configureAndTestConnectivity(setupConfig)
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
     .then(() => true);
-  store.dispatch({
+}
+
+function notifySetupComplete(setupResult) {
+  return (dispatch) => dispatch({
     type: STATE_SETUP_STATUS,
-    payload: saveSetupSettingsPromise
+    payload: setupResult
   });
-  return saveSetupSettingsPromise;
 }
 
 export function testUrlByKeepingCurrentSetup(url) {

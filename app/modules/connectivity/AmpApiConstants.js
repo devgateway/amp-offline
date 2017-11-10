@@ -34,6 +34,10 @@ export const PP_SUFFIX = '/portal';
 export const AMP_SUFFIX = '/aim';
 
 /** OTHER */
+export const AMP_OFFLINE_ENABLED = 'amp-offline-enabled';
+export const AMP_OFFLINE_COMPATIBLE = 'amp-offline-compatible';
+export const LATEST_AMP_OFFLINE = 'latest-amp-offline';
+export const AMP_VERSION = 'amp-version';
 export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
 export const TRANSLATIONS_PARAM = 'translations';
 export const PARAM_AMPOFFLINE_AGENT = 'AMPOffline';
