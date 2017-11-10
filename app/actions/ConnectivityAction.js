@@ -1,6 +1,12 @@
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
-import { URL_CONNECTIVITY_CHECK_EP } from '../modules/connectivity/AmpApiConstants';
+import {
+  AMP_OFFLINE_COMPATIBLE,
+  AMP_OFFLINE_ENABLED,
+  AMP_VERSION,
+  LATEST_AMP_OFFLINE,
+  URL_CONNECTIVITY_CHECK_EP
+} from '../modules/connectivity/AmpApiConstants';
 import { VERSION } from '../utils/Constants';
 import store from '../index';
 import Logger from '../modules/util/LoggerManager';
@@ -15,6 +21,8 @@ export const MANDATORY_UPDATE = 'mandatory_update';
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
 
+/* Expected connectivity response fields. */
+const CONNECTIVITY_RESPONSE_FIELDS = [AMP_OFFLINE_ENABLED, AMP_OFFLINE_COMPATIBLE, LATEST_AMP_OFFLINE, AMP_VERSION];
 const logger = new Logger('Connectivity action');
 
 export function isConnectivityCheckInProgress() {
@@ -61,7 +69,7 @@ export function connectivityCheck() {
 
 function _processResult(data, lastConnectivityStatus) {
   let status;
-  if (data === null || data === undefined) {
+  if (!isValidAmpResponse(data)) {
     if (lastConnectivityStatus === undefined) {
       status = new ConnectivityStatus(false, true, true);
     } else {
@@ -74,10 +82,10 @@ function _processResult(data, lastConnectivityStatus) {
       );
     }
   } else {
-    const isAmpClientEnabled = data['amp-offline-enabled'] === true;
-    const isAmpCompatible = data['amp-offline-compatible'] === true;
-    const latestAmpOffline = data['latest-amp-offline'];
-    const version = data['amp-version'];
+    const isAmpClientEnabled = data[AMP_OFFLINE_ENABLED] === true;
+    const isAmpCompatible = data[AMP_OFFLINE_COMPATIBLE] === true;
+    const latestAmpOffline = data[LATEST_AMP_OFFLINE];
+    const version = data[AMP_VERSION];
     // Process data related to version upgrades.
     if (latestAmpOffline) {
       if (isAmpCompatible === false || latestAmpOffline.critical === true) {
@@ -90,6 +98,11 @@ function _processResult(data, lastConnectivityStatus) {
   }
   store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: status });
   return status;
+}
+
+function isValidAmpResponse(response) {
+  const keys = (response && response instanceof Object && Object.keys(response)) || null;
+  return keys && CONNECTIVITY_RESPONSE_FIELDS.some(field => keys.includes(field));
 }
 
 function _getLastConnectivityStatus() {

@@ -85,6 +85,9 @@ class AFField extends Component {
   }
 
   componentWillReceiveProps(nexProps) {
+    if (!this.fieldExists) {
+      return;
+    }
     if (this.context.isSaveAndSubmit) {
       this.onChange(this.state.value, false);
     } else if (nexProps.validationResult) {
