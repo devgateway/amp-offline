@@ -7,7 +7,7 @@ fi
 
 BRANCH_NAME=$1
 
-INSTALLERS=`ls dist/* | grep -P "(exe|rpm|deb)"`
+INSTALLERS=`ls dist/* | grep -P "(32|64).(exe|rpm|deb)"`
 
 echo INSTALLERS=$INSTALLERS
 
