@@ -128,7 +128,7 @@ export default class Setup extends Component {
 
   renderCustomOption() {
     return (<div className={styles.row}>
-      <FormGroup controlId="customValueText" validationState={this.state.isValid ? '' : 'error'}>
+      <FormGroup controlId="customValueText" validationState={this.state.isValid ? null : 'error'}>
         <FormControl
           type="text" placeholder="https://…"
           value={this.state.customValue} onChange={this.onCustomOptionChange.bind(this)} />

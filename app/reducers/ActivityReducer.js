@@ -38,7 +38,7 @@ const defaultState = {
 };
 
 const activityReducer = (state = defaultState, action: Object) => {
-  logger.log('activityReducer');
+  logger.debug('activityReducer');
   switch (action.type) {
     case ACTIVITY_UNLOADED:
       return { ...defaultState };
