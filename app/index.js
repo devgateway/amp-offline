@@ -45,7 +45,7 @@ function handleUnexpectedError(err) {
   const msg = 'An unexpected error occurred. Please collect logs, note your actions and contact the administrator.';
   const toString = err.toString();
   const json = JSON.stringify(err);
-  alert(`${msg}\n\nDetails:\n${toString}\n${json}`);
+  alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
 }
 
 ampOfflineStartUp().then(() =>
