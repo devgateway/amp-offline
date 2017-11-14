@@ -54,7 +54,8 @@ class AFField extends Component {
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
     onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     extraParams: PropTypes.object,
-    defaultValueAsEmptyObject: PropTypes.bool
+    defaultValueAsEmptyObject: PropTypes.bool,
+    forceRequired: PropTypes.bool
   };
 
   static defaultProps = {
@@ -85,6 +86,9 @@ class AFField extends Component {
   }
 
   componentWillReceiveProps(nexProps) {
+    if (!this.fieldExists) {
+      return;
+    }
     if (this.context.isSaveAndSubmit) {
       this.onChange(this.state.value, false);
     } else if (nexProps.validationResult) {
@@ -112,7 +116,8 @@ class AFField extends Component {
   }
 
   getLabel() {
-    const required = (this.requiredND || this.alwaysRequired) && this.props.showRequired === true;
+    const required = (this.requiredND || this.alwaysRequired || this.props.forceRequired)
+      && this.props.showRequired === true;
     if (this.props.showLabel === false) {
       if (required) {
         return <span className={styles.required} />;

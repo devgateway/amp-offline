@@ -83,7 +83,7 @@ class AFIdentification extends Component {
               </div>
               <div>
                 {(this.state.showMinistryCode) ?
-                  <AFField parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} /> : null}
+                  <AFField parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} forceRequired /> : null}
               </div>
             </Col>
           </Row>
