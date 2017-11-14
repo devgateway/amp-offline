@@ -40,6 +40,14 @@ function checkAuth(nextState, replace) {
   }
 }
 
+function handleUnexpectedError(err) {
+  logger.error(err);
+  const msg = 'An unexpected error occurred. Please collect logs, note your actions and contact the administrator.';
+  const toString = err.toString();
+  const json = JSON.stringify(err);
+  alert(`${msg}\n${toString}\n${json}`);
+}
+
 ampOfflineStartUp().then(() =>
   render(
     <Provider store={store}>
@@ -64,9 +72,10 @@ ampOfflineStartUp().then(() =>
     </Provider>,
     document.getElementById('root')
   )
-).catch((err) => (logger.error(err)));
+).catch(handleUnexpectedError);
 
-window.addEventListener('error', ({ filename, message }) =>
-  logger.error(`Uncaught error: ${message} IN ${filename}`));
+window.addEventListener('error', ({ filename, message }) => {
+  handleUnexpectedError(`Uncaught error: ${message} IN ${filename}`);
+});
 
 window.addEventListener('unhandledrejection', ({ reason }) => logger.warn('Unhandled promise rejection:', reason));
