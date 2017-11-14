@@ -14,6 +14,7 @@ import SyncUpPage from './components/syncUp/SyncUp';
 import SyncUpSummaryPage from './containers/SyncUpSummaryPage';
 import UpdatePage from './containers/UpdatePage';
 import SettingPage from './containers/SettingPage';
+import HelpPage from './containers/HelpPage';
 import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
@@ -59,6 +60,7 @@ ampOfflineStartUp().then(() =>
             path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store} />
           <Route path="/update" component={UpdatePage} store={store} />
           <Route path="/settings" component={SettingPage} store={store} />
+          <Route path="/help" components={HelpPage} store={store} />
         </Route>
       </Router>
     </Provider>,
