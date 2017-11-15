@@ -14,7 +14,6 @@ import SyncUpPage from './components/syncUp/SyncUp';
 import SyncUpSummaryPage from './containers/SyncUpSummaryPage';
 import UpdatePage from './containers/UpdatePage';
 import SettingPage from './containers/SettingPage';
-import HelpPage from './containers/HelpPage';
 import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';

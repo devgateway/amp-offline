@@ -57,7 +57,11 @@ app.on('ready', async () => {
   });
 
   mainWindow.on('closed', () => {
-    mainWindow = null;
+    mainWindow = null;ç
+    // Close the help window if needed.
+    if (global.HELP_PDF_WINDOW) {
+      global.HELP_PDF_WINDOW.close();
+    }
   });
 
   if (process.env.NODE_ENV === 'development') {
@@ -79,18 +83,24 @@ app.on('ready', async () => {
   mainWindow.setMenu(null);
 });
 
-// Listen for sync message from renderer process
+// Listen to message from renderer process.
 ipcMain.on('createPDFWindow', (event, url) => {
-  console.log(url);
-  // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
-  let pdfWindow = new PDFWindow({
-    width: 800,
-    height: 600,
-    show: true
-  });
-  pdfWindow.on('closed', () => {
-    pdfWindow = null;
-  });
-  pdfWindow.loadURL(url);
-  return pdfWindow;
+  if (!global.HELP_PDF_WINDOW) {
+    // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
+    let pdfWindow = new PDFWindow({
+      width: 800,
+      height: 600,
+      show: true
+    });
+    pdfWindow.setMenu(null);
+
+    pdfWindow.on('closed', () => {
+      pdfWindow = null;
+      global.HELP_PDF_WINDOW = null;
+    });
+
+    global.HELP_PDF_WINDOW = pdfWindow;
+  }
+  global.HELP_PDF_WINDOW.loadURL(url);
+  return global.HELP_PDF_WINDOW;
 });

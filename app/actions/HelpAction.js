@@ -7,7 +7,6 @@ const url = require('url');
 const logger = new Logger('Settings Action');
 
 export function loadHelp() {
-  alert('loadHelp');
   // todo: mover la carga del pdf a un util.
   logger.log('saveSettings');
   const fileLocation = url.format({
