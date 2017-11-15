@@ -66,3 +66,8 @@ ampOfflineStartUp().then(() =>
     document.getElementById('root')
   )
 ).catch((err) => (logger.error(err)));
+
+window.addEventListener('error', ({ filename, message }) =>
+  logger.error(`Uncaught error: ${message} IN ${filename}`));
+
+window.addEventListener('unhandledrejection', ({ reason }) => logger.warn('Unhandled promise rejection:', reason));
