@@ -60,7 +60,6 @@ ampOfflineStartUp().then(() =>
             path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store} />
           <Route path="/update" component={UpdatePage} store={store} />
           <Route path="/settings" component={SettingPage} store={store} />
-          <Route path="/help" components={HelpPage} store={store} />
         </Route>
       </Router>
     </Provider>,
