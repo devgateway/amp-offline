@@ -190,6 +190,7 @@
     "underscore": "^1.8.3"
   },
   "dependencies": {
+    "electron-pdf-window": "^1.0.12"
   },
   "devEngines": {
     "node": ">=6.x",

@@ -1,5 +1,7 @@
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
+
+const PDFWindow = require('electron-pdf-window');
 
 let mainWindow = null;
 
@@ -19,7 +21,6 @@ if (process.env.NODE_ENV === 'development') {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
-
 
 const installExtensions = async () => {
   // if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
@@ -76,4 +77,20 @@ app.on('ready', async () => {
   ElectronUpdater.getElectronUpdater();
 
   mainWindow.setMenu(null);
+});
+
+// Listen for sync message from renderer process
+ipcMain.on('createPDFWindow', (event, url) => {
+  console.log(url);
+  // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
+  let pdfWindow = new PDFWindow({
+    width: 800,
+    height: 600,
+    show: true
+  });
+  pdfWindow.on('closed', () => {
+    pdfWindow = null;
+  });
+  pdfWindow.loadURL(url);
+  return pdfWindow;
 });
