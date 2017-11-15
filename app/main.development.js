@@ -57,8 +57,8 @@ app.on('ready', async () => {
   });
 
   mainWindow.on('closed', () => {
-    mainWindow = null;ç
-    // Close the help window if needed.
+    mainWindow = null;
+    // Close help window if needed.
     if (global.HELP_PDF_WINDOW) {
       global.HELP_PDF_WINDOW.close();
     }
