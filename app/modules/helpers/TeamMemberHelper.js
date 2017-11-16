@@ -21,7 +21,7 @@ const TeamMemberHelper = {
     let filter = { 'user-id': userId };
     const projections = { 'workspace-id': 1 };
     if (excludeDelete) {
-      filter = { ...filter, ...this._getExcludeDeletedFilter() };
+      filter = { ...filter, ...this.getExcludeDeletedTeamMembersFilter() };
     }
     return DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS, projections)
       .then((teamMembers) => flattenToListByKey(teamMembers, 'workspace-id'));
@@ -37,7 +37,7 @@ const TeamMemberHelper = {
     logger.debug('findAllByWorkspaceId');
     let filter = { 'workspace-id': workspaceId };
     if (excludeDelete) {
-      filter = { ...filter, ...this._getExcludeDeletedFilter() };
+      filter = { ...filter, ...this.getExcludeDeletedTeamMembersFilter() };
     }
     return this.findAll(filter);
   },
@@ -53,7 +53,7 @@ const TeamMemberHelper = {
     logger.debug('findByUserAndWorkspaceId');
     const filter = { $and: [{ 'workspace-id': workspaceId }, { 'user-id': userId }] };
     if (excludeDelete) {
-      filter.$and.push(this._getExcludeDeletedFilter());
+      filter.$and.push(this.getExcludeDeletedTeamMembersFilter());
     }
     return this.findTeamMember(filter);
   },
@@ -73,7 +73,7 @@ const TeamMemberHelper = {
     return DatabaseManager.findOne(filter, COLLECTION_TEAMMEMBERS);
   },
 
-  _getExcludeDeletedFilter() {
+  getExcludeDeletedTeamMembersFilter() {
     return { deleted: { $ne: true } };
   },
 

@@ -112,7 +112,10 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   static _getWSMembers(users) {
-    const wsMembersFilter = { 'user-id': { $in: Utils.flattenToListByKey(users, 'id') } };
+    const wsMembersFilter = {
+      'user-id': { $in: Utils.flattenToListByKey(users, 'id') },
+      ...TeamMemberHelper.getExcludeDeletedTeamMembersFilter()
+    };
     return TeamMemberHelper.findAll(wsMembersFilter);
   }
 
