@@ -27,6 +27,7 @@ import translate from '../utils/translate';
 import * as Utils from '../utils/Utils';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
+import DateUtils from '../utils/DateUtils';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -158,7 +159,7 @@ const _getActivity = (activityId, teamMemberId) => {
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
   return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
-    const modifiedOn = (new Date()).toISOString();
+    const modifiedOn = DateUtils.getISODateForAPI();
     if (!dehydratedActivity[TEAM]) {
       dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
     }
