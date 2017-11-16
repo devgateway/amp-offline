@@ -7,6 +7,7 @@ import UpdateManager from '../modules/update/UpdateManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import { UPDATE_INSTALLER_PATH } from '../utils/constants/ClientSettingsConstants';
 import ElectronUpdaterManager from '../modules/update/ElectronUpdaterManager';
+import { didSetupComplete } from './SetupAction';
 
 export const STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING = 'STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING';
 export const STATE_DOWNLOAD_UPDATE_CONFIRMED = 'STATE_DOWNLOAD_UPDATE_CONFIRMED';
@@ -57,7 +58,7 @@ export function getNewClientVersion() {
 export function isCheckForUpdates() {
   const { syncUpReducer, activityReducer, updateReducer, ampConnectionStatusReducer } = store.getState();
   const { proceedToUpdateDownload, confirmationPending, updatePending, updateInProgress } = updateReducer;
-  return updateReducer.newUpdateToCheck && getNewClientVersion() !== VERSION
+  return didSetupComplete() && updateReducer.newUpdateToCheck && getNewClientVersion() !== VERSION
     && !(activityReducer.isActivityLoadedForAf || syncUpReducer.syncUpInProgress
       || ampConnectionStatusReducer.updateInProgress
       || proceedToUpdateDownload || confirmationPending || updatePending || updateInProgress);

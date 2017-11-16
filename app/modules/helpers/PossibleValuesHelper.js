@@ -199,6 +199,9 @@ const PossibleValuesHelper = {
     if (o2 === null || o2.value === null) {
       return -1;
     }
+    if (o1.extra_info && o1.extra_info.index !== undefined) {
+      return o2.extra_info.index - o1.extra_info.index;
+    }
     return o1.value.localeCompare(o2.value) * (-1);
   },
 
