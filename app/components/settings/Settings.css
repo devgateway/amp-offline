@@ -2,3 +2,8 @@
     padding-top: 10px;
     font-size: 12px;
 }
+
+.hint {
+  font-size: 1.5em;
+  margin-left: 10px;
+}
