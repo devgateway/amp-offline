@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
-if (process.env.NODE_ENV === 'development') {
+if (true || process.env.NODE_ENV === 'development') {
   require('electron-debug')(); // eslint-disable-line global-require
   const path = require('path'); // eslint-disable-line
   const p = path.join(__dirname, '..', 'app', 'node_modules'); // eslint-disable-line
@@ -24,7 +24,7 @@ app.on('window-all-closed', () => {
 
 const installExtensions = async () => {
   // if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
-  if (process.env.NODE_ENV === 'development') {
+  if (true || process.env.NODE_ENV === 'development') {
     const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
 
     const extensions = [
@@ -64,7 +64,7 @@ app.on('ready', async () => {
     }
   });
 
-  if (process.env.NODE_ENV === 'development') {
+  if (true || process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools();
     mainWindow.webContents.on('context-menu', (e, props) => {
       const { x, y } = props;
@@ -90,9 +90,13 @@ ipcMain.on('createPDFWindow', (event, url) => {
     let pdfWindow = new PDFWindow({
       width: 800,
       height: 600,
-      show: true
+      show: true,
+      webPreferences: {
+        webSecurity: false
+      }
     });
-    pdfWindow.setMenu(null);
+    // pdfWindow.setMenu(null);
+    pdfWindow.openDevTools();
 
     pdfWindow.on('closed', () => {
       pdfWindow = null;
