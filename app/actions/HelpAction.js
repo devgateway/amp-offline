@@ -21,6 +21,7 @@ export function loadHelp() {
   /* Node 6.x doesnt have a function to copy files and fs-extra is not finding the original pdf inside the .asar, so
    we are using old fs functions, notice if we upgrade Node we might need to use fs.copyFileSync instead. */
   fs.writeFileSync(to, fs.readFileSync(from));
+  // We cant load pdf with relative path and reading directly from .asar didnt work consistently so we use a temp file.
   ipcRenderer.send('createPDFWindow', encodeURIComponent(to));
 
   /* An alternative option if rendering pdf inside chrome fails is to rely on the client's pdf reader:
