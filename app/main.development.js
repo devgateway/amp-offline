@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
-if (true || process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development') {
   require('electron-debug')(); // eslint-disable-line global-require
   const path = require('path'); // eslint-disable-line
   const p = path.join(__dirname, '..', 'app', 'node_modules'); // eslint-disable-line
@@ -24,7 +24,7 @@ app.on('window-all-closed', () => {
 
 const installExtensions = async () => {
   // if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
-  if (true || process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
 
     const extensions = [
@@ -64,7 +64,7 @@ app.on('ready', async () => {
     }
   });
 
-  if (true || process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools();
     mainWindow.webContents.on('context-menu', (e, props) => {
       const { x, y } = props;
@@ -87,7 +87,7 @@ app.on('ready', async () => {
 ipcMain.on('createPDFWindow', (event, url) => {
   if (!global.HELP_PDF_WINDOW) {
     // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
-    let pdfWindow = new BrowserWindow({
+    let pdfWindow = new PDFWindow({
       width: 800,
       height: 600,
       show: true,
@@ -95,10 +95,7 @@ ipcMain.on('createPDFWindow', (event, url) => {
         webSecurity: false
       }
     });
-    PDFWindow.addSupport(pdfWindow);
-
-    // pdfWindow.setMenu(null);
-    pdfWindow.openDevTools();
+    pdfWindow.setMenu(null);
 
     pdfWindow.on('closed', () => {
       pdfWindow = null;
@@ -107,7 +104,6 @@ ipcMain.on('createPDFWindow', (event, url) => {
 
     global.HELP_PDF_WINDOW = pdfWindow;
   }
-  console.error(url);
   global.HELP_PDF_WINDOW.loadURL(url);
   return global.HELP_PDF_WINDOW;
 });
