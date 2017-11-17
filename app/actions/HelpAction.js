@@ -30,8 +30,19 @@ export function loadHelp() {
     slashes: false
   });
   // alert(fileLocation);
-  // ipcRenderer.send('createPDFWindow', fileLocation);
-  exec(to);
+  // ipcRenderer.send('createPDFWindow', fileLocation); // TODO: probar con abrir desde una location dentro del appData o mejor del .asar
+  const fixedLocation = url.format({
+    pathname: 'C:\\Users\\Gabriel\\AppData\\Local\\Programs\\amp-offline\\resources\\app.asar/amp-help.pdf',
+    protocol: 'file:',
+    slashes: false
+  });
+  ipcRenderer.send('createPDFWindow', encodeURIComponent('C:\\Users\\Gabriel\\AppData\\Local\\Programs\\amp-offline\\resources/app.asar/amp-help.pdf')); // esto funciona en dev!!!
+  // ipcRenderer.send('createPDFWindow', encodeURIComponent('C:\\Users\\Gabriel\\AppData\\Roaming\\AMPOffline\\amp-help.pdf')); // esto funciona en dev!!!
+  // ipcRenderer.send('createPDFWindow', 'C:\\Users\\Gabriel\\AppData\\Roaming\\AMPOffline\\amp-help.pdf'); // esto funciona en dev!!!
+  // ipcRenderer.send('createPDFWindow', encodeURIComponent('C:\\Users\\Gabriel\\AppData\\Roaming\\AMPOffline\\amp-help.pdf')); // esto funciona en dev!!!
+  //ipcRenderer.send('createPDFWindow', 'http://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf'); // esto funciona en dev!!
+  //ipcRenderer.send('createPDFWindow', encodeURIComponent('http://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf')); // esto funciona en dev!!
+  //exec(to);
   return (dispatch) => (
     dispatch({ type: STATE_OPEN_HELP_WINDOW })
   );

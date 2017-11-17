@@ -87,7 +87,7 @@ app.on('ready', async () => {
 ipcMain.on('createPDFWindow', (event, url) => {
   if (!global.HELP_PDF_WINDOW) {
     // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
-    let pdfWindow = new PDFWindow({
+    let pdfWindow = new BrowserWindow({
       width: 800,
       height: 600,
       show: true,
@@ -95,6 +95,8 @@ ipcMain.on('createPDFWindow', (event, url) => {
         webSecurity: false
       }
     });
+    PDFWindow.addSupport(pdfWindow);
+
     // pdfWindow.setMenu(null);
     pdfWindow.openDevTools();
 
@@ -105,6 +107,7 @@ ipcMain.on('createPDFWindow', (event, url) => {
 
     global.HELP_PDF_WINDOW = pdfWindow;
   }
+  console.error(url);
   global.HELP_PDF_WINDOW.loadURL(url);
   return global.HELP_PDF_WINDOW;
 });

@@ -1,6 +1,6 @@
 {
   "name": "amp-offline",
-  "productName": "AMP Offline",
+  "productName": "AMPOffline",
   "version": "1.0.0",
   "description": "Offline desktop version of the AMP portal.",
   "main": "main.js",
@@ -56,7 +56,8 @@
           "main.js",
           "main.js.map",
           "master-translations.en.json",
-          "amp-help.pdf"
+          "amp-help.pdf",
+          "pdfjs/**/*"
         ]
       },
       "package.json"

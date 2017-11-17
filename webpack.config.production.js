@@ -51,8 +51,9 @@ const config = validate(merge(baseConfig, {
       { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml' },
       { test: /\.gif(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/gif+xml' },
       { test: /\.png(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/png+xml' },
-      { test: /\.js$/, loader: WebpackStrip.loader('debugger', 'console.log') },
-      { test: /\.jsx$/, loader: WebpackStrip.loader('debugger', 'console.log') }
+      { test: /\.pdf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=100000&mimetype=application/pdf' },
+      { test: /\.js$/, loader: WebpackStrip.loader('debugger') },
+      { test: /\.jsx$/, loader: WebpackStrip.loader('debugger') }
     ]
   },
 

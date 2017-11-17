@@ -45,22 +45,27 @@ export default class LoggerManager {
   }
 
   log(message) {
+    console.log(message);
     this.logger_.info(message);
   }
 
   info(message) {
+    console.info(message);
     this.logger_.info(message);
   }
 
   debug(message) {
+    console.debug(message);
     this.logger_.debug(message);
   }
 
   warn(message) {
+    console.warn(message);
     this.logger_.warn(message);
   }
 
   error(message) {
+    console.error(message);
     this.logger_.error(message);
   }
 }
