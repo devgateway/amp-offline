@@ -113,7 +113,6 @@ export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
 // Holds the BASE64 representation of a a transparent image 1x1 in case we don't yet have the country flag
 export const
   TRANSPARENT_FLAG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=';
-export const HELP_DIRECTORY = 'help';
 export const HELP_PDF_FILENAME = 'amp-help.pdf';
 
 export const DG_COMPANY_NAME = 'Development Gateway';
