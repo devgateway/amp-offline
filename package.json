@@ -65,8 +65,7 @@
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${name}-${version}.${ext}",
-      "license": "AMPOffline-TC.rtf"
+      "artifactName": "${name}-${version}.${ext}"
     },
     "linux": {
       "artifactName": "${name}-${version}-${arch}.${ext}",
