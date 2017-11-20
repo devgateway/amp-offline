@@ -1,15 +1,14 @@
-import ConnectionHelper from '../../connectivity/ConnectionHelper';
+/* eslint-disable class-methods-use-this */
+import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { AMP_COUNTRY_FLAG } from '../../connectivity/AmpApiConstants';
-import { AMP_COUNTRY_LOGO, ASSEST_DIRECTORY, SYNCUP_TYPE_ASSETS } from '../../../utils/Constants';
+import { AMP_COUNTRY_LOGO, ASSETS_DIRECTORY, SYNCUP_TYPE_ASSETS } from '../../../utils/Constants';
 import FileManager from '../../util/FileManager';
-
-/* eslint-disable class-methods-use-this */
 
 /**
  * Class to hold sync mechanism for amp assets
  */
-export default class AmpAssetManager extends AbstractAtomicSyncUpManager {
+export default class AmpAssetSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
     super(SYNCUP_TYPE_ASSETS);
@@ -18,8 +17,8 @@ export default class AmpAssetManager extends AbstractAtomicSyncUpManager {
   doAtomicSyncUp() {
     // For now we are only saving AMP countryFlag as an image
     return ConnectionHelper.doGet({ url: AMP_COUNTRY_FLAG, shouldRetry: true }).then((image) => {
-      FileManager.createDataDir(ASSEST_DIRECTORY);
-      FileManager.writeDataFileSync(image, ASSEST_DIRECTORY, AMP_COUNTRY_LOGO);
+      FileManager.createDataDir(ASSETS_DIRECTORY);
+      FileManager.writeDataFileSync(image, ASSETS_DIRECTORY, AMP_COUNTRY_LOGO);
       return null;
     });
   }

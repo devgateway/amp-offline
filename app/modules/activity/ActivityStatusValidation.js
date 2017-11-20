@@ -8,6 +8,7 @@ import Logger from '../../modules/util/LoggerManager';
 import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
 import WSSettingsHelpers from '../../modules/helpers/WSSettingsHelper';
 import WorkspaceHelper from '../../modules/helpers/WorkspaceHelper';
+import DateUtils from '../../utils/DateUtils';
 
 const logger = new Logger('Activity status validation');
 
@@ -56,12 +57,12 @@ export default class ActivityStatusValidation {
               if (isSameWorkspace) {
                 dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
                 dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-                dehydratedActivity[AC.APPROVAL_DATE] = new Date().toISOString();
+                dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
               } else {
                 if (isCrossTeamValidation) {
                   dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
                   dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-                  dehydratedActivity[AC.APPROVAL_DATE] = new Date().toISOString();
+                  dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
                 } else {
                   dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
                 }
@@ -100,7 +101,7 @@ export default class ActivityStatusValidation {
             dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
           }
           dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-          dehydratedActivity[AC.APPROVAL_DATE] = new Date().toISOString();
+          dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
         }
         return dehydratedActivity[AC.APPROVAL_STATUS];
       })

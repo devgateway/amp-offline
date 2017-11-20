@@ -1,6 +1,6 @@
 import store from '../index';
 import * as URLUtils from '../utils/URLUtils';
-import { WORKSPACE_URL } from '../utils/Constants';
+import { SYNCUP_REDIRECT_URL, WORKSPACE_URL } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
@@ -20,6 +20,7 @@ export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 export const STATE_SYNCUP_CONNECTION_UNAVAILABLE = 'STATE_SYNCUP_CONNECTION_UNAVAILABLE';
 export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
+export const STATE_SYNCUP_DISMISS_COMPLETE = 'STATE_SYNCUP_DISMISS_COMPLETE';
 export const STATE_CONNECTION_CHECK_IN_PROGRESS = 'STATE_CONNECTION_CHECK_IN_PROGRESS';
 export const STATE_SYNCUP_LOG_LOADED = 'STATE_SYNCUP_LOG_LOADED';
 
@@ -54,8 +55,8 @@ export function startSyncUp(historyData) {
   /* Save current syncup redux state because this might be a "forced" syncup and we dont want
    the user to be able to leave the page if this syncup fails. */
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
-    URLUtils.forwardTo('/syncUp');
     store.dispatch(syncUpInProgress());
+    URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
     store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
 
     return SyncUpManager.syncUpAllTypesOnDemand()
@@ -97,6 +98,7 @@ export function isForceSyncUp() {
 }
 
 export function dismissSyncAndChooseWorkspace() {
+  store.dispatch({ type: STATE_SYNCUP_DISMISS_COMPLETE });
   return checkIfShouldSyncBeforeLogout().then(() => URLUtils.forwardTo(WORKSPACE_URL));
 }
 

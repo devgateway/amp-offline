@@ -17,7 +17,15 @@ const DEFAULT_SETTINGS = [
     id: CS.SETUP_CONFIG,
     name: CS.SETUP_CONFIG,
     visible: true,
+    public: true,
     type: CS.SETTING_TYPE_OBJECT
+  },
+  {
+    id: CS.DEFAULT_SETUP_COMPLETE,
+    name: CS.DEFAULT_SETUP_COMPLETE,
+    visible: false,
+    type: CS.SETTING_TYPE_BOOLEAN,
+    value: false
   }
 ];
 

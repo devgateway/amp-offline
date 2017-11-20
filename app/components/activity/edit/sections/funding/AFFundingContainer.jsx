@@ -11,6 +11,7 @@ import AFFundingDetailContainer from './AFFundingDetailContainer';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import translate from '../../../../../utils/translate';
+import DateUtils from '../../../../../utils/DateUtils';
 
 const logger = new Logger('AF funding container');
 
@@ -41,14 +42,14 @@ export default class AFFundingContainer extends Component {
   _addTransactionItem(type) {
     logger.debug('_addTransactionItem');
     const fundingDetailItem = {};
-    fundingDetailItem[AC.REPORTING_DATE] = new Date().toISOString();
+    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getISODateForAPI(new Date());
     const trnTypeList = this.context.activityFieldsManager
       .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`];
     const trnType = Object.values(trnTypeList).find(item => item.value === type);
     fundingDetailItem[AC.TRANSACTION_TYPE] = trnType;
     fundingDetailItem[AC.CURRENCY] = {};
-    fundingDetailItem[AC.TRANSACTION_AMOUNT] = 0;
-    fundingDetailItem[AC.ADJUSTMENT_TYPE] = {};
+    fundingDetailItem[AC.TRANSACTION_AMOUNT] = undefined;
+    fundingDetailItem[AC.ADJUSTMENT_TYPE] = undefined;
     const newFunding = this.state.funding;
     if (newFunding[AC.FUNDING_DETAILS] === undefined) {
       newFunding[AC.FUNDING_DETAILS] = [];

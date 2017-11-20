@@ -34,7 +34,12 @@ export const PP_SUFFIX = '/portal';
 export const AMP_SUFFIX = '/aim';
 
 /** OTHER */
-export const API_DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ';
+export const AMP_OFFLINE_ENABLED = 'amp-offline-enabled';
+export const AMP_OFFLINE_COMPATIBLE = 'amp-offline-compatible';
+export const LATEST_AMP_OFFLINE = 'latest-amp-offline';
+export const AMP_VERSION = 'amp-version';
+export const API_SHORT_DATE_FORMAT = 'YYYY-MM-DD';
+export const API_LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZZ';
 export const TRANSLATIONS_PARAM = 'translations';
 export const PARAM_AMPOFFLINE_AGENT = 'AMPOffline';
 export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2+json';
@@ -52,3 +57,5 @@ export const ARCH64 = '64';
 export const ARCH32 = '32';
 export const ARCH64_NODE_OS_OPTIONS = new Set(['arm64', 'ppc64', 'x64']);
 export const ARCH64_USER_AGENT_OPTIONS = ['x86_64', 'amd64'];
+
+export const RESPONSE_CHECK_INTERVAL_MS = 100;

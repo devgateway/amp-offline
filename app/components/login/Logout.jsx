@@ -1,17 +1,14 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
 import translate from '../../utils/translate';
-import { SYNCUP_URL } from '../../utils/Constants';
+import { SYNCUP_REDIRECT_URL } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
   NOTIFICATION_SEVERITY_WARNING
 } from '../../utils/constants/ErrorConstants';
 import URLUtils from '../../utils/URLUtils';
-import {
-  logoutAction,
-  STATE_LOGOUT_REQUESTED
-} from '../../actions/LoginAction';
+import { logoutAction, STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
@@ -21,8 +18,6 @@ import Logger from '../../modules/util/LoggerManager';
 import { startSyncUp } from '../../actions/SyncUpAction';
 
 const logger = new Logger('Logout');
-
-/* eslint-disable class-methods-use-this */
 
 class Logout extends React.Component {
 
@@ -55,12 +50,12 @@ class Logout extends React.Component {
   render() {
     logger.log('render');
     if (this.props.loggedIn) {
+      // DO NOT add href since it can cause AMPOFFLINE-878
       return (
-        <div className={style.logout_container} >
-          <Button className={style.navbar_right_side} bsStyle="link" onClick={this.onLogout.bind(this)} >
-            {translate('logoff')}
-          </Button >
-        </div >
+        <a
+          className={style.navbar_right_side}
+          onClick={this.onLogout.bind(this)}>{translate('logout')}
+        </a>
       );
     }
     return null;
@@ -92,7 +87,7 @@ export default connect(
   dispatch => ({
     onConfirmationAlert: () => dispatch(addConfirmationAlert(logoutConfirmationAlert())),
     onLogoutDismissToSync: () => {
-      URLUtils.forwardTo(SYNCUP_URL);
+      URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
     }
   })
 )(Logout);

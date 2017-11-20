@@ -19,11 +19,11 @@ export class TopMenu extends Component {
 
   constructor() {
     super();
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   render() {
-    logger.log('render');
+    logger.debug('render');
     return this.props.builder(this.props.loggedIn,
       this.props.menu,
       this.props.onClick,
@@ -35,12 +35,12 @@ export class TopMenu extends Component {
 
 // We link this component with Redux to detect when the language changes.
 const mapStateToProps = (state) => {
-  logger.log('mapStateToProps');
+  logger.debug('mapStateToProps');
   return state;
 };
 
 const mapDispatchToProps = () => {
-  logger.log('mapDispatchToProps');
+  logger.debug('mapDispatchToProps');
   return {};
 };
 

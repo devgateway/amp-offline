@@ -13,11 +13,12 @@ import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './components/syncUp/SyncUp';
 import SyncUpSummaryPage from './containers/SyncUpSummaryPage';
 import UpdatePage from './containers/UpdatePage';
+import SettingPage from './containers/SettingPage';
 import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import Logger from './modules/util/LoggerManager';
-import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_URL } from './utils/Constants';
+import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_REDIRECT_URL } from './utils/Constants';
 import SetupPage from './containers/SetupPage';
 
 const logger = new Logger('index');
@@ -27,7 +28,7 @@ const store = configureStore();
 export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
 
-const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_URL];
+const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_REDIRECT_URL];
 
 function checkAuth(nextState, replace) {
   logger.log('checkAuth');
@@ -35,7 +36,7 @@ function checkAuth(nextState, replace) {
   if (!auth.loggedIn()) {
     replace({ state: { nextPathname: nextPath }, pathname: '/' });
   } else if (!(ignoreForceSyncUpFor.includes(nextPath) || nextPath.startsWith(SYNCUP_SUMMARY_URL)) && isForceSyncUp()) {
-    replace({ state: { nextPathname: nextPath }, pathname: SYNCUP_URL });
+    replace({ state: { nextPathname: nextPath }, pathname: SYNCUP_REDIRECT_URL });
   }
 }
 
@@ -47,7 +48,7 @@ ampOfflineStartUp().then(() =>
           <IndexRoute component={LoginPage} dispatch={store.dispatch} />
           <Route path="/setup" component={SetupPage} store={store} />
           <Route path="/workspace" component={WorkspacePage} onEnter={checkAuth} store={store} />
-          <Route path="/syncUp" component={SyncUpPage} onEnter={checkAuth} store={store} />
+          <Route path="/syncUp/:target" component={SyncUpPage} onEnter={checkAuth} store={store} />
           <Route path="/syncUpSummary/:id" component={SyncUpSummaryPage} onEnter={checkAuth} />
           <Route path="/syncUpSummary" component={SyncUpSummaryPage} onEnter={checkAuth} />
           <Route path="/desktop/:teamId" component={DesktopPage} onEnter={checkAuth} store={store} />
@@ -57,9 +58,15 @@ ampOfflineStartUp().then(() =>
           <Route
             path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store} />
           <Route path="/update" component={UpdatePage} store={store} />
+          <Route path="/settings" component={SettingPage} store={store} />
         </Route>
       </Router>
     </Provider>,
     document.getElementById('root')
   )
 ).catch((err) => (logger.error(err)));
+
+window.addEventListener('error', ({ filename, message }) =>
+  logger.error(`Uncaught error: ${message} IN ${filename}`));
+
+window.addEventListener('unhandledrejection', ({ reason }) => logger.warn('Unhandled promise rejection:', reason));
