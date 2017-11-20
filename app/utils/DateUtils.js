@@ -3,7 +3,7 @@
  */
 import Moment from 'moment';
 import Logger from '../modules/util/LoggerManager';
-import { API_DATE_FORMAT } from './Constants';
+import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../modules/connectivity/AmpApiConstants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 
@@ -19,7 +19,7 @@ export default class DateUtils {
   }
 
   static formatDateForCurrencyRates(date) {
-    return DateUtils.formatDate(date, API_DATE_FORMAT);
+    return DateUtils.formatDate(date, API_SHORT_DATE_FORMAT);
   }
 
   static isValidDateFormat(date, format) {
@@ -58,6 +58,25 @@ export default class DateUtils {
     return DateUtils.formatDate(date, DateUtils.getDateTimeFormat());
   }
 
+  /**
+   * Gets a date from future or past relative to the current moment
+   * @param durationStr the duration to add/substract from the current moment
+   * @param isAdd if true, then adds the duration (default to false)
+   * @return {moment.Moment}
+   */
+  static getDateFromNow(durationStr: string, isAdd = false) {
+    const duration = Moment.duration(durationStr);
+    if (Moment.isDuration(duration)) {
+      if (isAdd) {
+        return Moment().add(duration);
+      }
+      return Moment().subtract(duration);
+    }
+    const error = `Invalid duration format: ${durationStr}`;
+    logger.error(error);
+    throw new Error(error);
+  }
+
   static duration(from, to) {
     // not using 'fromNow' since it doesn't provide exact difference
     let seconds = Moment(to).diff(from, 'seconds');
@@ -66,4 +85,12 @@ export default class DateUtils {
     return `${minutes} min ${seconds} sec`;
   }
 
+  /**
+   * Formats the date according to AMP API format
+   * @param date (optional, defaults to current moment)
+   * @returns {string} date formatted according to API format
+   */
+  static getISODateForAPI(date = new Date()) {
+    return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);
+  }
 }

@@ -28,7 +28,7 @@ function setup(loggedIn) {
 describe('@@ Logout.jsx @@', () => {
   it('should display Logout link', () => {
     const { link } = setup(true);
-    expect(link.text()).to.be.equal(`${translate('logoff')} | `);
+    expect(link.text()).to.be.equal(`${translate('logout')} | `);
   });
 
   it('should not display Logout link', () => {

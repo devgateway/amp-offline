@@ -53,7 +53,9 @@ class AFField extends Component {
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
     onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    extraParams: PropTypes.object
+    extraParams: PropTypes.object,
+    defaultValueAsEmptyObject: PropTypes.bool,
+    forceRequired: PropTypes.bool
   };
 
   static defaultProps = {
@@ -84,10 +86,15 @@ class AFField extends Component {
   }
 
   componentWillReceiveProps(nexProps) {
+    if (!this.fieldExists) {
+      return;
+    }
     if (this.context.isSaveAndSubmit) {
       this.onChange(this.state.value, false);
     } else if (nexProps.validationResult) {
       this._processValidation(this.props.parent.errors);
+    } else if (nexProps.parent[this.fieldName] !== this.state.value) {
+      this.onChange(nexProps.parent[this.fieldName], false);
     }
   }
 
@@ -109,7 +116,8 @@ class AFField extends Component {
   }
 
   getLabel() {
-    const required = (this.requiredND || this.alwaysRequired) && this.props.showRequired === true;
+    const required = (this.requiredND || this.alwaysRequired || this.props.forceRequired)
+      && this.props.showRequired === true;
     if (this.props.showLabel === false) {
       if (required) {
         return <span className={styles.required} />;
@@ -176,7 +184,7 @@ class AFField extends Component {
     const selectedId = this.state.value ? this.state.value.id : null;
     return (<AFDropDown
       options={afOptions} onChange={this.onChange} selectedId={selectedId}
-      className={this.props.className} />);
+      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject} />);
   }
 
   _getListSelector() {

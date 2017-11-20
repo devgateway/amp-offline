@@ -1,6 +1,6 @@
 // TODO: this action is not going to be called from a component, its an initialization action
 import store from '../index';
-import { connectivityCheck } from './ConnectivityAction';
+import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
 import { CONNECTIVITY_CHECK_INTERVAL } from '../utils/Constants';
 import Logger from '../modules/util/LoggerManager';
@@ -12,8 +12,7 @@ import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
-import { checkIfSetupComplete, loadConnectionInformation } from './SetupAction';
-import ElectronUpdaterManager from '../modules/update/ElectronUpdaterManager';
+import { checkIfSetupComplete, configureDefaults } from './SetupAction';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -38,14 +37,18 @@ const logger = new Logger('Startup action');
 export function ampOfflineStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(checkIfSetupComplete)
-    .then(isSetupComplete => TranslationManager.initializeTranslations(isSetupComplete))
+    .then(isSetupComplete =>
+      TranslationManager.initializeTranslations(isSetupComplete)
+        .then(() => configureDefaults(isSetupComplete))
+    )
     .then(ampOfflineInit)
     .then(initLanguage);
 }
 
 export function ampOfflineInit() {
   store.dispatch(loadAllLanguages());
-  return loadConnectionInformation()
+  return checkIfSetupComplete()
+    .then(loadConnectionInformation)
     .then(scheduleConnectivityCheck)
     .then(loadGlobalSettings)
     .then(() => loadFMTree())

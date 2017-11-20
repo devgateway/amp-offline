@@ -23,10 +23,7 @@ const logger = new Logger('AF funding');
 class AFFunding extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
-  };
-
-  static propTypes = {
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
     activity: PropTypes.object.isRequired
   };
 
@@ -42,7 +39,7 @@ class AFFunding extends Component {
 
   componentWillMount() {
     this.state = {
-      fundingList: this.props.activity.fundings
+      fundingList: this.context.activity.fundings || []
     };
   }
 
@@ -89,6 +86,8 @@ class AFFunding extends Component {
       const newFundingList = this.state.fundingList;
       newFundingList.push(fundingItem);
       this.setState({ fundingList: newFundingList });
+      // Needed for new activities or funding is not added.
+      this.context.activity.fundings = newFundingList;
     }
   }
 
@@ -147,7 +146,7 @@ class AFFunding extends Component {
 
   generateOverviewTabContent() {
     return (<div>
-      <AFProjectCost activity={this.props.activity} />
+      <AFProjectCost activity={this.context.activity} />
     </div>);
   }
 
@@ -157,7 +156,7 @@ class AFFunding extends Component {
         <Tab eventKey={0} title="Overview" key={0}>{this.generateOverviewTabContent()}</Tab>
         {this.addFundingTabs()}
       </Tabs>
-      <AFFundingOrganizationSelect activity={this.props.activity} handleDonorSelect={this.handleDonorSelect} />
+      <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
     </div>);
   }
 }

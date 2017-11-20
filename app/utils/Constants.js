@@ -90,6 +90,7 @@ export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';
 export const SYNCUP_STATUS_CANCELED = 'CANCELED';
 export const SYNCUP_SYNC_REQUESTED_AT = 'sync-date';
+export const SYNCUP_SYNC_REQUESTED_BY = 'requested-by';
 export const SYNCUP_DATETIME_FIELD = 'timestamp';
 export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
 export const SYNCUP_DEPENDENCY_CHECK_INTERVAL = 10;
@@ -101,7 +102,6 @@ export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';
 export const ACTIVITY_STATUS_VALIDATED = 'ACTIVITY_STATUS_VALIDATED';
 
 export const CURRENCY_HOUR = '00:00';
-export const API_DATE_FORMAT = 'YYYY-MM-DD';
 export const DEFAULT_CURRENCY = 'USD';
 export const RATE_SAME_CURRENCY = 1;
 export const RATE_CURRENCY_NOT_FOUND = 1;
@@ -146,6 +146,9 @@ export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
 export const OTHER_ID = 999999999;
 export const NR_SYNC_HISTORY_ENTRIES = 20;
 export const NR_LOG_FILES = 100;
+// https://en.wikipedia.org/wiki/ISO_8601#Durations, example: "P1Y2M10DT2H30M"
+export const OLD_SYNC_LOGS_DURATION_ISO_8601 = 'P6M';
+export const NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM = NR_SYNC_HISTORY_ENTRIES;
 
 export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';

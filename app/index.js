@@ -13,6 +13,7 @@ import WorkspacePage from './containers/WorkspacePage';
 import SyncUpPage from './components/syncUp/SyncUp';
 import SyncUpSummaryPage from './containers/SyncUpSummaryPage';
 import UpdatePage from './containers/UpdatePage';
+import SettingPage from './containers/SettingPage';
 import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
@@ -57,9 +58,15 @@ ampOfflineStartUp().then(() =>
           <Route
             path="/activity/edit/:activityId" component={ActivityFormPage} onEnter={checkAuth} store={store} />
           <Route path="/update" component={UpdatePage} store={store} />
+          <Route path="/settings" component={SettingPage} store={store} />
         </Route>
       </Router>
     </Provider>,
     document.getElementById('root')
   )
 ).catch((err) => (logger.error(err)));
+
+window.addEventListener('error', ({ filename, message }) =>
+  logger.error(`Uncaught error: ${message} IN ${filename}`));
+
+window.addEventListener('unhandledrejection', ({ reason }) => logger.warn('Unhandled promise rejection:', reason));

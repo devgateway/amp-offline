@@ -7,6 +7,7 @@ import styles from './APFundingTransactionTypeItem.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import APLabel from '../../components/APLabel';
+import Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP Funding transaction type item');
 
@@ -47,7 +48,7 @@ class APFundingTransactionTypeItem extends Component {
     const filteredFD = this._filterFundingDetails();
     const content = [];
     filteredFD.forEach((item) => {
-      content.push(<APFundingItem item={item} key={item.id} wsCurrency={this._currency} />);
+      content.push(<APFundingItem item={item} key={Utils.numberRandom()} wsCurrency={this._currency} />);
     });
     // Not worth the effort to use BootstrapTable here.
     return <table className={styles.funding_table} >{content}</table>;

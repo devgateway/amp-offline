@@ -10,7 +10,7 @@ const defaultState = {
 };
 
 export default function currencyRatesReducer(state: Object = defaultState, action: Object) {
-  logger.log('currencyRatesReducer');
+  logger.debug('currencyRatesReducer');
   switch (action.type) {
     case STATE_LOADING_CURRENCY_RATES:
       return Object.assign({}, state, {

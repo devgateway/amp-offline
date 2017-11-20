@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/href-no-hash */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import translate from '../../utils/translate';
 import { SYNCUP_REDIRECT_URL } from '../../utils/Constants';
@@ -8,10 +8,7 @@ import {
   NOTIFICATION_SEVERITY_WARNING
 } from '../../utils/constants/ErrorConstants';
 import URLUtils from '../../utils/URLUtils';
-import {
-  logoutAction,
-  STATE_LOGOUT_REQUESTED
-} from '../../actions/LoginAction';
+import { logoutAction, STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
@@ -21,8 +18,6 @@ import Logger from '../../modules/util/LoggerManager';
 import { startSyncUp } from '../../actions/SyncUpAction';
 
 const logger = new Logger('Logout');
-
-/* eslint-disable class-methods-use-this */
 
 class Logout extends React.Component {
 
@@ -55,11 +50,11 @@ class Logout extends React.Component {
   render() {
     logger.log('render');
     if (this.props.loggedIn) {
+      // DO NOT add href since it can cause AMPOFFLINE-878
       return (
         <a
           className={style.navbar_right_side}
-          href="#"
-          onClick={this.onLogout.bind(this)}>{translate('logoff')}
+          onClick={this.onLogout.bind(this)}>{translate('logout')}
         </a>
       );
     }

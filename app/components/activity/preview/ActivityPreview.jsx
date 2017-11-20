@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Col, Grid, Row } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
@@ -14,6 +14,7 @@ import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
 import * as WC from '../../../utils/constants/WorkspaceConstants';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
+import FeatureManager from '../../../modules/util/FeatureManager';
 
 const logger = new Logger('Activity preview');
 
@@ -82,18 +83,29 @@ export default class ActivityPreview extends Component {
   _renderData() {
     const activity = this.props.activityReducer.activity;
 
-    const categories = AC.AP_SECTION_IDS.map((category) =>
-      <li><a href={category.hash}> {translate(category.value)} </a></li>
-    );
+    const categories = AC.AP_SECTION_IDS.map((category) => {
+      if (category.sectionPath
+        && !this.props.activityReducer.activityFieldsManager.isFieldPathEnabled(category.sectionPath)) {
+        return null;
+      }
+      if (category.fmPath && !FeatureManager.isFMSettingEnabled(category.fmPath)) {
+        return null;
+      }
+      return <li><a href={category.hash}> {translate(category.value)} </a></li>;
+    });
 
     const categoryKeys = AC.AP_SECTION_IDS.map(category => category.key);
 
     const teamLeadFlag = this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_MANAGER
       || this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_APPROVER;
 
+    const privateWSWarning = this.props.workspaceReducer.currentWorkspace[WC.IS_PRIVATE]
+      ? translate('privateWorkspaceWarning') : '';
+
     return (
       <div className={styles.preview_container}>
         <div className={styles.preview_header} >
+          <span className={styles.top_warning_text}>{privateWSWarning}</span>
           <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
           <span className={styles.preview_icons} >
             <ul>
