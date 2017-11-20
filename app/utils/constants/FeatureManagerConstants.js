@@ -20,3 +20,4 @@ export const ACTIVITY_PRIMARY_SECTORS = '/Activity Form/Sectors/Primary Sectors'
 export const ACTIVITY_SECONDARY_SECTORS = '/Activity Form/Sectors/Secondary Sectors';
 export const ACTIVITY_ORGANIZATIONS = '/Activity Form/Organizations';
 export const ACTIVITY_PROGRAM = '/Activity Form/Program';
+export const ACTIVITY_PLANNING = '/Activity Form/Planning';
