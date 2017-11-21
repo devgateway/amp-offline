@@ -335,8 +335,10 @@
   text-align: right;
 }
 
-.floatRight {
-  float: right;
+.tableValue {
+  width: 100%;
+  float: left;
+  font-weight: bold;
 }
 
 .paddingBottom {

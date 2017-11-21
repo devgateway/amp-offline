@@ -191,7 +191,7 @@ export const AP_SECTION_IDS =
     { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES }];
 
 /** Column counts for each section **/
-export const ACTIVITY_INTERNAL_IDS_COLS = 1;
+export const ACTIVITY_INTERNAL_IDS_COLS = 3;
 export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;

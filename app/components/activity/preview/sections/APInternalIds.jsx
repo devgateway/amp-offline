@@ -31,7 +31,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
   _getActInternalIdContent(actIntId, showInternalId) {
     let intId;
     if (showInternalId) {
-      intId = <span className={styles.floatRight}>{actIntId.internal_id}</span>;
+      intId = <span className={styles.tableValue}>{actIntId.internal_id}</span>;
     }
     return (
       <div key={actIntId.organization.value}>
