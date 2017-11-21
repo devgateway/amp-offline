@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
 
