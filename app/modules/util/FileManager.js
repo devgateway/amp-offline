@@ -214,10 +214,11 @@ const FileManager = {
   /**
    * Copy a file to the OS's temporal directory and return the full path. The new file will have a random name.
    * @param file
-   * @param route
+   * @param fullPath
+   * @return {string}
    */
-  copyDataFileToTmpSync(file, ...route) {
-    const from = this.getFullPathForBuiltInResources(...route, file);
+  copyDataFileToTmpSync(file, fullPath) {
+    const from = path.join(fullPath, file);
     const to = path.join(os.tmpdir(), `${Utils.numberRandom()}-${file}`);
     fs.writeFileSync(to, fs.readFileSync(from));
     return to;

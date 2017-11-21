@@ -15,7 +15,8 @@ export function loadHelp() {
   /* We cant load the pdf with a relative path (dev mode) so we use a temp file to be consistent (we could
   open it from the .asar in prod mode). */
   const fileName = `${HELP_PDF_FILENAME}-${store.getState().translationReducer.lang}.pdf`;
-  const to = FileManager.copyDataFileToTmpSync(fileName, STATIC_DIR, HELP_DIR);
+  const fromDir = FileManager.getFullPathForBuiltInResources(STATIC_DIR, HELP_DIR);
+  const to = FileManager.copyDataFileToTmpSync(fileName, fromDir);
   logger.debug(to);
   ipcRenderer.send('createPDFWindow', encodeURIComponent(to), closeHelpState);
 
