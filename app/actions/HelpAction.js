@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
 import Logger from '../modules/util/LoggerManager';
 import FileManager from '../modules/util/FileManager';
-import { HELP_PDF_FILENAME, STATIC_DIR } from '../utils/Constants';
+import { HELP_DIR, HELP_PDF_FILENAME, STATIC_DIR } from '../utils/Constants';
 import store from '../index';
 
 export const STATE_HELP_WINDOW_OPEN = 'STATE_HELP_WINDOW_OPEN';
@@ -14,7 +14,8 @@ export function loadHelp() {
   // We need to move/extract (depending if we run on prod or dev) the help pdf in order to open it.
   /* We cant load the pdf with a relative path (dev mode) so we use a temp file to be consistent (we could
   open it from the .asar in prod mode). */
-  const to = FileManager.copyDataFileToTmpSync(HELP_PDF_FILENAME, STATIC_DIR);
+  const fileName = `${HELP_PDF_FILENAME}-${store.getState().translationReducer.lang}.pdf`;
+  const to = FileManager.copyDataFileToTmpSync(fileName, STATIC_DIR, HELP_DIR);
   logger.debug(to);
   ipcRenderer.send('createPDFWindow', encodeURIComponent(to), closeHelpState);
 
