@@ -2,12 +2,12 @@
 import React, { Component, PropTypes } from 'react';
 import Tablify from '../components/Tablify';
 import Section from './Section';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import translate from '../../../../utils/translate';
 import { ACTIVITY_INTERNAL_IDS, ACTIVITY_INTERNAL_IDS_COLS } from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 
 const logger = new Logger('AP Internal ids');
 
