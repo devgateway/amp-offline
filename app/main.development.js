@@ -35,7 +35,7 @@ const installExtensions = async () => {
     for (const name of extensions) { // eslint-disable-line
       try {
         await installer.default(installer[name], forceDownload);
-      } catch (e) { } // eslint-disable-line
+      } catch (e) {} // eslint-disable-line
     }
   }
 };
