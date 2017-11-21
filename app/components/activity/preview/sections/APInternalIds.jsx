@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
 import Tablify from '../components/Tablify';
 import Section from './Section';
