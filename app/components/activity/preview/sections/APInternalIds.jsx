@@ -3,15 +3,11 @@ import React, { Component, PropTypes } from 'react';
 import Tablify from '../components/Tablify';
 import Section from './Section';
 import translate from '../../../../utils/translate';
-import {
-  ACTIVITY_INTERNAL_IDS_COLS
-} from '../../../../utils/constants/ActivityConstants';
-import {
-  ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH,
-  ACTIVITY_INTERNAL_IDS_ORGANIZATION_PATH
-} from '../../../../utils/constants/FieldPathConstants';
+import { ACTIVITY_INTERNAL_IDS } from '../../../../utils/constants/ActivityConstants';
+import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
+import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 
 const logger = new Logger('AP Internal ids');
 
@@ -21,7 +17,8 @@ const logger = new Logger('AP Internal ids');
  */
 const APInternalIdsSection = (isSeparateSection) => class extends Component {
   static propTypes = {
-    buildSimpleField: PropTypes.func.isRequired,
+    activity: PropTypes.object.isRequired,
+    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
     showIfEmpty: PropTypes.bool/* only makes sense if isSeparateSection is true, will render
                                   if there are no org ids*/
   };
@@ -31,11 +28,30 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     logger.log('constructor');
   }
 
+  _getActInternalIdContent(actIntId, showInternalId) {
+    let intId;
+    if (showInternalId) {
+      intId = <span className={styles.floatRight}>{actIntId.internal_id}</span>;
+    }
+    return (
+      <div key={actIntId.organization.value}>
+        <span>[{ actIntId.organization.value }]</span>
+        { intId }
+      </div>);
+  }
+
   buildContent() {
-    const content = [];
-    content.push(this.props.buildSimpleField(ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH, true, new Set([-1]), false));
-    content.push(this.props.buildSimpleField(ACTIVITY_INTERNAL_IDS_ORGANIZATION_PATH, true, new Set([-1]), false));
-    return content;
+    let orgIds;
+    if (this.props.activityFieldsManager.isFieldPathEnabled(ACTIVITY_INTERNAL_IDS)) {
+      const showInternalId = this.props.activityFieldsManager.isFieldPathEnabled(
+        ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH);
+      orgIds = [];
+      const actIntIds = this.props.activityFieldsManager.getValue(this.props.activity, ACTIVITY_INTERNAL_IDS);
+      if (actIntIds && actIntIds.length > 0) {
+        actIntIds.forEach(actIntId => orgIds.push(this._getActInternalIdContent(actIntId, showInternalId)));
+      }
+    }
+    return orgIds && orgIds.length > 0 ? orgIds : null;
   }
 
   render() {
@@ -43,7 +59,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     if (isSeparateSection === true) {
       // make sure content exists before formatting
       const noData = <tr><td>{translate('No Data')}</td></tr>;
-      const tableContent = content ? Tablify.addRows(content, ACTIVITY_INTERNAL_IDS_COLS) : noData;
+      const tableContent = content ? Tablify.addRows(content, 1) : noData;
       content = <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
     } else if (content || this.props.showIfEmpty) {
       return (
@@ -59,4 +75,3 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
 };
 
 export const APInternalIds = Section(APInternalIdsSection(true), 'Agency Internal IDs', true, 'APInternalIds');
-export const APInternalIdsFromIdentification = Section(APInternalIdsSection(false), null, false);

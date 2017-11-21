@@ -335,6 +335,10 @@
   text-align: right;
 }
 
+.floatRight {
+  float: right;
+}
+
 .paddingBottom {
   padding-bottom: 10px;
 }
