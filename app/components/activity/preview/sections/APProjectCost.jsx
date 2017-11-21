@@ -38,9 +38,12 @@ const APProjectCost = (fieldName) => class extends Component {
     let content = null;
     if (this.props.activityFieldsManager.isFieldPathEnabled(fieldName) === true) {
       const currency = this.props.activityFundingTotals._currentWorkspaceSettings.currency.code;
-      const date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
       let amount = 0;
-      if (this.props.activity[AC.PPC_AMOUNT] && this.props.activity[AC.PPC_AMOUNT][0]) {
+      let showPPC = false;
+      if (this.props.activity[AC.PPC_AMOUNT] && this.props.activity[AC.PPC_AMOUNT][0]
+        && this.props.activity[AC.PPC_AMOUNT][0][AC.AMOUNT]
+        && this.props.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE]) {
+        showPPC = true;
         const ppcAsFunding = this.props.activity[AC.PPC_AMOUNT][0];
         ppcAsFunding[AC.CURRENCY] = ppcAsFunding[AC.CURRENCY_CODE];
         ppcAsFunding[AC.TRANSACTION_AMOUNT] = ppcAsFunding[AC.AMOUNT];
@@ -50,7 +53,10 @@ const APProjectCost = (fieldName) => class extends Component {
           amount = NumberUtils.rawNumberToFormattedString(amount);
         }
       }
-      if (this.props.activity.fundings && this.props.activity.fundings.length > 0) {
+      if (this.props.activity.fundings && this.props.activity.fundings.length > 0 && showPPC) {
+        let date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
+        date = date ? date[0] : null;
+        date = date ? DateUtils.createFormattedDate(date) : translate('No Data');
         content = (<div>
           <div className={styles.project_cost_left}>
             <span className={styles.project_cost_title}>{translate('Cost')} </span>
@@ -58,7 +64,7 @@ const APProjectCost = (fieldName) => class extends Component {
           </div>
           <div className={styles.project_cost_right}>
             <span className={styles.project_cost_title}>{translate('Date')}</span>
-            <span className={styles.project_cost_date}>{DateUtils.createFormattedDate(date)}</span>
+            <span className={styles.project_cost_date}>{date}</span>
           </div>
         </div>);
       } else {
