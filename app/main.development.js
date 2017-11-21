@@ -1,4 +1,3 @@
-/* eslint-disable no-empty */
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
 
@@ -36,8 +35,7 @@ const installExtensions = async () => {
     for (const name of extensions) { // eslint-disable-line
       try {
         await installer.default(installer[name], forceDownload);
-      } catch (e) {
-      } // eslint-disable-line
+      } catch (e) { } // eslint-disable-line
     }
   }
 };

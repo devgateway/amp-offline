@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import { ELECTRON_APP } from '../util/ElectronApp';
+import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
 
@@ -63,7 +63,6 @@ const FileManager = {
   getFullPathForBuiltInResources(...pathParts) {
     return path.join(this.getResourcesPath(), pathParts.join('/'));
   },
-
 
   /**
    * Creates a data directory synchronously if it doesn't exist
