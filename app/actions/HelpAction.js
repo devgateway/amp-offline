@@ -1,34 +1,38 @@
-import { ipcRenderer, remote } from 'electron';
-import os from 'os';
-import path from 'path';
+import { ipcRenderer } from 'electron';
 import Logger from '../modules/util/LoggerManager';
 import FileManager from '../modules/util/FileManager';
-import Utils from '../utils/Utils';
-import { HELP_PDF_FILENAME } from '../utils/Constants';
+import { HELP_PDF_FILENAME, STATIC_DIR } from '../utils/Constants';
+import store from '../index';
 
-export const STATE_OPEN_HELP_WINDOW = 'STATE_OPEN_HELP_WINDOW';
+export const STATE_HELP_WINDOW_OPEN = 'STATE_HELP_WINDOW_OPEN';
+export const STATE_HELP_WINDOW_CLOSED = 'STATE_HELP_WINDOW_CLOSED';
 
 const logger = new Logger('Help Action');
-const fs = remote.require('fs');
 
 export function loadHelp() {
   logger.log('loadHelp');
   // We need to move/extract (depending if we run on prod or dev) the help pdf in order to open it.
-  const to = path.join(os.tmpdir(), `${Utils.numberRandom()}-${HELP_PDF_FILENAME}`);
-  const from = FileManager.getFullPathForBuiltInResources(HELP_PDF_FILENAME);
-  logger.debug(from);
+  /* We cant load the pdf with a relative path (dev mode) so we use a temp file to be consistent (we could
+  open it from the .asar in prod mode). */
+  const to = FileManager.copyDataFileToTmpSync(HELP_PDF_FILENAME, STATIC_DIR);
   logger.debug(to);
-  /* Node 6.x doesnt have a function to copy files and fs-extra is not finding the original pdf inside the .asar, so
-   we are using old fs functions, notice if we upgrade Node we might need to use fs.copyFileSync instead. */
-  fs.writeFileSync(to, fs.readFileSync(from));
-  // We cant load pdf with relative path and reading directly from .asar didnt work consistently so we use a temp file.
-  ipcRenderer.send('createPDFWindow', encodeURIComponent(to));
+  ipcRenderer.send('createPDFWindow', encodeURIComponent(to), closeHelpState);
 
   /* An alternative option if rendering pdf inside chrome fails is to rely on the client's pdf reader:
    * 1) const { exec } = require('child_process');
    * 2) exec(to); */
 
   return (dispatch) => (
-    dispatch({ type: STATE_OPEN_HELP_WINDOW })
+    dispatch({ type: STATE_HELP_WINDOW_OPEN })
   );
 }
+
+export function closeHelpState() {
+  return store.dispatch({ type: STATE_HELP_WINDOW_CLOSED });
+}
+
+// Listen to message from main process.
+/* eslint no-unused-vars: 0 */
+ipcRenderer.on('closeHelpWindow', (event, args) => {
+  closeHelpState();
+});

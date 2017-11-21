@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
 
 const PDFWindow = require('electron-pdf-window');
@@ -35,7 +35,8 @@ const installExtensions = async () => {
     for (const name of extensions) { // eslint-disable-line
       try {
         await installer.default(installer[name], forceDownload);
-      } catch (e) {} // eslint-disable-line
+      } catch (e) {
+      } // eslint-disable-line
     }
   }
 };
@@ -88,8 +89,6 @@ ipcMain.on('createPDFWindow', (event, url) => {
   if (!global.HELP_PDF_WINDOW) {
     // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
     let pdfWindow = new PDFWindow({
-      width: 800,
-      height: 600,
       show: true,
       webPreferences: {
         webSecurity: false
@@ -100,6 +99,10 @@ ipcMain.on('createPDFWindow', (event, url) => {
     pdfWindow.on('closed', () => {
       pdfWindow = null;
       global.HELP_PDF_WINDOW = null;
+      // Use IPC to communicate with renderer process.
+      if (mainWindow) {
+        mainWindow.webContents.send('closeHelpWindow');
+      }
     });
 
     global.HELP_PDF_WINDOW = pdfWindow;
