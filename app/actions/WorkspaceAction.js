@@ -2,6 +2,7 @@ import WorkspaceManager from '../modules/workspace/WorkspaceManager';
 import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
 import WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
+import * as ErrorNotificationHelper from '../modules/helpers/ErrorNotificationHelper';
 import store from '../index';
 import Logger from '../modules/util/LoggerManager';
 import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
@@ -10,6 +11,7 @@ import * as AC from '../utils/constants/ActivityConstants';
 import { isForceSyncUp } from './SyncUpAction';
 import { SYNCUP_REDIRECT_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
+import { NOTIFICATION_ORIGIN_WORKSPACE } from '../utils/constants/ErrorConstants';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_SELECT_WORKSPACE_ERROR = 'STATE_SELECT_WORKSPACE_ERROR';
@@ -40,11 +42,17 @@ function loadWorkspaceData(wsId) {
   const userId = store.getState().userReducer.userData.id;
   return Promise.all([
     WorkspaceHelper.findById(wsId),
-    TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId),
+    TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId, true),
     WSSettingsHelper.findByWorkspaceId(wsId),
     PossibleValuesHelper.findById(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)
   ])
     .then(([workspace, teamMember, workspaceSettings, possibleValue]) => {
+      if (!teamMember) {
+        throw ErrorNotificationHelper.createNotification({
+          message: 'Access Denied',
+          origin: NOTIFICATION_ORIGIN_WORKSPACE
+        });
+      }
       const currency = {};
       currency.code = workspaceSettings.currency;
       currency['translated-value'] =
