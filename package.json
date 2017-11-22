@@ -75,7 +75,7 @@
     },
     "nsis": {
       "artifactName": "${name}-${version}.${ext}",
-      "license": "license.txt"
+      "displayLanguageSelector": true
     },
     "linux": {
       "artifactName": "${name}-${version}-${arch}.${ext}",
