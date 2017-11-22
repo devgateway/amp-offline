@@ -36,6 +36,7 @@
   "clickToValidateActivity": "Click to validate the activity",
   "customTextForEmptyData": "Empty data.",
   "newDraftLegend": "New Draft. These are new activities that have been saved as drafts.",
+  "settingsUrlHint": "This URL should refer to the AMP server. If you are unsure what to enter here please contact the AMP Administrator.",
   "newUnvalidatedLegend": "New Unvalidated. These are new activities that have never been approved by the workspace manager.",
   "validatedActivitiesLegend": "Validated activities",
   "existingDraftsLegend": "Existing Drafts. These are activities that have been saved once and edited and saved as drafts.",
