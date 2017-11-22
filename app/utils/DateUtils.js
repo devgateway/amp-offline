@@ -3,7 +3,7 @@
  */
 import Moment from 'moment';
 import Logger from '../modules/util/LoggerManager';
-import { API_DATE_FORMAT } from './Constants';
+import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../modules/connectivity/AmpApiConstants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 
@@ -19,7 +19,7 @@ export default class DateUtils {
   }
 
   static formatDateForCurrencyRates(date) {
-    return DateUtils.formatDate(date, API_DATE_FORMAT);
+    return DateUtils.formatDate(date, API_SHORT_DATE_FORMAT);
   }
 
   static isValidDateFormat(date, format) {
@@ -28,7 +28,10 @@ export default class DateUtils {
   }
 
   static formatDate(date, format) {
+    /* NOTE: Depending on the country where the app is ran the timezone part of the string (ie: +0000) can cause the
+   * formatted date to be +1/-1 days, so we remove it from the string with a regex. */
     if (date !== undefined && date !== null) {
+      date = date.replace(/[+|-][0-9]{4}/g, '');
       const formattedDate = Moment(date).isValid() ? Moment(date).format(format) : date;
       return formattedDate;
     } else {
@@ -83,12 +86,11 @@ export default class DateUtils {
   }
 
   /**
-   * Remove the 'Z' and add +0000 (not +00:00) to match API validation.
-   * @param date
-   * @returns {string}
+   * Formats the date according to AMP API format
+   * @param date (optional, defaults to current moment)
+   * @returns {string} date formatted according to API format
    */
-  static getISODateForAPI(date) {
-    date = date || new Date();
-    return `${date.toISOString().substring(0, date.toISOString().length - 1)}+0000`;
+  static getISODateForAPI(date = new Date()) {
+    return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);
   }
 }
