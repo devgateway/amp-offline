@@ -65,7 +65,8 @@
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${name}-${version}.${ext}"
+      "artifactName": "${name}-${version}.${ext}",
+      "displayLanguageSelector": true
     },
     "linux": {
       "artifactName": "${name}-${version}-${arch}.${ext}",
