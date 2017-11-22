@@ -3,6 +3,7 @@ import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
+import { loadHelp } from '../actions/HelpAction';
 import store from '../index';
 import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
 import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
@@ -57,6 +58,10 @@ class MenuUtils {
         })
       }));
       newMenu.menu.TOOLS.nodes['Change Language'].nodes = langNodes;
+    }
+
+    if (newMenu.menu.HELP && newMenu.menu.HELP.nodes && newMenu.menu.HELP.nodes['AMP Offline Help']) {
+      newMenu.menu.HELP.nodes['AMP Offline Help'].onItemClickHandler = (() => (store.dispatch(loadHelp())));
     }
 
     if (newMenu.menu !== undefined && newMenu.menu !== null) {
