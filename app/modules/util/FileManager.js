@@ -1,7 +1,9 @@
 import fs from 'fs-extra';
+import os from 'os';
 import path from 'path';
 import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
+import Utils from '../../utils/Utils';
 
 const app = ELECTRON_APP;
 
@@ -61,7 +63,6 @@ const FileManager = {
   getFullPathForBuiltInResources(...pathParts) {
     return path.join(this.getResourcesPath(), pathParts.join('/'));
   },
-
 
   /**
    * Creates a data directory synchronously if it doesn't exist
@@ -208,6 +209,19 @@ const FileManager = {
   existsSync(...pathParts) {
     const fullPath = this.getFullPath(...pathParts);
     return fs.existsSync(fullPath);
+  },
+
+  /**
+   * Copy a file to the OS's temporal directory and return the full path. The new file will have a random name.
+   * @param file
+   * @param fullPath
+   * @return {string}
+   */
+  copyDataFileToTmpSync(file, fullPath) {
+    const from = path.join(fullPath, file);
+    const to = path.join(os.tmpdir(), `${Utils.numberRandom()}-${file}`);
+    fs.writeFileSync(to, fs.readFileSync(from));
+    return to;
   }
 };
 

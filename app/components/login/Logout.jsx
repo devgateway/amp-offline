@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/href-no-hash */
+/* eslint-disable class-methods-use-this */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
