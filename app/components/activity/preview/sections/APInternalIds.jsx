@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
 import Tablify from '../components/Tablify';
 import Section from './Section';
@@ -9,8 +11,6 @@ import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AP Internal ids');
-
-/* eslint-disable class-methods-use-this */
 
 /**
  * Organizations and project ids section
@@ -32,7 +32,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
   _getActInternalIdContent(actIntId, showInternalId) {
     let intId;
     if (showInternalId) {
-      intId = <span>{actIntId.internalId}</span>;
+      intId = <span className={styles.tableValue}>{actIntId.internal_id}</span>;
     }
     return (
       <div key={actIntId.organization.value}>
@@ -73,8 +73,6 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     }
     return content;
   }
-
 };
 
 export const APInternalIds = Section(APInternalIdsSection(true), 'Agency Internal IDs', true, 'APInternalIds');
-export const APInternalIdsFromIdentification = Section(APInternalIdsSection(false), null, false);

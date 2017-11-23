@@ -335,6 +335,12 @@
   text-align: right;
 }
 
+.tableValue {
+  width: 100%;
+  float: left;
+  font-weight: bold;
+}
+
 .paddingBottom {
   padding-bottom: 10px;
 }
