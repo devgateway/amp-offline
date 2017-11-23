@@ -91,6 +91,6 @@ export default class DateUtils {
    * @returns {string} date formatted according to API format
    */
   static getISODateForAPI(date = new Date()) {
-    return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);
+    return DateUtils.formatDate(date.toISOString(), API_LONG_DATE_FORMAT);
   }
 }
