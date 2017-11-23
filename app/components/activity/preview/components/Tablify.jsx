@@ -23,6 +23,12 @@ export default class Tablify extends Component {
    * @param cols number of columns
    */
   static addRows(content, cols) {
+    // Remove undefined cells.
+    content = content.filter(c => c);
+    // Decrease number of cols if we dont have enough elements.
+    if (content.length < cols) {
+      cols = content.length;
+    }
     const rows = Math.ceil(content.length / cols);
     const tableContent = [];
 

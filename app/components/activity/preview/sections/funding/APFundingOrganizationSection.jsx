@@ -42,7 +42,6 @@ class APFundingOrganizationSection extends Component {
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_STATUS]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.MODE_OF_PAYMENT]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
