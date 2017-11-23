@@ -55,6 +55,8 @@ export default function workspaceReducer(state = defaultState, action: Object) {
     case STATE_SELECT_WORKSPACE_ERROR:
       return { ...state,
         workspaceProcessing: false,
+        currentWorkspace: undefined,
+        workspaceFilter: undefined,
         errorMessage: action.actionData
       };
     case STATE_CONFIGURING_WORKSPACE_FILTER:
