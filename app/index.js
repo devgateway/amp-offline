@@ -78,4 +78,6 @@ window.addEventListener('error', ({ filename, message }) => {
   handleUnexpectedError(`Uncaught error: ${message} IN ${filename}`);
 });
 
-window.addEventListener('unhandledrejection', ({ reason }) => logger.warn('Unhandled promise rejection:', reason));
+window.addEventListener('unhandledrejection', ({ reason }) => {
+  handleUnexpectedError(`Unhandled promise rejection: ${reason}`);
+});
