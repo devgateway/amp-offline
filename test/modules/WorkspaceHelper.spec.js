@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha';
 import * as actions from '../../app/modules/helpers/WorkspaceHelper';
-import { removeIdFromCollection } from '../../app/utils/Utils';
+import { removeIdFromCollection, removeIdFromItem } from '../../app/utils/Utils';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -16,7 +16,7 @@ const workspacesToSave = [ws1, ws2];
 describe('@@ WorkspaceHelper @@', () => {
   describe('saveOrUpdateWorkspace', () =>
     it('should save the WS data', () =>
-      expect(actions.saveOrUpdateWorkspace(ws1)).to.eventually.deep.equal(ws1)
+      expect(actions.saveOrUpdateWorkspace(ws1).then(removeIdFromItem)).to.eventually.deep.equal(ws1)
     )
   );
 
