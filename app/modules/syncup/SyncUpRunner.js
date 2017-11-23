@@ -26,7 +26,8 @@ import {
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES,
-  SYNCUP_TYPE_TRANSLATIONS
+  SYNCUP_TYPE_TRANSLATIONS,
+  SYNCUP_TYPE_WORKSPACE_MEMBERS
 } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
@@ -193,7 +194,9 @@ export default class SyncUpRunner {
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
-    changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && this._hasActivitiesToPush;
+    // TODO workaround until AMPOFFLINE-908 with a more accurate activities to push detection will come
+    const hasWsMembersChanges = SyncUpDiff.hasChanges(changes[SYNCUP_TYPE_WORKSPACE_MEMBERS]);
+    changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && (this._hasActivitiesToPush || hasWsMembersChanges);
     changes[SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._hasContactsToPush;
     changes[SYNCUP_TYPE_TRANSLATIONS] = changes[SYNCUP_TYPE_TRANSLATIONS] || this._hasTranslationsToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax

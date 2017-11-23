@@ -108,11 +108,14 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     logger.log('_getValidUsers');
     const filter = { $and: [{ 'is-banned': { $ne: true } }, { 'is-active': { $ne: true } }] };
     const projections = { id: 1 };
-    return UserHelper.findAllUsersByExample(filter, projections);
+    return UserHelper.findAllClientRegisteredUsersByExample(filter, projections);
   }
 
   static _getWSMembers(users) {
-    const wsMembersFilter = { 'user-id': { $in: Utils.flattenToListByKey(users, 'id') } };
+    const wsMembersFilter = {
+      'user-id': { $in: Utils.flattenToListByKey(users, 'id') },
+      ...TeamMemberHelper.getExcludeDeletedTeamMembersFilter()
+    };
     return TeamMemberHelper.findAll(wsMembersFilter);
   }
 

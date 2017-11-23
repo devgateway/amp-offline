@@ -87,8 +87,13 @@ class AFPlanning extends Component {
   copySameValue(isChecked, copyFrom, copyTo) {
     const copyToEl = document.querySelector(`#id_${copyTo} input`);
     const copyFromEl = isChecked ? document.querySelector(`#id_${copyFrom} input`) : null;
-    copyToEl.value = isChecked ? copyFromEl.value : DateUtils.createFormattedDate(this.props.globalState[copyTo]);
-    this.props.activity[copyTo] = isChecked ? this.props.activity[copyFrom] : this.props.globalState[copyTo];
+    const globalCopyToValue = this.props.globalState[copyTo];
+    if (isChecked) {
+      copyToEl.value = copyFromEl.value;
+    } else {
+      copyToEl.value = globalCopyToValue ? DateUtils.createFormattedDate(globalCopyToValue) : '';
+    }
+    this.props.activity[copyTo] = isChecked ? this.props.activity[copyFrom] : globalCopyToValue;
   }
 
   copyIfChecked(label, copyFrom, copyTo) {
