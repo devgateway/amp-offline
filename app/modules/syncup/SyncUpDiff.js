@@ -84,7 +84,7 @@ export default class SyncUpDiff {
   }
 
   setDiff(type, diff) {
-    diff = this._nullifyIfNoDiff(diff);
+    diff = this.constructor._nullifyIfNoDiff(diff);
     if (diff === null) {
       delete this._syncUpDiff[type];
     } else {
@@ -92,7 +92,11 @@ export default class SyncUpDiff {
     }
   }
 
-  _nullifyIfNoDiff(diff) {
+  static hasChanges(diff) {
+    return !!SyncUpDiff._nullifyIfNoDiff(diff);
+  }
+
+  static _nullifyIfNoDiff(diff) {
     if (diff === undefined || diff === false || (diff.length && diff.length === 0)) {
       return null;
     } else if (diff.saved && diff.saved.length === 0 && diff.removed.length === 0) {

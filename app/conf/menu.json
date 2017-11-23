@@ -47,7 +47,6 @@
       "beforeSetup": true,
       "nodes": {
         "AMP Offline Help": {
-          "route": "/help",
           "public": true,
           "beforeSetup": true
         }
