@@ -8,6 +8,7 @@ import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';
 import Logger from '../../../../modules/util/LoggerManager';
+import FeatureManager from '../../../../modules/util/FeatureManager';
 
 const logger = new Logger('AP percentage list');
 
@@ -24,7 +25,8 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
     percentTitleClass: PropTypes.string,
     percentValueClass: PropTypes.string,
     tablify: PropTypes.bool,
-    columns: PropTypes.number
+    columns: PropTypes.number,
+    fmPath: PropTypes.string
   };
 
   constructor(props) {
@@ -36,7 +38,10 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
     const title = listTitle ? translate(listTitle) : null;
     const items = this.props.activity[listField];
     let content = null;
-    const isListEnabled = this.props.activityFieldsManager.isFieldPathEnabled(listField) === true;
+    let isListEnabled = this.props.activityFieldsManager.isFieldPathEnabled(listField) === true;
+    if (this.props.fmPath) {
+      isListEnabled = FeatureManager.isFMSettingEnabled(this.props.fmPath) ? isListEnabled : false;
+    }
     if (isListEnabled) {
       content = (<APField
         key={listField} title={title} value={translate('No Data')} separator={false}
