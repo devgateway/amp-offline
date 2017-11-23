@@ -249,6 +249,9 @@ export default class ActivityForm extends Component {
   }
 
   _renderActions() {
+    const { isNewActivity } = this.state;
+    const disablePreview = typeof isNewActivity === 'undefined' || isNewActivity;
+
     const previewUrl = `/activity/preview/${this.props.params.activityId}`;
     return (
       <div>
@@ -263,7 +266,11 @@ export default class ActivityForm extends Component {
             onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
           </Button>
           <Button
-            key="preview" bsClass={styles.action_button} disabled={this.state.isNewActivity} block >
+            key="preview"
+            bsClass={styles.action_button}
+            disabled={disablePreview}
+            block
+          >
             <Link to={previewUrl} title={translate('Preview')} >
               {translate('Preview')}
             </Link>
