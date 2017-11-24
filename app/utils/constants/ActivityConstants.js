@@ -164,13 +164,13 @@ export const DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT = 'implementation_locati
 export const DEPENDENCY_IMPLEMENTATION_LOCATION_VALID = 'implementation_location_valid';
 export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
 export const DEPENDENCY_ON_BUDGET = 'on_budget';
-
+export const DEPENDENCY_TRANSACTION_PRESENT = 'transaction_present';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
   [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification', fmPath: FMC.ACTIVITY_IDENTIFICATION },
     { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs', sectionPath: ACTIVITY_INTERNAL_IDS },
-    { key: 'APPlanning', hash: '#APPlanning', value: 'Planning', fmPath: FMC.ACTIVITY_PROJECT_ID_AND_PLANNING },
+    { key: 'APPlanning', hash: '#APPlanning', value: 'Planning', fmPath: FMC.ACTIVITY_PLANNING },
     { key: 'APLocation', hash: '#APLocation', value: 'Location', sectionPath: LOCATIONS },
     { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan', sectionPath: NATIONAL_PLAN_OBJECTIVE },
     { key: 'APProgram', hash: '#APProgram', value: 'Program', fmPath: FMC.ACTIVITY_PROGRAM },

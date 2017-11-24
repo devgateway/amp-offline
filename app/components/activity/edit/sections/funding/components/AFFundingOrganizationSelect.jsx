@@ -2,6 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import Logger from '../../../../../../modules/util/LoggerManager';
 import AFField from '../../../components/AFField';
+import { DONOR_ORGANIZATIONS_PATH } from '../../../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AP Funding Organization select');
 
@@ -30,7 +31,7 @@ export default class AFFundingOrganizationSelect extends Component {
     return (<div>
       <div>
         <AFField
-          parent={this.props.activity} fieldPath={'donor_organization~organization'}
+          parent={this.props.activity} fieldPath={DONOR_ORGANIZATIONS_PATH}
           extraParams={{ 'no-table': true }} onAfterUpdate={this._handleDonorSelect.bind(this)} />
       </div>
     </div>);

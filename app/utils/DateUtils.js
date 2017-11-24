@@ -6,6 +6,8 @@ import Logger from '../modules/util/LoggerManager';
 import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../modules/connectivity/AmpApiConstants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
+import * as ErrorNotificationHelper from '../modules/helpers/ErrorNotificationHelper';
+import { NOTIFICATION_ORIGIN_DATES } from './constants/ErrorConstants';
 
 const logger = new Logger('Date utils');
 
@@ -28,16 +30,16 @@ export default class DateUtils {
   }
 
   static formatDate(date, format) {
-    /* NOTE: Depending on the country where the app is ran the timezone part of the string (ie: +0000) can cause the
-   * formatted date to be +1/-1 days, so we remove it from the string with a regex. */
-    if (date !== undefined && date !== null) {
-      date = date.replace(/[+|-][0-9]{4}/g, '');
-      const formattedDate = Moment(date).isValid() ? Moment(date).format(format) : date;
-      return formattedDate;
-    } else {
-      // otherwise undefined date is converted to today.
-      return '';
+    if (date) {
+      const dateAsMoment = Moment(date);
+      if (dateAsMoment.isValid()) {
+        return dateAsMoment.format(format);
+      }
+      const message = `Invalid date provided: ${date}`;
+      logger.error(message);
+      throw ErrorNotificationHelper.createNotification({ message, origin: NOTIFICATION_ORIGIN_DATES });
     }
+    return '';
   }
 
   static getGSDateFormat() {
@@ -91,6 +93,8 @@ export default class DateUtils {
    * @returns {string} date formatted according to API format
    */
   static getISODateForAPI(date = new Date()) {
+    // DO NOT remove the timezone, since AMP also stores it.
+    // We'll revise, if needed, once we implement the timing synchronization between AMP and AMP Offline client.
     return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);
   }
 }

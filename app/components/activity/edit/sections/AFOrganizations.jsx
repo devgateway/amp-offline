@@ -6,6 +6,7 @@ import { ORGANIZATIONS } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
+import { ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION } from '../../../../utils/constants/FeatureManagerConstants';
 
 const logger = new Logger('AF organizations');
 
@@ -29,7 +30,10 @@ class AFOrganizations extends Component {
       <Grid className={afStyles.full_width}>
         <Row>
           <Col md={12} lg={12}>
-            <AFField parent={this.props.activity} fieldPath={AC.DONOR_ORGANIZATION} />
+            <AFField
+              parent={this.props.activity}
+              fieldPath={AC.DONOR_ORGANIZATION}
+              fmPath={ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
           </Col>
         </Row>
         <Row>
