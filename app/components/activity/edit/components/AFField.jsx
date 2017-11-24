@@ -20,6 +20,7 @@ import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
 import AFCheckbox from './AFCheckbox';
+import FeatureManager from '../../../../modules/util/FeatureManager';
 
 const logger = new Logger('AF field');
 
@@ -55,7 +56,8 @@ class AFField extends Component {
     onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     extraParams: PropTypes.object,
     defaultValueAsEmptyObject: PropTypes.bool,
-    forceRequired: PropTypes.bool
+    forceRequired: PropTypes.bool,
+    fmPath: PropTypes.string
   };
 
   static defaultProps = {
@@ -74,6 +76,12 @@ class AFField extends Component {
     const fieldPathParts = this.props.fieldPath.split('~');
     this.fieldName = fieldPathParts[fieldPathParts.length - 1];
     this.fieldDef = this.context.activityFieldsManager.getFieldDef(this.props.fieldPath);
+
+    // Check for fields that have to be enabled on FM too.
+    if (this.fieldDef && this.props.fmPath) {
+      this.fieldDef = FeatureManager.isFMSettingEnabled(this.props.fmPath) ? this.fieldDef : undefined;
+    }
+
     this.fieldExists = !!this.fieldDef;
     this.requiredND = this.fieldExists ? this.fieldDef.required === 'ND' : undefined;
     this.alwaysRequired = this.fieldExists ? this.fieldDef.required === 'Y' : undefined;
