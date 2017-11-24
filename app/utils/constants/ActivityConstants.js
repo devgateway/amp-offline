@@ -164,7 +164,7 @@ export const DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT = 'implementation_locati
 export const DEPENDENCY_IMPLEMENTATION_LOCATION_VALID = 'implementation_location_valid';
 export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
 export const DEPENDENCY_ON_BUDGET = 'on_budget';
-
+export const DEPENDENCY_TRANSACTION_PRESENT = 'transaction_present';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
