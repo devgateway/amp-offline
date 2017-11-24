@@ -90,7 +90,7 @@ export default class AFFundingContainer extends Component {
           </Row>
         </Grid>
       </FormGroup>
-      <AFFundingClassificationPanel funding={this.state.funding} />
+      <AFFundingClassificationPanel funding={this.state.funding} fundingDetails={this.state.stateFundingDetail} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.COMMITMENTS}
