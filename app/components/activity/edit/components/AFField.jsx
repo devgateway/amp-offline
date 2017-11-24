@@ -85,16 +85,17 @@ class AFField extends Component {
     this._processValidation(this.props.parent.errors);
   }
 
-  componentWillReceiveProps(nexProps) {
+  componentWillReceiveProps(nextProps) {
     if (!this.fieldExists) {
       return;
     }
     if (this.context.isSaveAndSubmit) {
       this.onChange(this.state.value, false);
-    } else if (nexProps.validationResult) {
+    } else if (nextProps.validationResult) {
       this._processValidation(this.props.parent.errors);
-    } else if (nexProps.parent[this.fieldName] !== this.state.value) {
-      this.onChange(nexProps.parent[this.fieldName], false);
+    } else if (nextProps.parent[this.fieldName] !== this.state.value ||
+      nextProps.forceRequired !== this.props.forceRequired) {
+      this.onChange(nextProps.parent[this.fieldName], false);
     }
   }
 
@@ -276,7 +277,8 @@ class AFField extends Component {
     if (this.fieldExists === false) {
       return null;
     }
-    const showValidationError = this.componentType !== Types.LIST_SELECTOR;
+    const showValidationError = !(this.componentType === Types.LIST_SELECTOR ||
+      (this.componentType === Types.LABEL && !this.props.showLabel));
     return (
       <FormGroup
         controlId={this.props.fieldPath} validationState={showValidationError ? this._getValidationState() : null}
