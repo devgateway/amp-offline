@@ -4,7 +4,13 @@ import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import Loading from '../../common/Loading';
 import * as styles from './ActivityForm.css';
-import { IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH, FIELDS_PER_SECTIONS } from './sections/AFSectionConstants';
+import {
+  IDENTIFICATION,
+  SECTIONS,
+  SECTIONS_FM_PATH,
+  FIELDS_PER_SECTIONS,
+  FUNDING
+} from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
 import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
@@ -162,7 +168,7 @@ export default class ActivityForm extends Component {
   }
 
   _selectSection(sectionName) {
-    const sectionsWithErrors = this.state.sectionsWithErrors.filter(sWithErrors => sWithErrors !== sectionName);
+    const sectionsWithErrors = this.state.sectionsWithErrors; /*.filter(sWithErrors => sWithErrors !== sectionName)*/;
     this.setState({
       currentSection: sectionName,
       sectionsWithErrors
@@ -204,6 +210,7 @@ export default class ActivityForm extends Component {
     if (errors.length) {
       validationError = this._handleSaveErrors(errors);
     }
+    this.state.validationErrors = errors; // TODO: agregar info mas especifica para los fundings.
     this.props.reportActivityValidation(errors);
     this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
@@ -301,7 +308,7 @@ export default class ActivityForm extends Component {
                   {projectTitle && `(${projectTitle})`}
                 </div>
                 <div ref={(mainContent => { this.mainContent = mainContent; })}>
-                  {AFSectionLoader(this.state.currentSection)}
+                  {AFSectionLoader(this.state.currentSection, this.state.validationErrors)}
                 </div>
               </div>
             </Col>

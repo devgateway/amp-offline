@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable react/no-unused-prop-types */
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -27,7 +28,8 @@ export default class AFFundingDonorSection extends Component {
     fundings: PropTypes.array.isRequired,
     organization: PropTypes.object.isRequired,
     role: PropTypes.object.isRequired,
-    removeFundingItem: PropTypes.func.isRequired
+    removeFundingItem: PropTypes.func.isRequired,
+    errors: PropTypes.array
   };
 
   constructor(props, context) {
@@ -41,6 +43,16 @@ export default class AFFundingDonorSection extends Component {
       fundingList: this.props.fundings
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // TODO: ver para "adentro" si este tab es uno q falla.
+    if (nextProps.errors && nextProps.errors.length > 0) {
+      if (this.state.openFundingDonorSection.filter(s => !s).length > 0) {
+        const tabsState = this.state.openFundingDonorSection.map(() => true);
+        this.setState({ openFundingDonorSection: tabsState });
+      }
+    }
   }
 
   _addNewFundingItem() {

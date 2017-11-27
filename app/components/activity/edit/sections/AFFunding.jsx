@@ -27,6 +27,10 @@ class AFFunding extends Component {
     activity: PropTypes.object.isRequired
   };
 
+  static propTypes = {
+    errors: PropTypes.array
+  };
+
   constructor(props) {
     super(props);
     logger.debug('constructor');
@@ -119,6 +123,9 @@ class AFFunding extends Component {
               .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
+          const fundingErrors = this.props.errors
+            ? this.props.errors.filter(e => (e.path && e.path.startsWith(AC.FUNDINGS)))
+            : [];
           return (<Tab
             eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
             title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
@@ -127,6 +134,7 @@ class AFFunding extends Component {
               organization={funding[AC.FUNDING_DONOR_ORG_ID]}
               role={sourceRole}
               removeFundingItem={this.removeFundingItem}
+              errors={fundingErrors}
             />
           </Tab>);
         });

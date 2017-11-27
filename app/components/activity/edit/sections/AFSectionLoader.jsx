@@ -14,7 +14,7 @@ import AFFunding from './AFFunding';
  * @param sectionName
  * @return {string|AFSection}
  */
-const loadSection = (sectionName) => {
+const loadSection = (sectionName, sectionsWithErrors) => {
   switch (sectionName) {
     case SC.IDENTIFICATION:
       return <AFIdentification />;
@@ -31,7 +31,7 @@ const loadSection = (sectionName) => {
     case SC.ORGANIZATIONS:
       return <AFOrganizations />;
     case SC.FUNDING:
-      return <AFFunding />;
+      return <AFFunding errors={sectionsWithErrors} />;
     /* case SC.COMPONENTS:
       return <AFComponents />; */
     default:
