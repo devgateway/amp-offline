@@ -1,5 +1,7 @@
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
+
+const PDFWindow = require('electron-pdf-window');
 
 let mainWindow = null;
 
@@ -19,7 +21,6 @@ if (process.env.NODE_ENV === 'development') {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
-
 
 const installExtensions = async () => {
   // if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
@@ -57,6 +58,10 @@ app.on('ready', async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    // Close help window if needed.
+    if (global.HELP_PDF_WINDOW) {
+      global.HELP_PDF_WINDOW.close();
+    }
   });
 
   if (process.env.NODE_ENV === 'development') {
@@ -76,4 +81,31 @@ app.on('ready', async () => {
   ElectronUpdater.getElectronUpdater();
 
   mainWindow.setMenu(null);
+});
+
+// Listen to message from renderer process.
+ipcMain.on('createPDFWindow', (event, url) => {
+  if (!global.HELP_PDF_WINDOW) {
+    // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
+    let pdfWindow = new PDFWindow({
+      show: true,
+      webPreferences: {
+        webSecurity: false
+      }
+    });
+    pdfWindow.setMenu(null);
+
+    pdfWindow.on('closed', () => {
+      pdfWindow = null;
+      global.HELP_PDF_WINDOW = null;
+      // Use IPC to communicate with renderer process.
+      if (mainWindow) {
+        mainWindow.webContents.send('closeHelpWindow');
+      }
+    });
+
+    global.HELP_PDF_WINDOW = pdfWindow;
+  }
+  global.HELP_PDF_WINDOW.loadURL(url);
+  return global.HELP_PDF_WINDOW;
 });

@@ -40,7 +40,7 @@ const WorkspaceHelper = {
    */
   findAllByUserId(userId) {
     logger.log('findAllByUserId');
-    return TeamMemberHelper.findWorkspaceIdsByUserId(userId).then((workspacesIds) => {
+    return TeamMemberHelper.findWorkspaceIdsByUserId(userId, true).then((workspacesIds) => {
       const filter = { id: { $in: workspacesIds } };
       return this.findAll(filter);
     });

@@ -97,7 +97,7 @@ export default class SyncUpDependency {
         if (acceptableStates.includes(state)) {
           depRules.delete(type);
           // if this is the last rule that is satisfied, then transition the dependent unit as pending, no dependency
-          if (Object.keys(depRules).length === 0) {
+          if (depRules.size === 0) {
             this.setState(otherType, SS.PENDING);
           }
         } else {

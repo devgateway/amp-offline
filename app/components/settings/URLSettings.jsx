@@ -13,6 +13,7 @@ import AmpTooltip from '../common/AmpTooltip';
 import * as URLUtils from '../../utils/URLUtils';
 import { testUrlByKeepingCurrentSetup, testUrlResultProcessed } from '../../actions/SetupAction';
 import URLInsertModal from './URLInsertModal';
+import settingsStyle from './Settings.css';
 
 const logger = new Logger('List Setting');
 
@@ -161,6 +162,9 @@ class URLSettings extends Component {
       afterSaveCell: this.afterSaveCell.bind(this)
     };
     return (<div>
+      <p className={settingsStyle.hint}>
+        {translate('settingsUrlHint')}
+      </p>
       <BootstrapTable
         data={dataSource} striped hover
         containerClass={tabStyle.containerTable} tableHeaderClass={tabStyle.header} thClassName={tabStyle.thClassName}
