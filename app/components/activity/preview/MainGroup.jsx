@@ -35,7 +35,7 @@ export default class MainGroup extends Component {
       <APInternalIds
         sectionPath={AC.ACTIVITY_INTERNAL_IDS} />
       <APPlanning
-        fmPath={FMC.ACTIVITY_PROJECT_ID_AND_PLANNING}
+        fmPath={FMC.ACTIVITY_PLANNING}
         inline={false}
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
       <APLocation

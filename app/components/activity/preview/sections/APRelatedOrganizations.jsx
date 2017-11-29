@@ -13,6 +13,7 @@ import {
 } from '../../../../utils/constants/ActivityConstants';
 import APPercentageList from '../components/APPercentageList';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import { ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION } from '../../../../utils/constants/FeatureManagerConstants';
 
 const DO = APPercentageList(DONOR_ORGANIZATION, ORGANIZATION, PERCENTAGE, 'Donor Organization');
 const RO = APPercentageList(RESPONSIBLE_ORGANIZATION, ORGANIZATION, PERCENTAGE, 'Responsible Organization');
@@ -32,7 +33,7 @@ class APRelatedOrganizations extends Component {
 
   render() {
     return (<div>
-      <DO key="do-org-list" {...this.props} />
+      <DO key="do-org-list" {...this.props} fmPath={ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
       <RO key="ro-org-list" {...this.props} />
       <CA key="ca-org-list" {...this.props} />
       <BE key="be-org-list" {...this.props} />

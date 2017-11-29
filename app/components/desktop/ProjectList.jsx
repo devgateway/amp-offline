@@ -103,6 +103,7 @@ export default class ProjectList extends Component {
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#style
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
+    paginationOptions.noDataText = translate('noDataText');
     const pagination = paginationOptions.usePagination;
     return (
       <div className={style.container}>

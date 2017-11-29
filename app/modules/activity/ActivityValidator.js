@@ -10,7 +10,9 @@ import {
   DEPENDENCY_IMPLEMENTATION_LOCATION_VALID,
   DEPENDENCY_ON_BUDGET,
   DEPENDENCY_PROJECT_CODE_ON_BUDGET,
+  DEPENDENCY_TRANSACTION_PRESENT,
   EXTRA_INFO,
+  FUNDING_DETAILS,
   HIERARCHICAL_VALUE,
   IMPLEMENTATION_LEVEL,
   IMPLEMENTATION_LEVELS_EXTRA_INFO,
@@ -404,6 +406,9 @@ export default class ActivityValidator {
         if (dependencies.includes(DEPENDENCY_PROJECT_CODE_ON_BUDGET)) {
           this.processValidationResult(obj, errors, fieldPath, this._validateOnBudgetRequiredOtherwiseAllowed(value));
         }
+        if (dependencies.includes(DEPENDENCY_TRANSACTION_PRESENT)) {
+          this.processValidationResult(obj, errors, fieldPath, this._validateAsRequiredIfHasTransactions(value, obj));
+        }
       });
     }
   }
@@ -479,5 +484,12 @@ export default class ActivityValidator {
     const isValid = !!((isOnBudget && value) || (!isOnBudget && !value));
     const errLabel = requiredAndNotConfigured ? 'requiredField' : 'notConfigurable';
     return isValid || errLabel;
+  }
+
+  _validateAsRequiredIfHasTransactions(value, fundingItem) {
+    const fundingDetails = fundingItem && fundingItem[FUNDING_DETAILS];
+    const hasFundings = fundingDetails && fundingDetails.length;
+    const isValid = !hasFundings || !!value;
+    return isValid || translate('requiredField');
   }
 }
