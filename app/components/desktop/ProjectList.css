@@ -88,3 +88,7 @@
   position: relative;
   top: -30px;
 }
+
+.sizePerPageDropDownWrapper {
+  margin-left: 10px;
+}
