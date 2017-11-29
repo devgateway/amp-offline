@@ -45,16 +45,17 @@ export default class AFFundingDonorSection extends Component {
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
+  /*componentWillReceiveProps(nextProps) {
     // TODO: ver para "adentro" si este tab es uno q falla.
     if (nextProps.errors && nextProps.errors.length > 0) {
+      debugger
       if (this.state.openFundingDonorSection.filter(s => !s).length > 0) {
         const tabsState = this.state.openFundingDonorSection.map(() => true);
         this.setState({ openFundingDonorSection: tabsState });
-        debugger;
+        const tab = this._filterFundings(nextProps.fundings);
       }
     }
-  }
+  }*/
 
   _addNewFundingItem() {
     logger.log('_addNewFundingItem');
@@ -80,7 +81,7 @@ export default class AFFundingDonorSection extends Component {
 
   _generateComplexHeader(i, funding) {
     // TODO: AFFields objects are not being refreshed (use a bind function?).
-    return (<div>
+    return (<div className={(funding.errors && funding.errors.length > 0) ? styles.error : ''}>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
         <AFField

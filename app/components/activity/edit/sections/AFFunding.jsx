@@ -48,23 +48,6 @@ class AFFunding extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    // TODO: ver para "adentro" si este tab es uno q falla.
-    /*if (nextProps.errors && nextProps.errors.length > 0) {
-      debugger;
-      // Recorrer los nextProps.errors y en su "parent" buscar _temporal_id, amp_funding_id, etc ç
-      // dependiendo del "path", con eso resaltar el tab del funding org,
-      // lo de adentro se resalta en los subcomponentes.
-      nextProps.errors.forEach(e => {
-        // Simple case, we have the amp_funding_id.
-        if (e.parent[AC.AMP_FUNDING_ID]) {
-          const funding = this.state.fundingList.find(f => f.amp_funding_id === e.parent[AC.AMP_FUNDING_ID]);
-          funding.highlightValidationError = true;
-        }
-      });
-    }*/
-  }
-
   _getAcronym(sourceRole) {
     if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
       switch (sourceRole.value) {
@@ -120,8 +103,9 @@ class AFFunding extends Component {
       const groups = [];
       this.state.fundingList.forEach(f => {
         // If source_role is disabled i[AC.SOURCE_ROLE] will be undefined so we ignore it.
-        if (!groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
-            && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)))) {
+        const tab = groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
+          && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)));
+        if (!tab) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
           groups.push({
             [AC.FUNDING_DONOR_ORG_ID]: f[AC.FUNDING_DONOR_ORG_ID],
@@ -129,6 +113,10 @@ class AFFunding extends Component {
             acronym,
             errors: f.errors
           });
+        } else {
+          // We are grouping funding items into the same "Donor & Role" tab but one funding item can have
+          // validation errors while the other doesnt so we have to keep that.
+          tab.errors = tab.errors || f.errors;
         }
         return groups;
       });
@@ -143,7 +131,6 @@ class AFFunding extends Component {
               .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
-          debugger
           return (<Tab
             eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
             title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
