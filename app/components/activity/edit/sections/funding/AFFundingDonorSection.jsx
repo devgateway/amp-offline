@@ -51,7 +51,7 @@ export default class AFFundingDonorSection extends Component {
       if (this.state.openFundingDonorSection.filter(s => !s).length > 0) {
         const tabsState = this.state.openFundingDonorSection.map(() => true);
         this.setState({ openFundingDonorSection: tabsState });
-        debugger
+        debugger;
       }
     }
   }

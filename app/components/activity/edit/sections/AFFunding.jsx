@@ -13,6 +13,7 @@ import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
 import Utils from '../../../../utils/Utils';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import styles from './funding/AFFunding.css';
 
 const logger = new Logger('AF funding');
 
@@ -45,6 +46,23 @@ class AFFunding extends Component {
     this.state = {
       fundingList: this.context.activity.fundings || []
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // TODO: ver para "adentro" si este tab es uno q falla.
+    /*if (nextProps.errors && nextProps.errors.length > 0) {
+      debugger;
+      // Recorrer los nextProps.errors y en su "parent" buscar _temporal_id, amp_funding_id, etc ç
+      // dependiendo del "path", con eso resaltar el tab del funding org,
+      // lo de adentro se resalta en los subcomponentes.
+      nextProps.errors.forEach(e => {
+        // Simple case, we have the amp_funding_id.
+        if (e.parent[AC.AMP_FUNDING_ID]) {
+          const funding = this.state.fundingList.find(f => f.amp_funding_id === e.parent[AC.AMP_FUNDING_ID]);
+          funding.highlightValidationError = true;
+        }
+      });
+    }*/
   }
 
   _getAcronym(sourceRole) {
@@ -87,6 +105,7 @@ class AFFunding extends Component {
       fundingItem[AC.FUNDING_DETAILS] = [];
       fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
       fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
+      fundingItem.highlightValidationError = false;
       const newFundingList = this.state.fundingList;
       newFundingList.push(fundingItem);
       this.setState({ fundingList: newFundingList });
@@ -107,7 +126,8 @@ class AFFunding extends Component {
           groups.push({
             [AC.FUNDING_DONOR_ORG_ID]: f[AC.FUNDING_DONOR_ORG_ID],
             [AC.SOURCE_ROLE]: f[AC.SOURCE_ROLE],
-            acronym
+            acronym,
+            errors: f.errors
           });
         }
         return groups;
@@ -123,18 +143,17 @@ class AFFunding extends Component {
               .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
-          const fundingErrors = this.props.errors
-            ? this.props.errors.filter(e => (e.path && e.path.startsWith(AC.FUNDINGS)))
-            : [];
+          debugger
           return (<Tab
             eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
-            title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}>
+            title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
+            tabClassName={(funding.errors && funding.errors.length > 0) ? styles.error : ''}>
             <AFFundingDonorSection
               fundings={this.state.fundingList}
               organization={funding[AC.FUNDING_DONOR_ORG_ID]}
               role={sourceRole}
               removeFundingItem={this.removeFundingItem}
-              errors={fundingErrors}
+              errors={this.props.errors}
             />
           </Tab>);
         });
