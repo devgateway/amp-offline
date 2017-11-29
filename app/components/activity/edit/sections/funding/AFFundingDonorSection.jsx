@@ -38,7 +38,10 @@ export default class AFFundingDonorSection extends Component {
     logger.log('constructor');
     // We manage the open/close state of these panels or they will have problems when nested panels.
     const openFundingsState = [];
-    this._filterFundings(this.props.fundings).map(() => (openFundingsState.push(false)));
+    this._filterFundings(this.props.fundings).map((f) => (openFundingsState.push({
+      open: false,
+      id: f[AC.GROUP_VERSIONED_FUNDING]
+    })));
     this.state = {
       openFundingDonorSection: openFundingsState,
       fundingList: this.props.fundings
@@ -46,17 +49,16 @@ export default class AFFundingDonorSection extends Component {
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
   }
 
-  /*componentWillReceiveProps(nextProps) {
-    // TODO: ver para "adentro" si este tab es uno q falla.
-    if (nextProps.errors && nextProps.errors.length > 0) {
-      debugger
-      if (this.state.openFundingDonorSection.filter(s => !s).length > 0) {
-        const tabsState = this.state.openFundingDonorSection.map(() => true);
-        this.setState({ openFundingDonorSection: tabsState });
-        const tab = this._filterFundings(nextProps.fundings);
+  componentWillReceiveProps(nextProps) {
+    // Expand the section that has errors.
+    const openFundingDonorSectionState = this.state.openFundingDonorSection;
+    nextProps.fundings.forEach(f => {
+      if (f.errors && f.errors.length > 0) {
+        openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]).open = true;
       }
-    }
-  }*/
+    });
+    this.setState({ openFundingDonorSection: openFundingDonorSectionState });
+  }
 
   _addNewFundingItem() {
     logger.log('_addNewFundingItem');
@@ -70,7 +72,9 @@ export default class AFFundingDonorSection extends Component {
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
     const newFundingList = this.state.fundingList;
     newFundingList.push(fundingItem);
-    this.setState({ fundingList: newFundingList });
+    const newOpenFundingDonorSection = this.state.openFundingDonorSection;
+    newOpenFundingDonorSection.push({ open: false, id: fundingItem[AC.GROUP_VERSIONED_FUNDING] });
+    this.setState({ fundingList: newFundingList, openFundingDonorSection: newOpenFundingDonorSection });
   }
 
   _filterFundings(fundings) {
@@ -115,10 +119,10 @@ export default class AFFundingDonorSection extends Component {
       {this._filterFundings(this.state.fundingList).map((g, i) => (
         <Panel
           header={this._generateComplexHeader(i, g)}
-          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible expanded={this.state.openFundingDonorSection[i]}
+          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible expanded={this.state.openFundingDonorSection[i].open}
           onSelect={() => {
             const newOpenState = this.state.openFundingDonorSection;
-            newOpenState[i] = !newOpenState[i];
+            newOpenState[i].open = !newOpenState[i].open;
             this.setState({ openFundingDonorSection: newOpenState });
           }}>
           <AFFundingContainer funding={g} />
