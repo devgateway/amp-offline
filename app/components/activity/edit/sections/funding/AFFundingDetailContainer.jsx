@@ -38,11 +38,18 @@ export default class AFFundingDetailContainer extends Component {
 
   componentWillReceiveProps(nextProps) {
     // Expand the section that has errors.
-    const fundingDetails = nextProps.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === nextProps.type));
-    const hasErrors = (fundingDetails && fundingDetails.filter(fd => (fd.errors && fd.errors.length > 0)).length > 0);
-    if (hasErrors) {
+    if (this.hasErrors(nextProps.fundingDetail, nextProps.type)) {
       this.setState({ openFDC: true });
     }
+  }
+
+  hasErrors(fundingDetail, type) {
+    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === type));
+    const hasErrors = (fundingDetails && fundingDetails.filter(fd => (fd.errors && fd.errors.length > 0)).length > 0);
+    if (hasErrors) {
+      return true;
+    }
+    return false;
   }
 
   _addTransactionItem() {
@@ -73,7 +80,7 @@ export default class AFFundingDetailContainer extends Component {
         default:
           break;
       }
-      const hasErrors = (fundingDetails && fundingDetails.filter(fd => (fd.errors && fd.errors.length > 0)).length > 0);
+      const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
       return (<div>
         <Panel
           header={header} collapsible expanded={this.state.openFDC}

@@ -166,6 +166,7 @@ class AFFunding extends Component {
 
   render() {
     const overviewTabHasErrors = (this.context.activity[AC.PPC_AMOUNT]
+      && this.context.activity[AC.PPC_AMOUNT][0]
       && this.context.activity[AC.PPC_AMOUNT][0].errors
       && this.context.activity[AC.PPC_AMOUNT][0].errors.length > 0);
     return (<div>
