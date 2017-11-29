@@ -165,9 +165,14 @@ class AFFunding extends Component {
   }
 
   render() {
+    const overviewTabHasErrors = (this.context.activity[AC.PPC_AMOUNT]
+      && this.context.activity[AC.PPC_AMOUNT][0].errors
+      && this.context.activity[AC.PPC_AMOUNT][0].errors.length > 0);
     return (<div>
       <Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs">
-        <Tab eventKey={0} title="Overview" key={0}>{this.generateOverviewTabContent()}</Tab>
+        <Tab
+          eventKey={0} title="Overview" key={0}
+          tabClassName={overviewTabHasErrors ? styles.error : ''}>{this.generateOverviewTabContent()}</Tab>
         {this.addFundingTabs()}
       </Tabs>
       <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
