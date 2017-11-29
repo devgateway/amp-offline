@@ -38,7 +38,9 @@ export default class AFFundingDetailContainer extends Component {
 
   componentWillReceiveProps(nextProps) {
     // Expand the section that has errors.
-    if (nextProps.fundingDetail && nextProps.fundingDetail.filter(fd => fd.errors && fd.errors.length > 0).length > 0) {
+    const fundingDetails = nextProps.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === nextProps.type));
+    const hasErrors = (fundingDetails && fundingDetails.filter(fd => (fd.errors && fd.errors.length > 0)).length > 0);
+    if (hasErrors) {
       this.setState({ openFDC: true });
     }
   }
