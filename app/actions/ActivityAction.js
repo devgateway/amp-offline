@@ -18,7 +18,11 @@ import {
 } from '../utils/constants/ActivityConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
-import { NOTIFICATION_ORIGIN_ACTIVITY, NOTIFICATION_SEVERITY_INFO } from '../utils/constants/ErrorConstants';
+import {
+  NOTIFICATION_ORIGIN_ACTIVITY,
+  NOTIFICATION_SEVERITY_ERROR,
+  NOTIFICATION_SEVERITY_INFO
+} from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
@@ -28,6 +32,7 @@ import * as Utils from '../utils/Utils';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
 import DateUtils from '../utils/DateUtils';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -42,6 +47,8 @@ export const ACTIVITY_UPDATE_GLOBAL_STATE = 'ACTIVITY_UPDATE_GLOBAL_STATE';
 export const ACTIVITY_LOADED_FOR_AF = 'ACTIVITY_LOADED_FOR_AF';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
+
+const logger = new LoggerManager('ActivityAction.js');
 
 export function loadActivityForActivityPreview(activityId) {
   const paths = [ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, CREATED_BY, TEAM, MODIFIED_BY];
@@ -187,7 +194,16 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
         return savedActivity;
       })
     ));
-  });
+  }).catch(error => dispatch(unableToSave(error)));
+}
+
+function unableToSave(error) {
+  logger.error(error);
+  return addMessage(new Notification({
+    message: translate('activitySavedError'),
+    origin: NOTIFICATION_ORIGIN_ACTIVITY,
+    severity: NOTIFICATION_SEVERITY_ERROR
+  }));
 }
 
 export function updateActivityGlobalState(setting, value) {
