@@ -36,6 +36,13 @@ export default class AFFundingDetailContainer extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    // Expand the section that has errors.
+    if (nextProps.fundingDetail && nextProps.fundingDetail.filter(fd => fd.errors && fd.errors.length > 0).length > 0) {
+      this.setState({ openFDC: true });
+    }
+  }
+
   _addTransactionItem() {
     this.props.handleNewTransaction(this.props.type);
   }
