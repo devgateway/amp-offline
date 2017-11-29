@@ -165,7 +165,7 @@ class SyncUp extends Component {
                     <tr key={log.id}>
                       <td>{log.id}</td>
                       <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
-                      <td>{log.status}</td>
+                      <td>{translate(`SYNC_STATUS_${log.status}`)}</td>
                     </tr>
                   ))}
                 </tbody>

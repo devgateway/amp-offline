@@ -51,7 +51,7 @@ class SyncUpSummary extends PureComponent {
               {translate('Status')}
             </div>
             <div className="col-md-8">
-              {translate(status)}
+              {translate(`SYNC_STATUS_${status}`)}
             </div>
           </div>
           <div className="row">
