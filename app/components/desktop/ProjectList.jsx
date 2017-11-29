@@ -2,7 +2,7 @@
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/no-string-refs: 0 */
 import React, { Component, PropTypes } from 'react';
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { BootstrapTable, TableHeaderColumn, SizePerPageDropDown } from 'react-bootstrap-table';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import classNames from 'classnames';
 import style from './ProjectList.css';
@@ -93,6 +93,38 @@ export default class ProjectList extends Component {
     return ProjectList.textFormatter(number, row, extraData);
   }
 
+  static renderSizePerPageDropdown(props) {
+    const { sizePerPageList } = props;
+    const sizePerPageOptions = sizePerPageList.map((_sizePerPage) => {
+      const pageText = _sizePerPage.text || _sizePerPage;
+      const pageNum = _sizePerPage.value || _sizePerPage;
+      return (
+        <li key={pageText} role="presentation" className="dropdown-item">
+          <a
+            href={`#${pageNum}`}
+            role="menuitem"
+            tabIndex="-1"
+            data-page={pageNum}
+            onMouseDown={e => {
+              e.preventDefault();
+              props.changeSizePerPage(pageNum);
+            }}
+          >{ pageText }</a>
+        </li>
+      );
+    });
+
+    return (
+      <span className={style.sizePerPageDropDownWrapper}>
+        <SizePerPageDropDown
+          onClick={props.toggleDropDown}
+          options={sizePerPageOptions}
+          {...props}
+        />
+      </span>
+    );
+  }
+
   handlerClickCleanFiltered() {
     this.refs[AC.AMP_ID].cleanFiltered();
     this.refs[AC.PROJECT_TITLE].cleanFiltered();
@@ -103,6 +135,7 @@ export default class ProjectList extends Component {
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#style
     // FFR: https://allenfang.github.io/react-bootstrap-table/example.html#column-format
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
+    paginationOptions.sizePerPageDropDown = this.constructor.renderSizePerPageDropdown;
     paginationOptions.noDataText = translate('noDataText');
     const pagination = paginationOptions.usePagination;
     return (
