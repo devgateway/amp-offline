@@ -55,4 +55,4 @@ class APIssues extends Component {
   }
 }
 
-export default Section(APIssues, 'Issues');
+export default Section(APIssues, 'Issues', true, 'APIssues');
