@@ -8,6 +8,7 @@ import ActivityFieldsManager from '../../../../../modules/activity/ActivityField
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
 import * as Utils from '../../../../../utils/Utils';
+import fundingStyles from './AFFundingContainer.css';
 
 const logger = new Logger('AF funding detail container');
 
@@ -63,12 +64,13 @@ export default class AFFundingDetailContainer extends Component {
         default:
           break;
       }
+      const hasErrors = (fundingDetails && fundingDetails.filter(fd => (fd.errors && fd.errors.length > 0)).length > 0);
       return (<div>
         <Panel
           header={header} collapsible expanded={this.state.openFDC}
           onSelect={() => {
             this.setState({ openFDC: !this.state.openFDC });
-          }}>
+          }} className={hasErrors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
             if (!fd[AC.TEMPORAL_ID]) {

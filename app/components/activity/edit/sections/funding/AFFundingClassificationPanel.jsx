@@ -8,6 +8,7 @@ import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import { INPUT_TYPE } from '../../components/AFComponentTypes';
+import fundingStyles from './AFFundingContainer.css';
 
 const logger = new Logger('AF Funding classication panel');
 
@@ -38,12 +39,13 @@ export default class AFFundingClassificationPanel extends Component {
     // this field is not yet implemented on possible-values (and is not used in Chad).
     const { fundingDetails } = this.props;
     const hasFundingDetails = fundingDetails && fundingDetails.length > 0;
+    const hasErrors = (this.props.funding.errors && this.props.funding.errors.length > 0);
     return (<div className={afStyles.full_width}>
       <Panel
         header={translate('Funding Classification')} collapsible expanded={this.state.openFCP}
         onSelect={() => {
           this.setState({ openFCP: !this.state.openFCP });
-        }}>
+        }} className={hasErrors ? fundingStyles.error : ''}>
         <FormGroup>
           <Grid className={afStyles.full_width}>
             <Row>
