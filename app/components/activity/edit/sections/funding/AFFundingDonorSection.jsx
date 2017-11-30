@@ -38,13 +38,14 @@ export default class AFFundingDonorSection extends Component {
     logger.log('constructor');
     // We manage the open/close state of these panels or they will have problems when nested panels.
     const openFundingsState = [];
-    this._filterFundings(this.props.fundings).map((f) => (openFundingsState.push({
+    const filteredFundings = this._filterFundings(this.props.fundings);
+    filteredFundings.map((f) => (openFundingsState.push({
       open: false,
       id: f[AC.GROUP_VERSIONED_FUNDING]
     })));
     this.state = {
       openFundingDonorSection: openFundingsState,
-      fundingList: this.props.fundings
+      fundingList: filteredFundings
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
   }
@@ -54,7 +55,10 @@ export default class AFFundingDonorSection extends Component {
     const openFundingDonorSectionState = this.state.openFundingDonorSection;
     nextProps.fundings.forEach(f => {
       if (this.props.hasErrors(f) || this.props.hasErrors(f[AC.FUNDING_DETAILS])) {
-        openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]).open = true;
+        const section = openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]);
+        if (section) {
+          section.open = true;
+        }
       }
     });
     this.setState({ openFundingDonorSection: openFundingDonorSectionState });
