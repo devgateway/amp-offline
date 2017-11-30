@@ -4,12 +4,7 @@ import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import Loading from '../../common/Loading';
 import * as styles from './ActivityForm.css';
-import {
-  IDENTIFICATION,
-  SECTIONS,
-  SECTIONS_FM_PATH,
-  FIELDS_PER_SECTIONS
-} from './sections/AFSectionConstants';
+import { IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH, FIELDS_PER_SECTIONS } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
 import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
