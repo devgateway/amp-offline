@@ -97,16 +97,19 @@ export default class AFFundingContainer extends Component {
         fundingDetail={this.state.stateFundingDetail}
         type={VC.COMMITMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
+        hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.DISBURSEMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
+        hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.EXPENDITURES}
         removeFundingDetailItem={this._removeFundingDetailItem}
+        hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem} />
     </div>);
   }

@@ -25,7 +25,8 @@ export default class AFFundingDetailContainer extends Component {
     fundingDetail: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
     handleNewTransaction: PropTypes.func.isRequired,
-    removeFundingDetailItem: PropTypes.func.isRequired
+    removeFundingDetailItem: PropTypes.func.isRequired,
+    hasErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -45,8 +46,7 @@ export default class AFFundingDetailContainer extends Component {
 
   hasErrors(fundingDetail, type) {
     const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === type));
-    const hasErrors = (fundingDetails && fundingDetails.filter(fd => (fd.errors && fd.errors.length > 0)).length > 0);
-    return hasErrors;
+    return this.props.hasErrors(fundingDetails);
   }
 
   _addTransactionItem() {
