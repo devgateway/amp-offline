@@ -8,17 +8,13 @@ import AFPrograms from './AFPrograms';
 import AFSectors from './AFSectors';
 import AFOrganizations from './AFOrganizations';
 import AFFunding from './AFFunding';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 
 /**
  * Loads AF section
  * @param sectionName
  * @return {string|AFSection}
  */
-const loadSection = (sectionName, sectionsWithErrors) => {
-  const fundingErrors = sectionsWithErrors
-    ? sectionsWithErrors.filter(e => (e.path && e.path.startsWith(AC.FUNDINGS)))
-    : [];
+const loadSection = (sectionName) => {
   switch (sectionName) {
     case SC.IDENTIFICATION:
       return <AFIdentification />;
@@ -35,7 +31,7 @@ const loadSection = (sectionName, sectionsWithErrors) => {
     case SC.ORGANIZATIONS:
       return <AFOrganizations />;
     case SC.FUNDING:
-      return <AFFunding errors={fundingErrors} />;
+      return <AFFunding />;
     /* case SC.COMPONENTS:
       return <AFComponents />; */
     default:

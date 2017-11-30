@@ -30,7 +30,6 @@ export default class AFFundingDonorSection extends Component {
     organization: PropTypes.object.isRequired,
     role: PropTypes.object.isRequired,
     removeFundingItem: PropTypes.func.isRequired,
-    errors: PropTypes.array,
     hasErrors: PropTypes.func.isRequired
   };
 

@@ -28,10 +28,6 @@ class AFFunding extends Component {
     activity: PropTypes.object.isRequired
   };
 
-  static propTypes = {
-    errors: PropTypes.array
-  };
-
   constructor(props) {
     super(props);
     logger.debug('constructor');
@@ -140,7 +136,6 @@ class AFFunding extends Component {
               organization={funding[AC.FUNDING_DONOR_ORG_ID]}
               role={sourceRole}
               removeFundingItem={this.removeFundingItem}
-              errors={this.props.errors}
               hasErrors={this.hasErrors}
             />
           </Tab>);
@@ -170,9 +165,9 @@ class AFFunding extends Component {
     // TODO: Investigate why after a failed validation and then after the user has corrected the errors some errors
     // are duplicated on the list, one time with message and another without it.
     if (container && container.errors) {
-      const withoutMensage = container.errors.filter(e => e.errorMessage === undefined);
+      const withoutMessage = container.errors.filter(e => e.errorMessage === undefined);
       const withMessage = container.errors.filter(e => e.errorMessage);
-      const difference = withMessage.filter(e => withoutMensage.filter(e2 => e2.path === e.path).length === 0);
+      const difference = withMessage.filter(e => withoutMessage.filter(e2 => e2.path === e.path).length === 0);
       return difference.length > 0;
     }
     return false;

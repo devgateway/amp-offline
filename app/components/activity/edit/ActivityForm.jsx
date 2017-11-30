@@ -8,8 +8,7 @@ import {
   IDENTIFICATION,
   SECTIONS,
   SECTIONS_FM_PATH,
-  FIELDS_PER_SECTIONS,
-  FUNDING
+  FIELDS_PER_SECTIONS
 } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
@@ -168,7 +167,7 @@ export default class ActivityForm extends Component {
   }
 
   _selectSection(sectionName) {
-    const sectionsWithErrors = this.state.sectionsWithErrors; /*.filter(sWithErrors => sWithErrors !== sectionName)*/;
+    const sectionsWithErrors = this.state.sectionsWithErrors.filter(sWithErrors => sWithErrors !== sectionName);
     this.setState({
       currentSection: sectionName,
       sectionsWithErrors
@@ -210,7 +209,6 @@ export default class ActivityForm extends Component {
     if (errors.length) {
       validationError = this._handleSaveErrors(errors);
     }
-    this.state.validationErrors = errors; // TODO: agregar info mas especifica para los fundings.
     this.props.reportActivityValidation(errors);
     this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
@@ -308,7 +306,7 @@ export default class ActivityForm extends Component {
                   {projectTitle && `(${projectTitle})`}
                 </div>
                 <div ref={(mainContent => { this.mainContent = mainContent; })}>
-                  {AFSectionLoader(this.state.currentSection, this.state.validationErrors)}
+                  {AFSectionLoader(this.state.currentSection)}
                 </div>
               </div>
             </Col>
