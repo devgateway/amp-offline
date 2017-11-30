@@ -112,8 +112,7 @@ export default class ActivityValidator {
     if (validationResult === true || validationResult === null) return;
     const error = {
       path: fieldPath,
-      errorMessage: validationResult,
-      parent
+      errorMessage: validationResult
     };
     if (!parent.errors) {
       parent.errors = [];
