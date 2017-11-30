@@ -167,12 +167,15 @@ class AFFunding extends Component {
 
   // Evaluate if a fundings section has errors.
   hasErrors(container) {
-    debugger
-    const errors = container
-      && container.errors
-      && container.errors.length > 0
-      && container.errors.filter(e => e.errorMessage).length > 0;
-    return errors;
+    // TODO: Investigate why after a failed validation and then after the user has corrected the errors some errors
+    // are duplicated on the list, one time with message and another without it.
+    if (container && container.errors) {
+      const withoutMensage = container.errors.filter(e => e.errorMessage === undefined);
+      const withMessage = container.errors.filter(e => e.errorMessage);
+      const difference = withMessage.filter(e => withoutMensage.filter(e2 => e2.path === e.path).length === 0);
+      return difference.length > 0;
+    }
+    return false;
   }
 
   render() {
