@@ -141,6 +141,7 @@ class AFFunding extends Component {
               role={sourceRole}
               removeFundingItem={this.removeFundingItem}
               errors={this.props.errors}
+              hasErrors={this.hasErrors}
             />
           </Tab>);
         });
@@ -162,6 +163,16 @@ class AFFunding extends Component {
     return (<div>
       <AFProjectCost activity={this.context.activity} />
     </div>);
+  }
+
+  // Evaluate if a fundings section has errors.
+  hasErrors(container) {
+    debugger
+    const errors = container
+      && container.errors
+      && container.errors.length > 0
+      && container.errors.filter(e => e.errorMessage).length > 0;
+    return errors;
   }
 
   render() {

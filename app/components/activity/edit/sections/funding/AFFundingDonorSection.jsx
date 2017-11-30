@@ -30,7 +30,8 @@ export default class AFFundingDonorSection extends Component {
     organization: PropTypes.object.isRequired,
     role: PropTypes.object.isRequired,
     removeFundingItem: PropTypes.func.isRequired,
-    errors: PropTypes.array
+    errors: PropTypes.array,
+    hasErrors: PropTypes.func.isRequired
   };
 
   constructor(props, context) {
@@ -53,7 +54,7 @@ export default class AFFundingDonorSection extends Component {
     // Expand the section that has errors.
     const openFundingDonorSectionState = this.state.openFundingDonorSection;
     nextProps.fundings.forEach(f => {
-      if (f.errors && f.errors.length > 0) {
+      if (this.props.hasErrors(f)) {
         openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]).open = true;
       }
     });
@@ -86,7 +87,7 @@ export default class AFFundingDonorSection extends Component {
 
   _generateComplexHeader(i, funding) {
     // TODO: AFFields objects are not being refreshed (use a bind function?).
-    return (<div className={(funding.errors && funding.errors.length > 0) ? fundingStyles.error : ''}>
+    return (<div className={(this.props.hasErrors(funding)) ? fundingStyles.error : ''}>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
         <AFField
@@ -125,7 +126,7 @@ export default class AFFundingDonorSection extends Component {
             newOpenState[i].open = !newOpenState[i].open;
             this.setState({ openFundingDonorSection: newOpenState });
           }}>
-          <AFFundingContainer funding={g} />
+          <AFFundingContainer funding={g} hasErrors={this.props.hasErrors} />
         </Panel>
       ))}
       <Button bsStyle="primary" onClick={this._addNewFundingItem}>{translate('New Funding Item')}</Button>

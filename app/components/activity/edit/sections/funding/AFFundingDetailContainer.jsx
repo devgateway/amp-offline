@@ -46,10 +46,7 @@ export default class AFFundingDetailContainer extends Component {
   hasErrors(fundingDetail, type) {
     const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === type));
     const hasErrors = (fundingDetails && fundingDetails.filter(fd => (fd.errors && fd.errors.length > 0)).length > 0);
-    if (hasErrors) {
-      return true;
-    }
-    return false;
+    return hasErrors;
   }
 
   _addTransactionItem() {

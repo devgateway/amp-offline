@@ -23,7 +23,8 @@ export default class AFFundingClassificationPanel extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    fundingDetails: PropTypes.array.isRequired
+    fundingDetails: PropTypes.array.isRequired,
+    hasErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -34,12 +35,19 @@ export default class AFFundingClassificationPanel extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    // Expand the section that has errors.
+    if (this.props.hasErrors(nextProps.funding)) {
+      this.setState({ openFCP: true });
+    }
+  }
+
   render() {
     // TODO: Add 'agreement' with the same component than locations + a restriction to have only 1 value at the time,
     // this field is not yet implemented on possible-values (and is not used in Chad).
     const { fundingDetails } = this.props;
     const hasFundingDetails = fundingDetails && fundingDetails.length > 0;
-    const hasErrors = (this.props.funding.errors && this.props.funding.errors.length > 0);
+    const hasErrors = this.props.hasErrors(this.props.funding);
     return (<div className={afStyles.full_width}>
       <Panel
         header={translate('Funding Classification')} collapsible expanded={this.state.openFCP}
