@@ -94,9 +94,33 @@ export default class ProjectList extends Component {
   }
 
   static renderSizePerPageDropdown(props) {
+    const { sizePerPageList } = props;
+    const sizePerPageOptions = sizePerPageList.map((_sizePerPage) => {
+      const pageText = _sizePerPage.text || _sizePerPage;
+      const pageNum = _sizePerPage.value || _sizePerPage;
+      return (
+        <li key={pageText} role="presentation" className="dropdown-item">
+          <a
+            href={`#${pageNum}`}
+            role="menuitem"
+            tabIndex="-1"
+            data-page={pageNum}
+            onMouseDown={e => {
+              e.preventDefault();
+              props.changeSizePerPage(pageNum);
+            }}
+          >{ pageText }</a>
+        </li>
+      );
+    });
+
     return (
       <span className={style.sizePerPageDropDownWrapper}>
-        <SizePerPageDropDown {...props} />
+        <SizePerPageDropDown
+          onClick={props.toggleDropDown}
+          options={sizePerPageOptions}
+          {...props}
+        />
       </span>
     );
   }
