@@ -86,7 +86,9 @@ export default class AFFundingDonorSection extends Component {
 
   _generateComplexHeader(i, funding) {
     // TODO: AFFields objects are not being refreshed (use a bind function?).
-    return (<div className={(this.props.hasErrors(funding)) ? fundingStyles.error : ''}>
+    return (<div
+      className={(this.props.hasErrors(funding) || this.props.hasErrors(funding[AC.FUNDING_DETAILS]))
+      ? fundingStyles.error : ''}>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
         <AFField
