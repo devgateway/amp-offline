@@ -1,5 +1,6 @@
 import * as AC from './ActivityConstants';
 import * as FM from './FeatureManagerConstants';
+import { ORG_ROLE_NAMES } from './ValueConstants';
 
 /**
  * This is a set of field paths that are used for frequent needs
@@ -21,6 +22,10 @@ export const PRIMARY_SECTOR_PATH = 'primary_sectors~sector';
 export const SECONDARY_SECTOR_PATH = 'secondary_sectors~sector';
 export const TERTIARY_SECTOR_PATH = 'tertiary_sectors~sector';
 export const DONOR_ORGANIZATIONS_PATH = 'donor_organization~organization';
+
+export const RELATED_ORGS_PATHS = ORG_ROLE_NAMES.map(orgRole => AC.toFieldName(orgRole));
+export const RELATED_ORGS_ORGANIZATION_PATHS = ORG_ROLE_NAMES.map(
+  orgRole => `${AC.toFieldName(orgRole)}~${AC.ORGANIZATION}`);
 
 export const RICH_TEXT_FIELDS = new Set([AC.STATUS_REASON, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS,
   AC.LESSONS_LEARNED, AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT,

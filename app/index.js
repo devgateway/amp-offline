@@ -20,6 +20,8 @@ import { isForceSyncUp } from './actions/SyncUpAction';
 import Logger from './modules/util/LoggerManager';
 import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_REDIRECT_URL } from './utils/Constants';
 import SetupPage from './containers/SetupPage';
+import NotificationHelper from './modules/helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
 
 const logger = new Logger('index');
 
@@ -38,6 +40,14 @@ function checkAuth(nextState, replace) {
   } else if (!(ignoreForceSyncUpFor.includes(nextPath) || nextPath.startsWith(SYNCUP_SUMMARY_URL)) && isForceSyncUp()) {
     replace({ state: { nextPathname: nextPath }, pathname: SYNCUP_REDIRECT_URL });
   }
+}
+
+function handleUnexpectedError(err) {
+  logger.error(err);
+  const msg = 'An unexpected error occurred. Please collect logs, note your actions and contact the administrator.';
+  const toString = err.toString();
+  const json = JSON.stringify(err);
+  alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
 }
 
 ampOfflineStartUp().then(() =>
@@ -64,9 +74,19 @@ ampOfflineStartUp().then(() =>
     </Provider>,
     document.getElementById('root')
   )
-).catch((err) => (logger.error(err)));
+).catch(handleUnexpectedError);
 
-window.addEventListener('error', ({ filename, message }) =>
-  logger.error(`Uncaught error: ${message} IN ${filename}`));
+window.addEventListener('error', ({ filename, message }) => {
+  handleUnexpectedError(`Uncaught error: ${message} IN ${filename}`);
+});
 
-window.addEventListener('unhandledrejection', ({ reason }) => logger.warn('Unhandled promise rejection:', reason));
+window.addEventListener('unhandledrejection', ({ reason }) => {
+  logger.warn('Unhandled promise rejection:', reason);
+  if (reason instanceof NotificationHelper) {
+    const notification = reason;
+    const { severity, origin } = notification;
+    if (severity === NOTIFICATION_SEVERITY_ERROR && origin === NOTIFICATION_ORIGIN_DATABASE) {
+      handleUnexpectedError(notification.message);
+    }
+  }
+});
