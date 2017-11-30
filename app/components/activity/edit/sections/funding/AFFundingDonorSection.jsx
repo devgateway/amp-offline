@@ -53,7 +53,7 @@ export default class AFFundingDonorSection extends Component {
     // Expand the section that has errors.
     const openFundingDonorSectionState = this.state.openFundingDonorSection;
     nextProps.fundings.forEach(f => {
-      if (this.props.hasErrors(f)) {
+      if (this.props.hasErrors(f) || this.props.hasErrors(f[AC.FUNDING_DETAILS])) {
         openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]).open = true;
       }
     });
