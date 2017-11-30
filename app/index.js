@@ -20,6 +20,8 @@ import { isForceSyncUp } from './actions/SyncUpAction';
 import Logger from './modules/util/LoggerManager';
 import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_REDIRECT_URL } from './utils/Constants';
 import SetupPage from './containers/SetupPage';
+import NotificationHelper from './modules/helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
 
 const logger = new Logger('index');
 
@@ -78,4 +80,13 @@ window.addEventListener('error', ({ filename, message }) => {
   handleUnexpectedError(`Uncaught error: ${message} IN ${filename}`);
 });
 
-window.addEventListener('unhandledrejection', ({ reason }) => logger.warn('Unhandled promise rejection:', reason));
+window.addEventListener('unhandledrejection', ({ reason }) => {
+  logger.warn('Unhandled promise rejection:', reason);
+  if (reason instanceof NotificationHelper) {
+    const notification = reason;
+    const { severity, origin } = notification;
+    if (severity === NOTIFICATION_SEVERITY_ERROR && origin === NOTIFICATION_ORIGIN_DATABASE) {
+      handleUnexpectedError(notification.message);
+    }
+  }
+});
