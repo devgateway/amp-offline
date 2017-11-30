@@ -12,6 +12,7 @@ import styles from './SyncUpSummary.css';
 import { AMP_ID } from '../../utils/constants/ActivityConstants';
 import Utils from '../../utils/Utils';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
+import { translateSyncStatus } from './tools';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
@@ -51,7 +52,7 @@ class SyncUpSummary extends PureComponent {
               {translate('Status')}
             </div>
             <div className="col-md-8">
-              {status}
+              {translateSyncStatus(status)}
             </div>
           </div>
           <div className="row">
