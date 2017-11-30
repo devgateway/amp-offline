@@ -1,5 +1,6 @@
 import FollowUp from './followup';
 import Notification from '../../modules/helpers/NotificationHelper';
+import translate from '../../utils/translate';
 
 /**
  * A simple confirmation alert definition. This will not force any action if explicit cancel or any other "no action"
@@ -9,7 +10,7 @@ import Notification from '../../modules/helpers/NotificationHelper';
  */
 export default class ConfirmationAlert {
   constructor(notification: Notification, actions: Array<FollowUp>, explicitCancel: boolean = true,
-    title: string = 'Action required') {
+    title: string = translate('Action required')) {
     this._notification = notification;
     this._title = title;
     this._actions = actions;
