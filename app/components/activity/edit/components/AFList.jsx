@@ -1,4 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
@@ -8,6 +10,9 @@ import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsMa
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFField from './AFField';
+import { addFullscreenAlert } from '../../../../actions/NotificationAction';
+import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorConstants';
+import Notification from '../../../../modules/helpers/NotificationHelper';
 
 const logger = new Logger('AF List');
 
@@ -17,7 +22,7 @@ const logger = new Logger('AF List');
  * Activity Form list of items like Locations, Programs, etc
  * @author Nadejda Mandrescu
  */
-export default class AFList extends Component {
+class AFList extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
@@ -29,6 +34,7 @@ export default class AFList extends Component {
     listPath: PropTypes.string.isRequired,
     onDeleteRow: PropTypes.func,
     onEditRow: PropTypes.func,
+    onConfirmationAlert: PropTypes.func.isRequired,
     language: PropTypes.string // Needed to update header translations.
   };
 
@@ -77,10 +83,18 @@ export default class AFList extends Component {
   }
 
   onDeleteRow(uniqueId) {
-    this.setState({
-      values: this.state.values.filter(item => uniqueId !== item.uniqueId)
-    });
-    this.props.onDeleteRow(uniqueId);
+    const { listPath, onDeleteRow, onConfirmationAlert } = this.props;
+    const { activityValidator } = this.context;
+    const itemToDelete = this.state.values.find(item => uniqueId === item.uniqueId);
+    const validationResult = activityValidator.validateItemRemovalFromList(listPath, itemToDelete);
+    if (validationResult && validationResult !== true) {
+      onConfirmationAlert(validationResult);
+    } else {
+      this.setState({
+        values: this.state.values.filter(item => uniqueId !== item.uniqueId)
+      });
+      onDeleteRow(uniqueId);
+    }
   }
 
   getCellClass(editable, required) {
@@ -256,3 +270,12 @@ export default class AFList extends Component {
     return this.renderAsSimpleTable();
   }
 }
+
+export default connect(
+  state => state,
+  dispatch => ({
+    onConfirmationAlert: (message) => dispatch(addFullscreenAlert(
+      new Notification({ message, origin: NOTIFICATION_ORIGIN_ACTIVITY, translateMsg: false })
+    ))
+  })
+)(AFList);
