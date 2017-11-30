@@ -101,18 +101,20 @@ class AFFunding extends Component {
         // If source_role is disabled i[AC.SOURCE_ROLE] will be undefined so we ignore it.
         const tab = groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
           && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)));
+        // Look for errors on Commitments/Disbursements/Expenditures too.
+        const errorsOnInternalSections = this.hasErrors(f[AC.FUNDING_DETAILS]);
         if (!tab) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
           groups.push({
             [AC.FUNDING_DONOR_ORG_ID]: f[AC.FUNDING_DONOR_ORG_ID],
             [AC.SOURCE_ROLE]: f[AC.SOURCE_ROLE],
             acronym,
-            errors: f.errors
+            errors: (f.errors && f.errors.length > 0) || errorsOnInternalSections
           });
         } else {
           // We are grouping funding items into the same "Donor & Role" tab but one funding item can have
           // validation errors while the other doesnt so we have to keep that.
-          tab.errors = tab.errors || f.errors;
+          tab.errors = tab.errors || (f.errors && f.errors.length > 0) || errorsOnInternalSections;
         }
         return groups;
       });
@@ -130,7 +132,7 @@ class AFFunding extends Component {
           return (<Tab
             eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
             title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
-            tabClassName={(funding.errors && funding.errors.length > 0) ? styles.error : ''}>
+            tabClassName={funding.errors ? styles.error : ''}>
             <AFFundingDonorSection
               fundings={this.state.fundingList}
               organization={funding[AC.FUNDING_DONOR_ORG_ID]}
@@ -162,13 +164,24 @@ class AFFunding extends Component {
 
   // Evaluate if a fundings section has errors.
   hasErrors(container) {
-    // TODO: Investigate why after a failed validation and then after the user has corrected the errors some errors
-    // are duplicated on the list, one time with message and another without it.
-    if (container && container.errors) {
-      const withoutMessage = container.errors.filter(e => e.errorMessage === undefined);
-      const withMessage = container.errors.filter(e => e.errorMessage);
-      const difference = withMessage.filter(e => withoutMessage.filter(e2 => e2.path === e.path).length === 0);
-      return difference.length > 0;
+    if (container) {
+      if (container instanceof Array) {
+        let error = false;
+        container.forEach(c => {
+          // Only find the first error.
+          if (!error) {
+            error = this.hasErrors(c);
+          }
+        });
+        return error;
+      } else if (container.errors) {
+        // TODO: Investigate why after a failed validation and then after the user has corrected the errors some errors
+        // are duplicated on the list, one time with message and another without it.
+        const withoutMessage = container.errors.filter(e => e.errorMessage === undefined);
+        const withMessage = container.errors.filter(e => e.errorMessage);
+        const difference = withMessage.filter(e => withoutMessage.filter(e2 => e2.path === e.path).length === 0);
+        return difference.length > 0;
+      }
     }
     return false;
   }
