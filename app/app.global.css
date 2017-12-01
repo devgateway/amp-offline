@@ -135,3 +135,11 @@ html, body {
 .form-control-feedback.glyphicon.glyphicon-remove {
   visibility: hidden;
 }
+
+.has-error .form-control {
+  border-color: red !important;
+}
+
+.help-block {
+  color: red !important;
+}
