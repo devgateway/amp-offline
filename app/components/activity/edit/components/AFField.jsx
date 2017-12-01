@@ -20,6 +20,7 @@ import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
 import AFCheckbox from './AFCheckbox';
+import FeatureManager from '../../../../modules/util/FeatureManager';
 
 const logger = new Logger('AF field');
 
@@ -55,7 +56,8 @@ class AFField extends Component {
     onFieldValidation: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     extraParams: PropTypes.object,
     defaultValueAsEmptyObject: PropTypes.bool,
-    forceRequired: PropTypes.bool
+    forceRequired: PropTypes.bool,
+    fmPath: PropTypes.string
   };
 
   static defaultProps = {
@@ -74,6 +76,12 @@ class AFField extends Component {
     const fieldPathParts = this.props.fieldPath.split('~');
     this.fieldName = fieldPathParts[fieldPathParts.length - 1];
     this.fieldDef = this.context.activityFieldsManager.getFieldDef(this.props.fieldPath);
+
+    // Check for fields that have to be enabled on FM too.
+    if (this.fieldDef && this.props.fmPath) {
+      this.fieldDef = FeatureManager.isFMSettingEnabled(this.props.fmPath) ? this.fieldDef : undefined;
+    }
+
     this.fieldExists = !!this.fieldDef;
     this.requiredND = this.fieldExists ? this.fieldDef.required === 'ND' : undefined;
     this.alwaysRequired = this.fieldExists ? this.fieldDef.required === 'Y' : undefined;
@@ -85,16 +93,17 @@ class AFField extends Component {
     this._processValidation(this.props.parent.errors);
   }
 
-  componentWillReceiveProps(nexProps) {
+  componentWillReceiveProps(nextProps) {
     if (!this.fieldExists) {
       return;
     }
     if (this.context.isSaveAndSubmit) {
       this.onChange(this.state.value, false);
-    } else if (nexProps.validationResult) {
+    } else if (nextProps.validationResult) {
       this._processValidation(this.props.parent.errors);
-    } else if (nexProps.parent[this.fieldName] !== this.state.value) {
-      this.onChange(nexProps.parent[this.fieldName], false);
+    } else if (nextProps.parent[this.fieldName] !== this.state.value ||
+      nextProps.forceRequired !== this.props.forceRequired) {
+      this.onChange(nextProps.parent[this.fieldName], false);
     }
   }
 
@@ -276,7 +285,8 @@ class AFField extends Component {
     if (this.fieldExists === false) {
       return null;
     }
-    const showValidationError = this.componentType !== Types.LIST_SELECTOR;
+    const showValidationError = !(this.componentType === Types.LIST_SELECTOR ||
+      (this.componentType === Types.LABEL && !this.props.showLabel));
     return (
       <FormGroup
         controlId={this.props.fieldPath} validationState={showValidationError ? this._getValidationState() : null}

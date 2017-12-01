@@ -1,6 +1,7 @@
 import { describe, it } from 'mocha';
 import actions from '../../app/modules/helpers/PossibleValuesHelper';
 import Logger from '../../app/modules/util/LoggerManager';
+import { DONOR_ORGANIZATIONS_PATH } from '../../app/utils/constants/FieldPathConstants';
 
 const logger = new Logger('Possible values helper');
 
@@ -11,7 +12,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 let ampFormatPV1 = {
-  'donor_organization~organization': [
+  [DONOR_ORGANIZATIONS_PATH]: [
     {
       id: 1,
       value: 'African Capacity Building Foundation'

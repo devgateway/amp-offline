@@ -12,7 +12,10 @@ import DateUtils from '../../utils/DateUtils';
 import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
-import { NR_SYNC_HISTORY_ENTRIES, SYNCUP_HISTORY_TARGET } from '../../utils/Constants';
+import {
+  NR_SYNC_HISTORY_ENTRIES,
+  SYNCUP_HISTORY_TARGET,
+} from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
   NOTIFICATION_SEVERITY_WARNING
@@ -28,6 +31,7 @@ import {
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
+import { translateSyncStatus } from './tools';
 
 const logger = new Logger('Syncup component');
 
@@ -165,7 +169,7 @@ class SyncUp extends Component {
                     <tr key={log.id}>
                       <td>{log.id}</td>
                       <td>{DateUtils.createFormattedDateTime(log['sync-date'])}</td>
-                      <td>{log.status}</td>
+                      <td>{translateSyncStatus(log.status)}</td>
                     </tr>
                   ))}
                 </tbody>

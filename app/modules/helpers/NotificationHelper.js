@@ -19,13 +19,15 @@ export default class NotificationHelper {
    * @param origin
    * @param errorCode
    * @param errorObject
+   * @param translateMsg translate the message or not (default true for now, since was used this since AMPOFFLINE-122)
    * @param severity
    */
   constructor({
-    message, origin, errorCode, errorObject,
+    message, origin, errorCode, errorObject, translateMsg = true,
     severity = constants.NOTIFICATION_SEVERITY_ERROR
   }) {
     logger.log('constructor');
+    this.translateMsg = translateMsg;
     if (errorObject) {
       this.message = errorObject.message;
       this.internalCode = errorObject.internalCode;
@@ -66,7 +68,7 @@ export default class NotificationHelper {
         if (fromAPI && message.charAt(0) === '(' && message.charAt(message.length - 1) === ')') {
           message = message.substring(1, message.length - 1);
         }
-        retMessage = translate(message);
+        retMessage = this.translateMsg ? translate(message) : message;
       }
     } catch (err) {
       logger.warn(err);
