@@ -1,7 +1,7 @@
 .error {
-  color: red;
+  color: #a94442;
 }
 
 .error > a {
-  color: red !important;
+  color: #a94442 !important;
 }

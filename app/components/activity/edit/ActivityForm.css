@@ -140,7 +140,7 @@ div.quick_links::after {
 }
 
 .required {
-    color: red;
+    color: #a94442;
 }
 
 .required:before {
@@ -171,7 +171,6 @@ div.quick_links::after {
   width: inherit;
   word-wrap: break-word;
   white-space: normal;
-  color: red !important;
 }
 
 .inline_field {
