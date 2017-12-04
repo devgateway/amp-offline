@@ -2,12 +2,13 @@ import store from '../index';
 import * as UrlUtils from '../utils/URLUtils';
 import { UPDATE_URL, VERSION } from '../utils/Constants';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
-import { MANDATORY_UPDATE } from './ConnectivityAction';
+import { connectivityCheck, MANDATORY_UPDATE } from './ConnectivityAction';
 import UpdateManager from '../modules/update/UpdateManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import { UPDATE_INSTALLER_PATH } from '../utils/constants/ClientSettingsConstants';
 import ElectronUpdaterManager from '../modules/update/ElectronUpdaterManager';
 import { didSetupComplete } from './SetupAction';
+import translate from '../utils/translate';
 
 export const STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING = 'STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING';
 export const STATE_DOWNLOAD_UPDATE_CONFIRMED = 'STATE_DOWNLOAD_UPDATE_CONFIRMED';
@@ -84,7 +85,12 @@ export function downloadUpdate(/* id */) {
   // TODO check if the update can be interrupted => avoid re-download on next update attempt (remember file per version)
   // const downloadPromise = UpdateManager.downloadInstaller(id);
   const updater: ElectronUpdaterManager = ElectronUpdaterManager.getUpdater(updateProgress);
-  const downloadPromise = updater.downloadUpdate();
+  const downloadPromise = connectivityCheck().then(status => {
+    if (status.isAmpAvailable) {
+      return updater.downloadUpdate();
+    }
+    return Promise.reject(translate('AMPUnreachableError'));
+  });
   downloadPromise.then(() => {
     store.dispatch({ type: STATE_UPDATE_STARTED });
     return updater.startUpdate();
