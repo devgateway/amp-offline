@@ -27,7 +27,6 @@ import {
 } from '../../utils/constants/ActivityConstants';
 import {
   DO_NOT_HYDRATE_FIELDS_LIST,
-  RELATED_ORGS_ORGANIZATION_PATHS,
   RELATED_ORGS_PATHS
 } from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT, GS_DEFAULT_NUMBER_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
@@ -144,7 +143,7 @@ export default class ActivityValidator {
     let dependencies = [];
     if (mainFieldPath === ACTIVITY_BUDGET) {
       dependencies = [DEPENDENCY_PROJECT_CODE_ON_BUDGET, DEPENDENCY_ON_BUDGET];
-    } else if (RELATED_ORGS_ORGANIZATION_PATHS.includes(mainFieldPath)) {
+    } else if (RELATED_ORGS_PATHS.includes(mainFieldPath)) {
       dependencies = [DEPENDENCY_COMPONENT_FUNDING_ORG_VALID];
     }
     const fieldPaths = this._activityFieldsManager.getFieldPathsByDependencies(dependencies);
@@ -152,7 +151,16 @@ export default class ActivityValidator {
       const parentPath = fieldPath.substring(0, fieldPath.lastIndexOf('~'));
       const parent = this._activityFieldsManager.getValue(this._activity, parentPath);
       const fieldDef = this._activityFieldsManager.getFieldDef(fieldPath);
-      errors.push(...this.validateField(parent, asDraft, fieldDef, fieldPath));
+      // flatten parents to the last leaf level
+      let depth = parentPath.split('~').length;
+      let parents = depth > 1 ? parent : [parent];
+      while (depth > 1) {
+        const flattenedParents = [];
+        parents.forEach(child => flattenedParents.push(...child));
+        depth -= 1;
+        parents = flattenedParents;
+      }
+      parents.forEach(par => errors.push(...this.validateField(par, asDraft, fieldDef, fieldPath)));
     });
     return errors;
   }
@@ -406,10 +414,8 @@ export default class ActivityValidator {
       if (hasLocations && dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT)) {
         this.processValidationResult(this._activity, errors, LOCATIONS, this._validateImplementationLocationPresent());
       }
-      if (dependencies.includes(DEPENDENCY_COMPONENT_FUNDING_ORG_VALID)) {
-        this.processValidationResult(this._activity, errors, ORGANIZATION, this._validateComponentFundingOrgValid());
-      }
       objects.forEach(obj => {
+        const hydratedValue = obj[fieldDef.field_name];
         const value = this._getValue(obj, fieldDef, this._wasHydrated(fieldPath));
         if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_VALID)) {
           this.processValidationResult(obj, errors, fieldPath, this._validateImplementationLocationValid());
@@ -423,6 +429,10 @@ export default class ActivityValidator {
         }
         if (dependencies.includes(DEPENDENCY_TRANSACTION_PRESENT)) {
           this.processValidationResult(obj, errors, fieldPath, this._validateAsRequiredIfHasTransactions(value, obj));
+        }
+        if (dependencies.includes(DEPENDENCY_COMPONENT_FUNDING_ORG_VALID)) {
+          const validationResult = this._validateComponentFundingOrgValid(hydratedValue);
+          this.processValidationResult(obj, errors, fieldPath, validationResult);
         }
       });
     }
@@ -508,24 +518,14 @@ export default class ActivityValidator {
     return isValid || translate('requiredField');
   }
 
-  _validateComponentFundingOrgValid() {
-    const compFundingOrg = this._getComponentOrgs();
-    let missingOrgs = [];
-    if (compFundingOrg.length) {
-      const missingIds = new Set();
+  _validateComponentFundingOrgValid(compFundOrg) {
+    if (compFundOrg && compFundOrg.id) {
       const relOrgIds = this._getActivityOrgIds();
-      missingOrgs = compFundingOrg.filter(compOrg => {
-        let isMissing = false;
-        if (!missingIds.has(compOrg.id)) {
-          isMissing = !relOrgIds.includes(compOrg.id);
-          if (isMissing) {
-            missingIds.add(compOrg.id);
-          }
-        }
-        return isMissing;
-      });
+      if (!relOrgIds.includes(compFundOrg.id)) {
+        return this._getComponentFundingOrgError(compFundOrg);
+      }
     }
-    return !missingOrgs.length || this._getComponentFundingOrgError(missingOrgs);
+    return true;
   }
 
   /**
@@ -553,12 +553,12 @@ export default class ActivityValidator {
     if (this._getComponentOrgs().find(compOrg => compOrg.id === org.id)) {
       canRemove = this._getActivityOrgIds().filter(orgIds => orgIds === org.id).length > 1;
     }
-    return canRemove || this._getComponentFundingOrgError([org]);
+    return canRemove || this._getComponentFundingOrgError(org);
   }
 
-  _getComponentFundingOrgError(orgs) {
-    orgs = orgs.map(org => PossibleValuesManager.getOptionTranslation(org));
-    const currentError = translate('missingCompFundOrgs').replace('%orgNames%', orgs);
+  _getComponentFundingOrgError(org) {
+    org = PossibleValuesManager.getOptionTranslation(org);
+    const currentError = translate('missingCompFundOrgs').replace('%orgNames%', org);
     return translate('dependencyNotMet').replace('%depName%', currentError);
   }
 
