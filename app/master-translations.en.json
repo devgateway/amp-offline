@@ -318,6 +318,7 @@
   "MB/s": "MB/s",
   "GB/s": "GB/s",
   "downloadFailed": "Installer download failed. Please try again.",
+  "downloadCancelled": "Installer download cancelled.",
   "updateInProgress": "AMP Offline upgrade is in progress...",
   "updateFailed": "AMP Offline upgrade failed.",
   "defaultSyncError": "There was an error while attempting to sync. Please try again.",

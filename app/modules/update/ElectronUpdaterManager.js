@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { CancellationToken } from 'electron-updater';
+import Moment from 'moment';
 import ElectronUpdater from './ElectronUpdater';
 import RequestConfig from '../connectivity/RequestConfig';
 import Logger from '../util/LoggerManager';
@@ -9,6 +9,7 @@ import { NOTIFICATION_ORIGIN_UPDATE } from '../../utils/constants/ErrorConstants
 import translate from '../../utils/translate';
 import * as Utils from '../../utils/Utils';
 import NumberUtils from '../../utils/NumberUtils';
+import { CONNECTION_TIMEOUT, TIMEOUT_CHECK_INTERVAL } from '../../utils/Constants';
 
 const autoUpdater = ElectronUpdater.getElectronUpdater();
 
@@ -48,7 +49,7 @@ export default class ElectronUpdaterManager {
 
   constructor(progressUpdateFunc) {
     logger.log('constructor');
-    this.cancellationToken = new CancellationToken();
+    this.cancellationToken = ElectronUpdater.getCancellationToken();
     this.progressUpdateFunc = progressUpdateFunc;
   }
 
@@ -58,6 +59,14 @@ export default class ElectronUpdaterManager {
     return new Promise((resolve, reject) => {
       try {
         autoUpdater.on('error', (ev, error) => {
+          if (ev.message === 'Cancelled') {
+            if (this.isTimeout) {
+              return this._reportError(translate('AMPUnreachableError'), reject);
+            } else {
+              // TODO when actual download cancellation will be implemented, integrated this part as needed
+              return this._reportError(translate('downloadCancelled'), reject);
+            }
+          }
           this._reportError(error, reject);
         });
         autoUpdater.on('update-not-available', () => {
@@ -67,18 +76,22 @@ export default class ElectronUpdaterManager {
         autoUpdater.on('update-available', (ev) => {
           logger.log(`update-available: ${JSON.stringify(ev)}`);
           this._sendUpdates({ message: translate('updateConfirmed'), downloadingUpdate: true });
-          autoUpdater.downloadUpdate();
+          autoUpdater.downloadUpdate(this.cancellationToken);
         });
         autoUpdater.on('download-progress', (progress) => {
           const message = this.getProgressMessage(progress);
           this._sendUpdates({ message, percent: progress.percent });
         });
         autoUpdater.on('update-downloaded', () => {
+          // stop timeout checks
+          this.lastUpdate = null;
           logger.log('update-downloaded');
           this._sendUpdates(translate('downloadComplete'));
           return resolve();
         });
         autoUpdater.checkForUpdates();
+        this.lastUpdate = Moment();
+        this.continueOrAbort();
       } catch (error) {
         logger.error('Unexpected error');
         this._reportError(error, reject);
@@ -113,7 +126,19 @@ export default class ElectronUpdaterManager {
     });
   }
 
+  continueOrAbort() {
+    const isTimeout = this.lastUpdate ? Moment().diff(this.lastUpdate) > CONNECTION_TIMEOUT : false;
+    if (isTimeout) {
+      logger.error('Update download timeout');
+      this.cancellationToken.cancel();
+      this.isTimeout = true;
+    } else if (this.lastUpdate) {
+      setTimeout(this.continueOrAbort.bind(this), TIMEOUT_CHECK_INTERVAL);
+    }
+  }
+
   _sendUpdates({ message, percent }) {
+    this.lastUpdate = Moment();
     this.progressUpdateFunc({ message, percent });
   }
 
