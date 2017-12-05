@@ -43,9 +43,17 @@ class SyncUpSummary extends PureComponent {
   }) {
     return (
       <div>
-        {errors.map(msg =>
-          <ErrorMessage message={msg.toString()} />
-        )}
+        {errors.map(error => {
+          let msg;
+          if (error._message) {
+            // can't check `error instanceof NotificationHelper` because
+            // `error` is typeless since it's read from sync log json
+            msg = error._message;
+          } else {
+            msg = error.toString();
+          }
+          return <ErrorMessage message={msg.toString()} />;
+        })}
         <div className="container">
           <div className="row">
             <div className={`col-md-4 text-right ${styles.section_title}`}>
