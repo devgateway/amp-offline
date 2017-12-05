@@ -25,7 +25,8 @@ export default class AFFundingContainer extends Component {
   };
 
   static propTypes = {
-    funding: PropTypes.object.isRequired
+    funding: PropTypes.object.isRequired,
+    hasErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -90,21 +91,25 @@ export default class AFFundingContainer extends Component {
           </Row>
         </Grid>
       </FormGroup>
-      <AFFundingClassificationPanel funding={this.state.funding} fundingDetails={this.state.stateFundingDetail} />
+      <AFFundingClassificationPanel
+        funding={this.state.funding} fundingDetails={this.state.stateFundingDetail} hasErrors={this.props.hasErrors} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.COMMITMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
+        hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.DISBURSEMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
+        hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.EXPENDITURES}
         removeFundingDetailItem={this._removeFundingDetailItem}
+        hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem} />
     </div>);
   }

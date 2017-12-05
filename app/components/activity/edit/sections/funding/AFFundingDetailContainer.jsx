@@ -8,6 +8,7 @@ import ActivityFieldsManager from '../../../../../modules/activity/ActivityField
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
 import * as Utils from '../../../../../utils/Utils';
+import fundingStyles from './AFFundingContainer.css';
 
 const logger = new Logger('AF funding detail container');
 
@@ -24,7 +25,8 @@ export default class AFFundingDetailContainer extends Component {
     fundingDetail: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
     handleNewTransaction: PropTypes.func.isRequired,
-    removeFundingDetailItem: PropTypes.func.isRequired
+    removeFundingDetailItem: PropTypes.func.isRequired,
+    hasErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -33,6 +35,18 @@ export default class AFFundingDetailContainer extends Component {
     this.state = {
       openFDC: false
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // Expand the section that has errors.
+    if (this.hasErrors(nextProps.fundingDetail, nextProps.type)) {
+      this.setState({ openFDC: true });
+    }
+  }
+
+  hasErrors(fundingDetail, type) {
+    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === type));
+    return this.props.hasErrors(fundingDetails);
   }
 
   _addTransactionItem() {
@@ -63,12 +77,13 @@ export default class AFFundingDetailContainer extends Component {
         default:
           break;
       }
+      const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
       return (<div>
         <Panel
           header={header} collapsible expanded={this.state.openFDC}
           onSelect={() => {
             this.setState({ openFDC: !this.state.openFDC });
-          }}>
+          }} className={hasErrors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
             if (!fd[AC.TEMPORAL_ID]) {
