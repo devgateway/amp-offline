@@ -8,6 +8,7 @@ import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import { INPUT_TYPE } from '../../components/AFComponentTypes';
+import fundingStyles from './AFFundingContainer.css';
 
 const logger = new Logger('AF Funding classication panel');
 
@@ -22,7 +23,8 @@ export default class AFFundingClassificationPanel extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    fundingDetails: PropTypes.array.isRequired
+    fundingDetails: PropTypes.array.isRequired,
+    hasErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -33,17 +35,25 @@ export default class AFFundingClassificationPanel extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    // Expand the section that has errors.
+    if (this.props.hasErrors(nextProps.funding)) {
+      this.setState({ openFCP: true });
+    }
+  }
+
   render() {
     // TODO: Add 'agreement' with the same component than locations + a restriction to have only 1 value at the time,
     // this field is not yet implemented on possible-values (and is not used in Chad).
     const { fundingDetails } = this.props;
     const hasFundingDetails = fundingDetails && fundingDetails.length > 0;
+    const hasErrors = this.props.hasErrors(this.props.funding);
     return (<div className={afStyles.full_width}>
       <Panel
         header={translate('Funding Classification')} collapsible expanded={this.state.openFCP}
         onSelect={() => {
           this.setState({ openFCP: !this.state.openFCP });
-        }}>
+        }} className={hasErrors ? fundingStyles.error : ''}>
         <FormGroup>
           <Grid className={afStyles.full_width}>
             <Row>

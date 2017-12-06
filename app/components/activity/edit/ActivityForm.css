@@ -132,7 +132,7 @@ div.quick_links::after {
 }
 
 .quick_links_required {
-    color: red !important;
+    color: #a94442 !important;
 }
 
 .label_highlight {
@@ -140,7 +140,7 @@ div.quick_links::after {
 }
 
 .required {
-    color: red;
+    color: #a94442;
 }
 
 .required:before {

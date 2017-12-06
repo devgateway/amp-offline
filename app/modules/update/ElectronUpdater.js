@@ -1,4 +1,4 @@
-import { autoUpdater } from 'electron-updater';
+import { autoUpdater, CancellationToken } from 'electron-updater';
 import { IS_DEV_MODE, IS_RENDERER_PROCESS } from '../util/ElectronApp';
 import { VERSION } from '../../utils/Constants';
 import Logger from '../util/LoggerManager';
@@ -8,6 +8,7 @@ const { remote } = require('electron');
 const logger = IS_DEV_MODE ? console : new Logger('Electron updater');
 
 let electronUpdater;
+let MainCancellationToken;
 
 /**
  * Electron Updater wrapper that is needed to handle linking between main and remote processes.
@@ -35,7 +36,7 @@ const ElectronUpdater = {
     if (!electronUpdater) {
       if (!IS_RENDERER_PROCESS) {
         electronUpdater = this._init();
-        global.electronUpdater = autoUpdater;
+        MainCancellationToken = this._initCancellationToken();
       } else {
         electronUpdater = remote.getGlobal('electronUpdater');
         // in dev mode it detects Chromium version, instead of the apps version
@@ -45,8 +46,20 @@ const ElectronUpdater = {
     return electronUpdater;
   },
 
+  /**
+   * Gets a new cancellation token to be used for the current attempt to upgrade
+   * @return {CancellationToken}
+   */
+  getCancellationToken() {
+    if (!MainCancellationToken) {
+      MainCancellationToken = remote.getGlobal('electronUpdaterCancellationToken');
+    }
+    return new MainCancellationToken();
+  },
+
   _init() {
     autoUpdater.autoDownload = false;
+    global.electronUpdater = autoUpdater;
     // TODO see why methods are not accessible in renderer process, workaround until then with:
     Object.getOwnPropertyNames(autoUpdater).filter(n => typeof autoUpdater[n] === 'function').forEach(method => {
       global.electronUpdater[method] = autoUpdater[method];
@@ -54,6 +67,12 @@ const ElectronUpdater = {
     autoUpdater.logger = logger;
     logger.log('ElectronUpdater initialized');
     return autoUpdater;
+  },
+
+  _initCancellationToken() {
+    global.electronUpdaterCancellationToken = CancellationToken;
+    logger.log('CancellationToken initialized');
+    return CancellationToken;
   }
 };
 
