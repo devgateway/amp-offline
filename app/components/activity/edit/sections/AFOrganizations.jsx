@@ -25,6 +25,7 @@ class AFOrganizations extends Component {
     super(props);
     logger.log('constructor');
     this.setState({ validationError: undefined });
+    this.checkValidationError = this.checkValidationError.bind(this);
   }
 
   /**
@@ -33,9 +34,28 @@ class AFOrganizations extends Component {
    */
   getValidationError() {
     const { activity } = this.props;
-    let dependencyErrors = (activity.errors && activity.errors.filter(error => error.path === AC.ORGANIZATION)) || [];
-    dependencyErrors = dependencyErrors.map(error => error.errorMessage);
-    return dependencyErrors.length ? dependencyErrors : undefined;
+    let dependencyErrors;
+    // TODO AMPOFFLINE-456 remove components dependency errors reporting from here once AF components are implemented
+    if (activity[AC.COMPONENTS] && activity[AC.COMPONENTS].length) {
+      const compFundOrgPath = `${AC.COMPONENTS}~${AC.COMPONENT_FUNDING}~${AC.COMPONENT_ORGANIZATION}`;
+      const compOrgsErrors = [];
+      activity[AC.COMPONENTS].forEach(component => {
+        const compFunding = component[AC.COMPONENT_FUNDING];
+        if (compFunding && compFunding.length) {
+          compFunding.filter(cF => cF.errors && cF.errors.length).forEach(cF => {
+            compOrgsErrors.push(...cF.errors.filter(e => e.path === compFundOrgPath).map(e => e.errorMessage));
+          });
+        }
+      });
+      const uniqueErrors = new Set(compOrgsErrors);
+      dependencyErrors = uniqueErrors.size ? [...uniqueErrors].join('. ') : null;
+    }
+    return dependencyErrors;
+  }
+
+  checkValidationError() {
+    const validationError = this.getValidationError();
+    this.setState({ validationError });
   }
 
   render() {
@@ -61,27 +81,36 @@ class AFOrganizations extends Component {
         </Row>
         <Row>
           <Col md={12} lg={12}>
-            <AFField parent={this.props.activity} fieldPath={AC.RESPONSIBLE_ORGANIZATION} />
+            <AFField
+              parent={this.props.activity} fieldPath={AC.RESPONSIBLE_ORGANIZATION}
+              onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
-            <AFField parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY} />
+            <AFField
+              parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY} onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
-            <AFField parent={this.props.activity} fieldPath={AC.IMPLEMENTING_AGENCY} />
+            <AFField
+              parent={this.props.activity} fieldPath={AC.IMPLEMENTING_AGENCY}
+              onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
-            <AFField parent={this.props.activity} fieldPath={AC.BENEFICIARY_AGENCY} />
+            <AFField
+              parent={this.props.activity} fieldPath={AC.BENEFICIARY_AGENCY}
+              onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
-            <AFField parent={this.props.activity} fieldPath={AC.CONTRACTING_AGENCY} />
+            <AFField
+              parent={this.props.activity} fieldPath={AC.CONTRACTING_AGENCY}
+              onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>
       </Grid>
