@@ -225,8 +225,7 @@ class AFList extends Component {
         if (rowId === content.length) {
           content.push({ rowData, cells: [] });
         }
-        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId)
-          || rowData[childFieldName] || Math.random();
+        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId) || Math.random();
         const value = (<AFField
           fieldPath={fieldPath} parent={rowData} type={fieldType} showLabel={false} className={className} inline
           showRequired={editable} onAfterUpdate={this._afterSaveCell.bind(this, rowData, childFieldName)} />);
