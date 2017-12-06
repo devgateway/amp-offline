@@ -26,6 +26,8 @@ def targetsMap = [
         'Windows 32 & 64 bits': ['win32', 'win64'],
         'Windows 64 bits': ['win64'],
         'Windows 32 bits': ['win32'],
+        'Linux All': ['linux'],
+        'Debian All': ['deb32', 'deb64'],
         'Windows and Linux deb 32 & 64 bits': ['win32', 'win64', 'deb32', 'deb64']
     ]
 // TODO exclude develop?
