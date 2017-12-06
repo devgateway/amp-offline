@@ -1,0 +1,9 @@
+.container {
+  text-align: center;
+  width: 99%;
+  margin-top: 10px;
+}
+
+.nav-tabs > li.active > a {
+  background-color: lightblue;
+}

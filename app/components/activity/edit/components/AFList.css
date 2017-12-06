@@ -1,0 +1,56 @@
+.containerTable {
+    color: #4b4a4b;
+    border: 1px solid #cccccc;
+    border-collapse: collapse;
+    position: relative;
+    top: 0;
+    padding-right: 10px;
+    font-size: 12px;
+    width: 100%;
+}
+
+.header {
+    margin-bottom: 0;
+}
+
+.thClassName {
+    background-color: #f8f9fc;
+    border-radius: 4px 4px 0 0;
+    font-weight: bold;
+    border: 1px solid #cccccc;
+    border-collapse: collapse;
+    padding: 8px;
+}
+
+.thDelete {
+    width: 8px;
+    padding-top: 2em;
+    padding-left: 2em;
+    vertical-align: middle !important;
+    text-align: center;
+    border: 1px solid #cccccc;
+    border-collapse: collapse;
+}
+
+.delete {
+    background-image: url('../../../../assets/images/ico_del.gif');
+    background-repeat: no-repeat;
+    padding: 1em;
+}
+
+.cell {
+    border: 1px solid #cccccc;
+    border-collapse: collapse;
+}
+
+.cell_readonly {
+    word-wrap: break-word;
+    white-space: normal !important;
+    font-size: 13px !important;
+    padding-top: 6px;
+    padding-left: 12px;
+}
+
+.cell_editable {
+    width: 90%;
+}

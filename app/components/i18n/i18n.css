@@ -1,0 +1,9 @@
+.flags_container {
+  padding-top: 4px;
+  float: right;
+  padding-right: 5px;
+}
+
+.flags_container span {
+  cursor: pointer;
+}

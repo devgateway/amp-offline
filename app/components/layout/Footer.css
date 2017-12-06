@@ -1,0 +1,32 @@
+/* https://css-tricks.com/snippets/css/sticky-footer/ */
+.footer, .container:after {
+  height: 45px;
+}
+
+.footer {
+  background-color: #8B8B8B;
+  color: white;
+  padding-top: 7px !important;
+
+}
+
+.footerContainer {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.footerText {
+  padding: 0;
+  font-family: arial;
+  font-size: 11px;
+  border: 0px;
+}
+.footerImageContainer{
+  padding-top: 10px;
+}
+.footerImage{
+  content: url('../../assets/images/dgf_logo_bottom.gif');
+  width: 118px;
+  height: 43px;
+  cursor: pointer;
+}

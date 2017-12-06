@@ -1,0 +1,21 @@
+.workspaces_container {
+
+}
+
+.title {
+  margin: 0px;
+}
+
+.table {
+  color: #014e86;
+  FONT-WEIGHT: bold;
+  FONT-SIZE: 11pt;
+  border-top: 0;
+  border-bottom: 0;
+  width: 50%;
+}
+
+.row {
+  border-top: 0;
+  cursor: pointer;
+}

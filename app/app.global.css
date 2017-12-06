@@ -1,0 +1,137 @@
+/* @import '../node_modules/react-dates/lib/css/_datepicker.css'; */
+@import '../node_modules/antd/dist/antd.css';
+@import "../resources/css/bootstrap.css";
+@import "../resources/css/bootstrap-theme.css";
+@import "../node_modules/rc-menu/assets/index.css";
+@import '../node_modules/react-bootstrap-table/css/react-bootstrap-table.css';
+@import '../node_modules/react-bootstrap-table/css/toastr.css';
+@import './assets/fonts/opensans_regular_macroman/stylesheet.css';
+@import './assets/fonts/opensans_extrabold_macroman/stylesheet.css';
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+.outerContainer {
+  height: 100%;
+  min-height: 680px;
+}
+
+.rc-menu-submenu-title {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  padding-right: 15px !important;
+  padding-left: 15px !important;
+  white-space: nowrap;
+  text-rendering: optimizeLegibility;
+}
+
+.rc-menu-vertical > .rc-menu-item, .rc-menu-inline > .rc-menu-item,
+.rc-menu-vertical > .rc-menu-submenu > .rc-menu-submenu-title,
+.rc-menu-inline > .rc-menu-submenu > .rc-menu-submenu-title {
+  padding: 5px 5px !important;
+}
+
+.rc-menu-vertical > .rc-menu-item {
+  /*padding: 5px 0px 5px 0px !important;*/
+}
+
+.rc-menu-submenu {
+  cursor: pointer;
+}
+
+.rc-menu-item { /* sub items without childs*/
+  cursor: pointer;
+  text-align: left;
+  padding: 5px 15px !important;
+}
+
+.rc-menu-vertical.rc-menu-sub {
+  padding: 0;
+  padding-left: 5px;
+  padding-right: 10px;
+  min-width: 0px;
+  text-align: left;
+}
+
+.rc-menu-root {
+  color: #3E6C94;
+}
+
+.rc-menu-item-selected {
+  background-color: #ffffff;
+}
+
+.rc-menu-submenu-selected {
+  background-color: transparent;
+}
+
+/* FOR DESKTOP PAGE */
+.nav-tabs > li > a {
+  line-height: 1.42857143;
+  border-radius: 4px 4px 0 0;
+  background: #f8f9fc;
+  border-bottom: 1px solid #e6eaee;
+  border-right: 1px solid #e6eaee;
+  border-left: 1px solid #e6eaee;
+  border-top: 1px solid #e6eaee;
+  color: #999999;
+  font-size: 15px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+/* BOOTSTRAP GENERAL OVERRIDE */
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  border-top: 0;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th,
+.table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+  padding: 6px;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+  color: #000000;
+}
+
+.panel-title {
+  cursor: pointer;
+}
+
+/* BOOTSTRAP TABLE OVERRIDE */
+.toast-title {
+  display: none;
+}
+
+.toast-message {
+  -ms-word-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+/*
+.DateInput {
+  width: 140px;
+}
+*/
+
+/* this is antd css that breaks bootstrap error reporting styles */
+.has-success.has-feedback:after, .has-warning.has-feedback:after, .has-error.has-feedback:after,
+.is-validating.has-feedback:after {
+  visibility: hidden;
+}
+
+.form-control-feedback.glyphicon.glyphicon-remove {
+  visibility: hidden;
+}

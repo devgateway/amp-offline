@@ -1,0 +1,20 @@
+.container {
+  padding-top: 10px;
+}
+
+.header {
+  font-size: 14px;
+}
+
+.header_small_item {
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.delete {
+  background-image: url('../../../../../assets/images/ico_del.gif');
+  background-repeat: no-repeat;
+  padding: 1em;
+  position: relative;
+  top: 14px;
+}

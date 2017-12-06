@@ -1,0 +1,21 @@
+.wrap {
+  min-height:84%;
+  background-color: #ffffff;
+}
+
+.header {
+  background-color: #ffffff;
+}
+
+.content {
+  margin-top: 120px;
+  margin-left: 20px;
+  padding-bottom: 45px;
+  background-color: #ffffff;
+}
+
+.loading_icon {
+  width: 20px;
+  content: url('../../assets/images/ajax-loader.gif');
+  margin-left: 3px;
+}

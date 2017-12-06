@@ -1,0 +1,56 @@
+{
+  "options": null,
+  "menu": {
+    "DESKTOP": {
+      "route": null,
+      "public": false,
+      "nodes": {
+        "My Desktop": {
+          "route": "/desktop/current",
+          "params": null
+        },
+        "Add Activity": {
+          "route": "/activity/edit/NEW_ACTIVITY_ID"
+        },
+        "Change workspace": {
+          "public": false,
+          "route": null,
+          "nodes": {
+          }
+        }
+      }
+    },
+    "TOOLS": {
+      "route": null,
+      "public": true,
+      "beforeSetup": true,
+      "nodes": {
+        "Change Language": {
+          "public": true,
+          "beforeSetup": true,
+          "nodes": {
+          }
+        },
+        "Settings": {
+          "public": true,
+          "beforeSetup": false,
+          "route": "/settings"
+        }
+      }
+    },
+    "SYNC": {
+      "public": false,
+      "route": "/syncUp/history"
+    },
+    "HELP": {
+      "public": true,
+      "beforeSetup": true,
+      "nodes": {
+        "AMP Offline Help": {
+          "public": true,
+          "beforeSetup": true
+        }
+      }
+    }
+  }
+}

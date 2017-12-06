@@ -1,0 +1,47 @@
+.container {
+  text-align: left;
+}
+
+.legend_container {
+  text-align: right;
+  margin-top: 4px;
+}
+
+.legend_container hr {
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+.legend {
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.red {
+  color: #c84545;
+  font-weight: bold;
+}
+
+.green {
+  color: #70a628;
+  font-weight: bold;
+}
+
+.blue {
+  color: #2e6fa1;
+  font-weight: bold;
+}
+
+.unsynced {
+  color: black;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.info_icon {
+  color: #90c845;
+  display: inline-block;
+  margin-left: 5px;
+  padding-right: 5px;
+  top: 2px;
+}

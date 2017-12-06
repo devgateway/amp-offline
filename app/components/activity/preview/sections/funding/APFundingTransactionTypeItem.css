@@ -1,0 +1,48 @@
+.header {
+  margin-top: 10px;
+  padding: 10px;
+  padding-left: 20px;
+  font-size: 0.85em;
+  color: #767676;
+  background-color: #f8f8f8;
+  font-weight: bold;
+}
+
+.table_container {
+  margin-top: 20px;
+}
+
+.subtotal_footer_legend {
+  display: inline-block;
+  background-color: #f5faff;
+  font-weight: bold;
+  border-top: 1px solid #ebebeb;
+  border-bottom: 1px solid #ebebeb;
+  text-align: left;
+  width: 50%;
+  padding: 5px;
+  padding-left: 20px;
+  padding-top: 8px;
+  padding-bottom: 6px;
+  margin-bottom: 15px;
+  font-size: 0.85em;
+  color: #767676;
+}
+
+.subtotal_footer_number {
+  display: inline-block;
+  background-color: #f5faff;
+  font-weight: bold;
+  border-top: 1px solid #ebebeb;
+  border-bottom: 1px solid #ebebeb;
+  width: 50%;
+  text-align: right;
+  padding: 5px;
+  padding-right: 20px;
+  margin-bottom: 15px;
+}
+
+.funding_table {
+  width: 100%;
+  font-weight: bold;
+}

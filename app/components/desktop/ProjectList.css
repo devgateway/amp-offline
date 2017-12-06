@@ -1,0 +1,94 @@
+.container {
+  text-align: center;
+  width: 100%;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  border-right: 1px solid rgb(221, 221, 221);
+  border-left: 1px solid rgb(221, 221, 221);
+  border-top: 0px;
+}
+
+.containerTable {
+  color: #4b4a4b;
+  border-top: 1px;
+  border-bottom: 0;
+  position: relative;
+  top: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 12px;
+}
+
+.header {
+  margin-bottom: 0px;
+}
+
+.row {
+  border-top: 0;
+}
+
+.thClassName {
+  border-right: none !important;
+  border-left: none !important;
+  color: #7f8fa4;
+  font-weight: normal;
+}
+
+.width_7 {
+  width: 7%;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.width_8 {
+  width: 8%;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.width_15 {
+  width: 15%;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.width_40 {
+  width: 40%;
+  border-right: none !important;
+  border-left: none !important;
+}
+
+.status_draft {
+  color: #c84545;
+}
+
+.status_validated {
+  color: #2e6fa1;
+}
+
+.status_unvalidated {
+  color: #70a628;
+}
+
+.unsynced {
+  font-style: italic;
+}
+
+.rejected {
+  color: #000;
+  font-style: italic;
+}
+
+.clearFilters {
+  cursor: pointer;
+  color: #70a628;
+  float: right;
+  font-size: 12px;
+  font-weight: bold;
+  right: 13px;
+  position: relative;
+  top: -30px;
+}
+
+.sizePerPageDropDownWrapper {
+  margin-left: 10px;
+}
