@@ -165,9 +165,9 @@
     "bluebird-queue": "0.0.8",
     "bunyan": "^1.8.10",
     "crypto-js": "^3.1.8",
-    "electron-debug": "^1.0.1",
-    "electron-mocha": "^3.4.0",
-    "electron-updater": "^2.12.1",
+    "electron-debug": "1.0.1",
+    "electron-mocha": "3.4.0",
+    "electron-updater": "2.12.1",
     "env-cmd": "^7.0.0",
     "font-awesome": "^4.7.0",
     "fs-extra": "^2.0.0",
@@ -208,6 +208,6 @@
     "ampServerProtocol": "https"
   },
   "dependencies": {
-    "electron-pdf-window": "^1.0.12"
+    "electron-pdf-window": "1.0.12"
   }
 }
