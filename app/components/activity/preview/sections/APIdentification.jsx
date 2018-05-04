@@ -26,8 +26,9 @@ class APIdentification extends Component {
   render() {
     const { buildSimpleField } = this.props;
     const fieldPaths = [AC.STATUS_REASON, AC.TYPE_OF_IMPLEMENTATION,
-      AC.MODALITIES, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS, AC.LESSONS_LEARNED, AC.PROJECT_IMPACT,
-      AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.A_C_CHAPTER, AC.ACTIVITY_BUDGET];
+      AC.MODALITIES, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS, AC.RESULTS, AC.LESSONS_LEARNED,
+      AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.A_C_CHAPTER,
+      AC.ACTIVITY_BUDGET];
     // Show ministry_code only when activity_budget is enabled and has value 'On Budget'.
     if (this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
       && this.props.activity[AC.ACTIVITY_BUDGET]

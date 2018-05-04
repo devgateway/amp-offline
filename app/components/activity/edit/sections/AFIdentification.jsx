@@ -92,6 +92,9 @@ class AFIdentification extends Component {
               <div>
                 <AFField parent={this.props.activity} fieldPath={AC.DESCRIPTION} />
               </div>
+              <div>
+                <AFField parent={this.props.activity} fieldPath={AC.RESULTS} />
+              </div>
             </Col>
             <Col md={6} lg={6} >
               <div>

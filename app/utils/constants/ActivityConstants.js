@@ -14,6 +14,7 @@ export const ACTIVITY_STATUS = 'activity_status';
 export const STATUS_REASON = 'status_reason';
 export const TYPE_OF_IMPLEMENTATION = 'type_of_implementation';
 export const OBJECTIVE = 'objective';
+export const RESULTS = 'results';
 export const ACTUAL_APPROVAL_DATE = 'actual_approval_date';
 export const FUNDINGS = 'fundings';
 export const FUNDING_DONOR_ORG_ID = 'donor_organization_id';
