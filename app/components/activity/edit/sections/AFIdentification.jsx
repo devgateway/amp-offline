@@ -3,7 +3,6 @@ import { Col, Grid, Row } from 'react-bootstrap';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
-import { RICH_TEXT_AREA } from '../components/AFComponentTypes';
 import { IDENTIFICATION } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../utils/constants/ValueConstants';
@@ -34,6 +33,7 @@ class AFIdentification extends Component {
       showMinistryCode
     };
     this.onActivityBudgetUpdate = this.onActivityBudgetUpdate.bind(this);
+    this.mapSimpleFieldDef = this.mapSimpleFieldDef.bind(this);
   }
 
   onActivityBudgetUpdate() {
@@ -44,8 +44,23 @@ class AFIdentification extends Component {
     });
   }
 
+  mapSimpleFieldDef(fieldName) {
+    return <AFField parent={this.props.activity} fieldPath={fieldName} />;
+  }
+
   render() {
     // TODO update the layout per Llanoc design. If not available, adjust to work. For now grouping fields as in AMP.
+    const leftColumn = [AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.OBJECTIVE, AC.LESSONS_LEARNED, AC.PROJECT_IMPACT,
+      AC.ACTIVITY_SUMMARY, AC.DESCRIPTION, AC.RESULTS].map(this.mapSimpleFieldDef);
+    const rightColumn = [
+      (<AFField
+        parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} onAfterUpdate={this.onActivityBudgetUpdate} />),
+    ];
+    if (this.state.showMinistryCode) {
+      rightColumn.push(<AFField parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} forceRequired />);
+    }
+    rightColumn.push(...[AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT].map(this.mapSimpleFieldDef));
+
     return (
       <div className={afStyles.full_width} >
         <Grid className={afStyles.full_width} >
@@ -56,50 +71,10 @@ class AFIdentification extends Component {
           </Row>
           <Row>
             <Col md={6} lg={6} >
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_STATUS} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.STATUS_REASON} />
-              </div>
-              <div >
-                <AFField parent={this.props.activity} fieldPath={AC.OBJECTIVE} type={RICH_TEXT_AREA} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.LESSONS_LEARNED} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.PROJECT_IMPACT} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_SUMMARY} />
-              </div>
+              {leftColumn}
             </Col>
             <Col md={6} lg={6} >
-              <div>
-                <AFField
-                  parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET}
-                  onAfterUpdate={this.onActivityBudgetUpdate} />
-              </div>
-              <div>
-                {(this.state.showMinistryCode) ?
-                  <AFField parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} forceRequired /> : null}
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6} lg={6} >
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.DESCRIPTION} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.RESULTS} />
-              </div>
-            </Col>
-            <Col md={6} lg={6} >
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.PROJECT_MANAGEMENT} />
-              </div>
+              {rightColumn}
             </Col>
           </Row>
         </Grid>
