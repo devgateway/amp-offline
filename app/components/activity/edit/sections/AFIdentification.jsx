@@ -52,10 +52,10 @@ class AFIdentification extends Component {
     // TODO update the layout per Llanoc design. If not available, adjust to work. For now grouping fields as in AMP.
     const leftColumn = [AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.OBJECTIVE, AC.LESSONS_LEARNED, AC.PROJECT_IMPACT,
       AC.ACTIVITY_SUMMARY, AC.DESCRIPTION, AC.RESULTS].map(this.mapSimpleFieldDef);
-    const rightColumn = [
+    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID].map(this.mapSimpleFieldDef);
+    rightColumn.push(
       (<AFField
-        parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} onAfterUpdate={this.onActivityBudgetUpdate} />),
-    ];
+        parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} onAfterUpdate={this.onActivityBudgetUpdate} />));
     if (this.state.showMinistryCode) {
       rightColumn.push(<AFField parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} forceRequired />);
     }
