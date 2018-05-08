@@ -21,6 +21,7 @@ export const FUNDINGS = 'fundings';
 export const FUNDING_DONOR_ORG_ID = 'donor_organization_id';
 export const IS_DRAFT = 'is_draft';
 export const ORG_ROLE_ORG_ID = 'organization';
+export const ADDITIONAL_INFO = 'additional_info';
 export const PRIMARY_SECTORS = 'primary_sectors';
 export const SECONDARY_SECTORS = 'secondary_sectors';
 export const TERTIARY_SECTORS = 'tertiary_sectors';

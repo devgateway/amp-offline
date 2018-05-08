@@ -1,7 +1,8 @@
-/* eslint-disable react/no-unused-prop-types */
+/* eslint-disable react/no-unused-prop-types,class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import {
+  ADDITIONAL_INFO,
   DONOR_ORGANIZATION,
   EXECUTING_AGENCY,
   CONTRACTING_AGENCY,
@@ -9,7 +10,7 @@ import {
   IMPLEMENTING_AGENCY,
   RESPONSIBLE_ORGANIZATION,
   ORGANIZATION,
-  PERCENTAGE
+  PERCENTAGE, HIERARCHICAL_VALUE
 } from '../../../../utils/constants/ActivityConstants';
 import APPercentageList from '../components/APPercentageList';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
@@ -31,14 +32,25 @@ class APRelatedOrganizations extends Component {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
   };
 
+  getItemTitle(item) {
+    const org = item[ORGANIZATION];
+    const orgTitle = org[HIERARCHICAL_VALUE] ? org[HIERARCHICAL_VALUE] : org.value;
+    const additionalInfo = item[ADDITIONAL_INFO];
+    if (additionalInfo) {
+      return `${orgTitle} (${additionalInfo})`;
+    }
+    return orgTitle;
+  }
+
   render() {
+    const porps = { ...this.props, getItemTitle: this.getItemTitle };
     return (<div>
-      <DO key="do-org-list" {...this.props} fmPath={ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
-      <RO key="ro-org-list" {...this.props} />
-      <CA key="ca-org-list" {...this.props} />
-      <BE key="be-org-list" {...this.props} />
-      <IE key="ie-org-list" {...this.props} />
-      <EA key="ea-org-list" {...this.props} />
+      <DO key="do-org-list" {...porps} fmPath={ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
+      <RO key="ro-org-list" {...porps} />
+      <CA key="ca-org-list" {...porps} />
+      <BE key="be-org-list" {...porps} />
+      <IE key="ie-org-list" {...porps} />
+      <EA key="ea-org-list" {...porps} />
     </div>);
   }
 }
