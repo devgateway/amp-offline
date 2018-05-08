@@ -2,7 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { FormControl } from 'react-bootstrap';
 import AFOption from './AFOption';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF Dropdown');
 
 /**
  * Activity Form dropdown component
@@ -14,20 +16,21 @@ export default class AFDropDown extends Component {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
     // TODO change it to be only number once we fix possible values to provide ids only as numbers
     selectedId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    defaultValueAsEmptyObject: PropTypes.bool
   };
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       value: undefined,
-      propsRecieved: false
+      propsReceived: false
     };
   }
 
   componentWillMount() {
-    this.setState({ value: this.props.selectedId, propsRecieved: true });
+    this.setState({ value: this.props.selectedId, propsReceived: true });
   }
 
   componentDidUpdate(prevProps) {
@@ -37,7 +40,11 @@ export default class AFDropDown extends Component {
   }
 
   handleChange(e) {
-    this._handleChange(this._findSelectedOption(e.target.value));
+    let value = this._findSelectedOption(e.target.value);
+    if (this.props.defaultValueAsEmptyObject === true && value === undefined) {
+      value = {};
+    }
+    this._handleChange(value);
   }
 
   _findSelectedOption(value) {
@@ -57,17 +64,17 @@ export default class AFDropDown extends Component {
   }
 
   render() {
-    if (!this.state.propsRecieved) {
+    if (!this.state.propsReceived) {
       return null;
     }
-    const defaultOption = <option key={-1} value={-1} >{translate('Choose One')}</option>;
+    const defaultOption = <option key={-1} value={-1}>{translate('Choose One')}</option>;
     const options = this.props.options.map(option =>
-      <option key={option.id} value={option.id} >{option.translatedValue}</option>);
+      <option key={option.id} value={option.id}>{option.translatedValue}</option>);
 
     return (
       <FormControl
         componentClass="select" defaultValue={this.state.value} onChange={this.handleChange.bind(this)}
-        placeholder={-1} >
+        placeholder={-1}>
         {[defaultOption].concat(options)}
       </FormControl>
     );

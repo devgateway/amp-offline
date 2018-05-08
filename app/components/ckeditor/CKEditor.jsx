@@ -2,8 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
 import styles from './CKEditor.css';
 import translate from '../../utils/translate';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+
+const logger = new Logger('CK Editor');
 
 /**
  * TODO (iteration 2+) check if we can download full version via npm or the right customization to include unde libs.
@@ -30,7 +32,7 @@ export default class CKEditor extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       value: null,
       show: false
@@ -69,7 +71,7 @@ export default class CKEditor extends Component {
 
   _show() {
     if (!CKEDITOR) {
-      LoggerManager.error('CKEditor not found');
+      logger.error('CKEditor not found');
       return;
     }
 
@@ -85,15 +87,18 @@ export default class CKEditor extends Component {
     };
     this.editorName = CKEDITOR.replace(this.placeholder, configuration).name;
     this.toggle = false;
+    const editor = CKEDITOR.instances[this.editorName];
+    editor.on('blur', () => {
+      if (this.props.onChange) {
+        const data = editor.getData();
+        this.props.onChange(data);
+      }
+    });
   }
 
   _hide() {
     this.toggle = false;
     const editor = CKEDITOR.instances[this.editorName];
-    const data = editor.getData();
-    if (this.props.onChange) {
-      this.props.onChange(data);
-    }
     // this is a workaround for https://dev.ckeditor.com/ticket/16825 issue that is planned to be fixed in 4.7.0
     editor.focusManager.blur(true);
     editor.destroy(true);

@@ -18,22 +18,22 @@ import config from './webpack.config.development';
  to see the origin (file and line) of the log.
  Note: Dont add it to webpack.config.development because that file might be used not only for DEV.*/
 if (process.env.FORCE_LOGGER !== 'true') {
-  let keepDebugLogsFor = LoggerSettings.getDefaultConfig(process.env.NODE_ENV).keepDebugLogsOnlyFor;
+  let keepDebugLogsFor = LoggerSettings.getDefaultConfig(process.env.NODE_ENV).keepDebugLogsFor;
   if (keepDebugLogsFor) {
-    if (keepDebugLogsFor.length) {
-      keepDebugLogsFor = new RegExp(`${keepDebugLogsFor.map(f => f.replace('.', '\\.')).join('|')}$`);
-    } else {
-      keepDebugLogsFor = /\.jsx?$/;
-    }
+    keepDebugLogsFor = keepDebugLogsFor.length ? keepDebugLogsFor : ['.jsx?'];
+  } else {
+    keepDebugLogsFor = [];
   }
+  keepDebugLogsFor = new RegExp(`${keepDebugLogsFor.map(f => f.replace('.', '\\.')).join('|')}|node_modules.*$`);
   config.module.loaders.push(
     {
       test: /\.jsx?$/,
+      exclude: /node_modules/,
       loader: StringReplacePlugin.replace({
-        replacements: [{ pattern: /LoggerManager.log/g, replacement: () => ('console.log') },
-          { pattern: /LoggerManager.debug/g, replacement: () => ('console.debug') },
-          { pattern: /LoggerManager.warn/g, replacement: () => ('console.warn') },
-          { pattern: /LoggerManager.error/g, replacement: () => ('console.error') }
+        replacements: [{ pattern: /logger.log/g, replacement: () => ('console.log') },
+          { pattern: /logger.debug/g, replacement: () => ('console.debug') },
+          { pattern: /logger.warn/g, replacement: () => ('console.warn') },
+          { pattern: /logger.error/g, replacement: () => ('console.error') }
         ],
       })
     },
@@ -41,7 +41,7 @@ if (process.env.FORCE_LOGGER !== 'true') {
       test: /\.jsx?$/,
       exclude: keepDebugLogsFor,
       loader: StringReplacePlugin.replace({
-        replacements: [{ pattern: /LoggerManager.debug/g, replacement: () => ('// console.debug') }],
+        replacements: [{ pattern: /logger.debug/g, replacement: () => ('// console.debug') }],
       })
     });
 }

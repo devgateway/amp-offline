@@ -3,22 +3,28 @@ import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
+import { loadHelp } from '../actions/HelpAction';
 import store from '../index';
 import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
-import LoggerManager from '../modules/util/LoggerManager';
+import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
+import Logger from '../modules/util/LoggerManager';
+import { didSetupComplete } from '../actions/SetupAction';
+
+const logger = new Logger('Menu utils');
 
 const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
 
 class MenuUtils {
 
   constructor() {
-    LoggerManager.log('constructor');
+    logger.debug('constructor');
   }
 
   buildMenu(loggedIn, menu, onClickHandler, workspaceReducer, menuOnClickHandler, languageList) {
-    LoggerManager.log('buildMenu');
+    logger.debug('buildMenu');
     const { workspaceList } = workspaceReducer;
     const firstLevelEntries = [];
+    const isSetupComplete = didSetupComplete();
     const newMenu = cloneDeep(menu);
 
     // Dynamic list of workspaces.
@@ -30,10 +36,13 @@ class MenuUtils {
       newMenu.menu.DESKTOP.nodes['Change workspace'].nodes = nodes;
 
       if (!workspaceReducer.currentWorkspace || !workspaceReducer.currentWorkspace['add-activity']) {
-        delete newMenu.menu.DESKTOP.nodes['Add Activity'];
+        delete newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY];
       } else {
-        const addActivityRoute = newMenu.menu.DESKTOP.nodes['Add Activity'].route;
-        newMenu.menu.DESKTOP.nodes['Add Activity'].route = addActivityRoute.replace('NEW_ACTIVITY_ID', NEW_ACTIVITY_ID);
+        const addActivityRoute = newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route;
+        newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route = addActivityRoute.replace('NEW_ACTIVITY_ID', NEW_ACTIVITY_ID);
+      }
+      if (!workspaceReducer.currentWorkspace) {
+        delete newMenu.menu.DESKTOP.nodes[MY_DESKTOP];
       }
     }
 
@@ -43,6 +52,7 @@ class MenuUtils {
       languageList.forEach(value => (langNodes[value] = {
         objId: value,
         public: true,
+        beforeSetup: true,
         onItemClickHandler: ((lang) => {
           store.dispatch(setLanguage(lang));
         })
@@ -50,12 +60,16 @@ class MenuUtils {
       newMenu.menu.TOOLS.nodes['Change Language'].nodes = langNodes;
     }
 
+    if (newMenu.menu.HELP && newMenu.menu.HELP.nodes && newMenu.menu.HELP.nodes['AMP Offline Help']) {
+      newMenu.menu.HELP.nodes['AMP Offline Help'].onItemClickHandler = (() => (store.dispatch(loadHelp())));
+    }
+
     if (newMenu.menu !== undefined && newMenu.menu !== null) {
       // Iterate first level items.
       Object.keys(newMenu.menu).forEach((key) => {
         const firstLevelObject = newMenu.menu[key];
-        if (toShow(firstLevelObject.public, loggedIn)) {
-          const structure = generateTree(firstLevelObject, key, 0, [], loggedIn, menuOnClickHandler);
+        if (toShow(firstLevelObject, loggedIn, isSetupComplete)) {
+          const structure = generateTree(firstLevelObject, key, 0, [], loggedIn, isSetupComplete, menuOnClickHandler);
           firstLevelEntries.push(structure);
         }
       });
@@ -73,7 +87,7 @@ class MenuUtils {
 }
 
 export function handleClick(info) {
-  LoggerManager.log('handleClick');
+  logger.debug('handleClick');
   if (info.item.props.route) { // if it doesn't have a route, we invoke a ClickHandler
     UrlUtils.forwardTo(info.item.props.route);
   } else if (info.item.props.onItemClickHandler) {
@@ -83,15 +97,16 @@ export function handleClick(info) {
   }
 }
 
-function generateTree(object, key, level, node, loggedIn, menuOnClickHandler) {
-  // LoggerManager.log('generateTree');
+function generateTree(object, key, level, node, loggedIn, isSetupComplete, menuOnClickHandler) {
+  // logger.log('generateTree');
   const newNode = Object.assign({}, node);
   if (object.nodes) {
     newNode[level] = [];
-    if (toShow(object.public, loggedIn)) {
+    if (toShow(object, loggedIn, isSetupComplete)) {
       Object.keys(object.nodes).forEach((key2) => {
-        if (toShow(object.nodes[key2].public, loggedIn)) {
-          newNode[level].push(generateTree(object.nodes[key2], key2, level + 1, newNode, loggedIn, menuOnClickHandler));
+        if (toShow(object.nodes[key2], loggedIn, isSetupComplete)) {
+          newNode[level].push(generateTree(object.nodes[key2], key2, level + 1, newNode, loggedIn,
+            isSetupComplete, menuOnClickHandler));
         }
       });
     }
@@ -119,15 +134,8 @@ function _getTitle(object, key) {
 }
 
 // Export function so we can access it from outside (ie: from MenuUtil.spec.js).
-export function toShow(isPublic, loggedIn) {
-  // LoggerManager.log('toShow');
-  /* Truth table:
-   * true, true --> true
-   * true, false --> true
-   * false, true --> true
-   * false, false --> false
-   * */
-  return isPublic || loggedIn;
+export function toShow(menu, loggedIn, isSetupComplete) {
+  return (menu.public || loggedIn) && (menu.beforeSetup || isSetupComplete);
 }
 
 export default MenuUtils;

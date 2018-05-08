@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import CKEditor from '../../../ckeditor/CKEditor';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF Rich text editor');
 
 /**
  * Activity Form Rich Text Area component
@@ -16,7 +18,7 @@ export default class AFRichTextEditor extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = {
       value: ''
     };

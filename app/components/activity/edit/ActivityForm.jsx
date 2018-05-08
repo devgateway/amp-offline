@@ -14,8 +14,11 @@ import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManag
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import ActivityValidator from '../../../modules/activity/ActivityValidator';
 import translate from '../../../utils/translate';
-import LoggerManager from '../../../modules/util/LoggerManager';
+import Logger from '../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
+import FeatureManager from '../../../modules/util/FeatureManager';
+
+const logger = new Logger('Activity form');
 
 /* eslint-disable class-methods-use-this */
 
@@ -65,8 +68,7 @@ export default class ActivityForm extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
-    this.activity = undefined;
+    logger.log('constructor');
     this.showSaveDialog = false;
     this._toggleQuickLinks = this._toggleQuickLinks.bind(this);
   }
@@ -84,9 +86,15 @@ export default class ActivityForm extends Component {
   }
 
   componentWillMount() {
-    this.props.loadActivityForActivityForm(this.props.params.activityId);
+    this.init(this.props.params.activityId);
+  }
+
+  init(activityId) { // eslint-disable-line react/sort-comp
+    this.activity = undefined;
+    this.props.loadActivityForActivityForm(activityId);
     this.setState({
-      isNewActivity: this.props.params.activityId === NEW_ACTIVITY_ID,
+      activityId,
+      isNewActivity: activityId === NEW_ACTIVITY_ID,
       quickLinksExpanded: true,
       currentSection: undefined,
       content: undefined,
@@ -98,11 +106,20 @@ export default class ActivityForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { activityFieldsManager, otherProjectTitles, activity, savedActivity } = nextProps.activityReducer;
+    const activityId = nextProps.params && nextProps.params.activityId;
+    // normally it means "Add Activity" was called from within AF, otherwise activityId must not change
+    if (this.state.activityId !== undefined && activityId !== undefined && this.state.activityId !== activityId) {
+      this.props.unloadActivity();
+      this.init(activityId);
+      return;
+    }
     if (activityFieldsManager) {
-      this.activityValidator = new ActivityValidator(activityFieldsManager, otherProjectTitles);
+      this.activityValidator = new ActivityValidator(activity, activityFieldsManager, otherProjectTitles);
       this.sections = SECTIONS.map(name => {
         const fmPath = SECTIONS_FM_PATH[name];
-        if (!fmPath || activityFieldsManager.isFieldPathEnabled(fmPath)) {
+        if (!fmPath) {
+          return name;
+        } else if (activityFieldsManager.isFieldPathEnabled(fmPath) || FeatureManager.isFMSettingEnabled(fmPath)) {
           return name;
         }
         return null;
@@ -114,6 +131,7 @@ export default class ActivityForm extends Component {
         this.props.loadActivityForActivityForm(savedActivity.id);
       } else {
         this.activity = activity;
+        this.activityValidator.activity = activity;
         this._selectSection(IDENTIFICATION);
       }
     }
@@ -206,7 +224,7 @@ export default class ActivityForm extends Component {
     let errorDetails = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join('. ');
     errorDetails = errorDetails.length > 1000 ? `${errorDetails.substring(0, 1000)}...` : errorDetails;
     const validationError = `${translate('afFieldsGeneralError')} Details: ${errorDetails}`;
-    LoggerManager.error(validationError);
+    logger.error(validationError);
     return validationError;
   }
 
@@ -234,6 +252,9 @@ export default class ActivityForm extends Component {
   }
 
   _renderActions() {
+    const { isNewActivity } = this.state;
+    const disablePreview = typeof isNewActivity === 'undefined' || isNewActivity;
+
     const previewUrl = `/activity/preview/${this.props.params.activityId}`;
     return (
       <div>
@@ -248,7 +269,11 @@ export default class ActivityForm extends Component {
             onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
           </Button>
           <Button
-            key="preview" bsClass={styles.action_button} disabled={this.state.isNewActivity} block >
+            key="preview"
+            bsClass={styles.action_button}
+            disabled={disablePreview}
+            block
+          >
             <Link to={previewUrl} title={translate('Preview')} >
               {translate('Preview')}
             </Link>
@@ -293,7 +318,7 @@ export default class ActivityForm extends Component {
   }
 
   render() {
-    if (this.props.activityReducer.isActivityLoaded) {
+    if (this.props.activityReducer.isActivityLoaded && this.activity) {
       return this._renderActivity();
     }
     // TODO report errors if not loading and not loaded

@@ -4,9 +4,14 @@ import SyncUpRunner from './SyncUpRunner';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
 import { TEST_URL } from '../connectivity/AmpApiConstants';
 import SyncUpHelper from '../helpers/SyncUpHelper';
+import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import { loadAllLanguages } from '../../actions/TranslationAction';
+import { loadWorkspaces, reloadSelectedWorkspace } from '../../actions/WorkspaceAction';
 import store from '../../index';
 import {
+  NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM,
+  NR_SYNC_HISTORY_ENTRIES,
+  OLD_SYNC_LOGS_DURATION_ISO_8601,
   SYNCUP_BEST_BEFORE_DAYS,
   SYNCUP_DATETIME_FIELD,
   SYNCUP_DIFF_LEFTOVER,
@@ -14,15 +19,20 @@ import {
   SYNCUP_NO_DATE,
   SYNCUP_STATUS_FAIL,
   SYNCUP_STATUS_SUCCESS,
-  SYNCUP_SYNC_REQUESTED_AT
+  SYNCUP_SYNC_REQUESTED_AT,
+  SYNCUP_SYNC_REQUESTED_BY
 } from '../../utils/Constants';
-import LoggerManager from '../../modules/util/LoggerManager';
-import {
-  loadCurrencyRatesOnStartup,
-  loadFMTree,
-  loadGlobalSettings
-} from '../../actions/StartUpAction';
+import Logger from '../../modules/util/LoggerManager';
+import { loadCurrencyRatesOnStartup, loadFMTree, loadGlobalSettings } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
+import translate from '../../utils/translate';
+import DateUtils from '../../utils/DateUtils';
+import * as Utils from '../../utils/Utils';
+import * as UserHelper from '../helpers/UserHelper';
+import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorConstants';
+import { addMessage } from '../../actions/NotificationAction';
+
+const logger = new Logger('Syncup manager');
 
 // TODO: Evaluate in the future whats best: to have static functions or to create instances of SyncUpManager.
 export default class SyncUpManager {
@@ -35,7 +45,7 @@ export default class SyncUpManager {
    * @private
    */
   static sortByLastSyncDateDesc(a, b) {
-    LoggerManager.log('_sortByLastSyncDateDesc');
+    logger.log('_sortByLastSyncDateDesc');
     return (a[SYNCUP_DATETIME_FIELD] > b[SYNCUP_DATETIME_FIELD]
       ? -1
       : a[SYNCUP_DATETIME_FIELD] < b[SYNCUP_DATETIME_FIELD] ? 1 : 0);
@@ -46,7 +56,7 @@ export default class SyncUpManager {
    * @returns {Promise}
    */
   static getLastSuccessfulSyncUp() {
-    LoggerManager.log('getLastSuccessfulSyncUp');
+    logger.log('getLastSuccessfulSyncUp');
     return new Promise((resolve, reject) => (
       SyncUpHelper.findAllSyncUpByExample({
         status: SYNCUP_STATUS_SUCCESS
@@ -66,7 +76,7 @@ export default class SyncUpManager {
    * Retrieves the latest sync up log
    */
   static getLastSyncUpLog() {
-    LoggerManager.log('getLastSyncUpLog');
+    logger.log('getLastSyncUpLog');
     return SyncUpHelper.getLatestId().then(id => {
       if (id === 0) {
         return {};
@@ -76,9 +86,9 @@ export default class SyncUpManager {
   }
 
   static getLastSyncUpIdForCurrentUser() {
-    LoggerManager.log('getLastSyncUpLog');
+    logger.log('getLastSyncUpLog');
     const user = store.getState().userReducer.userData;
-    return SyncUpHelper.getLatestId({ 'requested-by': user.id });
+    return SyncUpHelper.getLatestId(Utils.toMap(SYNCUP_SYNC_REQUESTED_BY, user.id));
   }
 
   /**
@@ -86,11 +96,17 @@ export default class SyncUpManager {
    * and then call the EPs from the types that need to be synced.
    */
   static syncUpAllTypesOnDemand() {
-    LoggerManager.log('syncUpAllTypesOnDemand');
+    logger.log('syncUpAllTypesOnDemand');
     let syncResult;
     const startDate = new Date();
     return this._startSyncUp()
       .then(result => {
+        if (result && result.status === SYNCUP_STATUS_FAIL && !result.units) {
+          let error = result.errors && result.errors.length && result.errors.join(' ');
+          error = error || translate('unexpectedError');
+          logger.error(error);
+          return Promise.reject(error);
+        }
         syncResult = result;
         syncResult.dateStarted = startDate.toISOString();
         return this._saveMainSyncUpLog(result);
@@ -105,36 +121,35 @@ export default class SyncUpManager {
    * @returns {*}
    */
   static prepareNetworkForSyncUp() {
-    LoggerManager.log('prepareNetworkForSyncUp');
+    logger.log('prepareNetworkForSyncUp');
     return ConnectionHelper.doGet({ url: TEST_URL });
   }
 
   static _startSyncUp() {
-    LoggerManager.log('_startSyncUp');
+    logger.log('_startSyncUp');
     /* We can save time by running these 2 promises in parallel because they are not related (one uses the network
      and the other the local database. */
     const userId = store.getState().userReducer.userData.id;
     let syncUpRunner: SyncUpRunner;
-    return new Promise((resolve) =>
-      Promise.all([this.prepareNetworkForSyncUp(TEST_URL), SyncUpHelper.getLastSyncUpLogWithSyncDiffTimestamp()]
-      ).then(([, lastSyncUpLog]) => {
+    return Promise.all([this.prepareNetworkForSyncUp(TEST_URL), SyncUpHelper.getLastSyncUpLogWithSyncDiffTimestamp()])
+      .then(([, lastSyncUpLog]) => {
         const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
         const syncUpDiffLeftOver = new SyncUpDiff(lastSyncUpLog[SYNCUP_DIFF_LEFTOVER]);
         syncUpRunner = new SyncUpRunner(userId, oldTimestamp, syncUpDiffLeftOver);
-        return syncUpRunner.run().then(resolve);
+        return syncUpRunner.run();
       }).catch(error => {
         // sync up runner should catch all errors and end gracefully
         // this is either an unexpected error (bug that has to be fixed) or a connectivity issue
-        console.error(`Possibly an unexpected error occurred: error = "${error}", stack = "${error.stack}"`);
+        const errorType = syncUpRunner ? 'bug / unexpected' : 'normal / expected';
+        logger.error(`A ${errorType} error occurred: error = "${error}", stack = "${error.stack}"`);
         const result = syncUpRunner ? syncUpRunner.buildResult([error])
           : SyncUpRunner.buildResult({ status: SYNCUP_STATUS_FAIL, userId, errors: [error] });
-        return resolve(result);
-      })
-    );
+        return result;
+      });
   }
 
   static _saveMainSyncUpLog(log) {
-    LoggerManager.log('_saveMainSyncUpLog');
+    logger.log('_saveMainSyncUpLog');
     return SyncUpHelper.getLatestId().then(id => {
       log.id = id + 1;
       return SyncUpHelper.saveOrUpdateSyncUp(log);
@@ -142,23 +157,30 @@ export default class SyncUpManager {
   }
 
   static _postSyncUp() {
-    const restart = true;
     return Promise.all([
-      loadAllLanguages(restart),
+      SyncUpManager.cleanupOldSyncUpLogs(),
+      SyncUpManager.dispatchLoadAllLanguages(),
       loadGlobalSettings(),
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
-      checkIfShouldSyncBeforeLogout()
+      checkIfShouldSyncBeforeLogout(),
+      store.dispatch(loadWorkspaces()),
+      reloadSelectedWorkspace()
     ]);
   }
 
+  static dispatchLoadAllLanguages() {
+    const restart = true;
+    return store.dispatch(loadAllLanguages(restart));
+  }
+
   static getSyncUpHistory() {
-    LoggerManager.log('getSyncUpHistory');
+    logger.log('getSyncUpHistory');
     return SyncUpHelper.findAllSyncUpByExample({});
   }
 
   static getLastSyncInDays() {
-    LoggerManager.log('getLastSyncInDays');
+    logger.log('getLastSyncInDays');
     return new Promise((resolve, reject) => (
       SyncUpManager.getLastSuccessfulSyncUp().then(lastSync => {
         if (lastSync && lastSync['sync-date']) {
@@ -176,7 +198,7 @@ export default class SyncUpManager {
    * Check if the last syncup is too old or there is not user data in storage, also set the message.
    */
   static checkIfToForceSyncUp() {
-    LoggerManager.log('checkIfToForceSyncUp');
+    logger.log('checkIfToForceSyncUp');
     return Promise.all([SyncUpManager.getLastSyncInDays(), SyncUpManager.getLastSuccessfulSyncUp(),
       SyncUpManager.getLastSyncUpIdForCurrentUser()])
       .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser]) => {
@@ -196,9 +218,83 @@ export default class SyncUpManager {
   }
 
   static isWarnSyncUp() {
-    LoggerManager.log('isWarnSyncUp');
+    logger.log('isWarnSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) =>
       (days === undefined || days > SYNCUP_BEST_BEFORE_DAYS)
     );
+  }
+
+  static getSyncUpStatusMessage() {
+    const { didUserSuccessfulSyncUp, daysFromLastSuccessfulSyncUp, lastSuccessfulSyncUp, didSyncUp } =
+      store.getState().syncUpReducer;
+    // detect message & build notification
+    let message = null;
+    if (didUserSuccessfulSyncUp) {
+      if (daysFromLastSuccessfulSyncUp > SYNCUP_FORCE_DAYS) {
+        message = translate('tooOldSyncWarning');
+      } else {
+        const successAt = DateUtils.createFormattedDate(lastSuccessfulSyncUp[SYNCUP_SYNC_REQUESTED_AT]);
+        message = `${translate('syncWarning')} ${translate('lastSuccessfulSyncupDate').replace('%date%', successAt)}`;
+      }
+    } else if (didSyncUp) {
+      message = `${translate('syncWarning')} ${translate('allPreviousSyncUpFailed')}`;
+    } else {
+      message = translate('syncWarning');
+    }
+    return message;
+  }
+
+  static cleanupOldSyncUpLogs() {
+    logger.log('cleanupOldSyncUpLogs');
+    return SyncUpManager._deleteOldSyncUpLogs()
+      .then(SyncUpManager._deleteOldDetails)
+      .catch(errorObject => {
+        // no need to reject and interrupt other actions, just log and notify
+        logger.error(`Could not properly cleanup old sync up logs: ${errorObject}`);
+        const notification = new ErrorNotificationHelper({ errorObject, origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS });
+        store.dispatch(addMessage(notification));
+      });
+  }
+
+  static _deleteOldSyncUpLogs() {
+    logger.log('_deleteOldSyncUpLogs');
+    return SyncUpManager._getMustKeepSyncUpLogsIds().then(syncUpLogIdsToKeep => {
+      const dateStr = DateUtils.getDateFromNow(OLD_SYNC_LOGS_DURATION_ISO_8601).toISOString();
+      const filter = { $and: [{ id: { $nin: syncUpLogIdsToKeep } }, { dateStarted: { $lt: dateStr } }] };
+      return SyncUpHelper.deleteSyncUpLogs(filter);
+    });
+  }
+
+  static _getMustKeepSyncUpLogsIds() {
+    return Promise.all([
+      SyncUpHelper.getLastSyncUpLogs(NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM, { id: 1 })
+        .then(logs => Utils.flattenToListByKey(logs, 'id')),
+      SyncUpManager._getUserMustKeepSyncUpLogIds()
+    ]).then(([logsToKeepIds, mustKeepLogIds]) => logsToKeepIds.concat(mustKeepLogIds));
+  }
+
+  static _getUserMustKeepSyncUpLogIds() {
+    return UserHelper.findAllClientRegisteredUsersByExample({}, { id: 1 })
+      .then(registeredUsers =>
+        Promise.all(Utils.flattenToListByKey(registeredUsers, 'id').map(userId => {
+          const filter = Utils.toMap(SYNCUP_SYNC_REQUESTED_BY, userId);
+          filter.status = SYNCUP_STATUS_SUCCESS;
+          return SyncUpHelper.getLatestId(filter);
+        })));
+  }
+
+  static _deleteOldDetails() {
+    logger.log('_deleteOldDetails');
+    // We cannot user .updateCollectionFields since our details are within units collection
+    return SyncUpHelper.getLastSyncUpLogs(NR_SYNC_HISTORY_ENTRIES, { id: 1 })
+      .then(logs => Utils.flattenToListByKey(logs, 'id'))
+      .then(lastSyncUpLogIds => SyncUpHelper.findAllSyncUpByExample({ id: { $nin: lastSyncUpLogIds } }))
+      .then(oldLogs => {
+        if (oldLogs && oldLogs.length) {
+          oldLogs.forEach(oldLog => oldLog.units && oldLog.units.forEach(unit => unit && delete unit.details));
+          return SyncUpHelper.saveOrUpdateSyncUpCollection(oldLogs);
+        }
+        return Promise.resolve();
+      });
   }
 }

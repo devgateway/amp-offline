@@ -11,7 +11,9 @@ import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorCo
 import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
+
+const logger = new Logger('Activity push to AMP manager');
 
 /* eslint-disable class-methods-use-this */
 /**
@@ -21,7 +23,7 @@ import LoggerManager from '../../util/LoggerManager';
 export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   constructor() {
     super(SYNCUP_TYPE_ACTIVITIES_PUSH);
-    LoggerManager.log('ActivitiesPushToAMPManager');
+    logger.log('ActivitiesPushToAMPManager');
     this._cancel = false;
     this.diff = [];
     this.pushed = new Set();
@@ -56,7 +58,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _pushActivitiesToAMP(diff) {
-    LoggerManager.log('_pushActivitiesToAMP');
+    logger.log('_pushActivitiesToAMP');
     // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
     if (store.getState().userReducer.userData.ampOfflinePassword) {
       return this._rejectActivitiesClientSide(diff)
@@ -103,14 +105,17 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @return {Promise}
    */
   static _getValidUsers() {
-    LoggerManager.log('_getValidUsers');
+    logger.log('_getValidUsers');
     const filter = { $and: [{ 'is-banned': { $ne: true } }, { 'is-active': { $ne: true } }] };
     const projections = { id: 1 };
-    return UserHelper.findAllUsersByExample(filter, projections);
+    return UserHelper.findAllClientRegisteredUsersByExample(filter, projections);
   }
 
   static _getWSMembers(users) {
-    const wsMembersFilter = { 'user-id': { $in: Utils.flattenToListByKey(users, 'id') } };
+    const wsMembersFilter = {
+      'user-id': { $in: Utils.flattenToListByKey(users, 'id') },
+      ...TeamMemberHelper.getExcludeDeletedTeamMembersFilter()
+    };
     return TeamMemberHelper.findAll(wsMembersFilter);
   }
 
@@ -121,10 +126,13 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @returns {Promise}
    */
   static _getActivitiesToPush(workspaceMembers) {
-    LoggerManager.log('_getActivitiesToPush');
+    logger.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
-    return ActivityHelper.findAllNonRejectedModifiedOnClient(modifiedBySpecificWSMembers);
+    // search where IS_PUSHED is set to see why
+    const notStalePush = Utils.toMap(AC.IS_PUSHED, { $ne: true });
+    const filter = { $and: [modifiedBySpecificWSMembers, notStalePush] };
+    return ActivityHelper.findAllNonRejectedModifiedOnClient(filter);
   }
 
   /**
@@ -134,7 +142,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @return {Promise}
    */
   _pushActivities(activities) {
-    LoggerManager.log('_pushActivities');
+    logger.log('_pushActivities');
     this.diff = activities.map(activity => activity.id);
     // executing push one by one for now and sequentially to avoid AMP / client overload
     if (!activities) {
@@ -152,10 +160,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   _pushActivity(activity) {
     // TODO AMPOFFLINE-706 reject activity client if it uses a new contact that could not be pushed
-    LoggerManager.log('_pushActivity');
-    // TODO remove once invalid fields are ignored by AMP
-    activity = Object.assign({}, activity);
-    delete activity[AC.CLIENT_CHANGE_ID];
+    logger.log('_pushActivity');
     return new Promise((resolve) =>
       /*
        shouldRetry: true may be problematic if the request was received but timed out
@@ -177,7 +182,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @private
    */
   _processPushResult({ activity, pushResult, error }) {
-    LoggerManager.log('_processPushResult');
+    logger.log('_processPushResult');
     // If we got an EP result, no matter if the import was rejected, then the push was successful.
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
@@ -193,7 +198,16 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         .then(resolve)
         .catch(reject));
     }
-    return Promise.resolve();
+
+    // The activity may be pushed, but the connection may be lost until we pull its latest change from AMP.
+    // We could simply remove client-change-id once it is pushed successfully, but we want to use it in next iteration
+    // for conflicts resolution. So for now we'll flag the activity as pushed to filter it out from next push attempt.
+    activity[AC.IS_PUSHED] = true;
+    if (!activity[AC.AMP_ID]) {
+      // update the activity with AMP ID to be matched during pull
+      activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
+    }
+    return ActivityHelper.saveOrUpdate(activity, false);
   }
 
   _updateDetails({ activity, pushResult, errorData }) {
@@ -201,11 +215,12 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const detail = Utils.toMap(AC.PROJECT_TITLE, activity[AC.PROJECT_TITLE]);
     detail[AC.AMP_ID] = (pushResult && pushResult[AC.AMP_ID]) || activity[AC.AMP_ID];
     detail.id = (pushResult && pushResult[AC.INTERNAL_ID]) || activity.id;
+    logger.log(`Activity push ${detailType} ${detail[AC.AMP_ID] || activity.id}`);
     this._details[detailType].push(detail);
   }
 
   _getRejectedId(activity) {
-    LoggerManager.log('_getRejectedId');
+    logger.log('_getRejectedId');
     // check if it was already rejected before and increment the maximum rejectedId
     const ampId = activity[AC.AMP_ID];
     const projectTile = activity[AC.PROJECT_TITLE];
@@ -237,7 +252,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const idToLog = activity[AC.AMP_ID] || activity.id;
     const fieldNameToLog = activity[AC.AMP_ID] ? AC.AMP_ID : AC.INTERNAL_ID;
     error = `(${fieldNameToLog} = ${idToLog}): ${error}`;
-    LoggerManager.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
+    logger.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;
     rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;

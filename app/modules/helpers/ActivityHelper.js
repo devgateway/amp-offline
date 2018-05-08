@@ -2,7 +2,9 @@ import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_ACTIVITIES } from '../../utils/Constants';
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as Utils from '../../utils/Utils';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Activity helper');
 
 /**
  * A simplified helper for using activities storage for loading, searching / filtering, saving and deleting activities.
@@ -17,7 +19,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedById(id) {
-    LoggerManager.log('findNonRejectedById');
+    logger.log('findNonRejectedById');
     const filter = { $and: [this._getNonRejectedRule(), { id }] };
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
@@ -28,7 +30,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByInternalId(internalId) {
-    LoggerManager.log('findNonRejectedByInternalId');
+    logger.log('findNonRejectedByInternalId');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.INTERNAL_ID, internalId)] };
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
@@ -39,7 +41,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByAmpId(ampId) {
-    LoggerManager.log('findNonRejectedByAmpId');
+    logger.log('findNonRejectedByAmpId');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.AMP_ID, ampId)] };
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
@@ -50,7 +52,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByProjectTitle(projectTitle) {
-    LoggerManager.log('findNonRejectedByProjectTitle');
+    logger.log('findNonRejectedByProjectTitle');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.PROJECT_TITLE, projectTitle)] };
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
@@ -78,7 +80,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAllRejectedByAmpId(ampId, projections) {
-    LoggerManager.log('findAllRejectedByAmpId');
+    logger.log('findAllRejectedByAmpId');
     const filter = { $and: [this._getRejectedRule(), Utils.toMap(AC.AMP_ID, ampId)] };
     return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
   },
@@ -90,7 +92,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAllRejected(filterRule, projections) {
-    LoggerManager.log('findAllRejected');
+    logger.log('findAllRejected');
     const filter = { $and: [this._getRejectedRule(), filterRule] };
     return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
   },
@@ -102,7 +104,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAll(filterRule, projections) {
-    LoggerManager.log('findAll');
+    logger.log('findAll');
     return DatabaseManager.findAll(filterRule, COLLECTION_ACTIVITIES, projections);
   },
 
@@ -118,16 +120,17 @@ const ActivityHelper = {
   /**
    * Saves the new activity or updates the existing
    * @param activity
+   * @param isDiffChange if this is a difference compared to AMP and should be tracked with new client change id
    * @return {Promise}
    */
-  saveOrUpdate(activity) {
-    LoggerManager.log('saveOrUpdate');
-    this._setOrUpdateIds(activity);
+  saveOrUpdate(activity, isDiffChange) {
+    logger.log('saveOrUpdate');
+    this._setOrUpdateIds(activity, isDiffChange);
     return DatabaseManager.saveOrUpdate(activity.id, activity, COLLECTION_ACTIVITIES);
   },
 
-  _setOrUpdateIds(activity) {
-    LoggerManager.log('_setOrUpdateIds');
+  _setOrUpdateIds(activity, isDiffChange = false) {
+    logger.log('_setOrUpdateIds');
     // if this activity version is not yet available offline
     if (activity.id === undefined) {
       // set id to internal_id (== activity comes from sync) or generate a new local id (== activity created offline)
@@ -140,7 +143,9 @@ const ActivityHelper = {
         activity[AC.CLIENT_CHANGE_ID] = activity.id;
       }
     } else {
-      activity[AC.CLIENT_CHANGE_ID] = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
+      if (isDiffChange) {
+        activity[AC.CLIENT_CHANGE_ID] = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
+      }
       if (activity[AC.REJECTED_ID]) {
         activity.id = `${activity.id}-${activity[AC.CLIENT_CHANGE_ID]}`;
       }
@@ -151,11 +156,12 @@ const ActivityHelper = {
   /**
    * Saves a collection of activities
    * @param activities
+   * @param isDiffChange if this is a difference compared to AMP and should be tracked with new client change id
    * @return {Promise}
    */
-  saveOrUpdateCollection(activities) {
-    LoggerManager.log('saveOrUpdateCollection');
-    activities.forEach(this._setOrUpdateIds);
+  saveOrUpdateCollection(activities, isDiffChange) {
+    logger.log('saveOrUpdateCollection');
+    activities.forEach(this._setOrUpdateIds, isDiffChange);
     return DatabaseManager.saveOrUpdateCollection(activities, COLLECTION_ACTIVITIES);
   },
 
@@ -165,18 +171,18 @@ const ActivityHelper = {
    * @return {Promise}
    */
   replaceAll(activities) {
-    LoggerManager.log('replaceAll');
+    logger.log('replaceAll');
     activities.forEach(this._setOrUpdateIds);
     return DatabaseManager.replaceCollection(activities, COLLECTION_ACTIVITIES);
   },
 
   removeNonRejectedById(id) {
-    LoggerManager.log('removeNonRejectedById');
+    logger.log('removeNonRejectedById');
     return DatabaseManager.removeById(id, COLLECTION_ACTIVITIES, this._getNonRejectedRule());
   },
 
   removeNonRejectedByAmpId(ampId) {
-    LoggerManager.log('removeNonRejectedByAmpId');
+    logger.log('removeNonRejectedByAmpId');
     return new Promise((resolve, reject) =>
       this.findNonRejectedByAmpId(ampId).then(result => {
         if (result === null) {
@@ -189,12 +195,12 @@ const ActivityHelper = {
   },
 
   removeRejected(id) {
-    LoggerManager.log('removeRejected');
+    logger.log('removeRejected');
     return DatabaseManager.removeById(id, COLLECTION_ACTIVITIES, this._getRejectedRule());
   },
 
   removeAll(filter) {
-    LoggerManager.log('removeAll');
+    logger.log('removeAll');
     return DatabaseManager.removeAll(filter, COLLECTION_ACTIVITIES);
   },
 

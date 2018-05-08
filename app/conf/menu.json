@@ -23,32 +23,32 @@
     "TOOLS": {
       "route": null,
       "public": true,
+      "beforeSetup": true,
       "nodes": {
         "Change Language": {
           "public": true,
+          "beforeSetup": true,
           "nodes": {
           }
         },
         "Settings": {
-          "public": false,
+          "public": true,
+          "beforeSetup": false,
           "route": "/settings"
         }
       }
     },
     "SYNC": {
       "public": false,
-      "route": "/syncUp"
+      "route": "/syncUp/history"
     },
     "HELP": {
       "public": true,
+      "beforeSetup": true,
       "nodes": {
         "AMP Offline Help": {
-          "route": "/help",
-          "public": true
-        },
-        "About": {
-          "route": "/about",
-          "public": true
+          "public": true,
+          "beforeSetup": true
         }
       }
     }

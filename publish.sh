@@ -7,5 +7,9 @@ fi
 
 BRANCH_NAME=$1
 
+INSTALLERS=`ls dist/* | grep -P "(32|64).(exe|rpm|deb)"`
+
+echo INSTALLERS=$INSTALLERS
+
 ssh sulfur "mkdir -p /opt/amp-offline-snapshots/${BRANCH_NAME}"
-scp dist/*.exe sulfur:/opt/amp-offline-snapshots/${BRANCH_NAME}
+scp $INSTALLERS sulfur:/opt/amp-offline-snapshots/${BRANCH_NAME}

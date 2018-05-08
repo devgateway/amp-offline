@@ -1,93 +1,99 @@
 {
   "name": "amp-offline",
   "productName": "AMP Offline",
-  "version": "0.0.2",
-  "description": "",
+  "version": "1.1.0-SNAPSHOT",
+  "description": "Offline desktop version of the AMP portal.",
   "main": "main.js",
   "scripts": {
-    "test-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
-    "test-electron-mocha": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.electron-mocha.js",
-    "test-store": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.store.js",
-    "test": "npm run test-mocha && npm run test-electron-mocha && npm run ",
+    "test-mocha": "env-cmd --no-override test mocha --timeout 30000 --retries 2 --compilers js:babel-register --recursive --require ./test/setup.js test/**/*.spec.js",
+    "test-electron-mocha": "env-cmd --no-override test electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.electron-mocha.js",
+    "test-store": "env-cmd --no-override test electron-mocha --compilers js:babel-register --recursive --renderer test/**/*.spec.store.js",
+    "test": "npm run test-mocha && npm run test-electron-mocha && npm run test-store",
     "test-watch": "npm test -- --watch",
     "test-mocha-watch": "npm run test-mocha -- --watch",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --retries 2 --compilers js:babel-register --require ./test/setup.js ./test/e2e.js",
     "lint": "eslint --ignore-path .gitignore --ignore-pattern libs/ --ext .jsx,.js --format=node_modules/eslint-formatter-pretty app test *.js",
-    "hot-server": "cross-env NODE_ENV=development FORCE_LOGGER=false node --max_old_space_size=2096 -r babel-register server.js",
-    "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --profile",
-    "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile",
+    "hot-server": "env-cmd --no-override development node --max_old_space_size=2096 -r babel-register server.js",
+    "build-main": "env-cmd --no-override production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --profile",
+    "build-renderer": "env-cmd --no-override production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile",
     "build": "npm run build-main && npm run build-renderer",
-    "start": "cross-env NODE_ENV=production electron ./app/",
-    "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register -r babel-polyfill ./app/main.development",
+    "start": "cross-env NODE_ENV=production ELECTRON_ENABLE_LOGGING=1 electron ./app/",
+    "start-hot-update-main-debug": "env-cmd --no-override development electron --inspect-brk=5858 -r babel-register -r babel-polyfill ./app/main.development",
+    "start-hot": "env-cmd --no-override development electron -r babel-register -r babel-polyfill ./app/main.development",
     "postinstall": "concurrently \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "dev": "npm run hot-server -- --start-hot",
     "package": "npm run build && build --publish never",
     "package-win-32": "build --win --ia32",
     "package-win-64": "build --win --x64",
     "package-linux": "build --linux --x64 --ia32",
+    "package-deb": "build --linux deb --x64 --ia32",
+    "package-deb-64": "build --linux deb --x64",
+    "package-deb-32": "build --linux deb --ia32",
     "package-mac": "npm run build && build -m",
     "package-all": "npm run build && build -mwl",
     "cleanup": "mop -v",
     "flow": "flow",
-    "build-dll": "cross-env NODE_ENV=development node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.dll.js --profile"
+    "build-dll": "cross-env NODE_ENV=development node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.dll.js --profile",
+    "list-asar-win": "asar list dist/win-unpacked/resources/app.asar"
   },
   "build": {
     "appId": "dg.AmpOffline",
     "mac": {
       "category": "public.app-category.tools",
-      "target": "dmg"
+      "target": "zip"
     },
-    "dmg": {
-      "contents": [
-        {
-          "x": 410,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 130,
-          "y": 150,
-          "type": "file"
-        }
-      ]
+    "directories": {
+      "buildResources": "resources"
     },
     "files": [
-      "dist/",
-      "node_modules/",
-      "libs/",
-      "app.html",
-      "main.js",
-      "main.js.map",
-      "package.json",
-      "master-translations.en.json"
+      {
+        "from": "app",
+        "filter": [
+          "dist/**/*",
+          "libs/**/*",
+          "lang/**/*",
+          "static/**/*",
+          "app.html",
+          "main.js",
+          "main.js.map",
+          "master-translations.en.json",
+          "amp-help.pdf"
+        ]
+      },
+      {
+        "from": "node_modules/electron-pdf-window/pdfjs",
+        "filter": [
+          "**/*"
+        ],
+        "to": "pdfjs"
+      },
+      "package.json"
     ],
-    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "artifactName": "${name}-${version}-${arch}.${ext}",
     "win": {
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${productName}-${version}.${ext}"
+      "artifactName": "${name}-${version}.${ext}",
+      "displayLanguageSelector": true
     },
     "linux": {
+      "artifactName": "${name}-${version}-${arch}.${ext}",
       "target": [
         "deb",
         "rpm"
-      ]
+      ],
+      "category": "Network"
     }
-  },
-  "directories": {
-    "buildResources": "resources",
-    "output": "release"
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"
   },
   "homepage": "",
   "author": {
-    "name": "DG",
-    "email": "something@developmentgateway.org",
-    "url": "http://"
+    "name": "Development Gateway",
+    "email": "info@developmentgateway.org",
+    "url": "http://www.developmentgateway.org"
   },
   "devDependencies": {
     "asar": "^0.12.3",
@@ -113,7 +119,7 @@
     "css-loader": "^0.25.0",
     "devtron": "^1.4.0",
     "electron": "^1.4.4",
-    "electron-builder": "^19.19.1",
+    "electron-builder": "19.37.2",
     "electron-devtools-installer": "^2.0.1",
     "enzyme": "^2.5.1",
     "eslint": "^3.9.1",
@@ -152,17 +158,17 @@
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.1",
     "webpack-merge": "^0.15.0",
-    "webpack-validator": "^2.2.9"
-  },
-  "dependencies": {
-    "antd": "^2.12.1",
+    "webpack-validator": "^2.2.9",
+    "antd": "2.12.1",
     "babel-plugin-webpack-alias": "^2.1.2",
     "bluebird": "^3.4.6",
     "bluebird-queue": "0.0.8",
     "bunyan": "^1.8.10",
     "crypto-js": "^3.1.8",
-    "electron-debug": "^1.0.1",
-    "electron-mocha": "^3.4.0",
+    "electron-debug": "1.0.1",
+    "electron-mocha": "3.4.0",
+    "electron-updater": "2.12.1",
+    "env-cmd": "^7.0.0",
     "font-awesome": "^4.7.0",
     "fs-extra": "^2.0.0",
     "i18next": "^4.1.1",
@@ -174,10 +180,10 @@
     "numeral": "^2.0.6",
     "prop-types": "^15.5.10",
     "rc-menu": "^5.0.7",
-    "react": "^15.3.2",
-    "react-addons-test-utils": "^15.4.2",
+    "react": "15.4.2",
+    "react-addons-test-utils": "15.4.2",
     "react-bootstrap": "^0.30.6",
-    "react-dom": "^15.3.2",
+    "react-dom": "15.4.2",
     "react-redux": "^4.4.5",
     "react-router": "^3.0.0",
     "react-router-redux": "^4.0.6",
@@ -197,8 +203,11 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-chad-future-v3-0-tc9.ampsite.net",
+    "ampServerUrl": "amp-haiti-develop-tc9.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
+  },
+  "dependencies": {
+    "electron-pdf-window": "1.0.12"
   }
 }

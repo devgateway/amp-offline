@@ -8,15 +8,19 @@ import {
   ACTIVITY_UNLOADED,
   ACTIVITY_VALIDATED,
   ACTIVITY_FIELD_VALIDATED,
+  ACTIVITY_LOADED_FOR_AF,
   ACTIVITY_UPDATE_GLOBAL_STATE
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
+
+const logger = new Logger('Activity reducer');
 
 const defaultState = {
   isActivityLoading: false,
   isActivityLoaded: false,
+  isActivityLoadedForAf: false,
   isActivitySaving: false,
   isActivitySaved: false,
   activity: undefined,
@@ -34,7 +38,7 @@ const defaultState = {
 };
 
 const activityReducer = (state = defaultState, action: Object) => {
-  LoggerManager.log('activityReducer');
+  logger.debug('activityReducer');
   switch (action.type) {
     case ACTIVITY_UNLOADED:
       return { ...defaultState };
@@ -55,6 +59,8 @@ const activityReducer = (state = defaultState, action: Object) => {
       };
     case ACTIVITY_LOAD_REJECTED:
       return { ...defaultState, errorMessage: action.payload };
+    case ACTIVITY_LOADED_FOR_AF:
+      return { ...state, isActivityLoadedForAf: true };
     case STATE_CHANGE_LANGUAGE: {
       let activityFieldsManager = state.activityFieldsManager;
       if (activityFieldsManager) {

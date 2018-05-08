@@ -11,6 +11,10 @@ import ampConnectionStatusReducer from './AmpConnectionStatusReducer';
 import startUpReducer from './StartUpReducer';
 import notificationReducer from './NotificationReducer';
 import currencyRatesReducer from './CurrencyRatesReducer';
+import updateReducer from './UpdateReducer';
+import setupReducer from './SetupReducer';
+import settingReducer from './SettingReducer';
+import helpReducer from './HelpReducer';
 import { STATE_LOGOUT } from '../actions/LoginAction';
 
 const combinedReducers = combineReducers({
@@ -25,7 +29,11 @@ const combinedReducers = combineReducers({
   ampConnectionStatusReducer,
   startUpReducer,
   notificationReducer,
-  currencyRatesReducer
+  currencyRatesReducer,
+  updateReducer,
+  setupReducer,
+  settingReducer,
+  helpReducer
 });
 
 const rootReducer = (state, action) => {

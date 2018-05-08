@@ -1,0 +1,22 @@
+{
+  "amp-title": "Aid Management Platform",
+  "amp-footer": "Developed in partnership with OECD, UNDP, WB, Government of Ethiopia and DG",
+  "amp-offline": "AMP Offline",
+  "TOOLS": "TOOLS",
+  "Change Language": "Change Language",
+  "HELP": "HELP",
+  "AMP Offline Help": "AMP Offline Help",
+  "About": "About",
+  "Choose One": "Choose One",
+  "Other": "Other",
+  "loadingOptions": "Loading setup options...",
+  "Reload options": "Reload options",
+  "testingConnectivity": "Checking connection...",
+  "Configure": "Configure",
+  "setupFor": "Configure for",
+  "wrongSetup": "Wrong country setup settings. Please try again.",
+  "urlNotWorking": "AMP Server is unreachable or wrong URL.",
+  "noConnectionToRegistry": "AMP Registry app is unreachable. You can chose 'Other' option to set the URL directly or try to reload the countries options list.",
+  "customHint": "Please enter AMP application URL. You can copy it from the AMP Client download page. Please refer to User Manual for more help.",
+  "timeoutError": "Connection timeout. Please check your internet connection."
+}

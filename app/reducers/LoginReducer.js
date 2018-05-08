@@ -6,9 +6,13 @@ import {
   STATE_LOGOUT_ASK_TO_SYNC,
   STATE_LOGOUT_DISMISS,
   STATE_LOGOUT_DISMISS_TO_SYNC,
-  STATE_LOGOUT_REQUESTED
+  STATE_LOGOUT_REQUESTED,
+  STATE_CHANGE_PASSWORD_ONLINE,
+  STATE_RESET_PASSWORD_ONLINE
 } from '../actions/LoginAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('Login reducer');
 
 const defaultState = {
   loggedIn: false,
@@ -27,7 +31,7 @@ const defaultState = {
  * @returns {*}
  */
 export default function loginReducer(state: Object = defaultState, action: Object) {
-  LoggerManager.log('LoginReducer');
+  logger.debug('LoginReducer');
   switch (action.type) {
     case STATE_LOGIN_OK:
       return Object.assign({}, state, {
@@ -56,7 +60,6 @@ export default function loginReducer(state: Object = defaultState, action: Objec
     case STATE_LOGOUT:
       return {
         ...defaultState,
-        logoutConfirmed: true,
         isInactivityTimeout: action.actionData && action.actionData.isInactivityTimeout
       };
     case STATE_LOGIN_PROCESSING:
@@ -65,6 +68,10 @@ export default function loginReducer(state: Object = defaultState, action: Objec
         logoutConfirmed: false,
         isInactivityTimeout: false
       });
+    case STATE_CHANGE_PASSWORD_ONLINE:
+      return Object.assign({}, state);
+    case STATE_RESET_PASSWORD_ONLINE:
+      return Object.assign({}, state);
     default:
       return state;
   }

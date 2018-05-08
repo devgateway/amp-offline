@@ -1,14 +1,17 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import Section from '../Section';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
-import { APProposedProjectCost, APRevisedProjectCost } from '../APProjectCost';
+import Logger from '../../../../../modules/util/LoggerManager';
+import { APProposedProjectCost } from '../APProjectCost';
 import APFundingOrganizationSection from './APFundingOrganizationSection';
 import APFundingTotalsSection from './APFundingTotalsSection';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import fundingStyles from './APFundingSection.css';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
+import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
+
+const logger = new Logger('AP funding section');
 
 /**
  * Total Number of Fundings section
@@ -21,10 +24,13 @@ class APFundingSection extends Component {
     buildSimpleField: PropTypes.func.isRequired
   };
 
+  static contextTypes = {
+    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
+  };
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _compareFundings(f1, f2) {
@@ -78,23 +84,24 @@ class APFundingSection extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.debug('render');
     const fundingList = [];
     let counter = 1;
-    this.props.activity.fundings.forEach((funding) => {
-      const item = (<APFundingOrganizationSection
-        funding={funding} key={funding[AC.AMP_FUNDING_ID]}
-        counter={counter} comparator={this._compareFundings}
-        buildSimpleField={this.props.buildSimpleField} />);
-      fundingList.push(item);
-      counter += 1;
-    });
+    if (this.props.activity.fundings) {
+      this.props.activity.fundings.forEach((funding) => {
+        const item = (<APFundingOrganizationSection
+          funding={funding} key={funding[AC.AMP_FUNDING_ID]}
+          counter={counter} comparator={this._compareFundings}
+          buildSimpleField={this.props.buildSimpleField} />);
+        fundingList.push(item);
+        counter += 1;
+      });
+    }
     return (<div className={fundingStyles.container}>
       <div className={fundingStyles.byline}>{getAmountsInThousandsMessage()}</div>
       <APProposedProjectCost sectionPath={AC.PPC_AMOUNT} titleClass={fundingStyles.section_header} />
-      <APRevisedProjectCost sectionPath={AC.RPC_AMOUNT} />
       <div>{fundingList}</div>
-      <div><APFundingTotalsSection fundings={this.props.activity.fundings} comparator={this._compareFundings} /></div>
+      <div><APFundingTotalsSection /></div>
       <div className={fundingStyles.clear} />
     </div>);
   }

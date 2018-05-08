@@ -1,4 +1,5 @@
 import * as ValueConstants from './ValueConstants';
+import * as FMC from './FeatureManagerConstants';
 import { capitalize } from '../Utils';
 
 /**
@@ -13,11 +14,14 @@ export const ACTIVITY_STATUS = 'activity_status';
 export const STATUS_REASON = 'status_reason';
 export const TYPE_OF_IMPLEMENTATION = 'type_of_implementation';
 export const OBJECTIVE = 'objective';
+export const RESULTS = 'results';
+export const BUDGET_CODE_PROJECT_ID = 'budget_code_project_id';
 export const ACTUAL_APPROVAL_DATE = 'actual_approval_date';
 export const FUNDINGS = 'fundings';
 export const FUNDING_DONOR_ORG_ID = 'donor_organization_id';
 export const IS_DRAFT = 'is_draft';
-export const ORG_ROLE_ORG_ID = 'organisation';
+export const ORG_ROLE_ORG_ID = 'organization';
+export const ADDITIONAL_INFO = 'additional_info';
 export const PRIMARY_SECTORS = 'primary_sectors';
 export const SECONDARY_SECTORS = 'secondary_sectors';
 export const TERTIARY_SECTORS = 'tertiary_sectors';
@@ -34,6 +38,8 @@ export const LOCATION_PERCENTAGE = 'location_percentage';
 export const IMPLEMENTATION_LOCATION = 'implementation_location';
 export const IMPLEMENTATION_LEVEL = 'implementation_level';
 export const APPROVAL_STATUS = 'approval_status';
+export const APPROVED_BY = 'approved_by';
+export const APPROVAL_DATE = 'approval_date';
 export const TYPE_OF_ASSISTANCE = 'type_of_assistance';
 export const EXPENDITURE_CLASS = 'expenditure_class';
 export const FUNDING_DETAILS = 'funding_details';
@@ -45,6 +51,7 @@ export const AGREEMENT_TITLE = 'title';
 export const PROJECT_CATEGORY = 'project_category';
 export const PROJECT_IMPLEMENTING_UNIT = 'project_implementing_unit';
 export const ORGANIZATION = 'organization';
+export const PERCENTAGE = 'percentage';
 export const AMP_ORGANIZATION_ROLE_ID = 'amp_organization_role_id';
 export const ROLE = 'role';
 export const EXECUTING_AGENCY = 'executing_agency';
@@ -94,6 +101,7 @@ export const LAST_IMPORTED_BY = 'last_imported_by';
 export const CLIENT_CHANGE_ID = 'client-change-id';
 export const CLIENT_CREATED_ON = 'client-created-on';
 export const CLIENT_UPDATED_ON = 'client-updated-on';
+export const IS_PUSHED = 'is-pushed';
 export const PROJECT_COMMENTS = 'project_comments';
 export const LESSONS_LEARNED = 'lessons_learned';
 export const PROJECT_IMPACT = 'project_impact';
@@ -101,6 +109,7 @@ export const ACTIVITY_SUMMARY = 'activity_summary';
 export const CONDITIONALITIES = 'conditionalities';
 export const PROJECT_MANAGEMENT = 'project_management';
 export const A_C_CHAPTER = 'a_c_chapter';
+export const CRIS_NUMBER = 'cris_number';
 export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
 export const HIERARCHICAL_VALUE = 'hierarchical_value';
 export const HIERARCHICAL_VALUE_PARTS = 'hierarchical_value_parts';
@@ -125,6 +134,7 @@ export const COMPONENT_TYPE = 'component_type';
 export const COMPONENT_TITLE = 'component_title';
 export const COMPONENT_FUNDING = 'funding';
 export const COMPONENT_DESCRIPTION = 'description';
+export const COMPONENT_ORGANIZATION = 'component_organization';
 export const FUNDING_AMOUNT_ID = 'amp_funding_amount_id';
 export const EXTRA_INFO = 'extra_info';
 export const ACRONYM = 'acronym';
@@ -141,6 +151,12 @@ export const FINANCING_ID = 'financing_id';
 export const DISBURSEMENT_ORDER_ID = 'disbursement_order_id';
 export const PLEDGE = 'pledge';
 export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
+export const REPORTING_DATE = 'reporting_date';
+export const RECIPIENT_ROLE = 'recipient_role';
+export const TEMPORAL_ID = '_temporal_id';
+export const MINISTRY_CODE = 'ministry_code';
+export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
+export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
 export const DONOR_CONTACT = 'donor_contact';
 export const PROJECT_COORDINATOR_CONTACT = 'project_coordinator_contact';
 export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact';
@@ -152,16 +168,39 @@ export const CONTACT = 'contact';
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
 export const SAME_AS_PROPOSED_APPROVAL_DATE_LABEL = 'Same as Proposed Approval Date';
 
+// Activity validation rules
+export const DEPENDENCY_IMPLEMENTATION_LEVEL_PRESENT = 'implementation_level_present';
+export const DEPENDENCY_IMPLEMENTATION_LEVEL_VALID = 'implementation_level_valid';
+export const DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT = 'implementation_location_present';
+export const DEPENDENCY_IMPLEMENTATION_LOCATION_VALID = 'implementation_location_valid';
+export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
+export const DEPENDENCY_ON_BUDGET = 'on_budget';
+export const DEPENDENCY_TRANSACTION_PRESENT = 'transaction_present';
+export const DEPENDENCY_COMPONENT_FUNDING_ORG_VALID = 'organization_present';
+
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
-  [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification' },
-  { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs' },
-  { key: 'APPlanning', hash: '#APPlanning', value: 'Planning' },
-  { key: 'APLocation', hash: '#APLocation', value: 'Location' },
-  { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan' },
-  { key: 'APProgram', hash: '#APProgram', value: 'Program' },
-  { key: 'APSector', hash: '#APSector', value: 'Sectors' },
-  { key: 'APFunding', hash: '#APFunding', value: 'Funding' }];
+  [{ key: 'APIdentification', hash: '#APIdentification', value: 'Identification', fmPath: FMC.ACTIVITY_IDENTIFICATION },
+    { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs', sectionPath: ACTIVITY_INTERNAL_IDS },
+    { key: 'APPlanning', hash: '#APPlanning', value: 'Planning', fmPath: FMC.ACTIVITY_PLANNING },
+    { key: 'APLocation', hash: '#APLocation', value: 'Location', sectionPath: LOCATIONS },
+    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan', sectionPath: NATIONAL_PLAN_OBJECTIVE },
+    { key: 'APProgram', hash: '#APProgram', value: 'Program', fmPath: FMC.ACTIVITY_PROGRAM },
+    { key: 'APSector', hash: '#APSector', value: 'Sectors', fmPath: FMC.ACTIVITY_SECTORS },
+    {
+      key: 'APFundingSources',
+      hash: '#APFundingSources',
+      value: 'Funding Sources',
+      sectionPath: TOTAL_NUMBER_OF_FUNDING_SOURCES
+    },
+    { key: 'APFunding', hash: '#APFunding', value: 'Funding', sectionPath: FUNDINGS },
+    {
+      key: 'APRelatedOrganizations',
+      hash: '#APRelatedOrganizations',
+      value: 'Related Organizations',
+      fmPath: FMC.ACTIVITY_ORGANIZATIONS
+    },
+    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES }];
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;

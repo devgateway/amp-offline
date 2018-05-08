@@ -1,4 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
@@ -6,8 +8,13 @@ import afStyles from '../ActivityForm.css';
 import { LABEL } from './AFComponentTypes';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import AFField from './AFField';
+import { addFullscreenAlert } from '../../../../actions/NotificationAction';
+import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorConstants';
+import Notification from '../../../../modules/helpers/NotificationHelper';
+
+const logger = new Logger('AF List');
 
 /* eslint-disable class-methods-use-this */
 
@@ -15,7 +22,7 @@ import AFField from './AFField';
  * Activity Form list of items like Locations, Programs, etc
  * @author Nadejda Mandrescu
  */
-export default class AFList extends Component {
+class AFList extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
@@ -26,19 +33,22 @@ export default class AFList extends Component {
     values: PropTypes.array.isRequired,
     listPath: PropTypes.string.isRequired,
     onDeleteRow: PropTypes.func,
-    onEditRow: PropTypes.func
+    onEditRow: PropTypes.func,
+    onConfirmationAlert: PropTypes.func.isRequired,
+    language: PropTypes.string // Needed to update header translations.
   };
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.debug('constructor');
     this.options = {
       onDeleteRow: this.onDeleteRow.bind(this),
       withoutNoDataText: true
     };
     this.state = {
       values: undefined,
-      validationError: null
+      validationError: null,
+      language: null
     };
   }
 
@@ -56,25 +66,35 @@ export default class AFList extends Component {
     this.percentageFieldPath = this.percentageFieldDef ? `${this.props.listPath}~${this.percentageFieldDef.field_name}`
       : null;
     this.setState({
-      values: this.props.values
+      values: this.props.values,
+      language: this.props.language
     });
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      values: nextProps.values
+      values: nextProps.values,
+      language: nextProps.language
     });
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.values !== this.props.values;
+    return nextProps.values !== this.props.values || nextProps.language !== this.props.language;
   }
 
   onDeleteRow(uniqueId) {
-    this.setState({
-      values: this.state.values.filter(item => uniqueId !== item.uniqueId)
-    });
-    this.props.onDeleteRow(uniqueId);
+    const { listPath, onDeleteRow, onConfirmationAlert } = this.props;
+    const { activityValidator } = this.context;
+    const itemToDelete = this.state.values.find(item => uniqueId === item.uniqueId);
+    const validationResult = activityValidator.validateItemRemovalFromList(listPath, itemToDelete);
+    if (validationResult && validationResult !== true) {
+      onConfirmationAlert(validationResult);
+    } else {
+      this.setState({
+        values: this.state.values.filter(item => uniqueId !== item.uniqueId)
+      });
+      onDeleteRow(uniqueId);
+    }
   }
 
   getCellClass(editable, required) {
@@ -126,7 +146,7 @@ export default class AFList extends Component {
 
   columnFormatter(editable, cell) {
     if (editable) {
-      return (<span className={styles.editable} >{cell}</span>);
+      return (<span className={styles.editable}>{cell}</span>);
     }
     return cell.toString();
   }
@@ -160,7 +180,7 @@ export default class AFList extends Component {
           key={childFieldName} dataField={childFieldName} columnTitle editable={{ readOnly: !editable, validator }}
           dataFormat={this.getDataFormat.bind(this, editable, fieldPath)}
           customEditor={{ getElement: this.getCustomEditor.bind(this, fieldPath) }}
-          columnClassName={this.getCellClass.bind(this, editable, required)} >
+          columnClassName={this.getCellClass.bind(this, editable, required)}>
           {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
         </TableHeaderColumn>);
     }));
@@ -175,10 +195,10 @@ export default class AFList extends Component {
     };
     // there is no one click row removal, we'll simulate with select
     return (<div>
-      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()} >
+      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()}>
         <BootstrapTable
           data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
-          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName} >
+          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName}>
           {columns}
         </BootstrapTable>
         <FormControl.Feedback />
@@ -205,7 +225,7 @@ export default class AFList extends Component {
         if (rowId === content.length) {
           content.push({ rowData, cells: [] });
         }
-        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId) || rowData[childFieldName];
+        const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId) || Math.random();
         const value = (<AFField
           fieldPath={fieldPath} parent={rowData} type={fieldType} showLabel={false} className={className} inline
           showRequired={editable} onAfterUpdate={this._afterSaveCell.bind(this, rowData, childFieldName)} />);
@@ -214,30 +234,30 @@ export default class AFList extends Component {
       });
     });
     return (
-      <div className="react-bs-table react-bs-table-bordered" >
-        <table className="table table-bordered table-hover" >
-          <tbody className="react-bs-container-body" >
-            <tr >
+      <div className="react-bs-table react-bs-table-bordered">
+        <table className="table table-bordered table-hover">
+          <tbody className="react-bs-container-body">
+            <tr>
               {headers.map(header =>
-                (<th className={styles.thClassName} style={collWidth} key={header} >{header}</th >))}
+                (<th className={styles.thClassName} style={collWidth} key={header}>{header}</th>))}
               <th className={`${styles.thDelete} ${styles.thClassName}`} />
-            </tr >
+            </tr>
             {content.map(row => (
               <tr key={row.rowData.uniqueId}>
                 {row.cells.map(cell => (
-                  <td key={cell.key} className={styles.cell} >{cell.value}</td >
+                  <td key={cell.key} className={styles.cell}>{cell.value}</td>
                 ))}
-                <td className={styles.thDelete} >
+                <td className={styles.thDelete}>
                   <a
-                    onClick={this.onDeleteRow.bind(this, row.rowData.uniqueId)} className={styles.delete} href={null} >
-                    <span >&nbsp;</span >
-                  </a >
-                </td >
-              </tr >
+                    onClick={this.onDeleteRow.bind(this, row.rowData.uniqueId)} className={styles.delete} href={null}>
+                    <span>&nbsp;</span>
+                  </a>
+                </td>
+              </tr>
             ))}
-          </tbody >
-        </table >
-      </div >
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -249,3 +269,12 @@ export default class AFList extends Component {
     return this.renderAsSimpleTable();
   }
 }
+
+export default connect(
+  state => state,
+  dispatch => ({
+    onConfirmationAlert: (message) => dispatch(addFullscreenAlert(
+      new Notification({ message, origin: NOTIFICATION_ORIGIN_ACTIVITY, translateMsg: false })
+    ))
+  })
+)(AFList);

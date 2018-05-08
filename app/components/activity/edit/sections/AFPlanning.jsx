@@ -20,7 +20,7 @@ import {
   SAME_AS_PROPOSED_APPROVAL_DATE_LABEL,
   SAME_AS_PROPOSED_START_DATE_LABEL
 } from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import {
   ACTIVITY_SAME_AS_PROPOSED_APPROVAL_DATE,
   ACTIVITY_SAME_AS_PROPOSED_START_DATE
@@ -33,6 +33,8 @@ import DateUtils from '../../../../utils/DateUtils';
 const SAME_AS_FM_PATH = {};
 SAME_AS_FM_PATH[SAME_AS_PROPOSED_START_DATE_LABEL] = ACTIVITY_SAME_AS_PROPOSED_START_DATE;
 SAME_AS_FM_PATH[SAME_AS_PROPOSED_APPROVAL_DATE_LABEL] = ACTIVITY_SAME_AS_PROPOSED_APPROVAL_DATE;
+
+const logger = new Logger('AF Planning');
 
 /**
  * Planning Section
@@ -47,7 +49,7 @@ class AFPlanning extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.copyIfChecked = this.copyIfChecked.bind(this);
   }
 
@@ -85,8 +87,13 @@ class AFPlanning extends Component {
   copySameValue(isChecked, copyFrom, copyTo) {
     const copyToEl = document.querySelector(`#id_${copyTo} input`);
     const copyFromEl = isChecked ? document.querySelector(`#id_${copyFrom} input`) : null;
-    copyToEl.value = isChecked ? copyFromEl.value : DateUtils.createFormattedDate(this.props.globalState[copyTo]);
-    this.props.activity[copyTo] = isChecked ? this.props.activity[copyFrom] : this.props.globalState[copyTo];
+    const globalCopyToValue = this.props.globalState[copyTo];
+    if (isChecked) {
+      copyToEl.value = copyFromEl.value;
+    } else {
+      copyToEl.value = globalCopyToValue ? DateUtils.createFormattedDate(globalCopyToValue) : '';
+    }
+    this.props.activity[copyTo] = isChecked ? this.props.activity[copyFrom] : globalCopyToValue;
   }
 
   copyIfChecked(label, copyFrom, copyTo) {

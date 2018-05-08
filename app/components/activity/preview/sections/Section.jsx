@@ -10,8 +10,10 @@ import {
   RICH_TEXT_FIELDS
 } from '../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
+
+const logger = new Logger('AP section');
 
 /**
  * Generic activity preview section class
@@ -25,7 +27,8 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
     groupClass: PropTypes.string,
     composedClass: PropTypes.string,
     fieldNameClass: PropTypes.string,
-    fieldValueClass: PropTypes.string
+    fieldValueClass: PropTypes.string,
+    fmPath: PropTypes.string,
   };
 
   static contextTypes = {
@@ -44,7 +47,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   /**
@@ -94,6 +97,9 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
 
   render() {
     if (this.props.sectionPath && !this.context.activityFieldsManager.isFieldPathEnabled(this.props.sectionPath)) {
+      return null;
+    }
+    if (this.props.fmPath && !FeatureManager.isFMSettingEnabled(this.props.fmPath)) {
       return null;
     }
     const composedSection = (<ComposedSection

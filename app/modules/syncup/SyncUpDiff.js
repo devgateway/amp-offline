@@ -18,7 +18,9 @@ import {
   SYNCUP_TYPE_WORKSPACES
 } from '../../utils/Constants';
 import { throwSyncUpError } from './syncupManagers/SyncUpManagerInterface';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Syncup diff');
 
 /* eslint-disable class-methods-use-this */
 
@@ -82,7 +84,7 @@ export default class SyncUpDiff {
   }
 
   setDiff(type, diff) {
-    diff = this._nullifyIfNoDiff(diff);
+    diff = this.constructor._nullifyIfNoDiff(diff);
     if (diff === null) {
       delete this._syncUpDiff[type];
     } else {
@@ -90,7 +92,11 @@ export default class SyncUpDiff {
     }
   }
 
-  _nullifyIfNoDiff(diff) {
+  static hasChanges(diff) {
+    return !!SyncUpDiff._nullifyIfNoDiff(diff);
+  }
+
+  static _nullifyIfNoDiff(diff) {
     if (diff === undefined || diff === false || (diff.length && diff.length === 0)) {
       return null;
     } else if (diff.saved && diff.saved.length === 0 && diff.removed.length === 0) {
@@ -131,7 +137,7 @@ export default class SyncUpDiff {
       }
       return false;
     }
-    LoggerManager.error(`Diff check reached unexpected use case: diff1 = "${diff1}", diff2 = "${diff2}". 
+    logger.error(`Diff check reached unexpected use case: diff1 = "${diff1}", diff2 = "${diff2}". 
     Possibly a bug. Fallback to false.`);
     return false;
   }

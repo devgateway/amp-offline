@@ -2,7 +2,9 @@ import { validate } from 'jsonschema';
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
 import Notification from './NotificationHelper';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Client settings helper');
 
 const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT' });
 
@@ -29,12 +31,13 @@ const settingsSchema = {
     id: { type: 'string' },
     name: { type: 'string' },
     visible: { type: 'boolean' },
+    public: { type: 'public' },
     type: { type: 'string' },
     options: { type: 'array' },
-    value: { type: ['boolean', 'string', 'integer'] },
+    value: { type: ['boolean', 'string', 'integer', 'object'] },
     'updated-at': { type: 'Date' }
   },
-  required: ['id', 'name', 'visible', 'type', 'value']
+  required: ['id', 'name', 'visible', 'type']
 };
 
 
@@ -46,7 +49,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSettingById(id) {
-    LoggerManager.log('findSettingById');
+    logger.debug('findSettingById');
     return this.findSetting({ id });
   },
 
@@ -56,7 +59,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSettingByName(name) {
-    LoggerManager.log('findSettingByName');
+    logger.debug('findSettingByName');
     return this.findSetting({ name });
   },
 
@@ -66,7 +69,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   findSetting(filter) {
-    LoggerManager.log('findSetting');
+    logger.debug('findSetting');
     return DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS);
   },
 
@@ -74,9 +77,10 @@ const ClientSettingsHelper = {
    * Find all visible settings
    * @returns {Promise}
    */
-  findAllVisibleSettings() {
-    LoggerManager.log('findAllVisibleSettings');
-    return this.findAll({ visible: true });
+  findAllVisibleSettings(filter = {}) {
+    logger.debug('findAllVisibleSettings');
+    filter.visible = true;
+    return this.findAll(filter);
   },
 
   findAll(filter) {
@@ -89,12 +93,23 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   saveOrUpdateSetting(setting) {
-    LoggerManager.log('saveOrUpdateSetting');
-    // LoggerManager.log(validate(setting, settingsSchema));
+    logger.log('saveOrUpdateSetting');
+    // logger.log(validate(setting, settingsSchema));
     if (validate(setting, settingsSchema).valid) {
-      LoggerManager.log(`Valid setting.id = ${setting.id}`);
+      logger.debug(`Valid setting.id = ${setting.id}`);
       setting['updated-at'] = (new Date()).toISOString();
       return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
+    }
+    return Promise.reject(INVALID_FORMAT_ERROR);
+  },
+
+  saveOrUpdateCollection(settings) {
+    logger.log('saveOrUpdateCollection');
+    if (settings.every(setting => validate(setting, settingsSchema).valid)) {
+      settings.forEach(setting => {
+        setting['updated-at'] = (new Date()).toISOString();
+      });
+      return DatabaseManager.saveOrUpdateCollection(settings, COLLECTION_CLIENT_SETTINGS);
     }
     return Promise.reject(INVALID_FORMAT_ERROR);
   },
@@ -105,7 +120,7 @@ const ClientSettingsHelper = {
    * @returns {Promise}
    */
   deleteById(id) {
-    LoggerManager.log('deleteById');
+    logger.debug('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS);
   }
 

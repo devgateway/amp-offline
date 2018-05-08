@@ -8,7 +8,9 @@ import {
 import * as Utils from '../../../utils/Utils';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
+
+const logger = new Logger('Activities pull from AMP manager');
 
 /* eslint-disable class-methods-use-this */
 
@@ -39,6 +41,16 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
     const unsycedSource = this.diff ? this._details : (previousDetails || []);
     merged[SYNCUP_DETAILS_UNSYNCED] = unsycedSource[SYNCUP_DETAILS_UNSYNCED];
     return merged;
+  }
+
+  static mergeDetails(...details) {
+    const result = Utils.toMap(SYNCUP_DETAILS_SYNCED, []);
+    result[SYNCUP_DETAILS_UNSYNCED] = [];
+    details.forEach(detail => {
+      result[SYNCUP_DETAILS_SYNCED].push(...(detail[SYNCUP_DETAILS_SYNCED] || []));
+      result[SYNCUP_DETAILS_UNSYNCED].push(...(detail[SYNCUP_DETAILS_UNSYNCED] || []));
+    });
+    return result;
   }
 
 
@@ -88,7 +100,7 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
   }
 
   onPullError(error, ampId) {
-    LoggerManager.error(`Activity amp-id=${ampId} pull error: ${error}`);
+    logger.error(`Activity amp-id=${ampId} pull error: ${error}`);
     return this._updateDetails(ampId, null, error);
   }
 

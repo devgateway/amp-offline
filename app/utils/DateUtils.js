@@ -2,10 +2,14 @@
  * Created by Anya on 24/04/2017.
  */
 import Moment from 'moment';
-import LoggerManager from '../modules/util/LoggerManager';
-import { API_DATE_FORMAT } from './Constants';
+import Logger from '../modules/util/LoggerManager';
+import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../modules/connectivity/AmpApiConstants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
+import * as ErrorNotificationHelper from '../modules/helpers/ErrorNotificationHelper';
+import { NOTIFICATION_ORIGIN_DATES } from './constants/ErrorConstants';
+
+const logger = new Logger('Date utils');
 
 export default class DateUtils {
   /**
@@ -17,7 +21,7 @@ export default class DateUtils {
   }
 
   static formatDateForCurrencyRates(date) {
-    return DateUtils.formatDate(date, API_DATE_FORMAT);
+    return DateUtils.formatDate(date, API_SHORT_DATE_FORMAT);
   }
 
   static isValidDateFormat(date, format) {
@@ -26,9 +30,16 @@ export default class DateUtils {
   }
 
   static formatDate(date, format) {
-    const formattedDate = Moment(date).isValid() ?
-      Moment(date).format(format) : date;
-    return formattedDate;
+    if (date) {
+      const dateAsMoment = Moment(date);
+      if (dateAsMoment.isValid()) {
+        return dateAsMoment.format(format);
+      }
+      const message = `Invalid date provided: ${date}`;
+      logger.error(message);
+      throw ErrorNotificationHelper.createNotification({ message, origin: NOTIFICATION_ORIGIN_DATES });
+    }
+    return '';
   }
 
   static getGSDateFormat() {
@@ -41,12 +52,31 @@ export default class DateUtils {
   }
 
   static createFormattedDate(date) {
-    LoggerManager.log('createFormattedDate');
+    logger.log('createFormattedDate');
     return DateUtils.formatDate(date, DateUtils.getGSDateFormat());
   }
 
   static createFormattedDateTime(date) {
     return DateUtils.formatDate(date, DateUtils.getDateTimeFormat());
+  }
+
+  /**
+   * Gets a date from future or past relative to the current moment
+   * @param durationStr the duration to add/substract from the current moment
+   * @param isAdd if true, then adds the duration (default to false)
+   * @return {moment.Moment}
+   */
+  static getDateFromNow(durationStr: string, isAdd = false) {
+    const duration = Moment.duration(durationStr);
+    if (Moment.isDuration(duration)) {
+      if (isAdd) {
+        return Moment().add(duration);
+      }
+      return Moment().subtract(duration);
+    }
+    const error = `Invalid duration format: ${durationStr}`;
+    logger.error(error);
+    throw new Error(error);
   }
 
   static duration(from, to) {
@@ -57,4 +87,14 @@ export default class DateUtils {
     return `${minutes} min ${seconds} sec`;
   }
 
+  /**
+   * Formats the date according to AMP API format
+   * @param date (optional, defaults to current moment)
+   * @returns {string} date formatted according to API format
+   */
+  static getISODateForAPI(date = new Date()) {
+    // DO NOT remove the timezone, since AMP also stores it.
+    // We'll revise, if needed, once we implement the timing synchronization between AMP and AMP Offline client.
+    return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);
+  }
 }

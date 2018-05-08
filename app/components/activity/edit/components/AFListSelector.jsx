@@ -4,13 +4,14 @@ import styles from './AFListSelector.css';
 import AFList from './AFList';
 import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
-import AFLabel from './AFLabel';
 import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
 import ActivityValidator from '../../../../modules/activity/ActivityValidator';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import * as Utils from '../../../../utils/Utils';
+
+const logger = new Logger('AF list selector');
 
 /* eslint-disable class-methods-use-this */
 
@@ -42,7 +43,7 @@ export default class AFListSelector extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
     this.handleAddValue = this.handleAddValue.bind(this);
     this.handleRemoveValue = this.handleRemoveValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -60,10 +61,17 @@ export default class AFListSelector extends Component {
       || `Search ${AC.toOriginalLabel(this.idOnlyField)}`;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
-    this.setUniqueIdsAndUpdateState(this.props.selectedOptions || []);
+    this.setUniqueIdsAndUpdateState(this.props.selectedOptions);
+    this.noMultipleValues = this.listDef.multiple_values !== true;
   }
 
-  setUniqueIdsAndUpdateState(values) {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedOptions !== this.props.selectedOptions) {
+      this.setUniqueIdsAndUpdateState(nextProps.selectedOptions);
+    }
+  }
+
+  setUniqueIdsAndUpdateState(values = []) {
     // set unique ids even if no unique items validation is request, to have unique id for deletion
     values.forEach(value => {
       if (!value.uniqueId) {
@@ -140,12 +148,9 @@ export default class AFListSelector extends Component {
     const params = this.props.extraParams || {};
     if (params['no-table'] !== true) {
       return (<div>
-        <div>
-          <AFLabel value={translate(this.searchLabel)} />
-        </div>
         <AFList
           onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
-          onEditRow={this.handleEditValue.bind(this)} />
+          onEditRow={this.handleEditValue.bind(this)} language={this.context.activityFieldsManager._lang} />
         <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()}>
           <FormControl.Feedback />
           <HelpBlock>{this.props.validationError}</HelpBlock>
@@ -160,7 +165,9 @@ export default class AFListSelector extends Component {
     return (<div>
       {this._renderTable()}
       <div className={`${searchDisplayStyle} ${styles.searchContainer}`}>
-        <AFSearchList onSearchSelect={this.handleAddValue} options={this.props.options} />
+        <AFSearchList
+          onSearchSelect={this.handleAddValue} options={this.props.options}
+          placeholder={translate(this.searchLabel)} />
         <Button
           onClick={this.dividePercentage.bind(this)} bsStyle="success" bsClass={btnStyle}
           disabled={this.state.values.length === 0} hidden={this.percentageFieldDef === undefined}>

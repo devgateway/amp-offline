@@ -1,7 +1,9 @@
 import stringifyObject from 'stringify-object';
 import translate from '../../utils/translate';
 import * as constants from '../../utils/constants/ErrorConstants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Notification helper');
 
 export default class NotificationHelper {
 
@@ -15,20 +17,25 @@ export default class NotificationHelper {
    *
    * @param message
    * @param origin
+   * @param errorCode
    * @param errorObject
+   * @param translateMsg translate the message or not (default true for now, since was used this since AMPOFFLINE-122)
    * @param severity
    */
   constructor({
-    message, origin, errorObject,
+    message, origin, errorCode, errorObject, translateMsg = true,
     severity = constants.NOTIFICATION_SEVERITY_ERROR
   }) {
-    LoggerManager.log('constructor');
+    logger.log('constructor');
+    this.translateMsg = translateMsg;
     if (errorObject) {
       this.message = errorObject.message;
       this.internalCode = errorObject.internalCode;
       this.origin = errorObject.origin;
       this.severity = errorObject.severity;
+      this.errorCode = errorObject.errorCode || errorCode;
     } else {
+      this.errorCode = errorCode;
       if (message) {
         this.message = this.processMessageParams(message);
       }
@@ -38,29 +45,33 @@ export default class NotificationHelper {
       }
     }
     // TODO: If we save the stacktrace here we can have the full info about the error's origin.
-    LoggerManager.error(`${this.message} - ${this.internalCode} - ${this.origin}`);
+    logger.error(`${this.message} - ${this.internalCode} - ${this.origin}`);
   }
 
-  processMessageParams(message) {
+  processMessageParams(message, fromAPI) {
     /* We need to be sure the message param (it can be a String, Object, Array inside an Object, etc
      * is shown correctly to the user. */
     let retMessage = null;
     try {
       if (message instanceof Error) {
         retMessage = message.message;
-        LoggerManager.error(message.stack);
+        logger.error(message.stack);
       } else if (message instanceof Object) {
         const fields = Object.keys(message);
         if (fields && message[fields[0]] && !isNaN(fields[0])) {
-          retMessage = this.processMessageParams(message[fields[0]][0]);
+          retMessage = this.processMessageParams(message[fields[0]][0], true);
         } else {
           retMessage = stringifyObject(message, { inlineCharacterLimit: 200 });
         }
       } else {
-        retMessage = translate(message);
+        // In order to translate some error messages from the API we need to sanitize it first.
+        if (fromAPI && message.charAt(0) === '(' && message.charAt(message.length - 1) === ')') {
+          message = message.substring(1, message.length - 1);
+        }
+        retMessage = this.translateMsg ? translate(message) : message;
       }
     } catch (err) {
-      LoggerManager.warn(err);
+      logger.warn(err);
       retMessage = stringifyObject(message());
     }
     return retMessage;
@@ -100,5 +111,13 @@ export default class NotificationHelper {
 
   set severity(severity) {
     this._severity = severity;
+  }
+
+  set errorCode(errorCode) {
+    this._errorCode = errorCode;
+  }
+
+  get errorCode() {
+    return this._errorCode;
   }
 }

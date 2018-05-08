@@ -11,28 +11,26 @@ import ErrorMessage from '../common/ErrorMessage';
 import styles from './SyncUpSummary.css';
 import { AMP_ID } from '../../utils/constants/ActivityConstants';
 import Utils from '../../utils/Utils';
+import SyncUpManager from '../../modules/syncup/SyncUpManager';
+import { translateSyncStatus } from './tools';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
-    errorMessage: PropTypes.string
+    errorMessage: PropTypes.string,
+    forceSyncUp: PropTypes.bool
   };
 
-  static listActivities(activities) {
-    if (Array.isArray(activities) && activities.length) {
-      return activities.map((activity) => {
-        const id = activity[AMP_ID];
-        const { project_title: title } = activity;
-        return (
-          <div key={id || Utils.stringToId(title)}>
-            {id} {title && `(${title})`}
-          </div>
-        );
-      }
+  static listActivities(activities, source) {
+    return activities.map((activity) => {
+      const id = activity[AMP_ID];
+      const { project_title: title } = activity;
+      return (
+        <div key={id || Utils.stringToId(title)}>
+          [Source: {source}] {id} {title && `(${title})`}
+        </div>
       );
-    } else {
-      return translate('None');
-    }
+    });
   }
 
   static report({
@@ -44,74 +42,103 @@ class SyncUpSummary extends PureComponent {
     unsyncedActivities
   }) {
     return (
-      <div className="container">
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Status')}
+      <div>
+        {errors.map(error => {
+          let msg;
+          if (error._message) {
+            // can't check `error instanceof NotificationHelper` because
+            // `error` is typeless since it's read from sync log json
+            msg = error._message;
+          } else {
+            msg = error.toString();
+          }
+          return <ErrorMessage message={msg.toString()} />;
+        })}
+        <div className="container">
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Status')}
+            </div>
+            <div className="col-md-8">
+              {translateSyncStatus(status)}
+            </div>
           </div>
-          <div className="col-md-8">
-            {status}
-            {status === SYNCUP_STATUS_FAIL && errors.map(msg =>
-              <ErrorMessage message={msg.toString()} />
-            )}
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Started')}
+            </div>
+            <div className="col-md-8">
+              {dateStarted}
+            </div>
           </div>
-        </div>
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Started')}
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Finished')}
+            </div>
+            <div className="col-md-8">
+              {dateFinished}
+            </div>
           </div>
-          <div className="col-md-8">
-            {dateStarted}
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Synced projects')}
+            </div>
+            <div className="col-md-8">
+              {syncedActivities}
+            </div>
           </div>
-        </div>
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Finished')}
-          </div>
-          <div className="col-md-8">
-            {dateFinished}
-          </div>
-        </div>
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Synced projects')}
-          </div>
-          <div className="col-md-8">
-            {syncedActivities}
-          </div>
-        </div>
-        <div className="row">
-          <div className={`col-md-4 text-right ${styles.section_title}`}>
-            {translate('Failed projects')}
-          </div>
-          <div className="col-md-8">
-            {unsyncedActivities}
+          <div className="row">
+            <div className={`col-md-4 text-right ${styles.section_title}`}>
+              {translate('Failed projects')}
+            </div>
+            <div className="col-md-8">
+              {unsyncedActivities}
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
+  getActivitiesByType(type) {
+    const { details } = this.props.data.units.find(
+      unit => unit.type === type
+    );
+
+    return {
+      synced: details.synced || [],
+      unsynced: details.unsynced || []
+    };
+  }
+
   render() {
-    const { data, errorMessage } = this.props;
+    const { data, errorMessage, forceSyncUp } = this.props;
+    const forceSyncUpError = forceSyncUp ? SyncUpManager.getSyncUpStatusMessage() : null;
     if (data) {
       const { status, errors, dateStarted } = data;
-      const pulled = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PULL).details;
-      const pushed = data.units.find(unit => unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH).details;
-      const synced = (pulled.synced || []).concat(pushed.synced || []);
-      const unsynced = (pulled.unsynced || []).concat(pushed.unsynced || []);
+      const { listActivities } = this.constructor;
+      const fallbackToNone = arr => (arr.length ? arr : translate('None'));
+      const pulled = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PULL);
+      const pushed = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PUSH);
+      if (forceSyncUpError) {
+        errors.push(forceSyncUpError);
+      }
       return this.constructor.report({
         status,
         errors,
         dateStarted: createFormattedDateTime(dateStarted),
         dateFinished: createFormattedDateTime(data['sync-date']),
-        syncedActivities: this.constructor.listActivities(synced),
-        unsyncedActivities: this.constructor.listActivities(unsynced)
+        syncedActivities: fallbackToNone(
+          listActivities(pushed.synced, translate('amp-offline')).concat(
+          listActivities(pulled.synced, translate('AMP')))),
+        unsyncedActivities: fallbackToNone(
+          listActivities(pushed.unsynced, translate('amp-offline')).concat(
+          listActivities(pulled.unsynced, translate('AMP'))))
       });
     } else if (errorMessage) {
       return this.constructor.report({
         status: SYNCUP_STATUS_FAIL,
-        errors: [errorMessage],
+        errors: forceSyncUpError ? [errorMessage, forceSyncUpError] : [errorMessage],
         dateStarted: 'n/a',
         dateFinished: 'n/a',
         syncedActivities: 'n/a',

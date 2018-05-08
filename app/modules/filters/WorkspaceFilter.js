@@ -1,8 +1,11 @@
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
-import * as ActivityConstants from '../../utils/constants/ActivityConstants';
+import * as AC from '../../utils/constants/ActivityConstants';
 import ActivityFilter from './ActivityFilter';
-import LoggerManager from '../util/LoggerManager';
+import { IS_COMPUTED, IS_PRIVATE } from '../../utils/constants/WorkspaceConstants';
+import Logger from '../util/LoggerManager';
+
+const logger = new Logger('Workspace filter');
 
 /**
  * Workspace Filter class
@@ -16,7 +19,8 @@ export default class WorkspaceFilterBuilder {
 
   constructor(workspace) {
     this._workspace = workspace;
-    this._isComputed = this._workspace && this._workspace['is-computed'] === true;
+    this._isComputed = this._workspace && this._workspace[IS_COMPUTED] === true;
+    this._isPrivate = this._workspace && this._workspace[IS_PRIVATE] === true;
     this._wsFilters = this._workspace ? this._workspace['workspace-filters'] : undefined;
   }
 
@@ -25,22 +29,21 @@ export default class WorkspaceFilterBuilder {
    * @returns {Promise}
    */
   getDBFilter() {
-    LoggerManager.log('getDBFilter');
-    return new Promise((resolve, reject) => {
-      if (!this._workspace) {
-        return resolve({});
-      }
-      return this._prepareFilters().then(() => resolve(this._generateDBFilter())).catch(reject);
-    });
+    logger.log('getDBFilter');
+    if (!this._workspace) {
+      return Promise.resolve({});
+    }
+    return this._prepareFilters().then(() => this._generateDBFilter());
   }
 
   _prepareFilters() {
-    const self = this;
-    return new Promise((resolve, reject) =>
-      self._getActivityFiltersPromise().then(activityDbFilter => {
-        self._activityDbFilter = activityDbFilter;
-        return resolve(self._activityDbFilter);
-      }).catch(reject));
+    const privateWSFilter = Utils.toMap(IS_PRIVATE, true);
+    return Promise.all([this._getActivityFiltersPromise(), WorkspaceHelper.findAll(privateWSFilter, { id: 1 })])
+      .then(([activityDbFilter, privateWorkspaces]) => {
+        this._activityDbFilter = activityDbFilter;
+        this._privateWorkspaces = Utils.flattenToListByKey(privateWorkspaces, 'id');
+        return activityDbFilter;
+      });
   }
 
   _getActivityFiltersPromise() {
@@ -60,9 +63,9 @@ export default class WorkspaceFilterBuilder {
    * @private
    */
   _generateDBFilter() {
-    LoggerManager.log('_generateDBFilter');
+    logger.log('_generateDBFilter');
     // initialise the team filter (no special Management workspaces rules are needed)
-    const teamFilter = Utils.toMap(ActivityConstants.TEAM, this._workspace.id);
+    const teamFilter = Utils.toMap(AC.TEAM, this._workspace.id);
     // non-computed workspace filter
     let dbFilter = teamFilter;
     // Add computed filters if needed
@@ -78,27 +81,31 @@ export default class WorkspaceFilterBuilder {
         }
       }
     }
+    if (!this._isPrivate) {
+      const excludeFromPrivateWS = Utils.toMap(AC.TEAM, { $nin: this._privateWorkspaces });
+      dbFilter = { $and: [dbFilter, excludeFromPrivateWS] };
+    }
     return dbFilter;
   }
 
   _getComputedOrgsFilter() {
-    LoggerManager.log('_getComputedOrgsFilter');
+    logger.log('_getComputedOrgsFilter');
     let computedOrgsFilter;
     const orgIds = this._workspace.organizations;
     if (orgIds && orgIds.length > 0) {
       // build activity orgs filter
       const activityOrgs = [];
-      ActivityConstants.ORG_ROLE_FIELDS.forEach(orgField => {
-        const orgFilter = Utils.toMap(ActivityConstants.ORG_ROLE_ORG_ID, { $in: orgIds });
+      AC.ORG_ROLE_FIELDS.forEach(orgField => {
+        const orgFilter = Utils.toMap(AC.ORG_ROLE_ORG_ID, { $in: orgIds });
         const orgRoleFilter = Utils.toMap(orgField, { $elemMatch: orgFilter });
         activityOrgs.push(orgRoleFilter);
       });
-      const fundingDonorOrgFilter = Utils.toMap(ActivityConstants.FUNDING_DONOR_ORG_ID, { $in: orgIds });
-      const fundingOrgs = Utils.toMap(ActivityConstants.FUNDINGS, { $elemMatch: fundingDonorOrgFilter });
+      const fundingDonorOrgFilter = Utils.toMap(AC.FUNDING_DONOR_ORG_ID, { $in: orgIds });
+      const fundingOrgs = Utils.toMap(AC.FUNDINGS, { $elemMatch: fundingDonorOrgFilter });
       activityOrgs.push(fundingOrgs);
       // add draft flag if needed
       if (this._workspace['hide-draft'] === true) {
-        const isDraftFilter = Utils.toMap(ActivityConstants.IS_DRAFT, { $ne: true });
+        const isDraftFilter = Utils.toMap(AC.IS_DRAFT, { $ne: true });
         computedOrgsFilter = { $or: { $and: [activityOrgs, isDraftFilter] } };
       } else {
         computedOrgsFilter = { $or: activityOrgs };
@@ -122,7 +129,7 @@ export default class WorkspaceFilterBuilder {
     wsIds.reduce((promise, wsId) =>
       promise.then(() => new Promise(() => {
         if (!processedWsIds.has(wsId)) {
-          LoggerManager.log(wsId);
+          logger.log(wsId);
           processedWsIds.add(wsId);
 
           WorkspaceHelper.findAll({ 'parent-workspace-id': wsId }, { id: 1 }).then(childWsIds => {
@@ -133,10 +140,10 @@ export default class WorkspaceFilterBuilder {
         return processedWsIds;
       }),
       Promise.resolve(processedWsIds)).then(() => {
-        LoggerManager.log('done');
+        logger.log('done');
         return processedWsIds;
       }, (e) => {
-        LoggerManager.error(e);
+        logger.error(e);
         reject(e);
       })
     ));

@@ -1,6 +1,9 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_TEAMMEMBERS } from '../../utils/Constants';
-import LoggerManager from '../../modules/util/LoggerManager';
+import { flattenToListByKey } from '../../utils/Utils';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Team member helper');
 
 /**
  * A simplified helper for 'Team Member' storage for loading, searching / filtering and saving team members configs.
@@ -10,30 +13,32 @@ const TeamMemberHelper = {
   /**
    * Find workspaces ids by user id
    * @param userId
+   * @param excludeDelete if to exclude deleted team members or not (false by default)
    * @returns {Promise}
    */
-  findWorkspaceIdsByUserId(userId) {
-    LoggerManager.log('findWorkspaceIdsByUserId');
-    const filter = { 'user-id': userId };
-    return new Promise((resolve, reject) => {
-      const projections = { 'workspace-id': 1 };
-      DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS, projections)
-        .then((teamMembers) => {
-          const wsIds = [];
-          teamMembers.forEach((teamMember) => wsIds.push(teamMember['workspace-id']));
-          return resolve(wsIds);
-        }).catch(reject);
-    });
+  findWorkspaceIdsByUserId(userId, excludeDelete = false) {
+    logger.debug('findWorkspaceIdsByUserId');
+    let filter = { 'user-id': userId };
+    const projections = { 'workspace-id': 1 };
+    if (excludeDelete) {
+      filter = { ...filter, ...this.getExcludeDeletedTeamMembersFilter() };
+    }
+    return DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS, projections)
+      .then((teamMembers) => flattenToListByKey(teamMembers, 'workspace-id'));
   },
 
   /**
    * Find all team members by workspace id
    * @param workspaceId
-   * @returns {*}
+   * @param excludeDelete if to exclude deleted team members or not (false by default)
+   * @returns {Promise}
    */
-  findAllByWorkspaceId(workspaceId) {
-    LoggerManager.log('findAllByWorkspaceId');
-    const filter = { 'workspace-id': workspaceId };
+  findAllByWorkspaceId(workspaceId, excludeDelete = false) {
+    logger.debug('findAllByWorkspaceId');
+    let filter = { 'workspace-id': workspaceId };
+    if (excludeDelete) {
+      filter = { ...filter, ...this.getExcludeDeletedTeamMembersFilter() };
+    }
     return this.findAll(filter);
   },
 
@@ -41,16 +46,20 @@ const TeamMemberHelper = {
    * Find a team member config by User and Workspace
    * @param userId
    * @param workspaceId
+   * @param excludeDelete if to exclude deleted team members or not (false by default)
    * @returns {*|Promise}
    */
-  findByUserAndWorkspaceId(userId, workspaceId) {
-    LoggerManager.log('findByUserAndWorkspaceId');
+  findByUserAndWorkspaceId(userId, workspaceId, excludeDelete = false) {
+    logger.debug('findByUserAndWorkspaceId');
     const filter = { $and: [{ 'workspace-id': workspaceId }, { 'user-id': userId }] };
+    if (excludeDelete) {
+      filter.$and.push(this.getExcludeDeletedTeamMembersFilter());
+    }
     return this.findTeamMember(filter);
   },
 
   findAll(filter) {
-    LoggerManager.log('findAll');
+    logger.debug('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS);
   },
 
@@ -60,8 +69,12 @@ const TeamMemberHelper = {
    * @returns {Promise}
    */
   findTeamMember(filter) {
-    LoggerManager.log('findTeamMember');
+    logger.debug('findTeamMember');
     return DatabaseManager.findOne(filter, COLLECTION_TEAMMEMBERS);
+  },
+
+  getExcludeDeletedTeamMembersFilter() {
+    return { deleted: { $ne: true } };
   },
 
   /**
@@ -70,12 +83,12 @@ const TeamMemberHelper = {
    * @returns {Promise}
    */
   saveOrUpdateTeamMember(teamMember) {
-    LoggerManager.log('saveOrUpdateWorkspace');
+    logger.log('saveOrUpdateWorkspace');
     return DatabaseManager.saveOrUpdate(teamMember.id, teamMember, COLLECTION_TEAMMEMBERS, {});
   },
 
   saveOrUpdateTeamMembers(data) {
-    LoggerManager.log('saveOrUpdateTeamMembers');
+    logger.log('saveOrUpdateTeamMembers');
     return DatabaseManager.saveOrUpdateCollection(data, COLLECTION_TEAMMEMBERS);
   },
 
@@ -85,12 +98,12 @@ const TeamMemberHelper = {
    * @returns {Promise}
    */
   deleteById(id) {
-    LoggerManager.log('deleteById');
+    logger.log('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_TEAMMEMBERS, {});
   },
 
   deleteByIds(ids) {
-    LoggerManager.log('deleteByIds');
+    logger.log('deleteByIds');
     const filter = { id: { $in: ids } };
     return DatabaseManager.removeAll(filter, COLLECTION_TEAMMEMBERS, {});
   }

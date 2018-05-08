@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import DateUtils from '../../app/utils/DateUtils';
 import GlobalSettingsManager from '../../app/modules/util/GlobalSettingsManager';
+import NotificationHelper from '../../app/modules/helpers/NotificationHelper';
 
 const defaultDateConfig = {
   dateFormat: 'dd/MM/yyyy'
@@ -42,8 +43,8 @@ describe('@@ DateUtils @@', () => {
     expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('Feb/04/2015');
   });
 
-  it('should do nothing with an invalid date', () => {
+  it('should throw an error for an invalid date', () => {
     GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(defaultDateConfig));
-    expect(DateUtils.createFormattedDate('not a date')).to.equal('not a date');
+    expect(DateUtils.createFormattedDate.bind(null, 'not a date')).to.throw(NotificationHelper);
   });
 });

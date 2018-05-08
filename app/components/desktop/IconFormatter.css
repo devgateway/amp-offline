@@ -11,3 +11,10 @@
   content: url('../../assets/images/view.svg');
   margin-left: 3px;
 }
+
+.validate_icon {
+  width: 20px;
+  cursor: pointer;
+  content: url('../../assets/images/check.svg');
+  margin-left: 3px;
+}

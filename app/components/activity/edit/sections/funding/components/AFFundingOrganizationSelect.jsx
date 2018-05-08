@@ -1,7 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../../modules/util/LoggerManager';
 import AFField from '../../../components/AFField';
+import { DONOR_ORGANIZATIONS_PATH } from '../../../../../../utils/constants/FieldPathConstants';
+
+const logger = new Logger('AP Funding Organization select');
 
 /**
  * Funding Section
@@ -16,11 +19,11 @@ export default class AFFundingOrganizationSelect extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.debug('constructor');
+    logger.debug('constructor');
   }
 
   _handleDonorSelect(value) {
-    LoggerManager.debug('_handleDonorSelect');
+    logger.debug('_handleDonorSelect');
     this.props.handleDonorSelect(value);
   }
 
@@ -28,7 +31,7 @@ export default class AFFundingOrganizationSelect extends Component {
     return (<div>
       <div>
         <AFField
-          parent={this.props.activity} fieldPath={'donor_organization~organization'}
+          parent={this.props.activity} fieldPath={DONOR_ORGANIZATIONS_PATH}
           extraParams={{ 'no-table': true }} onAfterUpdate={this._handleDonorSelect.bind(this)} />
       </div>
     </div>);

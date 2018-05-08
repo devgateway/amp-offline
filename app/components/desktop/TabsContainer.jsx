@@ -4,7 +4,9 @@ import React, { Component, PropTypes } from 'react';
 import style from './TabsContainer.css';
 import Tab from './Tab';
 import TabContent from './TabContent';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Tabs container');
 
 export default class TabsContainer extends Component {
 
@@ -14,7 +16,7 @@ export default class TabsContainer extends Component {
 
   constructor() {
     super();
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.state = { activeTab: 0 };
   }
 
@@ -23,7 +25,7 @@ export default class TabsContainer extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     return (
       <div className={style.container}>
         <ul className="nav nav-tabs">
@@ -36,11 +38,8 @@ export default class TabsContainer extends Component {
             />
           ))}
         </ul>
-        <TabContent
-          activeTab={this.state.activeTab}
-          data={this.props.tabsData}
-        />
-      </div >
+        <TabContent activeTab={this.state.activeTab} data={this.props.tabsData} {...this.props} />
+      </div>
     );
   }
 }

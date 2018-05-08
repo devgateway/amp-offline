@@ -1,9 +1,17 @@
-import React, { Component, PropTypes } from 'react';
+/* eslint-disable class-methods-use-this */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
 import Button from '../i18n/Button';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+import translate from '../../utils/translate';
+import LoginTroubleshootingLinks from './LoginTroubleshootingLinks';
+import { doSetupFirst } from '../../actions/SetupAction';
+import * as Utils from '../../utils/Utils';
+
+const logger = new Logger('login');
 
 export default class Login extends Component {
 
@@ -12,20 +20,39 @@ export default class Login extends Component {
     // This React component receives the login function to be dispatched as a prop,
     // so it doesnt have to know about the implementation.
     loginAction: PropTypes.func.isRequired,
-    loginReducer: PropTypes.object.isRequired
+    loginReducer: PropTypes.object.isRequired,
+    changePasswordOnline: PropTypes.func.isRequired,
+    resetPasswordOnline: PropTypes.func.isRequired,
+    isSetupComplete: PropTypes.bool,
+
   };
 
-  constructor() {
-    super();
-    LoggerManager.log('constructor');
+  constructor(args) {
+    super(args);
+    logger.debug('constructor');
 
-    this.state = {
+    this.state = Utils.isReleaseBranch() ? {} : {
       email: 'testuser@amp.org',
       password: 'password'
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+  }
+
+  componentWillMount() {
+    this.checkIfSetupComplete(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.checkIfSetupComplete(nextProps);
+  }
+
+  checkIfSetupComplete(props) {
+    const { isSetupComplete } = props;
+    if (isSetupComplete === false) {
+      doSetupFirst();
+    }
   }
 
   handlePasswordChange(e) {
@@ -36,15 +63,22 @@ export default class Login extends Component {
     this.setState({ email: e.target.value });
   }
 
+  processLogin(email, password) {
+    this.props.loginAction(email, password);
+  }
+
   render() {
-    LoggerManager.log('render');
-    const { loginAction } = this.props;
+    logger.debug('render');
+    const { isSetupComplete } = this.props;
+    if (isSetupComplete !== true) {
+      return null;
+    }
     return (
       <div className={styles.centered_form}>
         <table>
           <tbody>
             <tr>
-              <td><Span text="user" /></td>
+              <td><Span text={translate('user')} /></td>
               <td>
                 <input
                   type="text" value={this.state.email} onChange={this.handleEmailChange}
@@ -52,7 +86,7 @@ export default class Login extends Component {
               </td>
             </tr>
             <tr>
-              <td><Span text="password" /></td>
+              <td><Span text={translate('password')} /></td>
               <td>
                 <input
                   type="password" value={this.state.password} onChange={this.handlePasswordChange}
@@ -64,9 +98,13 @@ export default class Login extends Component {
         <Button
           type="button" className={`btn btn-success ${(this.props.loginReducer.loginProcessing ? 'disabled' : '')}`}
           onClick={() => {
-            loginAction(this.state.email.toLowerCase(), this.state.password);
-          }} text="login" />
+            this.processLogin(this.state.email.toLowerCase(), this.state.password);
+          }} text={translate('login')} />
         <hr />
+        <LoginTroubleshootingLinks
+          changePasswordOnline={this.props.changePasswordOnline}
+          resetPasswordOnline={this.props.resetPasswordOnline} />
+        <br />
         <ErrorMessage message={this.props.loginReducer.errorMessage} />
       </div>
     );

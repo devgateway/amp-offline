@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../ActivityPreview.css';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('tablify');
 
 /**
  * Component for converting content to table form
@@ -21,6 +23,12 @@ export default class Tablify extends Component {
    * @param cols number of columns
    */
   static addRows(content, cols) {
+    // Remove undefined cells.
+    content = content.filter(c => c);
+    // Decrease number of cols if we dont have enough elements.
+    if (content.length < cols) {
+      cols = content.length;
+    }
     const rows = Math.ceil(content.length / cols);
     const tableContent = [];
 
@@ -36,21 +44,22 @@ export default class Tablify extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {
-    const cellWidth = `${(100 / this.props.columns)}%`;
+    const columns = this.props.columns >= this.props.content.length ? this.props.content.length : this.props.columns;
+    const cellWidth = `${(100 / columns)}%`;
     const cellwidthStyle = {
       width: cellWidth
     };
-    const rows = Math.ceil(this.props.content.length / this.props.columns);
+    const rows = Math.ceil(this.props.content.length / columns);
     const tableContent = [];
     for (let i = 0; i < rows; i++) {
       const rowContent = [];
       rowContent.push(<div style={cellwidthStyle} className={styles.tablify_outer_cell}>
         {this.props.content.pop()}</div>);
-      for (let j = 1; j < this.props.columns; j++) {
+      for (let j = 1; j < this.props.columns && this.props.content.length > 0; j++) {
         rowContent.push(<div style={cellwidthStyle} className={styles.tablify_inner_cell}>
           {this.props.content.pop()}</div>);
       }

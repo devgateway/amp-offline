@@ -20,7 +20,41 @@ println "Tag: ${tag}"
 
 def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
 
-node {
+// define target options
+def targetsMap = [
+        'Package All': ['win32', 'win64', 'linux'],
+        'Windows 32 & 64 bits': ['win32', 'win64'],
+        'Windows 64 bits': ['win64'],
+        'Windows 32 bits': ['win32'],
+        'Linux All': ['linux'],
+        'Debian All': ['deb32', 'deb64'],
+        'Windows and Linux deb 32 & 64 bits': ['win32', 'win64', 'deb32', 'deb64']
+    ]
+// TODO exclude develop?
+def isReleaseBranch = branch != null && branch.matches(/master|develop|release.*/)
+def defaultTarget = isReleaseBranch ? 'Package All' : 'Windows 64 bits'
+// By default options are listed and sorted ascending and there is no way to configure defaultValue for choices.
+// To ensure that the right default option is selected on automatic build, it must be renamed to be sorted first
+def defaultTargetFirst = "(Default) ${defaultTarget}"
+targetsMap[defaultTargetFirst] = targetsMap[defaultTarget]
+targetsMap = targetsMap.findAll { it.key != defaultTarget }
+def targets = targetsMap.keySet().sort().join('\n')
+println "Is Release branch: ${isReleaseBranch}"
+println "Default Target: ${defaultTarget}"
+println "Options: ${targets}"
+
+properties([
+    parameters([
+        choice(name: 'packageTarget', description: 'Package for', choices: targets)
+])])
+
+def selectedTarget = params.packageTarget
+println "Selected target: ${selectedTarget}"
+def scriptTarget = targetsMap.get(selectedTarget).join(',')
+println "Script target: ${scriptTarget}"
+
+// limit to "master" executor until AMPOFFLINE-837 is addressed
+node('master') {
 	try {
 		stage('PrepareSetup') {
 			checkout scm
@@ -52,8 +86,9 @@ node {
 		}
 		stage('Dist') {
 			try {
-				sh './dist.sh'
-				sh './publish.sh ${BRANCH_NAME}'
+				sh "echo Using package target: ${scriptTarget}"
+                sh "./dist.sh ${pr} ${branch} ${scriptTarget}"
+				sh "./publish.sh ${BRANCH_NAME}"
 				slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
 			} catch (e) {
 				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Failed to create and publish installers for ${changePretty}")

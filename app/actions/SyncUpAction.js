@@ -1,13 +1,14 @@
 import store from '../index';
 import * as URLUtils from '../utils/URLUtils';
-import { WORKSPACE_URL } from '../utils/Constants';
+import { SYNCUP_REDIRECT_URL, WORKSPACE_URL } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import { connectivityCheck } from './ConnectivityAction';
+import { ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -19,11 +20,14 @@ export const STATE_SYNCUP_FAILED = 'STATE_SYNCUP_FAILED';
 export const STATE_SYNCUP_FORCED = 'STATE_SYNCUP_FORCED';
 export const STATE_SYNCUP_CONNECTION_UNAVAILABLE = 'STATE_SYNCUP_CONNECTION_UNAVAILABLE';
 export const STATE_SYNCUP_DISMISSED = 'STATE_SYNCUP_DISMISSED';
+export const STATE_SYNCUP_DISMISS_COMPLETE = 'STATE_SYNCUP_DISMISS_COMPLETE';
 export const STATE_CONNECTION_CHECK_IN_PROGRESS = 'STATE_CONNECTION_CHECK_IN_PROGRESS';
 export const STATE_SYNCUP_LOG_LOADED = 'STATE_SYNCUP_LOG_LOADED';
 
+const logger = new Logger('Syncup action');
+
 export function loadSyncUpHistory() {
-  LoggerManager.log('getSyncUpHistory');
+  logger.log('getSyncUpHistory');
   return (dispatch) => {
     if (store.getState().syncUpReducer.loadingSyncHistory === false) {
       SyncUpManager.getSyncUpHistory().then((data) => (
@@ -47,20 +51,18 @@ export function startSyncUpIfConnectionAvailable() {
 }
 
 export function startSyncUp(historyData) {
-  LoggerManager.log('startSyncUp');
+  logger.log('startSyncUp');
   /* Save current syncup redux state because this might be a "forced" syncup and we dont want
    the user to be able to leave the page if this syncup fails. */
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
-    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
     store.dispatch(syncUpInProgress());
+    URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
+    store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
 
-    return SyncUpManager.syncUpAllTypesOnDemand().then((log) =>
-      // TODO probably the way in which we will update the ui will change
-      // once we get the final version also it will change the way in which pass
-      // the historyData object
-      checkIfToForceSyncUp().then(() => {
+    return SyncUpManager.syncUpAllTypesOnDemand()
+      .then((log) => {
         const newHistoryData = Object.assign({}, historyData, { status: SYNC_STATUS_COMPLETED });
-        LoggerManager.log('syncupSucessfull');
+        logger.log('syncupSucessfull');
         store.dispatch({ type: 'STATE_SYNCUP_COMPLETED', actionData: newHistoryData });
         const { id } = log;
         store.dispatch({
@@ -68,11 +70,12 @@ export function startSyncUp(historyData) {
           actionData: log
         });
         URLUtils.forwardTo(`/syncUpSummary/${id}`);
-        return newHistoryData;
-      })
+        return checkIfToForceSyncUp();
+      }
     ).catch((err) => {
-      const actionData = { errorMessage: err };
-      store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData });
+      logger.error(err);
+      const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY ? err.message : translate('defaultSyncError');
+      store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage } });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });
@@ -95,11 +98,12 @@ export function isForceSyncUp() {
 }
 
 export function dismissSyncAndChooseWorkspace() {
+  store.dispatch({ type: STATE_SYNCUP_DISMISS_COMPLETE });
   return checkIfShouldSyncBeforeLogout().then(() => URLUtils.forwardTo(WORKSPACE_URL));
 }
 
 function syncUpSearchHistoryOk(data) {
-  LoggerManager.log(`syncUpSearchHistoryOk: ${JSON.stringify(data)}`);
+  logger.log(`syncUpSearchHistoryOk: ${JSON.stringify(data)}`);
   return {
     type: STATE_SYNCUP_SHOW_HISTORY,
     actionData: data
@@ -107,7 +111,7 @@ function syncUpSearchHistoryOk(data) {
 }
 
 function syncUpSearchHistoryFailed(err) {
-  LoggerManager.log(`STATE_SYNCUP_SEARCH_FAILED: ${err}`);
+  logger.log(`STATE_SYNCUP_SEARCH_FAILED: ${err}`);
   return {
     type: STATE_SYNCUP_SEARCH_FAILED,
     actionData: { errorMessage: err }
@@ -115,24 +119,22 @@ function syncUpSearchHistoryFailed(err) {
 }
 
 function sendingRequest() {
-  LoggerManager.debug('sendingRequest');
+  logger.debug('sendingRequest');
   return {
     type: STATE_SYNCUP_LOADING_HISTORY
   };
 }
 
 function syncUpInProgress() {
-  LoggerManager.debug('sendingRequest');
+  logger.debug('sendingRequest');
   return {
     type: STATE_SYNCUP_IN_PROCESS
   };
 }
 
 function syncConnectionUnavailable() {
-  LoggerManager.debug('syncConnectionUnavailable');
-  const msg = translate('syncConnectionError');
   return {
     type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,
-    actionData: { errorMessage: msg }
+    actionData: { errorMessage: translate('AMPUnreachableError') }
   };
 }

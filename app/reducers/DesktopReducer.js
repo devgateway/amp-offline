@@ -4,7 +4,9 @@ import {
   STATE_DESKTOP_ERROR,
   STATE_DESKTOP_RESET
 } from '../actions/DesktopAction';
-import LoggerManager from '../modules/util/LoggerManager';
+import Logger from '../modules/util/LoggerManager';
+
+const logger = new Logger('Desktop reducer');
 
 const defaultState = {
   errorMessage: '',
@@ -16,7 +18,7 @@ const defaultState = {
 };
 
 export default function desktopReducer(state = defaultState, action: Object) {
-  LoggerManager.log('desktopReducer');
+  logger.debug('desktopReducer');
   switch (action.type) {
     case STATE_DESKTOP_LOADED:
       return Object.assign({}, state, {

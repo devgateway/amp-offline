@@ -8,10 +8,12 @@ import {
   IMPLEMENTATION_LEVEL,
   IMPLEMENTATION_LOCATION
 } from '../../../../utils/constants/ActivityConstants';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 import styles from '../ActivityPreview.css';
 
 const APLocationsList = APPercentageList(LOCATIONS, LOCATION, LOCATION_PERCENTAGE);
+
+const logger = new Logger('AP location');
 
 /**
  * Activity Preview Locations section
@@ -25,22 +27,22 @@ class APLocation extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   render() {
     let content = [<APLocationsList
       key="locations-list" {...this.props}
-      percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />];
+      percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} tablify={false} />];
     const topContent = [];
     topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LEVEL, true, new Set([0]))} </td>);
     topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0]))} </td>);
     content = content.filter(el => el !== undefined);
     let table = null;
-    if ((this.props.activity.implementation_level
-      && this.props.activity.implementation_level.value !== 'National')
-      || (this.props.activity.implentation_location
-      && this.props.activity.implementation_location !== 'Country')) {
+    if ((this.props.activity[IMPLEMENTATION_LEVEL]
+      && this.props.activity[IMPLEMENTATION_LEVEL].value !== 'National')
+      || (this.props.activity[IMPLEMENTATION_LOCATION]
+      && this.props.activity[IMPLEMENTATION_LOCATION].value !== 'Country')) {
       table = (<table className={styles.box_table2}>
         <tbody>
           {content}
@@ -56,7 +58,6 @@ class APLocation extends Component {
       {table}
     </div>);
   }
-
 }
 
 export default Section(APLocation, 'Location', true, 'APLocation');

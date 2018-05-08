@@ -1,21 +1,9 @@
 import request from 'request';
-import os from 'os';
 import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
-import {
-  ARCH32,
-  ARCH64,
-  ARCH64_NODE_OS_OPTIONS,
-  ARCH64_USER_AGENT_OPTIONS,
-  PARAM_AMPOFFLINE_AGENT,
-  PLATFORM_DEBIAN,
-  PLATFORM_MAC_OS,
-  PLATFORM_REDHAT,
-  PLATFORM_WINDOWS,
-  TRANSLATIONS_PARAM
-} from './AmpApiConstants';
+import { PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
 
@@ -33,9 +21,7 @@ const RequestConfig = {
    in case we don't want to send id we dont have to send null or nothing*/
   getRequestConfig({ method, url, paramsMap, body, extraUrlParam }) {
     const routeConfiguration = this._getRouteConfiguration(method, url);
-    const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
-    const urlParams = this._paramsMapToString(paramsMap);
-    const fullUrl = fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
+    const fullUrl = this.getFullURL({ method, url, paramsMap, body, extraUrlParam });
     const headers = {
       'User-Agent': `${PARAM_AMPOFFLINE_AGENT}/${VERSION} ${this._getExtendedUserAgent(navigator.userAgent)}`
     };
@@ -74,32 +60,21 @@ const RequestConfig = {
     return requestConfig;
   },
 
+  getFullURL({ method, url, paramsMap, extraUrlParam }) {
+    const routeConfiguration = this._getRouteConfiguration(method, url);
+    const fullBaseUrl = this._getFullBaseUrl(url, routeConfiguration);
+    const urlParams = this._paramsMapToString(paramsMap, routeConfiguration);
+    return fullBaseUrl + (extraUrlParam ? `/${extraUrlParam}` : '') + urlParams;
+  },
+
   _getExtendedUserAgent(userAgent) {
-    const userAgentLowerCase = userAgent.toLowerCase();
-    let platform = os.platform().toLowerCase();
-    if (platform === 'darwin') {
-      platform = PLATFORM_MAC_OS;
-    } else if (platform === 'win32') {
-      platform = PLATFORM_WINDOWS;
-    } else if (platform === 'linux') {
-      if (userAgentLowerCase.includes('red hat')) {
-        platform = PLATFORM_REDHAT;
-      } else {
-        platform = PLATFORM_DEBIAN;
-      }
-    }
-    let arch = os.arch();
-    if (ARCH64_NODE_OS_OPTIONS.has(arch) || ARCH64_USER_AGENT_OPTIONS.some(a64 => userAgentLowerCase.includes(a64))) {
-      arch = ARCH64;
-    } else {
-      arch = ARCH32;
-    }
+    const { platform, arch } = Utils.getPlatformDetails();
     return `(${platform}; ${arch}) ${userAgent}`;
   },
 
   _addTranslations(paramsMap) {
     let translations = store.getState().translationReducer.languageList;
-    if (translations) {
+    if (translations && translations.length > 0) {
       translations = translations.join('|');
       if (paramsMap instanceof Map) {
         paramsMap.set(TRANSLATIONS_PARAM, translations);
@@ -112,18 +87,27 @@ const RequestConfig = {
     return paramsMap;
   },
 
-  _paramsMapToString(paramsMap) {
-    paramsMap = this._addTranslations(paramsMap);
-    const kv = [];
-    if (paramsMap instanceof Map) {
-      paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
-    } else {
-      Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
+  _paramsMapToString(paramsMap, routeConfiguration) {
+    const { regularAmpUrl, translations } = routeConfiguration;
+    const addTranslations = regularAmpUrl !== true && translations !== false;
+    if (addTranslations) {
+      paramsMap = this._addTranslations(paramsMap);
     }
-    return `?${kv.join('&')}`;
+    const kv = [];
+    if (paramsMap) {
+      if (paramsMap instanceof Map) {
+        paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
+      } else {
+        Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
+      }
+    }
+    return kv.length ? `?${kv.join('&')}` : '';
   },
 
   _getFullBaseUrl(url, routeConfiguration) {
+    if (routeConfiguration.isFull) {
+      return url;
+    }
     // if the route is regularAMPUrl we fetch the ROOT for amp
     // if not we get the REST url
     return routeConfiguration.regularAmpUrl ?
@@ -151,4 +135,4 @@ const RequestConfig = {
   }
 };
 
-module.exports = RequestConfig;
+export default RequestConfig;

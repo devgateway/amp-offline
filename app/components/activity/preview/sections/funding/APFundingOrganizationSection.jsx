@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
@@ -8,6 +8,8 @@ import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import translate from '../../../../../utils/translate';
+
+const logger = new Logger('AP funding organization section');
 
 /**
  * @author Gabriel Inchauspe
@@ -27,7 +29,7 @@ class APFundingOrganizationSection extends Component {
 
   constructor(props, context) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this._currency = context.currentWorkspaceSettings.currency.code;
   }
 
@@ -40,7 +42,6 @@ class APFundingOrganizationSection extends Component {
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_STATUS]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.MODE_OF_PAYMENT]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
@@ -99,7 +100,7 @@ class APFundingOrganizationSection extends Component {
   }
 
   render() {
-    LoggerManager.debug('render');
+    logger.debug('render');
     return (<div>
       <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
       <table className={styles.two_box_table}>

@@ -1,5 +1,3 @@
-/* eslint react/forbid-prop-types: 0 */
-/* eslint react/jsx-space-before-closing: 0 */
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import translate from '../../utils/translate';
@@ -7,10 +5,12 @@ import style from './Navbar.css';
 import TopMenuContainer from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
 import { AMP_COUNTRY_LOGO, DESKTOP_CURRENT_URL } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
 import NotificationsContainer from '../notifications';
+
+const logger = new Logger('Navbar');
 
 const defaultMenu = require('../../conf/menu.json');
 
@@ -27,19 +27,19 @@ export default class Navbar extends Component {
 
   constructor() {
     super();
-    LoggerManager.log('constructor');
+    logger.debug('constructor');
   }
 
   extractLoggedUser(prepend) {
-    LoggerManager.log('extractLoggedUser');
+    logger.debug('extractLoggedUser');
     if (this.props.userReducer instanceof Object && this.props.userReducer.userData instanceof Object) {
       return prepend + this.props.userReducer.userData.email;
     }
     return '';
   }
 
-  extractWorkSpace(prepend) {
-    LoggerManager.log('extractWorkSpace');
+  extractWorkspace(prepend) {
+    logger.debug('extractWorkSpace');
     if (this.props.workspaceReducer && this.props.workspaceReducer.currentWorkspace) {
       return prepend + this.props.workspaceReducer.currentWorkspace.name;
     }
@@ -47,7 +47,7 @@ export default class Navbar extends Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.debug('render');
     return (
       <div className={style.container}>
         <div className={style.navbar}>
@@ -57,16 +57,13 @@ export default class Navbar extends Component {
               src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
               className={[style.countryFlag, style.navbar_left_side].join(' ')}
             />
+            <a className={style.navbar_left_side}>{translate('amp-title')}</a>
           </Link>
-          <Link className={style.navbar_left_side} style={{ cursor: 'pointer' }}>{translate('amp-title')}</Link>
-
-          <Logout loggedIn={this.props.loginReducer.loggedIn} />
           <div className={style.userInfo}>
-            <a className={style.navbar_right_side} >{this.extractLoggedUser('')}</a>
-            <a className={style.navbar_right_side} >{this.extractWorkSpace('')}</a>
+            <Logout loggedIn={this.props.loginReducer.loggedIn} {...this.props} />
+            <a className={style.navbar_right_side}>{this.extractLoggedUser('')}</a>
+            <a className={style.navbar_right_side}>{this.extractWorkspace('')}</a>
           </div>
-
-
         </div>
         <div className={style.main_menu}>
           <TopMenuContainer

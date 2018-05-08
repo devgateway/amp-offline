@@ -1,46 +1,66 @@
 import bunyan from 'bunyan';
-import fs from 'fs';
-import { LOG_FILE_NAME, LOG_DIR, LOG_FILE_EXTENSION } from '../../utils/Constants';
+import path from 'path';
+import {
+  LOG_DIR,
+  LOG_FILE_EXTENSION,
+  LOG_FILE_NAME,
+  NR_LOG_FILES
+} from '../../utils/Constants';
 import LoggerSettings from '../../utils/LoggerSettings';
+import FileManager from './FileManager';
 
 /* To understand the levels: https://github.com/trentm/node-bunyan#levels
  * 30: info
  * 40: warn
  * 50: error */
 export default class LoggerManager {
+  static bunyanLog = null;
 
-  static bunyanLog = LoggerManager.initialize();
+  static getBunyanLog() {
+    if (!this.bunyanLog) {
+      console.log('initialize');
+      const settings = LoggerSettings.getDefaultConfig(process.env.NODE_ENV);
+      const logDirFullPath = FileManager.createDataDir(LOG_DIR);
 
-  static initialize() {
-    console.log('initialize');
-    const settings = LoggerSettings.getDefaultConfig(process.env.NODE_ENV);
-    // Create directory.
-    if (!fs.existsSync(LOG_DIR)) {
-      fs.mkdirSync(LOG_DIR);
+      FileManager.readdirSync(LOG_DIR)
+        .sort()
+        .reverse()
+        .slice(NR_LOG_FILES)
+        .forEach(filename => FileManager.deleteFile(path.join(logDirFullPath, filename)));
+
+      const date = new Date();
+      let file = `${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
+      file = FileManager.getFullPath(LOG_DIR, file);
+      this.bunyanLog = bunyan.createLogger({
+        name: 'amp',
+        streams: [{ level: settings.level, path: file }
+        ]
+      });
     }
-    const date = new Date();
-    const file = `${LOG_DIR}/${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
-    const log = bunyan.createLogger({
-      name: 'amp',
-      streams: [{ level: settings.level, path: file }
-      ]
-    });
-    return log;
+    return this.bunyanLog;
   }
 
-  static log(message) {
-    this.bunyanLog.info(message);
+  constructor(module) {
+    this.logger_ = this.constructor.getBunyanLog().child({ module });
   }
 
-  static debug(message) {
-    this.bunyanLog.debug(message);
+  log(message) {
+    this.logger_.info(message);
   }
 
-  static warn(message) {
-    this.bunyanLog.warn(message);
+  info(message) {
+    this.logger_.info(message);
   }
 
-  static error(message) {
-    this.bunyanLog.error(message);
+  debug(message) {
+    this.logger_.debug(message);
+  }
+
+  warn(message) {
+    this.logger_.warn(message);
+  }
+
+  error(message) {
+    this.logger_.error(message);
   }
 }

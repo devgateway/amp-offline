@@ -3,13 +3,16 @@ import translate from '../../utils/translate';
 import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
+import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
 import {
-  IS_DRAFT,
+  ADJUSTMENT_TYPE,
   APPROVAL_STATUS,
-  FUNDINGS,
+  DONOR_ORGANIZATION,
   FUNDING_DETAILS,
-  TRANSACTION_TYPE,
-  ADJUSTMENT_TYPE
+  FUNDINGS,
+  IS_DRAFT,
+  REJECTED_ID,
+  TRANSACTION_TYPE
 } from '../../utils/constants/ActivityConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
@@ -17,14 +20,24 @@ import {
   FUNDING_CURRENCY_PATH,
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
-import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
+import {
+  ACTUAL,
+  APPROVED_STATUS,
+  COMMITMENTS,
+  DISBURSEMENTS,
+  EDITED_STATUS,
+  STARTED_APPROVED_STATUS,
+  STARTED_STATUS
+} from '../../utils/constants/ValueConstants';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+
+const logger = new Logger('Desktop manager');
 
 const DesktopManager = {
 
   generateDesktopData(workspace, teamMemberId, currentWorkspaceSettings, currencyRatesManager) {
-    LoggerManager.log('generateDesktopData');
+    logger.log('generateDesktopData');
     return new Promise((resolve, reject) =>
       WorkspaceFilter.getDBFilter(workspace).then(wsFilter =>
         this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
@@ -45,7 +58,7 @@ const DesktopManager = {
   },
 
   generateOneTabData(wsFilter, teamMemberId, fn, currentWorkspaceSettings, currencyRatesManager) {
-    LoggerManager.log('generateOneTabData');
+    logger.log('generateOneTabData');
     return new Promise((resolve, reject) => (
       fn.call(ActivityHelper, wsFilter)
         .then((activities) => (
@@ -61,7 +74,7 @@ const DesktopManager = {
   },
 
   hydrateActivities(activities, teamMemberId) {
-    LoggerManager.log('hydrateActivities');
+    logger.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
       fieldPaths: [DONOR_ORGANIZATIONS_PATH, ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, FUNDING_CURRENCY_PATH],
@@ -70,7 +83,7 @@ const DesktopManager = {
   },
 
   convertActivitiesToGridStructure(hydratedActivities, currentWorkspaceSettings, currencyRatesManager) {
-    LoggerManager.log('convertActivitiesToGridStructure');
+    logger.log('convertActivitiesToGridStructure');
     const forGrid = hydratedActivities.map((item) => (
       Object.assign({}, item, {
         key: item.id,
@@ -81,7 +94,7 @@ const DesktopManager = {
           currencyRatesManager),
         actualCommitments: this.getActivityAmounts(item, COMMITMENTS, currentWorkspaceSettings, currencyRatesManager),
         view: true,
-        edit: this.getActivityCanEdit(item),
+        edit: this.getActivityCanEdit(item) && !item[REJECTED_ID],
         new: this.getActivityIsNew(item)
       })
     ));
@@ -90,36 +103,43 @@ const DesktopManager = {
 
   getActivityIsNew(item) {
     if (item[IS_DRAFT]) {
-      if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'edited') {
+      if (item[APPROVAL_STATUS] === APPROVED_STATUS || item[APPROVAL_STATUS] === EDITED_STATUS) {
         return false;
       } else {
         return true;
       }
     } else {
-      if (item[APPROVAL_STATUS] === 'started') {
+      if (item[APPROVAL_STATUS] === STARTED_STATUS) {
         return true;
       }
       return false;
     }
   },
 
-  getActivityCanEdit(/* item */) {
-    return true; // TODO: to be implemented.
+  getActivityCanEdit(item) {
+    return !item[REJECTED_ID];
   },
 
   getActivityAmounts(item, trnType, currentWorkspaceSettings, currencyRatesManager) {
     let amount = 0;
-    item[FUNDINGS].forEach((funding) => (
-      funding[FUNDING_DETAILS].forEach((fd) => {
-        if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
-          amount += currencyRatesManager.convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
-        }
-      })
-    ));
+    if (item[FUNDINGS]) {
+      item[FUNDINGS].forEach((funding) => (
+        funding[FUNDING_DETAILS].forEach((fd) => {
+          if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
+            amount += currencyRatesManager
+              .convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
+          }
+        })
+      ));
+    }
     return amount;
   },
+
   getActivityDonors(item) {
-    return item.donor_organization.map((donor) => (donor.organization.value));
+    if (item[DONOR_ORGANIZATION]) {
+      return item[DONOR_ORGANIZATION].map((donor) => (donor.organization.value));
+    }
+    return [];
   },
 
   getActivityIsSynced(/* item */) {
@@ -131,7 +151,7 @@ const DesktopManager = {
     let status = '';
     if (item[IS_DRAFT]) {
       status = ACTIVITY_STATUS_DRAFT;
-    } else if (item[APPROVAL_STATUS] === 'approved' || item[APPROVAL_STATUS] === 'startedapproved') {
+    } else if (item[APPROVAL_STATUS] === APPROVED_STATUS || item[APPROVAL_STATUS] === STARTED_APPROVED_STATUS) {
       status = ACTIVITY_STATUS_VALIDATED;
     } else {
       status = ACTIVITY_STATUS_UNVALIDATED;
@@ -149,7 +169,7 @@ const DesktopManager = {
     const defaultTabs = [
       {
         id: 0,
-        name: 'Activities',
+        name: ACTIVITIES_TAB_TITLE,
         isActive: true,
         projects: projectsWithLinks,
         sorting: null,
@@ -157,7 +177,7 @@ const DesktopManager = {
       },
       {
         id: 1,
-        name: 'Rejected Sync',
+        name: REJECTED_TAB_TITLE,
         isActive: false,
         projects: rejected,
         sorting: null,

@@ -3,11 +3,13 @@ import React, { Component, PropTypes } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
-import LoggerManager from '../../../../../modules/util/LoggerManager';
+import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
+
+const logger = new Logger('AF overall funding totals');
 
 /**
  * @author Gabriel Inchauspe
@@ -25,7 +27,7 @@ export default class AFOverallFundingTotals extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.options = {
       withoutNoDataText: true
     };
@@ -83,25 +85,29 @@ export default class AFOverallFundingTotals extends Component {
 
   _buildGroups(fundings) {
     const groups = [];
-    fundings.forEach((item) => {
-      item[AC.FUNDING_DETAILS].forEach(item2 => {
-        const amount = this.context.currencyRatesManager
-          .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
-        const auxFd = {
-          adjType: item2[AC.ADJUSTMENT_TYPE],
-          trnType: item2[AC.TRANSACTION_TYPE],
-          key: item2.id,
-          currency: this.context.currentWorkspaceSettings.currency.code,
-          amount
-        };
-        const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id);
-        if (!group) {
-          groups.push(auxFd);
-        } else {
-          group.amount += auxFd.amount;
-        }
+    if (fundings) {
+      fundings.forEach((item) => {
+        item[AC.FUNDING_DETAILS].forEach(item2 => {
+          if (item2[AC.ADJUSTMENT_TYPE] && item2[AC.TRANSACTION_TYPE]) {
+            const amount = this.context.currencyRatesManager
+              .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
+            const auxFd = {
+              adjType: item2[AC.ADJUSTMENT_TYPE],
+              trnType: item2[AC.TRANSACTION_TYPE],
+              key: item2.id,
+              currency: this.context.currentWorkspaceSettings.currency.code,
+              amount
+            };
+            const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id);
+            if (!group) {
+              groups.push(auxFd);
+            } else {
+              group.amount += auxFd.amount;
+            }
+          }
+        });
       });
-    });
+    }
     return groups;
   }
 

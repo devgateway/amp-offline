@@ -3,7 +3,9 @@ import { Button, FormControl, Panel } from 'react-bootstrap';
 import styles from './AFSearchList.css';
 import AFOption from './AFOption';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
+
+const logger = new Logger('AF search list');
 
 // similar to AMP
 const HIERARCHY_LEVEL_PADDING_CHAR = ' ';
@@ -18,12 +20,13 @@ const HIERARCHY_LEVEL_PADDING_SIZE = 2;
 export default class AFSearchList extends Component {
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
-    onSearchSelect: PropTypes.func.isRequired
+    onSearchSelect: PropTypes.func.isRequired,
+    placeholder: PropTypes.string
   };
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
     this.applyFilter = this.applyFilter.bind(this);
     this.state = {
       filter: '',
@@ -85,7 +88,7 @@ export default class AFSearchList extends Component {
   }
 
   render() {
-    const placeHolderText = `${translate('Search')}...`;
+    const placeHolderText = this.props.placeholder || `${translate('Search')}...`;
     const options = React.Children.toArray(this.state.values.map(option =>
       <Button
         key={option.id} onMouseDown={this.handleSelect.bind(this, option.id)} bsClass={styles.item}

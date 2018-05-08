@@ -1,26 +1,25 @@
-import React, { PropTypes } from 'react';
+/* eslint-disable jsx-a11y/href-no-hash */
+/* eslint-disable class-methods-use-this */
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
 import translate from '../../utils/translate';
-import { SYNCUP_URL } from '../../utils/Constants';
+import { SYNCUP_REDIRECT_URL } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
   NOTIFICATION_SEVERITY_WARNING
 } from '../../utils/constants/ErrorConstants';
 import URLUtils from '../../utils/URLUtils';
-import {
-  logoutAction,
-  STATE_LOGOUT_DISMISS_TO_SYNC,
-  STATE_LOGOUT_REQUESTED
-} from '../../actions/LoginAction';
+import { logoutAction, STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import Notification from '../../modules/helpers/NotificationHelper';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import style from '../layout/Navbar.css';
-import LoggerManager from '../../modules/util/LoggerManager';
+import Logger from '../../modules/util/LoggerManager';
+import { startSyncUp } from '../../actions/SyncUpAction';
 
-/* eslint-disable class-methods-use-this */
+const logger = new Logger('Logout');
 
 class Logout extends React.Component {
 
@@ -51,14 +50,14 @@ class Logout extends React.Component {
   }
 
   render() {
-    LoggerManager.log('render');
+    logger.log('render');
     if (this.props.loggedIn) {
+      // DO NOT add href since it can cause AMPOFFLINE-878
       return (
-        <div className={style.logout_container} >
-          <Button className={style.navbar_right_side} bsStyle="link" onClick={this.onLogout.bind(this)} >
-            {translate('logoff')}
-          </Button >
-        </div >
+        <a
+          className={style.navbar_right_side}
+          onClick={this.onLogout.bind(this)}>{translate('logout')}
+        </a>
       );
     }
     return null;
@@ -75,9 +74,7 @@ const logoutConfirmationAlert = () => {
     type: STATE_LOGOUT_REQUESTED,
     actionData: { logoutConfirmed: true }
   }, translate('logout'));
-  const proceedWithSync = new FollowUp({
-    type: STATE_LOGOUT_DISMISS_TO_SYNC
-  }, translate('Sync'));
+  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Sync'));
   const actions = [proceedWithLogout, proceedWithSync];
   return new ConfirmationAlert(logoutNotification, actions, true);
 };
@@ -92,7 +89,7 @@ export default connect(
   dispatch => ({
     onConfirmationAlert: () => dispatch(addConfirmationAlert(logoutConfirmationAlert())),
     onLogoutDismissToSync: () => {
-      URLUtils.forwardTo(SYNCUP_URL);
+      URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
     }
   })
 )(Logout);

@@ -2,11 +2,13 @@ import ContactHelper from '../../helpers/ContactHelper';
 import { SYNCUP_TYPE_CONTACTS_PULL } from '../../../utils/Constants';
 import { CONTACT_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
-import LoggerManager from '../../util/LoggerManager';
+import Logger from '../../util/LoggerManager';
 import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
 import { CONTACT } from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
+
+const logger = new Logger('Contacts pull syncup manager');
 
 /* eslint-disable class-methods-use-this */
 
@@ -86,7 +88,7 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
   }
 
   onPullError(error, contactId) {
-    LoggerManager.error(`Contact id=${contactId} pull error: ${error}`);
+    logger.error(`Contact id=${contactId} pull error: ${error}`);
     return error;
   }
 

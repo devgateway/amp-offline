@@ -11,13 +11,16 @@ import {
   CLIENT_UPDATED_ON,
   CREATED_BY,
   CREATED_ON,
+  IS_PUSHED,
   MODIFIED_BY,
   PROJECT_TITLE,
   TEAM
 } from '../utils/constants/ActivityConstants';
+import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import {
   NOTIFICATION_ORIGIN_ACTIVITY,
+  NOTIFICATION_SEVERITY_ERROR,
   NOTIFICATION_SEVERITY_INFO
 } from '../utils/constants/ErrorConstants';
 import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
@@ -27,6 +30,9 @@ import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import translate from '../utils/translate';
 import * as Utils from '../utils/Utils';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
+import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
+import DateUtils from '../utils/DateUtils';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -38,8 +44,11 @@ export const ACTIVITY_UNLOADED = 'ACTIVITY_UNLOADED';
 export const ACTIVITY_VALIDATED = 'ACTIVITY_VALIDATED';
 export const ACTIVITY_FIELD_VALIDATED = 'ACTIVITY_FIELD_VALIDATED';
 export const ACTIVITY_UPDATE_GLOBAL_STATE = 'ACTIVITY_UPDATE_GLOBAL_STATE';
+export const ACTIVITY_LOADED_FOR_AF = 'ACTIVITY_LOADED_FOR_AF';
 const ACTIVITY_LOAD = 'ACTIVITY_LOAD';
 const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
+
+const logger = new LoggerManager('ActivityAction.js');
 
 export function loadActivityForActivityPreview(activityId) {
   const paths = [ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, CREATED_BY, TEAM, MODIFIED_BY];
@@ -51,7 +60,8 @@ export function loadActivityForActivityPreview(activityId) {
         teamMemberId: ownProps().userReducer.teamMember.id,
         possibleValuesPaths: paths,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
-        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager
+        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
+        currentLanguage: ownProps().translationReducer.lang
       })
     });
 }
@@ -66,7 +76,11 @@ export function loadActivityForActivityForm(activityId) {
         isAF: true,
         possibleValuesPaths: null,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
-        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager
+        currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
+        currentLanguage: ownProps().translationReducer.lang
+      }).then(data => {
+        dispatch({ type: ACTIVITY_LOADED_FOR_AF });
+        return data;
       })
     });
 }
@@ -106,7 +120,7 @@ export function saveActivity(activity) {
 
 function _loadActivity({
                          activityId, teamMemberId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
-                         isAF
+                         isAF, currentLanguage
                        }) {
   return new Promise((resolve, reject) => {
     const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
@@ -118,7 +132,7 @@ function _loadActivity({
     ])
       .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
         fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
-        const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection);
+        const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
         const activityWsId = activity[TEAM] && activity[TEAM].id;
@@ -145,16 +159,16 @@ const _getActivity = (activityId, teamMemberId) => {
   if (activityId === NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
-  return ActivityHelper.findNonRejectedById(activityId).then(activity =>
-    ActivityHydrator.hydrateActivity({ activity, teamMemberId }));
+  return ActivityHelper.findAll({ id: activityId }).then(activity =>
+    ActivityHydrator.hydrateActivity({ activity: activity[0], teamMemberId }));
 };
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
   return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
-    const modifiedOn = (new Date()).toISOString();
+    const modifiedOn = DateUtils.getISODateForAPI();
     if (!dehydratedActivity[TEAM]) {
-      dehydratedActivity[TEAM] = teamMember['workspace-id'];
+      dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
     }
     if (!dehydratedActivity[CREATED_BY]) {
       dehydratedActivity[CREATED_BY] = teamMember.id;
@@ -164,19 +178,32 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
     }
     dehydratedActivity[MODIFIED_BY] = teamMember.id;
     dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
-    return ActivityHelper.saveOrUpdate(dehydratedActivity).then((savedActivity) => {
-      dispatch(addMessage(new Notification({
-        message: translate('activitySavedMsg'),
-        origin: NOTIFICATION_ORIGIN_ACTIVITY,
-        severity: NOTIFICATION_SEVERITY_INFO
-      })));
-      // TODO this reset is useless if we choose to stay within AF when activity is saved
-      dispatch(resetDesktop());
-      checkIfShouldSyncBeforeLogout();
-      // DO NOT return anything else! It is recorded by the reducer and refreshes AF when you choose to stay in AF
-      return savedActivity;
-    });
-  });
+    delete dehydratedActivity[IS_PUSHED];
+
+    return ActivityStatusValidation.statusValidation(dehydratedActivity, teamMember, false).then(() => (
+      ActivityHelper.saveOrUpdate(dehydratedActivity, true).then((savedActivity) => {
+        dispatch(addMessage(new Notification({
+          message: translate('activitySavedMsg'),
+          origin: NOTIFICATION_ORIGIN_ACTIVITY,
+          severity: NOTIFICATION_SEVERITY_INFO
+        })));
+        // TODO this reset is useless if we choose to stay within AF when activity is saved
+        dispatch(resetDesktop());
+        checkIfShouldSyncBeforeLogout();
+        // DO NOT return anything else! It is recorded by the reducer and refreshes AF when you choose to stay in AF
+        return savedActivity;
+      })
+    ));
+  }).catch(error => dispatch(unableToSave(error)));
+}
+
+function unableToSave(error) {
+  logger.error(error);
+  return addMessage(new Notification({
+    message: translate('activitySavedError'),
+    origin: NOTIFICATION_ORIGIN_ACTIVITY,
+    severity: NOTIFICATION_SEVERITY_ERROR
+  }));
 }
 
 export function updateActivityGlobalState(setting, value) {

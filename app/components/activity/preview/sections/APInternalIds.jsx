@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
 import Tablify from '../components/Tablify';
 import Section from './Section';
@@ -6,9 +8,9 @@ import translate from '../../../../utils/translate';
 import { ACTIVITY_INTERNAL_IDS, ACTIVITY_INTERNAL_IDS_COLS } from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
-import LoggerManager from '../../../../modules/util/LoggerManager';
+import Logger from '../../../../modules/util/LoggerManager';
 
-/* eslint-disable class-methods-use-this */
+const logger = new Logger('AP Internal ids');
 
 /**
  * Organizations and project ids section
@@ -24,13 +26,13 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
 
   constructor(props) {
     super(props);
-    LoggerManager.log('constructor');
+    logger.log('constructor');
   }
 
   _getActInternalIdContent(actIntId, showInternalId) {
     let intId;
     if (showInternalId) {
-      intId = <span>{actIntId.internalId}</span>;
+      intId = <span className={styles.tableValue}>{actIntId.internal_id}</span>;
     }
     return (
       <div key={actIntId.organization.value}>
@@ -71,8 +73,6 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     }
     return content;
   }
-
 };
 
 export const APInternalIds = Section(APInternalIdsSection(true), 'Agency Internal IDs', true, 'APInternalIds');
-export const APInternalIdsFromIdentification = Section(APInternalIdsSection(false), null, false);
