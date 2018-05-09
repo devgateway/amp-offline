@@ -165,7 +165,7 @@ const _getActivity = (activityId, teamMemberId) => {
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
-  return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
+  return dehydrator.dehydrateEntity(activity).then(dehydratedActivity => {
     const modifiedOn = DateUtils.getISODateForAPI();
     if (!dehydratedActivity[TEAM]) {
       dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
