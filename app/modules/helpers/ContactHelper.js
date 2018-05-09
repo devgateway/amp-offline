@@ -18,6 +18,12 @@ const ContactHelper = {
     return ContactHelper.findContact(filterRule);
   },
 
+  findContactsByIds(ids) {
+    logger.debug('findContactsByIds');
+    const filterRule = { id: { $in: ids } };
+    return ContactHelper.findAllContacts(filterRule);
+  },
+
   findContactByInternalId(internalId) {
     logger.debug('findContactById');
     const filterRule = Utils.toMap(INTERNAL_ID, internalId);
@@ -55,6 +61,14 @@ const ContactHelper = {
 
   isNewContact(contact) {
     return contact.id && `${contact.id}`.startsWith(CLIENT_CHANGE_ID_PREFIX);
+  },
+
+  /**
+   * Checks if the contact is stampped as modified on client (i.e. not yet pushed to AMP)
+   * @param contact
+   */
+  isModifiedOnClient(contact) {
+    return !!contact[CLIENT_CHANGE_ID];
   },
 
   cleanupLocalData(contact) {

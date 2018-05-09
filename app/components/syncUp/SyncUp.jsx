@@ -127,7 +127,6 @@ class SyncUp extends Component {
   }
 
   render() {
-    logger.log('render');
     const { syncUpReducer, currentUserHistory } = this.props;
     const { loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (

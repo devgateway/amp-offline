@@ -40,7 +40,9 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
     const matchContact = Utils.toMap(CONTACT, { $in: removedContactIds });
     const queries = ACTIVITY_CONTACT_PATHS.map(type => Utils.toMap(type, { $elemMatch: matchContact }));
     const filter = { $or: queries };
-    // TODO: check if AMP reports activity as modified if a contact is removed, until then remove from all local
+    // When a contact is deleted from Address Book in AMP, it is automatically removed from activities.
+    // The activity itself is not reported as modified on the server.
+    // Therefore also simply removing deleted contacts from local AMP Offline activities as well.
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
       activities.forEach(activity => this.unlinkRemovedContactsFromActivity(activity, removedContactIds));
       return ActivityHelper.saveOrUpdateCollection(activities);
