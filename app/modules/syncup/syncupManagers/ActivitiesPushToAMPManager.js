@@ -190,9 +190,12 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   _getUnsyncedContacts(activity) {
     const unsyncedContacts = [];
-    ACTIVITY_CONTACT_PATHS.forEach(cType =>
-      unsyncedContacts.push(...activity[cType].filter(c => ContactHelper.isModifiedOnClient(c)))
-    );
+    ACTIVITY_CONTACT_PATHS.forEach(cType => {
+      const contacts = activity[cType];
+      if (contacts && contacts.length) {
+        unsyncedContacts.push(...contacts.filter(c => ContactHelper.isModifiedOnClient(c)));
+      }
+    });
     if (unsyncedContacts.length) {
       return ContactHelper.findContactsByIds(unsyncedContacts);
     }
