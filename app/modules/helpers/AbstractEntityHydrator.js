@@ -100,6 +100,12 @@ export default class AbstractEntityHydrator {
     const isList = fieldDef.field_type === 'list';
 
     if (possibleValues['field-path'].length === pathIndex + 1) {
+      const options = possibleValues['possible-options'];
+      if (!options || !Object.keys(options).length) {
+        // there may be invalid "possible-options" paths like donor_contact~contact (TDB ticket) => skipping
+        logger.error(`No options available for ${possibleValues.id}. Won't hydrate / dehydrate this path.`);
+        return;
+      }
       // this is the last level
       objects.forEach(obj => {
         const fieldValue = obj[fieldName];

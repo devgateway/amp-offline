@@ -4,6 +4,12 @@ import PossibleValuesManager from '../activity/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
+/*
+import { ACTIVITY_CONTACT_PATHS } from '../../utils/constants/FieldPathConstants';
+import { CONTACT } from '../../utils/constants/ActivityConstants';
+import ContactHelper from './ContactHelper';
+import ContactHydrator from './ContactHydrator';
+*/
 
 /* eslint-disable class-methods-use-this */
 
@@ -36,6 +42,11 @@ import AbstractEntityHydrator from './AbstractEntityHydrator';
  * @author Nadejda Mandrescu
  */
 export default class ActivityHydrator extends AbstractEntityHydrator {
+  /*
+  constructor(fieldsDef) {
+    super(fieldsDef);
+    this.contactHydrator = new ContactHydrator(contactsFieldsDef);
+  }*/
 
   /**
    * Replaces each activity related objects ids with full object data for the specified field paths
@@ -44,8 +55,62 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
    * @return {Object} the modified activities
    */
   hydrateActivities(activities, fieldPaths) {
-    // TODO AMPOFFLINE-707 hydrate contacts
+    // TODO cleanup if won't use afterall
+    /*
+    return this._hydrateExternalEntities(activities, fieldPaths)
+      .then(() => super.hydrateEntities(activities, fieldPaths));
+      */
     return super.hydrateEntities(activities, fieldPaths);
+  }
+
+  /*
+  _hydrateExternalEntities(activities, fieldPaths) {
+    return Promise.all([this._hydrateContacts(activities, fieldPaths)]);
+  }
+
+  _hydrateContacts(activities, fieldPaths) {
+    let cPaths = ACTIVITY_CONTACT_PATHS;
+    if (fieldPaths && fieldPaths.length) {
+      cPaths = cPaths.filter(cPath =>
+        fieldPaths.includes(cPath) || fieldPaths.indexOf(fp => fp.startsWith(`${cPath}~`)) !== -1);
+    }
+    const contactsIds = [];
+    cPaths.forEach(cType => {
+      activities.forEach(a => {
+        const cs = a[cType] || [];
+        if (cs.length) {
+          contactsIds.push(...cs.map(c => c[CONTACT]));
+        }
+      });
+    });
+    if (!contactsIds.length) {
+      return Promise.resolve();
+    }
+    return ContactHelper.findContactsByIds(contactsIds).then(contacts => {
+      const cotactById = {};
+      return this.contactHydrator.hydrateEntities(contacts).then(hcs => {
+        hcs.forEach(c => (cotactById[c.id] = c));
+        cPaths.forEach(cType => {
+          activities.forEach(a => {
+            const acs = a[cType] || [];
+            acs.forEach(c => (c[CONTACT] = cotactById[c[CONTACT]]));
+          });
+        });
+        return activities;
+      });
+    });
+  }
+  */
+
+  /**
+   * Replaces each related object full data with it's id
+   * @param activity
+   * @param fieldPaths
+   * @return {Promise.<entity>}
+   */
+  dehydrateActivity(activity, fieldPaths = []) {
+    // TODO dehydrate contacts first
+    return super.dehydrateEntity(activity, fieldPaths);
   }
 
   // old mechanism for locations, using v1 API
@@ -80,19 +145,17 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
    */
   static hydrateActivities({ activities, fieldPaths, teamMemberId }) {
     // Note: 926 activities are hydrated in 0.2s, where a significant time is consumed by promises
-    return new Promise((resolve, reject) => {
-      if (teamMemberId === undefined) {
-        reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
-      }
-      return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS)
-        .then((fieldsDef) => {
-          if (fieldsDef === null) {
-            throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
-          } else {
-            const hydrator = new ActivityHydrator(fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS]);
-            return hydrator.hydrateEntities(activities, fieldPaths).then(resolve).catch(reject);
-          }
-        }).catch(reject);
-    });
+    if (teamMemberId === undefined) {
+      return Promise.reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
+    }
+    return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS)
+      .then(fieldsDef => {
+        if (fieldsDef === null) {
+          throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
+        } else {
+          const hydrator = new ActivityHydrator(fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS]);
+          return hydrator.hydrateActivities(activities, fieldPaths);
+        }
+      });
   }
 }
