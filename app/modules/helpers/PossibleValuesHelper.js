@@ -89,14 +89,17 @@ const PossibleValuesHelper = {
     let idsFilter = idsWithoutRoot && { $in: idsWithoutRoot };
     if (root && root.length) {
       if (idsWithoutRoot) {
-        idsFilter = idsWithoutRoot.map(id => `${root}~${id}`);
+        idsFilter = { $in: idsWithoutRoot.map(id => `${root}~${id}`) };
       } else {
         idsFilter = { $regex: new RegExp(`${root}~.*`) };
       }
     }
     if (idsFilter) {
       if (filter.id) {
-        filter.id = { $and: [filter.id, idsFilter] };
+        filter.$and = filter.$and || [];
+        filter.$and.push({ id: filter.id });
+        filter.$and.push({ id: idsFilter });
+        delete filter.id;
       } else {
         filter.id = idsFilter;
       }
