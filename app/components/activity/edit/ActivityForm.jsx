@@ -10,9 +10,9 @@ import AFSaveDialog from './AFSaveDialog';
 import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
 import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
-import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
-import ActivityValidator from '../../../modules/activity/ActivityValidator';
+import ActivityValidator from '../../../modules/field/EntityValidator';
 import translate from '../../../utils/translate';
 import Logger from '../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
@@ -35,7 +35,7 @@ export default class ActivityForm extends Component {
       isActivitySaving: PropTypes.bool,
       activity: PropTypes.object,
       savedActivity: PropTypes.object,
-      activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+      activityFieldsManager: PropTypes.instanceOf(FieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       errorMessage: PropTypes.object,
       validationResult: PropTypes.array,
@@ -58,7 +58,7 @@ export default class ActivityForm extends Component {
 
   static childContextTypes = {
     activity: PropTypes.object,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
     isSaveAndSubmit: PropTypes.bool,
@@ -131,7 +131,7 @@ export default class ActivityForm extends Component {
         this.props.loadActivityForActivityForm(savedActivity.id);
       } else {
         this.activity = activity;
-        this.activityValidator.activity = activity;
+        this.activityValidator.entity = activity;
         this._selectSection(IDENTIFICATION);
       }
     }

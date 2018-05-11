@@ -3,7 +3,7 @@
 import React, { Component, PropTypes } from 'react';
 import Tablify from '../components/Tablify';
 import Section from './Section';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
 import { ACTIVITY_INTERNAL_IDS, ACTIVITY_INTERNAL_IDS_COLS } from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
@@ -19,7 +19,7 @@ const logger = new Logger('AP Internal ids');
 const APInternalIdsSection = (isSeparateSection) => class extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     showIfEmpty: PropTypes.bool/* only makes sense if isSeparateSection is true, will render
                                   if there are no org ids*/
   };

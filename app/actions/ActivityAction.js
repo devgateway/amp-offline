@@ -3,7 +3,7 @@ import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
 import ActivityHydrator from '../modules/helpers/ActivityHydrator';
-import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
 import {
@@ -132,7 +132,7 @@ function _loadActivity({
     ])
       .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
         fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
-        const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
+        const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
         const activityWsId = activity[TEAM] && activity[TEAM].id;

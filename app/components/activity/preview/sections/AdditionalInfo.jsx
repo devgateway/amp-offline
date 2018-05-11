@@ -4,8 +4,8 @@ import APField from '../components/APField';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP Additional info');
 
@@ -20,7 +20,7 @@ class AdditionalInfo extends Component {
     buildSimpleField: PropTypes.func.isRequired,
     fieldNameClass: PropTypes.string,
     fieldValueClass: PropTypes.string,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   constructor(props) {

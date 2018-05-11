@@ -5,7 +5,7 @@ import {
   LOCATION_PATH,
   PATHS_WITH_TREE_STRUCTURE
 } from '../../utils/constants/FieldPathConstants';
-import PossibleValuesManager from '../activity/PossibleValuesManager';
+import PossibleValuesManager from '../field/PossibleValuesManager';
 import PossibleValuesHelper from './PossibleValuesHelper';
 
 const logger = new Logger('ContactHydrator');

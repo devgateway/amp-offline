@@ -4,7 +4,7 @@ import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
 import * as Utils from '../../../../../utils/Utils';
@@ -18,7 +18,7 @@ const logger = new Logger('AF funding detail container');
 export default class AFFundingDetailContainer extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   static propTypes = {

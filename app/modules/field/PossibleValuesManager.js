@@ -1,7 +1,7 @@
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../utils/constants/ActivityConstants';
 import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
-import Logger from '../../modules/util/LoggerManager';
-import ActivityFieldsManager from './ActivityFieldsManager';
+import Logger from '../util/LoggerManager';
+import FieldsManager from './FieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 
@@ -108,7 +108,7 @@ export default class PossibleValuesManager {
       filters.forEach(filter => {
         const filterBy = filter.value;
         Object.values(options).forEach(option => {
-          const optionDataToCheck = ActivityFieldsManager.getValue(option, filter.path);
+          const optionDataToCheck = FieldsManager.getValue(option, filter.path);
           if (option.visible && optionDataToCheck && (
             (optionDataToCheck instanceof Array && optionDataToCheck.includes(filterBy)) ||
             (optionDataToCheck === filterBy))) {

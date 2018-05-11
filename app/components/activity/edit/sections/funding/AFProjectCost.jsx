@@ -6,7 +6,7 @@ import * as AF from '../../components/AFComponentTypes';
 import Logger from '../../../../../modules/util/LoggerManager';
 import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
 import afStyles from '../../ActivityForm.css';
 
@@ -18,7 +18,7 @@ const logger = new Logger('AF project cost');
 export default class AFProjectCost extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   static propTypes = {

@@ -8,7 +8,7 @@ import {
   SECTOR_PERCENTAGE
 } from '../../../../utils/constants/ActivityConstants';
 import styles from './APSector.css';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const PrimarySectorList = APPercentageList(PRIMARY_SECTORS, SECTOR, SECTOR_PERCENTAGE, 'Primary Sector');
@@ -24,7 +24,7 @@ class APSector extends Component {
   /* eslint-disable react/no-unused-prop-types */
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
   /* eslint-enable react/no-unused-prop-types */
 

@@ -5,7 +5,7 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 
@@ -17,7 +17,7 @@ const logger = new Logger('AF proposed project cost table');
 export default class AFProposedProjectCostTable extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     currentWorkspaceSettings: PropTypes.object.isRequired,
     activity: PropTypes.object.isRequired
   };

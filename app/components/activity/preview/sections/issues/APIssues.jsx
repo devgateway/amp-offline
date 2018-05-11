@@ -3,7 +3,7 @@ import Section from '../Section';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APIssues.css';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APMeasure from './APMeasure';
 import translate from '../../../../../utils/translate';
@@ -17,7 +17,7 @@ class APIssues extends Component {
   /* eslint-disable react/no-unused-prop-types */
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
   /* eslint-enable react/no-unused-prop-types */
 

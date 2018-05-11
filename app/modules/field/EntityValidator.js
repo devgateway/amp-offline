@@ -32,39 +32,39 @@ import {
 import { DEFAULT_DATE_FORMAT, GS_DEFAULT_NUMBER_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
 import translate from '../../utils/translate';
-import Logger from '../../modules/util/LoggerManager';
-import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
+import Logger from '../util/LoggerManager';
+import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
-import ActivityFieldsManager from './ActivityFieldsManager';
+import FieldsManager from './FieldsManager';
 import { ON_BUDGET } from '../../utils/constants/ValueConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 
-const logger = new Logger('Activity validator');
+const logger = new Logger('EntityValidator');
 
 /**
- * Activity Validator
+ * Entity Validator
  * @author Nadejda Mandrescu
  */
-export default class ActivityValidator {
-  constructor(activity, activityFieldsManager: ActivityFieldsManager, otherProjectTitles: Array) {
+export default class EntityValidator {
+  constructor(entity, fieldsManager: FieldsManager, otherProjectTitles: Array) {
     logger.log('constructor');
-    this._activity = activity;
-    this._fieldsDef = activityFieldsManager.fieldsDef;
-    this._possibleValuesMap = activityFieldsManager.possibleValuesMap;
-    this._activityFieldsManager = activityFieldsManager;
+    this._entity = entity;
+    this._fieldsDef = fieldsManager.fieldsDef;
+    this._possibleValuesMap = fieldsManager.possibleValuesMap;
+    this._fieldsManager = fieldsManager;
     this._otherProjectTitles = new Set(otherProjectTitles);
     this.excludedFields = [APPROVAL_DATE, APPROVAL_STATUS, APPROVED_BY];
   }
 
-  set activity(activity) {
-    this._activity = activity;
+  set entity(entity) {
+    this._entity = entity;
   }
 
-  areAllConstraintsMet(activity, asDraft, fieldPathsToSkipSet) {
+  areAllConstraintsMet(entity, asDraft, fieldPathsToSkipSet) {
     logger.log('areAllConstraintsMet');
     const errors = [];
     this._initGenericErrors();
-    this._areAllConstraintsMet([activity], this._fieldsDef, asDraft, undefined, fieldPathsToSkipSet, errors);
+    this._areAllConstraintsMet([entity], this._fieldsDef, asDraft, undefined, fieldPathsToSkipSet, errors);
     return errors;
   }
 
@@ -146,12 +146,12 @@ export default class ActivityValidator {
     } else if (RELATED_ORGS_PATHS.includes(mainFieldPath)) {
       dependencies = [DEPENDENCY_COMPONENT_FUNDING_ORG_VALID];
     }
-    const fieldPaths = this._activityFieldsManager.getFieldPathsByDependencies(dependencies);
+    const fieldPaths = this._fieldsManager.getFieldPathsByDependencies(dependencies);
     fieldPaths.forEach(fieldPath => {
       const parentPath = fieldPath.substring(0, fieldPath.lastIndexOf('~'));
-      const parent = this._activityFieldsManager.getValue(this._activity, parentPath);
+      const parent = this._fieldsManager.getValue(this._entity, parentPath);
       if (parent) {
-        const fieldDef = this._activityFieldsManager.getFieldDef(fieldPath);
+        const fieldDef = this._fieldsManager.getFieldDef(fieldPath);
         // flatten parents to the last leaf level
         let depth = parentPath.split('~').length;
         let parents = depth > 1 ? parent : [parent];
@@ -205,7 +205,7 @@ export default class ActivityValidator {
 
   _validateValue(objects, fieldDef, fieldPath, isList, errors) {
     logger.log('_validateValue');
-    const fieldLabel = this._activityFieldsManager.getFieldLabelTranslation(fieldPath);
+    const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath);
     const wasHydrated = this._wasHydrated(fieldPath);
     const stringLengthError = translate('stringTooLong').replace('%fieldName%', fieldLabel);
     const percentageChild = isList && fieldDef.importable === true &&
@@ -317,7 +317,7 @@ export default class ActivityValidator {
       validationError = translate('percentageRangeError');
     }
     if (validationError) {
-      const fieldLabel = this._activityFieldsManager.getFieldLabelTranslation(fieldPath);
+      const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath);
       validationError = validationError.replace('%percentageField%', fieldLabel);
     }
     return validationError || true;
@@ -371,7 +371,7 @@ export default class ActivityValidator {
   noMultipleValuesValidator(values, fieldName) {
     logger.log('noMultipleValuesValidator');
     if (values && values.length > 1) {
-      const friendlyFieldName = this._activityFieldsManager.getFieldLabelTranslation(fieldName);
+      const friendlyFieldName = this._fieldsManager.getFieldLabelTranslation(fieldName);
       return translate('multipleValuesNotAllowed').replace('%fieldName%', friendlyFieldName || fieldName);
     }
     return true;
@@ -408,13 +408,13 @@ export default class ActivityValidator {
       const hasLocations = this._hasLocations();
       // reporting some dependency errors only for the top objects
       if (hasLocations && dependencies.includes(DEPENDENCY_IMPLEMENTATION_LEVEL_PRESENT)) {
-        this.processValidationResult(this._activity, errors, LOCATIONS, this._validateImplementationLevelPresent());
+        this.processValidationResult(this._entity, errors, LOCATIONS, this._validateImplementationLevelPresent());
       }
       if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LEVEL_VALID)) {
-        this.processValidationResult(this._activity, errors, LOCATIONS, this._validateImplementationLevelValid());
+        this.processValidationResult(this._entity, errors, LOCATIONS, this._validateImplementationLevelValid());
       }
       if (hasLocations && dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT)) {
-        this.processValidationResult(this._activity, errors, LOCATIONS, this._validateImplementationLocationPresent());
+        this.processValidationResult(this._entity, errors, LOCATIONS, this._validateImplementationLocationPresent());
       }
       objects.forEach(obj => {
         const hydratedValue = obj[fieldDef.field_name];
@@ -441,12 +441,12 @@ export default class ActivityValidator {
   }
 
   _hasLocations() {
-    return this._activity[LOCATIONS] && this._activity[LOCATIONS].length && this._activity[LOCATIONS]
+    return this._entity[LOCATIONS] && this._entity[LOCATIONS].length && this._entity[LOCATIONS]
       .some(ampLoc => !!ampLoc.location);
   }
 
   _getImplementationLevelId() {
-    return this._activity[IMPLEMENTATION_LEVEL] && this._activity[IMPLEMENTATION_LEVEL].id;
+    return this._entity[IMPLEMENTATION_LEVEL] && this._entity[IMPLEMENTATION_LEVEL].id;
   }
 
   _validateImplementationLevelPresent() {
@@ -465,7 +465,7 @@ export default class ActivityValidator {
   }
 
   _getImplementationLocation() {
-    return this._activity[IMPLEMENTATION_LOCATION] && this._activity[IMPLEMENTATION_LOCATION].id;
+    return this._entity[IMPLEMENTATION_LOCATION] && this._entity[IMPLEMENTATION_LOCATION].id;
   }
 
   _validateImplementationLocationPresent() {
@@ -505,7 +505,7 @@ export default class ActivityValidator {
   }
 
   _validateOnBudgetOrErrorLabel(value) {
-    const onOffBudget = this._activity[ACTIVITY_BUDGET] && this._activity[ACTIVITY_BUDGET].value;
+    const onOffBudget = this._entity[ACTIVITY_BUDGET] && this._entity[ACTIVITY_BUDGET].value;
     const isOnBudget = onOffBudget && onOffBudget === ON_BUDGET;
     const requiredAndNotConfigured = isOnBudget && !value;
     const isValid = !!((isOnBudget && value) || (!isOnBudget && !value));
@@ -565,7 +565,7 @@ export default class ActivityValidator {
   }
 
   _getComponentOrgs() {
-    const components = this._activity[COMPONENTS];
+    const components = this._entity[COMPONENTS];
     const compFundingOrgs = [];
     if (components && components.length) {
       components.forEach(component => {
@@ -586,7 +586,7 @@ export default class ActivityValidator {
   _getActivityOrgIds() {
     const activityOrgs = [];
     RELATED_ORGS_PATHS.forEach(orgRolePath => {
-      const orgRoles = this._activity[orgRolePath];
+      const orgRoles = this._entity[orgRolePath];
       if (orgRoles) {
         activityOrgs.push(...orgRoles.map(entry => entry[ORGANIZATION] && entry[ORGANIZATION].id).filter(el => !!el));
       }

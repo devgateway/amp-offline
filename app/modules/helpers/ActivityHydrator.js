@@ -1,6 +1,6 @@
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
-import PossibleValuesManager from '../activity/PossibleValuesManager';
+import PossibleValuesManager from '../field/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 import AbstractEntityHydrator from './AbstractEntityHydrator';

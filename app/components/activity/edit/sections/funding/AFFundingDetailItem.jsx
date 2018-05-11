@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
@@ -16,7 +16,7 @@ import styles from './AFFundingDetailItem.css';
 export default class AFFundingDetailItem extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     currentWorkspaceSettings: PropTypes.object.isRequired
   };
 
