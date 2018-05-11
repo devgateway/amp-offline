@@ -4,6 +4,7 @@ import PossibleValuesManager from '../field/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
+import { PREFIX_ACTIVITY } from '../../utils/constants/FieldPathConstants';
 /*
 import { ACTIVITY_CONTACT_PATHS } from '../../utils/constants/FieldPathConstants';
 import { CONTACT } from '../../utils/constants/ActivityConstants';
@@ -42,11 +43,9 @@ import ContactHydrator from './ContactHydrator';
  * @author Nadejda Mandrescu
  */
 export default class ActivityHydrator extends AbstractEntityHydrator {
-  /*
   constructor(fieldsDef) {
-    super(fieldsDef);
-    this.contactHydrator = new ContactHydrator(contactsFieldsDef);
-  }*/
+    super(fieldsDef, PREFIX_ACTIVITY);
+  }
 
   /**
    * Replaces each activity related objects ids with full object data for the specified field paths

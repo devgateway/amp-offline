@@ -46,8 +46,9 @@ export default class AbstractEntityHydrator {
    * Initializes the hydrator
    * @param fieldsDef fields definition structure
    */
-  constructor(fieldsDef) {
+  constructor(fieldsDef, entityPrefix) {
     this._fieldsDef = fieldsDef;
+    this._entityPrefix = entityPrefix;
   }
 
   /**
@@ -159,22 +160,23 @@ export default class AbstractEntityHydrator {
     // id-only field => if it will be needed, be careful when adding back to include custom validation, etc
     // TODO rather filter possible options result by non-id fields
     if (fieldPaths && fieldPaths.length > 0) {
-      filter.id = { $in: fieldPaths.filter(path => !DO_NOT_HYDRATE_FIELDS_LIST.includes(path)) };
+      fieldPaths = fieldPaths.filter(path => !DO_NOT_HYDRATE_FIELDS_LIST.includes(path));
     } else {
       filter.id = { $nin: DO_NOT_HYDRATE_FIELDS_LIST };
     }
 
-    return PossibleValuesHelper.findAll(filter).then(possibleValuesCollection => {
-      if (fieldPaths && fieldPaths.length !== 0 && possibleValuesCollection.length !== fieldPaths.length) {
-        const missing = new Map(fieldPaths.map(fieldPath => [fieldPath, 1]));
-        possibleValuesCollection.forEach(pv => missing.delete(pv.id));
-        // TODO once we have notification system, to flag if some possible values are not found, but not to block usage
-        if (missing.size > 0) {
-          logger.error(`Field paths not found: ${missing.toJSON()}`);
+    return PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(this._entityPrefix, fieldPaths, filter)
+      .then(possibleValuesCollection => {
+        if (fieldPaths && fieldPaths.length !== 0 && possibleValuesCollection.length !== fieldPaths.length) {
+          const missing = new Map(fieldPaths.map(fieldPath => [fieldPath, 1]));
+          possibleValuesCollection.forEach(pv => missing.delete(pv.id));
+          // TODO once we have notification system, to flag if some possible values are not found, but not to block
+          if (missing.size > 0) {
+            logger.error(`Field paths not found: ${missing.toJSON()}`);
+          }
         }
-      }
-      return possibleValuesCollection;
-    });
+        return possibleValuesCollection;
+      });
   }
 
 }

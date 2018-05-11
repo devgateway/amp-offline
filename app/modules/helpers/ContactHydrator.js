@@ -1,5 +1,5 @@
 import AbstractEntityHydrator from './AbstractEntityHydrator';
-import { CONTACT } from '../../utils/constants/ActivityConstants';
+import { PREFIX_CONTACT } from '../../utils/constants/FieldPathConstants';
 
 /**
  * Converts a contact Similar to ActivityHydrator,
@@ -7,7 +7,11 @@ import { CONTACT } from '../../utils/constants/ActivityConstants';
  * @author Nadejda Mandrescu
  */
 export default class ContactHydrator extends AbstractEntityHydrator {
+  constructor(fieldsDef) {
+    super(fieldsDef, PREFIX_CONTACT);
+  }
 
+  /*
   _getPossibleValues(fieldPaths = []) {
     fieldPaths.push(...this._fieldsDef.map(f => `${CONTACT}~${f.field_name}`));
     return super._getPossibleValues(fieldPaths).then(pvs => {
@@ -15,5 +19,6 @@ export default class ContactHydrator extends AbstractEntityHydrator {
       return pvs;
     });
   }
+  */
 
 }

@@ -67,17 +67,50 @@ const PossibleValuesHelper = {
    * @returns {Promise}
    */
   findById(id) {
-    logger.log('findById');
+    logger.debug('findById');
     const filter = { id };
     return this.findOne(filter);
   },
 
   findOne(filter) {
+    logger.debug('findOne');
     return DatabaseManager.findOne(filter, COLLECTION_POSSIBLE_VALUES);
   },
 
+  /**
+   * Finds all possible values that start with the prefix, optionaly with specific ids and a filter
+   * @param root (optional) the root of the path to add to the listed ids
+   * @param idsWithoutRoot (optional) the ids without root
+   * @param filter (optional) filter to apply
+   * @return {Array}
+   */
+  findAllByIdsWithoutPrefixAndCleanupPrefix(root, idsWithoutRoot, filter = {}) {
+    logger.debug('findAllByIdsWithoutPrefixAndCleanupPrefix');
+    let idsFilter = idsWithoutRoot && { $in: idsWithoutRoot };
+    if (root && root.length) {
+      if (idsWithoutRoot) {
+        idsFilter = idsWithoutRoot.map(id => `${root}~${id}`);
+      } else {
+        idsFilter = { $regex: new RegExp(`${root}~.*`) };
+      }
+    }
+    if (idsFilter) {
+      if (filter.id) {
+        filter.id = { $and: [filter.id, idsFilter] };
+      } else {
+        filter.id = idsFilter;
+      }
+    }
+    return this.findAll(filter).then(pvs => {
+      if (root && root.length) {
+        pvs.forEach(pv => (pv.id = pv.id.substring(root.length + 1)));
+      }
+      return pvs;
+    });
+  },
+
   findAll(filter, projections) {
-    logger.log('findById');
+    logger.debug('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections);
   },
 
