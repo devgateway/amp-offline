@@ -47,21 +47,6 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
     super(fieldsDef, PREFIX_ACTIVITY);
   }
 
-  /**
-   * Replaces each activity related objects ids with full object data for the specified field paths
-   * @param activities
-   * @param fieldPaths
-   * @return {Object} the modified activities
-   */
-  hydrateActivities(activities, fieldPaths) {
-    // TODO cleanup if won't use afterall
-    /*
-    return this._hydrateExternalEntities(activities, fieldPaths)
-      .then(() => super.hydrateEntities(activities, fieldPaths));
-      */
-    return super.hydrateEntities(activities, fieldPaths);
-  }
-
   /*
   _hydrateExternalEntities(activities, fieldPaths) {
     return Promise.all([this._hydrateContacts(activities, fieldPaths)]);
@@ -100,17 +85,6 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
     });
   }
   */
-
-  /**
-   * Replaces each related object full data with it's id
-   * @param activity
-   * @param fieldPaths
-   * @return {Promise.<entity>}
-   */
-  dehydrateActivity(activity, fieldPaths = []) {
-    // TODO dehydrate contacts first
-    return super.dehydrateEntity(activity, fieldPaths);
-  }
 
   // old mechanism for locations, using v1 API
   _buildLocationHierchicalValueParts(options, selectedId) {
@@ -153,7 +127,7 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
           throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
         } else {
           const hydrator = new ActivityHydrator(fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS]);
-          return hydrator.hydrateActivities(activities, fieldPaths);
+          return hydrator.hydrateEntities(activities, fieldPaths);
         }
       });
   }

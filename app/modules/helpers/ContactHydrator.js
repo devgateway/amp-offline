@@ -11,14 +11,4 @@ export default class ContactHydrator extends AbstractEntityHydrator {
     super(fieldsDef, PREFIX_CONTACT);
   }
 
-  /*
-  _getPossibleValues(fieldPaths = []) {
-    fieldPaths.push(...this._fieldsDef.map(f => `${CONTACT}~${f.field_name}`));
-    return super._getPossibleValues(fieldPaths).then(pvs => {
-      pvs.forEach(pv => (pv.id = pv.id.substring(CONTACT.length + 1)));
-      return pvs;
-    });
-  }
-  */
-
 }
