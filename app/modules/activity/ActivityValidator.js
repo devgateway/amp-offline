@@ -150,17 +150,19 @@ export default class ActivityValidator {
     fieldPaths.forEach(fieldPath => {
       const parentPath = fieldPath.substring(0, fieldPath.lastIndexOf('~'));
       const parent = this._activityFieldsManager.getValue(this._activity, parentPath);
-      const fieldDef = this._activityFieldsManager.getFieldDef(fieldPath);
-      // flatten parents to the last leaf level
-      let depth = parentPath.split('~').length;
-      let parents = depth > 1 ? parent : [parent];
-      while (depth > 1) {
-        const flattenedParents = [];
-        parents.forEach(child => flattenedParents.push(...child));
-        depth -= 1;
-        parents = flattenedParents;
+      if (parent) {
+        const fieldDef = this._activityFieldsManager.getFieldDef(fieldPath);
+        // flatten parents to the last leaf level
+        let depth = parentPath.split('~').length;
+        let parents = depth > 1 ? parent : [parent];
+        while (depth > 1) {
+          const flattenedParents = [];
+          parents.forEach(child => flattenedParents.push(...child));
+          depth -= 1;
+          parents = flattenedParents;
+        }
+        parents.forEach(par => errors.push(...this.validateField(par, asDraft, fieldDef, fieldPath)));
       }
-      parents.forEach(par => errors.push(...this.validateField(par, asDraft, fieldDef, fieldPath)));
     });
     return errors;
   }
