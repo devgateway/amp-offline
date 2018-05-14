@@ -7,6 +7,9 @@ import {
   CONTACT_LOAD_FULFILLED,
   CONTACT_LOAD_REJECTED,
   CONTACTS_UNLOADED,
+  CONTACT_MANAGERS_PENDING,
+  CONTACT_MANAGERS_FULFILLED,
+  CONTACT_MANAGERS_REJECTED,
 } from '../actions/ContactAction';
 
 const logger = new Logger('ContactReducer');
@@ -14,8 +17,12 @@ const logger = new Logger('ContactReducer');
 const defaultState = {
   isContactsLoading: false,
   isContactsLoaded: false,
+  isContactManagersLoading: false,
+  isContactManagersLoaded: false,
   contactsError: null,
+  managersError: null,
   contactsByIds: {},
+  contactFieldsManager: null,
 };
 
 const contactReducer = (state = defaultState, action: Object) => {
@@ -83,6 +90,28 @@ const contactReducer = (state = defaultState, action: Object) => {
         }
       };
     }
+    case CONTACT_MANAGERS_PENDING:
+      return {
+        ...state,
+        isContactManagersLoading: true,
+        isContactManagersLoaded: false,
+        managersError: null,
+        contactFieldsManager: null,
+      };
+    case CONTACT_MANAGERS_FULFILLED:
+      return {
+        ...state,
+        isContactManagersLoading: false,
+        isContactManagersLoaded: true,
+        ...action.payload,
+      };
+    case CONTACT_MANAGERS_REJECTED:
+      return {
+        ...state,
+        isContactManagersLoading: false,
+        isContactManagersLoaded: false,
+        managersError: action.payload,
+      };
     default:
       return state;
   }

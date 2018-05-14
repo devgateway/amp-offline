@@ -11,6 +11,10 @@ export const CONTACTS_LOAD_REJECTED = 'CONTACTS_LOAD_REJECTED';
 export const CONTACT_LOAD_PENDING = 'CONTACT_LOAD_PENDING';
 export const CONTACT_LOAD_FULFILLED = 'CONTACT_LOAD_FULFILLED';
 export const CONTACT_LOAD_REJECTED = 'CONTACT_LOAD_REJECTED';
+export const CONTACT_MANAGERS = 'CONTACT_MANAGERS';
+export const CONTACT_MANAGERS_PENDING = 'CONTACT_MANAGERS_PENDING';
+export const CONTACT_MANAGERS_FULFILLED = 'CONTACT_MANAGERS_FULFILLED';
+export const CONTACT_MANAGERS_REJECTED = 'CONTACT_MANAGERS_REJECTED';
 export const CONTACTS_UNLOADED = 'CONTACTS_UNLOADED';
 
 export const loadAllSummaryContacts = () => (dispatch) => dispatch({
@@ -24,6 +28,19 @@ export const loadHydratedContacts = (ids) => (dispatch, ownProps) => dispatch({
   type: CONTACTS_LOAD,
   payload: _hydrateContacts(ids, ownProps().userReducer.teamMember.id)
 });
+
+export const configureContactManagers = () => (dispatch, ownProps) => dispatch({
+  type: CONTACT_MANAGERS,
+  payload: _getContactManagers(ownProps().userReducer.teamMember.id, ownProps().translationReducer.lang)
+});
+
+const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_CONTACT_FIELDS)
+    .then(fields => fields[SYNCUP_TYPE_CONTACT_FIELDS]),
+  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_CONTACT)
+]).then(([cFields, possibleValuesCollection]) => ({
+  contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage)
+}));
 
 const _hydrateContacts = (ids, teamMemberId) => Promise.all([
   ContactHelper.findContactsByIds(ids),
