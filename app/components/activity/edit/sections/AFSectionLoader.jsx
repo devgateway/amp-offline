@@ -8,7 +8,7 @@ import AFPrograms from './AFPrograms';
 import AFSectors from './AFSectors';
 import AFOrganizations from './AFOrganizations';
 import AFFunding from './AFFunding';
-import AFContacts from './AFContacts';
+import { AFContactsPage } from '../../../../containers/ContactPage';
 
 /**
  * Loads AF section
@@ -34,9 +34,11 @@ const loadSection = (sectionName) => {
     case SC.FUNDING:
       return <AFFunding />;
     case SC.CONTACTS:
-      return <AFContacts />;
-    /* case SC.COMPONENTS:
-      return <AFComponents />; */
+      return <AFContactsPage />;
+    /*
+    case SC.COMPONENTS:
+      return <AFComponents />;
+    */
     default:
       return 'Not Implemented';
   }

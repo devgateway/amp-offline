@@ -334,5 +334,6 @@
   "invalidUrl": "Invalid URL",
   "duplicateUrl": "Duplicate URL",
   "settingsSaveSuccess": "Settings were saved successfully.",
-  "settingsSaveError": "Settings could not be saved."
+  "settingsSaveError": "Settings could not be saved.",
+  "Search Contact": "Search Contact"
 }

@@ -38,12 +38,13 @@ export default class AFListSelector extends Component {
     onChange: PropTypes.func.isRequired,
     // we need to report validation error before search box, thus passing to the component to display
     validationError: PropTypes.string,
-    extraParams: PropTypes.object
+    extraParams: PropTypes.object,
   };
 
   constructor(props) {
     super(props);
     logger.debug('constructor');
+    this.listType = (this.props.extraParams || {}).listType || AFList;
     this.handleAddValue = this.handleAddValue.bind(this);
     this.handleRemoveValue = this.handleRemoveValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -148,7 +149,7 @@ export default class AFListSelector extends Component {
     const params = this.props.extraParams || {};
     if (params['no-table'] !== true) {
       return (<div>
-        <AFList
+        <this.listType
           onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
           onEditRow={this.handleEditValue.bind(this)} language={this.context.activityFieldsManager._lang} />
         <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()}>
