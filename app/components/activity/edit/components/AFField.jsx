@@ -158,6 +158,8 @@ class AFField extends Component {
         return Types.NUMBER;
       case 'date':
         return Types.DATE;
+      case 'boolean':
+        return Types.CHECKBOX;
       default:
         return null;
     }
