@@ -44,19 +44,21 @@ class ContactForm extends Component {
   }
 
   componentWillMount() {
-    const contact = this.context.contactReducer.contactsByIds[this.props.contactId];
-    this.init(this.context, contact);
-    this.setState({ contact });
+    this.init(this.context);
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
     this.init(nextContext);
   }
 
-  init(context, contact = this.state.contact) {
-    const { contactFieldsManager } = context.contactReducer;
-    if (contactFieldsManager && !this.contactValidator) {
-      this.contactValidator = new EntityValidator(contact, contactFieldsManager, []);
+  init(context) {
+    const { contactFieldsManager, contactsByIds } = context.contactReducer;
+    const hydratedContact = contactsByIds[this.props.contactId];
+    if (hydratedContact !== this.state.contact) {
+      this.setState({ contact: hydratedContact });
+    }
+    if (contactFieldsManager && !this.contactValidator && hydratedContact) {
+      this.contactValidator = new EntityValidator(hydratedContact, contactFieldsManager, []);
     }
   }
 
