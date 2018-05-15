@@ -44,16 +44,19 @@ export default class AFContactList extends Component {
   }
 
   toContactItem(contactOption) {
+    const { listPath, onEditRow } = this.props;
+    const onItemEdit = (col) => onEditRow(contactOption, col, contactOption[col]);
     const contactId = contactOption[AC.CONTACT].id;
-    // TODO delete and mark as primary
+    const pcFieldPath = `${listPath}~${AC.PRIMARY_CONTACT}`;
     // TODO styling
     return (
       <Row key={contactOption.uniqueId}>
         <Col md={7} lg={7} >
-          <ContactFormPage contactId={contactId} />
+          <ContactFormPage contactId={contactId} onEdit={() => onItemEdit(AC.CONTACT)} />
         </Col>
         <Col md={1} lg={1} >
-          <AFField parent={contactOption} fieldPath={`${this.props.listPath}~${AC.PRIMARY_CONTACT}`} />
+          <AFField
+            parent={contactOption} fieldPath={pcFieldPath} onAfterUpdate={() => onItemEdit(AC.PRIMARY_CONTACT)} />
         </Col>
         <Col md={1} lg={1}>
           <a

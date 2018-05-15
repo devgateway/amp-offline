@@ -16,6 +16,7 @@ class ContactForm extends Component {
 
   static propTypes = {
     contactId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    onEdit: PropTypes.func.isRequired,
   };
 
   static childContextTypes = {
