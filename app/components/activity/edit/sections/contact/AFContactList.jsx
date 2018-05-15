@@ -30,7 +30,6 @@ export default class AFContactList extends Component {
 
   constructor(props) {
     super(props);
-    this.handleRemove = this.handleRemove.bind(this);
     this.toContactItem = this.toContactItem.bind(this);
     this.state = {
       values: this.props.values
@@ -39,12 +38,6 @@ export default class AFContactList extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ values: nextProps.values });
-  }
-
-  handleRemove(id) {
-    this.props.onDeleteRow(id);
-    const values = this.state.values.filter(v => v.id !== id);
-    this.setState({ values });
   }
 
   changePrimary(contactRow, wasPrimary, isNowPrimary) {
@@ -80,7 +73,7 @@ export default class AFContactList extends Component {
         </Col>
         <Col md={1} lg={1}>
           <a
-            onClick={this.handleRemove.bind(contactRow.uniqueId)} className={styles.delete} href={null}>
+            onClick={() => this.props.onDeleteRow(contactRow.uniqueId)} className={styles.delete} href={null}>
             <span>&nbsp;</span>
           </a>
         </Col>
