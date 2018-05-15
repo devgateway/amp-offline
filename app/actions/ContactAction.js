@@ -73,7 +73,8 @@ export const getActivityContacts = (activity) => {
   ACTIVITY_CONTACT_PATHS.forEach(cType => {
     const cs = activity[cType];
     if (cs && cs.length) {
-      contactsIds.push(...cs.map(c => c[CONTACT]));
+      // contact may be eventually hydrated
+      contactsIds.push(...cs.map(c => c[CONTACT].id || c[CONTACT]));
     }
   });
   return contactsIds;
