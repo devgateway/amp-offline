@@ -3,6 +3,9 @@ import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import { SYNCUP_TYPE_CONTACT_FIELDS } from '../utils/Constants';
 import * as CC from '../utils/constants/ContactConstants';
+import FieldsManager from '../modules/field/FieldsManager';
+import { PREFIX_CONTACT } from '../utils/constants/FieldPathConstants';
+import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 
 export const CONTACTS_LOAD = 'CONTACTS_LOAD';
 export const CONTACTS_LOAD_PENDING = 'CONTACTS_LOAD_PENDING';
