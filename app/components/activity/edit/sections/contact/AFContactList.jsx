@@ -1,8 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Col, Grid, Row } from 'react-bootstrap';
-import styles from '../../components/AFList.css';
+import { Col, Grid, Panel, Row } from 'react-bootstrap';
+import * as styles from './AFContactList.css';
+import * as afStyles from '../../ActivityForm.css';
 import { ContactFormPage } from '../../../../../containers/ContactPage';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -40,6 +41,12 @@ export default class AFContactList extends Component {
     this.setState({ values: nextProps.values });
   }
 
+  handlePrimaryGroupClick(e, contactRow, wasPrimary, isNowPrimary) {
+    this.changePrimary(contactRow, wasPrimary, isNowPrimary);
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   changePrimary(contactRow, wasPrimary, isNowPrimary) {
     if (isNowPrimary === wasPrimary) {
       return;
@@ -51,38 +58,55 @@ export default class AFContactList extends Component {
         this.handleEdit(existingPrimary, AC.PRIMARY_CONTACT);
       }
     }
+    contactRow[AC.PRIMARY_CONTACT] = isNowPrimary;
     this.handleEdit(contactRow, AC.PRIMARY_CONTACT);
+    this.setState({ values: Array.from(this.state.values) });
   }
 
   handleEdit(row, fieldName) {
     this.props.onEditRow(row, fieldName, row[fieldName]);
   }
 
+  doNotTogglePanel(e) {
+    e.stopPropagation();
+  }
+
   toContactItem(contactRow) {
     const contactId = contactRow[AC.CONTACT].id;
+    const cFullName = contactRow[AC.CONTACT].displayFullValue;
+    const isNowPrimary = contactRow[AC.PRIMARY_CONTACT];
+    const header = (
+      <div>
+        <Row key={contactRow.uniqueId}>
+          <Col md={9} lg={9} className={styles.contactHeader} >
+            <span className={styles.headerLink}>{cFullName}</span>
+          </Col>
+          <Col md={3} lg={3} className={styles.primaryCol} onClick={this.doNotTogglePanel}>
+            <AFField
+              parent={contactRow} fieldPath={`${this.props.listPath}~${AC.PRIMARY_CONTACT}`}
+              className={styles.primaryField} inline
+              onAfterUpdate={this.changePrimary.bind(this, contactRow, isNowPrimary)} />
+          </Col>
+          <Col md={1} lg={1} className={styles.deleteCol} >
+            <a onClick={() => this.props.onDeleteRow(contactRow.uniqueId)} className={styles.delete} href={null} />
+          </Col>
+        </Row>
+      </div>
+    );
     // TODO styling
     return (
-      <Row key={contactRow.uniqueId}>
-        <Col md={7} lg={7} >
-          <ContactFormPage contactId={contactId} onEdit={() => this.handleEdit(contactRow, AC.CONTACT)} />
-        </Col>
-        <Col md={1} lg={1} >
-          <AFField
-            parent={contactRow} fieldPath={`${this.props.listPath}~${AC.PRIMARY_CONTACT}`}
-            onAfterUpdate={this.changePrimary.bind(this, contactRow, contactRow[AC.PRIMARY_CONTACT])} />
-        </Col>
-        <Col md={1} lg={1}>
-          <a
-            onClick={() => this.props.onDeleteRow(contactRow.uniqueId)} className={styles.delete} href={null}>
-            <span>&nbsp;</span>
-          </a>
-        </Col>
-      </Row>
+      <Panel defaultExpanded collapsible header={header}>
+        <Row key={contactRow.uniqueId}>
+          <Col md={13} lg={13} >
+            <ContactFormPage contactId={contactId} onEdit={() => this.handleEdit(contactRow, AC.CONTACT)} />
+          </Col>
+        </Row>
+      </Panel>
     );
   }
 
   render() {
     const contactForms = this.state.values.map(this.toContactItem);
-    return <Grid>{contactForms}</Grid>;
+    return <Grid className={afStyles.full_width}>{contactForms}</Grid>;
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Col, Grid, Panel, Row } from 'react-bootstrap';
+import { Col, FormGroup, Grid, Row } from 'react-bootstrap';
 import * as CC from '../../../utils/constants/ContactConstants';
 import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
@@ -73,10 +73,10 @@ class ContactForm extends Component {
     // TODO there API bus, adding explicit field types as a workaround (remove when fixed)
     return (
       <div>
-        <Panel header={`${contact[CC.NAME]} ${contact[CC.LAST_NAME]}`} collapsible defaultExpanded>
+        <FormGroup>
           <Grid>
             <Row>
-              <Col lg={2} md={2}>
+              <Col lg={3} md={3}>
                 <AFField parent={contact} fieldPath={CC.TITLE} />
               </Col>
             </Row>
@@ -126,7 +126,7 @@ class ContactForm extends Component {
               </Col>
             </Row>
           </Grid>
-        </Panel>
+        </FormGroup>
       </div>
     );
   }

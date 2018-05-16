@@ -107,6 +107,7 @@ html, body {
 
 .panel-title {
   cursor: pointer;
+  font-size: 12px;
 }
 
 /* BOOTSTRAP TABLE OVERRIDE */
