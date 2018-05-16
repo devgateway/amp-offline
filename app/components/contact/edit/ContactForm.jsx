@@ -70,6 +70,7 @@ class ContactForm extends Component {
     if (!contact || !this.contactValidator) {
       return null;
     }
+
     // TODO there API bus, adding explicit field types as a workaround (remove when fixed)
     return (
       <div>
@@ -107,7 +108,7 @@ class ContactForm extends Component {
             </Row>
             <Row>
               <Col lg={6} md={6}>
-                <div>TODO contact organizations</div>
+                <AFField parent={contact} fieldPath={CC.ORGANISATION_CONTACTS} />
               </Col>
             </Row>
             <Row>
