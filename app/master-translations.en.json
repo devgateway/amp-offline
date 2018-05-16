@@ -335,5 +335,6 @@
   "duplicateUrl": "Duplicate URL",
   "settingsSaveSuccess": "Settings were saved successfully.",
   "settingsSaveError": "Settings could not be saved.",
-  "Search Contact": "Search Contact"
+  "Search Contact": "Search Contact",
+  "Add Contact Phone": "Add Contact Phone"
 }

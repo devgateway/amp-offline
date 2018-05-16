@@ -110,6 +110,10 @@ html, body {
   font-size: 12px;
 }
 
+.form-control {
+  padding-right: 12px !important;
+}
+
 /* BOOTSTRAP TABLE OVERRIDE */
 .toast-title {
   display: none;

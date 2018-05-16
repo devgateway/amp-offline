@@ -6,3 +6,25 @@
   border: 1px solid #cccccc;
   padding: 6px;
 }
+
+.contactForm .phoneList {
+  padding: 0;
+}
+
+.phoneList > div {
+  width: inherit;
+  float: left;
+}
+
+.phoneContainer {
+  border: 1px solid #cccccc;
+  padding: 6px;
+}
+
+.phoneExtensionCol {
+}
+
+.phoneExtension > span > input {
+  width: 100px;
+  margin-left: 6px;
+}

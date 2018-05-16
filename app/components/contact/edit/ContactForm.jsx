@@ -7,6 +7,7 @@ import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
 import AFField from '../../activity/edit/components/AFField';
 import { INPUT_TYPE, TEXT_AREA } from '../../activity/edit/components/AFComponentTypes';
+import ContactPhone from './ContactPhone';
 
 /**
  * Contact Form
@@ -108,13 +109,13 @@ class ContactForm extends Component {
               </Col>
             </Row>
             <Row>
-              <Col lg={6} md={6} className={styles.orgsList}>
+              <Col lg={9} md={9} className={styles.orgsList}>
                 <AFField parent={contact} fieldPath={CC.ORGANISATION_CONTACTS} />
               </Col>
             </Row>
             <Row>
-              <Col lg={6} md={6}>
-                <div>TODO contact phones</div>
+              <Col lg={9} md={9} className={styles.phoneList}>
+                <ContactPhone contact={contact} />
               </Col>
             </Row>
             <Row>
