@@ -91,7 +91,7 @@ const PossibleValuesHelper = {
       if (idsWithoutRoot) {
         idsFilter = { $in: idsWithoutRoot.map(id => `${root}~${id}`) };
       } else {
-        idsFilter = { $regex: new RegExp(`${root}~.*`) };
+        idsFilter = { $regex: new RegExp(`^${root}~.*`) };
       }
     }
     if (idsFilter) {
@@ -106,7 +106,10 @@ const PossibleValuesHelper = {
     }
     return this.findAll(filter).then(pvs => {
       if (root && root.length) {
-        pvs.forEach(pv => (pv.id = pv.id.substring(root.length + 1)));
+        pvs.forEach(pv => {
+          pv.id = pv.id.substring(root.length + 1);
+          pv['field-path'] = pv['field-path'].slice(1);
+        });
       }
       return pvs;
     });
