@@ -1,4 +1,4 @@
-/* eslint-disable class-methods-use-this */
+/* eslint-disable class-methods-use-this,jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Panel, Row } from 'react-bootstrap';
@@ -39,12 +39,6 @@ export default class AFContactList extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ values: nextProps.values });
-  }
-
-  handlePrimaryGroupClick(e, contactRow, wasPrimary, isNowPrimary) {
-    this.changePrimary(contactRow, wasPrimary, isNowPrimary);
-    e.preventDefault();
-    e.stopPropagation();
   }
 
   changePrimary(contactRow, wasPrimary, isNowPrimary) {
@@ -93,7 +87,6 @@ export default class AFContactList extends Component {
         </Row>
       </div>
     );
-    // TODO styling
     return (
       <Panel defaultExpanded collapsible header={header}>
         <Row key={contactRow.uniqueId}>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, Row } from 'react-bootstrap';
+import * as styles from './ContactForm.css';
 import * as CC from '../../../utils/constants/ContactConstants';
 import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
@@ -73,7 +74,7 @@ class ContactForm extends Component {
 
     // TODO there API bus, adding explicit field types as a workaround (remove when fixed)
     return (
-      <div>
+      <div className={styles.contactForm}>
         <FormGroup>
           <Grid>
             <Row>
@@ -107,7 +108,7 @@ class ContactForm extends Component {
               </Col>
             </Row>
             <Row>
-              <Col lg={6} md={6}>
+              <Col lg={6} md={6} className={styles.orgsList}>
                 <AFField parent={contact} fieldPath={CC.ORGANISATION_CONTACTS} />
               </Col>
             </Row>
