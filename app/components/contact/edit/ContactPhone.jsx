@@ -35,6 +35,12 @@ export default class ContactPhone extends Component {
     this.setUniquePhoneIdsAndUpdateState(nextProps.contact[CC.PHONE]);
   }
 
+  onAdd() {
+    const phones = this.getPhones();
+    phones.push({});
+    this.setUniquePhoneIdsAndUpdateState(phones);
+  }
+
   onRemove(uniqueId) {
     let { uniqueIdPhones } = this.state;
     uniqueIdPhones = uniqueIdPhones.filter(([uId]) => uId !== uniqueId);
@@ -47,6 +53,10 @@ export default class ContactPhone extends Component {
     }
     const uniqueIdPhones = phones.map(p => ([Utils.stringToUniqueId('phone'), p]));
     this.setState({ uniqueIdPhones });
+  }
+
+  getPhones() {
+    return this.state.uniqueIdPhones.map(([, p]) => p);
   }
 
   getEntry(phone) {
@@ -73,14 +83,14 @@ export default class ContactPhone extends Component {
     if (!uniqueIdPhones) {
       return null;
     }
-    const phones = uniqueIdPhones.map(([, p]) => p);
+    const phones = this.getPhones();
     const ids = uniqueIdPhones.map(([uId]) => uId);
 
     return (
       <Grid>
         <EntryList
           label={translate('Add Contact Phone')} className={styles.phoneContainer}
-          onRemove={this.onRemove.bind(this)} childrenIds={ids}>
+          onRemove={this.onRemove.bind(this)} onAdd={this.onAdd.bind(this)} childrenIds={ids}>
           {phones.map(this.getEntry)}
         </EntryList>
       </Grid>

@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
 import * as styles from './EntryList.css';
 import * as listStyles from '../../activity/edit/components/AFList.css';
 import * as afStyles from '../../activity/edit/ActivityForm.css';
@@ -42,12 +41,11 @@ export default class EntryList extends Component {
 
   render() {
     const { label, onAdd } = this.props;
-    // TODO add button img
     return (
       <div className={styles.entryList}>
         {label &&
         <AFLabel value={label} className={[afStyles.label_highlight, afStyles.activity_form_control].join(' ')} />}
-        <Button onClick={onAdd} className={styles.addButton}>Add</Button>
+        <span className={styles.addButton}><a onClick={onAdd} href={null} /></span>
         <div className={this.props.className}>
           {this.getChildren()}
         </div>

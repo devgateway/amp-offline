@@ -2,10 +2,6 @@
   width: 100%;
 }
 
-.entryList .addButton {
-  margin-bottom: 6px;
-}
-
 .entryList .data {
   width: 95%;
   display: inline-flex;
@@ -18,4 +14,16 @@
 
 .entryList .deleteCol {
   width: 20px;
+}
+
+.addButton {
+  width: 20px;
+  margin-bottom: 6px;
+}
+
+.addButton > a {
+  background-image: url('../../../assets/images/ico_add.gif');
+  background-repeat: no-repeat;
+  padding: 1em;
+  background-position: center;
 }
