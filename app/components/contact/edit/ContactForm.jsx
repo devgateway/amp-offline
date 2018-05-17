@@ -78,12 +78,12 @@ class ContactForm extends Component {
       <div className={styles.contactForm}>
         <FormGroup>
           <Grid>
-            <Row>
+            <Row key={CC.TITLE}>
               <Col lg={3} md={3}>
                 <AFField parent={contact} fieldPath={CC.TITLE} />
               </Col>
             </Row>
-            <Row>
+            <Row key="full-name">
               <Col lg={6} md={6}>
                 <AFField parent={contact} fieldPath={CC.NAME} type={INPUT_TYPE} />
               </Col>
@@ -91,12 +91,12 @@ class ContactForm extends Component {
                 <AFField parent={contact} fieldPath={CC.LAST_NAME} type={INPUT_TYPE} />
               </Col>
             </Row>
-            <Row>
+            <Row key={CC.EMAIL}>
               <Col lg={6} md={6}>
                 <div>TODO add contact email</div>
               </Col>
             </Row>
-            <Row>
+            <Row key="function">
               <Col lg={6} md={6}>
                 <AFField parent={contact} fieldPath={CC.FUNCTION} type={INPUT_TYPE} />
               </Col>
@@ -104,22 +104,22 @@ class ContactForm extends Component {
                 <AFField parent={contact} fieldPath={CC.ORGANIZATION_NAME} type={INPUT_TYPE} />
               </Col>
             </Row>
-            <Row>
+            <Row key={CC.ORGANISATION_CONTACTS}>
               <Col lg={9} md={9} className={styles.orgsList}>
                 <AFField parent={contact} fieldPath={CC.ORGANISATION_CONTACTS} />
               </Col>
             </Row>
-            <Row>
+            <Row key={CC.PHONE}>
               <Col lg={9} md={9} className={styles.phoneList}>
-                <ContactPhone contact={contact} />
+                <ContactPhone items={contact && contact[CC.PHONE]} />
               </Col>
             </Row>
-            <Row>
+            <Row key={CC.FAX}>
               <Col lg={6} md={6}>
                 <div>TODO contact fax</div>
               </Col>
             </Row>
-            <Row>
+            <Row key={CC.OFFICE_ADDRESS}>
               <Col lg={6} md={6}>
                 <AFField parent={contact} fieldPath={CC.OFFICE_ADDRESS} type={TEXT_AREA} />
               </Col>

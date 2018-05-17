@@ -27,11 +27,12 @@ export default class EntryList extends Component {
     const entries = [];
     for (let idx = 0; idx < children.length; idx++) {
       const child = children[idx];
+      const cId = childrenIds[idx];
       entries.push(
-        <div>
+        <div key={cId}>
           <span className={styles.data}>{child}</span>
           <span className={styles.deleteCol}>
-            <a onClick={() => this.props.onRemove(childrenIds[idx])} className={listStyles.delete} href={null} />
+            <a onClick={() => this.props.onRemove(cId)} className={listStyles.delete} href={null} />
           </span>
         </div>
       );
