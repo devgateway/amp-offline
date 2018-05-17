@@ -87,8 +87,6 @@ class ContactForm extends Component {
               <Col lg={6} md={6}>
                 <AFField parent={contact} fieldPath={CC.NAME} type={INPUT_TYPE} />
               </Col>
-            </Row>
-            <Row>
               <Col lg={6} md={6}>
                 <AFField parent={contact} fieldPath={CC.LAST_NAME} type={INPUT_TYPE} />
               </Col>
@@ -102,8 +100,6 @@ class ContactForm extends Component {
               <Col lg={6} md={6}>
                 <AFField parent={contact} fieldPath={CC.FUNCTION} type={INPUT_TYPE} />
               </Col>
-            </Row>
-            <Row>
               <Col lg={6} md={6}>
                 <AFField parent={contact} fieldPath={CC.ORGANIZATION_NAME} type={INPUT_TYPE} />
               </Col>
