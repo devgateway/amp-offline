@@ -9,6 +9,7 @@ import AFField from '../../activity/edit/components/AFField';
 import { INPUT_TYPE, TEXT_AREA } from '../../activity/edit/components/AFComponentTypes';
 import ContactPhone from './ContactPhone';
 import ContactEmail from './ContactEmail';
+import ContactFax from './ContactFax';
 
 /**
  * Contact Form
@@ -116,8 +117,8 @@ class ContactForm extends Component {
               </Col>
             </Row>
             <Row key={CC.FAX}>
-              <Col lg={6} md={6}>
-                <div>TODO contact fax</div>
+              <Col lg={6} md={6} className={styles.entryList}>
+                <ContactFax items={contact && contact[CC.FAX]} />
               </Col>
             </Row>
             <Row key={CC.OFFICE_ADDRESS}>
