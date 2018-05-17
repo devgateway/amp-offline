@@ -8,6 +8,7 @@ import EntityValidator from '../../../modules/field/EntityValidator';
 import AFField from '../../activity/edit/components/AFField';
 import { INPUT_TYPE, TEXT_AREA } from '../../activity/edit/components/AFComponentTypes';
 import ContactPhone from './ContactPhone';
+import ContactEmail from './ContactEmail';
 
 /**
  * Contact Form
@@ -92,8 +93,8 @@ class ContactForm extends Component {
               </Col>
             </Row>
             <Row key={CC.EMAIL}>
-              <Col lg={6} md={6}>
-                <div>TODO add contact email</div>
+              <Col lg={9} md={9} className={styles.entryList}>
+                <ContactEmail items={contact && contact[CC.EMAIL]} />
               </Col>
             </Row>
             <Row key="function">
@@ -110,7 +111,7 @@ class ContactForm extends Component {
               </Col>
             </Row>
             <Row key={CC.PHONE}>
-              <Col lg={9} md={9} className={styles.phoneList}>
+              <Col lg={9} md={9} className={styles.entryList}>
                 <ContactPhone items={contact && contact[CC.PHONE]} />
               </Col>
             </Row>

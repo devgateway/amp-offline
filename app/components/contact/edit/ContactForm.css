@@ -11,14 +11,18 @@
   padding: 6px;
 }
 
-.contactForm .phoneList {
+.contactForm .entryList {
   padding: 0;
   width: 100%;
 }
 
-.phoneList > div {
+.entryList > div {
   width: inherit;
   float: left;
+}
+
+.emailCol input {
+  width: 100%;
 }
 
 .phoneExtensionCol {
