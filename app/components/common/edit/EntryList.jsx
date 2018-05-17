@@ -1,7 +1,9 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import * as styles from './EntryList.css';
+import * as listStyles from '../../activity/edit/components/AFList.css';
 import * as afStyles from '../../activity/edit/ActivityForm.css';
 import AFLabel from '../../activity/edit/components/AFLabel';
 
@@ -14,6 +16,7 @@ export default class EntryList extends Component {
   static propTypes = {
     label: PropTypes.string,
     children: PropTypes.array.isRequired,
+    childrenIds: PropTypes.array.isRequired,
     onRemove: PropTypes.func.isRequired,
     onAdd: PropTypes.func.isRequired,
     className: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -21,14 +24,20 @@ export default class EntryList extends Component {
   };
 
   getChildren() {
-    return this.props.children.map(c => (
-      <div>
-        <span>{c}</span>
-        <span className={styles.deleteCol}>
-          <a onClick={() => this.props.onRemove(c)} className={styles.delete} href={null} />
-        </span>
-      </div>
-    ));
+    const { children, childrenIds } = this.props;
+    const entries = [];
+    for (let idx = 0; idx < children.length; idx++) {
+      const child = children[idx];
+      entries.push(
+        <div>
+          <span className={styles.data}>{child}</span>
+          <span className={styles.deleteCol}>
+            <a onClick={() => this.props.onRemove(childrenIds[idx])} className={listStyles.delete} href={null} />
+          </span>
+        </div>
+      );
+    }
+    return entries;
   }
 
   render() {

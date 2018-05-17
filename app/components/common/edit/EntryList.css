@@ -5,3 +5,17 @@
 .entryList .addButton {
   margin-bottom: 6px;
 }
+
+.entryList .data {
+  width: 95%;
+  display: inline-flex;
+}
+
+.entryList .data > div {
+  margin-right: 0;
+  width: 100%;
+}
+
+.entryList .deleteCol {
+  width: 20px;
+}
