@@ -18,6 +18,7 @@ const logger = new Logger('EntryListWrapper');
 const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
   static propTypes = {
     items: PropTypes.array.isRequired,
+    onChange: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -35,12 +36,14 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
   onAdd() {
     const items = this.getItems();
     items.push({});
+    this.props.onChange(items);
     this.setUniqueItemIdsAndUpdateState(items);
   }
 
   onRemove(uniqueId) {
     let { uniqueIdItemPairs } = this.state;
     uniqueIdItemPairs = uniqueIdItemPairs.filter(([uId]) => uId !== uniqueId);
+    this.props.onChange(Object.values(uniqueIdItemPairs));
     this.setState({ uniqueIdItemPairs });
   }
 
@@ -49,9 +52,6 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
   }
 
   toUniqueItemIds(items) {
-    if (!items) {
-      return null;
-    }
     return items.map(item => ([Utils.stringToUniqueId('item'), item]));
   }
 

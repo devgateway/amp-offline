@@ -39,6 +39,8 @@ export const loadHydratedContacts = (ids) => (dispatch, ownProps) => dispatch({
   payload: _hydrateContacts(ids, ownProps().userReducer.teamMember.id)
 });
 
+export const updateContact = (contact) => (dispatch) => dispatch({ type: CONTACT_LOAD_FULFILLED, actionData: contact });
+
 export const configureContactManagers = () => (dispatch, ownProps) => dispatch({
   type: CONTACT_MANAGERS,
   payload: _getContactManagers(ownProps().userReducer.teamMember.id, ownProps().translationReducer.lang)

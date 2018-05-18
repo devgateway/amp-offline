@@ -33,6 +33,10 @@ export default class AFDropDown extends Component {
     this.setState({ value: this.props.selectedId, propsReceived: true });
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ value: nextProps.selectedId });
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.options !== prevProps.options) {
       this._checkIfValueChanged(this.state.value);
@@ -73,7 +77,7 @@ export default class AFDropDown extends Component {
 
     return (
       <FormControl
-        componentClass="select" defaultValue={this.state.value} onChange={this.handleChange.bind(this)}
+        componentClass="select" value={this.state.value} onChange={this.handleChange.bind(this)}
         placeholder={-1}>
         {[defaultOption].concat(options)}
       </FormControl>

@@ -31,6 +31,7 @@ class AFContacts extends Component {
     activityValidator: PropTypes.instanceOf(ActivityValidator),
     isSaveAndSubmit: PropTypes.bool,
     filterForUnhydratedByIds: PropTypes.func.isRequired,
+    updateContact: PropTypes.func.isRequired,
   };
 
   static propTypes = {
@@ -39,6 +40,7 @@ class AFContacts extends Component {
     loadHydratedContacts: PropTypes.func.isRequired,
     filterForUnhydratedByIds: PropTypes.func.isRequired,
     configureContactManagers: PropTypes.func.isRequired,
+    updateContact: PropTypes.func.isRequired,
   };
 
   getChildContext() {
@@ -49,6 +51,7 @@ class AFContacts extends Component {
       isSaveAndSubmit: this.context.isSaveAndSubmit,
       contactReducer: this.props.contactReducer,
       filterForUnhydratedByIds: this.props.filterForUnhydratedByIds,
+      updateContact: this.props.updateContact,
     };
   }
 
