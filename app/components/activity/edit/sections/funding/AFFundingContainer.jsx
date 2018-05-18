@@ -5,7 +5,7 @@ import { FormGroup, Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
 import AFField from '../../components/AFField';
@@ -21,7 +21,7 @@ const logger = new Logger('AF funding container');
 export default class AFFundingContainer extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   static propTypes = {

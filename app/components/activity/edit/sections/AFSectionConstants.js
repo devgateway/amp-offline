@@ -1,4 +1,5 @@
 import * as AC from '../../../../utils/constants/ActivityConstants';
+import * as FC from '../../../../utils/constants/FieldPathConstants';
 import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 
 export const IDENTIFICATION = 'Identification';
@@ -33,11 +34,12 @@ export const SECTIONS = [
   PROGRAM,
   SECTORS,
   ORGANIZATIONS,
-  FUNDING/* ,
+  FUNDING,
+  CONTACTS,
+  /*
   COMPONENTS,
   STRUCTURES,
   ISSUES_SECTION,
-  CONTACTS,
   M_E,
   RELATED_DOCUMENTS */
 ];
@@ -77,6 +79,6 @@ FIELDS_PER_SECTIONS[FUNDING] = new Set([AC.FUNDINGS, AC.TOTAL_NUMBER_OF_FUNDING_
 FIELDS_PER_SECTIONS[COMPONENTS] = new Set([]);
 FIELDS_PER_SECTIONS[STRUCTURES] = new Set([]);
 FIELDS_PER_SECTIONS[ISSUES_SECTION] = new Set([]);
-FIELDS_PER_SECTIONS[CONTACTS] = new Set([]);
+FIELDS_PER_SECTIONS[CONTACTS] = new Set(FC.ACTIVITY_CONTACT_PATHS);
 FIELDS_PER_SECTIONS[M_E] = new Set([]);
 FIELDS_PER_SECTIONS[RELATED_DOCUMENTS] = new Set([]);

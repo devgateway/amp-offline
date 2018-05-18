@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as VC from '../../../../utils/constants/ValueConstants';
 
 const logger = new Logger('AP Identification');
@@ -14,7 +14,7 @@ const logger = new Logger('AP Identification');
 class APIdentification extends Component {
   static propTypes = {
     buildSimpleField: PropTypes.func.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activity: PropTypes.object.isRequired
   };
 

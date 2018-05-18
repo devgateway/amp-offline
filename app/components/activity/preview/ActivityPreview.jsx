@@ -7,7 +7,7 @@ import * as AC from '../../../utils/constants/ActivityConstants';
 import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
 import APStatusBar from './sections/APStatusBar';
-import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 import Logger from '../../../modules/util/LoggerManager';
@@ -30,7 +30,7 @@ export default class ActivityPreview extends Component {
       isActivityLoaded: PropTypes.bool,
       activity: PropTypes.object,
       activityWorkspace: PropTypes.object,
-      activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+      activityFieldsManager: PropTypes.instanceOf(FieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
       currentWorkspaceSettings: PropTypes.object,
@@ -50,7 +50,7 @@ export default class ActivityPreview extends Component {
     activityWorkspace: PropTypes.object,
     currentWorkspaceSettings: PropTypes.object,
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     workspaceReducer: PropTypes.object,
     userReducer: PropTypes.object

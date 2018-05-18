@@ -12,7 +12,7 @@ import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
 import Utils from '../../../../utils/Utils';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import styles from './funding/AFFunding.css';
 
 const logger = new Logger('AF funding');
@@ -24,7 +24,7 @@ const logger = new Logger('AF funding');
 class AFFunding extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activity: PropTypes.object.isRequired
   };
 

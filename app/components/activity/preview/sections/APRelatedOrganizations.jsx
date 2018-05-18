@@ -13,7 +13,7 @@ import {
   PERCENTAGE, HIERARCHICAL_VALUE
 } from '../../../../utils/constants/ActivityConstants';
 import APPercentageList from '../components/APPercentageList';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import { ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION } from '../../../../utils/constants/FeatureManagerConstants';
 
 const DO = APPercentageList(DONOR_ORGANIZATION, ORGANIZATION, PERCENTAGE, 'Donor Organization');
@@ -29,7 +29,7 @@ const EA = APPercentageList(EXECUTING_AGENCY, ORGANIZATION, PERCENTAGE, 'Executi
 class APRelatedOrganizations extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   getItemTitle(item) {

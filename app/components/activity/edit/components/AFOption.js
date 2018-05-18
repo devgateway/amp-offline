@@ -1,5 +1,5 @@
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../../../utils/constants/ActivityConstants';
-import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 /* eslint-disable class-methods-use-this */
 

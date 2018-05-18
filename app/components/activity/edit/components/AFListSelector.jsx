@@ -4,8 +4,8 @@ import styles from './AFListSelector.css';
 import AFList from './AFList';
 import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import ActivityValidator from '../../../../modules/field/EntityValidator';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -27,7 +27,7 @@ fieldNameToSearchFieldLabel[AC.PROGRAM] = 'Add Program';
  */
 export default class AFListSelector extends Component {
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired
   };
 

@@ -6,8 +6,8 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
 import afStyles from '../ActivityForm.css';
 import { LABEL } from './AFComponentTypes';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import ActivityValidator from '../../../../modules/field/EntityValidator';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFField from './AFField';
 import { addFullscreenAlert } from '../../../../actions/NotificationAction';
@@ -25,7 +25,7 @@ const logger = new Logger('AF List');
 class AFList extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
   };
 

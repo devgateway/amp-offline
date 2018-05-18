@@ -3,7 +3,7 @@ import APField from '../components/APField';
 import APPercentageField from '../components/APPercentageField';
 import Tablify from '../components/Tablify';
 import { HIERARCHICAL_VALUE } from '../../../../utils/constants/ActivityConstants';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';
@@ -19,7 +19,7 @@ const logger = new Logger('AP percentage list');
 const APPercentageList = (listField, valueField, percentageField, listTitle = null) => class extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     fieldNameClass: PropTypes.string,
     fieldValueClass: PropTypes.string,
     percentTitleClass: PropTypes.string,

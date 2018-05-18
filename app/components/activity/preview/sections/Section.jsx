@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import styles from '../ActivityPreview.css';
 import APField from '../components/APField';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import FeatureManager from '../../../../modules/util/FeatureManager';
 import {
@@ -33,7 +33,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
 
   static contextTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
     activityWorkspace: PropTypes.object.isRequired
   };

@@ -7,7 +7,7 @@ import { IDENTIFICATION } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../utils/constants/ValueConstants';
 import Logger from '../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AF identification');
 
@@ -19,7 +19,7 @@ class AFIdentification extends Component {
 
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   constructor(props) {

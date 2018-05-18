@@ -74,10 +74,10 @@ const hydratedActivity = {
 const hydrator = new ActivityHydrator(fieldsDef);
 
 describe('@@ ActivityHydrator @@', () => {
-  describe('_hydrateActivitiesWithFullObjects',
+  describe('_hydrateEntitiesWithFullObjects',
     () => {
       // I had to take this line out from 'it' since for some reason this method was executed multiple times under 'it'
-      const newActivities = hydrator._hydrateActivitiesWithFullObjects(activities, possibleValuesCollection);
+      const newActivities = hydrator._hydrateEntitiesWithFullObjects(activities, possibleValuesCollection);
       describe('multiple fields', () =>
         it('should hydrate the activity with all possible values', () => {
           expect(newActivities).to.have.length(2);
@@ -93,15 +93,15 @@ describe('@@ ActivityHydrator @@', () => {
     }
   );
 
-  describe('_hydrateActivitiesWithFullObjects', () =>
+  describe('_hydrateEntitiesWithFullObjects', () =>
     it('should not fail if invalid field options are provided', () =>
-      expect(hydrator._hydrateActivitiesWithFullObjects(activities, invalidPossibleValues)).to.have.length(2)
+      expect(hydrator._hydrateEntitiesWithFullObjects(activities, invalidPossibleValues)).to.have.length(2)
     )
   );
 
-  describe('_hydrateActivitiesWithFullObjects',
+  describe('_hydrateEntitiesWithFullObjects',
     () => {
-      const dehydratedActivity = hydrator._hydrateActivitiesWithFullObjects([hydratedActivity],
+      const dehydratedActivity = hydrator._hydrateEntitiesWithFullObjects([hydratedActivity],
         possibleValuesCollection, false)[0];
       describe('dehyrating activity', () =>
         it('should dehydrate the activity', () => {

@@ -1,17 +1,16 @@
-import * as PossibleValuesHelper from './PossibleValuesHelper';
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
-import PossibleValuesManager from '../activity/PossibleValuesManager';
-import {
-  DO_NOT_HYDRATE_FIELDS_LIST,
-  LOCATION_PATH,
-  PATHS_WITH_TREE_STRUCTURE
-} from '../../utils/constants/FieldPathConstants';
+import PossibleValuesManager from '../field/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
-import Logger from '../util/LoggerManager';
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
-
-const logger = new Logger('Activity hydrator');
+import AbstractEntityHydrator from './AbstractEntityHydrator';
+import { PREFIX_ACTIVITY } from '../../utils/constants/FieldPathConstants';
+/*
+import { ACTIVITY_CONTACT_PATHS } from '../../utils/constants/FieldPathConstants';
+import { CONTACT } from '../../utils/constants/ActivityConstants';
+import ContactHelper from './ContactHelper';
+import ContactHydrator from './ContactHydrator';
+*/
 
 /* eslint-disable class-methods-use-this */
 
@@ -43,105 +42,49 @@ const logger = new Logger('Activity hydrator');
  * }
  * @author Nadejda Mandrescu
  */
-export default class ActivityHydrator {
-  /**
-   * Initializes the activity hydrator
-   * @param fieldsDef fields definition structure
-   */
+export default class ActivityHydrator extends AbstractEntityHydrator {
   constructor(fieldsDef) {
-    this._fieldsDef = fieldsDef;
+    super(fieldsDef, PREFIX_ACTIVITY);
   }
 
-  /**
-   * Replaces an activity related objects ids with full object data for the specified field paths
-   * @param activity
-   * @param fieldPaths
-   * @return {Object} the modified activity
-   */
-  hydrateActivity(activity, fieldPaths = []) {
-    return this.hydrateActivities(...activity, fieldPaths).then(activities => activities[0]);
+  /*
+  _hydrateExternalEntities(activities, fieldPaths) {
+    return Promise.all([this._hydrateContacts(activities, fieldPaths)]);
   }
 
-  /**
-   * Replaces each activity related objects ids with full object data for the specified field paths
-   * @param activities
-   * @param fieldPaths
-   * @return {Object} the modified activities
-   */
-  hydrateActivities(activities, fieldPaths) {
-    return new Promise((resolve, reject) =>
-      this._getPossibleValues(fieldPaths).then(possibleValuesCollection =>
-        this._hydrateActivitiesWithFullObjects(activities, possibleValuesCollection)).then(resolve).catch(reject));
-  }
-
-  /**
-   * Replaces each related object full data with it's id
-   * @param activity
-   * @param fieldPaths
-   * @return {Promise.<activity>}
-   */
-  dehydrateActivity(activity, fieldPaths = []) {
-    return this._getPossibleValues(fieldPaths).then(possibleValuesCollection =>
-      this._hydrateActivitiesWithFullObjects([activity], possibleValuesCollection, false))
-      .then(activities => activities[0]);
-  }
-
-  _hydrateActivitiesWithFullObjects(activities, possibleValuesCollection, hydrate = true) {
-    possibleValuesCollection.forEach(pv => this._hydrateFieldPath(activities, pv, 0, this._fieldsDef, hydrate));
-    return activities;
-  }
-
-  _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs, hydrate = true) {
-    const fieldName = possibleValues['field-path'][pathIndex];
-    const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
-    if (fieldDef === undefined) {
-      const warn = `Field definition not found for: ${possibleValues['field-path'].slice(0, pathIndex + 1).join('~')}`;
-      logger.warn(warn);
-      return;
+  _hydrateContacts(activities, fieldPaths) {
+    let cPaths = ACTIVITY_CONTACT_PATHS;
+    if (fieldPaths && fieldPaths.length) {
+      cPaths = cPaths.filter(cPath =>
+        fieldPaths.includes(cPath) || fieldPaths.indexOf(fp => fp.startsWith(`${cPath}~`)) !== -1);
     }
-    const isList = fieldDef.field_type === 'list';
-
-    if (possibleValues['field-path'].length === pathIndex + 1) {
-      // this is the last level
-      objects.forEach(obj => {
-        const fieldValue = obj[fieldName];
-        if (fieldValue !== undefined && fieldValue !== null) {
-          if (isList) {
-            for (let index = 0; index < fieldValue.length; index++) {
-              const currValue = fieldValue[index];
-              fieldValue[index] = hydrate ? this._fillSelectedOption(possibleValues, currValue) : currValue.id;
-            }
-          } else {
-            obj[fieldName] = hydrate ? this._fillSelectedOption(possibleValues, fieldValue) : fieldValue.id;
-          }
+    const contactsIds = [];
+    cPaths.forEach(cType => {
+      activities.forEach(a => {
+        const cs = a[cType] || [];
+        if (cs.length) {
+          contactsIds.push(...cs.map(c => c[CONTACT]));
         }
       });
-    } else {
-      let nextLevelObjects = [];
-      objects.forEach(obj => {
-        const fieldValue = obj[fieldName];
-        if (fieldValue !== undefined && fieldValue !== null) {
-          if (isList) {
-            nextLevelObjects = nextLevelObjects.concat(fieldValue);
-          } else {
-            nextLevelObjects.push(fieldValue);
-          }
-        }
+    });
+    if (!contactsIds.length) {
+      return Promise.resolve();
+    }
+    return ContactHelper.findContactsByIds(contactsIds).then(contacts => {
+      const cotactById = {};
+      return this.contactHydrator.hydrateEntities(contacts).then(hcs => {
+        hcs.forEach(c => (cotactById[c.id] = c));
+        cPaths.forEach(cType => {
+          activities.forEach(a => {
+            const acs = a[cType] || [];
+            acs.forEach(c => (c[CONTACT] = cotactById[c[CONTACT]]));
+          });
+        });
+        return activities;
       });
-      if (nextLevelObjects.length > 0) {
-        this._hydrateFieldPath(nextLevelObjects, possibleValues, pathIndex + 1, fieldDef.children, hydrate);
-      }
-    }
+    });
   }
-
-  _fillSelectedOption(possibleValues, selectedId) {
-    const options = possibleValues['possible-options'];
-    if (LOCATION_PATH === possibleValues.id || PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
-      return PossibleValuesManager.buildHierarchicalData(options, selectedId);
-    }
-    const selectedOption = options[selectedId];
-    return selectedOption && Object.assign({}, selectedOption);
-  }
+  */
 
   // old mechanism for locations, using v1 API
   _buildLocationHierchicalValueParts(options, selectedId) {
@@ -155,36 +98,6 @@ export default class ActivityHydrator {
   }
 
   /**
-   * Retrieves possible field options for specified field paths or all options if no field paths are given
-   * @param fieldPaths
-   * @private
-   * @return {Promise}
-   */
-  _getPossibleValues(fieldPaths) {
-    const filter = {};
-    // AMP started to provide approval_status possible options, but so far there is no need to hydrate it and it is not
-    // id-only field => if it will be needed, be careful when adding back to include custom validation, etc
-    // TODO rather filter possible options result by non-id fields
-    if (fieldPaths && fieldPaths.length > 0) {
-      filter.id = { $in: fieldPaths.filter(path => !DO_NOT_HYDRATE_FIELDS_LIST.includes(path)) };
-    } else {
-      filter.id = { $nin: DO_NOT_HYDRATE_FIELDS_LIST };
-    }
-
-    return PossibleValuesHelper.findAll(filter).then(possibleValuesCollection => {
-      if (fieldPaths && fieldPaths.legth !== 0 && possibleValuesCollection.length !== fieldPaths.length) {
-        const missing = new Map(fieldPaths.map(fieldPath => [fieldPath, 1]));
-        possibleValuesCollection.forEach(pv => missing.delete(pv.id));
-        // TODO once we have notification system, to flag if some possible values are not found, but not to block usage
-        if (missing.size > 0) {
-          logger.error(`Field paths not found: ${missing.toJSON()}`);
-        }
-      }
-      return possibleValuesCollection;
-    });
-  }
-
-  /**
    * Hydrates an activity for the specified fields paths and team member
    * @param activity activities to hydrate with full field values
    * @param fieldPaths the field paths to hydrate
@@ -192,11 +105,8 @@ export default class ActivityHydrator {
    * @return {Promise}
    */
   static hydrateActivity({ activity, fieldPaths, teamMemberId }) {
-    return new Promise((resolve, reject) =>
-      ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, teamMemberId })
-        .then(activities => resolve(activities[0]))
-        .catch(reject)
-    );
+    return ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, teamMemberId })
+        .then(activities => activities[0]);
   }
 
   /**
@@ -208,19 +118,17 @@ export default class ActivityHydrator {
    */
   static hydrateActivities({ activities, fieldPaths, teamMemberId }) {
     // Note: 926 activities are hydrated in 0.2s, where a significant time is consumed by promises
-    return new Promise((resolve, reject) => {
-      if (teamMemberId === undefined) {
-        reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
-      }
-      return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS)
-        .then((fieldsDef) => {
-          if (fieldsDef === null) {
-            throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
-          } else {
-            const hydrator = new ActivityHydrator(fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS]);
-            return hydrator.hydrateActivities(activities, fieldPaths).then(resolve).catch(reject);
-          }
-        }).catch(reject);
-    });
+    if (teamMemberId === undefined) {
+      return Promise.reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
+    }
+    return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS)
+      .then(fieldsDef => {
+        if (fieldsDef === null) {
+          throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
+        } else {
+          const hydrator = new ActivityHydrator(fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS]);
+          return hydrator.hydrateEntities(activities, fieldPaths);
+        }
+      });
   }
 }

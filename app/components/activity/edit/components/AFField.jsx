@@ -10,10 +10,10 @@ import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
 import styles from '../ActivityForm.css';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
-import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import ActivityValidator from '../../../../modules/field/EntityValidator';
 import { reportFieldValidation } from '../../../../actions/ActivityAction';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
@@ -33,7 +33,7 @@ const logger = new Logger('AF field');
 class AFField extends Component {
   static contextTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
     isSaveAndSubmit: PropTypes.bool.isRequired
   };

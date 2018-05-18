@@ -3,7 +3,7 @@ import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
 import ActivityHydrator from '../modules/helpers/ActivityHydrator';
-import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
 import {
@@ -33,6 +33,7 @@ import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
 import DateUtils from '../utils/DateUtils';
 import LoggerManager from '../modules/util/LoggerManager';
+import { unloadContacts } from './ContactAction';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -86,10 +87,12 @@ export function loadActivityForActivityForm(activityId) {
 }
 
 export function unloadActivity() {
-  return (dispatch) =>
+  return (dispatch) => {
     dispatch({
       type: ACTIVITY_UNLOADED
     });
+    unloadContacts()(dispatch);
+  };
 }
 
 export function reportActivityValidation(validationResult) {
@@ -132,7 +135,7 @@ function _loadActivity({
     ])
       .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
         fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
-        const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
+        const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
         const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
           currentWorkspaceSettings, currencyRatesManager);
         const activityWsId = activity[TEAM] && activity[TEAM].id;
@@ -165,7 +168,7 @@ const _getActivity = (activityId, teamMemberId) => {
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
-  return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
+  return dehydrator.dehydrateEntity(activity).then(dehydratedActivity => {
     const modifiedOn = DateUtils.getISODateForAPI();
     if (!dehydratedActivity[TEAM]) {
       dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
