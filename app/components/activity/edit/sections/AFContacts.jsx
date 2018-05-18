@@ -8,6 +8,7 @@ import AFContactList from './contact/AFContactList';
 import { getActivityContacts } from '../../../../actions/ContactAction';
 import AFField from '../components/AFField';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
+import ErrorMessage from '../../../common/ErrorMessage';
 
 
 /**
@@ -68,7 +69,10 @@ class AFContacts extends Component {
   }
 
   render() {
-    // TODO display contactsError
+    const { contactsError } = this.props.contactReducer;
+    if (contactsError) {
+      return <ErrorMessage message={contactsError} />;
+    }
     const extraParams = {
       listType: AFContactList
     };
@@ -76,7 +80,6 @@ class AFContacts extends Component {
       .filter(acp => this.context.activityFieldsManager.isFieldPathEnabled(acp))
       // .slice(0, 1) // TODO remove
       .map(acp => <AFField key={acp} parent={this.context.activity} fieldPath={acp} extraParams={extraParams} />);
-      // .map(acp => <AFContactList type={acp} {...this.props} />);
     return <div>{contactGroups}</div>;
   }
 
