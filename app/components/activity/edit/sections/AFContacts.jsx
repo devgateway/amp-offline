@@ -29,12 +29,14 @@ class AFContacts extends Component {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
     isSaveAndSubmit: PropTypes.bool,
+    filterForUnhydratedByIds: PropTypes.func.isRequired,
   };
 
   static propTypes = {
     contactReducer: PropTypes.object.isRequired,
-    loadAllSummaryContacts: PropTypes.func.isRequired,
+    loadSummaryForNotLoadedContacts: PropTypes.func.isRequired,
     loadHydratedContacts: PropTypes.func.isRequired,
+    filterForUnhydratedByIds: PropTypes.func.isRequired,
     configureContactManagers: PropTypes.func.isRequired,
   };
 
@@ -45,17 +47,28 @@ class AFContacts extends Component {
       activityValidator: this.context.activityValidator,
       isSaveAndSubmit: this.context.isSaveAndSubmit,
       contactReducer: this.props.contactReducer,
+      filterForUnhydratedByIds: this.props.filterForUnhydratedByIds,
     };
   }
 
   componentWillMount() {
-    const contactIds = getActivityContacts(this.context.activity);
-    this.props.loadAllSummaryContacts();
-    this.props.loadHydratedContacts(contactIds);
+    this.props.loadSummaryForNotLoadedContacts();
     this.props.configureContactManagers();
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { isContactsLoaded } = nextProps.contactReducer;
+    if (isContactsLoaded) {
+      const contactIds = getActivityContacts(this.context.activity);
+      const unhydratedIds = nextProps.filterForUnhydratedByIds(contactIds);
+      if (unhydratedIds.length) {
+        this.props.loadHydratedContacts(unhydratedIds);
+      }
+    }
+  }
+
   render() {
+    // TODO display contactsError
     const extraParams = {
       listType: AFContactList
     };

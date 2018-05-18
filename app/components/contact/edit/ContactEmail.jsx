@@ -12,8 +12,8 @@ import EntryListWrapper from '../../common/edit/EntryListWrapper';
  * @author Nadejda Mandrescu
  */
 
-const getEntryFunc = (email) => (
-  <Row>
+const getEntryFunc = (id, email) => (
+  <Row key={id}>
     <Col lg={4} md={4} className={styles.emailCol}>
       <AFField parent={email} fieldPath={`${CC.EMAIL}~${CC.VALUE}`} showLabel={false} inline type={Types.INPUT_TYPE} />
     </Col>

@@ -60,7 +60,8 @@ class ContactForm extends Component {
 
   init(context) {
     const { contactFieldsManager, contactsByIds } = context.contactReducer;
-    const hydratedContact = contactsByIds[this.props.contactId];
+    const contact = contactsByIds[this.props.contactId];
+    const hydratedContact = contact && contact.hydrated ? contact : null;
     if (hydratedContact !== this.state.contact) {
       this.setState({ contact: hydratedContact });
     }
@@ -86,10 +87,10 @@ class ContactForm extends Component {
               </Col>
             </Row>
             <Row key="full-name">
-              <Col lg={6} md={6}>
+              <Col lg={6} md={6} key={CC.NAME}>
                 <AFField parent={contact} fieldPath={CC.NAME} type={INPUT_TYPE} />
               </Col>
-              <Col lg={6} md={6}>
+              <Col lg={6} md={6} key={CC.LAST_NAME}>
                 <AFField parent={contact} fieldPath={CC.LAST_NAME} type={INPUT_TYPE} />
               </Col>
             </Row>
@@ -99,10 +100,10 @@ class ContactForm extends Component {
               </Col>
             </Row>
             <Row key="function">
-              <Col lg={6} md={6}>
+              <Col lg={6} md={6} key={CC.FUNCTION}>
                 <AFField parent={contact} fieldPath={CC.FUNCTION} type={INPUT_TYPE} />
               </Col>
-              <Col lg={6} md={6}>
+              <Col lg={6} md={6} key={CC.ORGANIZATION_NAME}>
                 <AFField parent={contact} fieldPath={CC.ORGANIZATION_NAME} type={INPUT_TYPE} />
               </Col>
             </Row>

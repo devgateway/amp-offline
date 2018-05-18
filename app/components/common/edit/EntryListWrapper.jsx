@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Grid } from 'react-bootstrap';
@@ -16,16 +17,15 @@ const logger = new Logger('EntryListWrapper');
  */
 const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
   static propTypes = {
-    items: PropTypes.object.isRequired,
+    items: PropTypes.array.isRequired,
   };
 
   constructor(props) {
     super(props);
     logger.debug('constructor');
     this.state = {
-      uniqueIdItemPairs: null,
+      uniqueIdItemPairs: this.toUniqueItemIds(props.items),
     };
-    this.setUniqueItemIdsAndUpdateState(props.items);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -45,11 +45,14 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
   }
 
   setUniqueItemIdsAndUpdateState(items) {
+    this.setState({ uniqueIdItemPairs: this.toUniqueItemIds(items) });
+  }
+
+  toUniqueItemIds(items) {
     if (!items) {
-      return;
+      return null;
     }
-    const uniqueIdItemPairs = items.map(item => ([Utils.stringToUniqueId('item'), item]));
-    this.setState({ uniqueIdItemPairs });
+    return items.map(item => ([Utils.stringToUniqueId('item'), item]));
   }
 
   getItems() {
@@ -61,7 +64,6 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
     if (!uniqueIdItemPairs) {
       return null;
     }
-    const items = this.getItems();
     const ids = uniqueIdItemPairs.map(([uId]) => uId);
 
     return (
@@ -69,7 +71,7 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
         <EntryList
           label={translate(Title)} className={styles.wrapperContainer}
           onRemove={this.onRemove.bind(this)} onAdd={this.onAdd.bind(this)} childrenIds={ids}>
-          {items.map(getEntryFunc)}
+          {uniqueIdItemPairs.map(([uid, item]) => getEntryFunc(uid, item))}
         </EntryList>
       </Grid>
     );

@@ -19,6 +19,7 @@ export default class AFContactList extends Component {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activity: PropTypes.object.isRequired,
     contactReducer: PropTypes.object.isRequired,
+    filterForUnhydratedByIds: PropTypes.func.isRequired,
   };
 
   static propTypes = {
@@ -65,6 +66,11 @@ export default class AFContactList extends Component {
     e.stopPropagation();
   }
 
+  isContactHydrated(contactId) {
+    const { isContactsLoading, isContactLoading } = this.context.contactReducer;
+    return !isContactsLoading && !isContactLoading && !this.context.filterForUnhydratedByIds([contactId]).length;
+  }
+
   toContactItem(contactRow) {
     const contactId = contactRow[AC.CONTACT].id;
     const cFullName = contactRow[AC.CONTACT].displayFullValue;
@@ -87,11 +93,13 @@ export default class AFContactList extends Component {
         </Row>
       </div>
     );
+    const isContactHydrated = this.isContactHydrated(contactId);
     return (
-      <Panel defaultExpanded collapsible header={header}>
-        <Row key={contactRow.uniqueId}>
+      <Panel key={contactRow.uniqueId} defaultExpanded collapsible header={header}>
+        <Row>
           <Col md={13} lg={13} >
-            <ContactFormPage contactId={contactId} onEdit={() => this.handleEdit(contactRow, AC.CONTACT)} />
+            {isContactHydrated &&
+            <ContactFormPage contactId={contactId} onEdit={() => this.handleEdit(contactRow, AC.CONTACT)} />}
           </Col>
         </Row>
       </Panel>

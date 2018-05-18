@@ -12,8 +12,8 @@ import EntryListWrapper from '../../common/edit/EntryListWrapper';
  * @author Nadejda Mandrescu
  */
 
-const getEntryFunc = (phone) => (
-  <Row>
+const getEntryFunc = (id, phone) => (
+  <Row key={id}>
     <Col lg={4} md={4}>
       <AFField parent={phone} fieldPath={`${CC.PHONE}~${CC.TYPE}`} showLabel={false} />
     </Col>
