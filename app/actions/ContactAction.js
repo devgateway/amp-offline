@@ -127,7 +127,7 @@ export const getActivityContactIds = (activity) => {
     const cs = activity[cType];
     if (cs && cs.length) {
       // contact may be eventually hydrated
-      contactsIds.add(...cs.map(c => c[AC.CONTACT].id || c[AC.CONTACT]));
+      cs.forEach(c => contactsIds.add(c[AC.CONTACT].id || c[AC.CONTACT]));
     }
   });
   return Array.from(contactsIds);
