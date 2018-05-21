@@ -28,7 +28,7 @@ export default class AFContactList extends Component {
     listPath: PropTypes.string.isRequired,
     onDeleteRow: PropTypes.func,
     onEditRow: PropTypes.func,
-    language: PropTypes.string,
+    // language: PropTypes.string,
   };
 
   constructor(props) {
