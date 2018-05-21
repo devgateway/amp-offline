@@ -9,7 +9,7 @@ import {
   CONTACTS_UNLOADED,
   CONTACT_MANAGERS_PENDING,
   CONTACT_MANAGERS_FULFILLED,
-  CONTACT_MANAGERS_REJECTED,
+  CONTACT_MANAGERS_REJECTED, CONTACTS_SAVE_PENDING, CONTACTS_SAVE_FULFILLED, CONTACTS_SAVE_REJECTED,
 } from '../actions/ContactAction';
 
 const logger = new Logger('ContactReducer');
@@ -19,7 +19,10 @@ const defaultState = {
   isContactsLoaded: false,
   isContactLoading: false,
   isContactLoaded: false,
+  isContactsSaving: false,
+  isContactsSaved: false,
   contactError: null,
+  saveError: null,
   isContactManagersLoading: false,
   isContactManagersLoaded: false,
   contactsError: null,
@@ -115,6 +118,12 @@ const contactReducer = (state = defaultState, action: Object) => {
         isContactManagersLoaded: false,
         managersError: action.payload,
       };
+    case CONTACTS_SAVE_PENDING:
+      return { ...state, isContactsSaving: true, isContactsSaved: false, saveError: null };
+    case CONTACTS_SAVE_FULFILLED:
+      return { ...state, isContactsSaving: false, isContactsSaved: true };
+    case CONTACTS_SAVE_REJECTED:
+      return { ...state, isContactsSaving: false, isContactsSaved: false, saveError: action.payload };
     default:
       return state;
   }

@@ -444,7 +444,7 @@ export default class EntityValidator {
     objects.forEach(obj => {
       const fieldName = fieldDef.field_name;
       const hydratedValue = obj[fieldName];
-      if (ACTIVITY_CONTACT_PATHS.includes(fieldName)) {
+      if (hydratedValue && ACTIVITY_CONTACT_PATHS.includes(fieldName)) {
         const validationResult = this._isUniquePrimaryContact(hydratedValue, fieldName);
         this.processValidationResult(this._entity, errors, fieldName, validationResult);
       }

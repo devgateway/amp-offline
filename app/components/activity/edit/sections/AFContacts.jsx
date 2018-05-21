@@ -7,7 +7,7 @@ import * as AC from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_CONTACT_PATHS } from '../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import AFContactList from './contact/AFContactList';
-import { buildNewActivityContact, getActivityContacts } from '../../../../actions/ContactAction';
+import { buildNewActivityContact, getActivityContactIds } from '../../../../actions/ContactAction';
 import AFField from '../components/AFField';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
@@ -72,7 +72,7 @@ class AFContacts extends Component {
   onUnhydratedCheck(props) {
     const { isContactsLoaded } = props.contactReducer;
     if (isContactsLoaded) {
-      const contactIds = getActivityContacts(this.context.activity);
+      const contactIds = getActivityContactIds(this.context.activity);
       const unhydratedIds = props.filterForUnhydratedByIds(contactIds);
       if (unhydratedIds.length) {
         this.props.loadHydratedContacts(unhydratedIds);

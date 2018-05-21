@@ -33,7 +33,7 @@ import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
 import DateUtils from '../utils/DateUtils';
 import LoggerManager from '../modules/util/LoggerManager';
-import { unloadContacts } from './ContactAction';
+import * as ContactAction from './ContactAction';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -91,7 +91,7 @@ export function unloadActivity() {
     dispatch({
       type: ACTIVITY_UNLOADED
     });
-    unloadContacts()(dispatch);
+    ContactAction.unloadContacts()(dispatch);
   };
 }
 
@@ -118,6 +118,7 @@ export function saveActivity(activity) {
       payload: _saveActivity(activity, ownProps().userReducer.teamMember,
         ownProps().activityReducer.activityFieldsManager.fieldsDef, dispatch)
     });
+    ContactAction.dehydrateAndSaveActivityContacts(activity)(dispatch, ownProps);
   };
 }
 

@@ -86,9 +86,10 @@ const PossibleValuesHelper = {
    */
   findAllByIdsWithoutPrefixAndCleanupPrefix(root, idsWithoutRoot, filter = {}) {
     logger.debug('findAllByIdsWithoutPrefixAndCleanupPrefix');
-    let idsFilter = idsWithoutRoot && { $in: idsWithoutRoot };
+    const hasIdsWithoutRoot = !!(idsWithoutRoot && idsWithoutRoot.length);
+    let idsFilter = hasIdsWithoutRoot && { $in: idsWithoutRoot };
     if (root && root.length) {
-      if (idsWithoutRoot) {
+      if (hasIdsWithoutRoot) {
         idsFilter = { $in: idsWithoutRoot.map(id => `${root}~${id}`) };
       } else {
         idsFilter = { $regex: new RegExp(`^${root}~.*`) };

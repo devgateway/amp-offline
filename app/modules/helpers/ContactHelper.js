@@ -52,7 +52,9 @@ const ContactHelper = {
   },
 
   stampClientChange(contact) {
-    contact[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${Utils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
+    if (!contact[CLIENT_CHANGE_ID]) {
+      contact[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${Utils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
+    }
     if (!contact.id) {
       contact.id = contact[CLIENT_CHANGE_ID];
     }
