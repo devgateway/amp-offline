@@ -43,7 +43,6 @@ class AFContacts extends Component {
     loadSummaryForNotLoadedContacts: PropTypes.func.isRequired,
     loadHydratedContacts: PropTypes.func.isRequired,
     filterForUnhydratedByIds: PropTypes.func.isRequired,
-    configureContactManagers: PropTypes.func.isRequired,
     updateContact: PropTypes.func.isRequired,
   };
 
@@ -62,7 +61,6 @@ class AFContacts extends Component {
   componentWillMount() {
     this.setState({ activity: this.context.activity });
     this.props.loadSummaryForNotLoadedContacts();
-    this.props.configureContactManagers();
   }
 
   componentWillReceiveProps(nextProps) {

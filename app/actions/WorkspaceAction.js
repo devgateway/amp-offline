@@ -12,6 +12,7 @@ import { isForceSyncUp } from './SyncUpAction';
 import { SYNCUP_REDIRECT_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
 import { NOTIFICATION_ORIGIN_WORKSPACE } from '../utils/constants/ErrorConstants';
+import { FIELD_OPTIONS } from '../utils/constants/FieldPathConstants';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_SELECT_WORKSPACE_ERROR = 'STATE_SELECT_WORKSPACE_ERROR';
@@ -56,7 +57,7 @@ function loadWorkspaceData(wsId) {
       const currency = {};
       currency.code = workspaceSettings.currency;
       currency['translated-value'] =
-        possibleValue['possible-options'][workspaceSettings.currency]['translated-value'];
+        possibleValue[FIELD_OPTIONS][workspaceSettings.currency]['translated-value'];
       workspaceSettings.currency = currency;
       const actionData = { teamMember, workspace, workspaceSettings };
       store.dispatch({ type: STATE_SELECT_WORKSPACE, actionData });

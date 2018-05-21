@@ -2,7 +2,9 @@ import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CONTACTS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
-import { CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID } from '../../utils/constants/ContactConstants';
+import
+{ CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID, NAME, LAST_NAME }
+from '../../utils/constants/ContactConstants';
 
 const logger = new Logger('Contact helper');
 
@@ -44,6 +46,21 @@ const ContactHelper = {
     logger.debug('findAllContactsModifiedOnClient');
     filterRule[CLIENT_CHANGE_ID] = { $exists: true };
     return ContactHelper.findAllContacts(filterRule);
+  },
+
+  findAllContactsAsPossibleOptions() {
+    return ContactHelper.findAllContacts({}, { id: 1, [NAME]: 1, [LAST_NAME]: 1 })
+      .then(contacts => contacts.map(ContactHelper._toPV).reduce((result, cpv) => {
+        result[cpv.id] = cpv;
+        return result;
+      }, {}));
+  },
+
+  _toPV(contact) {
+    return {
+      id: contact.id,
+      value: `${contact[NAME]} ${contact[LAST_NAME]}`
+    };
   },
 
   findAllContacts(filterRule, projections) {

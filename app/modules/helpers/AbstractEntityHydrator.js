@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import Logger from '../util/LoggerManager';
 import {
-  DO_NOT_HYDRATE_FIELDS_LIST,
+  DO_NOT_HYDRATE_FIELDS_LIST, FIELD_OPTIONS, FIELD_PATH,
   LOCATION_PATH,
   PATHS_WITH_TREE_STRUCTURE
 } from '../../utils/constants/FieldPathConstants';
@@ -100,17 +100,17 @@ export default class AbstractEntityHydrator {
 
 
   _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs, hydrate = true) {
-    const fieldName = possibleValues['field-path'][pathIndex];
+    const fieldName = possibleValues[FIELD_PATH][pathIndex];
     const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
     if (fieldDef === undefined) {
-      const warn = `Field definition not found for: ${possibleValues['field-path'].slice(0, pathIndex + 1).join('~')}`;
+      const warn = `Field definition not found for: ${possibleValues[FIELD_PATH].slice(0, pathIndex + 1).join('~')}`;
       logger.warn(warn);
       return;
     }
     const isList = fieldDef.field_type === 'list';
 
-    if (possibleValues['field-path'].length === pathIndex + 1) {
-      const options = possibleValues['possible-options'];
+    if (possibleValues[FIELD_PATH].length === pathIndex + 1) {
+      const options = possibleValues[FIELD_OPTIONS];
       if (!options || !Object.keys(options).length) {
         // there may be invalid "possible-options" paths like donor_contact~contact (TDB ticket) => skipping
         logger.error(`No options available for ${possibleValues.id}. Won't hydrate / dehydrate this path.`);
@@ -149,7 +149,7 @@ export default class AbstractEntityHydrator {
   }
 
   _fillSelectedOption(possibleValues, selectedId) {
-    const options = possibleValues['possible-options'];
+    const options = possibleValues[FIELD_OPTIONS];
     if (LOCATION_PATH === possibleValues.id || PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
       return PossibleValuesManager.buildHierarchicalData(options, selectedId);
     }
