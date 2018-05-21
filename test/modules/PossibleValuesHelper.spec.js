@@ -1,7 +1,12 @@
 import { describe, it } from 'mocha';
 import actions from '../../app/modules/helpers/PossibleValuesHelper';
 import Logger from '../../app/modules/util/LoggerManager';
-import { DONOR_ORGANIZATIONS_PATH, PREFIX_CONTACT } from '../../app/utils/constants/FieldPathConstants';
+import {
+  DONOR_ORGANIZATIONS_PATH,
+  FIELD_OPTIONS,
+  FIELD_PATH,
+  PREFIX_CONTACT
+} from '../../app/utils/constants/FieldPathConstants';
 import * as Utils from '../../app/utils/Utils';
 
 const logger = new Logger('Possible values helper');
@@ -111,13 +116,13 @@ let treeOptions = {
 
 let validPossibleValuesColl = [/* ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations */];
 let invalidPV = { 'invalid-field-name': 'some value' };
-let missingId = { 'possible-options': [{ value: 'aa' }, { id: 2, value: 'bb' }] };
+let missingId = { [FIELD_OPTIONS]: [{ value: 'aa' }, { id: 2, value: 'bb' }] };
 let mixedValidInvalid = [/* ampFormatPV1, invalidPV */];
 
 const validCurrencyDBOptions = [{
   id: 'rpc_amount~currency_code',
-  'field-path': ['rpc_amount', 'currency_code'],
-  'possible-options': {
+  [FIELD_PATH]: ['rpc_amount', 'currency_code'],
+  [FIELD_OPTIONS]: {
     USD: {
       id: 'USD',
       parentId: undefined,
@@ -128,8 +133,8 @@ const validCurrencyDBOptions = [{
 const validContactsOptions = [
   {
     id: 'organisation_contacts~organisation',
-    'field-path': ['organisation_contacts', 'organisation'],
-    'possible-options': {
+    [FIELD_PATH]: ['organisation_contacts', 'organisation'],
+    [FIELD_OPTIONS]: {
       3: {
         id: 3,
         parentId: undefined,

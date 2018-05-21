@@ -1,6 +1,6 @@
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as VC from '../../utils/constants/ValueConstants';
-import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
+import { FIELD_OPTIONS, LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
@@ -52,8 +52,8 @@ export default class ActivityFilter {
       .then(([workspaces, dateFilterHidesProjects, locationOptions]) => {
         this._wsIds = workspaces;
         this._dateFilterHidesProjects = dateFilterHidesProjects.value === 'true';
-        if (locationOptions && locationOptions['possible-options']) {
-          this._locationOptions = locationOptions['possible-options'];
+        if (locationOptions && locationOptions[FIELD_OPTIONS]) {
+          this._locationOptions = locationOptions[FIELD_OPTIONS];
         } else {
           this._locationOptions = [];
         }

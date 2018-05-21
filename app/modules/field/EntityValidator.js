@@ -376,11 +376,12 @@ export default class EntityValidator {
     const repeating = new Set();
     const unique = new Set();
     values.forEach(item => {
-      const value = item[fieldName][HIERARCHICAL_VALUE] || item[fieldName]._value;
-      if (unique.has(value)) {
+      const id = item[fieldName].id;
+      const value = item[fieldName][HIERARCHICAL_VALUE] || item[fieldName].value;
+      if (unique.has(id)) {
         repeating.add(value);
       } else {
-        unique.add(value);
+        unique.add(id);
       }
     });
     if (repeating.size > 0) {

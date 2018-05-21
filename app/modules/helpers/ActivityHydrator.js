@@ -5,12 +5,6 @@ import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstan
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
 import { PREFIX_ACTIVITY } from '../../utils/constants/FieldPathConstants';
-/*
-import { ACTIVITY_CONTACT_PATHS } from '../../utils/constants/FieldPathConstants';
-import { CONTACT } from '../../utils/constants/ActivityConstants';
-import ContactHelper from './ContactHelper';
-import ContactHydrator from './ContactHydrator';
-*/
 
 /* eslint-disable class-methods-use-this */
 
@@ -46,45 +40,6 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
   constructor(fieldsDef) {
     super(fieldsDef, PREFIX_ACTIVITY);
   }
-
-  /*
-  _hydrateExternalEntities(activities, fieldPaths) {
-    return Promise.all([this._hydrateContacts(activities, fieldPaths)]);
-  }
-
-  _hydrateContacts(activities, fieldPaths) {
-    let cPaths = ACTIVITY_CONTACT_PATHS;
-    if (fieldPaths && fieldPaths.length) {
-      cPaths = cPaths.filter(cPath =>
-        fieldPaths.includes(cPath) || fieldPaths.indexOf(fp => fp.startsWith(`${cPath}~`)) !== -1);
-    }
-    const contactsIds = [];
-    cPaths.forEach(cType => {
-      activities.forEach(a => {
-        const cs = a[cType] || [];
-        if (cs.length) {
-          contactsIds.push(...cs.map(c => c[CONTACT]));
-        }
-      });
-    });
-    if (!contactsIds.length) {
-      return Promise.resolve();
-    }
-    return ContactHelper.findContactsByIds(contactsIds).then(contacts => {
-      const cotactById = {};
-      return this.contactHydrator.hydrateEntities(contacts).then(hcs => {
-        hcs.forEach(c => (cotactById[c.id] = c));
-        cPaths.forEach(cType => {
-          activities.forEach(a => {
-            const acs = a[cType] || [];
-            acs.forEach(c => (c[CONTACT] = cotactById[c[CONTACT]]));
-          });
-        });
-        return activities;
-      });
-    });
-  }
-  */
 
   // old mechanism for locations, using v1 API
   _buildLocationHierchicalValueParts(options, selectedId) {

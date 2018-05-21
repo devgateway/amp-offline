@@ -2,6 +2,7 @@
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 import PossibleValuesManager from './PossibleValuesManager';
 import Logger from '../util/LoggerManager';
+import { FIELD_OPTIONS } from '../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('Fields manager');
 
@@ -28,7 +29,7 @@ export default class FieldsManager {
     this._fieldsDef = fieldsDef;
     this._possibleValuesMap = {};
     possibleValuesCollection.forEach(pv => {
-      this._possibleValuesMap[pv.id] = pv['possible-options'];
+      this._possibleValuesMap[pv.id] = pv[FIELD_OPTIONS];
     });
     this._fieldPathsEnabledStatusMap = {};
     this._lang = currentLanguage || LANGUAGE_ENGLISH;

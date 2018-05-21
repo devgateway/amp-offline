@@ -4,6 +4,9 @@ import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
+import { ACTIVITY_CONTACT_PATHS, FIELD_OPTIONS, FIELD_PATH } from '../../utils/constants/FieldPathConstants';
+import { CONTACT } from '../../utils/constants/ActivityConstants';
+import ContactHelper from './ContactHelper';
 
 const logger = new Logger('Possible values helper');
 
@@ -43,13 +46,13 @@ const possibleValuesSchema = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    'field-path': {
+    [FIELD_PATH]: {
       type: 'array',
       items: { type: 'string' }
     },
-    'possible-options': { $ref: '/OptionSchema' }
+    [FIELD_OPTIONS]: { $ref: '/OptionSchema' }
   },
-  required: ['id', 'field-path', 'possible-options']
+  required: ['id', FIELD_PATH, FIELD_OPTIONS]
 };
 
 const validator = new Validator();
@@ -109,7 +112,7 @@ const PossibleValuesHelper = {
       if (root && root.length) {
         pvs.forEach(pv => {
           pv.id = pv.id.substring(root.length + 1);
-          pv['field-path'] = pv['field-path'].slice(1);
+          pv[FIELD_PATH] = pv[FIELD_PATH].slice(1);
         });
       }
       return pvs;
@@ -118,7 +121,23 @@ const PossibleValuesHelper = {
 
   findAll(filter, projections) {
     logger.debug('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections);
+    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections).then(this._preProcess);
+  },
+
+  _preProcess(pvc) {
+    return PossibleValuesHelper._refreshContactOptionsWithLocalChanges(pvc).then(() => pvc);
+  },
+
+  _refreshContactOptionsWithLocalChanges(pvc) {
+    const contactOptionsPVC = pvc.filter(PossibleValuesHelper.isActivityContactPV);
+    if (contactOptionsPVC && contactOptionsPVC.length) {
+      return ContactHelper.findAllContactsAsPossibleOptions().then(contactOptions => {
+        // extend / update contact options with local new/update contact info
+        contactOptionsPVC.forEach(pv => (pv[FIELD_OPTIONS] = { ...pv[FIELD_OPTIONS], ...contactOptions }));
+        return pvc;
+      });
+    }
+    return Promise.resolve(pvc);
   },
 
   /**
@@ -204,8 +223,8 @@ const PossibleValuesHelper = {
     const possibleOptions = this._transformOptions(possibleOptionsFromAMP);
     const possibleValuesForLocalUsage = {
       id: fieldPath,
-      'field-path': fieldPathParts,
-      'possible-options': possibleOptions
+      [FIELD_PATH]: fieldPathParts,
+      [FIELD_OPTIONS]: possibleOptions
     };
     return possibleValuesForLocalUsage;
   },
@@ -249,6 +268,11 @@ const PossibleValuesHelper = {
     const errorMessage = JSON.stringify(errors).substring(0, 1000);
     logger.error(errorMessage);
     return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
+  },
+
+  isActivityContactPV(pv) {
+    return pv[FIELD_PATH].length === 2
+      && ACTIVITY_CONTACT_PATHS.includes(pv[FIELD_PATH][0]) && pv[FIELD_PATH][1] === CONTACT;
   }
 };
 
