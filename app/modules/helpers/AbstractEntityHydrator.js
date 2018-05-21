@@ -79,9 +79,18 @@ export default class AbstractEntityHydrator {
    * @return {Promise.<entity>}
    */
   dehydrateEntity(entity, fieldPaths = []) {
+    return this.dehydrateEntities([entity], fieldPaths).then(entities => entities[0]);
+  }
+
+  /**
+   * All entities are processed to replace each related object full data with it's id
+   * @param entities
+   * @param fieldPaths (optional) list of field paths to process. All are processed by default.
+   * @return {*|Promise<any>}
+   */
+  dehydrateEntities(entities, fieldPaths = []) {
     return this._getPossibleValues(fieldPaths).then(possibleValuesCollection =>
-      this._hydrateEntitiesWithFullObjects([entity], possibleValuesCollection, false))
-      .then(entities => entities[0]);
+      this._hydrateEntitiesWithFullObjects(entities, possibleValuesCollection, false));
   }
 
   _hydrateEntitiesWithFullObjects(entities, possibleValuesCollection, hydrate = true) {

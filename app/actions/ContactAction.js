@@ -16,6 +16,10 @@ export const CONTACTS_LOAD_REJECTED = 'CONTACTS_LOAD_REJECTED';
 export const CONTACT_LOAD_PENDING = 'CONTACT_LOAD_PENDING';
 export const CONTACT_LOAD_FULFILLED = 'CONTACT_LOAD_FULFILLED';
 export const CONTACT_LOAD_REJECTED = 'CONTACT_LOAD_REJECTED';
+export const CONTACTS_SAVE = 'CONTACTS_SAVE';
+export const CONTACTS_SAVE_PENDING = 'CONTACTS_SAVE_PENDING';
+export const CONTACTS_SAVE_FULFILLED = 'CONTACTS_SAVE_FULFILLED';
+export const CONTACTS_SAVE_REJECTED = 'CONTACTS_SAVE_REJECTED';
 export const CONTACT_MANAGERS = 'CONTACT_MANAGERS';
 export const CONTACT_MANAGERS_PENDING = 'CONTACT_MANAGERS_PENDING';
 export const CONTACT_MANAGERS_FULFILLED = 'CONTACT_MANAGERS_FULFILLED';
@@ -40,6 +44,13 @@ export const loadHydratedContacts = (ids) => (dispatch, ownProps) => dispatch({
 });
 
 export const updateContact = (contact) => (dispatch) => dispatch({ type: CONTACT_LOAD_FULFILLED, actionData: contact });
+
+export const dehydrateAndSaveActivityContacts = (activity) => (dispatch, ownProps) => dispatch({
+  type: CONTACTS_SAVE,
+  payload: _dehydrateAndSaveContacts(_getActivityContacts(activity, ownProps().contactReducer.contactsByIds),
+    ownProps().userReducer.teamMember.id,
+    ownProps().contactReducer.contactFieldsManager.fieldsDef)
+});
 
 export const configureContactManagers = () => (dispatch, ownProps) => dispatch({
   type: CONTACT_MANAGERS,
@@ -88,16 +99,32 @@ const _mapById = (contacts) => {
   return contactsByIds;
 };
 
-export const getActivityContacts = (activity) => {
-  const contactsIds = [];
+const _dehydrateAndSaveContacts = (contacts, teamMemberId, fieldsDef) => {
+  contacts.forEach(c => {
+    if (ContactHelper.isNewContact(c)) {
+      c[CC.CREATOR] = teamMemberId;
+    }
+    ContactHelper.stampClientChange(c);
+    ['uniqueId', 'formId', 'hydrated', 'errors'].forEach(tmpProp => delete c[tmpProp]);
+  });
+  const ch = new ContactHydrator(fieldsDef);
+  return ch.dehydrateEntities(contacts)
+    .then(ContactHelper.saveOrUpdateContactCollection);
+};
+
+export const _getActivityContacts = (activity, contactsById) =>
+  getActivityContactIds(activity).map(id => contactsById[id]);
+
+export const getActivityContactIds = (activity) => {
+  const contactsIds = new Set();
   ACTIVITY_CONTACT_PATHS.forEach(cType => {
     const cs = activity[cType];
     if (cs && cs.length) {
       // contact may be eventually hydrated
-      contactsIds.push(...cs.map(c => c[AC.CONTACT].id || c[AC.CONTACT]));
+      contactsIds.add(...cs.map(c => c[AC.CONTACT].id || c[AC.CONTACT]));
     }
   });
-  return contactsIds;
+  return Array.from(contactsIds);
 };
 
 export const buildNewActivityContact = () => {

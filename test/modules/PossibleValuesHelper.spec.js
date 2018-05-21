@@ -114,6 +114,17 @@ let invalidPV = { 'invalid-field-name': 'some value' };
 let missingId = { 'possible-options': [{ value: 'aa' }, { id: 2, value: 'bb' }] };
 let mixedValidInvalid = [/* ampFormatPV1, invalidPV */];
 
+const validCurrencyDBOptions = [{
+  id: 'rpc_amount~currency_code',
+  'field-path': ['rpc_amount', 'currency_code'],
+  'possible-options': {
+    USD: {
+      id: 'USD',
+      parentId: undefined,
+      value: 'USD'
+    }
+  }
+}];
 const validContactsOptions = [
   {
     id: 'organisation_contacts~organisation',
@@ -171,6 +182,14 @@ describe('@@ PossibleValuesHelper @@', () => {
     it('should save initial data', () =>
       expect(actions.saveOrUpdateCollection(validPossibleValuesColl))
         .to.eventually.have.lengthOf(validPossibleValuesColl.length)
+    )
+  );
+
+  describe('findAllByIdsWithoutPrefixAndCleanupPrefix', () =>
+    it('should find valid contact options in processed format', () =>
+      expect(actions.findAllByIdsWithoutPrefixAndCleanupPrefix(null, [], { id: 'rpc_amount~currency_code' })
+        .then(Utils.removeIdFromCollection)
+      ).to.eventually.deep.equal(validCurrencyDBOptions)
     )
   );
 
