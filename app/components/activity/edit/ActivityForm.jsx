@@ -69,7 +69,6 @@ export default class ActivityForm extends Component {
   constructor(props) {
     super(props);
     logger.log('constructor');
-    this.showSaveDialog = false;
     this._toggleQuickLinks = this._toggleQuickLinks.bind(this);
   }
 
@@ -100,12 +99,24 @@ export default class ActivityForm extends Component {
       content: undefined,
       sectionsWithErrors: [],
       validationError: null,
+      showSaveDialog: false,
+      isSaving: false,
+      isGoToDesktop: false,
       isSaveAndSubmit: false
     });
   }
 
   componentWillReceiveProps(nextProps) {
     const { activityFieldsManager, otherProjectTitles, activity, savedActivity } = nextProps.activityReducer;
+    const { isSaving, isGoToDesktop } = this.state;
+    if (isSaving && savedActivity) {
+      if (isGoToDesktop) {
+        this.props.router.push(`/desktop/${this.props.userReducer.teamMember.id}`);
+        return;
+      } else {
+        this.setState({ isSaving: false });
+      }
+    }
     const activityId = nextProps.params && nextProps.params.activityId;
     // normally it means "Add Activity" was called from within AF, otherwise activityId must not change
     if (this.state.activityId !== undefined && activityId !== undefined && this.state.activityId !== activityId) {
@@ -195,7 +206,21 @@ export default class ActivityForm extends Component {
     );
   }
 
-  _saveActivity(asDraft) {
+  _validateAndSubmit() {
+    const validationError = this._validateActivity(false);
+    if (!validationError) {
+      this._saveActivity(false, true);
+    }
+  }
+
+  _validateAndShowSaveAsDraftDialog() {
+    const validationError = this._validateActivity(true);
+    if (!validationError) {
+      this.setState({ showSaveDialog: true });
+    }
+  }
+
+  _validateActivity(asDraft) {
     let validationError;
     // TODO to adjust oonce AMP-XXX is fixed to properly define activive
     const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID, FUNDING_ACTIVE_LIST]);
@@ -205,12 +230,13 @@ export default class ActivityForm extends Component {
       validationError = this._handleSaveErrors(errors);
     }
     this.props.reportActivityValidation(errors);
-    this.showSaveDialog = asDraft && !validationError;
     this.setState({ isSaveAndSubmit: !asDraft, validationError });
-    if (!asDraft && !validationError) {
-      this.props.saveActivity(this.activity);
-      this.props.router.push(`/desktop/${this.props.userReducer.teamMember.id}`);
-    }
+    return validationError;
+  }
+
+  _saveActivity(asDraft, isGoToDesktop) {
+    this.setState({ showSaveDialog: false, isSaving: true, isGoToDesktop });
+    this.props.saveActivity(this.activity);
   }
 
   _handleSaveErrors(errors) {
@@ -237,16 +263,14 @@ export default class ActivityForm extends Component {
   }
 
   _renderSaveDialog() {
-    if (!this.showSaveDialog) {
+    if (!this.state.showSaveDialog) {
       return null;
     }
-    this.showSaveDialog = false;
     return (
       <AFSaveDialog
-        activity={this.activity}
         actionTitle={translate('Save as draft')}
-        saveActivity={this.props.saveActivity}
-        teamMemberId={this.props.userReducer.teamMember.id}
+        saveActivity={this._saveActivity.bind(this, true)}
+        onClose={() => this.setState({ showSaveDialog: false })}
       />
     );
   }
@@ -262,11 +286,11 @@ export default class ActivityForm extends Component {
         <div>
           <Button
             bsClass={styles.action_button} key="submit"
-            onClick={this._saveActivity.bind(this, false)} block >{translate('Save and Submit')}
+            onClick={this._validateAndSubmit.bind(this)} block >{translate('Save and Submit')}
           </Button>
           <Button
             bsClass={styles.action_button} key="saveAsDraft"
-            onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
+            onClick={this._validateAndShowSaveAsDraftDialog.bind(this)} block >{translate('Save as draft')}
           </Button>
           <Button
             key="preview"
