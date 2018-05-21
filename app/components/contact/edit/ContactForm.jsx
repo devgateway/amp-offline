@@ -72,7 +72,7 @@ class ContactForm extends Component {
    * @param contact
    */
   onUpdate(contact) {
-    contact.formId = this._formId;
+    contact[CC.TMP_FORM_ID] = this._formId;
   }
 
   /**
@@ -80,7 +80,7 @@ class ContactForm extends Component {
    */
   checkForUpdates() {
     const { contact } = this.state;
-    if (contact.formId !== this._formId) {
+    if (contact[CC.TMP_FORM_ID] !== this._formId) {
       this.onUpdate(contact);
       this.setState({ reloading: true });
       this.context.updateContact({ contact });
@@ -90,7 +90,7 @@ class ContactForm extends Component {
   init(context) {
     const { contactFieldsManager, contactsByIds } = context.contactReducer;
     const contact = contactsByIds[this.props.contactId];
-    const hydratedContact = contact && contact.hydrated ? contact : null;
+    const hydratedContact = contact && contact[CC.TMP_HYDRATED] ? contact : null;
     if (hydratedContact) {
       this._initLists(hydratedContact);
       this.setState({ contact: hydratedContact, reloading: false });

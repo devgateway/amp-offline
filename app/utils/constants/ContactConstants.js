@@ -16,3 +16,9 @@ export const PHONE = 'phone';
 export const EXTENSION_VALUE = 'extension_value';
 export const TYPE = 'type';
 export const FAX = 'fax';
+
+export const TMP_FORM_ID = 'form-id';
+export const TMP_UNIQUE_ID = 'uniqueId';
+export const TMP_HYDRATED = 'hydrated';
+export const TMP_ERRORS = 'errors';
+export const TMP_FIELDS = [TMP_FORM_ID, TMP_UNIQUE_ID, TMP_HYDRATED, TMP_ERRORS];

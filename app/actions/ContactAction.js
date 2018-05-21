@@ -38,6 +38,12 @@ export const loadSummaryForNotLoadedContacts = () => (dispatch, ownProps) => dis
 
 export const unloadContacts = () => (dispatch) => dispatch({ type: CONTACTS_UNLOADED });
 
+export const loadHydratedContactsForActivity = (activity) => (dispatch, ownProps) => {
+  const unhydratedIds = filterForUnhydratedByIds(getActivityContactIds(activity))(dispatch, ownProps);
+  configureContactManagers()(dispatch, ownProps);
+  return loadHydratedContacts(unhydratedIds)(dispatch, ownProps);
+};
+
 export const loadHydratedContacts = (ids) => (dispatch, ownProps) => dispatch({
   type: CONTACTS_LOAD,
   payload: _hydrateContacts(ids, ownProps().userReducer.teamMember.id)
@@ -59,7 +65,7 @@ export const configureContactManagers = () => (dispatch, ownProps) => dispatch({
 
 export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => {
   const { contactsByIds } = ownProps().contactReducer;
-  return contactIds.map(id => ([id, contactsByIds[id]])).filter(([, c]) => !c || !c.hydrated).map(([id]) => id);
+  return contactIds.map(id => ([id, contactsByIds[id]])).filter(([, c]) => !c || !c[CC.TMP_HYDRATED]).map(([id]) => id);
 };
 
 const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
@@ -80,7 +86,7 @@ const _hydrateContacts = (ids, teamMemberId) => Promise.all([
 }).then(_flagAsFullyHydrated).then(_mapById);
 
 const _flagAsFullyHydrated = (contacts) => {
-  contacts.forEach(c => (c.hydrated = true));
+  contacts.forEach(c => (c[CC.TMP_HYDRATED] = true));
   return contacts;
 };
 
@@ -105,7 +111,7 @@ const _dehydrateAndSaveContacts = (contacts, teamMemberId, fieldsDef) => {
       c[CC.CREATOR] = teamMemberId;
     }
     ContactHelper.stampClientChange(c);
-    ['uniqueId', 'formId', 'hydrated', 'errors'].forEach(tmpProp => delete c[tmpProp]);
+    CC.TMP_FIELDS.forEach(tmpProp => delete c[tmpProp]);
   });
   const ch = new ContactHydrator(fieldsDef);
   return ch.dehydrateEntities(contacts)
@@ -130,7 +136,7 @@ export const getActivityContactIds = (activity) => {
 export const buildNewActivityContact = () => {
   const contact = {};
   ContactHelper.stampClientChange(contact);
-  contact.hydrated = true;
+  contact[CC.TMP_HYDRATED] = true;
   return {
     [AC.CONTACT]: contact,
     [AC.PRIMARY_CONTACT]: false,
