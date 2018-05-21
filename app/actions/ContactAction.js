@@ -3,8 +3,8 @@ import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import { SYNCUP_TYPE_CONTACT_FIELDS } from '../utils/Constants';
 import * as CC from '../utils/constants/ContactConstants';
+import * as AC from '../utils/constants/ActivityConstants';
 import { ACTIVITY_CONTACT_PATHS, PREFIX_CONTACT } from '../utils/constants/FieldPathConstants';
-import { CONTACT } from '../utils/constants/ActivityConstants';
 import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as Utils from '../utils/Utils';
@@ -94,8 +94,18 @@ export const getActivityContacts = (activity) => {
     const cs = activity[cType];
     if (cs && cs.length) {
       // contact may be eventually hydrated
-      contactsIds.push(...cs.map(c => c[CONTACT].id || c[CONTACT]));
+      contactsIds.push(...cs.map(c => c[AC.CONTACT].id || c[AC.CONTACT]));
     }
   });
   return contactsIds;
+};
+
+export const buildNewActivityContact = () => {
+  const contact = {};
+  ContactHelper.stampClientChange(contact);
+  contact.hydrated = true;
+  return {
+    [AC.CONTACT]: contact,
+    [AC.PRIMARY_CONTACT]: false,
+  };
 };

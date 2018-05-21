@@ -8,6 +8,7 @@ import { ContactFormPage } from '../../../../../containers/ContactPage';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import AFField from '../../components/AFField';
+import * as Utils from '../../../../../utils/Utils';
 
 /**
  * AF Contact group list
@@ -75,6 +76,7 @@ export default class AFContactList extends Component {
     const contactId = contactRow[AC.CONTACT].id;
     const cFullName = contactRow[AC.CONTACT].displayFullValue;
     const isNowPrimary = contactRow[AC.PRIMARY_CONTACT];
+    contactRow.uniqueId = contactRow.uniqueId || Utils.stringToUniqueId(); // generate for new contacts
     const header = (
       <div>
         <Row key={contactRow.uniqueId}>
