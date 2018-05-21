@@ -27,6 +27,12 @@ export default class AFCheckbox extends Component {
     this.setState({ value: this.props.value || '' });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.state.value !== nextProps.value) {
+      this.setState({ value: nextProps.value || '' });
+    }
+  }
+
   handleChange(e) {
     const value = e.target.checked;
     this.props.onChange(value);

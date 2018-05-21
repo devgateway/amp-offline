@@ -27,6 +27,10 @@ export default class AFTextArea extends Component {
     this.setState({ value: this.props.value });
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ value: nextProps.value });
+  }
+
   handleChange(e) {
     let value = e.target.value;
     if (value) {
@@ -34,8 +38,7 @@ export default class AFTextArea extends Component {
         value = value.substring(0, this.props.maxLength);
       }
     }
-    this.props.onChange(value ? value.trim() : value);
-    this.setState({ value });
+    this.props.onChange(value);
   }
 
   render() {

@@ -17,6 +17,9 @@ const logger = new Logger('ContactReducer');
 const defaultState = {
   isContactsLoading: false,
   isContactsLoaded: false,
+  isContactLoading: false,
+  isContactLoaded: false,
+  contactError: null,
   isContactManagersLoading: false,
   isContactManagersLoaded: false,
   contactsError: null,

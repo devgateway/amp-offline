@@ -158,6 +158,8 @@ class AFField extends Component {
         return Types.NUMBER;
       case 'date':
         return Types.DATE;
+      case 'boolean':
+        return Types.CHECKBOX;
       default:
         return null;
     }
@@ -267,6 +269,10 @@ class AFField extends Component {
     return <AFLabel value={val} />;
   }
 
+  _isFullyInitialized() {
+    return !!this.context.activityFieldsManager;
+  }
+
   _getValidationState() {
     if (this.state.validationError) {
       return 'error';
@@ -282,7 +288,7 @@ class AFField extends Component {
   }
 
   render() {
-    if (this.fieldExists === false) {
+    if (this.fieldExists === false || !this._isFullyInitialized()) {
       return null;
     }
     const showValidationError = !(this.componentType === Types.LIST_SELECTOR ||

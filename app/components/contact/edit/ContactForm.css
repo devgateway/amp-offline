@@ -1,0 +1,34 @@
+.contactForm > div > div {
+  width: 100%;
+}
+
+.orgsList {
+  width: 100%;
+}
+
+.contactForm .orgsList > div > span > div {
+  border: 1px solid #cccccc;
+  padding: 6px;
+}
+
+.contactForm .entryList {
+  padding: 0;
+  width: 100%;
+}
+
+.entryList > div {
+  width: inherit;
+  float: left;
+}
+
+.emailCol {
+  width: 100%;
+}
+
+.phoneExtensionCol {
+}
+
+.phoneExtension > span > input {
+  width: 100px;
+  margin-left: 6px;
+}

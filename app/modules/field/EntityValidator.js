@@ -23,9 +23,11 @@ import {
   IMPLEMENTATION_LOCATION,
   LOCATIONS,
   ORGANIZATION,
+  PRIMARY_CONTACT,
   PROJECT_TITLE
 } from '../../utils/constants/ActivityConstants';
 import {
+  ACTIVITY_CONTACT_PATHS,
   DO_NOT_HYDRATE_FIELDS_LIST,
   RELATED_ORGS_PATHS
 } from '../../utils/constants/FieldPathConstants';
@@ -438,6 +440,15 @@ export default class EntityValidator {
         }
       });
     }
+    // other custom validation, not yet generically defined through API
+    objects.forEach(obj => {
+      const fieldName = fieldDef.field_name;
+      const hydratedValue = obj[fieldName];
+      if (ACTIVITY_CONTACT_PATHS.includes(fieldName)) {
+        const validationResult = this._isUniquePrimaryContact(hydratedValue, fieldName);
+        this.processValidationResult(this._entity, errors, fieldName, validationResult);
+      }
+    });
   }
 
   _hasLocations() {
@@ -592,5 +603,16 @@ export default class EntityValidator {
       }
     });
     return activityOrgs;
+  }
+
+  _isUniquePrimaryContact(contacts, contactListFieldName) {
+    const isValid = contacts.filter(c => c[PRIMARY_CONTACT]).length < 2;
+    let error = null;
+    if (!isValid) {
+      const pcPath = `${contactListFieldName}~${PRIMARY_CONTACT}`;
+      const primaryContactLabel = this._fieldsManager.getFieldLabelTranslation(pcPath);
+      error = translate('dependencyNotMet').replace('%depName%', primaryContactLabel);
+    }
+    return isValid || error;
   }
 }
