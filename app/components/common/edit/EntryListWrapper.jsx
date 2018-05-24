@@ -43,7 +43,7 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
   onRemove(uniqueId) {
     let { uniqueIdItemPairs } = this.state;
     uniqueIdItemPairs = uniqueIdItemPairs.filter(([uId]) => uId !== uniqueId);
-    this.props.onChange(Object.values(uniqueIdItemPairs));
+    this.props.onChange(this.getItems(uniqueIdItemPairs));
     this.setState({ uniqueIdItemPairs });
   }
 
@@ -55,8 +55,8 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
     return items.map(item => ([Utils.stringToUniqueId('item'), item]));
   }
 
-  getItems() {
-    return this.state.uniqueIdItemPairs.map(([, item]) => item);
+  getItems(uniqueIdItemPairs = this.state.uniqueIdItemPairs) {
+    return uniqueIdItemPairs.map(([, item]) => item);
   }
 
   render() {
