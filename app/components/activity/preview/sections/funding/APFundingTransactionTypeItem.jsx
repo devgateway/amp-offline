@@ -41,7 +41,10 @@ class APFundingTransactionTypeItem extends Component {
     const measure = `${this.props.group.adjType.value} ${this.props.group.trnType.value}`;
     const label = translate(measure);
     const key = this.props.group.adjType.value + this.props.group.trnType.value;
-    return <APLabel label={label} className={styles.header} key={key} />;
+    return (<div>
+      <APLabel label={label} labelClass={styles.header} key={key} />
+      <APLabel label={translate('Exchange Rate')} labelClass={styles.exchange_rate} />
+    </div>);
   }
 
   _drawDetail() {
