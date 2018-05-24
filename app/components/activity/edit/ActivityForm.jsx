@@ -45,7 +45,6 @@ export default class ActivityForm extends Component {
       currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
       currentWorkspaceSettings: PropTypes.object
     }).isRequired,
-    userReducer: PropTypes.object.isRequired,
     loadActivityForActivityForm: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     saveActivity: PropTypes.func.isRequired,
@@ -111,7 +110,8 @@ export default class ActivityForm extends Component {
     const { isSaving, isGoToDesktop } = this.state;
     if (isSaving && savedActivity) {
       if (isGoToDesktop) {
-        this.props.router.push(`/desktop/${this.props.userReducer.teamMember.id}`);
+        this.activity = null;
+        this.props.router.push('/desktop/current');
         return;
       } else {
         this.setState({ isSaving: false });

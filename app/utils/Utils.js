@@ -81,6 +81,16 @@ const Utils = {
   },
 
   /**
+   * Converts a list of objects (e.g. from DB query) to a Map by specified unique key (e.g. usually id)
+   * @param listOfMap
+   * @param key (optional) the key to map by. Default is 'id'.
+   * @return {Map}
+   */
+  toMapByKey(listOfMap, key = 'id') {
+    return listOfMap.reduce((acc, val) => acc.set(val[key], val), new Map());
+  },
+
+  /**
    * Wait for the specified timeout
    * @param timeout in milliseconds
    * @return {Promise}

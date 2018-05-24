@@ -75,6 +75,9 @@ const ContactHelper = {
     if (!contact.id) {
       contact.id = contact[CLIENT_CHANGE_ID];
     }
+    if (!contact[INTERNAL_ID]) {
+      contact[INTERNAL_ID] = contact.id;
+    }
     return contact;
   },
 
@@ -91,12 +94,14 @@ const ContactHelper = {
   },
 
   cleanupLocalData(contact) {
+    // TODO AMP-27748: these can be removed once extra fields are ignored by API
     const cleanContact = { ...contact };
     if (ContactHelper.isNewContact(contact)) {
       delete cleanContact.id;
     }
     delete cleanContact[CLIENT_CHANGE_ID];
     delete cleanContact._id;
+    delete cleanContact[INTERNAL_ID];
     return cleanContact;
   },
 

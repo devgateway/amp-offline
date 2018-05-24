@@ -51,10 +51,11 @@ class ContactForm extends Component {
   }
 
   getChildContext() {
+    const { contact } = this.state;
     return {
       ...this.context,
       activityFieldsManager: this.context.contactReducer.contactFieldsManager,
-      activityValidator: this.contactValidator,
+      activityValidator: contact && contact[CC.TMP_ENTITY_VALIDATOR],
     };
   }
 
@@ -73,6 +74,7 @@ class ContactForm extends Component {
    */
   onUpdate(contact) {
     contact[CC.TMP_FORM_ID] = this._formId;
+    contact[CC.TMP_ENTITY_VALIDATOR].entity = contact;
   }
 
   /**
@@ -88,15 +90,12 @@ class ContactForm extends Component {
   }
 
   init(context) {
-    const { contactFieldsManager, contactsByIds } = context.contactReducer;
+    const { contactsByIds } = context.contactReducer;
     const contact = contactsByIds[this.props.contactId];
     const hydratedContact = contact && contact[CC.TMP_HYDRATED] ? contact : null;
     if (hydratedContact) {
       this._initLists(hydratedContact);
       this.setState({ contact: hydratedContact, reloading: false });
-    }
-    if (contactFieldsManager && !this.contactValidator && hydratedContact) {
-      this.contactValidator = new EntityValidator(hydratedContact, contactFieldsManager, []);
     }
   }
 
@@ -112,7 +111,7 @@ class ContactForm extends Component {
 
   render() {
     const { contact, reloading } = this.state;
-    if (!contact || !this.contactValidator) {
+    if (!contact) {
       return null;
     }
 

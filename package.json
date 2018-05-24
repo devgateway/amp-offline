@@ -169,6 +169,7 @@
     "electron-mocha": "3.4.0",
     "electron-updater": "2.12.1",
     "env-cmd": "^7.0.0",
+    "fast-deep-equal": "^2.0.1",
     "font-awesome": "^4.7.0",
     "fs-extra": "^2.0.0",
     "i18next": "^4.1.1",

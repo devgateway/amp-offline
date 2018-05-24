@@ -55,3 +55,5 @@ export const ON_BUDGET = 'On Budget';
 
 export const INTERNATIONAL = 'International';
 export const COUNTRY = 'Country';
+
+export const TMP_ENTITY_VALIDATOR = 'entity-validator';
