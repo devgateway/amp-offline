@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal';
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
@@ -106,17 +107,35 @@ const _mapById = (contacts) => {
 };
 
 const _dehydrateAndSaveContacts = (contacts, teamMemberId, fieldsDef) => {
+  const ch = new ContactHydrator(fieldsDef);
+  _cleanupLocalFields(contacts);
+  return ch.dehydrateEntities(contacts)
+    .then(() => ContactHelper.findContactsByIds(contacts.map(c => c.id)))
+    .then(Utils.toMapByKey)
+    .then(cMap => _getOnlyModifiedContacts(contacts, cMap, teamMemberId))
+    .then(ContactHelper.saveOrUpdateContactCollection);
+};
+
+// TODO AMP-27748 until contacts API rejects extra fields (contrary to activity API), we are cleaning them up
+const _cleanupLocalFields = (contacts) => {
   contacts.forEach(c => {
-    if (ContactHelper.isNewContact(c)) {
+    CC.TMP_FIELDS.forEach(tmpProp => delete c[tmpProp]);
+    (c[CC.ORGANISATION_CONTACTS] || []).forEach(o => delete o[CC.TMP_UNIQUE_ID]);
+  });
+  return contacts;
+};
+
+const _getOnlyModifiedContacts = (contacts, dbContactsMapById, teamMemberId) => contacts.filter(c => {
+  const dbC = dbContactsMapById.get(c.id);
+  const toUpdate = !dbC || !equal(c, dbC);
+  if (toUpdate) {
+    if (ContactHelper.isNewContact(c) && !c[CC.CREATOR]) {
       c[CC.CREATOR] = teamMemberId;
     }
     ContactHelper.stampClientChange(c);
-    CC.TMP_FIELDS.forEach(tmpProp => delete c[tmpProp]);
-  });
-  const ch = new ContactHydrator(fieldsDef);
-  return ch.dehydrateEntities(contacts)
-    .then(ContactHelper.saveOrUpdateContactCollection);
-};
+  }
+  return toUpdate;
+});
 
 export const _getActivityContacts = (activity, contactsById) =>
   getActivityContactIds(activity).map(id => contactsById[id]);
