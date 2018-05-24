@@ -45,7 +45,6 @@ export default class ActivityForm extends Component {
       currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
       currentWorkspaceSettings: PropTypes.object
     }).isRequired,
-    userReducer: PropTypes.object.isRequired,
     loadActivityForActivityForm: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     saveActivity: PropTypes.func.isRequired,
