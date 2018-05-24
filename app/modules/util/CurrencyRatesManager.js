@@ -66,10 +66,10 @@ export default class CurrencyRatesManager {
   convertTransactionAmountToCurrency(fundingDetail, currencyTo) {
     const fixedExchangeRate = fundingDetail[AC.FIXED_EXCHANGE_RATE];
     const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
-    if (fixedExchangeRate) {
+    const currencyFrom = fundingDetail[AC.CURRENCY].value;
+    if (fixedExchangeRate && currencyTo !== currencyFrom) {
       return transactionAmount / fixedExchangeRate;
     } else {
-      const currencyFrom = fundingDetail[AC.CURRENCY].value;
       const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
       const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate);
       return transactionAmount * currencyRate;

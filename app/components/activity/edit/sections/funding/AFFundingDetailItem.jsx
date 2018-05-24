@@ -63,6 +63,11 @@ export default class AFFundingDetailItem extends Component {
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} />
           </Col>
           <Col md={3} lg={3}>
+            <AFField
+              parent={this.props.fundingDetail}
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`} />
+          </Col>
+          <Col md={3} lg={3}>
             <a
               onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
               className={styles.delete} href={null} />
