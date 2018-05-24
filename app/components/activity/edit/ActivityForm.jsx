@@ -111,7 +111,8 @@ export default class ActivityForm extends Component {
     const { isSaving, isGoToDesktop } = this.state;
     if (isSaving && savedActivity) {
       if (isGoToDesktop) {
-        this.props.router.push(`/desktop/${this.props.userReducer.teamMember.id}`);
+        this.activity = null;
+        this.props.router.push('/desktop/current');
         return;
       } else {
         this.setState({ isSaving: false });
