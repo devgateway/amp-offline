@@ -39,7 +39,7 @@ import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
 import FieldsManager from './FieldsManager';
-import { ON_BUDGET } from '../../utils/constants/ValueConstants';
+import { ON_BUDGET, TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 import { CLIENT_CHANGE_ID_PREFIX } from '../../utils/constants/ContactConstants';
 
@@ -50,14 +50,15 @@ const logger = new Logger('EntityValidator');
  * @author Nadejda Mandrescu
  */
 export default class EntityValidator {
-  constructor(entity, fieldsManager: FieldsManager, otherProjectTitles: Array) {
+  constructor(entity, fieldsManager: FieldsManager, otherProjectTitles: Array,
+    excludedFields = [APPROVAL_DATE, APPROVAL_STATUS, APPROVED_BY]) {
     logger.log('constructor');
     this._entity = entity;
     this._fieldsDef = fieldsManager.fieldsDef;
     this._possibleValuesMap = fieldsManager.possibleValuesMap;
     this._fieldsManager = fieldsManager;
     this._otherProjectTitles = new Set(otherProjectTitles);
-    this.excludedFields = [APPROVAL_DATE, APPROVAL_STATUS, APPROVED_BY];
+    this.excludedFields = excludedFields || [];
   }
 
   set entity(entity) {
@@ -83,7 +84,7 @@ export default class EntityValidator {
         this._validateDependencies(objects, errors, fieldPath, fd);
         // once required fields are checked, exclude objects without values from further validation
         const objectsWithFDValues = objects.filter(o => o[fd.field_name] !== null && o[fd.field_name] !== undefined);
-        this._validateValue(objectsWithFDValues, fd, fieldPath, isList, errors);
+        this._validateValue(objectsWithFDValues, asDraft, fd, fieldPath, isList, errors);
         if (isList && fd.importable === true) {
           let childrenObj = objectsWithFDValues.map(o => o[fd.field_name]);
           // isList === either an actual list or a complex object
@@ -207,7 +208,7 @@ export default class EntityValidator {
     this.invalidDate = translate('invalidDate').replace('%gs-format%', gsDateFormat);
   }
 
-  _validateValue(objects, fieldDef, fieldPath, isList, errors) {
+  _validateValue(objects, asDraft, fieldDef, fieldPath, isList, errors) {
     logger.log('_validateValue');
     const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath);
     const wasHydrated = this._wasHydrated(fieldPath);
@@ -262,6 +263,14 @@ export default class EntityValidator {
       } else if (fieldDef.field_type === 'long') {
         if (!Number.isInteger(value) && !this._isAllowInvalidNumber(value, fieldPath)) {
           this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
+        } else {
+          const hValue = obj[fieldDef.field_name];
+          const entityValidator = hValue[VC_TMP_ENTITY_VALIDATOR];
+          if (entityValidator) {
+            let validationError = entityValidator.areAllConstraintsMet(entityValidator._entity, asDraft);
+            validationError = validationError.length ? validationError.join('. ') : null;
+            this.processValidationResult(obj, errors, fieldPath, validationError);
+          }
         }
       } else if (fieldDef.field_type === 'float') {
         if (value !== +value) {
@@ -308,7 +317,8 @@ export default class EntityValidator {
    */
   _isAllowInvalidNumber(value, fieldPath) {
     const parts = fieldPath.split('~');
-    const isContactId = parts.length === 2 && ACTIVITY_CONTACT_PATHS.includes(parts[0]) && CONTACT === parts[1];
+    const isContactId = (parts.length === 2 && ACTIVITY_CONTACT_PATHS.includes(parts[0]) && CONTACT === parts[1]) ||
+      (parts.length === 1 && this.excludedFields.includes(parts[0]));
     if (isContactId && `${value}`.startsWith(CLIENT_CHANGE_ID_PREFIX)) {
       return true;
     }

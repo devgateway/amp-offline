@@ -79,7 +79,7 @@ class AFContacts extends Component {
   }
 
   onAdd(activityContactsField) {
-    const activityContact = buildNewActivityContact();
+    const activityContact = buildNewActivityContact(this.props.contactReducer.contactFieldsManager);
     this.context.activity[activityContactsField].push(activityContact);
     this.props.updateContact(activityContact[AC.CONTACT]);
   }
