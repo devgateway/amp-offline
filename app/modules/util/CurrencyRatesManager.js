@@ -5,6 +5,7 @@ import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER, RATE_CURRENCY_NOT_FOUND } from '.
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
 import { formatDateForCurrencyRates } from '../../utils/DateUtils';
 import * as AC from '../../utils/constants/ActivityConstants';
+import { FIXED_EXCHANGE_RATE } from '../../utils/constants/ActivityConstants';
 
 export default class CurrencyRatesManager {
   constructor(currencyRates, baseCurrency) {
@@ -63,11 +64,16 @@ export default class CurrencyRatesManager {
   }
 
   convertTransactionAmountToCurrency(fundingDetail, currencyTo) {
-    const currencyFrom = fundingDetail[AC.CURRENCY].value;
-    const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
+    const fixedExchangeRate = fundingDetail[AC.FIXED_EXCHANGE_RATE];
     const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
-    const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate);
-    return transactionAmount * currencyRate;
+    if (fixedExchangeRate) {
+      return transactionAmount / fixedExchangeRate;
+    } else {
+      const currencyFrom = fundingDetail[AC.CURRENCY].value;
+      const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
+      const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate);
+      return transactionAmount * currencyRate;
+    }
   }
 
   getExchangeRate(currenciesToSearch, timeDateToFind) {
