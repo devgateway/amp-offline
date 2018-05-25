@@ -5,7 +5,6 @@ import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER, RATE_CURRENCY_NOT_FOUND } from '.
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
 import { formatDateForCurrencyRates } from '../../utils/DateUtils';
 import * as AC from '../../utils/constants/ActivityConstants';
-import { FIXED_EXCHANGE_RATE } from '../../utils/constants/ActivityConstants';
 
 export default class CurrencyRatesManager {
   constructor(currencyRates, baseCurrency) {
