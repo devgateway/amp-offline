@@ -109,8 +109,7 @@ export default class CurrencyRatesManager {
     );
     if (rateFromToBase && rateBaseToTo) {
       // if we have both currencies we just return the product of ech rate
-      return this.getExchangeRate(rateFromToBase, timeDateToFind)
-        * this.getExchangeRate(rateBaseToTo, timeDateToFind);
+      return this.getExchangeRate(rateFromToBase, timeDateToFind) * this.getExchangeRate(rateBaseToTo, timeDateToFind);
     } else if (rateFromToBase) {
       // if either of them is not found we try to find the inverse
       // we get the inverse of rateBaseToTo
