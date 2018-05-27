@@ -25,17 +25,16 @@ export default class CurrencyRatesManager {
     if (currencyFrom === currencyTo) {
       return RATE_SAME_CURRENCY;
     }
+    if (fixedExchangeRate && fixedExchangeRate > 0) {
+      return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
+    }
     const timeDateToFind = (new Date(`${dateToFind} ${CURRENCY_HOUR}`)).getTime();
     if (this._currencyRates) {
       const currenciesToSearchDirect = this._currencyRates.find((item) =>
         item[CURRENCY_PAIR].from === currencyFrom && item[CURRENCY_PAIR].to === currencyTo
       );
       if (currenciesToSearchDirect) {
-        if (fixedExchangeRate && fixedExchangeRate > 0) {
-          return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
-        } else {
-          return this.getExchangeRate(currenciesToSearchDirect, timeDateToFind);
-        }
+        return this.getExchangeRate(currenciesToSearchDirect, timeDateToFind);
       } else {
         // direct not found
         const currenciesToSearchInverse =
@@ -43,13 +42,7 @@ export default class CurrencyRatesManager {
             item[CURRENCY_PAIR].from === currencyTo && item[CURRENCY_PAIR].to === currencyFrom
           );
         if (currenciesToSearchInverse) {
-          if (fixedExchangeRate && fixedExchangeRate > 0) {
-            return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
-          } else {
-            return 1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind);
-          }
-        } else if (fixedExchangeRate && fixedExchangeRate > 0) {
-          return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
+          return 1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind);
         } else {
           return this.convertViaBaseCurrency(currencyFrom, currencyTo, timeDateToFind);
         }
@@ -117,10 +110,10 @@ export default class CurrencyRatesManager {
     if (rateFromToBase && rateBaseToTo) {
       // if we have both currencies we just return the product of ech rate
       return this.getExchangeRate(rateFromToBase, timeDateToFind)
-              * this.getExchangeRate(rateBaseToTo, timeDateToFind);
+        * this.getExchangeRate(rateBaseToTo, timeDateToFind);
     } else if (rateFromToBase) {
-            // if either of them is not found we try to find the inverse
-            // we get the inverse of rateBaseToTo
+      // if either of them is not found we try to find the inverse
+      // we get the inverse of rateBaseToTo
       const rateToToBase = this._currencyRates.find((item) =>
         item[CURRENCY_PAIR].from === currencyTo && item[CURRENCY_PAIR].to === this._baseCurrency
       );
