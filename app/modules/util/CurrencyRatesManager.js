@@ -21,7 +21,7 @@ export default class CurrencyRatesManager {
    * @param dateToFind date for which we are doing the conversion. It is expected in yyyy-mm-dd
    * @returns {*|Promise.<TResult>}
    */
-  convertCurrency(currencyFrom, currencyTo, dateToFind) {
+  convertCurrency(currencyFrom, currencyTo, dateToFind, fixedExchangeRate) {
     if (currencyFrom === currencyTo) {
       return RATE_SAME_CURRENCY;
     }
@@ -31,7 +31,11 @@ export default class CurrencyRatesManager {
         item[CURRENCY_PAIR].from === currencyFrom && item[CURRENCY_PAIR].to === currencyTo
       );
       if (currenciesToSearchDirect) {
-        return this.getExchangeRate(currenciesToSearchDirect, timeDateToFind);
+        if (fixedExchangeRate && fixedExchangeRate > 0) {
+          return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
+        } else {
+          return this.getExchangeRate(currenciesToSearchDirect, timeDateToFind);
+        }
       } else {
         // direct not found
         const currenciesToSearchInverse =
@@ -39,7 +43,13 @@ export default class CurrencyRatesManager {
             item[CURRENCY_PAIR].from === currencyTo && item[CURRENCY_PAIR].to === currencyFrom
           );
         if (currenciesToSearchInverse) {
-          return 1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind);
+          if (fixedExchangeRate && fixedExchangeRate > 0) {
+            return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
+          } else {
+            return 1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind);
+          }
+        } else if (fixedExchangeRate && fixedExchangeRate > 0) {
+          return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
         } else {
           return this.convertViaBaseCurrency(currencyFrom, currencyTo, timeDateToFind);
         }
@@ -64,15 +74,11 @@ export default class CurrencyRatesManager {
 
   convertTransactionAmountToCurrency(fundingDetail, currencyTo) {
     const fixedExchangeRate = fundingDetail[AC.FIXED_EXCHANGE_RATE];
-    const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
     const currencyFrom = fundingDetail[AC.CURRENCY].value;
-    if (fixedExchangeRate && currencyTo !== currencyFrom) {
-      return transactionAmount / fixedExchangeRate;
-    } else {
-      const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
-      const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate);
-      return transactionAmount * currencyRate;
-    }
+    const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
+    const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
+    const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate, fixedExchangeRate);
+    return transactionAmount * currencyRate;
   }
 
   getExchangeRate(currenciesToSearch, timeDateToFind) {
