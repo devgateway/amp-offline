@@ -22,7 +22,8 @@ export default class AFFundingDetailItem extends Component {
 
   static propTypes = {
     fundingDetail: PropTypes.object.isRequired,
-    removeFundingDetailItem: PropTypes.func.isRequired
+    removeFundingDetailItem: PropTypes.func.isRequired,
+    funding: PropTypes.object.isRequired
   };
 
   render() {
@@ -32,6 +33,7 @@ export default class AFFundingDetailItem extends Component {
         .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
       this.props.fundingDetail[AC.CURRENCY] = currency[0];
     }
+    const orgGroupName = this.props.funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
     return (<div className={afStyles.full_width}>
       <Grid className={styles.grid}>
         <Row>
@@ -67,7 +69,8 @@ export default class AFFundingDetailItem extends Component {
           <Col md={6} lg={6}>
             <AFField
               parent={this.props.fundingDetail}
-              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`} defaultValueAsEmptyObject />
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`} defaultValueAsEmptyObject
+              filter={[{ value: orgGroupName, path: 'extra_info~organization_group' }]} />
           </Col>
           <Col md={3} lg={3}>
             <a
