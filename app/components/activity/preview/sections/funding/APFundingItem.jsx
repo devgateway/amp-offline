@@ -27,6 +27,16 @@ class APFundingItem extends Component {
     logger.log('constructor');
   }
 
+  insertPledgeRow() {
+    if (this.props.item.pledge) {
+      return (<tr className={styles.row}>
+        <td className={styles.left_text}>{translate(this.props.item[AC.PLEDGE].value)}</td>
+      </tr>);
+    } else {
+      return null;
+    }
+  }
+
   render() {
     logger.log('render');
     const convertedAmount = this.context.currencyRatesManager.convertTransactionAmountToCurrency(this.props.item,
@@ -40,6 +50,7 @@ class APFundingItem extends Component {
             className={styles.right_text}>
             {`${rawNumberToFormattedString(convertedAmount)} ${this.props.wsCurrency}`}</td>
         </tr>
+        {this.insertPledgeRow()}
       </tbody>);
   }
 }
