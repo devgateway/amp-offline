@@ -28,3 +28,7 @@
     background-color: inherit;
     white-space: pre;
 }
+
+.item:hover {
+    background-color: lightgrey;
+}
