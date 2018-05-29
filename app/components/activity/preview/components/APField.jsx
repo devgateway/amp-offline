@@ -44,7 +44,13 @@ export default class APField extends Component {
   _getValue() {
     const classNames = `${this.props.fieldValueClass} ${this.displayClass}`;
     const value = this.props.value ? this.props.value : translate('No Data');
-    const displayValue = (this.props.inline && this.props.value instanceof String) ? `${value} ` : value;
+    let displayValue;
+    if (Array.isArray(value) && value.length > 1 && typeof value[0] === 'string') {
+      // Improve the display of simple array of strings.
+      displayValue = value.map((i) => (` ${i}`)).toString();
+    } else {
+      displayValue = (this.props.inline && this.props.value instanceof String) ? `${value} ` : value;
+    }
     if (this.props.useInnerHTML) {
       return <div className={classNames} dangerouslySetInnerHTML={{ __html: displayValue }} />;
     } else {

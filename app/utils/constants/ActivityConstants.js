@@ -164,6 +164,7 @@ export const MOFED_CONTACT = 'mofed_contact';
 export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing_executing_agency_contact';
 export const CONTACT = 'contact';
 export const PRIMARY_CONTACT = 'primary_contact';
+export const FY = 'fy';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
