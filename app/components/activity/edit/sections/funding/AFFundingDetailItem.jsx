@@ -84,7 +84,7 @@ export default class AFFundingDetailItem extends Component {
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
               fmPath={fixedExchangeRateFMPath}
-              min={0} />
+              bigger={0} />
           </Col>
           <Col md={3} lg={3}>
             <a

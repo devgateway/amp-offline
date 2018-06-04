@@ -48,8 +48,11 @@ class AFField extends Component {
     inline: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
     type: PropTypes.string,
-    max: PropTypes.number,
-    min: PropTypes.number,
+    biggerOrEqual: PropTypes.number,
+    bigger: PropTypes.number,
+    smallerOrEqual: PropTypes.number,
+    smaller: PropTypes.number,
+    precision: PropTypes.number,
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
@@ -249,8 +252,11 @@ class AFField extends Component {
 
   _getNumber() {
     return (<AFNumber
-      value={this.state.value} onChange={this.onChange} max={this.props.max}
-      min={this.props.min} className={this.props.className} />);
+      value={this.state.value} onChange={this.onChange}
+      bigger={this.props.bigger} biggerOrEqual={this.props.biggerOrEqual}
+      smaller={this.props.smaller} smallerOrEqual={this.props.smallerOrEqual}
+      precision={this.props.precision}
+      className={this.props.className} />);
   }
 
   _getDate() {

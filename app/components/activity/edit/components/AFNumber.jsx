@@ -12,10 +12,13 @@ const logger = new Logger('AF number');
 export default class AFNumber extends Component {
   static propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    max: PropTypes.number,
-    min: PropTypes.number,
+    bigger: PropTypes.number,
+    biggerOrEqual: PropTypes.number,
+    smaller: PropTypes.number,
+    smallerOrEqual: PropTypes.number,
     onChange: PropTypes.func,
-    readonly: PropTypes.bool
+    readonly: PropTypes.bool,
+    precision: PropTypes.number
     // TODO: Add number check functions.
   };
 
@@ -35,12 +38,20 @@ export default class AFNumber extends Component {
     let validationError = null;
     if (value) {
       const auxValue = Number(value);
-      // TODO move it to ActivityValidator._validateValue once we have API restrictions
-      if (this.props.max !== undefined && auxValue > this.props.max) {
-        validationError = `${translate('Number is bigger than')} ${this.props.max}`;
-      }
-      if (this.props.min !== undefined && auxValue < this.props.min) {
-        validationError = `${translate('Number is smaller than')} ${this.props.min}`;
+      if (!Number.isNaN(auxValue)) {
+        // TODO move it to ActivityValidator._validateValue once we have API restrictions
+        if (this.props.smaller !== undefined && !(auxValue < this.props.smaller)) {
+          validationError = `${translate('Number has to be smaller than')} ${this.props.smaller}`;
+        }
+        if (this.props.smallerOrEqual !== undefined && !(auxValue <= this.props.smallerOrEqual)) {
+          validationError = `${translate('Number has to be smaller or equal than')} ${this.props.smallerOrEqual}`;
+        }
+        if (this.props.bigger !== undefined && !(auxValue > this.props.bigger)) {
+          validationError = `${translate('Number has to be bigger than')} ${this.props.bigger}`;
+        }
+        if (this.props.biggerOrEqual !== undefined && !(auxValue >= this.props.biggerOrEqual)) {
+          validationError = `${translate('Number has to be bigger or equal than')} ${this.props.biggerOrEqual}`;
+        }
       }
     }
     return validationError;
