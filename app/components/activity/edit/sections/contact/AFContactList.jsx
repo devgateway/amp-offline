@@ -9,6 +9,8 @@ import FieldsManager from '../../../../../modules/field/FieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import AFField from '../../components/AFField';
 import * as Utils from '../../../../../utils/Utils';
+import { buildNewActivityContact } from '../../../../../actions/ContactAction';
+import * as entryListStyles from '../../../../common/edit/EntryList.css';
 
 /**
  * AF Contact group list
@@ -21,6 +23,7 @@ export default class AFContactList extends Component {
     activity: PropTypes.object.isRequired,
     contactReducer: PropTypes.object.isRequired,
     filterForUnhydratedByIds: PropTypes.func.isRequired,
+    updateContact: PropTypes.func.isRequired,
   };
 
   static propTypes = {
@@ -57,6 +60,12 @@ export default class AFContactList extends Component {
     contactRow[AC.PRIMARY_CONTACT] = isNowPrimary;
     this.handleEdit(contactRow, AC.PRIMARY_CONTACT);
     this.setState({ values: Array.from(this.state.values) });
+  }
+
+  handleAdd(activityContactsField) {
+    const activityContact = buildNewActivityContact(this.context.contactReducer.contactFieldsManager);
+    this.context.activity[activityContactsField].push(activityContact);
+    this.context.updateContact(activityContact[AC.CONTACT]);
   }
 
   handleEdit(row, fieldName) {
@@ -110,6 +119,13 @@ export default class AFContactList extends Component {
 
   render() {
     const contactForms = this.state.values.map(this.toContactItem);
-    return <Grid className={afStyles.full_width}>{contactForms}</Grid>;
+    return (
+      <span>
+        <div className={[entryListStyles.addButton, styles.addButton].join(' ')}>
+          <a onClick={this.handleAdd.bind(this, this.props.listPath)} href={null} />
+        </div>
+        <Grid className={afStyles.full_width}>{contactForms}</Grid>
+      </span>
+    );
   }
 }
