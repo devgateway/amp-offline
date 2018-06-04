@@ -7,13 +7,11 @@ import * as AC from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_CONTACT_PATHS } from '../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import AFContactList from './contact/AFContactList';
-import { buildNewActivityContact, getActivityContactIds } from '../../../../actions/ContactAction';
+import { getActivityContactIds } from '../../../../actions/ContactAction';
 import AFField from '../components/AFField';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
-import AFLabel from '../components/AFLabel';
-import * as entryListStyles from '../../../common/edit/EntryList.css';
-
+import * as styles from './contact/AFContactList.css';
 
 /**
  * AF Contacts Section
@@ -78,12 +76,6 @@ class AFContacts extends Component {
     }
   }
 
-  onAdd(activityContactsField) {
-    const activityContact = buildNewActivityContact(this.props.contactReducer.contactFieldsManager);
-    this.context.activity[activityContactsField].push(activityContact);
-    this.props.updateContact(activityContact[AC.CONTACT]);
-  }
-
   onChange(activityContactsField) {
     const uniqueAC = [];
     const ids = new Set();
@@ -111,17 +103,12 @@ class AFContacts extends Component {
     const extraParams = {
       listType: AFContactList
     };
-    // TODO in a separate task we'll use translatable labels for contact group/list type
     const contactGroups = ACTIVITY_CONTACT_PATHS
       .filter(acp => this.context.activityFieldsManager.isFieldPathEnabled(acp))
       .map(acp => (
         <div key={acp}>
-          <AFLabel value={acp} />
-          <span className={entryListStyles.addButton}>
-            <a onClick={this.onAdd.bind(this, acp)} href={null} />
-          </span>
           <AFField
-            parent={this.context.activity} showLabel={false} fieldPath={acp} extraParams={extraParams}
+            parent={this.context.activity} fieldPath={acp} extraParams={extraParams} className={styles.subSection}
             onAfterUpdate={this.onChange.bind(this, acp)} />
         </div>
       ));

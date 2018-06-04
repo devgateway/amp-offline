@@ -8,6 +8,7 @@ import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
+import { CONTACT } from '../../../utils/constants/ActivityConstants';
 
 const logger = new Logger('Contacts push sync up manager');
 
@@ -97,16 +98,17 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _updateNewContactToActualIdsInActivities(tmpContactId, newContactId) {
-    const queries = ACTIVITY_CONTACT_PATHS.map(cType => Utils.toMap(cType, { $elemMatch: tmpContactId }));
+    const queries = ACTIVITY_CONTACT_PATHS.map(cType =>
+      Utils.toMap(cType, { $elemMatch: { [CONTACT]: tmpContactId } }));
     const filter = { $or: queries };
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
       activities.forEach(activity => {
         ACTIVITY_CONTACT_PATHS.forEach(cType => {
-          const contacts = activity[cType];
-          const idx = contacts.findIndex(c => c === tmpContactId);
-          if (idx !== -1) {
-            contacts[idx] = newContactId;
-          }
+          (activity[cType] || []).forEach(ac => {
+            if (ac[CONTACT] === tmpContactId) {
+              ac[CONTACT] = newContactId;
+            }
+          });
         });
       });
       return ActivityHelper.saveOrUpdateCollection(activities);
