@@ -24,6 +24,7 @@ const getEntryFunc = (id, phone) => (
     <Col lg={4} md={4} className={styles.phoneExtensionCol}>
       <AFField
         parent={phone} fieldPath={`${CC.PHONE}~${CC.EXTENSION_VALUE}`} inline type={Types.INPUT_TYPE}
+        customLabel="Extension"
         className={styles.phoneExtension} />
     </Col>
   </Row>

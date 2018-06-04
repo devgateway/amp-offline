@@ -11,6 +11,8 @@ import {
   CONTACT_MANAGERS_FULFILLED,
   CONTACT_MANAGERS_REJECTED, CONTACTS_SAVE_PENDING, CONTACTS_SAVE_FULFILLED, CONTACTS_SAVE_REJECTED,
 } from '../actions/ContactAction';
+import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
+import FieldsManager from '../modules/field/FieldsManager';
 
 const logger = new Logger('ContactReducer');
 
@@ -124,6 +126,15 @@ const contactReducer = (state = defaultState, action: Object) => {
       return { ...state, isContactsSaving: false, isContactsSaved: true };
     case CONTACTS_SAVE_REJECTED:
       return { ...state, isContactsSaving: false, isContactsSaved: false, saveError: action.payload };
+    case STATE_CHANGE_LANGUAGE: {
+      let contactFieldsManager = state.contactFieldsManager;
+      if (contactFieldsManager) {
+        // we no longer will use the previous contactFieldsManager, thus shallow clone is acceptable
+        contactFieldsManager = FieldsManager.clone(contactFieldsManager);
+        contactFieldsManager.currentLanguageCode = action.actionData;
+      }
+      return { ...state };
+    }
     default:
       return state;
   }
