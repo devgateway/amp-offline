@@ -48,6 +48,7 @@ class APFundingOrganizationSection extends Component {
       true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
       true, null, false, funding));
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.DONOR_OBJECTIVE]}`, true, null, false, funding));
 
     const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
     return tableContent;
