@@ -13,8 +13,8 @@ import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import Logger from '../../util/LoggerManager';
-import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
 import ContactHelper from '../../helpers/ContactHelper';
+import { getActivityContactIds } from '../../../actions/ContactAction';
 
 const logger = new Logger('Activity push to AMP manager');
 
@@ -165,7 +165,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     logger.log('_pushOrRejectActivityClientSide');
     return this._getUnsyncedContacts(activity).then(unsyncedContacts => {
       if (unsyncedContacts.length) {
-        const cNames = unsyncedContacts.map(c => `${c[CC.NAME]} ${c[CC.LAST_NAME]}`).join(', ');
+        const cNames = unsyncedContacts.map(c => `"${c[CC.NAME]} ${c[CC.LAST_NAME]}"`).join(', ');
         const error = translate('rejectActivityWhenContactUnsynced').replace('%contacts%', cNames);
         return this._processPushResult({ activity, error });
       }
@@ -189,17 +189,9 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _getUnsyncedContacts(activity) {
-    const unsyncedContacts = [];
-    ACTIVITY_CONTACT_PATHS.forEach(cType => {
-      const contacts = activity[cType];
-      if (contacts && contacts.length) {
-        unsyncedContacts.push(...contacts.filter(c => ContactHelper.isModifiedOnClient(c)));
-      }
-    });
-    if (unsyncedContacts.length) {
-      return ContactHelper.findContactsByIds(unsyncedContacts);
-    }
-    return Promise.resolve(unsyncedContacts);
+    const contactIds = getActivityContactIds(activity);
+    return ContactHelper.findContactsByIds(contactIds)
+      .then(contacts => contacts.filter(c => ContactHelper.isModifiedOnClient(c)));
   }
 
   /**
