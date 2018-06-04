@@ -23,5 +23,8 @@ export const TMP_FORM_ID = 'form-id';
 export const TMP_UNIQUE_ID = 'uniqueId';
 export const TMP_HYDRATED = 'hydrated';
 export const TMP_ERRORS = 'errors';
+export const TMP_CONTACT_LOADED = 'isContactLoaded';
+export const TMP_CONTACT_LOADING = 'isContactLoading';
 export const TMP_ENTITY_VALIDATOR = VC_TMP_ENTITY_VALIDATOR;
-export const TMP_FIELDS = [TMP_FORM_ID, TMP_UNIQUE_ID, TMP_HYDRATED, TMP_ERRORS, TMP_ENTITY_VALIDATOR];
+export const TMP_FIELDS = [TMP_FORM_ID, TMP_UNIQUE_ID, TMP_HYDRATED, TMP_ERRORS, TMP_ENTITY_VALIDATOR,
+  TMP_CONTACT_LOADED, TMP_CONTACT_LOADING];
