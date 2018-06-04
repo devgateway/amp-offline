@@ -17,8 +17,7 @@ export default class AFNumber extends Component {
     smaller: PropTypes.number,
     smallerOrEqual: PropTypes.number,
     onChange: PropTypes.func,
-    readonly: PropTypes.bool,
-    precision: PropTypes.number
+    readonly: PropTypes.bool
     // TODO: Add number check functions.
   };
 
@@ -68,9 +67,19 @@ export default class AFNumber extends Component {
     this.setState({ value });
   }
 
+  handleBlur(e) {
+    /* The problem with on field validations is we cant prevent the user from leaving the control, so in case of
+    validation of "bigger" that wont be enforced on EntityValidator and the user could save bad data, so we
+    clear the control when leaving. */
+    if (this.validate(this.state.value)) {
+      e.target.value = '';
+      this.handleChange(e);
+    }
+  }
+
   render() {
     return (<FormControl
       componentClass="input" value={this.state.value} onChange={this.handleChange.bind(this)}
-      disabled={this.props.readonly || false} />);
+      disabled={this.props.readonly || false} onBlur={this.handleBlur.bind(this)} />);
   }
 }
