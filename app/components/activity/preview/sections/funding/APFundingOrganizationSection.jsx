@@ -48,10 +48,16 @@ class APFundingOrganizationSection extends Component {
       true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
       true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.DONOR_OBJECTIVE]}`, true, null, false, funding));
 
     const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
     return tableContent;
+  }
+
+  _buildDonorObjectiveTable() {
+    const content = [];
+    const { buildSimpleField, funding } = this.props;
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.DONOR_OBJECTIVE]}`, true, null, false, funding));
+    return Tablify.addRows(content, 1);
   }
 
   _buildFundingDetailSection() {
@@ -106,6 +112,9 @@ class APFundingOrganizationSection extends Component {
       <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
       <table className={styles.two_box_table}>
         <tbody>{this._buildDonorInfo()}</tbody>
+      </table>
+      <table className={styles.two_box_table}>
+        <tbody>{this._buildDonorObjectiveTable()}</tbody>
       </table>
       <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
