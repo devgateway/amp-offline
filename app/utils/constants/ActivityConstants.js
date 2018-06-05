@@ -201,13 +201,16 @@ export const AP_SECTION_IDS =
       value: 'Related Organizations',
       fmPath: FMC.ACTIVITY_ORGANIZATIONS
     },
-    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES }];
+    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES },
+    { key: 'APContact', hash: '#APContact', value: 'Contact Information', fmPath: FMC.ACTIVITY_CONTACT },
+  ];
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;
 export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
+export const ACTIVITY_CONTACT_COLS = 2;
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

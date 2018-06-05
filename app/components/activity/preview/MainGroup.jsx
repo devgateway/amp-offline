@@ -14,6 +14,7 @@ import Logger from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
 import APRelatedOrganizations from './sections/APRelatedOrganizations';
 import APIssues from './sections/issues/APIssues';
+import APContact from './sections/APContact';
 
 const logger = new Logger('AP Main group');
 
@@ -25,7 +26,7 @@ export default class MainGroup extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   render() {
@@ -57,6 +58,9 @@ export default class MainGroup extends Component {
         fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FMC.ACTIVITY_ORGANIZATIONS}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APIssues sectionPath={AC.ISSUES} />
+      <APContact
+        fieldNameClass={styles.hidden} fieldValueClass={styles.box_field_value_tight}
+        columns={AC.ACTIVITY_CONTACT_COLS} fmPath={FMC.ACTIVITY_CONTACT} />
     </div>);
   }
 }
