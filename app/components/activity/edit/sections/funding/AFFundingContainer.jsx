@@ -111,6 +111,7 @@ export default class AFFundingContainer extends Component {
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem} />
+      <AFField parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.DONOR_OBJECTIVE}`} type={Types.TEXT_AREA} />
     </div>);
   }
 }
