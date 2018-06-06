@@ -89,6 +89,47 @@ class AFFunding extends Component {
       this.setState({ fundingList: newFundingList });
       // Needed for new activities or funding is not added.
       this.context.activity.fundings = newFundingList;
+
+      this._addDonorToOrgRoleList(value._id, fundingItem[AC.SOURCE_ROLE]);
+    }
+  }
+
+  /* Manually add the selected organization to activity.donor_organization or activity.execution_agency, etc
+   (instead of activity.organization).
+   NOTE: this will need more testing if we add the functionality to choose the org type + org. */
+  _addDonorToOrgRoleList(donorId, role) {
+    let sourceRolePath = '';
+    const roleValue = role ? role.value : null;
+    switch (roleValue) {
+      case VC.DONOR_AGENCY:
+        sourceRolePath = AC.DONOR_ORGANIZATION;
+        break;
+      case VC.BENEFICIARY_AGENCY:
+        sourceRolePath = AC.BENEFICIARY_AGENCY;
+        break;
+      case VC.EXECUTING_AGENCY:
+        sourceRolePath = AC.EXECUTING_AGENCY;
+        break;
+      case VC.CONTRACTING_AGENCY:
+        sourceRolePath = AC.CONTRACTING_AGENCY;
+        break;
+      case VC.IMPLEMENTING_AGENCY:
+        sourceRolePath = AC.IMPLEMENTING_AGENCY;
+        break;
+      case VC.RESPONSIBLE_ORGANIZATION:
+        sourceRolePath = AC.RESPONSIBLE_ORGANIZATION;
+        break;
+      default:
+        // This is the case when SOURCE_ROLE is disabled.
+        sourceRolePath = AC.DONOR_ORGANIZATION;
+        break;
+    }
+    if (!this.context.activity[sourceRolePath]) {
+      // Initialize if necessary.
+      this.context.activity[sourceRolePath] = [];
+    }
+    if (this.context.activity[sourceRolePath].filter(o => (o.organization.id === donorId)).length === 0) {
+      this.context.activity[sourceRolePath].push({ organization: { id: donorId } });
     }
   }
 
