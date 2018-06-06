@@ -8,6 +8,9 @@ import APFundingTotalItem from './APFundingTotalItem';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import APLabel from '../../components/APLabel';
 import Utils from '../../../../../utils/Utils';
+import FeatureManager from '../../../../../modules/util/FeatureManager';
+import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
 
 const logger = new Logger('AP Funding transaction type item');
 
@@ -41,9 +44,24 @@ class APFundingTransactionTypeItem extends Component {
     const measure = `${this.props.group.adjType.value} ${this.props.group.trnType.value}`;
     const label = translate(measure);
     const key = this.props.group.adjType.value + this.props.group.trnType.value;
+    let fixedExchangeRateFMPath;
+    switch (this.props.group.trnType.value) {
+      case VC.COMMITMENTS:
+        fixedExchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
+        break;
+      case VC.DISBURSEMENTS:
+        fixedExchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
+        break;
+      case VC.EXPENDITURES:
+        fixedExchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
+        break;
+      default:
+        break;
+    }
     return (<div>
       <APLabel label={label} labelClass={styles.header} key={key} />
-      <APLabel label={translate('Exchange Rate')} labelClass={styles.exchange_rate} />
+      {FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
+        <APLabel label={translate('Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
     </div>);
   }
 
