@@ -70,8 +70,8 @@ class AFFunding extends Component {
     if (value) {
       const fundingItem = {};
       fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
-        id: value._id,
-        value: value._value,
+        id: value.id,
+        value: value.value,
         extra_info: value.extra_info,
         'translated-value': value['translated-value']
       };
@@ -90,7 +90,7 @@ class AFFunding extends Component {
       // Needed for new activities or funding is not added.
       this.context.activity.fundings = newFundingList;
 
-      this._addDonorToOrgRoleList(value._id, fundingItem[AC.SOURCE_ROLE]);
+      this._addDonorToOrgRoleList(value.id, fundingItem[AC.SOURCE_ROLE]);
     }
   }
 
@@ -128,7 +128,7 @@ class AFFunding extends Component {
       // Initialize if necessary.
       this.context.activity[sourceRolePath] = [];
     }
-    if (this.context.activity[sourceRolePath].filter(o => (o.organization.id === donorId)).length === 0) {
+    if (this.context.activity[sourceRolePath].some(o => (o.organization.id === donorId))) {
       this.context.activity[sourceRolePath].push({ organization: { id: donorId } });
     }
   }
