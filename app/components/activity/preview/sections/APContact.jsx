@@ -70,11 +70,13 @@ class APContact extends Component {
           const hydratedC = hydratedContactsByIds[c[CONTACT].id];
           return hydratedC ? this.renderContact(hydratedC) : null;
         });
+        const content = contacts.length ? contacts : this.renderNoContacts();
+        const contentClass = contacts.length ? styles.tableCell : null;
 
         return (
           <div key="contact-group">
             <div key="title" className={styles.sector_title}>{title}</div>
-            <div key="contacts">{contacts.length ? contacts : this.renderNoContacts()}</div>
+            <div key="contacts" className={contentClass}>{content}</div>
           </div>);
       })
       // TODO tablify must not reverses the order

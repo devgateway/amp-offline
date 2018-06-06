@@ -347,6 +347,10 @@
   text-align: right;
 }
 
+.tableCell {
+  padding-left: 10px;
+}
+
 .tableValue {
   width: 100%;
   float: left;
