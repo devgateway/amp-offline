@@ -41,7 +41,8 @@ export default class AFProjectCost extends Component {
         <Row>
           <Col md={5} lg={5} >
             <AFField
-              parent={this.props.activity} fieldPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} type={AF.NUMBER} bigger={0} />
+              parent={this.props.activity} fieldPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} type={AF.NUMBER}
+              extraParams={{ bigger: 0 }} />
           </Col>
           <Col md={5} lg={5} >
             <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_COOPERATION} />

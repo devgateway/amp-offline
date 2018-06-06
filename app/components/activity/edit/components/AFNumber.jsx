@@ -12,12 +12,9 @@ const logger = new Logger('AF number');
 export default class AFNumber extends Component {
   static propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    bigger: PropTypes.number,
-    biggerOrEqual: PropTypes.number,
-    smaller: PropTypes.number,
-    smallerOrEqual: PropTypes.number,
     onChange: PropTypes.func,
-    readonly: PropTypes.bool
+    readonly: PropTypes.bool,
+    extraParams: PropTypes.object
     // TODO: Add number check functions.
   };
 
@@ -34,22 +31,23 @@ export default class AFNumber extends Component {
   }
 
   validate(value) {
+    const params = this.props.extraParams || {};
     let validationError = null;
     if (value) {
       const auxValue = Number(value);
       if (!Number.isNaN(auxValue)) {
         // TODO move it to ActivityValidator._validateValue once we have API restrictions
-        if (this.props.smaller !== undefined && !(auxValue < this.props.smaller)) {
-          validationError = `${translate('Number has to be smaller than')} ${this.props.smaller}`;
+        if (params.smaller !== undefined && !(auxValue < params.smaller)) {
+          validationError = `${translate('Number has to be smaller than')} ${params.smaller}`;
         }
-        if (this.props.smallerOrEqual !== undefined && !(auxValue <= this.props.smallerOrEqual)) {
-          validationError = `${translate('Number has to be smaller or equal than')} ${this.props.smallerOrEqual}`;
+        if (params.smallerOrEqual !== undefined && !(auxValue <= params.smallerOrEqual)) {
+          validationError = `${translate('Number has to be smaller or equal than')} ${params.smallerOrEqual}`;
         }
-        if (this.props.bigger !== undefined && !(auxValue > this.props.bigger)) {
-          validationError = `${translate('Number has to be bigger than')} ${this.props.bigger}`;
+        if (params.bigger !== undefined && !(auxValue > params.bigger)) {
+          validationError = `${translate('Number has to be bigger than')} ${params.bigger}`;
         }
-        if (this.props.biggerOrEqual !== undefined && !(auxValue >= this.props.biggerOrEqual)) {
-          validationError = `${translate('Number has to be bigger or equal than')} ${this.props.biggerOrEqual}`;
+        if (params.biggerOrEqual !== undefined && !(auxValue >= params.biggerOrEqual)) {
+          validationError = `${translate('Number has to be bigger or equal than')} ${params.biggerOrEqual}`;
         }
       }
     }
