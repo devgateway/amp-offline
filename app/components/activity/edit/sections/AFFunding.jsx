@@ -128,7 +128,7 @@ class AFFunding extends Component {
       // Initialize if necessary.
       this.context.activity[sourceRolePath] = [];
     }
-    if (this.context.activity[sourceRolePath].some(o => (o.organization.id === donorId))) {
+    if (!this.context.activity[sourceRolePath].some(o => (o.organization.id === donorId))) {
       this.context.activity[sourceRolePath].push({ organization: { id: donorId } });
     }
   }
