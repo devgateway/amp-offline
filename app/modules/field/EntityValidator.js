@@ -179,7 +179,9 @@ export default class EntityValidator {
 
   _validateRequired(value, isRequired) {
     const invalidValue = isRequired &&
-      (value === undefined || value === null || value === '' || (value.length !== undefined && value.length === 0));
+      (value === undefined || value === null ||
+        (value.trim && value.trim() === '') ||
+        (value.length !== undefined && value.length === 0));
     return invalidValue ? translate('requiredField') : true;
   }
 
