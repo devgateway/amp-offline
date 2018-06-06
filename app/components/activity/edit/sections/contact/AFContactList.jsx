@@ -64,6 +64,9 @@ export default class AFContactList extends Component {
 
   handleAdd(activityContactsField) {
     const activityContact = buildNewActivityContact(this.context.contactReducer.contactFieldsManager);
+    if (!this.context.activity[activityContactsField]) {
+      this.context.activity[activityContactsField] = [];
+    }
     this.context.activity[activityContactsField].push(activityContact);
     this.context.updateContact(activityContact[AC.CONTACT]);
   }
