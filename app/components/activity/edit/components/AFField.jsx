@@ -50,7 +50,6 @@ class AFField extends Component {
     inline: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
     type: PropTypes.string,
-    precision: PropTypes.number,
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
@@ -253,7 +252,6 @@ class AFField extends Component {
     return (<AFNumber
       value={this.state.value} onChange={this.onChange}
       extraParams={this.props.extraParams}
-      precision={this.props.precision}
       className={this.props.className} />);
   }
 
