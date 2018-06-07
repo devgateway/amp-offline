@@ -63,9 +63,9 @@ export function loadActivityForActivityPreview(activityId) {
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
         currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
         currentLanguage: ownProps().translationReducer.lang
-      }).then(activity => {
-        ContactAction.loadHydratedContactsForActivity(activity)(dispatch, ownProps);
-        return activity;
+      }).then(data => {
+        ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
+        return data;
       })
     });
 }

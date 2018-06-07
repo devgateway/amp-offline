@@ -102,7 +102,7 @@ class ContactForm extends Component {
   }
 
   _initLists(contact) {
-    [CC.EMAIL, CC.FAX, CC.PHONE].forEach(l => (contact[l] = contact[l] || []));
+    [CC.EMAIL, CC.FAX, CC.PHONE, CC.ORGANISATION_CONTACTS].forEach(l => (contact[l] = contact[l] || []));
   }
 
   handleEntriesChange(fieldName, newItems) {

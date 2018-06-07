@@ -46,6 +46,7 @@ export const FUNDING_DETAILS = 'funding_details';
 export const MODE_OF_PAYMENT = 'mode_of_payment';
 export const FUNDING_CLASSIFICATION_DATE = 'funding_classification_date';
 export const AGREEMENT = 'agreement';
+export const DONOR_OBJECTIVE = 'donor_objective';
 export const AGREEMENT_CODE = 'code';
 export const AGREEMENT_TITLE = 'title';
 export const PROJECT_CATEGORY = 'project_category';
@@ -157,13 +158,13 @@ export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
 export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
 export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
-export const DONOR_CONTACT = 'donor_contact';
-export const PROJECT_COORDINATOR_CONTACT = 'project_coordinator_contact';
-export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact';
-export const MOFED_CONTACT = 'mofed_contact';
-export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing_executing_agency_contact';
+export const DONOR_CONTACT = 'donor_contact_information';
+export const PROJECT_COORDINATOR_CONTACT = 'project_coordinator_contact_information';
+export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact_information';
+export const MOFED_CONTACT = 'mofed_contact_information';
+export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing/executing_agency_contact_information';
 export const CONTACT = 'contact';
-export const PRIMARY_CONTACT = 'primary_contact';
+export const PRIMARY_CONTACT = 'mark_as_primary';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
@@ -201,13 +202,16 @@ export const AP_SECTION_IDS =
       value: 'Related Organizations',
       fmPath: FMC.ACTIVITY_ORGANIZATIONS
     },
-    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES }];
+    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES },
+    { key: 'APContact', hash: '#APContact', value: 'Contact Information', fmPath: FMC.ACTIVITY_CONTACT },
+  ];
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;
 export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
+export const ACTIVITY_CONTACT_COLS = 2;
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));
