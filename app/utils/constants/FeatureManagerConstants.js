@@ -15,6 +15,8 @@ export const ACTIVITY_SAME_AS_PROPOSED_APPROVAL_DATE =
 export const ACTIVITY_IDENTIFICATION = '/Activity Form/Identification';
 export const ACTIVITY_LAST_UPDATED_BY = '/Activity Form/Identification/Activity Last Updated by';
 export const ACTIVITY_LAST_UPDATED_ON = '/Activity Form/Identification/Activity Updated On';
+export const ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID =
+  '/Activity Form/Funding/Funding Group/Funding Item/Disbursements/Disbursements Table/Disbursement Order Id';
 export const ACTIVITY_SECTORS = '/Activity Form/Sectors';
 export const ACTIVITY_PRIMARY_SECTORS = '/Activity Form/Sectors/Primary Sectors';
 export const ACTIVITY_SECONDARY_SECTORS = '/Activity Form/Sectors/Secondary Sectors';
