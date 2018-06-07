@@ -4,7 +4,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
@@ -58,14 +60,17 @@ export default class AFFundingDetailItem extends Component {
         </Row>
         <Row>
           <Col md={3} lg={3}>
-            <AFField
+            {(this.props.fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
               parent={this.props.fundingDetail}
-              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} />
+              fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} /> : null}
           </Col>
-          <Col md={3} lg={3}>
+        </Row>
+        <Row>
+          <Col md={12} lg={12}>
             <a
               onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
-              className={styles.delete} href={null} />
+              className={styles.delete} href={null} >&nbsp;</a>
           </Col>
         </Row>
       </Grid>
