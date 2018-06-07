@@ -11,3 +11,7 @@
   /*position: relative;
   top: 40px;*/
 }
+
+.delete:hover {
+  text-decoration: none;
+}
