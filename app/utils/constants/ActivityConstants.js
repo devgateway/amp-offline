@@ -163,7 +163,6 @@ export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact_information';
 export const MOFED_CONTACT = 'mofed_contact_information';
 export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing/executing_agency_contact_information';
 export const CONTACT = 'contact';
-export const PRIMARY_CONTACT = 'primary_contact';
 export const ORGANIZATION_GROUP = 'organization_group';
 export const PRIMARY_CONTACT = 'mark_as_primary';
 
