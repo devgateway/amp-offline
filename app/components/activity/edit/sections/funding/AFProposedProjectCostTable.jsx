@@ -8,6 +8,7 @@ import styles from '../../components/AFList.css';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AF proposed project cost table');
 
@@ -48,10 +49,7 @@ export default class AFProposedProjectCostTable extends Component {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
           editable={false}
-          dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
-            fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
-            type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
+          dataFormat={() => (this._createCurrencyField())} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
         columns.push(<TableHeaderColumn
@@ -76,5 +74,20 @@ export default class AFProposedProjectCostTable extends Component {
       </div>);
     }
     return null;
+  }
+
+  _createCurrencyField() {
+    if (!this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] ||
+      !this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE].id) {
+      const currency = Object.values(this.context.activityFieldsManager.possibleValuesMap[FPC.FUNDING_CURRENCY_PATH])
+        .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
+      currency[0].id = currency[0].value;
+      this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] = currency[0];
+    }
+    const field = (<AFField
+      parent={this.context.activity[AC.PPC_AMOUNT][0]}
+      fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
+      type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true }} />);
+    return field;
   }
 }
