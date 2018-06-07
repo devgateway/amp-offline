@@ -157,14 +157,15 @@ export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
 export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
 export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
-export const DONOR_CONTACT = 'donor_contact';
-export const PROJECT_COORDINATOR_CONTACT = 'project_coordinator_contact';
-export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact';
-export const MOFED_CONTACT = 'mofed_contact';
-export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing_executing_agency_contact';
+export const DONOR_CONTACT = 'donor_contact_information';
+export const PROJECT_COORDINATOR_CONTACT = 'project_coordinator_contact_information';
+export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact_information';
+export const MOFED_CONTACT = 'mofed_contact_information';
+export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing/executing_agency_contact_information';
 export const CONTACT = 'contact';
 export const PRIMARY_CONTACT = 'primary_contact';
 export const FIXED_EXCHANGE_RATE = 'fixed_exchange_rate';
+export const PRIMARY_CONTACT = 'mark_as_primary';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
