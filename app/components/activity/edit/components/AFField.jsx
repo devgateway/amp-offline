@@ -21,6 +21,7 @@ import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
 import AFCheckbox from './AFCheckbox';
 import FeatureManager from '../../../../modules/util/FeatureManager';
+import translate from '../../../../utils/translate';
 
 const logger = new Logger('AF field');
 
@@ -43,6 +44,7 @@ class AFField extends Component {
     parent: PropTypes.object.isRequired,
     id: PropTypes.string,
     filter: PropTypes.array,
+    customLabel: PropTypes.string,
     showLabel: PropTypes.bool,
     showRequired: PropTypes.bool,
     inline: PropTypes.bool,
@@ -133,7 +135,8 @@ class AFField extends Component {
       }
       return null;
     }
-    const label = this.context.activityFieldsManager.getFieldLabelTranslation(this.props.fieldPath);
+    const { customLabel, fieldPath } = this.props;
+    const label = translate(customLabel) || this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath);
     return <AFLabel value={label} required={required} className={styles.label_highlight} />;
   }
 
