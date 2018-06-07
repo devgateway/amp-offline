@@ -36,7 +36,7 @@ export default class AFNumber extends Component {
     if (value) {
       const auxValue = Number(value);
       if (!Number.isNaN(auxValue)) {
-        // TODO move it to ActivityValidator._validateValue once we have API restrictions
+        // TODO move it to ActivityValidator._validateValue once we have API restrictions. See AMPOFFLINE-1043.
         if (params.smaller !== undefined && !(auxValue < params.smaller)) {
           validationError = `${translate('Number has to be smaller than')} ${params.smaller}`;
         }
@@ -66,9 +66,9 @@ export default class AFNumber extends Component {
   }
 
   handleBlur(e) {
-    /* The problem with on field validations is we cant prevent the user from leaving the control, so in case of
-    validation of "bigger" that wont be enforced on EntityValidator and the user could save bad data, so we
-    clear the control when leaving. */
+    /* See AMPOFFLINE-1043: The problem with on field validations is we cant prevent the user from leaving the control,
+    so in case of validation of "bigger" that wont be enforced on EntityValidator and the user could save bad data,
+    so we clear the control when leaving. */
     if (this.validate(this.state.value)) {
       e.target.value = '';
       this.handleChange(e);
