@@ -16,8 +16,8 @@
   width: 100%;
 }
 
-.entryList > div {
-  width: inherit;
+.entryList > div> span > div {
+  width: 100%;
   float: left;
 }
 
