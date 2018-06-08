@@ -5,10 +5,12 @@ import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
+import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 
 /**
  * @author Gabriel Inchauspe
@@ -23,7 +25,8 @@ export default class AFFundingDetailItem extends Component {
   static propTypes = {
     fundingDetail: PropTypes.object.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
-    funding: PropTypes.object.isRequired
+    funding: PropTypes.object.isRequired,
+    type: PropTypes.string
   };
 
   render() {
@@ -34,6 +37,20 @@ export default class AFFundingDetailItem extends Component {
       this.props.fundingDetail[AC.CURRENCY] = currency[0];
     }
     const orgGroupName = this.props.funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
+    let fixedExchangeRateFMPath;
+    switch (this.props.type) {
+      case VC.COMMITMENTS:
+        fixedExchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
+        break;
+      case VC.DISBURSEMENTS:
+        fixedExchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
+        break;
+      case VC.EXPENDITURES:
+        fixedExchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
+        break;
+      default:
+        break;
+    }
     return (<div className={afStyles.full_width}>
       <Grid className={styles.grid}>
         <Row>
@@ -71,6 +88,13 @@ export default class AFFundingDetailItem extends Component {
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`} defaultValueAsEmptyObject
               filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]} />
+          </Col>
+          <Col md={3} lg={3}>
+            <AFField
+              parent={this.props.fundingDetail}
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
+              fmPath={fixedExchangeRateFMPath}
+              extraParams={{ bigger: 0 }} />
           </Col>
           <Col md={3} lg={3}>
             <a
