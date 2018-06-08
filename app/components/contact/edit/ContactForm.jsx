@@ -23,6 +23,7 @@ class ContactForm extends Component {
   static contextTypes = {
     contactReducer: PropTypes.object.isRequired,
     updateContact: PropTypes.func.isRequired,
+    activity: PropTypes.object,
   };
 
   static propTypes = {
@@ -45,6 +46,7 @@ class ContactForm extends Component {
     this.state = {
       contact: null,
       reloading: false,
+      isAF: false,
     };
     this._formId = Utils.stringToUniqueId();
     this.handleEntriesChange = this.handleEntriesChange.bind(this);
@@ -95,12 +97,12 @@ class ContactForm extends Component {
     const hydratedContact = contact && contact[CC.TMP_HYDRATED] ? contact : null;
     if (hydratedContact) {
       this._initLists(hydratedContact);
-      this.setState({ contact: hydratedContact, reloading: false });
+      this.setState({ contact: hydratedContact, reloading: false, isAF: !!context.activity });
     }
   }
 
   _initLists(contact) {
-    [CC.EMAIL, CC.FAX, CC.PHONE].forEach(l => (contact[l] = contact[l] || []));
+    [CC.EMAIL, CC.FAX, CC.PHONE, CC.ORGANISATION_CONTACTS].forEach(l => (contact[l] = contact[l] || []));
   }
 
   handleEntriesChange(fieldName, newItems) {
@@ -110,7 +112,7 @@ class ContactForm extends Component {
   }
 
   render() {
-    const { contact, reloading } = this.state;
+    const { contact, reloading, isAF } = this.state;
     if (!contact) {
       return null;
     }
@@ -127,15 +129,23 @@ class ContactForm extends Component {
           <Grid onClick={this.checkForUpdates.bind(this)} onFocus={this.checkForUpdates.bind(this)} >
             <Row key={CC.TITLE}>
               <Col lg={3} md={3}>
-                <AFField parent={contact} fieldPath={CC.TITLE} onAfterUpdate={onUpdate} />
+                <AFField
+                  parent={contact} fieldPath={CC.TITLE} customLabel={isAF ? 'Contact Title' : null}
+                  onAfterUpdate={onUpdate} />
               </Col>
             </Row>
             <Row key="full-name">
               <Col lg={6} md={6} key={CC.NAME}>
-                <AFField parent={contact} fieldPath={CC.NAME} type={INPUT_TYPE} onAfterUpdate={onUpdate} />
+                <AFField
+                  parent={contact} fieldPath={CC.NAME} type={INPUT_TYPE}
+                  customLabel={isAF ? 'contact first name' : null}
+                  onAfterUpdate={onUpdate} />
               </Col>
               <Col lg={6} md={6} key={CC.LAST_NAME}>
-                <AFField parent={contact} fieldPath={CC.LAST_NAME} type={INPUT_TYPE} onAfterUpdate={onUpdate} />
+                <AFField
+                  parent={contact} fieldPath={CC.LAST_NAME} type={INPUT_TYPE}
+                  customLabel={isAF ? 'contact lastname' : null}
+                  onAfterUpdate={onUpdate} />
               </Col>
             </Row>
             <Row key={CC.EMAIL}>
@@ -145,15 +155,24 @@ class ContactForm extends Component {
             </Row>
             <Row key="function">
               <Col lg={6} md={6} key={CC.FUNCTION}>
-                <AFField parent={contact} fieldPath={CC.FUNCTION} type={INPUT_TYPE} onAfterUpdate={onUpdate} />
+                <AFField
+                  parent={contact} fieldPath={CC.FUNCTION} type={INPUT_TYPE}
+                  customLabel={isAF ? 'contact function' : null}
+                  onAfterUpdate={onUpdate} />
               </Col>
               <Col lg={6} md={6} key={CC.ORGANIZATION_NAME}>
-                <AFField parent={contact} fieldPath={CC.ORGANIZATION_NAME} type={INPUT_TYPE} onAfterUpdate={onUpdate} />
+                <AFField
+                  parent={contact} fieldPath={CC.ORGANIZATION_NAME} type={INPUT_TYPE}
+                  customLabel={isAF ? 'organisationName' : null}
+                  onAfterUpdate={onUpdate} />
               </Col>
             </Row>
             <Row key={CC.ORGANISATION_CONTACTS}>
               <Col lg={9} md={9} className={styles.orgsList}>
-                <AFField parent={contact} fieldPath={CC.ORGANISATION_CONTACTS} onAfterUpdate={onUpdate} />
+                <AFField
+                  parent={contact} fieldPath={CC.ORGANISATION_CONTACTS}
+                  customLabel={isAF ? 'Contact Organizations' : null}
+                  onAfterUpdate={onUpdate} />
               </Col>
             </Row>
             <Row key={CC.PHONE}>
@@ -168,7 +187,10 @@ class ContactForm extends Component {
             </Row>
             <Row key={CC.OFFICE_ADDRESS}>
               <Col lg={6} md={6}>
-                <AFField parent={contact} fieldPath={CC.OFFICE_ADDRESS} type={TEXT_AREA} onAfterUpdate={onUpdate} />
+                <AFField
+                  parent={contact} fieldPath={CC.OFFICE_ADDRESS} type={TEXT_AREA}
+                  customLabel={isAF ? 'contact office address' : null}
+                  onAfterUpdate={onUpdate} />
               </Col>
             </Row>
           </Grid>

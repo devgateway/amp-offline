@@ -335,8 +335,17 @@
   "duplicateUrl": "Duplicate URL",
   "settingsSaveSuccess": "Settings were saved successfully.",
   "settingsSaveError": "Settings could not be saved.",
+  "Contact Title": "Contact Title",
+  "contact first name": "contact first name",
+  "contact lastname": "contact lastname",
+  "contact function": "contact function",
+  "organisationName": "organisationName",
+  "Contact Organizations": "Contact Organizations",
   "Search Contact": "Search Contact",
   "Add Contact Phone": "Add Contact Phone",
+  "Extension": "Extension:",
   "Add Contact Email": "Add Contact Email",
-  "Add Contact Fax": "Add Contact Fax"
+  "Add Contact Fax": "Add Contact Fax",
+  "contact office address": "contact office address",
+  "Contact Information": "Contact Information"
 }

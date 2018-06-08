@@ -53,6 +53,13 @@ class APFundingOrganizationSection extends Component {
     return tableContent;
   }
 
+  _buildDonorObjectiveTable() {
+    const content = [];
+    const { buildSimpleField, funding } = this.props;
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.DONOR_OBJECTIVE]}`, true, null, false, funding));
+    return Tablify.addRows(content, 1);
+  }
+
   _buildFundingDetailSection() {
     const content = [];
     // Group the list of funding details by adjustment_type and transaction_type.
@@ -105,6 +112,9 @@ class APFundingOrganizationSection extends Component {
       <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
       <table className={styles.two_box_table}>
         <tbody>{this._buildDonorInfo()}</tbody>
+      </table>
+      <table className={styles.two_box_table}>
+        <tbody>{this._buildDonorObjectiveTable()}</tbody>
       </table>
       <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
