@@ -8,7 +8,7 @@ import * as CC from '../../../utils/constants/ContactConstants';
 import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
 import AFField from '../../activity/edit/components/AFField';
-import { INPUT_TYPE, TEXT_AREA } from '../../activity/edit/components/AFComponentTypes';
+import { CUSTOM, INPUT_TYPE, TEXT_AREA } from '../../activity/edit/components/AFComponentTypes';
 import ContactPhone from './ContactPhone';
 import ContactEmail from './ContactEmail';
 import ContactFax from './ContactFax';
@@ -77,6 +77,7 @@ class ContactForm extends Component {
   onUpdate(contact) {
     contact[CC.TMP_FORM_ID] = this._formId;
     contact[CC.TMP_ENTITY_VALIDATOR].entity = contact;
+    this.setState({ contact });
   }
 
   /**
@@ -150,7 +151,10 @@ class ContactForm extends Component {
             </Row>
             <Row key={CC.EMAIL}>
               <Col lg={9} md={9} className={styles.entryList}>
-                <ContactEmail items={contact[CC.EMAIL]} onChange={this.handleEntriesChange.bind(this, CC.EMAIL)} />
+                <AFField parent={contact} fieldPath={CC.EMAIL} showLabel={false} type={CUSTOM}>
+                  <ContactEmail
+                    items={contact[CC.EMAIL]} onEntriesChange={this.handleEntriesChange.bind(this, CC.EMAIL)} />
+                </AFField>
               </Col>
             </Row>
             <Row key="function">
@@ -177,12 +181,17 @@ class ContactForm extends Component {
             </Row>
             <Row key={CC.PHONE}>
               <Col lg={9} md={9} className={styles.entryList}>
-                <ContactPhone items={contact[CC.PHONE]} onChange={this.handleEntriesChange.bind(this, CC.PHONE)} />
+                <AFField parent={contact} fieldPath={CC.PHONE} showLabel={false} type={CUSTOM}>
+                  <ContactPhone
+                    items={contact[CC.PHONE]} onEntriesChange={this.handleEntriesChange.bind(this, CC.PHONE)} />
+                </AFField>
               </Col>
             </Row>
             <Row key={CC.FAX}>
               <Col lg={6} md={6} className={styles.entryList}>
-                <ContactFax items={contact[CC.FAX]} onChange={this.handleEntriesChange.bind(this, CC.FAX)} />
+                <AFField parent={contact} fieldPath={CC.FAX} showLabel={false} type={CUSTOM}>
+                  <ContactFax items={contact[CC.FAX]} onEntriesChange={this.handleEntriesChange.bind(this, CC.FAX)} />
+                </AFField>
               </Col>
             </Row>
             <Row key={CC.OFFICE_ADDRESS}>

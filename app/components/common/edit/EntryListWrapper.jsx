@@ -7,6 +7,8 @@ import translate from '../../../utils/translate';
 import * as styles from './EntryList.css';
 import * as Utils from '../../../utils/Utils';
 import EntryList from './EntryList';
+import { LIST_MAX_SIZE } from '../../../utils/constants/FieldPathConstants';
+import FieldsManager from '../../../modules/field/FieldsManager';
 
 const logger = new Logger('EntryListWrapper');
 
@@ -15,10 +17,16 @@ const logger = new Logger('EntryListWrapper');
  *
  * @author Nadejda Mandrescu
  */
-const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
+const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Component {
+  static contextTypes = {
+    activity: PropTypes.object,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager),
+  };
+
   static propTypes = {
     items: PropTypes.array.isRequired,
     onChange: PropTypes.func.isRequired,
+    onEntriesChange: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -29,6 +37,13 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
     };
   }
 
+  componentWillMount() {
+    const { activityFieldsManager } = this.context;
+    if (activityFieldsManager && listPath) {
+      this.fieldDef = activityFieldsManager.getFieldDef(listPath) || {};
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     this.setUniqueItemIdsAndUpdateState(nextProps.items);
   }
@@ -36,15 +51,22 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
   onAdd() {
     const items = this.getItems();
     items.push({});
+    // special behavior used by Contact Email/Phone/Fax: report validation error, but do not add new entry
     this.props.onChange(items);
+    if (this.fieldDef[LIST_MAX_SIZE] && this.fieldDef[LIST_MAX_SIZE] < items.length) {
+      items.pop();
+    }
+    this.props.onEntriesChange(items);
     this.setUniqueItemIdsAndUpdateState(items);
   }
 
   onRemove(uniqueId) {
     let { uniqueIdItemPairs } = this.state;
     uniqueIdItemPairs = uniqueIdItemPairs.filter(([uId]) => uId !== uniqueId);
-    this.props.onChange(this.getItems(uniqueIdItemPairs));
-    this.setState({ uniqueIdItemPairs });
+    const items = this.getItems(uniqueIdItemPairs);
+    this.props.onChange(items);
+    this.props.onEntriesChange(items);
+    // this.setUniqueItemIdsAndUpdateState(items);
   }
 
   setUniqueItemIdsAndUpdateState(items) {
