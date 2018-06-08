@@ -11,3 +11,4 @@ export const DATE = 'DATE';
 export const LABEL = 'LABEL';
 export const CHECKBOX = 'CHECKBOX';
 export const INPUT_TYPE = 'INPUT_TYPE';
+export const CUSTOM = 'CUSTOM';

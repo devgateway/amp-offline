@@ -43,6 +43,8 @@ class AFField extends Component {
     fieldPath: PropTypes.string.isRequired,
     parent: PropTypes.object.isRequired,
     id: PropTypes.string,
+    // children content used for the CUSTOM field type
+    children: PropTypes.any,
     filter: PropTypes.array,
     customLabel: PropTypes.string,
     showLabel: PropTypes.bool,
@@ -188,6 +190,9 @@ class AFField extends Component {
         return this._getBoolean();
       case Types.INPUT_TYPE:
         return this._getInput();
+      case Types.CUSTOM: {
+        return this._getCustom();
+      }
       default:
         return 'Not Implemented';
     }
@@ -262,6 +267,14 @@ class AFField extends Component {
 
   _getBoolean() {
     return (<AFCheckbox value={this.state.value} onChange={this.onChange} />);
+  }
+
+  _getCustom() {
+    const { children } = this.props;
+    const isArray = Array.isArray(children);
+    let cs = isArray ? children : [children];
+    cs = React.Children.map(children, child => React.cloneElement(child, { onChange: this.onChange }));
+    return cs;
   }
 
   _getValueAsLabel() {
