@@ -11,6 +11,7 @@ const mapStateToProps = (state) => {
   logger.log('mapStateToProps');
   return {
     activityReducer: state.activityReducer,
+    contactReducer: state.contactReducer,
     userReducer: state.userReducer,
     workspaceReducer: state.workspaceReducer
   };
