@@ -218,6 +218,10 @@
   "noParentChildMixing": "Both parent and child items are present: %children%.",
   "Number is bigger than": "Number is bigger than",
   "Number is smaller than": "Number is smaller than",
+  "Number has to be bigger than": "Number has to be bigger than",
+  "Number has to be bigger or equal than": "Number has to be bigger or equal than",
+  "Number has to be smaller than": "Number has to be smaller than",
+  "Number has to be smaller or equal than": "Number has to be smaller or equal than",
   "dependencyNotMet": "Dependency not met \"%depName%\".",
   "depImplLevelPresent": "Implementation Level must be configured",
   "depImplLevelValid": "Implementation Level must be valid",
@@ -346,5 +350,7 @@
   "Extension": "Extension:",
   "Add Contact Email": "Add Contact Email",
   "Add Contact Fax": "Add Contact Fax",
-  "contact office address": "contact office address"
+  "Exchange Rate": "Exchange Rate",
+  "contact office address": "contact office address",
+  "Contact Information": "Contact Information"
 }

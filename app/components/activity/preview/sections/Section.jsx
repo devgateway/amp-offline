@@ -12,6 +12,7 @@ import {
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
+import * as Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP section');
 
@@ -34,8 +35,10 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
   static contextTypes = {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    contactFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    contactsByIds: PropTypes.object.isRequired,
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
-    activityWorkspace: PropTypes.object.isRequired
+    activityWorkspace: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -58,24 +61,26 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
    * @param NAOptions optional set of values that should be treated as undefined
    * @param inline optional flag to render name and values on the same line
    * @param parent optional object where we look for the path (instead of the activity root).
+   * @param fieldsManager (optional) custom fields manager. Activity Fields Manager used by default.
    * @return {null|APField}
    */
-  buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false, parent = null) {
+  buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false, parent = null, fieldsManager = null) {
     const fmPath = ACTIVITY_FIELDS_FM_PATH[path];
-    if (this.context.activityFieldsManager.isFieldPathEnabled(path)
+    fieldsManager = fieldsManager || this.context.activityFieldsManager;
+    if (fieldsManager.isFieldPathEnabled(path)
       && (!fmPath || FeatureManager.isFMSettingEnabled(fmPath, false))) {
-      const title = this.context.activityFieldsManager.getFieldLabelTranslation(path);
+      const title = fieldsManager.getFieldLabelTranslation(path);
       let valuePath = path;
       if (parent) {
         const fieldPathParts = path.split('~');
         valuePath = fieldPathParts[fieldPathParts.length - 1];
       }
       const alternatePath = ALTERNATE_VALUE_PATH[valuePath];
-      let value = this.context.activityFieldsManager.getValue(parent || this.context.activity, valuePath);
+      let value = fieldsManager.getValue(parent || this.context.activity, valuePath);
       if ((value === null || value === undefined) && alternatePath) {
-        value = this.context.activityFieldsManager.getValue(this.context.activity, alternatePath);
+        value = fieldsManager.getValue(this.context.activity, alternatePath);
       }
-      const fieldDef = this.context.activityFieldsManager.getFieldDef(path);
+      const fieldDef = fieldsManager.getFieldDef(path);
       if (fieldDef.field_type === 'date') {
         value = DateUtils.createFormattedDate(value);
       }
@@ -89,7 +94,8 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = RICH_TEXT_FIELDS.has(path);
         return (<APField
-          key={path} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline} separator={false}
+          key={Utils.stringToUniqueId(path)} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline}
+          separator={false}
           fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
       }
     }

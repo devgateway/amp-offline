@@ -21,6 +21,7 @@ import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
 import AFCheckbox from './AFCheckbox';
 import FeatureManager from '../../../../modules/util/FeatureManager';
+import AFMultiSelect from './AFMultiSelect';
 import translate from '../../../../utils/translate';
 
 const logger = new Logger('AF field');
@@ -50,8 +51,6 @@ class AFField extends Component {
     inline: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
     type: PropTypes.string,
-    max: PropTypes.number,
-    min: PropTypes.number,
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
@@ -188,6 +187,8 @@ class AFField extends Component {
         return this._getBoolean();
       case Types.INPUT_TYPE:
         return this._getInput();
+      case Types.MULTI_SELECT:
+        return this._getMultiSelect();
       default:
         return 'Not Implemented';
     }
@@ -198,7 +199,8 @@ class AFField extends Component {
     const selectedId = this.state.value ? this.state.value.id : null;
     return (<AFDropDown
       options={afOptions} onChange={this.onChange} selectedId={selectedId}
-      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject} />);
+      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject}
+      extraParams={this.props.extraParams} />);
   }
 
   _getListSelector() {
@@ -252,8 +254,9 @@ class AFField extends Component {
 
   _getNumber() {
     return (<AFNumber
-      value={this.state.value} onChange={this.onChange} max={this.props.max}
-      min={this.props.min} className={this.props.className} />);
+      value={this.state.value} onChange={this.onChange}
+      extraParams={this.props.extraParams}
+      className={this.props.className} />);
   }
 
   _getDate() {
@@ -262,6 +265,20 @@ class AFField extends Component {
 
   _getBoolean() {
     return (<AFCheckbox value={this.state.value} onChange={this.onChange} />);
+  }
+
+  _getMultiSelect() {
+    const selectFieldDef = this.fieldDef.children.length === 1 ?
+      this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
+    if (!selectFieldDef) {
+      logger.error('Could not automatically detect multi-select field.');
+      return null;
+    }
+    const optionsPath = `${this.props.fieldPath}~${selectFieldDef.field_name}`;
+    const afOptions = this._toAFOptions(this._getOptions(optionsPath));
+    return (<AFMultiSelect
+      options={afOptions} values={this.state.value} listPath={this.props.fieldPath}
+      selectField={selectFieldDef.field_name} onChange={this.onChange} />);
   }
 
   _getValueAsLabel() {
