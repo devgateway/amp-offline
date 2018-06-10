@@ -179,7 +179,9 @@ export default class EntityValidator {
 
   _validateRequired(value, isRequired) {
     const invalidValue = isRequired &&
-      (value === undefined || value === null || value === '' || (value.length !== undefined && value.length === 0));
+      (value === undefined || value === null ||
+        (value.trim && value.trim() === '') ||
+        (value.length !== undefined && value.length === 0));
     return invalidValue ? translate('requiredField') : true;
   }
 
@@ -273,7 +275,7 @@ export default class EntityValidator {
           }
         }
       } else if (fieldDef.field_type === 'float') {
-        if (value !== +value) {
+        if (value !== +value || value.toString().indexOf('e') > -1) {
           this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'boolean') {

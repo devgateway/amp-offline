@@ -12,10 +12,9 @@ const logger = new Logger('AF number');
 export default class AFNumber extends Component {
   static propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    max: PropTypes.number,
-    min: PropTypes.number,
     onChange: PropTypes.func,
-    readonly: PropTypes.bool
+    readonly: PropTypes.bool,
+    extraParams: PropTypes.object
     // TODO: Add number check functions.
   };
 
@@ -32,15 +31,24 @@ export default class AFNumber extends Component {
   }
 
   validate(value) {
+    const params = this.props.extraParams || {};
     let validationError = null;
     if (value) {
       const auxValue = Number(value);
-      // TODO move it to ActivityValidator._validateValue once we have API restrictions
-      if (this.props.max !== undefined && auxValue > this.props.max) {
-        validationError = `${translate('Number is bigger than')} ${this.props.max}`;
-      }
-      if (this.props.min !== undefined && auxValue < this.props.min) {
-        validationError = `${translate('Number is smaller than')} ${this.props.min}`;
+      if (!Number.isNaN(auxValue)) {
+        // TODO move it to ActivityValidator._validateValue once we have API restrictions. See AMPOFFLINE-1043.
+        if (params.smaller !== undefined && !(auxValue < params.smaller)) {
+          validationError = `${translate('Number has to be smaller than')} ${params.smaller}`;
+        }
+        if (params.smallerOrEqual !== undefined && !(auxValue <= params.smallerOrEqual)) {
+          validationError = `${translate('Number has to be smaller or equal than')} ${params.smallerOrEqual}`;
+        }
+        if (params.bigger !== undefined && !(auxValue > params.bigger)) {
+          validationError = `${translate('Number has to be bigger than')} ${params.bigger}`;
+        }
+        if (params.biggerOrEqual !== undefined && !(auxValue >= params.biggerOrEqual)) {
+          validationError = `${translate('Number has to be bigger or equal than')} ${params.biggerOrEqual}`;
+        }
       }
     }
     return validationError;
@@ -57,9 +65,19 @@ export default class AFNumber extends Component {
     this.setState({ value });
   }
 
+  handleBlur(e) {
+    /* See AMPOFFLINE-1043: The problem with on field validations is we cant prevent the user from leaving the control,
+    so in case of validation of "bigger" that wont be enforced on EntityValidator and the user could save bad data,
+    so we clear the control when leaving. */
+    if (this.validate(this.state.value)) {
+      e.target.value = '';
+      this.handleChange(e);
+    }
+  }
+
   render() {
     return (<FormControl
       componentClass="input" value={this.state.value} onChange={this.handleChange.bind(this)}
-      disabled={this.props.readonly || false} />);
+      disabled={this.props.readonly || false} onBlur={this.handleBlur.bind(this)} />);
   }
 }

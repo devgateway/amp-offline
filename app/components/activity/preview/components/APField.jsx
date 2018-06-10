@@ -15,6 +15,7 @@ export default class APField extends Component {
     value: PropTypes.any,
     inline: PropTypes.bool,
     useInnerHTML: PropTypes.bool,
+    fieldClass: PropTypes.string,
     fieldNameClass: PropTypes.string,
     fieldValueClass: PropTypes.string,
     separator: PropTypes.bool
@@ -38,7 +39,7 @@ export default class APField extends Component {
     super(props);
     logger.log('constructor');
     this.useSeparator = this.props.separator !== false;
-    this.displayClass = this.props.inline === true ? styles.inline : styles.block;
+    this.displayClass = this.props.fieldClass || (this.props.inline === true ? styles.inline : styles.block);
   }
 
   _getValue() {
