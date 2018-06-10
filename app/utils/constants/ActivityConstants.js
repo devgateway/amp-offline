@@ -156,6 +156,7 @@ export const REPORTING_DATE = 'reporting_date';
 export const RECIPIENT_ROLE = 'recipient_role';
 export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
+export const FY = 'fy';
 export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
 export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
 export const DONOR_CONTACT = 'donor_contact_information';
@@ -164,6 +165,7 @@ export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact_information';
 export const MOFED_CONTACT = 'mofed_contact_information';
 export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing/executing_agency_contact_information';
 export const CONTACT = 'contact';
+export const FIXED_EXCHANGE_RATE = 'fixed_exchange_rate';
 export const PRIMARY_CONTACT = 'mark_as_primary';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
@@ -212,6 +214,9 @@ export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
 export const ACTIVITY_CONTACT_COLS = 2;
+
+export const MULTI_SELECT_MIN_SIZE = 8;
+export const MULTI_SELECT_MAX_SIZE = 8;
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

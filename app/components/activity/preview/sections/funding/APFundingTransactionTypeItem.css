@@ -1,11 +1,8 @@
 .header {
-  margin-top: 10px;
-  padding: 10px;
   padding-left: 20px;
-  font-size: 0.85em;
-  color: #767676;
-  background-color: #f8f8f8;
+  font-size: 1.10em;
   font-weight: bold;
+  float: left;
 }
 
 .table_container {
@@ -38,11 +35,16 @@
   width: 50%;
   text-align: right;
   padding: 5px;
-  padding-right: 20px;
+  padding-right: 91px;
   margin-bottom: 15px;
 }
 
 .funding_table {
   width: 100%;
   font-weight: bold;
+}
+
+.exchange_rate {
+  float: right;
+  font-size: 0.85em;
 }
