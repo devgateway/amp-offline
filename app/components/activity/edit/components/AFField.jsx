@@ -199,7 +199,8 @@ class AFField extends Component {
     const selectedId = this.state.value ? this.state.value.id : null;
     return (<AFDropDown
       options={afOptions} onChange={this.onChange} selectedId={selectedId}
-      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject} />);
+      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject}
+      extraParams={this.props.extraParams} />);
   }
 
   _getListSelector() {
