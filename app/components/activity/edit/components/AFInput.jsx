@@ -20,7 +20,10 @@ export default class AFInput extends AFTextArea {
   }
 
   render() {
-    return (<FormControl
-      componentClass="input" type="text" value={this.state.value} onChange={this.handleChange.bind(this)} />);
+    return (
+      <FormControl
+        componentClass="input" type="text" value={this.state.value} onChange={this.handleChange.bind(this)}
+        onBlur={this.onBlur.bind(this)} />
+    );
   }
 }
