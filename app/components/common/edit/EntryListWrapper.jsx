@@ -58,7 +58,9 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
     let { uniqueIdItemPairs } = this.state;
     uniqueIdItemPairs = uniqueIdItemPairs.filter(([uId]) => uId !== uniqueId);
     const items = this.getItems(uniqueIdItemPairs);
-    this.props.onChange(items);
+    if (this.props.onChange) {
+      this.props.onChange(items);
+    }
     this.props.onEntriesChange(items);
   }
 
