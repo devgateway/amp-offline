@@ -23,7 +23,7 @@ export default class AFDropDown extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       value: undefined,
       propsReceived: false

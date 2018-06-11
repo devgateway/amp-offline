@@ -30,5 +30,5 @@ const getEntryFunc = (id, phone) => (
   </Row>
 );
 
-const ContactPhone = EntryListWrapper('Add Contact Phone', getEntryFunc);
+const ContactPhone = EntryListWrapper('Add Contact Phone', getEntryFunc, CC.PHONE);
 export default ContactPhone;

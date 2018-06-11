@@ -1,5 +1,6 @@
 .entryList {
   width: 100%;
+  font-size: inherit;
 }
 
 .entryList .data {
