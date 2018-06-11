@@ -114,7 +114,7 @@ export default class EntityValidator {
   }
 
   processValidationResult(parent, errors, fieldPath, validationResult) {
-    if (validationResult === true || validationResult === null) return;
+    if (validationResult === true || validationResult === null || validationResult === undefined) return;
     const error = {
       path: fieldPath,
       errorMessage: validationResult
