@@ -17,7 +17,7 @@ export default class AFTextArea extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       value: null
     };
@@ -31,6 +31,11 @@ export default class AFTextArea extends Component {
     this.setState({ value: nextProps.value });
   }
 
+  onBlur(e) {
+    const value = e.target.value;
+    this.props.onChange(value);
+  }
+
   handleChange(e) {
     let value = e.target.value;
     if (value) {
@@ -38,10 +43,14 @@ export default class AFTextArea extends Component {
         value = value.substring(0, this.props.maxLength);
       }
     }
-    this.props.onChange(value);
+    this.setState({ value });
   }
 
   render() {
-    return <FormControl componentClass="textarea" value={this.state.value} onChange={this.handleChange.bind(this)} />;
+    return (
+      <FormControl
+        componentClass="textarea" value={this.state.value} onChange={this.handleChange.bind(this)}
+        onBlur={this.onBlur.bind(this)} />
+    );
   }
 }

@@ -81,9 +81,10 @@ export default class AFFundingDetailItem extends Component {
         </Row>
         <Row>
           <Col md={3} lg={3}>
-            <AFField
+            {(this.props.fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
               parent={this.props.fundingDetail}
-              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} />
+              fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} /> : null}
           </Col>
           <Col md={6} lg={6}>
             <AFField
@@ -101,10 +102,12 @@ export default class AFFundingDetailItem extends Component {
               fmPath={fixedExchangeRateFMPath}
               extraParams={{ bigger: 0 }} />
           </Col>
+        </Row>
+        <Row>
           <Col md={3} lg={3}>
             <a
               onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
-              className={styles.delete} href={null} />
+              className={styles.delete} href={null}>&nbsp;</a>
           </Col>
         </Row>
       </Grid>

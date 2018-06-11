@@ -12,3 +12,4 @@ export const LABEL = 'LABEL';
 export const CHECKBOX = 'CHECKBOX';
 export const INPUT_TYPE = 'INPUT_TYPE';
 export const MULTI_SELECT = 'MULTI_SELECT';
+export const CUSTOM = 'CUSTOM';

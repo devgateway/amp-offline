@@ -103,7 +103,10 @@ const _flagAsFullyHydrated = (contacts, contactFieldsManager, activity) => {
 };
 
 const _findContactsAsSummary = (contactIdsToExclude = []) => {
-  contactIdsToExclude = contactIdsToExclude.map(id => +id);
+  contactIdsToExclude = contactIdsToExclude.map(id => {
+    const nId = +id;
+    return Number.isNaN(nId) ? id : nId;
+  });
   const filter = contactIdsToExclude.length ? Utils.toMap('id', { $nin: contactIdsToExclude }) : {};
   const projections = { id: 1 };
   projections[CC.NAME] = 1;

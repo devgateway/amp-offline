@@ -44,6 +44,8 @@ class AFField extends Component {
     fieldPath: PropTypes.string.isRequired,
     parent: PropTypes.object.isRequired,
     id: PropTypes.string,
+    // children content used for the CUSTOM field type
+    children: PropTypes.any,
     filter: PropTypes.array,
     customLabel: PropTypes.string,
     showLabel: PropTypes.bool,
@@ -189,6 +191,9 @@ class AFField extends Component {
         return this._getInput();
       case Types.MULTI_SELECT:
         return this._getMultiSelect();
+      case Types.CUSTOM: {
+        return this._getCustom();
+      }
       default:
         return 'Not Implemented';
     }
@@ -279,6 +284,14 @@ class AFField extends Component {
     return (<AFMultiSelect
       options={afOptions} values={this.state.value} listPath={this.props.fieldPath}
       selectField={selectFieldDef.field_name} onChange={this.onChange} />);
+  }
+
+  _getCustom() {
+    const { children } = this.props;
+    const isArray = Array.isArray(children);
+    let cs = isArray ? children : [children];
+    cs = React.Children.map(children, child => React.cloneElement(child, { onChange: this.onChange }));
+    return cs;
   }
 
   _getValueAsLabel() {
