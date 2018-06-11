@@ -13,7 +13,7 @@ export default class AFInput extends AFTextArea {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       value: ''
     };
