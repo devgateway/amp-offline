@@ -7,7 +7,11 @@
 .delete {
   background-image: url('../../../../../assets/images/ico_del.gif');
   background-repeat: no-repeat;
-  padding: 1em;
-  position: relative;
-  top: 40px;
+  padding: 0.5em;
+  /*position: relative;
+  top: 40px;*/
+}
+
+.delete:hover {
+  text-decoration: none;
 }
