@@ -148,10 +148,13 @@ class AFFunding extends Component {
   removeFundingItem(id) {
     logger.log('_removeFundingItem');
     if (confirm(translate('deleteFundingItem'))) {
-      const newFundingList = this.state.fundingList;
+      const newFundingList = this.state.fundingList.slice();
       const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
       newFundingList.splice(index, 1);
       this.setState({ fundingList: newFundingList });
+      // Remove from the activity.
+      const index2 = this.context.activity.fundings.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      this.context.activity.fundings.splice(index2, 1);
     }
   }
 
