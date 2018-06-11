@@ -7,7 +7,6 @@ import translate from '../../../utils/translate';
 import * as styles from './EntryList.css';
 import * as Utils from '../../../utils/Utils';
 import EntryList from './EntryList';
-import { LIST_MAX_SIZE } from '../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../modules/field/FieldsManager';
 
 const logger = new Logger('EntryListWrapper');
@@ -50,14 +49,9 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
 
   onAdd() {
     const items = this.getItems();
+    // Keep .push() call here. Search by __ADD_ENTRY_ASSUMPTION__ to see why.
     items.push({});
-    // special behavior used by Contact Email/Phone/Fax: report validation error, but do not add new entry
-    this.props.onChange(items);
-    if (this.fieldDef[LIST_MAX_SIZE] && this.fieldDef[LIST_MAX_SIZE] < items.length) {
-      items.pop();
-    }
     this.props.onEntriesChange(items);
-    this.setUniqueItemIdsAndUpdateState(items);
   }
 
   onRemove(uniqueId) {
@@ -66,7 +60,6 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
     const items = this.getItems(uniqueIdItemPairs);
     this.props.onChange(items);
     this.props.onEntriesChange(items);
-    // this.setUniqueItemIdsAndUpdateState(items);
   }
 
   setUniqueItemIdsAndUpdateState(items) {

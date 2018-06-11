@@ -16,6 +16,10 @@
   width: 100%;
 }
 
+.keepFontSize {
+  font-size: inherit;
+}
+
 .entryList > div> span > div {
   width: 100%;
   float: left;
@@ -31,4 +35,8 @@
 .phoneExtension > span > input {
   width: 100px;
   margin-left: 6px;
+}
+
+.maxSizeError {
+  padding-left: 15px;
 }
