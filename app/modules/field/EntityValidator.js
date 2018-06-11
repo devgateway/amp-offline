@@ -30,7 +30,8 @@ import {
 import {
   ACTIVITY_CONTACT_PATHS,
   DO_NOT_HYDRATE_FIELDS_LIST,
-  RELATED_ORGS_PATHS
+  RELATED_ORGS_PATHS,
+  LIST_MAX_SIZE,
 } from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT, GS_DEFAULT_NUMBER_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
@@ -113,7 +114,7 @@ export default class EntityValidator {
   }
 
   processValidationResult(parent, errors, fieldPath, validationResult) {
-    if (validationResult === true || validationResult === null) return;
+    if (validationResult === true || validationResult === null || validationResult === undefined) return;
     const error = {
       path: fieldPath,
       errorMessage: validationResult
@@ -222,6 +223,9 @@ export default class EntityValidator {
     const uniqueConstraint = isList && fieldDef.unique_constraint;
     const noMultipleValues = fieldDef.multiple_values !== true;
     const noParentChildMixing = fieldDef.tree_collection === true;
+    const maxListSize = fieldDef[LIST_MAX_SIZE];
+    const listLengthError = translate('listTooLong')
+      .replace('%fieldName%', fieldLabel).replace('%sizeLimit%', maxListSize);
     // it could be faster to do outer checks for the type and then go through the list for each type,
     // but realistically there won't be many objects in the list, that's why opting for clear code
     objects.forEach(obj => {
@@ -251,6 +255,9 @@ export default class EntityValidator {
             const idOnlyFieldPath = `${fieldPath}~${idOnlyField.field_name}`;
             const noParentChildMixingError = this.noParentChildMixing(value, idOnlyFieldPath, idOnlyField.field_name);
             this.processValidationResult(obj, errors, fieldPath, noParentChildMixingError);
+          }
+          if (maxListSize && value.length > maxListSize) {
+            this.processValidationResult(obj, errors, fieldPath, listLengthError);
           }
         }
       } else if (fieldDef.field_type === 'string') {

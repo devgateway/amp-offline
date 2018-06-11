@@ -20,5 +20,5 @@ const getEntryFunc = (id, email) => (
   </Row>
 );
 
-const ContactEmail = EntryListWrapper('Add Contact Email', getEntryFunc);
+const ContactEmail = EntryListWrapper('Add Contact Email', getEntryFunc, CC.EMAIL);
 export default ContactEmail;
