@@ -24,7 +24,7 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
 
   static propTypes = {
     items: PropTypes.array.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     onEntriesChange: PropTypes.func.isRequired,
   };
 
