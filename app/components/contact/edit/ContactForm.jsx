@@ -116,6 +116,7 @@ class ContactForm extends Component {
         error: null
       };
     });
+    contact[CC.ORGANISATION_CONTACTS] = contact[CC.ORGANISATION_CONTACTS] || [];
   }
 
   handleEntriesChange(fieldName, newItems) {

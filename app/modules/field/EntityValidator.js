@@ -282,7 +282,7 @@ export default class EntityValidator {
           }
         }
       } else if (fieldDef.field_type === 'float') {
-        if (value !== +value) {
+        if (value !== +value || value.toString().indexOf('e') > -1) {
           this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'boolean') {
