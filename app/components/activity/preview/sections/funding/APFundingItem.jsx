@@ -30,7 +30,12 @@ class APFundingItem extends Component {
   insertPledgeRow() {
     if (this.props.item.pledge) {
       return (<tr className={styles.row}>
-        <td className={styles.left_text}>{translate(this.props.item[AC.PLEDGE].value)}</td>
+        <td
+          colSpan={AC.AP_FUNDINGS_TABLE_COLS}
+          className={styles.left_text}>
+          <span>{`${translate('Source Pledge')}: `}</span>
+          <span className={styles.value}>{`${translate(this.props.item[AC.PLEDGE].value)}`}</span>
+        </td>
       </tr>);
     } else {
       return null;
