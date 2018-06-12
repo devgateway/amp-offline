@@ -102,7 +102,8 @@ class ContactForm extends Component {
     const hydratedContact = contact && contact[CC.TMP_HYDRATED] ? contact : null;
     if (hydratedContact) {
       this._initLists(hydratedContact, context);
-      this.setState({ contact: hydratedContact, reloading: false, isAF: !!context.activity });
+      this.setState({ reloading: false, isAF: !!context.activity });
+      this.onUpdate(hydratedContact);
     }
   }
 
