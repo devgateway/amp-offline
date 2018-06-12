@@ -30,7 +30,8 @@ import {
 import {
   ACTIVITY_CONTACT_PATHS,
   DO_NOT_HYDRATE_FIELDS_LIST,
-  RELATED_ORGS_PATHS
+  RELATED_ORGS_PATHS,
+  LIST_MAX_SIZE, REGEX_PATTERN,
 } from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT, GS_DEFAULT_NUMBER_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
@@ -41,7 +42,7 @@ import DateUtils from '../../utils/DateUtils';
 import FieldsManager from './FieldsManager';
 import { ON_BUDGET, TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
 import PossibleValuesManager from './PossibleValuesManager';
-import { CLIENT_CHANGE_ID_PREFIX } from '../../utils/constants/ContactConstants';
+import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
 
 const logger = new Logger('EntityValidator');
 
@@ -113,7 +114,7 @@ export default class EntityValidator {
   }
 
   processValidationResult(parent, errors, fieldPath, validationResult) {
-    if (validationResult === true || validationResult === null) return;
+    if (validationResult === true || validationResult === null || validationResult === undefined) return;
     const error = {
       path: fieldPath,
       errorMessage: validationResult
@@ -222,6 +223,11 @@ export default class EntityValidator {
     const uniqueConstraint = isList && fieldDef.unique_constraint;
     const noMultipleValues = fieldDef.multiple_values !== true;
     const noParentChildMixing = fieldDef.tree_collection === true;
+    const maxListSize = fieldDef[LIST_MAX_SIZE];
+    const listLengthError = translate('listTooLong')
+      .replace('%fieldName%', fieldLabel).replace('%sizeLimit%', maxListSize);
+    const regexPattern = fieldDef[REGEX_PATTERN] ? new RegExp(fieldDef[REGEX_PATTERN]) : null;
+    const regexError = this._getRegexError(regexPattern, fieldPath);
     // it could be faster to do outer checks for the type and then go through the list for each type,
     // but realistically there won't be many objects in the list, that's why opting for clear code
     objects.forEach(obj => {
@@ -252,15 +258,24 @@ export default class EntityValidator {
             const noParentChildMixingError = this.noParentChildMixing(value, idOnlyFieldPath, idOnlyField.field_name);
             this.processValidationResult(obj, errors, fieldPath, noParentChildMixingError);
           }
+          if (maxListSize && value.length > maxListSize) {
+            this.processValidationResult(obj, errors, fieldPath, listLengthError);
+          }
         }
       } else if (fieldDef.field_type === 'string') {
         // TODO multilingual support Iteration 2+
         if (!(typeof value === 'string' || value instanceof String)) {
           this.processValidationResult(obj, errors, fieldPath, this.invalidString.replace('%value%', value));
-        } else if (fieldDef.field_length && fieldDef.field_length < value.length) {
-          this.processValidationResult(obj, errors, fieldPath, stringLengthError);
-        } else if (fieldPath === PROJECT_TITLE) {
-          this.processValidationResult(obj, errors, fieldPath, this.projectTitleValidator(value));
+        } else {
+          if (fieldDef.field_length && fieldDef.field_length < value.length) {
+            this.processValidationResult(obj, errors, fieldPath, stringLengthError);
+          }
+          if (fieldPath === PROJECT_TITLE) {
+            this.processValidationResult(obj, errors, fieldPath, this.projectTitleValidator(value));
+          }
+          if (regexPattern && !regexPattern.test(value)) {
+            this.processValidationResult(obj, errors, fieldPath, regexError);
+          }
         }
       } else if (fieldDef.field_type === 'long') {
         if (!Number.isInteger(value) && !this._isAllowInvalidNumber(value, fieldPath)) {
@@ -325,6 +340,23 @@ export default class EntityValidator {
       return true;
     }
     return false;
+  }
+
+  _getRegexError(regexPattern, fieldPath) {
+    if (regexPattern) {
+      let errorLabel = `invalidFormat-${fieldPath}`;
+      let error = translate(errorLabel);
+      if (error === errorLabel && fieldPath.startsWith(`${FAX}~`)) {
+        // workaround for duplicate trn message that we avoid defining in master-translations
+        errorLabel = `invalidFormat-${fieldPath.replace(FAX, PHONE)}`;
+        error = translate(errorLabel);
+      }
+      if (error === errorLabel) {
+        return translate('invalidFormat-generic');
+      }
+      return error;
+    }
+    return null;
   }
 
   projectTitleValidator(value) {

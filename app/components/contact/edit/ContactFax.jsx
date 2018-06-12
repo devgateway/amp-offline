@@ -20,5 +20,5 @@ const getEntryFunc = (id, fax) => (
   </Row>
 );
 
-const ContactFax = EntryListWrapper('Add Contact Fax', getEntryFunc);
+const ContactFax = EntryListWrapper('Add Contact Fax', getEntryFunc, CC.FAX);
 export default ContactFax;

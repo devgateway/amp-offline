@@ -7,6 +7,7 @@ import translate from '../../../utils/translate';
 import * as styles from './EntryList.css';
 import * as Utils from '../../../utils/Utils';
 import EntryList from './EntryList';
+import FieldsManager from '../../../modules/field/FieldsManager';
 
 const logger = new Logger('EntryListWrapper');
 
@@ -15,10 +16,16 @@ const logger = new Logger('EntryListWrapper');
  *
  * @author Nadejda Mandrescu
  */
-const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
+const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Component {
+  static contextTypes = {
+    activity: PropTypes.object,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager),
+  };
+
   static propTypes = {
     items: PropTypes.array.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
+    onEntriesChange: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -29,22 +36,32 @@ const EntryListWrapper = (Title, getEntryFunc) => class extends Component {
     };
   }
 
+  componentWillMount() {
+    const { activityFieldsManager } = this.context;
+    if (activityFieldsManager && listPath) {
+      this.fieldDef = activityFieldsManager.getFieldDef(listPath) || {};
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     this.setUniqueItemIdsAndUpdateState(nextProps.items);
   }
 
   onAdd() {
     const items = this.getItems();
+    // Keep .push() call here. Search by __ADD_ENTRY_ASSUMPTION__ to see why.
     items.push({});
-    this.props.onChange(items);
-    this.setUniqueItemIdsAndUpdateState(items);
+    this.props.onEntriesChange(items);
   }
 
   onRemove(uniqueId) {
     let { uniqueIdItemPairs } = this.state;
     uniqueIdItemPairs = uniqueIdItemPairs.filter(([uId]) => uId !== uniqueId);
-    this.props.onChange(this.getItems(uniqueIdItemPairs));
-    this.setState({ uniqueIdItemPairs });
+    const items = this.getItems(uniqueIdItemPairs);
+    if (this.props.onChange) {
+      this.props.onChange(items);
+    }
+    this.props.onEntriesChange(items);
   }
 
   setUniqueItemIdsAndUpdateState(items) {
