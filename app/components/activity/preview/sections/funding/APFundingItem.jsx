@@ -8,6 +8,7 @@ import styles from './APFundingItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
+import FeatureManager from '../../../../../modules/util/FeatureManager';
 
 const logger = new Logger('AP Funding item');
 
@@ -44,7 +45,7 @@ class APFundingItem extends Component {
       default:
         break;
     }
-    if (this.props.item.pledge && pledgeFMPath) {
+    if (this.props.item.pledge && FeatureManager.isFMSettingEnabled(pledgeFMPath)) {
       return (<tr className={styles.row}>
         <td
           colSpan={AC.AP_FUNDINGS_TABLE_COLS}
