@@ -62,7 +62,10 @@ export default class AFFundingDonorSection extends Component {
         }
       }
     });
-    this.setState({ openFundingDonorSection: openFundingDonorSectionState });
+    this.setState({
+      openFundingDonorSection: openFundingDonorSectionState,
+      fundingList: this._filterFundings(nextProps.fundings)
+    });
   }
 
   _addNewFundingItem() {

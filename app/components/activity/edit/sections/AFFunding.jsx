@@ -84,11 +84,11 @@ class AFFunding extends Component {
       fundingItem[AC.FUNDING_DETAILS] = [];
       fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
       fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
-      const newFundingList = this.state.fundingList;
+      const newFundingList = this.state.fundingList.slice();
       newFundingList.push(fundingItem);
       this.setState({ fundingList: newFundingList });
       // Needed for new activities or funding is not added.
-      this.context.activity.fundings = newFundingList;
+      this.context.activity.fundings.push(fundingItem);
     }
   }
 
