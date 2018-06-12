@@ -29,11 +29,12 @@ class APIdentification extends Component {
       AC.MODALITIES, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS, AC.RESULTS, AC.LESSONS_LEARNED,
       AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.BUDGET_CODE_PROJECT_ID,
       AC.A_C_CHAPTER, AC.CRIS_NUMBER, AC.ACTIVITY_BUDGET];
-    // Show ministry_code only when activity_budget is enabled and has value 'On Budget'.
+    // Show ministry_code and FY only when activity_budget is enabled and has value 'On Budget'.
     if (this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
       && this.props.activity[AC.ACTIVITY_BUDGET]
       && this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET) {
       fieldPaths.push(AC.MINISTRY_CODE);
+      fieldPaths.push(`${AC.FY}~${AC.YEAR}`);
     }
     return (
       <div>
