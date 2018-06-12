@@ -98,19 +98,23 @@ export default class AFFundingContainer extends Component {
         type={VC.COMMITMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={this.props.funding} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.DISBURSEMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={this.props.funding} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.EXPENDITURES}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={this.props.funding} />
+      <AFField parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.DONOR_OBJECTIVE}`} type={Types.TEXT_AREA} />
     </div>);
   }
 }

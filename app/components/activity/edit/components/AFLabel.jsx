@@ -23,7 +23,7 @@ export default class AFLabel extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   _renderTooltip() {

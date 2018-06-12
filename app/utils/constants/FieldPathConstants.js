@@ -58,3 +58,5 @@ export const PREFIX_CONTACT = 'contact';
 
 export const FIELD_PATH = 'field-path';
 export const FIELD_OPTIONS = 'possible-options';
+export const LIST_MAX_SIZE = 'size-limit';
+export const REGEX_PATTERN = 'regex-pattern';

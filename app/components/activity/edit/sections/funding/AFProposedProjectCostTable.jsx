@@ -8,6 +8,7 @@ import styles from '../../components/AFList.css';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AF proposed project cost table');
 
@@ -30,6 +31,22 @@ export default class AFProposedProjectCostTable extends Component {
     };
   }
 
+  _createCurrencyField() {
+    if (!this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] ||
+      !this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE].id) {
+      const currency = Object.values(this.context.activityFieldsManager.possibleValuesMap[FPC.FUNDING_CURRENCY_PATH])
+        .find(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
+      // TODO: Check why the structure of this object is {id: currecy_code, value: currency_code}.
+      const newCurrency = { id: currency.value, value: currency.value };
+      this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] = newCurrency;
+    }
+    const field = (<AFField
+      parent={this.context.activity[AC.PPC_AMOUNT][0]}
+      fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
+      type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true }} />);
+    return field;
+  }
+
   render() {
     if (this.context.activityFieldsManager.isFieldPathEnabled(AC.PPC_AMOUNT)) {
       /* IMPORTANT: Since we want to mimic the AF that shows inputs on tables not only when the user clicks the
@@ -48,10 +65,7 @@ export default class AFProposedProjectCostTable extends Component {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
           editable={false}
-          dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
-            fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
-            type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
+          dataFormat={() => (this._createCurrencyField())} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
         columns.push(<TableHeaderColumn

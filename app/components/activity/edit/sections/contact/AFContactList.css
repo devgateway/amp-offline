@@ -21,6 +21,7 @@
 .primaryField {
   margin-bottom: 0;
   height: 20px;
+  font-size: inherit;
 }
 
 .primaryField > span:first-child {
@@ -51,4 +52,25 @@
   background-repeat: no-repeat;
   background-position: center;
   padding: 1em;
+}
+
+.subSection {
+  font-size: inherit;
+}
+
+.subSection > span > span {
+  display: inline-block;
+  width: 100%;
+  padding: 2px 2px 2px 10px;
+  margin-bottom: 10px;
+  background-color: #F5F5F5;
+  border: 1px solid #DADAD6;
+}
+
+.subSection > span > div > div:first-child {
+  border: 1px dotted #DADAD6;
+}
+
+.addButton {
+  padding: 10px 0 10px 15px;
 }
