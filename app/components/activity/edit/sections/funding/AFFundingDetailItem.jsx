@@ -25,6 +25,7 @@ export default class AFFundingDetailItem extends Component {
   static propTypes = {
     fundingDetail: PropTypes.object.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
+    funding: PropTypes.object.isRequired,
     type: PropTypes.string
   };
 
@@ -35,16 +36,21 @@ export default class AFFundingDetailItem extends Component {
         .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
       this.props.fundingDetail[AC.CURRENCY] = currency[0];
     }
+    const orgGroupName = this.props.funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
     let fixedExchangeRateFMPath;
+    let pledgeFMPath;
     switch (this.props.type) {
       case VC.COMMITMENTS:
         fixedExchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
+        pledgeFMPath = FMC.ACTIVITY_COMMITMENTS_PLEDGES;
         break;
       case VC.DISBURSEMENTS:
         fixedExchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
+        pledgeFMPath = FMC.ACTIVITY_DISBURSEMENTS_PLEDGES;
         break;
       case VC.EXPENDITURES:
         fixedExchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
+        pledgeFMPath = FMC.ACTIVITY_EXPENDITURES_PLEDGES;
         break;
       default:
         break;
@@ -80,6 +86,15 @@ export default class AFFundingDetailItem extends Component {
               fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} /> : null}
           </Col>
+          <Col md={6} lg={6}>
+            <AFField
+              parent={this.props.fundingDetail}
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`} defaultValueAsEmptyObject
+              filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
+              fmPath={pledgeFMPath} />
+          </Col>
+        </Row>
+        <Row>
           <Col md={3} lg={3}>
             <AFField
               parent={this.props.fundingDetail}
