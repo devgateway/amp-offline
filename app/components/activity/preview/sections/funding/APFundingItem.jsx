@@ -6,6 +6,8 @@ import translate from '../../../../../utils/translate';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APFundingItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
+import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
 
 const logger = new Logger('AP Funding item');
 
@@ -28,7 +30,21 @@ class APFundingItem extends Component {
   }
 
   insertPledgeRow() {
-    if (this.props.item.pledge) {
+    let pledgeFMPath;
+    switch (this.props.item[AC.TRANSACTION_TYPE].value) {
+      case VC.COMMITMENTS:
+        pledgeFMPath = FMC.ACTIVITY_COMMITMENTS_PLEDGES;
+        break;
+      case VC.DISBURSEMENTS:
+        pledgeFMPath = FMC.ACTIVITY_DISBURSEMENTS_PLEDGES;
+        break;
+      case VC.EXPENDITURES:
+        pledgeFMPath = FMC.ACTIVITY_EXPENDITURES_PLEDGES;
+        break;
+      default:
+        break;
+    }
+    if (this.props.item.pledge && pledgeFMPath) {
       return (<tr className={styles.row}>
         <td
           colSpan={AC.AP_FUNDINGS_TABLE_COLS}
