@@ -6,6 +6,9 @@ import translate from '../../../../../utils/translate';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APFundingItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
+import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
+import FeatureManager from '../../../../../modules/util/FeatureManager';
 
 const logger = new Logger('AP Funding item');
 
@@ -27,6 +30,28 @@ class APFundingItem extends Component {
     logger.log('constructor');
   }
 
+  insertFixedExchangeRateCell() {
+    let exchangeRateFMPath;
+    switch (this.props.item[AC.TRANSACTION_TYPE].value) {
+      case VC.COMMITMENTS:
+        exchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
+        break;
+      case VC.DISBURSEMENTS:
+        exchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
+        break;
+      case VC.EXPENDITURES:
+        exchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
+        break;
+      default:
+        break;
+    }
+    if (FeatureManager.isFMSettingEnabled(exchangeRateFMPath)) {
+      return this.props.item[AC.FIXED_EXCHANGE_RATE];
+    } else {
+      return null;
+    }
+  }
+
   render() {
     logger.log('render');
     const convertedAmount = this.context.currencyRatesManager.convertTransactionAmountToCurrency(this.props.item,
@@ -39,7 +64,7 @@ class APFundingItem extends Component {
           <td
             className={styles.right_text}>
             {`${rawNumberToFormattedString(convertedAmount)} ${this.props.wsCurrency}`}</td>
-          <td className={styles.right_text}>{this.props.item[AC.FIXED_EXCHANGE_RATE]}</td>
+          <td className={[styles.right_text, styles.exchange_rate].join(' ')}>{this.insertFixedExchangeRateCell()}</td>
         </tr>
       </tbody>);
   }
