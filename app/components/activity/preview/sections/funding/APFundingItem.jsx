@@ -6,6 +6,9 @@ import translate from '../../../../../utils/translate';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APFundingItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
+import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
+import * as VC from '../../../../../utils/constants/ValueConstants';
+import FeatureManager from '../../../../../modules/util/FeatureManager';
 
 const logger = new Logger('AP Funding item');
 
@@ -27,6 +30,35 @@ class APFundingItem extends Component {
     logger.log('constructor');
   }
 
+  insertPledgeRow() {
+    let pledgeFMPath;
+    switch (this.props.item[AC.TRANSACTION_TYPE].value) {
+      case VC.COMMITMENTS:
+        pledgeFMPath = FMC.ACTIVITY_COMMITMENTS_PLEDGES;
+        break;
+      case VC.DISBURSEMENTS:
+        pledgeFMPath = FMC.ACTIVITY_DISBURSEMENTS_PLEDGES;
+        break;
+      case VC.EXPENDITURES:
+        pledgeFMPath = FMC.ACTIVITY_EXPENDITURES_PLEDGES;
+        break;
+      default:
+        break;
+    }
+    if (this.props.item.pledge && FeatureManager.isFMSettingEnabled(pledgeFMPath)) {
+      return (<tr className={styles.row}>
+        <td
+          colSpan={AC.AP_FUNDINGS_TABLE_COLS}
+          className={styles.left_text}>
+          <span>{`${translate('Source Pledge')}: `}</span>
+          <span className={styles.value}>{`${translate(this.props.item[AC.PLEDGE].value)}`}</span>
+        </td>
+      </tr>);
+    } else {
+      return null;
+    }
+  }
+
   render() {
     logger.log('render');
     const convertedAmount = this.context.currencyRatesManager.convertTransactionAmountToCurrency(this.props.item,
@@ -41,6 +73,7 @@ class APFundingItem extends Component {
             {`${rawNumberToFormattedString(convertedAmount)} ${this.props.wsCurrency}`}</td>
           <td className={styles.right_text}>{this.props.item[AC.FIXED_EXCHANGE_RATE]}</td>
         </tr>
+        {this.insertPledgeRow()}
       </tbody>);
   }
 }
