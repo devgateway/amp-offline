@@ -84,12 +84,11 @@ class AFFunding extends Component {
       fundingItem[AC.FUNDING_DETAILS] = [];
       fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
       fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
-      const newFundingList = this.state.fundingList;
+      const newFundingList = this.state.fundingList.slice();
       newFundingList.push(fundingItem);
       this.setState({ fundingList: newFundingList });
       // Needed for new activities or funding is not added.
-      this.context.activity.fundings = newFundingList;
-
+      this.context.activity.fundings.push(fundingItem);
       this._addDonorToOrgRoleList(value.id, fundingItem[AC.SOURCE_ROLE]);
     }
   }
@@ -189,10 +188,13 @@ class AFFunding extends Component {
   removeFundingItem(id) {
     logger.log('_removeFundingItem');
     if (confirm(translate('deleteFundingItem'))) {
-      const newFundingList = this.state.fundingList;
+      const newFundingList = this.state.fundingList.slice();
       const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
       newFundingList.splice(index, 1);
       this.setState({ fundingList: newFundingList });
+      // Remove from the activity.
+      const index2 = this.context.activity.fundings.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      this.context.activity.fundings.splice(index2, 1);
     }
   }
 
