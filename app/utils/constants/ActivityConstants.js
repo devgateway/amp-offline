@@ -165,6 +165,7 @@ export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact_information';
 export const MOFED_CONTACT = 'mofed_contact_information';
 export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing/executing_agency_contact_information';
 export const CONTACT = 'contact';
+export const ORGANIZATION_GROUP = 'organization_group';
 export const FIXED_EXCHANGE_RATE = 'fixed_exchange_rate';
 export const PRIMARY_CONTACT = 'mark_as_primary';
 
@@ -214,6 +215,7 @@ export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
 export const ACTIVITY_CONTACT_COLS = 2;
+export const AP_FUNDINGS_TABLE_COLS = 4;
 
 export const MULTI_SELECT_MIN_SIZE = 8;
 export const MULTI_SELECT_MAX_SIZE = 8;

@@ -24,6 +24,12 @@ export const ACTIVITY_ORGANIZATIONS = '/Activity Form/Organizations';
 export const ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION = '/Activity Form/Organizations/Donor Organization';
 export const ACTIVITY_PROGRAM = '/Activity Form/Program';
 export const ACTIVITY_PLANNING = '/Activity Form/Planning';
+export const ACTIVITY_COMMITMENTS_PLEDGES =
+  '/Activity Form/Funding/Funding Group/Funding Item/Commitments/Commitments Table/Pledges';
+export const ACTIVITY_DISBURSEMENTS_PLEDGES =
+  '/Activity Form/Funding/Funding Group/Funding Item/Disbursements/Disbursements Table/Pledges';
+export const ACTIVITY_EXPENDITURES_PLEDGES =
+  '/Activity Form/Funding/Funding Group/Funding Item/Disbursements/Expenditures Table/Pledges';
 export const ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE =
   '/Activity Form/Funding/Funding Group/Funding Item/Commitments/Commitments Table/Fixed exchange rate';
 export const ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE =
