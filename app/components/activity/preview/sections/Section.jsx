@@ -83,6 +83,8 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       const fieldDef = fieldsManager.getFieldDef(path);
       if (fieldDef.field_type === 'date') {
         value = DateUtils.createFormattedDate(value);
+      } else if (Array.isArray(value) && !value.length) {
+        value = null;
       }
       value = NAOptions && NAOptions.has(value) ? null : value;
 
