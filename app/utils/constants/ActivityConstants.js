@@ -215,6 +215,7 @@ export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
 export const ACTIVITY_CONTACT_COLS = 2;
+export const AP_FUNDINGS_TABLE_COLS = 4;
 
 export const MULTI_SELECT_MIN_SIZE = 8;
 export const MULTI_SELECT_MAX_SIZE = 8;

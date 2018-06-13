@@ -66,7 +66,7 @@ class APContact extends Component {
       .filter(acp => activityFieldsManager.isFieldPathEnabled(acp))
       .map(acp => {
         const title = activityFieldsManager.getFieldLabelTranslation(acp);
-        const contacts = activity[acp].map(c => {
+        const contacts = (activity[acp] || []).map(c => {
           const hydratedC = hydratedContactsByIds[c[CONTACT].id];
           return hydratedC ? this.renderContact(hydratedC) : null;
         });
