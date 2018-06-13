@@ -22,7 +22,8 @@ const logger = new Logger('AF funding donor section');
 export default class AFFundingDonorSection extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    activity: PropTypes.object.isRequired
   };
 
   static propTypes = {
@@ -61,7 +62,10 @@ export default class AFFundingDonorSection extends Component {
         }
       }
     });
-    this.setState({ openFundingDonorSection: openFundingDonorSectionState });
+    this.setState({
+      openFundingDonorSection: openFundingDonorSectionState,
+      fundingList: this._filterFundings(nextProps.fundings)
+    });
   }
 
   _addNewFundingItem() {
@@ -74,11 +78,13 @@ export default class AFFundingDonorSection extends Component {
     }
     fundingItem[AC.FUNDING_DETAILS] = [];
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
-    const newFundingList = this.state.fundingList;
+    const newFundingList = this.state.fundingList.slice();
     newFundingList.push(fundingItem);
     const newOpenFundingDonorSection = this.state.openFundingDonorSection;
     newOpenFundingDonorSection.push({ open: false, id: fundingItem[AC.GROUP_VERSIONED_FUNDING] });
     this.setState({ fundingList: newFundingList, openFundingDonorSection: newOpenFundingDonorSection });
+    // Add to activity object or it will disappear when changing section.
+    this.context.activity.fundings.push(fundingItem);
   }
 
   _filterFundings(fundings) {
