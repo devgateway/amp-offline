@@ -89,7 +89,7 @@ export default class AFFundingDetailItem extends Component {
           <Col md={6} lg={6}>
             <AFField
               parent={this.props.fundingDetail}
-              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`} defaultValueAsEmptyObject
+              fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`}
               filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
               fmPath={pledgeFMPath} />
           </Col>
