@@ -29,11 +29,11 @@ export const ACTIVITY_COMMITMENTS_PLEDGES =
 export const ACTIVITY_DISBURSEMENTS_PLEDGES =
   '/Activity Form/Funding/Funding Group/Funding Item/Disbursements/Disbursements Table/Pledges';
 export const ACTIVITY_EXPENDITURES_PLEDGES =
-  '/Activity Form/Funding/Funding Group/Funding Item/Disbursements/Expenditures Table/Pledges';
+  '/Activity Form/Funding/Funding Group/Funding Item/Expenditures/Expenditures Table/Pledges';
 export const ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE =
   '/Activity Form/Funding/Funding Group/Funding Item/Commitments/Commitments Table/Fixed exchange rate';
 export const ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE =
   '/Activity Form/Funding/Funding Group/Funding Item/Disbursements/Disbursements Table/Fixed exchange rate';
 export const ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE =
-  '/Activity Form/Funding/Funding Group/Funding Item/Disbursements/Expenditures Table/Fixed exchange rate';
+  '/Activity Form/Funding/Funding Group/Funding Item/Expenditures/Expenditures Table/Fixed exchange rate';
 export const ACTIVITY_CONTACT = '/Activity Form/Contacts';
