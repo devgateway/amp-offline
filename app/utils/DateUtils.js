@@ -8,6 +8,7 @@ import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import * as ErrorNotificationHelper from '../modules/helpers/ErrorNotificationHelper';
 import { NOTIFICATION_ORIGIN_DATES } from './constants/ErrorConstants';
+import translate from '../utils/translate';
 
 const logger = new Logger('Date utils');
 
@@ -35,7 +36,7 @@ export default class DateUtils {
       if (dateAsMoment.isValid()) {
         return dateAsMoment.format(format);
       }
-      const message = `Invalid date provided: ${date}`;
+      const message = `${translate('Invalid date provided')}: ${date}`;
       logger.error(message);
       throw ErrorNotificationHelper.createNotification({ message, origin: NOTIFICATION_ORIGIN_DATES });
     }
