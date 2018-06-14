@@ -75,6 +75,7 @@
   "Total Actual Expenditures": "Total Expenditures",
   "Total Planned Expenditures": "Total Planned Expenditures",
   "Total MTEF Projections": "Total MTEF Projections",
+  "Source Pledge": "Source Pledge",
   "Next": "Next",
   "Prev": "Prev",
   "timeoutError": "Connection timeout. Please check your internet connection.",
@@ -355,6 +356,7 @@
   "Add Contact Email": "Add Contact Email",
   "Add Contact Fax": "Add Contact Fax",
   "Exchange Rate": "Exchange Rate",
+  "Fixed Exchange Rate": "Fixed Exchange Rate",
   "contact office address": "contact office address",
   "Contact Information": "Contact Information"
 }
