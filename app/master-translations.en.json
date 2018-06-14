@@ -309,6 +309,8 @@
   "Quick Links": "Quick Links",
   "Not Implemented": "Not Implemented",
   "unexpectedError": "An unexpected error occurred. Please collect logs, note your actions and contact the administrator.",
+  "uncaughtErrorInFile": "Uncaught error: %message% IN %filename%",
+  "Database Error": "Database Error",
   "financing_id": "Financing Id",
   "deleteFundingItem": "Do you really want to delete this funding item?",
   "deleteFundingTransactionItem": "Do you really want to delete this funding transaction item?",

@@ -7,6 +7,7 @@ import Logger from '../../modules/util/LoggerManager';
 import { ACTIVITY_CONTACT_PATHS, FIELD_OPTIONS, FIELD_PATH } from '../../utils/constants/FieldPathConstants';
 import { CONTACT } from '../../utils/constants/ActivityConstants';
 import ContactHelper from './ContactHelper';
+import translate from '../../utils/translate';
 
 const logger = new Logger('Possible values helper');
 
@@ -265,8 +266,9 @@ const PossibleValuesHelper = {
   },
 
   _getInvalidFormatError(errors) {
-    const errorMessage = JSON.stringify(errors).substring(0, 1000);
-    logger.error(errorMessage);
+    const jsonError = JSON.stringify(errors).substring(0, 1000);
+    const errorMessage = `${translate('Database Error')}: ${jsonError}`;
+    logger.error(jsonError);
     return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
   },
 
