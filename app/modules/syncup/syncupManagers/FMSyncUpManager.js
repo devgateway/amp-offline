@@ -5,6 +5,7 @@ import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import * as FMPaths from '../../../utils/constants/FeatureManagerConstants';
 import Logger from '../../util/LoggerManager';
 import FMHelper from '../../helpers/FMHelper';
+import FeatureManager from '../../util/FeatureManager';
 
 const logger = new Logger('FM sync up manager');
 
@@ -18,25 +19,40 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
     super(SYNCUP_TYPE_FEATURE_MANAGER);
+    this.fmPaths = Object.values(FMPaths);
   }
 
   doAtomicSyncUp() {
     logger.log('doAtomicSyncUp');
     const body = this._getRequestBody();
     return ConnectionHelper.doPost({ url: FEATURE_MANAGER_URL, body, shouldRetry: true })
-      .then((fmTree) => FMHelper.replaceAll([this._prepareData(fmTree)]));
+      .then((fmTree) => {
+        const newFMTree = this._prepareData(fmTree);
+        return FMHelper.replaceAll([newFMTree]).then((res) => {
+          // update FeatureManager with the new tree immediately to no longer report new local settings to pull
+          FeatureManager.setFMTree(newFMTree.fmTree);
+          return res;
+        });
+      });
+  }
+
+  getDiffLeftover() {
+    return super.getDiffLeftover() || this._hasNewLocalSettingsToPull();
+  }
+
+  _hasNewLocalSettingsToPull() {
+    return this.fmPaths.some(fmPath => !FeatureManager.hasFMSetting(fmPath));
   }
 
   _getRequestBody() {
-    const fmPaths = Object.values(FMPaths);
-    const fmModules = this._getModules(fmPaths);
+    const fmModules = this._getModules(this.fmPaths);
     return {
       'reporting-fields': false,
       'enabled-modules': false,
       'detail-flat': false,
       'full-enabled-paths': false,
       'detail-modules': fmModules,
-      'fm-paths': fmPaths
+      'fm-paths': this.fmPaths
     };
   }
 
@@ -69,7 +85,19 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
         dataToStore[key] = value;
       }
     });
+    this._setUndetectedFMSettingsAsDisabled(dataToStore);
     return { fmTree: dataToStore };
+  }
+
+  _setUndetectedFMSettingsAsDisabled(newFmTree) {
+    const futureFM = new FeatureManager(newFmTree);
+    this.fmPaths.forEach(fmPath => {
+      if (!futureFM.hasFMSetting(fmPath)) {
+        logger.warn('FM Path was not found in AMP. Either it doesn\'t exist or the path is wrong. Storing as disabled.'
+          + `FM Path = ${fmPath}`);
+        futureFM.setFMSetting(fmPath, false);
+      }
+    });
   }
 
 }
