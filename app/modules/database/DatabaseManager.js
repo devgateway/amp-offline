@@ -73,13 +73,13 @@ const DatabaseManager = {
         db.loadDatabase((err) => {
           if (err !== null) {
             DatabaseCollection.getInstance().removeCollection(name);
-            reject(this._createNotification(err));
+            reject(DatabaseManager._createNotification(err));
           } else {
             DatabaseManager.createIndex(db, {}, (err2) => {
               if (err2 === null) {
                 resolve(db);
               } else {
-                reject(this._createNotification(err2));
+                reject(DatabaseManager._createNotification(err2));
               }
             });
           }
@@ -100,7 +100,7 @@ const DatabaseManager = {
       const exampleObject = { id };
       collection.find(exampleObject, (err, docs) => {
         if (err !== null) {
-          reject(this._createNotification(err));
+          reject(DatabaseManager._createNotification(err));
         }
         if (docs.length === 1) {
           logger.log('Update');
@@ -108,20 +108,20 @@ const DatabaseManager = {
             if (err2 === null) {
               resolve(data);
             } else {
-              reject(this._createNotification(err2));
+              reject(DatabaseManager._createNotification(err2));
             }
           });
         } else if (docs.length === 0) {
           logger.log('Insert');
           collection.insert(data, (err3, newDoc) => {
             if (err3 !== null) {
-              reject(this._createNotification(err3));
+              reject(DatabaseManager._createNotification(err3));
             } else {
               resolve(newDoc);
             }
           });
         } else {
-          reject(this._createNotification(`${translate('Something is really wrong with this record')}: 
+          reject(DatabaseManager._createNotification(`${translate('Something is really wrong with this record')}: 
             ${exampleObject.id} - ${collectionName}`));
         }
       });
@@ -174,7 +174,7 @@ const DatabaseManager = {
     DatabaseManager._saveOrUpdateColl(collectionData, collectionName).then(newData => resolve(newData))
       .catch((saveUpdateError) =>
         // reject as a notification
-        reject(this._createNotification(saveUpdateError.toString()))
+        reject(DatabaseManager._createNotification(saveUpdateError.toString()))
       );
   },
 
@@ -286,7 +286,7 @@ const DatabaseManager = {
         if (err === null) {
           resolve(numAffected);
         } else {
-          reject(this._createNotification(err));
+          reject(DatabaseManager._createNotification(err));
         }
       });
     }).catch(reject);
@@ -301,11 +301,11 @@ const DatabaseManager = {
             if (err2 === null && newDocs.length === collectionData.length) {
               resolve(newDocs);
             } else {
-              reject(this._createNotification(err2));
+              reject(DatabaseManager._createNotification(err2));
             }
           });
         } else {
-          reject(this._createNotification(err));
+          reject(DatabaseManager._createNotification(err));
         }
       });
     }).catch(reject);
@@ -318,7 +318,7 @@ const DatabaseManager = {
         if (err === null && newDocs.length === collectionData.length) {
           resolve(newDocs);
         } else {
-          reject(this._createNotification(err));
+          reject(DatabaseManager._createNotification(err));
         }
       });
     }).catch(reject);
@@ -349,14 +349,14 @@ const DatabaseManager = {
       const exampleObject = Object.assign({ id }, example);
       collection.findOne(exampleObject, (err, doc) => {
         if (err !== null) {
-          reject(this._createNotification(err));
+          reject(DatabaseManager._createNotification(err));
         }
         if (doc !== null) {
           collection.remove(exampleObject, { multi: false }, (err2, count) => {
             if (err2 === null) {
               resolve(count);
             } else {
-              reject(this._createNotification(err2));
+              reject(DatabaseManager._createNotification(err2));
             }
           });
         } else if (doc === null) {
@@ -402,7 +402,7 @@ const DatabaseManager = {
         if (err === null) {
           resolve(count);
         } else {
-          reject(this._createNotification(err));
+          reject(DatabaseManager._createNotification(err));
         }
       });
     }).catch(reject);
@@ -421,7 +421,7 @@ const DatabaseManager = {
             resolve(docs[0]);
             break;
           default:
-            reject(this._createNotification(translate('moreThanOneResultFound')));
+            reject(DatabaseManager._createNotification(translate('moreThanOneResultFound')));
             break;
         }
       }).catch(reject);
@@ -447,7 +447,7 @@ const DatabaseManager = {
           case 1:
             return docs[0];
           default:
-            return Promise.reject(this._createNotification(translate('moreThanOneResultFound')));
+            return Promise.reject(DatabaseManager._createNotification(translate('moreThanOneResultFound')));
         }
       });
   },
@@ -475,7 +475,7 @@ const DatabaseManager = {
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.find(example, newProjections, (err, docs) => {
         if (err !== null) {
-          reject(this._createNotification(err));
+          reject(DatabaseManager._createNotification(err));
         }
         resolve(docs);
       });
@@ -499,7 +499,7 @@ const DatabaseManager = {
       collection.find(example, newProjections).sort(sort).skip(skip).limit(limit)
         .exec((err, docs) => {
           if (err !== null) {
-            reject(this._createNotification(err));
+            reject(DatabaseManager._createNotification(err));
           }
           resolve(docs);
         });
@@ -522,7 +522,7 @@ const DatabaseManager = {
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.count(example, (err, count) => {
         if (err !== null) {
-          reject(this._createNotification(err));
+          reject(DatabaseManager._createNotification(err));
         }
         resolve(count);
       });
