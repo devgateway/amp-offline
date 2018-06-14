@@ -1,10 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Button } from 'react-bootstrap';
 import * as styles from './EntryList.css';
 import * as listStyles from '../../activity/edit/components/AFList.css';
 import * as afStyles from '../../activity/edit/ActivityForm.css';
 import AFLabel from '../../activity/edit/components/AFLabel';
+import translate from '../../../utils/translate';
+
 
 /**
  * A generic list of entries that allows to add/remove entries, while the entry init/edit is handled elsewhere
@@ -19,7 +22,11 @@ export default class EntryList extends Component {
     onRemove: PropTypes.func.isRequired,
     onAdd: PropTypes.func.isRequired,
     className: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-    // entryType: PropTypes.object.isRequired,
+    titleAsAddButton: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    titleAsAddButton: false,
   };
 
   getChildren() {
@@ -40,13 +47,24 @@ export default class EntryList extends Component {
     return entries;
   }
 
-  render() {
-    const { label, onAdd } = this.props;
+  getAddSection() {
+    const { label, onAdd, titleAsAddButton } = this.props;
+    if (titleAsAddButton) {
+      return <Button bsStyle="success" onClick={onAdd}>{translate(label)}</Button>;
+    }
     return (
-      <div className={styles.entryList}>
+      <span>
         {label &&
         <AFLabel value={label} className={[afStyles.label_highlight, afStyles.activity_form_control].join(' ')} />}
         <span className={styles.addButton}><a onClick={onAdd} href={null} /></span>
+      </span>
+    );
+  }
+
+  render() {
+    return (
+      <div className={styles.entryList}>
+        {this.getAddSection()}
         <div className={this.props.className}>
           {this.getChildren()}
         </div>
