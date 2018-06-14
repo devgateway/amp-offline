@@ -4,7 +4,8 @@ import {
   ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
   ACTIVITY_SINGLE_FIELDS_TREE_URL,
   AMP_COUNTRY_FLAG,
-  AMP_REGISTRY_SETTINGS_URL,
+  AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
+  AMP_REGISTRY_STAGING_SETTINGS_URL,
   AVAILABLE_LANGUAGES_URL,
   CHANGE_PASSWORD_URL,
   CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
@@ -33,7 +34,12 @@ import {
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
-  url: AMP_REGISTRY_SETTINGS_URL,
+  url: AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
+  isFull: true,
+  method: 'GET',
+  requiresAuth: false
+}, {
+  url: AMP_REGISTRY_STAGING_SETTINGS_URL,
   isFull: true,
   method: 'GET',
   requiresAuth: false
