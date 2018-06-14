@@ -61,7 +61,7 @@ class APFundingTransactionTypeItem extends Component {
     return (<div>
       <APLabel label={label} labelClass={styles.header} key={key} />
       {FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
-        <APLabel label={translate('Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
+        <APLabel label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
     </div>);
   }
 

@@ -1,12 +1,17 @@
 .right_text {
   text-align: right;
-  width: 35%;
+  width: 29%;
   padding-right: 35px;
 }
 
 .left_text {
   width: 30%;
   padding-left: 20px;
+}
+
+.exchange_rate {
+  min-width: 4em;
+  max-width: 4em;
 }
 
 .row {
