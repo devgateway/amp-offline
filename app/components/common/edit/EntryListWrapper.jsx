@@ -26,6 +26,13 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
     items: PropTypes.array.isRequired,
     onChange: PropTypes.func,
     onEntriesChange: PropTypes.func.isRequired,
+    wrapperContainerStyle: PropTypes.any,
+    titleAsAddButton: PropTypes.bool,
+    entryListStyle: PropTypes.any,
+  };
+
+  static defaultProps = {
+    wrapperContainerStyle: styles.wrapperContainer,
   };
 
   constructor(props) {
@@ -81,12 +88,14 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
     if (!uniqueIdItemPairs) {
       return null;
     }
+    const { wrapperContainerStyle, titleAsAddButton, entryListStyle } = this.props;
     const ids = uniqueIdItemPairs.map(([uId]) => uId);
 
     return (
       <Grid>
         <EntryList
-          label={translate(Title)} className={styles.wrapperContainer}
+          label={translate(Title)} className={wrapperContainerStyle} titleAsAddButton={titleAsAddButton}
+          entryListStyle={entryListStyle}
           onRemove={this.onRemove.bind(this)} onAdd={this.onAdd.bind(this)} childrenIds={ids}>
           {uniqueIdItemPairs.map(([uid, item]) => getEntryFunc(uid, item))}
         </EntryList>
