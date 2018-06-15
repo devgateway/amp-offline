@@ -54,14 +54,16 @@ export default class AFNumber extends Component {
     return validationError;
   }
 
-  handleChange(e) {
+  handleChange(e, propagateChange) {
     // TODO: I think keep in a variable the string representation of the number (according to current GS) along with
     // the numeric value.
     let value = e.target.value;
     value = value && value.trim();
     const validationError = this.validate(value);
     const valueAsNumber = value === null || value === undefined || value === '' ? null : Number(value);
-    this.props.onChange(valueAsNumber, null, validationError);
+    if (propagateChange) {
+      this.props.onChange(valueAsNumber, null, validationError);
+    }
     this.setState({ value });
   }
 
@@ -71,8 +73,8 @@ export default class AFNumber extends Component {
     so we clear the control when leaving. */
     if (this.validate(this.state.value)) {
       e.target.value = '';
-      this.handleChange(e);
     }
+    this.handleChange(e, true);
   }
 
   render() {
