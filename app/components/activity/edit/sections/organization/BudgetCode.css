@@ -1,0 +1,21 @@
+.afField, .afField > span > div {
+  width: 100%;
+  padding: unset;
+}
+
+.entryWrapperContainer {
+  padding-top: 15px;
+}
+
+.entryWrapperContainer > div {
+  align-items: center;
+  display: flex;
+}
+
+.entryWrapperContainer > div > span > div {
+  margin: 0;
+}
+
+.entryList {
+
+}

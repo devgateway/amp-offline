@@ -22,6 +22,7 @@ export const PRIMARY_SECTOR_PATH = 'primary_sectors~sector';
 export const SECONDARY_SECTOR_PATH = 'secondary_sectors~sector';
 export const TERTIARY_SECTOR_PATH = 'tertiary_sectors~sector';
 export const DONOR_ORGANIZATIONS_PATH = 'donor_organization~organization';
+export const RESPONSIBLE_ORGANIZATION_BUDGETS_PATH = `${AC.RESPONSIBLE_ORGANIZATION}~${AC.BUDGETS}`;
 
 export const RELATED_ORGS_PATHS = ORG_ROLE_NAMES.map(orgRole => AC.toFieldName(orgRole));
 export const RELATED_ORGS_ORGANIZATION_PATHS = ORG_ROLE_NAMES.map(
