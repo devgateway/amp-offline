@@ -7,7 +7,7 @@ import * as AC from '../../../utils/constants/ActivityConstants';
 import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
 import APStatusBar from './sections/APStatusBar';
-import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 import Logger from '../../../modules/util/LoggerManager';
@@ -30,11 +30,15 @@ export default class ActivityPreview extends Component {
       isActivityLoaded: PropTypes.bool,
       activity: PropTypes.object,
       activityWorkspace: PropTypes.object,
-      activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+      activityFieldsManager: PropTypes.instanceOf(FieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
       currentWorkspaceSettings: PropTypes.object,
       errorMessage: PropTypes.object
+    }).isRequired,
+    contactReducer: PropTypes.shape({
+      contactFieldsManager: PropTypes.instanceOf(FieldsManager),
+      contactsByIds: PropTypes.object,
     }).isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
@@ -50,10 +54,12 @@ export default class ActivityPreview extends Component {
     activityWorkspace: PropTypes.object,
     currentWorkspaceSettings: PropTypes.object,
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     workspaceReducer: PropTypes.object,
-    userReducer: PropTypes.object
+    userReducer: PropTypes.object,
+    contactFieldsManager: PropTypes.instanceOf(FieldsManager),
+    contactsByIds: PropTypes.object,
   };
 
   constructor(props) {
@@ -66,6 +72,8 @@ export default class ActivityPreview extends Component {
       activity: this.props.activityReducer.activity,
       activityWorkspace: this.props.activityReducer.activityWorkspace,
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
+      contactFieldsManager: this.props.contactReducer.contactFieldsManager,
+      contactsByIds: this.props.contactReducer.contactsByIds,
       currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager

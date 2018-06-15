@@ -15,6 +15,7 @@ export default class APField extends Component {
     value: PropTypes.any,
     inline: PropTypes.bool,
     useInnerHTML: PropTypes.bool,
+    fieldClass: PropTypes.string,
     fieldNameClass: PropTypes.string,
     fieldValueClass: PropTypes.string,
     separator: PropTypes.bool
@@ -38,13 +39,19 @@ export default class APField extends Component {
     super(props);
     logger.log('constructor');
     this.useSeparator = this.props.separator !== false;
-    this.displayClass = this.props.inline === true ? styles.inline : styles.block;
+    this.displayClass = this.props.fieldClass || (this.props.inline === true ? styles.inline : styles.block);
   }
 
   _getValue() {
     const classNames = `${this.props.fieldValueClass} ${this.displayClass}`;
     const value = this.props.value ? this.props.value : translate('No Data');
-    const displayValue = (this.props.inline && this.props.value instanceof String) ? `${value} ` : value;
+    let displayValue;
+    if (Array.isArray(value) && value.length > 1 && typeof value[0] === 'string') {
+      // Improve the display of simple array of strings.
+      displayValue = value.map((i) => (` ${i}`)).toString();
+    } else {
+      displayValue = (this.props.inline && this.props.value instanceof String) ? `${value} ` : value;
+    }
     if (this.props.useInnerHTML) {
       return <div className={classNames} dangerouslySetInnerHTML={{ __html: displayValue }} />;
     } else {

@@ -2,7 +2,9 @@ import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CONTACTS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
-import { CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID } from '../../utils/constants/ContactConstants';
+import
+{ CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID, NAME, LAST_NAME }
+from '../../utils/constants/ContactConstants';
 
 const logger = new Logger('Contact helper');
 
@@ -16,6 +18,12 @@ const ContactHelper = {
     logger.debug('findContactById');
     const filterRule = { id };
     return ContactHelper.findContact(filterRule);
+  },
+
+  findContactsByIds(ids) {
+    logger.debug('findContactsByIds');
+    const filterRule = { id: { $in: ids } };
+    return ContactHelper.findAllContacts(filterRule);
   },
 
   findContactByInternalId(internalId) {
@@ -40,15 +48,35 @@ const ContactHelper = {
     return ContactHelper.findAllContacts(filterRule);
   },
 
+  findAllContactsAsPossibleOptions() {
+    return ContactHelper.findAllContacts({}, { id: 1, [NAME]: 1, [LAST_NAME]: 1 })
+      .then(contacts => contacts.map(ContactHelper._toPV).reduce((result, cpv) => {
+        result[cpv.id] = cpv;
+        return result;
+      }, {}));
+  },
+
+  _toPV(contact) {
+    return {
+      id: contact.id,
+      value: `${contact[NAME]} ${contact[LAST_NAME]}`
+    };
+  },
+
   findAllContacts(filterRule, projections) {
     logger.debug('findAllContacts');
     return DatabaseManager.findAll(filterRule, COLLECTION_CONTACTS, projections);
   },
 
   stampClientChange(contact) {
-    contact[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${Utils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
+    if (!contact[CLIENT_CHANGE_ID]) {
+      contact[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${Utils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
+    }
     if (!contact.id) {
       contact.id = contact[CLIENT_CHANGE_ID];
+    }
+    if (!contact[INTERNAL_ID]) {
+      contact[INTERNAL_ID] = contact.id;
     }
     return contact;
   },
@@ -57,13 +85,23 @@ const ContactHelper = {
     return contact.id && `${contact.id}`.startsWith(CLIENT_CHANGE_ID_PREFIX);
   },
 
+  /**
+   * Checks if the contact is stampped as modified on client (i.e. not yet pushed to AMP)
+   * @param contact
+   */
+  isModifiedOnClient(contact) {
+    return !!contact[CLIENT_CHANGE_ID];
+  },
+
   cleanupLocalData(contact) {
+    // TODO AMP-27748: these can be removed once extra fields are ignored by API
     const cleanContact = { ...contact };
     if (ContactHelper.isNewContact(contact)) {
       delete cleanContact.id;
     }
     delete cleanContact[CLIENT_CHANGE_ID];
     delete cleanContact._id;
+    delete cleanContact[INTERNAL_ID];
     return cleanContact;
   },
 

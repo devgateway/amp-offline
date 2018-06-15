@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import styles from '../ActivityPreview.css';
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import NumberUtils from '../../../../utils/NumberUtils';
@@ -17,7 +17,7 @@ const logger = new Logger('AP project cost');
 const APProjectCost = (fieldName) => class extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityFundingTotals: PropTypes.object.isRequired
   };
 

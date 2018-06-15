@@ -1,24 +1,26 @@
 /* eslint-disable class-methods-use-this */
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 import PossibleValuesManager from './PossibleValuesManager';
-import Logger from '../../modules/util/LoggerManager';
+import Logger from '../util/LoggerManager';
+import { FIELD_OPTIONS } from '../../utils/constants/FieldPathConstants';
 
-const logger = new Logger('Activity fields manager');
+const logger = new Logger('Fields manager');
 
 /**
  * This is a helper class for checking fields status, getting field options translations and the like.
+ *
  * @author Nadejda Mandrescu
  */
-export default class ActivityFieldsManager {
+export default class FieldsManager {
   /**
-   * Shallow clone of another activityFieldsManager
-   * @param activityFieldsManager
-   * @return {ActivityFieldsManager}
+   * Shallow clone of another newFieldsManager
+   * @param fieldsManager
+   * @return {FieldsManager}
    */
-  static clone(activityFieldsManager: ActivityFieldsManager) {
-    const newActivityFieldsManager = new ActivityFieldsManager([], []);
-    Object.assign(newActivityFieldsManager, activityFieldsManager);
-    return newActivityFieldsManager;
+  static clone(fieldsManager: FieldsManager) {
+    const newFieldsManager = new FieldsManager([], []);
+    Object.assign(newFieldsManager, fieldsManager);
+    return newFieldsManager;
   }
 
   constructor(fieldsDef, possibleValuesCollection, currentLanguage) {
@@ -27,7 +29,7 @@ export default class ActivityFieldsManager {
     this._fieldsDef = fieldsDef;
     this._possibleValuesMap = {};
     possibleValuesCollection.forEach(pv => {
-      this._possibleValuesMap[pv.id] = pv['possible-options'];
+      this._possibleValuesMap[pv.id] = pv[FIELD_OPTIONS];
     });
     this._fieldPathsEnabledStatusMap = {};
     this._lang = currentLanguage || LANGUAGE_ENGLISH;
@@ -161,7 +163,7 @@ export default class ActivityFieldsManager {
   }
 
   getValue(object, fieldPath) {
-    return ActivityFieldsManager.getValue(object, fieldPath);
+    return FieldsManager.getValue(object, fieldPath);
   }
 
   static getValue(object, fieldPath) {

@@ -1,7 +1,7 @@
 import TranslationManager from '../modules/util/TranslationManager';
 import Logger from '../modules/util/LoggerManager';
 import DateUtils from '../utils/DateUtils';
-import PossibleValuesManager from '../modules/activity/PossibleValuesManager';
+import PossibleValuesManager from '../modules/field/PossibleValuesManager';
 import { LANGUAGE_ENGLISH } from '../utils/Constants';
 import store from '../index';
 

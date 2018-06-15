@@ -14,11 +14,14 @@ export const ACTIVITY_STATUS = 'activity_status';
 export const STATUS_REASON = 'status_reason';
 export const TYPE_OF_IMPLEMENTATION = 'type_of_implementation';
 export const OBJECTIVE = 'objective';
+export const RESULTS = 'results';
+export const BUDGET_CODE_PROJECT_ID = 'budget_code_project_id';
 export const ACTUAL_APPROVAL_DATE = 'actual_approval_date';
 export const FUNDINGS = 'fundings';
 export const FUNDING_DONOR_ORG_ID = 'donor_organization_id';
 export const IS_DRAFT = 'is_draft';
 export const ORG_ROLE_ORG_ID = 'organization';
+export const ADDITIONAL_INFO = 'additional_info';
 export const PRIMARY_SECTORS = 'primary_sectors';
 export const SECONDARY_SECTORS = 'secondary_sectors';
 export const TERTIARY_SECTORS = 'tertiary_sectors';
@@ -43,6 +46,7 @@ export const FUNDING_DETAILS = 'funding_details';
 export const MODE_OF_PAYMENT = 'mode_of_payment';
 export const FUNDING_CLASSIFICATION_DATE = 'funding_classification_date';
 export const AGREEMENT = 'agreement';
+export const DONOR_OBJECTIVE = 'donor_objective';
 export const AGREEMENT_CODE = 'code';
 export const AGREEMENT_TITLE = 'title';
 export const PROJECT_CATEGORY = 'project_category';
@@ -57,6 +61,8 @@ export const BENEFICIARY_AGENCY = 'beneficiary_agency';
 export const IMPLEMENTING_AGENCY = 'implementing_agency';
 export const RESPONSIBLE_ORGANIZATION = 'responsible_organization';
 export const DONOR_ORGANIZATION = 'donor_organization';
+export const BUDGETS = 'budgets';
+export const BUDGET_CODE = 'budget_code';
 export const ARCHIVED = 'archived';
 export const TRANSACTION_DATE = 'transaction_date';
 export const TRANSACTION_TYPE = 'transaction_type';
@@ -106,6 +112,7 @@ export const ACTIVITY_SUMMARY = 'activity_summary';
 export const CONDITIONALITIES = 'conditionalities';
 export const PROJECT_MANAGEMENT = 'project_management';
 export const A_C_CHAPTER = 'a_c_chapter';
+export const CRIS_NUMBER = 'cris_number';
 export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
 export const HIERARCHICAL_VALUE = 'hierarchical_value';
 export const HIERARCHICAL_VALUE_PARTS = 'hierarchical_value_parts';
@@ -151,8 +158,18 @@ export const REPORTING_DATE = 'reporting_date';
 export const RECIPIENT_ROLE = 'recipient_role';
 export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
+export const FY = 'fy';
 export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
 export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
+export const DONOR_CONTACT = 'donor_contact_information';
+export const PROJECT_COORDINATOR_CONTACT = 'project_coordinator_contact_information';
+export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact_information';
+export const MOFED_CONTACT = 'mofed_contact_information';
+export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing/executing_agency_contact_information';
+export const CONTACT = 'contact';
+export const ORGANIZATION_GROUP = 'organization_group';
+export const FIXED_EXCHANGE_RATE = 'fixed_exchange_rate';
+export const PRIMARY_CONTACT = 'mark_as_primary';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
@@ -190,13 +207,20 @@ export const AP_SECTION_IDS =
       value: 'Related Organizations',
       fmPath: FMC.ACTIVITY_ORGANIZATIONS
     },
-    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES }];
+    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES },
+    { key: 'APContact', hash: '#APContact', value: 'Contact Information', fmPath: FMC.ACTIVITY_CONTACT },
+  ];
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;
 export const ACTIVITY_PLANNING_COLS = 3;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
+export const ACTIVITY_CONTACT_COLS = 2;
+export const AP_FUNDINGS_TABLE_COLS = 4;
+
+export const MULTI_SELECT_MIN_SIZE = 8;
+export const MULTI_SELECT_MAX_SIZE = 8;
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

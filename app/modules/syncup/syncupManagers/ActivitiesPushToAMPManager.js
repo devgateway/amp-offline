@@ -4,6 +4,7 @@ import * as ActivityHelper from '../../helpers/ActivityHelper';
 import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
+import * as CC from '../../../utils/constants/ContactConstants';
 import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
@@ -12,6 +13,8 @@ import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import Logger from '../../util/LoggerManager';
+import ContactHelper from '../../helpers/ContactHelper';
+import { getActivityContactIds } from '../../../actions/ContactAction';
 
 const logger = new Logger('Activity push to AMP manager');
 
@@ -154,8 +157,20 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
           return Promise.resolve();
         }
         // uninterruptible call
-        return this._pushActivity(nextActivity);
+        return this._pushOrRejectActivityClientSide(nextActivity);
       }), Promise.resolve());
+  }
+
+  _pushOrRejectActivityClientSide(activity) {
+    logger.log('_pushOrRejectActivityClientSide');
+    return this._getUnsyncedContacts(activity).then(unsyncedContacts => {
+      if (unsyncedContacts.length) {
+        const cNames = unsyncedContacts.map(c => `"${c[CC.NAME]} ${c[CC.LAST_NAME]}"`).join(', ');
+        const error = translate('rejectActivityWhenContactUnsynced').replace('%contacts%', cNames);
+        return this._processPushResult({ activity, error });
+      }
+      return this._pushActivity(activity);
+    });
   }
 
   _pushActivity(activity) {
@@ -171,6 +186,12 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         .then((pushResult) => this._processPushResult({ activity, pushResult })).then(resolve)
         .catch((error) => this._processPushResult({ activity, error }).then(resolve))
     );
+  }
+
+  _getUnsyncedContacts(activity) {
+    const contactIds = getActivityContactIds(activity);
+    return ContactHelper.findContactsByIds(contactIds)
+      .then(contacts => contacts.filter(c => ContactHelper.isModifiedOnClient(c)));
   }
 
   /**

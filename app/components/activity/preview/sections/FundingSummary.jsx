@@ -4,7 +4,7 @@ import APField from '../components/APField';
 import * as VC from '../../../../utils/constants/ValueConstants';
 import * as PC from '../../../../utils/constants/FieldPathConstants';
 import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -21,7 +21,7 @@ const logger = new Logger('Funding summary');
  */
 class FundingSummary extends Component {
   static propTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
     fieldNameClass: PropTypes.string,
     fieldValueClass: PropTypes.string

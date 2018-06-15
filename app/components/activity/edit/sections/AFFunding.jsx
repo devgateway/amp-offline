@@ -12,7 +12,7 @@ import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
 import Utils from '../../../../utils/Utils';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import styles from './funding/AFFunding.css';
 
 const logger = new Logger('AF funding');
@@ -24,7 +24,7 @@ const logger = new Logger('AF funding');
 class AFFunding extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activity: PropTypes.object.isRequired
   };
 
@@ -70,8 +70,8 @@ class AFFunding extends Component {
     if (value) {
       const fundingItem = {};
       fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
-        id: value._id,
-        value: value._value,
+        id: value.id,
+        value: value.value,
         extra_info: value.extra_info,
         'translated-value': value['translated-value']
       };
@@ -84,11 +84,51 @@ class AFFunding extends Component {
       fundingItem[AC.FUNDING_DETAILS] = [];
       fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
       fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
-      const newFundingList = this.state.fundingList;
+      const newFundingList = this.state.fundingList.slice();
       newFundingList.push(fundingItem);
       this.setState({ fundingList: newFundingList });
       // Needed for new activities or funding is not added.
-      this.context.activity.fundings = newFundingList;
+      this.context.activity.fundings.push(fundingItem);
+      this._addDonorToOrgRoleList(value.id, fundingItem[AC.SOURCE_ROLE]);
+    }
+  }
+
+  /* Manually add the selected organization to activity.donor_organization or activity.execution_agency, etc
+   (instead of activity.organization).
+   NOTE: this will need more testing if we add the functionality to choose the org type + org. */
+  _addDonorToOrgRoleList(donorId, role) {
+    let sourceRolePath = '';
+    const roleValue = role ? role.value : null;
+    switch (roleValue) {
+      case VC.DONOR_AGENCY:
+        sourceRolePath = AC.DONOR_ORGANIZATION;
+        break;
+      case VC.BENEFICIARY_AGENCY:
+        sourceRolePath = AC.BENEFICIARY_AGENCY;
+        break;
+      case VC.EXECUTING_AGENCY:
+        sourceRolePath = AC.EXECUTING_AGENCY;
+        break;
+      case VC.CONTRACTING_AGENCY:
+        sourceRolePath = AC.CONTRACTING_AGENCY;
+        break;
+      case VC.IMPLEMENTING_AGENCY:
+        sourceRolePath = AC.IMPLEMENTING_AGENCY;
+        break;
+      case VC.RESPONSIBLE_ORGANIZATION:
+        sourceRolePath = AC.RESPONSIBLE_ORGANIZATION;
+        break;
+      default:
+        // This is the case when SOURCE_ROLE is disabled.
+        sourceRolePath = AC.DONOR_ORGANIZATION;
+        break;
+    }
+    if (!this.context.activity[sourceRolePath]) {
+      // Initialize if necessary.
+      this.context.activity[sourceRolePath] = [];
+    }
+    if (!this.context.activity[sourceRolePath].some(o => (o.organization.id === donorId))) {
+      this.context.activity[sourceRolePath].push({ organization: { id: donorId } });
     }
   }
 
@@ -148,10 +188,13 @@ class AFFunding extends Component {
   removeFundingItem(id) {
     logger.log('_removeFundingItem');
     if (confirm(translate('deleteFundingItem'))) {
-      const newFundingList = this.state.fundingList;
+      const newFundingList = this.state.fundingList.slice();
       const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
       newFundingList.splice(index, 1);
       this.setState({ fundingList: newFundingList });
+      // Remove from the activity.
+      const index2 = this.context.activity.fundings.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      this.context.activity.fundings.splice(index2, 1);
     }
   }
 

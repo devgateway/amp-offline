@@ -5,7 +5,7 @@ import { FormGroup, Col, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
 import AFField from '../../components/AFField';
@@ -21,7 +21,7 @@ const logger = new Logger('AF funding container');
 export default class AFFundingContainer extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   static propTypes = {
@@ -98,19 +98,23 @@ export default class AFFundingContainer extends Component {
         type={VC.COMMITMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={this.props.funding} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.DISBURSEMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={this.props.funding} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.EXPENDITURES}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={this.props.funding} />
+      <AFField parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.DONOR_OBJECTIVE}`} type={Types.TEXT_AREA} />
     </div>);
   }
 }

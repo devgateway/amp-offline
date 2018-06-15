@@ -17,12 +17,13 @@ export default class AFDropDown extends Component {
     // TODO change it to be only number once we fix possible values to provide ids only as numbers
     selectedId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func.isRequired,
-    defaultValueAsEmptyObject: PropTypes.bool
+    defaultValueAsEmptyObject: PropTypes.bool,
+    extraParams: PropTypes.object
   };
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       value: undefined,
       propsReceived: false
@@ -31,6 +32,10 @@ export default class AFDropDown extends Component {
 
   componentWillMount() {
     this.setState({ value: this.props.selectedId, propsReceived: true });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ value: nextProps.selectedId });
   }
 
   componentDidUpdate(prevProps) {
@@ -64,6 +69,7 @@ export default class AFDropDown extends Component {
   }
 
   render() {
+    const extraParams = this.props.extraParams || {};
     if (!this.state.propsReceived) {
       return null;
     }
@@ -73,9 +79,9 @@ export default class AFDropDown extends Component {
 
     return (
       <FormControl
-        componentClass="select" defaultValue={this.state.value} onChange={this.handleChange.bind(this)}
+        componentClass="select" value={this.state.value} onChange={this.handleChange.bind(this)}
         placeholder={-1}>
-        {[defaultOption].concat(options)}
+        {extraParams.noChooseOneOption ? options : [defaultOption].concat(options)}
       </FormControl>
     );
   }

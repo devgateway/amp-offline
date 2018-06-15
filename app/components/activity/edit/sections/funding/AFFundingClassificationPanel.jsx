@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import { Col, FormGroup, Grid, Panel, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
@@ -18,7 +18,7 @@ const logger = new Logger('AF Funding classication panel');
 export default class AFFundingClassificationPanel extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   static propTypes = {

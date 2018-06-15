@@ -29,7 +29,8 @@ export const DOWNLOAD_UPDATE_BINARY_URL = '/amp/amp-offline-release';
 export const ELECTRON_UPDATER_CHECK_URL = '/amp/offline';
 export const CHANGE_PASSWORD_URL = '/aim/showChangePassword.do';
 export const RESET_PASSWORD_URL = '/aim/showEmailForm.do';
-export const AMP_REGISTRY_SETTINGS_URL = 'https://amp-registry.ampsite.net/amp-registry';
+export const AMP_REGISTRY_PRODUCTION_SETTINGS_URL = 'https://amp-registry.ampsite.net/amp-registry';
+export const AMP_REGISTRY_STAGING_SETTINGS_URL = 'https://amp-registry-stg.ampsite.net/amp-registry';
 export const PP_SUFFIX = '/portal';
 export const AMP_SUFFIX = '/aim';
 
