@@ -74,7 +74,9 @@ export function startSyncUp(historyData) {
       }
     ).catch((err) => {
       logger.error(err);
-      const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY ? err.message : translate('defaultSyncError');
+      const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY
+        ? `${translate('defaultSyncError')}: ${err.message}`
+        : translate('defaultSyncError');
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage } });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();

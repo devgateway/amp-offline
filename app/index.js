@@ -22,6 +22,7 @@ import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_REDIRECT_URL } from './utils/Cons
 import SetupPage from './containers/SetupPage';
 import NotificationHelper from './modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
+import translate from './utils/translate';
 
 const logger = new Logger('index');
 
@@ -44,7 +45,7 @@ function checkAuth(nextState, replace) {
 
 function handleUnexpectedError(err) {
   logger.error(err);
-  const msg = 'An unexpected error occurred. Please collect logs, note your actions and contact the administrator.';
+  const msg = translate('unexpectedError');
   const toString = err.toString();
   const json = JSON.stringify(err);
   alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
@@ -77,7 +78,9 @@ ampOfflineStartUp().then(() =>
 ).catch(handleUnexpectedError);
 
 window.addEventListener('error', ({ filename, message }) => {
-  handleUnexpectedError(`Uncaught error: ${message} IN ${filename}`);
+  logger.error(message, filename);
+  const trn = translate('uncaughtErrorInFile').replace('%message%', message).replace('%filename%', filename);
+  handleUnexpectedError(trn);
 });
 
 window.addEventListener('unhandledrejection', ({ reason }) => {
@@ -86,7 +89,8 @@ window.addEventListener('unhandledrejection', ({ reason }) => {
     const notification = reason;
     const { severity, origin } = notification;
     if (severity === NOTIFICATION_SEVERITY_ERROR && origin === NOTIFICATION_ORIGIN_DATABASE) {
-      handleUnexpectedError(notification.message);
+      // Try to translate.
+      handleUnexpectedError(translate(notification.message));
     }
   }
 });
