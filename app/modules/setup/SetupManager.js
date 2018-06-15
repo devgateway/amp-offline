@@ -1,5 +1,9 @@
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
-import { AMP_REGISTRY_SETTINGS_URL, TEST_URL } from '../connectivity/AmpApiConstants';
+import {
+  AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
+  AMP_REGISTRY_STAGING_SETTINGS_URL,
+  TEST_URL
+} from '../connectivity/AmpApiConstants';
 import Notification from '../helpers/NotificationHelper';
 import TranslationManager from '../util/TranslationManager';
 import translate from '../../utils/translate';
@@ -18,6 +22,7 @@ import {
 import ConnectionInformation from '../connectivity/ConnectionInformation';
 import AssetsUtils from '../../utils/AssetsUtils';
 import SetupSyncUpManager from '../syncup/SetupSyncUpManager';
+import * as Utils from '../../utils/Utils';
 
 /**
  * Setup Manager
@@ -71,7 +76,9 @@ const SetupManager = {
    * Retrieves all AMP countries setup settings from AMP Registry
    */
   getSetupOptions() {
-    return ConnectionHelper.doGet({ url: AMP_REGISTRY_SETTINGS_URL, shouldRetry: true });
+    const registryURL = Utils.isReleaseBranch() ?
+      AMP_REGISTRY_PRODUCTION_SETTINGS_URL : AMP_REGISTRY_STAGING_SETTINGS_URL;
+    return ConnectionHelper.doGet({ url: registryURL, shouldRetry: true });
   },
 
   getCustomOption(languageList) {
