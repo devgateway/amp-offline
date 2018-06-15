@@ -121,8 +121,8 @@ const DatabaseManager = {
             }
           });
         } else {
-          reject(DatabaseManager._createNotification(`${translate('Something is really wrong with this record')}: 
-            ${exampleObject.id} - ${collectionName}`));
+          reject(DatabaseManager._createNotification(
+            `${translate('WrongRecord')}: ${exampleObject.id} - ${collectionName}`));
         }
       });
     }).catch(reject);
