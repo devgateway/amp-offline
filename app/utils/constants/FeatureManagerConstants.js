@@ -37,3 +37,15 @@ export const ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE =
 export const ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE =
   '/Activity Form/Funding/Funding Group/Funding Item/Expenditures/Expenditures Table/Fixed exchange rate';
 export const ACTIVITY_CONTACT = '/Activity Form/Contacts';
+
+export const ACTIVITY_ISSUES_ISSUE = '/Activity Form/Issues Section/Issue';
+export const ACTIVITY_ISSUES_ADD_ISSUE = '/Activity Form/Issues Section/Add Issue';
+export const ACTIVITY_ISSUES_DELETE_ISSUE = '/Activity Form/Issues Section/Issue/Delete Item';
+export const ACTIVITY_ISSUES_ISSUE_DATE = '/Activity Form/Issues Section/Issue/Date';
+export const ACTIVITY_ISSUES_MEASURE = '/Activity Form/Issues Section/Issue/Measure';
+export const ACTIVITY_ISSUES_ADD_MEASURE = '/Activity Form/Issues Section/Issue/Add Item';
+export const ACTIVITY_ISSUES_MEASURE_DATE = '/Activity Form/Issues Section/Issue/Measure/Date';
+export const ACTIVITY_ISSUES_DELETE_MEASURE = '/Activity Form/Issues Section/Issue/Measure/Delete Item';
+export const ACTIVITY_ISSUES_ACTOR = '/Activity Form/Issues Section/Issue/Measure/Actor';
+export const ACTIVITY_ISSUES_ADD_ACTOR = '/Activity Form/Issues Section/Issue/Measure/Add Item';
+export const ACTIVITY_ISSUES_DELETE_ACTOR = '/Activity Form/Issues Section/Issue/Measure/Actor/Delete Item';
