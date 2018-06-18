@@ -365,6 +365,10 @@
   "contact office address": "contact office address",
   "Contact Information": "Contact Information",
   "Add Issue": "Add Issue",
+  "Delete Issue": "Delete Issue",
   "Issue": "Issue",
-  "Add Measure": "Add Measure"
+  "Add Measure": "Add Measure",
+  "Delete Measure": "Delete Measure",
+  "Add Actor": "Add Actor",
+  "Actor": "Actor"
 }

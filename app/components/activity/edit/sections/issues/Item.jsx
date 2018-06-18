@@ -30,21 +30,66 @@ export default class Item extends Component {
     logger.log('constructor');
   }
 
+  _generateIssueRow() {
+    return (<div>
+      <span>{translate('Issue')}</span>
+      <AFField parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_NAME}`} type={Types.TEXT_AREA} />
+      <AFField parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_DATE}`} type={Types.DATE} />
+      {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
+        <a href='#'>{translate('Add Measure')}</a> : null}
+      {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ISSUE) ?
+        <a href='#'>{translate('Delete Issue')}</a> : null}
+
+      {(this.props.issue[AC.MEASURES])
+        ? <div>
+          {this.props.issue[AC.MEASURES].map(m => (
+            <Item measure={m} issue={this.props.issue} />
+          ))}
+        </div>
+        : null}
+    </div>);
+  }
+
+  _generateMeasureRow() {
+    return (<div>
+      <span>{translate('Measure')}</span>
+      <AFField
+        parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_NAME}`}
+        type={Types.TEXT_AREA} />
+      <AFField
+        parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_DATE}`}
+        type={Types.DATE} />
+      {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
+        <a href='#'>{translate('Add Actor')}</a> : null}
+      {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_MEASURE) ?
+        <a href='#'>{translate('Delete Measure')}</a> : null}
+
+      {(this.props.measure[AC.ACTORS])
+        ? <div>
+          {this.props.measure[AC.ACTORS].map(a => (
+            <Item actor={a} measure={this.props.measure} issue={this.props.issue} />
+          ))}
+        </div>
+        : null}
+    </div>);
+  }
+
+  _generateActorRow() {
+    return (<div>
+      <span>{translate('Actor')}</span>
+      <AFField
+        parent={this.props.actor} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.ACTORS}~${AC.ACTOR_NAME}`}
+        type={Types.TEXT_AREA} />
+    </div>);
+  }
+
   render() {
     if (this.props.actor) {
-
+      return this._generateActorRow();
     } else if (this.props.measure) {
-
+      return this._generateMeasureRow();
     } else {
-      return (<div>
-        <span>{translate('Issue')}</span>
-        <AFField parent={this.props.issue} fieldPath={`${AC.ISSUE_NAME}`} type={Types.TEXT_AREA} />
-        <AFField parent={this.props.issue} fieldPath={`${AC.ISSUE_DATE}`} />
-        {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
-          <Button bsStyle="primary">{translate('Add Measure')} </Button>
-          : null}
-      </div>);
+      return this._generateIssueRow();
     }
-    return null;
   }
 }
