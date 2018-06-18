@@ -35,12 +35,13 @@ class AFIssues extends Component {
     if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ISSUE)) {
       content.push(<Button
         bsStyle="primary"
+        key={Math.random()}
         onClick={this.addIssueHandler.bind(this)}>{translate('Add Issue')}
       </Button>);
     }
     if (this.context.activity[AC.ISSUES]) {
       this.context.activity[AC.ISSUES].forEach(i => {
-        content.push(<Item issue={i} />);
+        content.push(<Item issue={i} key={Math.random()} />);
       });
     }
     return <div>{content}</div>;
