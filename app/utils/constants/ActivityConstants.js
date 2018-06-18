@@ -130,6 +130,7 @@ export const SOURCE_ROLE = 'source_role';
 export const AMP_FUNDING_ID = 'amp_funding_id';
 export const ISSUES = 'issues';
 export const ISSUE_DATE = 'issue_date';
+export const ISSUE_NAME = 'name';
 export const MEASURES = 'measures';
 export const MEASURE_DATE = 'measure_date';
 export const ACTORS = 'actors';
