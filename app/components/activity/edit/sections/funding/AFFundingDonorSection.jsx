@@ -83,8 +83,12 @@ export default class AFFundingDonorSection extends Component {
     const newOpenFundingDonorSection = this.state.openFundingDonorSection;
     newOpenFundingDonorSection.push({ open: false, id: fundingItem[AC.GROUP_VERSIONED_FUNDING] });
     this.setState({ fundingList: newFundingList, openFundingDonorSection: newOpenFundingDonorSection });
+
     // Add to activity object or it will disappear when changing section.
-    this.context.activity.fundings.push(fundingItem);
+    if (!this.context.activity[AC.FUNDINGS]) {
+      this.context.activity[AC.FUNDINGS] = [];
+    }
+    this.context.activity[AC.FUNDINGS].push(fundingItem);
   }
 
   _filterFundings(fundings) {

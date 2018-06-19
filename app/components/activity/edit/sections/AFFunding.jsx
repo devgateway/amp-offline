@@ -88,7 +88,10 @@ class AFFunding extends Component {
       newFundingList.push(fundingItem);
       this.setState({ fundingList: newFundingList });
       // Needed for new activities or funding is not added.
-      this.context.activity.fundings.push(fundingItem);
+      if (!this.context.activity[AC.FUNDINGS]) {
+        this.context.activity[AC.FUNDINGS] = [];
+      }
+      this.context.activity[AC.FUNDINGS].push(fundingItem);
       this._addDonorToOrgRoleList(value.id, fundingItem[AC.SOURCE_ROLE]);
     }
   }
