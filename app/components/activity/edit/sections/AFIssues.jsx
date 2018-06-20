@@ -21,9 +21,16 @@ class AFIssues extends Component {
     activity: PropTypes.object.isRequired
   };
 
+  static propTypes = {
+    activity: PropTypes.object.isRequired
+  };
+
   constructor(props) {
     super(props);
     logger.log('constructor');
+    this.state = {
+      issues: this.props.activity[AC.ISSUES] || []
+    };
 
     this.addMeasureHandler = this.addMeasureHandler.bind(this);
     this.addActorHandler = this.addActorHandler.bind(this);
@@ -33,27 +40,38 @@ class AFIssues extends Component {
   }
 
   addIssueHandler() {
-
+    const newIssuesList = this.state.issues.slice();
+    const newIssue = {
+      [AC.ISSUE_DATE]: null,
+      [AC.MEASURES]: [],
+      [AC.ISSUE_NAME]: ''
+    };
+    newIssuesList.push(newIssue);
+    this.setState({ issues: newIssuesList });
+    if (!this.context.activity[AC.ISSUES]) {
+      this.context.activity[AC.ISSUES] = [];
+    }
+    this.context.activity[AC.ISSUES].push(newIssue);
   }
 
-  addMeasureHandler() {
-
+  addMeasureHandler(a, b) {
+    debugger;
   }
 
-  addActorHandler() {
-
+  addActorHandler(a, b) {
+    debugger;
   }
 
-  removeIssueHandler() {
-
+  removeIssueHandler(a, b) {
+    debugger;
   }
 
-  removeMeasureHandler() {
-
+  removeMeasureHandler(a, b) {
+    debugger;
   }
 
-  removeActorHandler() {
-
+  removeActorHandler(a, b) {
+    debugger;
   }
 
   render() {
@@ -65,8 +83,8 @@ class AFIssues extends Component {
         onClick={this.addIssueHandler.bind(this)}>{translate('Add Issue')}
       </Button>);
     }
-    if (this.context.activity[AC.ISSUES]) {
-      this.context.activity[AC.ISSUES].forEach(i => {
+    if (this.state.issues) {
+      this.state.issues.forEach(i => {
         content.push(<Item
           issue={i} key={Math.random()} addActor={this.addActorHandler}
           addMeasure={this.addMeasureHandler} removeIssue={this.removeIssueHandler}

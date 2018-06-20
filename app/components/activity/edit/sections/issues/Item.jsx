@@ -51,9 +51,9 @@ export default class Item extends Component {
         </td>
         <td>
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
-            <a href='#'>{translate('Add Measure')}</a> : null}
+            <a href='#' onClick={this.props.addMeasure}>{translate('Add Measure')}</a> : null}
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ISSUE) ?
-            <a href='#'>{translate('Delete Issue')}</a> : null}
+            <a href='#' onClick={this.props.removeIssue}>{translate('Delete Issue')}</a> : null}
         </td>
       </tr>
 
@@ -89,16 +89,16 @@ export default class Item extends Component {
         </td>
         <td>
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
-            <a href='#'>{translate('Add Actor')}</a> : null}
+            <a href='#' onClick={this.props.addActor}>{translate('Add Actor')}</a> : null}
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_MEASURE) ?
-            <a href='#'>{translate('Delete Measure')}</a> : null}
+            <a href='#' onClick={this.props.removeMeasure}>{translate('Delete Measure')}</a> : null}
         </td>
       </tr>
 
       {(this.props.measure[AC.ACTORS])
         ? this.props.measure[AC.ACTORS].map(a => (
           (<tr>
-            <td><img className={styles.tree} href={null} /></td>
+            <td><img className={[styles.tree, styles.actor].join(' ')} href={null} /></td>
             <td>
               <Item
                 actor={a} measure={this.props.measure} issue={this.props.issue} key={Math.random()}
@@ -123,7 +123,7 @@ export default class Item extends Component {
         </td>
         <td>
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ?
-            <a href='#'>{translate('Delete Actor')}</a> : null}
+            <a href='#' onClick={this.props.removeActor}>{translate('Delete Actor')}</a> : null}
         </td>
       </tr>
     </table>);
