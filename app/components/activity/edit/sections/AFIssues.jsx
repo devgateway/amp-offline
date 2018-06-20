@@ -24,9 +24,35 @@ class AFIssues extends Component {
   constructor(props) {
     super(props);
     logger.log('constructor');
+
+    this.addMeasureHandler = this.addMeasureHandler.bind(this);
+    this.addActorHandler = this.addActorHandler.bind(this);
+    this.removeIssueHandler = this.removeIssueHandler.bind(this);
+    this.removeMeasureHandler = this.removeMeasureHandler.bind(this);
+    this.removeActorHandler = this.removeActorHandler.bind(this);
   }
 
   addIssueHandler() {
+
+  }
+
+  addMeasureHandler() {
+
+  }
+
+  addActorHandler() {
+
+  }
+
+  removeIssueHandler() {
+
+  }
+
+  removeMeasureHandler() {
+
+  }
+
+  removeActorHandler() {
 
   }
 
@@ -41,7 +67,10 @@ class AFIssues extends Component {
     }
     if (this.context.activity[AC.ISSUES]) {
       this.context.activity[AC.ISSUES].forEach(i => {
-        content.push(<Item issue={i} key={Math.random()} />);
+        content.push(<Item
+          issue={i} key={Math.random()} addActor={this.addActorHandler}
+          addMeasure={this.addMeasureHandler} removeIssue={this.removeIssueHandler}
+          removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler} />);
       });
     }
     return <div>{content}</div>;

@@ -23,7 +23,12 @@ export default class Item extends Component {
   static propTypes = {
     issue: PropTypes.object,
     measure: PropTypes.object,
-    actor: PropTypes.object
+    actor: PropTypes.object,
+    addMeasure: PropTypes.func.isRequired,
+    addActor: PropTypes.func.isRequired,
+    removeIssue: PropTypes.func.isRequired,
+    removeMeasure: PropTypes.func.isRequired,
+    removeActor: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -56,7 +61,10 @@ export default class Item extends Component {
         ? this.props.issue[AC.MEASURES].map(m => (
           (<tr>
             <td>
-              <Item measure={m} issue={this.props.issue} key={Math.random()} />
+              <Item
+                measure={m} issue={this.props.issue} key={Math.random()} removeActor={this.props.removeActor}
+                removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
+                addMeasure={this.props.addMeasure} addActor={this.props.addActor} />
             </td>
           </tr>)
         ))
@@ -92,7 +100,11 @@ export default class Item extends Component {
           (<tr>
             <td><img className={styles.tree} href={null} /></td>
             <td>
-              <Item actor={a} measure={this.props.measure} issue={this.props.issue} key={Math.random()} />
+              <Item
+                actor={a} measure={this.props.measure} issue={this.props.issue} key={Math.random()}
+                removeActor={this.props.removeActor}
+                removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
+                addMeasure={this.props.addMeasure} addActor={this.props.addActor} />
             </td>
           </tr>)
         ))
