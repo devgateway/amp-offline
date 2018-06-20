@@ -54,8 +54,16 @@ class AFIssues extends Component {
     this.context.activity[AC.ISSUES].push(newIssue);
   }
 
-  addMeasureHandler(a, b) {
-    debugger;
+  addMeasureHandler(issueIndex) {
+    const measure = {
+      [AC.MEASURE_NAME]: '',
+      [AC.MEASURE_DATE]: null,
+      [AC.ACTORS]: []
+    };
+    const issues = this.state.issues.slice();
+    issues[issueIndex][AC.MEASURES].push(measure);
+    this.setState({ issues });
+    this.context.activity[AC.ISSUES] = issues;
   }
 
   addActorHandler(a, b) {
@@ -66,7 +74,7 @@ class AFIssues extends Component {
     debugger;
   }
 
-  removeMeasureHandler(a, b) {
+  removeMeasureHandler(measure) {
     debugger;
   }
 
@@ -84,9 +92,9 @@ class AFIssues extends Component {
       </Button>);
     }
     if (this.state.issues) {
-      this.state.issues.forEach(i => {
+      this.state.issues.forEach((issue, i) => {
         content.push(<Item
-          issue={i} key={Math.random()} addActor={this.addActorHandler}
+          issue={issue} key={Math.random()} issueIndex={i} addActor={this.addActorHandler}
           addMeasure={this.addMeasureHandler} removeIssue={this.removeIssueHandler}
           removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler} />);
       });
