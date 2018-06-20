@@ -57,7 +57,8 @@ export default class Item extends Component {
               {translate('Add Measure')}
             </a> : null}
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ISSUE) ?
-            <a href='#' onClick={this.props.removeIssue}>{translate('Delete Issue')}</a> : null}
+            <a onClick={this.props.removeIssue.bind(null, this.props.issueIndex)}>
+              {translate('Delete Issue')}</a> : null}
         </td>
       </tr>
 
@@ -97,7 +98,7 @@ export default class Item extends Component {
             <a onClick={this.props.addActor.bind(null, this.props.issueIndex).bind(null, this.props.measureIndex)}>
               {translate('Add Actor')}</a> : null}
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_MEASURE) ?
-            <a href='#' onClick={this.props.removeMeasure.bind(null, this.props.measure)}>
+            <a onClick={this.props.removeMeasure.bind(null, this.props.issueIndex).bind(null, this.props.measureIndex)}>
               {translate('Delete Measure')}
             </a> : null}
         </td>
@@ -131,7 +132,7 @@ export default class Item extends Component {
         </td>
         <td>
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ?
-            <a href='#' onClick={this.props.removeActor}>{translate('Delete Actor')}</a> : null}
+            <a onClick={this.props.removeActor}>{translate('Delete Actor')}</a> : null}
         </td>
       </tr>
     </table>);

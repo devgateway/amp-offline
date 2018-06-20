@@ -76,15 +76,21 @@ class AFIssues extends Component {
     this.context.activity[AC.ISSUES] = issues;
   }
 
-  removeIssueHandler(a, b) {
-    debugger;
+  removeIssueHandler(issueIndex) {
+    const issues = this.state.issues.slice();
+    issues.splice(issueIndex, 1);
+    this.setState({ issues });
+    this.context.activity[AC.ISSUES] = issues;
   }
 
-  removeMeasureHandler(measure) {
-    debugger;
+  removeMeasureHandler(issueIndex, measureIndex) {
+    const issues = this.state.issues.slice();
+    issues[issueIndex][AC.MEASURES].splice(measureIndex, 1);
+    this.setState({ issues });
+    this.context.activity[AC.ISSUES] = issues;
   }
 
-  removeActorHandler(a, b) {
+  removeActorHandler(issueIndex, measureIndex, actorIndex) {
     debugger;
   }
 
