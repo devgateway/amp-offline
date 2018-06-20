@@ -25,6 +25,7 @@ export default class Item extends Component {
     measure: PropTypes.object,
     actor: PropTypes.object,
     issueIndex: PropTypes.number,
+    measureIndex: PropTypes.number,
     addMeasure: PropTypes.func.isRequired,
     addActor: PropTypes.func.isRequired,
     removeIssue: PropTypes.func.isRequired,
@@ -61,13 +62,14 @@ export default class Item extends Component {
       </tr>
 
       {(this.props.issue[AC.MEASURES])
-        ? this.props.issue[AC.MEASURES].map(m => (
+        ? this.props.issue[AC.MEASURES].map((m, i) => (
           (<tr>
             <td>
               <Item
                 measure={m} issue={this.props.issue} key={Math.random()} removeActor={this.props.removeActor}
                 removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
-                addMeasure={this.props.addMeasure} addActor={this.props.addActor} />
+                addMeasure={this.props.addMeasure} addActor={this.props.addActor} measureIndex={i}
+                issueIndex={this.props.issueIndex} />
             </td>
           </tr>)
         ))
@@ -92,7 +94,8 @@ export default class Item extends Component {
         </td>
         <td>
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
-            <a href='#' onClick={this.props.addActor}>{translate('Add Actor')}</a> : null}
+            <a onClick={this.props.addActor.bind(null, this.props.issueIndex).bind(null, this.props.measureIndex)}>
+              {translate('Add Actor')}</a> : null}
           {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_MEASURE) ?
             <a href='#' onClick={this.props.removeMeasure.bind(null, this.props.measure)}>
               {translate('Delete Measure')}

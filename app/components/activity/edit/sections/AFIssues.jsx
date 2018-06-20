@@ -66,8 +66,14 @@ class AFIssues extends Component {
     this.context.activity[AC.ISSUES] = issues;
   }
 
-  addActorHandler(a, b) {
-    debugger;
+  addActorHandler(issueIndex, measureIndex) {
+    const actor = {
+      [AC.ACTOR_NAME]: ''
+    };
+    const issues = this.state.issues.slice();
+    issues[issueIndex][AC.MEASURES][measureIndex][AC.ACTORS].push(actor);
+    this.setState({ issues });
+    this.context.activity[AC.ISSUES] = issues;
   }
 
   removeIssueHandler(a, b) {
