@@ -91,7 +91,10 @@ class AFIssues extends Component {
   }
 
   removeActorHandler(issueIndex, measureIndex, actorIndex) {
-    debugger;
+    const issues = this.state.issues.slice();
+    issues[issueIndex][AC.MEASURES][measureIndex][AC.ACTORS].splice(actorIndex, 1);
+    this.setState({ issues });
+    this.context.activity[AC.ISSUES] = issues;
   }
 
   render() {

@@ -26,6 +26,7 @@ export default class Item extends Component {
     actor: PropTypes.object,
     issueIndex: PropTypes.number,
     measureIndex: PropTypes.number,
+    actorIndex: PropTypes.number,
     addMeasure: PropTypes.func.isRequired,
     addActor: PropTypes.func.isRequired,
     removeIssue: PropTypes.func.isRequired,
@@ -105,7 +106,7 @@ export default class Item extends Component {
       </tr>
 
       {(this.props.measure[AC.ACTORS])
-        ? this.props.measure[AC.ACTORS].map(a => (
+        ? this.props.measure[AC.ACTORS].map((a, i) => (
           (<tr>
             <td><img className={[styles.tree, styles.actor].join(' ')} href={null} /></td>
             <td>
@@ -113,7 +114,8 @@ export default class Item extends Component {
                 actor={a} measure={this.props.measure} issue={this.props.issue} key={Math.random()}
                 removeActor={this.props.removeActor}
                 removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
-                addMeasure={this.props.addMeasure} addActor={this.props.addActor} />
+                addMeasure={this.props.addMeasure} addActor={this.props.addActor}
+                measureIndex={this.props.measureIndex} issueIndex={this.props.issueIndex} actorIndex={i} />
             </td>
           </tr>)
         ))
@@ -131,8 +133,12 @@ export default class Item extends Component {
             type={Types.TEXT_AREA} showLabel={false} />
         </td>
         <td>
-          {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ?
-            <a onClick={this.props.removeActor}>{translate('Delete Actor')}</a> : null}
+          {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ? <a
+            onClick={this.props.removeActor
+              .bind(null, this.props.issueIndex)
+              .bind(null, this.props.measureIndex)
+              .bind(null, this.props.actorIndex)}>{translate('Delete Actor')}
+          </a> : null}
         </td>
       </tr>
     </table>);
