@@ -1,5 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component, PropTypes } from 'react';
-import { Col, Grid, Row } from 'react-bootstrap';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -40,108 +40,125 @@ export default class Item extends Component {
   }
 
   _generateIssueRow() {
-    return (<table>
-      <tr>
-        <td>
-          <span>{translate('Issue')}</span>
-          <AFField
-            parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_NAME}`} type={Types.TEXT_AREA}
-            showLabel={false} />
-        </td>
-        <td>
-          <AFField
-            parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_DATE}`} type={Types.DATE} showLabel={false} />
-        </td>
-        <td>
-          {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
-            <a onClick={this.props.addMeasure.bind(null, this.props.issueIndex)}>
-              {translate('Add Measure')}
-            </a> : null}
-          {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ISSUE) ?
-            <a onClick={this.props.removeIssue.bind(null, this.props.issueIndex)}>
-              {translate('Delete Issue')}</a> : null}
-        </td>
-      </tr>
+    return (<div>
+      <table className={styles.table}>
+        <tr>
+          <td>
+            <span>{translate('Issue')}</span>
+            <AFField
+              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_NAME}`} type={Types.TEXT_AREA}
+              showLabel={false} />
+          </td>
+          <td>
+            <AFField
+              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_DATE}`} type={Types.DATE}
+              showLabel={false} />
+          </td>
+          <td>
+            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
+              <span className={styles.addButton}>
+                <a
+                  title={translate('Add Measure')}
+                  onClick={this.props.addMeasure.bind(null, this.props.issueIndex)}
+                  href={null} />
+              </span>
+              : null}
+            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ISSUE) ?
+              <a
+                title={translate('Delete Issue')}
+                className={styles.delete}
+                onClick={this.props.removeIssue.bind(null, this.props.issueIndex)} />
+              : null}
+          </td>
+        </tr>
+      </table>
 
       {(this.props.issue[AC.MEASURES])
         ? this.props.issue[AC.MEASURES].map((m, i) => (
-          (<tr>
-            <td>
-              <Item
-                measure={m} issue={this.props.issue} key={Math.random()} removeActor={this.props.removeActor}
-                removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
-                addMeasure={this.props.addMeasure} addActor={this.props.addActor} measureIndex={i}
-                issueIndex={this.props.issueIndex} />
-            </td>
-          </tr>)
+          <Item
+            measure={m} issue={this.props.issue} key={Math.random()} removeActor={this.props.removeActor}
+            removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
+            addMeasure={this.props.addMeasure} addActor={this.props.addActor} measureIndex={i}
+            issueIndex={this.props.issueIndex} />
         ))
         : null}
-    </table>);
+    </div>);
   }
 
   _generateMeasureRow() {
-    return (<table>
-      <tr>
-        <td><img className={styles.tree} href={null} /></td>
-        <td>
-          <span>{translate('Measure')}</span>
-          <AFField
-            parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_NAME}`}
-            type={Types.TEXT_AREA} showLabel={false} />
-        </td>
-        <td>
-          <AFField
-            parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_DATE}`}
-            type={Types.DATE} showLabel={false} />
-        </td>
-        <td>
-          {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
-            <a onClick={this.props.addActor.bind(null, this.props.issueIndex).bind(null, this.props.measureIndex)}>
-              {translate('Add Actor')}</a> : null}
-          {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_MEASURE) ?
-            <a onClick={this.props.removeMeasure.bind(null, this.props.issueIndex).bind(null, this.props.measureIndex)}>
-              {translate('Delete Measure')}
-            </a> : null}
-        </td>
-      </tr>
+    return (<div className={styles.measure}>
+      <table className={styles.table}>
+        <tr>
+          <td>
+            <img role={'presentation'} className={styles.tree} />
+            <span>{translate('Measure')}</span>
+            <AFField
+              parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_NAME}`}
+              type={Types.TEXT_AREA} showLabel={false} />
+          </td>
+          <td>
+            <AFField
+              parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_DATE}`}
+              type={Types.DATE} showLabel={false} />
+          </td>
+          <td>
+            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
+              <span className={styles.addButton}>
+                <a
+                  title={translate('Add Actor')}
+                  onClick={this.props.addActor.bind(null, this.props.issueIndex).bind(null, this.props.measureIndex)}
+                  href={null} />
+              </span>
+              : null}
+            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_MEASURE) ?
+              <a
+                title={translate('Delete Measure')}
+                className={styles.delete}
+                onClick={this.props.removeMeasure.bind(null, this.props.issueIndex)
+                  .bind(null, this.props.measureIndex)} />
+              : null}
+          </td>
+        </tr>
+      </table>
 
       {(this.props.measure[AC.ACTORS])
         ? this.props.measure[AC.ACTORS].map((a, i) => (
-          (<tr>
-            <td><img className={[styles.tree, styles.actor].join(' ')} href={null} /></td>
-            <td>
-              <Item
-                actor={a} measure={this.props.measure} issue={this.props.issue} key={Math.random()}
-                removeActor={this.props.removeActor}
-                removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
-                addMeasure={this.props.addMeasure} addActor={this.props.addActor}
-                measureIndex={this.props.measureIndex} issueIndex={this.props.issueIndex} actorIndex={i} />
-            </td>
-          </tr>)
+          <Item
+            actor={a} measure={this.props.measure} issue={this.props.issue} key={Math.random()}
+            removeActor={this.props.removeActor}
+            removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
+            addMeasure={this.props.addMeasure} addActor={this.props.addActor}
+            measureIndex={this.props.measureIndex} issueIndex={this.props.issueIndex} actorIndex={i} />
         ))
         : null}
-    </table>);
+    </div>);
   }
 
   _generateActorRow() {
-    return (<table>
-      <tr>
-        <td>
-          <span>{translate('Actor')}</span>
-          <AFField
-            parent={this.props.actor} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.ACTORS}~${AC.ACTOR_NAME}`}
-            type={Types.TEXT_AREA} showLabel={false} />
-        </td>
-        <td>
-          {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ? <a
-            onClick={this.props.removeActor
-              .bind(null, this.props.issueIndex)
-              .bind(null, this.props.measureIndex)
-              .bind(null, this.props.actorIndex)}>{translate('Delete Actor')}
-          </a> : null}
-        </td>
-      </tr>
-    </table>);
+    return (<div className={styles.actor}>
+      <table className={styles.table}>
+        <tr>
+          <td>
+            <img role={'presentation'} className={[styles.tree, styles.actor].join(' ')} />
+            <span>{translate('Actor')}</span>
+            <AFField
+              parent={this.props.actor} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.ACTORS}~${AC.ACTOR_NAME}`}
+              type={Types.TEXT_AREA} showLabel={false} />
+          </td>
+          <td>
+            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ?
+              <a
+                title={translate('Delete Actor')}
+                className={styles.delete}
+                onClick={this.props.removeActor
+                  .bind(null, this.props.issueIndex)
+                  .bind(null, this.props.measureIndex)
+                  .bind(null, this.props.actorIndex)} />
+              : null}
+          </td>
+        </tr>
+      </table>
+    </div>);
   }
 
   render() {

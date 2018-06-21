@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Grid } from 'react-bootstrap';
 import AFSection from './AFSection';
 import { ISSUES_SECTION } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
