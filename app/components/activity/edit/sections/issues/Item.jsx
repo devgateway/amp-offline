@@ -149,7 +149,7 @@ export default class Item extends Component {
             {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ?
               <a
                 title={translate('Delete Actor')}
-                className={styles.delete}
+                className={[styles.delete, styles.delete_actor].join(' ')}
                 onClick={this.props.removeActor
                   .bind(null, this.props.issueIndex)
                   .bind(null, this.props.measureIndex)
