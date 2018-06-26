@@ -46,13 +46,11 @@ export default class Item extends Component {
           <td>
             <span>{translate('Issue')}</span>
             <AFField
-              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_NAME}`} type={Types.TEXT_AREA}
-              showLabel={false} />
+              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_NAME}`} type={Types.TEXT_AREA} />
           </td>
           <td>
             <AFField
-              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_DATE}`} type={Types.DATE}
-              showLabel={false} />
+              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_DATE}`} type={Types.DATE} />
           </td>
           <td>
             {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
@@ -94,12 +92,12 @@ export default class Item extends Component {
             <span>{translate('Measure')}</span>
             <AFField
               parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_NAME}`}
-              type={Types.TEXT_AREA} showLabel={false} />
+              type={Types.TEXT_AREA} />
           </td>
           <td>
             <AFField
               parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_DATE}`}
-              type={Types.DATE} showLabel={false} />
+              type={Types.DATE} />
           </td>
           <td>
             {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
@@ -143,7 +141,7 @@ export default class Item extends Component {
             <span>{translate('Actor')}</span>
             <AFField
               parent={this.props.actor} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.ACTORS}~${AC.ACTOR_NAME}`}
-              type={Types.TEXT_AREA} showLabel={false} />
+              type={Types.TEXT_AREA} />
           </td>
           <td>
             {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ?
