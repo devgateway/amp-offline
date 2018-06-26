@@ -50,7 +50,8 @@ export default class Item extends Component {
           </td>
           <td>
             <AFField
-              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_DATE}`} type={Types.DATE} />
+              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_DATE}`} type={Types.DATE}
+              showLabel={false} />
           </td>
           <td>
             {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
@@ -97,7 +98,7 @@ export default class Item extends Component {
           <td>
             <AFField
               parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_DATE}`}
-              type={Types.DATE} />
+              type={Types.DATE} showLabel={false} />
           </td>
           <td>
             {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
