@@ -44,7 +44,6 @@ export default class Item extends Component {
       <table className={styles.table}>
         <tr>
           <td>
-            <span>{translate('Issue')}</span>
             <AFField
               parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_NAME}`} type={Types.TEXT_AREA} />
           </td>
@@ -56,6 +55,7 @@ export default class Item extends Component {
           <td>
             {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
               <span className={styles.addButton}>
+                <span>{translate('Add Measure')}:</span>
                 <a
                   title={translate('Add Measure')}
                   onClick={this.props.addMeasure.bind(null, this.props.issueIndex)}
@@ -90,7 +90,6 @@ export default class Item extends Component {
         <tr>
           <td>
             <img role={'presentation'} className={styles.tree} />
-            <span>{translate('Measure')}</span>
             <AFField
               parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_NAME}`}
               type={Types.TEXT_AREA} />
@@ -103,6 +102,7 @@ export default class Item extends Component {
           <td>
             {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
               <span className={styles.addButton}>
+                <span>{translate('Add Actor')}:</span>
                 <a
                   title={translate('Add Actor')}
                   onClick={this.props.addActor.bind(null, this.props.issueIndex).bind(null, this.props.measureIndex)}
@@ -139,7 +139,6 @@ export default class Item extends Component {
         <tr>
           <td>
             <img role={'presentation'} className={[styles.tree, styles.actor].join(' ')} />
-            <span>{translate('Actor')}</span>
             <AFField
               parent={this.props.actor} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.ACTORS}~${AC.ACTOR_NAME}`}
               type={Types.TEXT_AREA} />
