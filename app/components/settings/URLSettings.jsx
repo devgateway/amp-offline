@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable no-alert */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -143,6 +144,12 @@ class URLSettings extends Component {
     this.props.onChange(setting);
   }
 
+  handleConfirmDelete(next) {
+    if (confirm(translate('Are you sure you want to delete?'))) {
+      next();
+    }
+  }
+
   render() {
     const { dataSource } = this.state;
     const options = {
@@ -151,7 +158,8 @@ class URLSettings extends Component {
       afterInsertRow: this.handleInsertedRow.bind(this),
       afterDeleteRow: this.handleDeletedRow.bind(this),
       insertModal: this.constructor.createCustomInsertModal,
-      insertFailIndicator: translate('duplicateUrl')
+      insertFailIndicator: translate('duplicateUrl'),
+      handleConfirmDeleteRow: this.handleConfirmDelete.bind(this)
     };
     const selectRow = {
       mode: 'checkbox'
