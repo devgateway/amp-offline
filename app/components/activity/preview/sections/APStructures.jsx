@@ -28,9 +28,17 @@ class APStructures extends Component {
   getCoordinates(structure) {
     const { buildSimpleField } = this.props;
     if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
-      const content = [buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LATITUDE]}`, true, null, false, structure),
-        buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LONGITUDE]}`, true, null, false, structure)];
-      return Tablify.addRows(content, 2);
+      const content = [];
+      content.push(
+        <td>{buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LATITUDE]}`, true, null, false, structure)}</td>);
+      content.push(
+        <td>{buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LONGITUDE]}`, true, null, false, structure)}</td>);
+      return (
+        <table className={styles.structures_coordinates_table}>
+          <tbody>
+            <tr>{content}</tr>
+          </tbody>
+        </table>);
     } else {
       return (<div>
         {structure[AC.STRUCTURES_COORDINATES].map(c => (<div>

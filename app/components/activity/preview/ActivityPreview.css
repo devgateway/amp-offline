@@ -417,3 +417,7 @@
   font-weight: bold;
   border-radius: 5px;
 }
+
+.structures_coordinates_table {
+  width: 100%;
+}
