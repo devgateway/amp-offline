@@ -39,7 +39,6 @@ class APStructures extends Component {
     } else {
       const content = [];
       structure[AC.STRUCTURES_COORDINATES].forEach(c => {
-        // content.push(<tr>);
         content.push(
           <tr>
             <td>{buildSimpleField(`${[AC.STRUCTURES]}~${AC.STRUCTURES_COORDINATES}~${[AC.STRUCTURES_LATITUDE]}`,
