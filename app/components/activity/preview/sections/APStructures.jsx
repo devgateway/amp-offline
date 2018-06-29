@@ -63,6 +63,7 @@ class APStructures extends Component {
         <div>{activity[AC.STRUCTURES].map(s => (
           <div>
             <div className={styles.structure_title}>{s[AC.STRUCTURES_TITLE]}</div>
+            {buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_TITLE]}`, true, null, false, s)}
             {buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_DESCRIPTION]}`, false, null, false, s)}
             {this.getCoordinates(s)}
           </div>)
