@@ -13,6 +13,7 @@ import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
 import { checkIfSetupComplete, configureDefaults } from './SetupAction';
+import RepositoryManager from '../modules/repository/RepositoryManager';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -42,7 +43,8 @@ export function ampOfflineStartUp() {
         .then(() => configureDefaults(isSetupComplete))
     )
     .then(ampOfflineInit)
-    .then(initLanguage);
+    .then(initLanguage)
+    .then(() => nonCriticalRoutinesStartup());
 }
 
 export function ampOfflineInit() {
@@ -53,6 +55,10 @@ export function ampOfflineInit() {
     .then(loadGlobalSettings)
     .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup);
+}
+
+function nonCriticalRoutinesStartup() {
+  RepositoryManager.init(true);
 }
 
 // exporting timer from a function since we cannot export let
