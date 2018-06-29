@@ -1,9 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import Logger from '../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import Tablify from '../components/Tablify';
 import styles from '../ActivityPreview.css';
 
 const logger = new Logger('AP structures');
@@ -15,7 +13,6 @@ const logger = new Logger('AP structures');
 class APStructures extends Component {
 
   static propTypes = {
-    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     buildSimpleField: PropTypes.func.isRequired,
     activity: PropTypes.object.isRequired
   };
@@ -40,12 +37,23 @@ class APStructures extends Component {
           </tbody>
         </table>);
     } else {
-      return (<div>
-        {structure[AC.STRUCTURES_COORDINATES].map(c => (<div>
-          <div>{c[AC.STRUCTURES_LATITUDE]}</div>
-          <div>{c[AC.STRUCTURES_LONGITUDE]}</div>
-        </div>))}
-      </div>);
+      const content = [];
+      structure[AC.STRUCTURES_COORDINATES].forEach(c => {
+        // content.push(<tr>);
+        content.push(
+          <tr>
+            <td>{buildSimpleField(`${[AC.STRUCTURES]}~${AC.STRUCTURES_COORDINATES}~${[AC.STRUCTURES_LATITUDE]}`,
+              true, null, false, c)}</td>
+            <td>{buildSimpleField(`${[AC.STRUCTURES]}~${AC.STRUCTURES_COORDINATES}~${[AC.STRUCTURES_LONGITUDE]}`,
+              true, null, false, c)}</td>
+          </tr>);
+      });
+      return (
+        <table className={styles.structures_coordinates_table}>
+          <tbody>
+            {content}
+          </tbody>
+        </table>);
     }
   }
 
@@ -56,7 +64,7 @@ class APStructures extends Component {
         <div>{activity[AC.STRUCTURES].map(s => (
           <div>
             <div className={styles.structure_title}>{s[AC.STRUCTURES_TITLE]}</div>
-            {buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_DESCRIPTION]}`, true, null, false, s)}
+            {buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_DESCRIPTION]}`, false, null, false, s)}
             {this.getCoordinates(s)}
           </div>)
         )}
