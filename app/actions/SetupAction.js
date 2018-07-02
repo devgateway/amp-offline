@@ -147,7 +147,7 @@ export function configureAndTestConnectivity(setupConfig) {
         lastIndex = index;
         if (connectivityStatus && connectivityStatus.isAmpAvailable) {
           // at least one url worked, halt here
-          return Promise.resolve(connectivityStatus);
+          return Promise.resolve({ connectivityStatus, fixedUrl: url });
         }
         return testAMPUrl(url);
       })

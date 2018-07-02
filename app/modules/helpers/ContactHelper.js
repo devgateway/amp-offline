@@ -3,8 +3,9 @@ import { COLLECTION_CONTACTS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import
-{ CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID, NAME, LAST_NAME }
+{ CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, NAME, LAST_NAME }
 from '../../utils/constants/ContactConstants';
+import { INTERNAL_ID } from '../../utils/constants/EntityConstants';
 
 const logger = new Logger('Contact helper');
 
