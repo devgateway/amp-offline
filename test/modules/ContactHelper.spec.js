@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
 import ContactHelper from '../../app/modules/helpers/ContactHelper';
 import { removeIdFromCollection, removeIdFromItem, toMap } from '../../app/utils/Utils';
-import { INTERNAL_ID } from '../../app/utils/constants/ContactConstants';
+import { INTERNAL_ID } from '../../app/utils/constants/EntityConstants';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');

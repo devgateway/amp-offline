@@ -11,7 +11,7 @@ let dataPath;
 let resourcesPath;
 
 /**
- * System File Manager that is intented to handle proper root directory detection in dev & prod mode. It servers as a
+ * System File Manager that is intended to handle proper root directory detection in dev & prod mode. It servers as a
  * wrapper over 'fs' package. Use it only with relative paths against an app data folder.
  *
  * @author Nadejda Mandrescu
@@ -54,6 +54,14 @@ const FileManager = {
    */
   getFullPath(...pathParts) {
     return path.join(this.getDataPath(), pathParts.join('/'));
+  },
+
+  joinPath(...pathParts) {
+    return path.join(pathParts);
+  },
+
+  basename(fromPath) {
+    return path.basename(fromPath);
   },
 
   /**
@@ -149,6 +157,15 @@ const FileManager = {
   copyDataFileSync(fromPath, ...toPathParts) {
     const fullPath = this.getFullPath(...toPathParts);
     fs.copySync(fromPath, fullPath);
+  },
+
+  /**
+   * Copies synchronously a file from a full path to another full path
+   * @param fromPath full source path
+   * @param toPath full destination path
+   */
+  copyDataFileSyncUsingFullPaths(fromPath, toPath) {
+    fs.copySync(fromPath, toPath);
   },
 
   /**

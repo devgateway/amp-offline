@@ -2,7 +2,6 @@ import { TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR } from './ValueConstant
 
 export const CLIENT_CHANGE_ID = 'amp-offline-contact-change-id';
 export const CLIENT_CHANGE_ID_PREFIX = 'amp-offline-contact-id';
-export const INTERNAL_ID = 'internal-id';
 export const NAME = 'name';
 export const LAST_NAME = 'last_name';
 export const TITLE = 'title';
