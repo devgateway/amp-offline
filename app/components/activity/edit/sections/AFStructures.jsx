@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Col, Grid, Panel, Row } from 'react-bootstrap';
+import { Col, Grid, Panel, Row, Button } from 'react-bootstrap';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { STRUCTURES } from './AFSectionConstants';
@@ -26,10 +26,10 @@ class AFStructures extends Component {
 
   static generateTable(structure) {
     const content = [];
-    content.push(<Col md={3} lg={3}>
+    content.push(<Col md={2} lg={2}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_TITLE}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
-    content.push(<Col md={3} lg={3}>
+    content.push(<Col md={2} lg={2}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_DESCRIPTION}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
     content.push(<Col md={3} lg={3}>
@@ -41,6 +41,11 @@ class AFStructures extends Component {
       <AFField
         fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER}
         extraParams={{ readonly: true }} />
+    </Col>);
+    content.push(<Col md={2} lg={2}>
+      <Button bsStyle="primary">{translate('Map')}</Button>
+      <Button bsStyle="primary">{translate('View')}</Button>
+      <Button bsStyle="danger">{translate('Delete')}</Button>
     </Col>);
     return content;
   }
@@ -67,7 +72,9 @@ class AFStructures extends Component {
     return (<div className={afStyles.full_width}>
       <Grid className={afStyles.full_width}>
         {activity[AC.STRUCTURES].map(s => (
-          <Row><Panel header={translate('Structure')}>{this.generateTable(s)}</Panel></Row>))}
+          <Row>
+            <Panel header={translate('Structure')}>{AFStructures.generateTable(s)}</Panel>
+          </Row>))}
       </Grid>
     </div>);
   }
