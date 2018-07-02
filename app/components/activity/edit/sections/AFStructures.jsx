@@ -22,14 +22,16 @@ class AFStructures extends Component {
     activity: PropTypes.object.isRequired
   };
 
-  static propTypes = {};
+  static propTypes = {
+    activity: PropTypes.object.isRequired
+  };
 
-  static generateTable(structure) {
+  static generateDataRow(structure) {
     const content = [];
-    content.push(<Col md={2} lg={2}>
+    content.push(<Col md={3} lg={3}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_TITLE}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
-    content.push(<Col md={2} lg={2}>
+    content.push(<Col md={3} lg={3}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_DESCRIPTION}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
     content.push(<Col md={3} lg={3}>
@@ -42,23 +44,21 @@ class AFStructures extends Component {
         fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER}
         extraParams={{ readonly: true }} />
     </Col>);
-    content.push(<Col md={2} lg={2}>
-      <Button bsStyle="primary">{translate('Map')}</Button>
-      <Button bsStyle="primary">{translate('View')}</Button>
-      <Button bsStyle="danger">{translate('Delete')}</Button>
-    </Col>);
     return content;
   }
 
   constructor(props) {
     super(props);
     logger.log('constructor');
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleMap = this.handleMap.bind(this);
+    this.handleView = this.handleView.bind(this);
+    this.state = { structures: props.activity[AC.STRUCTURES] || [] };
   }
 
   preProcessForIds() {
-    const { activity } = this.context;
-    if (activity[AC.STRUCTURES]) {
-      activity[AC.STRUCTURES].forEach(s => {
+    if (this.state.structures) {
+      this.state.structures.forEach(s => {
         if (!s.id) {
           s.id = Math.random();
         }
@@ -66,15 +66,39 @@ class AFStructures extends Component {
     }
   }
 
+  generateButtonRow(structure, i) {
+    return (<Col md={12} lg={12}>
+      <Button bsStyle="primary" onClick={this.handleMap.bind(this, structure)}>{translate('Map')}</Button>
+      {structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON ?
+        <Button bsStyle="primary" onClick={this.handleView.bind(this, structure)}>{translate('View')}</Button>
+        : null}
+      <Button bsStyle="danger" onClick={this.handleDelete.bind(this, structure, i)}>{translate('Delete')}</Button>
+    </Col>);
+  }
+
+  handleView(structure) {
+    debugger;
+  }
+
+  handleMap(structure) {
+    // TODO: To be implemented.
+  }
+
+  handleDelete(structure, i) {
+    const newStructures = this.state.structures.slice();
+    newStructures.splice(i, 1);
+    this.setState({ structures: newStructures });
+  }
+
   render() {
     this.preProcessForIds();
-    const { activity } = this.context;
     return (<div className={afStyles.full_width}>
       <Grid className={afStyles.full_width}>
-        {activity[AC.STRUCTURES].map(s => (
-          <Row>
-            <Panel header={translate('Structure')}>{AFStructures.generateTable(s)}</Panel>
-          </Row>))}
+        {this.state.structures.map((s, i) => (
+          <Panel header={translate('Structure')}>
+            <Row>{AFStructures.generateDataRow(s)}</Row>
+            <Row>{this.generateButtonRow(s, i)}</Row>
+          </Panel>))}
       </Grid>
     </div>);
   }
