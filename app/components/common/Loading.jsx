@@ -19,7 +19,7 @@ export default class Loading extends Component {
       <div className={styles.loading}>
         <span>{translate('Loading...')}</span>
         <img className={appStyle.loading_icon} alt="loading" />
-      <div>
+      </div>
     );
   }
 }
