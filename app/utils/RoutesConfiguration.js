@@ -162,7 +162,7 @@ const routesConfiguration = [{
   requiredAuth: true
 }, {
   url: RESOURCE_PULL_URL,
-  method: 'GET',
+  method: 'POST',
   requiredAuth: true
 }, {
   url: CHANGE_PASSWORD_URL,

@@ -1,5 +1,9 @@
 import ResourceHelper from '../../helpers/ResourceHelper';
-import { SYNCUP_TYPE_ACTIVITIES_PULL, SYNCUP_TYPE_RESOURCES_PULL } from '../../../utils/Constants';
+import {
+  SYNCUP_RESOURCE_PULL_BATCH_SIZE,
+  SYNCUP_TYPE_ACTIVITIES_PULL,
+  SYNCUP_TYPE_RESOURCES_PULL
+} from '../../../utils/Constants';
 import { RESOURCE_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
@@ -68,38 +72,39 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
   }
 
   pullNewEntries() {
-    const requestConfigurations = this.diff.saved.map(uuid => {
-      const pullConfig = {
-        getConfig: {
+    const requestConfigurations = [];
+    for (let idx = 0; idx < this.diff.saved.length; idx += SYNCUP_RESOURCE_PULL_BATCH_SIZE) {
+      const uuids = this.diff.saved.slice(idx, idx + SYNCUP_RESOURCE_PULL_BATCH_SIZE);
+      requestConfigurations.push({
+        postConfig: {
           shouldRetry: true,
           url: RESOURCE_PULL_URL,
-          extraUrlParam: uuid
+          body: uuids
         },
-        onPullError: [uuid]
-      };
-      return pullConfig;
-    });
+        onPullError: [uuids]
+      });
+    }
     return this.pullNewEntriesInBatches(requestConfigurations);
   }
 
-  processEntryPullResult(resource, error) {
-    if (!error && resource) {
-      return this._saveResource(resource);
+  processEntryPullResult(resources, error) {
+    if (!error && resources) {
+      return this._saveResources(resources);
     }
-    return this.onPullError(error, resource && resource[UUID]);
+    return this.onPullError(error, resources && resources.map(r => r[UUID]));
   }
 
-  _saveResource(resource) {
+  _saveResources(resources) {
     // in the current iteration we expect to pull only metadata
-    return ResourceHelper.saveOrUpdateResource(resource)
+    return ResourceHelper.saveOrUpdateResourceCollection(resources)
       .then(() => {
-        this.pulled.add(resource[UUID]);
-        return resource;
-      }).catch((err) => this.onPullError(err, resource[UUID]));
+        resources.forEach(r => this.pulled.add(r[UUID]));
+        return resources;
+      }).catch((err) => this.onPullError(err, resources.map(r => r[UUID])));
   }
 
-  onPullError(error, uuid) {
-    logger.error(`Resource uuid=${uuid} pull error: ${error}`);
+  onPullError(error, uuids) {
+    logger.error(`Resources uuids=${uuids} pull error: ${error}`);
     return error;
   }
 
