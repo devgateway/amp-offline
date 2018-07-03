@@ -87,6 +87,10 @@ class APFundingOrganizationSection extends Component {
     let totalActualDisbursements = 0;
     let totalActualCommitments = 0;
     const fd = this.props.funding[AC.FUNDING_DETAILS];
+    if (!fd || fd.length === 0) {
+      // Dont show this section if there are no funding details.
+      return null;
+    }
     const fdActualCommitments = fd.filter((item) =>
       item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS
     );
@@ -97,7 +101,6 @@ class APFundingOrganizationSection extends Component {
     );
     totalActualDisbursements = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualDisbursements,
       this._currency);
-
 
     return (<div>
       <APFundingTotalItem
