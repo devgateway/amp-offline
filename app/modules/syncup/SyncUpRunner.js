@@ -247,6 +247,7 @@ export default class SyncUpRunner {
 
   _prepareForSync(syncUpManager) {
     syncUpManager.lastSyncUpDate = this._lastTimestamp;
+    syncUpManager.totalSyncUpDiff = this._syncUpDiffLeftOver;
   }
 
   _buildUnitResult(syncUpManager: SyncUpManagerInterface, error) {
