@@ -105,7 +105,8 @@ export default class Login extends Component {
           changePasswordOnline={this.props.changePasswordOnline}
           resetPasswordOnline={this.props.resetPasswordOnline} />
         <br />
-        <ErrorMessage message={this.props.loginReducer.errorMessage} />
+        {!this.props.loginReducer.loginProcessing ?
+          <ErrorMessage message={this.props.loginReducer.errorMessage} /> : null}
       </div>
     );
   }

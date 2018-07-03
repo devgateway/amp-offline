@@ -199,7 +199,7 @@ const syncConfirmationAlert = (syncUpReducer) => {
   const proceedWithWorkspace = new FollowUp({
     type: STATE_SYNCUP_DISMISSED
   }, translate('Ignore'));
-  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Sync'));
+  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Synchronize'));
   const actions = [proceedWithSync, syncUpReducer.forceSyncUp ? proceedWithLogout : proceedWithWorkspace];
   // generate confirmation alert configuration
   return new ConfirmationAlert(syncNotification, actions, false);
