@@ -90,6 +90,7 @@ class AFStructures extends Component {
     this.setState({ showViewDialog: true, viewStructure: structure });
   }
 
+  /* eslint-disable class-methods-use-this */
   handleMap() {
     // TODO: To be implemented.
   }
