@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Logger from '../../modules/util/LoggerManager';
+import translate from '../../utils/translate';
 
 const logger = new Logger('Loading component');
 
@@ -14,7 +15,7 @@ export default class Loading extends Component {
     logger.log('render');
     return (
       <div>
-        <span>Loading...</span>
+        <span>{translate('Loading...')}</span>
       </div>
     );
   }
