@@ -30,7 +30,7 @@ const Utils = {
    * @return {string}
    */
   stringToUniqueId(string: string) {
-    return `${this.stringToId(string)}-${Date.now()}-${Math.random()}`;
+    return `${this.stringToId(string)}-${Date.now()}-${Math.random().toString().substring(2)}`;
   },
 
   numberRandom() {
