@@ -25,6 +25,7 @@ import {
   POSSIBLE_VALUES_V2_MEDIA_TYPE,
   POST_TRANSLATIONS_URL,
   RESET_PASSWORD_URL,
+  RESOURCE_PULL_URL,
   SYNC_URL,
   TEST_URL,
   URL_CONNECTIVITY_CHECK_EP,
@@ -158,6 +159,10 @@ const routesConfiguration = [{
 }, {
   url: CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
+  requiredAuth: true
+}, {
+  url: RESOURCE_PULL_URL,
+  method: 'GET',
   requiredAuth: true
 }, {
   url: CHANGE_PASSWORD_URL,
