@@ -111,7 +111,7 @@ class AFStructures extends Component {
       />
       <Grid className={afStyles.full_width}>
         {this.state.structures.map((s, i) => (
-          <Panel header={translate('Structure')}>
+          <Panel key={Math.random()} header={translate('Structure')}>
             <Row>{AFStructures.generateDataRow(s)}</Row>
             <Row>{this.generateButtonRow(s, i)}</Row>
           </Panel>))}

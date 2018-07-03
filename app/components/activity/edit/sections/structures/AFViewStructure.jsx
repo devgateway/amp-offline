@@ -91,7 +91,7 @@ export default class AFViewStructure extends Component {
         bsClass={`${styles.save_as_draft} modal`}
         bsSize="small"
       >
-        <Modal.Header closeButton className={styles.save_as_draft_header}>
+        <Modal.Header closeButton>
           <Modal.Title className={styles.save_as_draft_header_title}>
             {translate('Coordinates')}
           </Modal.Title>
@@ -116,8 +116,8 @@ export default class AFViewStructure extends Component {
             </table>
           </div>
         </Modal.Body>
-        <Modal.Footer className={styles.save_as_draft_footer}>
-          <Button onClick={this.close.bind(this)} className={styles.save_as_draft_button} {...buttonProps}>
+        <Modal.Footer>
+          <Button onClick={this.close.bind(this)} {...buttonProps}>
             {translate('Close')}
           </Button>
         </Modal.Footer>
