@@ -9,6 +9,7 @@ import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
 import * as Types from '../components/AFComponentTypes';
 import translate from '../../../../utils/translate';
+import AFViewStructure from './structures/AFViewStructure';
 
 const logger = new Logger('AF Structures');
 
@@ -28,18 +29,18 @@ class AFStructures extends Component {
 
   static generateDataRow(structure) {
     const content = [];
-    content.push(<Col md={3} lg={3}>
+    content.push(<Col md={3} lg={3} key={Math.random()}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_TITLE}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
-    content.push(<Col md={3} lg={3}>
+    content.push(<Col md={3} lg={3} key={Math.random()}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_DESCRIPTION}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
-    content.push(<Col md={3} lg={3}>
+    content.push(<Col md={3} lg={3} key={Math.random()}>
       <AFField
         fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.NUMBER}
         extraParams={{ readonly: true }} />
     </Col>);
-    content.push(<Col md={3} lg={3}>
+    content.push(<Col md={3} lg={3} key={Math.random()}>
       <AFField
         fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER}
         extraParams={{ readonly: true }} />
@@ -53,7 +54,7 @@ class AFStructures extends Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleMap = this.handleMap.bind(this);
     this.handleView = this.handleView.bind(this);
-    this.state = { structures: props.activity[AC.STRUCTURES] || [] };
+    this.state = { structures: props.activity[AC.STRUCTURES] || [], showViewDialog: false, viewStructure: null };
   }
 
   preProcessForIds() {
@@ -68,16 +69,25 @@ class AFStructures extends Component {
 
   generateButtonRow(structure, i) {
     return (<Col md={12} lg={12}>
-      <Button bsStyle="primary" onClick={this.handleMap.bind(this, structure)}>{translate('Map')}</Button>
+      <Button
+        bsStyle="primary" className={afStyles.button}
+        onClick={this.handleMap.bind(this, structure)}>{translate('Map')}
+      </Button>
       {structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON ?
-        <Button bsStyle="primary" onClick={this.handleView.bind(this, structure)}>{translate('View')}</Button>
+        <Button
+          bsStyle="primary" className={afStyles.button}
+          onClick={this.handleView.bind(this, structure)}>{translate('View')}
+        </Button>
         : null}
-      <Button bsStyle="danger" onClick={this.handleDelete.bind(this, structure, i)}>{translate('Delete')}</Button>
+      <Button
+        bsStyle="danger" className={afStyles.button}
+        onClick={this.handleDelete.bind(this, structure, i)}>{translate('Delete')}
+      </Button>
     </Col>);
   }
 
   handleView(structure) {
-
+    this.setState({ showViewDialog: true, viewStructure: structure });
   }
 
   handleMap() {
@@ -94,6 +104,11 @@ class AFStructures extends Component {
   render() {
     this.preProcessForIds();
     return (<div className={afStyles.full_width}>
+      <AFViewStructure
+        show={this.state.showViewDialog}
+        structure={this.state.viewStructure}
+        onClose={() => this.setState({ showViewDialog: false, viewStructure: null })}
+      />
       <Grid className={afStyles.full_width}>
         {this.state.structures.map((s, i) => (
           <Panel header={translate('Structure')}>
