@@ -14,6 +14,7 @@ import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
 import { checkIfSetupComplete, configureDefaults } from './SetupAction';
 import RepositoryManager from '../modules/repository/RepositoryManager';
+import { deleteOrphanResources } from './ResourceAction';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -59,6 +60,7 @@ export function ampOfflineInit() {
 
 function nonCriticalRoutinesStartup() {
   RepositoryManager.init(true);
+  return deleteOrphanResources();
 }
 
 // exporting timer from a function since we cannot export let
