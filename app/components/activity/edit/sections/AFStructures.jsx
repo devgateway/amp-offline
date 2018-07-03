@@ -77,10 +77,10 @@ class AFStructures extends Component {
   }
 
   handleView(structure) {
-    debugger;
+
   }
 
-  handleMap(structure) {
+  handleMap() {
     // TODO: To be implemented.
   }
 
@@ -88,6 +88,7 @@ class AFStructures extends Component {
     const newStructures = this.state.structures.slice();
     newStructures.splice(i, 1);
     this.setState({ structures: newStructures });
+    this.context.activity[AC.STRUCTURES] = newStructures;
   }
 
   render() {
