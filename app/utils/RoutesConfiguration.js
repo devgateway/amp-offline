@@ -26,6 +26,7 @@ import {
   POST_TRANSLATIONS_URL,
   RESET_PASSWORD_URL,
   RESOURCE_PULL_URL,
+  RESOURCE_PUSH_URL,
   SYNC_URL,
   TEST_URL,
   URL_CONNECTIVITY_CHECK_EP,
@@ -163,6 +164,11 @@ const routesConfiguration = [{
 }, {
   url: RESOURCE_PULL_URL,
   method: 'POST',
+  requiredAuth: true
+}, {
+  url: RESOURCE_PUSH_URL,
+  method: 'PUT',
+  isForm: true,
   requiredAuth: true
 }, {
   url: CHANGE_PASSWORD_URL,
