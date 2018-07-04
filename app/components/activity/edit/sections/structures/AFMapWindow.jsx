@@ -5,6 +5,8 @@ import L from 'leaflet';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from './AFMapWindow.css';
+import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
+import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 
 const logger = new Logger('Map Modal');
 // const esri = require('esri-leaflet');
@@ -47,12 +49,19 @@ export default class AFMapWindow extends Component {
   }
 
   generateMap() {
+    // TODO: make these customizable or automatic from available tiles?
+    const minZoom = 8;
+    const maxZoom = 11;
+    const lat = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LATITUDE));
+    const lng = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LONGITUDE));
+    const cp = 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
-    const map = L.map(node).setView([18.8628921578, -72.770007622], 8);
+    const map = L.map(node).setView([lat, lng], minZoom);
     L.tileLayer(`file://${global.__dirname}/../assets/map-tiles/{z}/{x}/{y}.png`, {
-      maxZoom: 11,
-      minZoom: 8,
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      maxZoom,
+      minZoom,
+      attribution: cp
     }).addTo(map);
     map.on('click', this.onMapClick.bind(null, map));
   }
@@ -66,9 +75,7 @@ export default class AFMapWindow extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div id="map">
-          mapa
-        </div>
+        <div id="map" />
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick.bind(this)} bsStyle="success">
