@@ -83,8 +83,12 @@ export default class AFFundingDonorSection extends Component {
     const newOpenFundingDonorSection = this.state.openFundingDonorSection;
     newOpenFundingDonorSection.push({ open: false, id: fundingItem[AC.GROUP_VERSIONED_FUNDING] });
     this.setState({ fundingList: newFundingList, openFundingDonorSection: newOpenFundingDonorSection });
+
     // Add to activity object or it will disappear when changing section.
-    this.context.activity.fundings.push(fundingItem);
+    if (!this.context.activity[AC.FUNDINGS]) {
+      this.context.activity[AC.FUNDINGS] = [];
+    }
+    this.context.activity[AC.FUNDINGS].push(fundingItem);
   }
 
   _filterFundings(fundings) {
@@ -131,7 +135,8 @@ export default class AFFundingDonorSection extends Component {
       {this._filterFundings(this.state.fundingList).map((g, i) => (
         <Panel
           header={this._generateComplexHeader(i, g)}
-          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible expanded={this.state.openFundingDonorSection[i].open}
+          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible
+          expanded={this.state.openFundingDonorSection[i] ? this.state.openFundingDonorSection[i].open : false}
           onSelect={() => {
             const newOpenState = this.state.openFundingDonorSection;
             newOpenState[i].open = !newOpenState[i].open;
