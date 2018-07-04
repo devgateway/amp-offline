@@ -64,9 +64,27 @@ const RepositoryManager = {
    * @param content the file content metadata information
    */
   copyToDestination(dstFilePath, content) {
-    const srcFilePath = FileManager.getFullPath(REPOSITORY_DIR, this._getContentPath(content));
+    const srcFilePath = this.getFullContentFilePath(content);
     // if we ever decide to archive files, then we will unarchive first before the copy
     FileManager.copyDataFileSyncUsingFullPaths(srcFilePath, dstFilePath);
+  },
+
+  /**
+   * Get full path to the content from repository
+   * @param content
+   * @return {*|string}
+   */
+  getFullContentFilePath(content) {
+    return FileManager.getFullPath(REPOSITORY_DIR, this._getContentPath(content));
+  },
+
+  /**
+   * Create a read stream for a content stored in the repository
+   * @param content
+   * @return {*}
+   */
+  createContentReadStream(content) {
+    return FileManager.createReadStream(REPOSITORY_DIR, this._getContentPath(content));
   },
 
   /**

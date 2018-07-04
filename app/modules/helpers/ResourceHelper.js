@@ -3,6 +3,7 @@ import { COLLECTION_RESOURCES } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import { CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID } from '../../utils/constants/EntityConstants';
+import { CONTENT_TYPE } from '../../utils/constants/ResourceConstants';
 
 const logger = new Logger('ResourceHelper');
 
@@ -90,6 +91,7 @@ const ResourceHelper = {
     delete cleanResource.id;
     delete cleanResource._id;
     delete cleanResource[INTERNAL_ID];
+    delete cleanResource[CONTENT_TYPE];
     return cleanResource;
   },
 

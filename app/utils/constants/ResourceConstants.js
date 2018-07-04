@@ -6,6 +6,7 @@ export const ORPHAN = 'orphan';
 export const HASH = 'hash';
 export const PATH = 'path';
 export const FILE_NAME = 'file_name';
+export const CONTENT_TYPE = 'content-type';
 
 /** Repository File System constants */
 
