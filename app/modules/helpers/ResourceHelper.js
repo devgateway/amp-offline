@@ -3,7 +3,7 @@ import { COLLECTION_RESOURCES } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import { CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID } from '../../utils/constants/EntityConstants';
-import { CONTENT_TYPE } from '../../utils/constants/ResourceConstants';
+import { CONTENT_ID, CONTENT_TYPE } from '../../utils/constants/ResourceConstants';
 
 const logger = new Logger('ResourceHelper');
 
@@ -53,6 +53,17 @@ const ResourceHelper = {
     return DatabaseManager.findAll(filterRule, COLLECTION_RESOURCES, projections);
   },
 
+  countAllResourcesModifiedOnClient(filterRule = {}) {
+    logger.debug('countAllResourcesModifiedOnClient');
+    filterRule[CLIENT_CHANGE_ID] = { $exists: true };
+    return ResourceHelper.countAllResources(filterRule);
+  },
+
+  countAllResources(filterRule = {}) {
+    logger.debug('countAllResources');
+    return DatabaseManager.count(filterRule, COLLECTION_RESOURCES);
+  },
+
   stampClientChange(resource) {
     if (!resource[CLIENT_CHANGE_ID]) {
       resource[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${Utils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
@@ -91,8 +102,19 @@ const ResourceHelper = {
     delete cleanResource.id;
     delete cleanResource._id;
     delete cleanResource[INTERNAL_ID];
+    delete cleanResource[CONTENT_ID];
     delete cleanResource[CONTENT_TYPE];
     return cleanResource;
+  },
+
+  /**
+   * Copy local specific data from source resource to destination resource
+   * @param src the source resource
+   * @param dst the destination resource
+   */
+  copyLocalData(src, dst) {
+    dst[CONTENT_ID] = src[dst];
+    dst[CONTENT_TYPE] = src[dst];
   },
 
   /**
