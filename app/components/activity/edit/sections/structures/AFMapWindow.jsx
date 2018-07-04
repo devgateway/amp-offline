@@ -74,7 +74,7 @@ export default class AFMapWindow extends Component {
         iconAnchor: [12, 41],
         popupAnchor: [-3, -76]
       });
-      L.marker([this.props.point.lat, this.props.point.lng], { icon: myIcon }).addTo(map);
+      L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]], { icon: myIcon }).addTo(map);
     }
 
     // Load polygon.

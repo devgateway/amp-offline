@@ -100,15 +100,14 @@ class AFStructures extends Component {
     this.setState({ showViewDialog: true, viewStructure: structure });
   }
 
-  /* eslint-disable class-methods-use-this */
   handleMap(structure) {
     if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
       this.setState({
         showMapDialog: true,
         viewStructure: structure,
         currentPoint: {
-          lat: structure[AC.STRUCTURES_LATITUDE],
-          lng: structure[AC.STRUCTURES_LONGITUDE]
+          [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
+          [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE]
         },
         currentPolygon: null
       });
@@ -133,6 +132,7 @@ class AFStructures extends Component {
     this.setState({ showMapDialog: false });
   }
 
+  /* eslint-disable class-methods-use-this */
   handleSaveMap() {
     logger.log('handleSaveMap');
   }
