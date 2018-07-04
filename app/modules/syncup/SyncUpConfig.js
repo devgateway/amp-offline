@@ -16,6 +16,7 @@ import ContactFieldsSyncUpManager from './syncupManagers/ContactFieldsSyncUpMana
 import ContactPossibleValuesSyncUpManager from './syncupManagers/ContactPossibleValuesSyncUpManager';
 import ResourcesPullSyncUpManager from './syncupManagers/ResourcesPullSyncUpManager';
 import ResourcesPushSyncUpManager from './syncupManagers/ResourcesPushSyncUpManager';
+import ResourceFieldsSyncUpManager from './syncupManagers/ResourceFieldsSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
@@ -27,7 +28,10 @@ import {
   SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_CONTACT_FIELDS,
-  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES, SYNCUP_TYPE_CONTACTS_PULL, SYNCUP_TYPE_CONTACTS_PUSH,
+  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
+  SYNCUP_TYPE_CONTACTS_PULL,
+  SYNCUP_TYPE_CONTACTS_PUSH,
+  SYNCUP_TYPE_RESOURCE_FIELDS,
   SYNCUP_TYPE_RESOURCES_PULL,
   SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_USERS,
@@ -46,7 +50,7 @@ export default class SyncUpConfig {
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
-    ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager,
+    ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
@@ -82,6 +86,7 @@ export default class SyncUpConfig {
       Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     // pull resources once activities were pulled, so that we remove any resource only from non-conflicting activities
     dependencies[SYNCUP_TYPE_RESOURCES_PULL] = Utils.toMap(SYNCUP_TYPE_ACTIVITIES_PULL, SS.STATES_FINISH);
+    dependencies[SYNCUP_TYPE_RESOURCE_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     return dependencies;
   }
 
