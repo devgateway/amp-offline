@@ -111,12 +111,11 @@ class AFStructures extends Component {
   }
 
   handleCloseMap() {
-    alert('close');
     this.setState({ showMapDialog: false });
   }
 
   handleSaveMap() {
-    alert('save');
+    logger.log('handleSaveMap');
   }
 
   render() {
