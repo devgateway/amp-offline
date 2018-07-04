@@ -10,6 +10,7 @@ import afStyles from '../ActivityForm.css';
 import * as Types from '../components/AFComponentTypes';
 import translate from '../../../../utils/translate';
 import AFViewStructure from './structures/AFViewStructure';
+import AFMapWindow from './structures/AFMapWindow';
 
 const logger = new Logger('AF Structures');
 
@@ -54,7 +55,14 @@ class AFStructures extends Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleMap = this.handleMap.bind(this);
     this.handleView = this.handleView.bind(this);
-    this.state = { structures: props.activity[AC.STRUCTURES] || [], showViewDialog: false, viewStructure: null };
+    this.handleSaveMap = this.handleSaveMap.bind(this);
+    this.handleCloseMap = this.handleCloseMap.bind(this);
+    this.state = {
+      structures: props.activity[AC.STRUCTURES] || [],
+      showViewDialog: false,
+      viewStructure: null,
+      showMapDialog: false
+    };
   }
 
   preProcessForIds() {
@@ -92,7 +100,7 @@ class AFStructures extends Component {
 
   /* eslint-disable class-methods-use-this */
   handleMap() {
-    // TODO: To be implemented.
+    this.setState({ showMapDialog: true });
   }
 
   handleDelete(structure, i) {
@@ -102,14 +110,30 @@ class AFStructures extends Component {
     this.context.activity[AC.STRUCTURES] = newStructures;
   }
 
+  handleCloseMap() {
+    alert('close');
+    this.setState({ showMapDialog: false });
+  }
+
+  handleSaveMap() {
+    alert('save');
+  }
+
   render() {
     this.preProcessForIds();
     return (<div className={afStyles.full_width}>
+
       <AFViewStructure
         show={this.state.showViewDialog}
         structure={this.state.viewStructure}
         onClose={() => this.setState({ showViewDialog: false, viewStructure: null })}
       />
+
+      <AFMapWindow
+        show={this.state.showMapDialog}
+        onModalClose={this.handleCloseMap}
+        onSave={this.handleSaveMap} />
+
       <Grid className={afStyles.full_width}>
         {this.state.structures.map((s, i) => (
           <Panel key={Math.random()} header={translate('Structure')}>
