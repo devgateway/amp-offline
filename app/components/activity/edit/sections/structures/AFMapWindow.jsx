@@ -7,6 +7,7 @@ import translate from '../../../../../utils/translate';
 import styles from './AFMapWindow.css';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
 import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
+import * as AC from '../../../../../utils/constants/ActivityConstants';
 
 const logger = new Logger('Map Modal');
 // const esri = require('esri-leaflet');
@@ -23,7 +24,7 @@ export default class AFMapWindow extends Component {
     onSave: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
     point: PropTypes.object,
-    polygon: PropTypes.object
+    polygon: PropTypes.array
   };
 
   constructor(props) {
@@ -66,14 +67,19 @@ export default class AFMapWindow extends Component {
     map.on('click', this.onMapClick.bind(null, map));
 
     // Load point.
-    const myIcon = L.icon({
-      iconUrl: 'assets/images/marker-icon.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [-3, -76]
-    });
     if (this.props.point) {
+      const myIcon = L.icon({
+        iconUrl: 'assets/images/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [-3, -76]
+      });
       L.marker([this.props.point.lat, this.props.point.lng], { icon: myIcon }).addTo(map);
+    }
+
+    // Load polygon.
+    if (this.props.polygon) {
+      L.polygon(this.props.polygon.map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]]))).addTo(map);
     }
   }
 

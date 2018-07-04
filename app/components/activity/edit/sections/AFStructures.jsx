@@ -113,7 +113,12 @@ class AFStructures extends Component {
         currentPolygon: null
       });
     } else {
-      // TODO: Implement for polygon.
+      this.setState({
+        showMapDialog: true,
+        viewStructure: structure,
+        currentPolygon: structure[AC.STRUCTURES_COORDINATES],
+        currentPoint: null
+      });
     }
   }
 
