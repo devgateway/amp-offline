@@ -1,14 +1,18 @@
+import RepositoryManager from '../repository/RepositoryManager';
+import FileManager from '../util/FileManager';
+import { CONTENT_ID, FILE_NAME, ORPHAN } from '../../utils/constants/ResourceConstants';
+import RepositoryHelper from '../helpers/RepositoryHelper';
+import ResourceHelper from '../helpers/ResourceHelper';
+import * as Utils from '../../utils/Utils';
+import Logger from '../util/LoggerManager';
+
+const logger = new Logger('ResourceManager');
+
 /**
  * Resource Manager
  *
  * @author Nadejda Mandrescu
  */
-import RepositoryManager from '../repository/RepositoryManager';
-import FileManager from '../util/FileManager';
-import { CONTENT_ID, FILE_NAME } from '../../utils/constants/ResourceConstants';
-import RepositoryHelper from '../helpers/RepositoryHelper';
-import ResourceHelper from '../helpers/ResourceHelper';
-
 const ResourceManager = {
   /**
    * A wrapper to save the resource with a file attached (if any)
@@ -16,6 +20,7 @@ const ResourceManager = {
    * @param srcFilePath (optional)
    */
   saveOrUpdateResource(resource, srcFilePath = null) {
+    logger.log('saveOrUpdateResource');
     if (srcFilePath) {
       RepositoryManager.init(false);
       const content = RepositoryManager.storeLocalFileToRepository(srcFilePath);
@@ -40,6 +45,56 @@ const ResourceManager = {
         }
         return { resource };
       });
+  },
+
+  /**
+   * Delete resource together with content
+   * @param uuid
+   * @return {*}
+   */
+  deleteResourceWithContent(uuid) {
+    logger.log('deleteResourceWithContent');
+    return ResourceHelper.findResourceByUuid(uuid).then(r => {
+      const contentId = r[CONTENT_ID];
+      if (contentId) {
+        return RepositoryHelper.findContentById(contentId).then(this._deleteContent);
+      }
+      return contentId;
+    }).then(() => ResourceHelper.deleteResourceById(uuid));
+  },
+
+  /**
+   * Delete all resources identified with uuid from the input list and its related content if any exists
+   * @param uuids
+   * @return {Promise}
+   */
+  deleteAllResourcesWithContent(uuids) {
+    logger.log('deleteAllResourcesWithContent');
+    return ResourceHelper.findAllResources({ uuid: { $in: uuids } }, Utils.toMap(CONTENT_ID, 1))
+      .then(resources => Utils.flattenToListByKey(resources, CONTENT_ID))
+      .then(RepositoryHelper.findContentsByIds)
+      .then(contents => Promise.all(contents.map(ResourceManager.deleteContent)))
+      .then(() => ResourceHelper.removeAllByIds(uuids));
+  },
+
+  /**
+   * Delete content and its related physical file
+   * @param content
+   * @return {Promise}
+   */
+  deleteContent(content) {
+    logger.log(`deleteContent id=${content && content.id}`);
+    if (content) {
+      try {
+        RepositoryManager.deleteFromRepository(content);
+        return RepositoryHelper.deleteContentById(content.id);
+      } catch (error) {
+        logger.error(`Could not delete content id = ${content.id}, error: ${error}`);
+        content[ORPHAN] = true;
+        return RepositoryHelper.saveOrUpdateContent(content);
+      }
+    }
+    return Promise.resolve();
   },
 
 };

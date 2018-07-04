@@ -70,6 +70,15 @@ const RepositoryManager = {
   },
 
   /**
+   * Deletes a file from the repository
+   * @param content the file metadata
+   */
+  deleteFromRepository(content) {
+    const fullFilePath = FileManager.getFullPath(REPOSITORY_DIR, this._getContentPath(content));
+    FileManager.deleteFile(fullFilePath);
+  },
+
+  /**
    * Provides content path. Having a dedicated method can allow us to calculate the path differently later if needed.
    * @param content
    * @return {String}
