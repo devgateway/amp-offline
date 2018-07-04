@@ -4,7 +4,6 @@ import { Button, Modal } from 'react-bootstrap';
 import L from 'leaflet';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import AFInput from '../../components/AFInput';
 import styles from './AFMapWindow.css';
 
 const logger = new Logger('Map Modal');
@@ -50,7 +49,7 @@ export default class AFMapWindow extends Component {
   generateMap() {
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
     const map = L.map(node).setView([18.8628921578, -72.770007622], 8);
-    L.tileLayer('file:///P://Haiti_5_11/{z}/{x}/{y}.png', {
+    L.tileLayer(`file://${global.__dirname}/../assets/map-tiles/{z}/{x}/{y}.png`, {
       maxZoom: 11,
       minZoom: 8,
       attribution: 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -60,14 +59,13 @@ export default class AFMapWindow extends Component {
 
   render() {
     const { onModalClose } = this.props;
-    return (<Modal show={this.props.show} onEntered={this.generateMap.bind(this)}>
+    return (<Modal show={this.props.show} onEntered={this.generateMap.bind(this)} bsSize="large">
       <Modal.Header>
         <Modal.Title>
           {translate('Structures')}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <AFInput value={this.state.value} onChange={this.handleChange.bind(this)} />
         <div id="map">
           mapa
         </div>
