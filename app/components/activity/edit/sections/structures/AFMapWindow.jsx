@@ -21,15 +21,15 @@ export default class AFMapWindow extends Component {
   static propTypes = {
     onModalClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
-    show: PropTypes.bool.isRequired
+    show: PropTypes.bool.isRequired,
+    point: PropTypes.object,
+    polygon: PropTypes.object
   };
 
   constructor(props) {
     super(props);
     logger.log('constructor');
-    this.state = {
-      validationResult: undefined
-    };
+    this.state = {};
   }
 
   onMapClick(map, e) {
@@ -64,6 +64,17 @@ export default class AFMapWindow extends Component {
       attribution: cp
     }).addTo(map);
     map.on('click', this.onMapClick.bind(null, map));
+
+    // Load point.
+    const myIcon = L.icon({
+      iconUrl: 'assets/images/marker-icon.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [-3, -76]
+    });
+    if (this.props.point) {
+      L.marker([this.props.point.lat, this.props.point.lng], { icon: myIcon }).addTo(map);
+    }
   }
 
   render() {

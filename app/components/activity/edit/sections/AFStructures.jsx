@@ -61,7 +61,9 @@ class AFStructures extends Component {
       structures: props.activity[AC.STRUCTURES] || [],
       showViewDialog: false,
       viewStructure: null,
-      showMapDialog: false
+      showMapDialog: false,
+      currentPoint: null,
+      currentPolygon: null
     };
   }
 
@@ -99,8 +101,20 @@ class AFStructures extends Component {
   }
 
   /* eslint-disable class-methods-use-this */
-  handleMap() {
-    this.setState({ showMapDialog: true });
+  handleMap(structure) {
+    if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+      this.setState({
+        showMapDialog: true,
+        viewStructure: structure,
+        currentPoint: {
+          lat: structure[AC.STRUCTURES_LATITUDE],
+          lng: structure[AC.STRUCTURES_LONGITUDE]
+        },
+        currentPolygon: null
+      });
+    } else {
+      // TODO: Implement for polygon.
+    }
   }
 
   handleDelete(structure, i) {
@@ -131,7 +145,9 @@ class AFStructures extends Component {
       <AFMapWindow
         show={this.state.showMapDialog}
         onModalClose={this.handleCloseMap}
-        onSave={this.handleSaveMap} />
+        onSave={this.handleSaveMap}
+        polygon={this.state.currentPolygon}
+        point={this.state.currentPoint} />
 
       <Grid className={afStyles.full_width}>
         {this.state.structures.map((s, i) => (
