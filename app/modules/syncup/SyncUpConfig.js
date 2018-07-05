@@ -17,6 +17,7 @@ import ContactPossibleValuesSyncUpManager from './syncupManagers/ContactPossible
 import ResourcesPullSyncUpManager from './syncupManagers/ResourcesPullSyncUpManager';
 import ResourcesPushSyncUpManager from './syncupManagers/ResourcesPushSyncUpManager';
 import ResourceFieldsSyncUpManager from './syncupManagers/ResourceFieldsSyncUpManager';
+import ResourcePossibleValuesSyncUpManager from './syncupManagers/ResourcePossibleValuesSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
@@ -32,6 +33,7 @@ import {
   SYNCUP_TYPE_CONTACTS_PULL,
   SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_RESOURCE_FIELDS,
+  SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES,
   SYNCUP_TYPE_RESOURCES_PULL,
   SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_USERS,
@@ -51,6 +53,7 @@ export default class SyncUpConfig {
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
+    ResourcePossibleValuesSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
@@ -87,6 +90,8 @@ export default class SyncUpConfig {
     // pull resources once activities were pulled, so that we remove any resource only from non-conflicting activities
     dependencies[SYNCUP_TYPE_RESOURCES_PULL] = Utils.toMap(SYNCUP_TYPE_ACTIVITIES_PULL, SS.STATES_FINISH);
     dependencies[SYNCUP_TYPE_RESOURCE_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
+    dependencies[SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES] =
+      Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     return dependencies;
   }
 
