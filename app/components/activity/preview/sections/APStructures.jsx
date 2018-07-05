@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import Logger from '../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 
 const logger = new Logger('AP structures');
