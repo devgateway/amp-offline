@@ -13,7 +13,6 @@ const logger = new Logger('AP structures');
 class APStructures extends Component {
 
   static propTypes = {
-    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activity: PropTypes.object.isRequired
   };
 
@@ -41,13 +40,15 @@ class APStructures extends Component {
   render() {
     const { activity } = this.props;
     if (activity[AC.STRUCTURES]) {
-      return (<div>{activity[AC.STRUCTURES].map(s => (<div>
-          <div>{s[AC.STRUCTURES_TITLE]}</div>
-          <div>{s[AC.STRUCTURES_DESCRIPTION]}</div>
-          {APStructures.getCoordinates(s)}
-        </div>)
-      )}
-      </div>);
+      return (
+        <div>{activity[AC.STRUCTURES].map(s => (
+          <div>
+            <div>{s[AC.STRUCTURES_TITLE]}</div>
+            <div>{s[AC.STRUCTURES_DESCRIPTION]}</div>
+            {APStructures.getCoordinates(s)}
+          </div>)
+        )}
+        </div>);
     }
     return null;
   }
