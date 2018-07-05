@@ -25,6 +25,10 @@ import {
   POSSIBLE_VALUES_V2_MEDIA_TYPE,
   POST_TRANSLATIONS_URL,
   RESET_PASSWORD_URL,
+  RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  RESOURCE_PULL_URL,
+  RESOURCE_PUSH_URL,
+  RESOURCE_SINGLE_FIELDS_TREE_URL,
   SYNC_URL,
   TEST_URL,
   URL_CONNECTIVITY_CHECK_EP,
@@ -157,6 +161,23 @@ const routesConfiguration = [{
   requiredAuth: true
 }, {
   url: CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
+  requiredAuth: true
+}, {
+  url: RESOURCE_PULL_URL,
+  method: 'POST',
+  requiredAuth: true
+}, {
+  url: RESOURCE_PUSH_URL,
+  method: 'PUT',
+  isForm: true,
+  requiredAuth: true
+}, {
+  url: RESOURCE_SINGLE_FIELDS_TREE_URL,
+  method: 'GET',
+  requiredAuth: true
+}, {
+  url: RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
   requiredAuth: true
 }, {

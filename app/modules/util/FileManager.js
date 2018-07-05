@@ -121,6 +121,16 @@ const FileManager = {
   },
 
   /**
+   * Creates a read stream
+   * @param pathParts
+   * @return {*}
+   */
+  createReadStream(...pathParts) {
+    const fullPath = this.getFullPath(...pathParts);
+    return fs.createReadStream(fullPath);
+  },
+
+  /**
    * Reads a text file synchronously
    * @param pathParts
    * @return {*}

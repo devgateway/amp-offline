@@ -57,7 +57,7 @@ const ResourceManager = {
     return ResourceHelper.findResourceByUuid(uuid).then(r => {
       const contentId = r[CONTENT_ID];
       if (contentId) {
-        return RepositoryHelper.findContentById(contentId).then(this._deleteContent);
+        return RepositoryHelper.findContentById(contentId).then(ResourceManager.deleteContent);
       }
       return contentId;
     }).then(() => ResourceHelper.deleteResourceById(uuid));

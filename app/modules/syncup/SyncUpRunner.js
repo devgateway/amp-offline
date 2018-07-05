@@ -26,6 +26,8 @@ import {
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES,
+  SYNCUP_TYPE_RESOURCE_FIELDS,
+  SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_TRANSLATIONS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS
 } from '../../utils/Constants';
@@ -34,6 +36,7 @@ import * as Utils from '../../utils/Utils';
 import ContactHelper from '../helpers/ContactHelper';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
+import ResourceHelper from '../helpers/ResourceHelper';
 
 const logger = new Logger('Syncup runner');
 
@@ -153,13 +156,14 @@ export default class SyncUpRunner {
 
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
       ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
+      ResourceHelper.countAllResourcesModifiedOnClient(),
       TranslationSyncupManager.getNewTranslationsDifference()])
-      .then(([ampIds, userIds, activitiesToPush, contactsToPush, newTranslations]) => {
+      .then(([ampIds, userIds, activitiesToPush, contactsToPush, resourcesToPushCount, newTranslations]) => {
         this._ampIds = ampIds;
         this._registeredUserIds = userIds;
         this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
         this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
-        this._contactsToPush = contactsToPush;
+        this._hasResourcesToPush = resourcesToPushCount > 0;
         this._hasTranslationsToPush = newTranslations && newTranslations.length > 0;
         return this._getCumulativeSyncUpChanges();
       });
@@ -191,6 +195,7 @@ export default class SyncUpRunner {
     // TODO: remove this flag once AMP-25568 is done
     changes[SYNCUP_TYPE_ACTIVITY_FIELDS] = true;
     changes[SYNCUP_TYPE_CONTACT_FIELDS] = true;
+    changes[SYNCUP_TYPE_RESOURCE_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
@@ -198,6 +203,7 @@ export default class SyncUpRunner {
     const hasWsMembersChanges = SyncUpDiff.hasChanges(changes[SYNCUP_TYPE_WORKSPACE_MEMBERS]);
     changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && (this._hasActivitiesToPush || hasWsMembersChanges);
     changes[SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._hasContactsToPush;
+    changes[SYNCUP_TYPE_RESOURCES_PUSH] = isFirstRun && this._hasResourcesToPush;
     changes[SYNCUP_TYPE_TRANSLATIONS] = changes[SYNCUP_TYPE_TRANSLATIONS] || this._hasTranslationsToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
@@ -247,6 +253,7 @@ export default class SyncUpRunner {
 
   _prepareForSync(syncUpManager) {
     syncUpManager.lastSyncUpDate = this._lastTimestamp;
+    syncUpManager.totalSyncUpDiff = this._syncUpDiffLeftOver;
   }
 
   _buildUnitResult(syncUpManager: SyncUpManagerInterface, error) {

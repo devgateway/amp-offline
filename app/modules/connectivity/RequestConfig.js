@@ -28,7 +28,7 @@ const RequestConfig = {
     if (!routeConfiguration.isBinary) {
       // If it is not binary we assume its JSON if we need to handle
       // more types we can adjust accordingly
-      headers['content-type'] = 'application/json';
+      headers['content-type'] = routeConfiguration.isForm ? 'multipart/form-data' : 'application/json';
       headers.Accept = routeConfiguration.accept || 'application/json';
     }
     const requestConfig = {
@@ -55,7 +55,11 @@ const RequestConfig = {
     }
 
     if (body !== undefined) {
-      requestConfig.body = body;
+      if (routeConfiguration.isForm) {
+        requestConfig.formData = body;
+      } else {
+        requestConfig.body = body;
+      }
     }
     return requestConfig;
   },

@@ -87,6 +87,11 @@ export const SYNCUP_TYPE_CONTACTS_PUSH = 'contacts-push';
 export const SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES = 'activity-possible-values-fields';
 export const SYNCUP_TYPE_CONTACT_FIELDS = 'contact-fields';
 export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fields';
+export const SYNCUP_TYPE_RESOURCES_PULL = 'resources';
+export const SYNCUP_TYPE_RESOURCES_PUSH = 'resources-push';
+export const SYNCUP_TYPE_RESOURCE_FIELDS = 'resource-fields';
+export const SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES = 'resource-possible-values-fields';
+
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
@@ -99,6 +104,7 @@ export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
 export const SYNCUP_DEPENDENCY_CHECK_INTERVAL = 10;
 export const SYNCUP_DETAILS_SYNCED = 'synced';
 export const SYNCUP_DETAILS_UNSYNCED = 'unsynced';
+export const SYNCUP_RESOURCE_PULL_BATCH_SIZE = 100;
 
 export const ACTIVITY_STATUS_DRAFT = 'ACTIVITY_STATUS_DRAFT';
 export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';

@@ -29,6 +29,14 @@ export default class SyncUpManagerInterface {
     return this._type;
   }
 
+  set totalSyncUpDiff(totalSyncUpDiff) {
+    this._totalSyncUpDiff = totalSyncUpDiff;
+  }
+
+  get totalSyncUpDiff() {
+    return this._totalSyncUpDiff;
+  }
+
   addError(error) {
     this._errors.push(error);
   }
