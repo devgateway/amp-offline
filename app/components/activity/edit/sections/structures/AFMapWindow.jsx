@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import L from 'leaflet';
+import path from 'path';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from './AFMapWindow.css';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
 import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import FileManager from '../../../../../modules/util/FileManager';
+import { MAP_MARKER_IMAGE } from '../../../../../utils/Constants';
 
 const logger = new Logger('Map Modal');
 // const esri = require('esri-leaflet');
@@ -27,17 +30,17 @@ export default class AFMapWindow extends Component {
     polygon: PropTypes.array
   };
 
-  constructor(props) {
-    super(props);
-    logger.log('constructor');
-    this.state = {};
-  }
-
-  onMapClick(map, e) {
+  static onMapClick(map, e) {
     popup
       .setLatLng(e.latlng)
       .setContent(`You clicked the map at '${e.latlng.toString()}`)
       .openOn(map);
+  }
+
+  constructor(props) {
+    super(props);
+    logger.log('constructor');
+    this.state = {};
   }
 
   handleSaveBtnClick() {
@@ -59,17 +62,26 @@ export default class AFMapWindow extends Component {
 
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
     const map = L.map(node).setView([lat, lng], minZoom);
-    L.tileLayer(`file://${global.__dirname}/../assets/map-tiles/{z}/{x}/{y}.png`, {
+
+    let tilesPath = '';
+    const tilesFiles = 'assets/map-tiles/{z}/{x}/{y}.png';
+    if (process.env.NODE_ENV === 'production') {
+      tilesPath = `file://${path.join(FileManager.getDataPath(), tilesFiles)}`;
+    } else {
+      tilesPath = `file://${global.__dirname}/../${tilesFiles}`;
+    }
+
+    L.tileLayer(tilesPath, {
       maxZoom,
       minZoom,
       attribution: cp
     }).addTo(map);
-    map.on('click', this.onMapClick.bind(null, map));
+    map.on('click', AFMapWindow.onMapClick.bind(null, map));
 
     // Load point.
     if (this.props.point) {
       const myIcon = L.icon({
-        iconUrl: 'assets/images/marker-icon.png',
+        iconUrl: MAP_MARKER_IMAGE,
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [-3, -76]
