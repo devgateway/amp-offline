@@ -17,7 +17,7 @@ export default class Loading extends Component {
     logger.log('render');
     return (
       <div className={styles.loading}>
-        <span>{translate('Loading...')}</span>
+        <span>{translate('loadingMessage')}</span>
         <img className={appStyle.loading_icon} alt="loading" />
       </div>
     );

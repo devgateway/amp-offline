@@ -29,7 +29,7 @@
   "AMP Offline Help": "AMP Offline Help",
   "About": "About",
   "Synchronize": "Synchronize",
-  "Loading...": "Loading...",
+  "loadingMessage": "Loading...",
   "Add Activity": "Add Activity",
   "goback": "Go Back",
   "clickToPreviewActivity": "Click to preview the activity",
