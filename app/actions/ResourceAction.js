@@ -13,6 +13,7 @@ import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import EntityValidator from '../modules/field/EntityValidator';
 import ResourceHelper from '../modules/helpers/ResourceHelper';
 import { RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
+import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -61,7 +62,7 @@ export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownPro
   type: RESOURCES_SAVE,
   payload: _dehydrateAndSaveResources(
     _getHydratedActivityResources(activity, ownProps().resourceReducer.resourcesByUuids),
-    ownProps().userReducer.teamMember,
+    ownProps().userReducer.teamMember[WORKSPACE_ID], ownProps().userReducer.userData.email,
     ownProps().resourceReducer.resourceFieldsManager.fieldsDef)
 });
 
@@ -108,13 +109,13 @@ const _mapById = (resources) => {
 const _getHydratedActivityResources = (activity, resourcesByUuid) =>
   getActivityResourceUuids(activity).map(uuid => resourcesByUuid[uuid]);
 
-const _dehydrateAndSaveResources = (resources, teamMember, fieldsDef) => {
+const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
   const rh = new ResourceHydrator(fieldsDef);
   _cleanupTmpFields(resources);
   return rh.dehydrateEntities(resources)
     .then(() => ResourceHelper.findResourcesByUuids(resources.map(r => r[UUID])))
     .then(Utils.toMapByKey)
-    .then(rMap => _getOnlyNewResources(resources, rMap, teamMember))
+    .then(rMap => _getOnlyNewResources(resources, rMap, teamId, email))
     .then(ResourceHelper.saveOrUpdateResourceCollection);
 };
 
@@ -125,13 +126,12 @@ const _cleanupTmpFields = (resources) => {
   return resources;
 };
 
-const _getOnlyNewResources = (resources, dbResourcesMapById, teamMember) => resources.filter(r => {
+const _getOnlyNewResources = (resources, dbResourcesMapById, teamId, email) => resources.filter(r => {
   const dbR = dbResourcesMapById.get(r[UUID]);
   const toSave = !dbR;
   if (toSave) {
-    // TODO format
-    r[CREATOR_EMAIL] = teamMember;
-    r[TEAM] = teamMember;
+    r[CREATOR_EMAIL] = email;
+    r[TEAM] = teamId;
   }
   return toSave;
 });
