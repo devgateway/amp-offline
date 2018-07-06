@@ -80,7 +80,7 @@ const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
 }));
 
 const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([
-  ResourceHelper.findResourceByUuid(uuids),
+  ResourceHelper.findResourcesByUuids(uuids),
   FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
@@ -92,14 +92,18 @@ const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity)
 }).then((resources) => _flagAsFullyHydrated(resources, resourceFieldsManager, activity)).then(_mapById);
 
 const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
-  const adocsMap = activity && Utils.toMapByKey(_getActivityResources(activity, false), UUID);
-  resources.forEach(r => {
-    r[TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
-    if (adocsMap) {
-      const ar = adocsMap.get(r[UUID]);
-      ar[TMP_ENTITY_VALIDATOR] = r[TMP_ENTITY_VALIDATOR];
-    }
-  });
+  if (resources && resources.length) {
+    const rMap = Utils.toMapByKey(resources, UUID);
+    const ars = activity[AC.ACTIVITY_DOCUMENTS];
+    ars.forEach(ar => {
+      const r = rMap.get(ar[UUID]);
+      if (r) {
+        r[TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
+        ar[UUID] = r;
+        ar[TMP_ENTITY_VALIDATOR] = r[TMP_ENTITY_VALIDATOR];
+      }
+    });
+  }
   return resources;
 };
 
