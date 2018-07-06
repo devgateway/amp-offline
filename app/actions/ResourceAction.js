@@ -84,8 +84,11 @@ const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity)
   FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
-  const rh = new ResourceHydrator(rFields);
-  return rh.hydrateEntities(resources);
+  if (resources && resources.length) {
+    const rh = new ResourceHydrator(rFields);
+    return rh.hydrateEntities(resources);
+  }
+  return [];
 }).then((resources) => _flagAsFullyHydrated(resources, resourceFieldsManager, activity)).then(_mapById);
 
 const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {

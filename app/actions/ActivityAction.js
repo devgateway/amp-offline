@@ -34,6 +34,7 @@ import ActivityStatusValidation from '../modules/activity/ActivityStatusValidati
 import DateUtils from '../utils/DateUtils';
 import LoggerManager from '../modules/util/LoggerManager';
 import * as ContactAction from './ContactAction';
+import * as ResourceAction from './ResourceAction';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -65,6 +66,7 @@ export function loadActivityForActivityPreview(activityId) {
         currentLanguage: ownProps().translationReducer.lang
       }).then(data => {
         ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
+        ResourceAction.loadHydratedResourcesForActivity(data.activity)(dispatch, ownProps);
         return data;
       })
     });
