@@ -151,6 +151,7 @@ export const COMPONENT_DESCRIPTION = 'description';
 export const COMPONENT_ORGANIZATION = 'component_organization';
 export const FUNDING_AMOUNT_ID = 'amp_funding_amount_id';
 export const EXTRA_INFO = 'extra_info';
+export const VALUE = 'value';
 export const ACRONYM = 'acronym';
 export const TYPE_OF_COOPERATION = 'type_of_cooperation';
 export const ANNUAL_PROJECT_BUDGET_ID = 'annual_project_budget_id';
@@ -181,6 +182,7 @@ export const CONTACT = 'contact';
 export const ORGANIZATION_GROUP = 'organization_group';
 export const FIXED_EXCHANGE_RATE = 'fixed_exchange_rate';
 export const PRIMARY_CONTACT = 'mark_as_primary';
+export const ISO2 = 'iso2';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
