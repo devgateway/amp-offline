@@ -1,0 +1,16 @@
+.docList {
+  border-collapse: collapse;
+}
+.header {
+  display: flex;
+}
+.downloadIconContainer {
+  float: right;
+  border-left: 1px solid #ebebeb;
+  padding: 15px;
+}
+.downloadIcon {
+  width: 20px;
+  margin-left: 3px;
+  content: url('../../../../assets/images/view.svg');
+}
