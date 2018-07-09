@@ -11,6 +11,7 @@ import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
+import translate from '../../../../../utils/translate';
 
 /**
  * @author Gabriel Inchauspe
@@ -58,29 +59,29 @@ export default class AFFundingDetailItem extends Component {
     return (<div className={afStyles.full_width}>
       <Grid className={styles.grid}>
         <Row>
-          <Col md={3} lg={3}>
+          <Col md={4} lg={4}>
             <AFField
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.ADJUSTMENT_TYPE}`} />
           </Col>
-          <Col md={3} lg={3}>
+          <Col md={4} lg={4}>
             <AFField
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} />
           </Col>
-          <Col md={3} lg={3}>
+          <Col md={4} lg={4}>
             <AFField
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject />
           </Col>
-          <Col md={3} lg={3}>
+        </Row>
+        <Row>
+          <Col md={4} lg={4}>
             <AFField
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />
           </Col>
-        </Row>
-        <Row>
-          <Col md={3} lg={3}>
+          <Col md={4} lg={4}>
             {(this.props.fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
               parent={this.props.fundingDetail}
               fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
@@ -95,7 +96,7 @@ export default class AFFundingDetailItem extends Component {
           </Col>
         </Row>
         <Row>
-          <Col md={3} lg={3}>
+          <Col md={4} lg={4}>
             <AFField
               parent={this.props.fundingDetail}
               fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
@@ -104,10 +105,10 @@ export default class AFFundingDetailItem extends Component {
           </Col>
         </Row>
         <Row>
-          <Col md={3} lg={3}>
+          <Col md={4} lg={4}>
             <a
               onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
-              className={styles.delete} href={null}>&nbsp;</a>
+              className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
           </Col>
         </Row>
       </Grid>
