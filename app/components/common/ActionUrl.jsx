@@ -24,7 +24,7 @@ export default class ActionUrl extends Component {
 
   renderCustomAction() {
     const { onClick, urlContent } = this.props;
-    return <span onClick={onClick}>{urlContent}</span>;
+    return <span className={styles.action} onClick={onClick}>{urlContent}</span>;
   }
 
   renderNavigationLink() {

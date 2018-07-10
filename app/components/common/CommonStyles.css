@@ -1,6 +1,10 @@
 .url {
-  color: #90C845
+  color: #90C845;
+}
+.action {
+  cursor: pointer;
+  color: #90C845;
 }
 .noAction {
-  color: #90C845
+  color: #90C845;
 }
