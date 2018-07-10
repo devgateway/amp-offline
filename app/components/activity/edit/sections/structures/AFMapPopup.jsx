@@ -16,7 +16,9 @@ export default class AFMapPopup extends Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
+    coordinates: PropTypes.object,
+    layer: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -34,7 +36,7 @@ export default class AFMapPopup extends Component {
   }
 
   render() {
-    const { onCancel } = this.props;
+    const { onCancel, layer, coordinates } = this.props;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
         <Modal.Title>
@@ -43,12 +45,13 @@ export default class AFMapPopup extends Component {
       </Modal.Header>
       <Modal.Body>
         {translate('Title')} <input type={'text'} />
+        <span>{coordinates ? coordinates.toString() : null}</span>
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick.bind(this)} bsStyle="success">
           {translate('Submit')}
         </Button>
-        <Button onClick={onCancel}>
+        <Button onClick={onCancel.bind(null, layer)}>
           {translate('Cancel')}
         </Button>
       </Modal.Footer>

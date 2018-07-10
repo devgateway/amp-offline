@@ -40,26 +40,27 @@ export default class AFMapWindow extends Component {
   constructor(props) {
     super(props);
     logger.log('constructor');
-    this.onMapClick = this.onMapClick.bind(this);
+    this.openStructureDataPopup = this.openStructureDataPopup.bind(this);
     this.onStructureDataPopupCancel = this.onStructureDataPopupCancel.bind(this);
     this.state = {
       showStructureDataPopup: false,
       structureDataPopupCoordinates: null,
-      map: null
+      map: null,
+      currentLayer: null
     };
   }
 
-  onMapClick(e) {
-    /* Note: If we want to use leaflet's popup with a React component as content then we need to add react-leaflet
-    * lib and convert the current js map definition (leaflet) to React components: https://react-leaflet.js.org */
-    // TODO: Mostrar el componente popup modal.
-    this.setState({ showStructureDataPopup: true, structureDataPopupCoordinates: e.latlng });
-    L.marker(e.latlng, { icon: myIcon }).addTo(this.state.map);
+  onStructureDataPopupCancel(layer, a, b, c) {
+    this.setState({ showStructureDataPopup: false });
+    this.state.map.removeLayer(layer.layer);
+    // TODO: we need a list of existing layers and remove it.
   }
 
-  onStructureDataPopupCancel(e, latlng) {
-    this.setState({ showStructureDataPopup: false });
-    this.state.map.removeLayer(latlng); // TODO: necesito el latlng aca.
+  openStructureDataPopup(e, layer) {
+    /* Note: If we want to use leaflet's popup with a React component as content then we need to add react-leaflet
+    * lib and convert the current js map definition (leaflet) to React components: https://react-leaflet.js.org */
+    this.setState({ showStructureDataPopup: true, structureDataPopupCoordinates: e.getLatLng(), currentLayer: layer });
+    // L.marker(e.latlng, { icon: myIcon }).addTo(this.state.map);
   }
 
   handleSaveBtnClick() {
@@ -95,7 +96,7 @@ export default class AFMapWindow extends Component {
       minZoom,
       attribution: cp
     }).addTo(map);
-    map.on('click', this.onMapClick);
+    // map.on('click', this.openStructureDataPopup);
 
     // Load point.
     if (this.props.point) {
@@ -123,20 +124,16 @@ export default class AFMapWindow extends Component {
           allowIntersection: false,
           showArea: true
         },
-        circle: false
+        circle: false,
+        marker: {
+          icon: myIcon
+        }
       }
     }));
     map.on(L.Draw.Event.CREATED, (event) => {
       const layer = event.layer;
-      layer.on('contextmenu', (e) => {
-        e.layerz = layer;
-        /* selectedPointEvent = e;
-        isMenuOpen = true;
-        const y = e.originalEvent.clientY;
-        const x = e.originalEvent.clientX; */
-        // this.showMenu(y, x);
-      });
       drawnItems.addLayer(layer);
+      this.openStructureDataPopup(layer, event);
     });
 
     this.setState({ map });
@@ -154,7 +151,8 @@ export default class AFMapWindow extends Component {
         <div id="map" />
         <AFMapPopup
           show={this.state.showStructureDataPopup} onSubmit={() => (alert('submit'))}
-          onCancel={this.onStructureDataPopupCancel} />
+          onCancel={this.onStructureDataPopupCancel} coordinates={this.state.structureDataPopupCoordinates}
+          layer={this.state.currentLayer} />
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick.bind(this)} bsStyle="success">
