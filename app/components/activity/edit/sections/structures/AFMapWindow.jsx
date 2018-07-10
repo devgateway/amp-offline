@@ -42,11 +42,12 @@ export default class AFMapWindow extends Component {
     logger.log('constructor');
     this.openStructureDataPopup = this.openStructureDataPopup.bind(this);
     this.onStructureDataPopupCancel = this.onStructureDataPopupCancel.bind(this);
+    this.onStructureDataPopupSubmit = this.onStructureDataPopupSubmit.bind(this);
     this.state = {
       showStructureDataPopup: false,
-      structureDataPopupCoordinates: null,
       map: null,
-      currentLayer: null
+      currentLayer: null,
+      layersList: []
     };
   }
 
@@ -56,11 +57,15 @@ export default class AFMapWindow extends Component {
     // TODO: we need a list of existing layers and remove it.
   }
 
+  onStructureDataPopupSubmit(layer, title) {
+    this.setState({ showStructureDataPopup: false });
+    // TODO: we need a list of existing layers and add it.
+  }
+
   openStructureDataPopup(e, layer) {
     /* Note: If we want to use leaflet's popup with a React component as content then we need to add react-leaflet
     * lib and convert the current js map definition (leaflet) to React components: https://react-leaflet.js.org */
-    this.setState({ showStructureDataPopup: true, structureDataPopupCoordinates: e.getLatLng(), currentLayer: layer });
-    // L.marker(e.latlng, { icon: myIcon }).addTo(this.state.map);
+    this.setState({ showStructureDataPopup: true, currentLayer: layer });
   }
 
   handleSaveBtnClick() {
@@ -82,7 +87,6 @@ export default class AFMapWindow extends Component {
 
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
     const map = L.map(node).setView([lat, lng], minZoom);
-
     let tilesPath = '';
     const tilesFiles = 'assets/map-tiles/{z}/{x}/{y}.png';
     if (process.env.NODE_ENV === 'production') {
@@ -90,18 +94,20 @@ export default class AFMapWindow extends Component {
     } else {
       tilesPath = `file://${global.__dirname}/../${tilesFiles}`;
     }
-
     L.tileLayer(tilesPath, {
       maxZoom,
       minZoom,
       attribution: cp
     }).addTo(map);
-    // map.on('click', this.openStructureDataPopup);
+
+    // This object groups all layers at the same time.
+    const drawnItems = L.featureGroup().addTo(map);
 
     // Load point.
     if (this.props.point) {
-      L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]], { icon: myIcon })
-        .addTo(map);
+      const marker = L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]],
+        { icon: myIcon });
+      drawnItems.addLayer(marker);
     }
 
     // Load polygon.
@@ -111,7 +117,6 @@ export default class AFMapWindow extends Component {
     }
 
     // Setup controls.
-    const drawnItems = L.featureGroup().addTo(map);
     map.addControl(new L.Control.Draw({
       edit: {
         featureGroup: drawnItems,
@@ -150,8 +155,8 @@ export default class AFMapWindow extends Component {
       <Modal.Body>
         <div id="map" />
         <AFMapPopup
-          show={this.state.showStructureDataPopup} onSubmit={() => (alert('submit'))}
-          onCancel={this.onStructureDataPopupCancel} coordinates={this.state.structureDataPopupCoordinates}
+          show={this.state.showStructureDataPopup} onSubmit={this.onStructureDataPopupSubmit}
+          onCancel={this.onStructureDataPopupCancel}
           layer={this.state.currentLayer} />
       </Modal.Body>
       <Modal.Footer>

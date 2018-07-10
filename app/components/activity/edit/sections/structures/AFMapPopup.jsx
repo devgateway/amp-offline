@@ -17,26 +17,27 @@ export default class AFMapPopup extends Component {
     show: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
-    coordinates: PropTypes.object,
-    layer: PropTypes.object.isRequired
+    layer: PropTypes.object
   };
 
   constructor(props) {
     super(props);
     logger.log('constructor');
+    this.handleSaveBtnClick = this.handleSaveBtnClick.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleSaveBtnClick() {
+  handleSaveBtnClick(layer) {
     const { onSubmit } = this.props;
-    onSubmit();
+    onSubmit(layer, this.state.title);
   }
 
-  handleChange(url) {
-    this.setState({ url });
+  handleChange(obj) {
+    this.setState({ title: obj.target.value });
   }
 
   render() {
-    const { onCancel, layer, coordinates } = this.props;
+    const { onCancel, layer } = this.props;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
         <Modal.Title>
@@ -44,11 +45,10 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {translate('Title')} <input type={'text'} />
-        <span>{coordinates ? coordinates.toString() : null}</span>
+        {translate('Title')} <input type={'text'} onChange={this.handleChange} />
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={this.handleSaveBtnClick.bind(this)} bsStyle="success">
+        <Button onClick={this.handleSaveBtnClick.bind(null, layer)} bsStyle="success">
           {translate('Submit')}
         </Button>
         <Button onClick={onCancel.bind(null, layer)}>
