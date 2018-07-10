@@ -43,7 +43,7 @@ const logger = new Logger('ResourceAction');
  */
 export const deleteOrphanResources = () => {
   logger.log('deleteOrphanResources');
-  const filter = Utils.toMap(ORPHAN, { $eq: true });
+  const filter = Utils.toMap(ORPHAN, true);
   return RepositoryHelper.findAllContents(filter)
     .then(contents => Promise.all(contents.map(ResourceManager.deleteContent)));
 };
