@@ -8,6 +8,7 @@
 @import './assets/fonts/opensans_regular_macroman/stylesheet.css';
 @import './assets/fonts/opensans_extrabold_macroman/stylesheet.css';
 @import '../node_modules/leaflet/dist/leaflet.css';
+@import '../node_modules/leaflet-draw/dist/leaflet.draw.css';
 
 * {
   margin: 0;

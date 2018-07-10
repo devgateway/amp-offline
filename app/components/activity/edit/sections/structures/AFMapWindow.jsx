@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import L from 'leaflet';
+import LD from 'leaflet-draw';
 import path from 'path';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
@@ -11,10 +13,15 @@ import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import FileManager from '../../../../../modules/util/FileManager';
 import { MAP_MARKER_IMAGE } from '../../../../../utils/Constants';
+import AFMapPopup from './AFMapPopup';
 
 const logger = new Logger('Map Modal');
-// const esri = require('esri-leaflet');
-const popup = L.popup();
+const myIcon = L.icon({
+  iconUrl: MAP_MARKER_IMAGE,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [-3, -76]
+});
 
 /**
  * Map Modal
@@ -30,17 +37,29 @@ export default class AFMapWindow extends Component {
     polygon: PropTypes.array
   };
 
-  static onMapClick(map, e) {
-    popup
-      .setLatLng(e.latlng)
-      .setContent(`You clicked the map at '${e.latlng.toString()}`)
-      .openOn(map);
-  }
-
   constructor(props) {
     super(props);
     logger.log('constructor');
-    this.state = {};
+    this.onMapClick = this.onMapClick.bind(this);
+    this.onStructureDataPopupCancel = this.onStructureDataPopupCancel.bind(this);
+    this.state = {
+      showStructureDataPopup: false,
+      structureDataPopupCoordinates: null,
+      map: null
+    };
+  }
+
+  onMapClick(e) {
+    /* Note: If we want to use leaflet's popup with a React component as content then we need to add react-leaflet
+    * lib and convert the current js map definition (leaflet) to React components: https://react-leaflet.js.org */
+    // TODO: Mostrar el componente popup modal.
+    this.setState({ showStructureDataPopup: true, structureDataPopupCoordinates: e.latlng });
+    L.marker(e.latlng, { icon: myIcon }).addTo(this.state.map);
+  }
+
+  onStructureDataPopupCancel(e, latlng) {
+    this.setState({ showStructureDataPopup: false });
+    this.state.map.removeLayer(latlng); // TODO: necesito el latlng aca.
   }
 
   handleSaveBtnClick() {
@@ -76,23 +95,51 @@ export default class AFMapWindow extends Component {
       minZoom,
       attribution: cp
     }).addTo(map);
-    map.on('click', AFMapWindow.onMapClick.bind(null, map));
+    map.on('click', this.onMapClick);
 
     // Load point.
     if (this.props.point) {
-      const myIcon = L.icon({
-        iconUrl: MAP_MARKER_IMAGE,
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [-3, -76]
-      });
-      L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]], { icon: myIcon }).addTo(map);
+      L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]], { icon: myIcon })
+        .addTo(map);
     }
 
     // Load polygon.
     if (this.props.polygon) {
-      L.polygon(this.props.polygon.map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]]))).addTo(map);
+      L.polygon(this.props.polygon.map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])))
+        .addTo(map);
     }
+
+    // Setup controls.
+    const drawnItems = L.featureGroup().addTo(map);
+    map.addControl(new L.Control.Draw({
+      edit: {
+        featureGroup: drawnItems,
+        poly: {
+          allowIntersection: false
+        }
+      },
+      draw: {
+        polygon: {
+          allowIntersection: false,
+          showArea: true
+        },
+        circle: false
+      }
+    }));
+    map.on(L.Draw.Event.CREATED, (event) => {
+      const layer = event.layer;
+      layer.on('contextmenu', (e) => {
+        e.layerz = layer;
+        /* selectedPointEvent = e;
+        isMenuOpen = true;
+        const y = e.originalEvent.clientY;
+        const x = e.originalEvent.clientX; */
+        // this.showMenu(y, x);
+      });
+      drawnItems.addLayer(layer);
+    });
+
+    this.setState({ map });
   }
 
   render() {
@@ -105,6 +152,9 @@ export default class AFMapWindow extends Component {
       </Modal.Header>
       <Modal.Body>
         <div id="map" />
+        <AFMapPopup
+          show={this.state.showStructureDataPopup} onSubmit={() => (alert('submit'))}
+          onCancel={this.onStructureDataPopupCancel} />
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick.bind(this)} bsStyle="success">
