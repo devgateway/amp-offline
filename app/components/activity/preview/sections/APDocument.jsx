@@ -12,6 +12,7 @@ import Loading from '../../../common/Loading';
 import ActionIcon from '../../../common/ActionIcon';
 import docSyles from './APDocument.css';
 import ActionUrl from '../../../common/ActionUrl';
+import FileDialog from '../../../../modules/util/FileDialog';
 
 /**
  * Activity Preview Documents section
@@ -24,17 +25,21 @@ class APDocument extends Component {
     resourceReducer: PropTypes.shape({
       isResourcesLoading: PropTypes.bool,
       isResourcesLoaded: PropTypes.bool,
+      isContentsLoading: PropTypes.bool,
+      isContentsLoaded: PropTypes.bool,
       isResourceManagersLoading: PropTypes.bool,
       isResourceManagersLoaded: PropTypes.bool,
       resourceFieldsManager: PropTypes.instanceOf(FieldsManager),
       resourcesByUuids: PropTypes.object,
+      contentsByIds: PropTypes.object,
     }).isRequired,
     buildSimpleField: PropTypes.func.isRequired,
   };
 
   getResources() {
-    const { isResourcesLoaded, isResourceManagersLoaded, resourcesByUuids } = this.props.resourceReducer;
-    if (isResourcesLoaded && isResourceManagersLoaded) {
+    const { isResourcesLoaded, isResourceManagersLoaded, isContentsLoaded, resourcesByUuids } =
+      this.props.resourceReducer;
+    if (isResourcesLoaded && isResourceManagersLoaded && isContentsLoaded) {
       const resourcesUuids = getActivityResourceUuids(this.props.activity, false);
       return resourcesUuids.map(uuid => resourcesByUuids[uuid]).filter(r => r);
     }
@@ -48,9 +53,13 @@ class APDocument extends Component {
    */
   getResourceUrlData(resource) {
     const resData = {};
-    if (resource[RC.FILE_NAME]) {
-      resData.urlText = resource[RC.FILE_NAME];
-      // TODO on click action for local file download
+    const fileName = resource[RC.FILE_NAME];
+    if (fileName) {
+      const { contentsByIds } = this.props.resourceReducer;
+      const content = contentsByIds[resource[RC.CONTENT_ID]];
+      const srcFile = content && content[RC.PATH];
+      resData.urlText = fileName;
+      resData.action = srcFile ? () => FileDialog.saveDialog(srcFile, fileName) : null;
     }
     const url = resource[RC.WEB_LINK];
     if (url) {
@@ -88,8 +97,8 @@ class APDocument extends Component {
   }
 
   renderNoResources() {
-    const { isResourcesLoading, isResourceManagersLoading } = this.props.resourceReducer;
-    if (isResourcesLoading || isResourceManagersLoading) {
+    const { isResourcesLoading, isResourceManagersLoading, isContentsLoading } = this.props.resourceReducer;
+    if (isResourcesLoading || isResourceManagersLoading || isContentsLoading) {
       return <Loading />;
     }
     return (
