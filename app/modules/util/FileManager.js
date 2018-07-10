@@ -9,6 +9,7 @@ const app = ELECTRON_APP;
 
 let dataPath;
 let resourcesPath;
+let downloadPath;
 
 /**
  * System File Manager that is intended to handle proper root directory detection in dev & prod mode. It servers as a
@@ -45,6 +46,17 @@ const FileManager = {
       }
     }
     return resourcesPath;
+  },
+
+  /**
+   * Provides the user default download directory
+   * @return {*}
+   */
+  getDownloadPath() {
+    if (!downloadPath) {
+      downloadPath = app.getPath('downloads');
+    }
+    return downloadPath;
   },
 
   /**
