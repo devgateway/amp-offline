@@ -1,5 +1,5 @@
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
-import { CREATOR_EMAIL, ORPHAN, UUID, TEAM } from '../utils/constants/ResourceConstants';
+import { CREATOR_EMAIL, ORPHAN, UUID, TEAM, CONTENT_ID } from '../utils/constants/ResourceConstants';
 import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
 import ResourceManager from '../modules/resource/ResourceManager';
@@ -19,6 +19,10 @@ export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
 export const RESOURCES_LOAD_FULFILLED = 'RESOURCES_LOAD_FULFILLED';
 export const RESOURCES_LOAD_REJECTED = 'RESOURCES_LOAD_REJECTED';
+export const RESOURCES_CONTENT_LOAD = 'RESOURCES_CONTENT_LOAD';
+export const RESOURCES_CONTENT_LOAD_PENDING = 'RESOURCES_CONTENT_LOAD_PENDING';
+export const RESOURCES_CONTENT_LOAD_FULFILLED = 'RESOURCES_CONTENT_LOAD_FULFILLED';
+export const RESOURCES_CONTENT_LOAD_REJECTED = 'RESOURCES_CONTENT_LOAD_REJECTED';
 export const RESOURCES_SAVE = 'RESOURCES_SAVE';
 export const RESOURCES_SAVE_PENDING = 'RESOURCES_SAVE_PENDING';
 export const RESOURCES_SAVE_FULFILLED = 'RESOURCES_SAVE_FULFILLED';
@@ -47,13 +51,20 @@ export const deleteOrphanResources = () => {
 export const loadHydratedResourcesForActivity = (activity) => (dispatch, ownProps) => {
   const unhydratedIds = getActivityResourceUuids(activity);
   return configureResourceManagers()(dispatch, ownProps)
-    .then(() => loadHydratedResources(unhydratedIds)(dispatch, ownProps));
+    .then(() => loadHydratedResources(unhydratedIds)(dispatch, ownProps))
+    .then(() =>
+      loadContents(_getResourcesContentIds(ownProps().resourceReducer.resourcesByUuids))(dispatch, ownProps));
 };
 
 export const loadHydratedResources = (uuids) => (dispatch, ownProps) => dispatch({
   type: RESOURCES_LOAD,
   payload: _hydrateResources(uuids, ownProps().userReducer.teamMember.id,
     ownProps().resourceReducer.resourceFieldsManager, ownProps().activityReducer.activity)
+});
+
+export const loadContents = (ids) => (dispatch) => dispatch({
+  type: RESOURCES_CONTENT_LOAD,
+  payload: RepositoryHelper.findContentsByIds(ids).then(contents => _mapByField(contents, 'id'))
 });
 
 export const unloadResources = () => (dispatch) => dispatch({ type: RESOURCES_UNLOADED });
@@ -89,7 +100,7 @@ const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity)
     return rh.hydrateEntities(resources);
   }
   return [];
-}).then((resources) => _flagAsFullyHydrated(resources, resourceFieldsManager, activity)).then(_mapById);
+}).then((resources) => _flagAsFullyHydrated(resources, resourceFieldsManager, activity)).then(_mapByField);
 
 const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
   if (resources && resources.length) {
@@ -107,14 +118,17 @@ const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
   return resources;
 };
 
-const _mapById = (resources) => {
-  const resourcesByUuids = {};
-  resources.forEach(r => (resourcesByUuids[r[UUID]] = r));
-  return resourcesByUuids;
+const _mapByField = (elements, fieldName = UUID) => {
+  const elementsByField = {};
+  elements.forEach(el => (elementsByField[el[fieldName]] = el));
+  return elementsByField;
 };
 
 const _getHydratedActivityResources = (activity, resourcesByUuid) =>
   getActivityResourceUuids(activity).map(uuid => resourcesByUuid[uuid]);
+
+const _getResourcesContentIds = (resourcesByUuids) =>
+  Object.values(resourcesByUuids).map(r => r[CONTENT_ID]).filter(id => id);
 
 const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
   const rh = new ResourceHydrator(fieldsDef);
