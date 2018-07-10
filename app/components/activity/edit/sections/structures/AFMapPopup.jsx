@@ -25,6 +25,7 @@ export default class AFMapPopup extends Component {
     logger.log('constructor');
     this.handleSaveBtnClick = this.handleSaveBtnClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.state = { title: props.layer && props.layer.structureData ? props.layer.structureData.title : '' };
   }
 
   handleSaveBtnClick(layer) {
@@ -38,6 +39,7 @@ export default class AFMapPopup extends Component {
 
   render() {
     const { onCancel, layer } = this.props;
+    const { title } = this.state;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
         <Modal.Title>
@@ -45,7 +47,8 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {translate('Title')} <input type={'text'} onChange={this.handleChange} />
+        {translate('Title')}
+        <input type={'text'} value={title} onChange={this.handleChange} />
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick.bind(null, layer)} bsStyle="success">

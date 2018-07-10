@@ -43,10 +43,12 @@ export default class AFMapWindow extends Component {
     this.openStructureDataPopup = this.openStructureDataPopup.bind(this);
     this.onStructureDataPopupCancel = this.onStructureDataPopupCancel.bind(this);
     this.onStructureDataPopupSubmit = this.onStructureDataPopupSubmit.bind(this);
+    this.handleMarkerClick = this.handleMarkerClick.bind(this);
     this.state = {
       showStructureDataPopup: false,
       map: null,
       currentLayer: null,
+      currentLayerData: null,
       layersList: []
     };
   }
@@ -59,7 +61,8 @@ export default class AFMapWindow extends Component {
 
   onStructureDataPopupSubmit(layer, title) {
     this.setState({ showStructureDataPopup: false });
-    // TODO: we need a list of existing layers and add it.
+    layer.structureData = { title };
+    // TODO: we need a list of existing layers and add it, puedo identificar cada layer con layer.layer._leaflet_id.
   }
 
   openStructureDataPopup(e, layer) {
@@ -73,8 +76,8 @@ export default class AFMapWindow extends Component {
     onSave();
   }
 
-  handleChange(url) {
-    this.setState({ url });
+  handleMarkerClick(event) {
+    this.openStructureDataPopup(event.target, event);
   }
 
   generateMap() {
@@ -84,7 +87,6 @@ export default class AFMapWindow extends Component {
     const lat = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LATITUDE));
     const lng = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LONGITUDE));
     const cp = 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
     const map = L.map(node).setView([lat, lng], minZoom);
     let tilesPath = '';
@@ -107,13 +109,15 @@ export default class AFMapWindow extends Component {
     if (this.props.point) {
       const marker = L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]],
         { icon: myIcon });
+      marker.on('click', (event) => this.handleMarkerClick(event));
       drawnItems.addLayer(marker);
     }
 
     // Load polygon.
     if (this.props.polygon) {
-      L.polygon(this.props.polygon.map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])))
-        .addTo(map);
+      const poli = L.polygon(this.props.polygon.map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])));
+      poli.on('click', (event) => this.handleMarkerClick(event));
+      drawnItems.addLayer(poli);
     }
 
     // Setup controls.
@@ -130,6 +134,7 @@ export default class AFMapWindow extends Component {
           showArea: true
         },
         circle: false,
+        circlemarker: false,
         marker: {
           icon: myIcon
         }
@@ -137,6 +142,7 @@ export default class AFMapWindow extends Component {
     }));
     map.on(L.Draw.Event.CREATED, (event) => {
       const layer = event.layer;
+      layer.on('click', (event2) => (this.handleMarkerClick(event2)));
       drawnItems.addLayer(layer);
       this.openStructureDataPopup(layer, event);
     });
@@ -157,7 +163,7 @@ export default class AFMapWindow extends Component {
         <AFMapPopup
           show={this.state.showStructureDataPopup} onSubmit={this.onStructureDataPopupSubmit}
           onCancel={this.onStructureDataPopupCancel}
-          layer={this.state.currentLayer} />
+          layer={this.state.currentLayer} layerData={this.state.currentLayerData} />
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick.bind(this)} bsStyle="success">
