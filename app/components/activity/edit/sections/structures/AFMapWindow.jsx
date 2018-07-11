@@ -147,7 +147,8 @@ export default class AFMapWindow extends Component {
         poly: {
           allowIntersection: false
         },
-        remove: false
+        remove: false,
+        edit: false // Disable edit because it changes _leaflet_ids.
       },
       draw: {
         polygon: {
