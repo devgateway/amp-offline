@@ -106,6 +106,7 @@ class AFStructures extends Component {
         showMapDialog: true,
         viewStructure: structure,
         currentPoint: {
+          [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
           [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE]
         },
@@ -134,7 +135,8 @@ class AFStructures extends Component {
 
   /* eslint-disable class-methods-use-this */
   handleSaveMap() {
-    logger.log('handleSaveMap');
+    alert('handleSaveMap');
+    // TODO: add new structures to state.structures.
   }
 
   render() {
@@ -152,7 +154,8 @@ class AFStructures extends Component {
         onModalClose={this.handleCloseMap}
         onSave={this.handleSaveMap}
         polygon={this.state.currentPolygon}
-        point={this.state.currentPoint} />
+        point={this.state.currentPoint}
+        structures={this.state.structures} />
 
       <Grid className={afStyles.full_width}>
         {this.state.structures.map((s, i) => (

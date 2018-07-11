@@ -34,7 +34,8 @@ export default class AFMapWindow extends Component {
     onSave: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
     point: PropTypes.object,
-    polygon: PropTypes.array
+    polygon: PropTypes.array,
+    structures: PropTypes.array.isRequired
   };
 
   constructor(props) {
@@ -48,27 +49,33 @@ export default class AFMapWindow extends Component {
       showStructureDataPopup: false,
       map: null,
       currentLayer: null,
-      currentLayerData: null,
+      structureData: null,
       layersList: []
     };
   }
 
-  onStructureDataPopupCancel(layer, a, b, c) {
+  onStructureDataPopupCancel(layer) {
     this.setState({ showStructureDataPopup: false });
-    this.state.map.removeLayer(layer.layer);
+    this.state.map.removeLayer(layer.layer || layer);
     // TODO: we need a list of existing layers and remove it.
   }
 
-  onStructureDataPopupSubmit(layer, title) {
-    this.setState({ showStructureDataPopup: false });
-    layer.structureData = { title };
-    // TODO: we need a list of existing layers and add it, puedo identificar cada layer con layer.layer._leaflet_id.
+  onStructureDataPopupSubmit(layer, title, color) {
+    this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
+    const newLayersList = this.state.layersList.slice();
+    const index = newLayersList.findIndex((item) => (item.layer._leaflet_id === layer._leaflet_id));
+    if (index > -1) {
+      newLayersList.splice(index, 1);
+    }
+    const newLayer = { layer, structureData: { title, color } };
+    newLayersList.push(newLayer);
+    this.setState({ layersList: newLayersList });
   }
 
-  openStructureDataPopup(e, layer) {
+  openStructureDataPopup(e, layer, structureData) {
     /* Note: If we want to use leaflet's popup with a React component as content then we need to add react-leaflet
     * lib and convert the current js map definition (leaflet) to React components: https://react-leaflet.js.org */
-    this.setState({ showStructureDataPopup: true, currentLayer: layer });
+    this.setState({ showStructureDataPopup: true, currentLayer: layer, structureData });
   }
 
   handleSaveBtnClick() {
@@ -77,7 +84,8 @@ export default class AFMapWindow extends Component {
   }
 
   handleMarkerClick(event) {
-    this.openStructureDataPopup(event.target, event);
+    const layer = this.state.layersList.find((item) => (item.layer._leaflet_id === event.target._leaflet_id));
+    this.openStructureDataPopup(event, event.target, layer.structureData);
   }
 
   generateMap() {
@@ -111,6 +119,12 @@ export default class AFMapWindow extends Component {
         { icon: myIcon });
       marker.on('click', (event) => this.handleMarkerClick(event));
       drawnItems.addLayer(marker);
+      const newLayersList = this.state.layersList.slice();
+      newLayersList.push({
+        layer: marker,
+        structureData: { title: this.props.point[AC.STRUCTURES_TITLE], color: null }
+      });
+      this.setState({ layersList: newLayersList });
     }
 
     // Load polygon.
@@ -118,6 +132,7 @@ export default class AFMapWindow extends Component {
       const poli = L.polygon(this.props.polygon.map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])));
       poli.on('click', (event) => this.handleMarkerClick(event));
       drawnItems.addLayer(poli);
+      // TODO: Implement above code from point.
     }
 
     // Setup controls.
@@ -144,7 +159,8 @@ export default class AFMapWindow extends Component {
       const layer = event.layer;
       layer.on('click', (event2) => (this.handleMarkerClick(event2)));
       drawnItems.addLayer(layer);
-      this.openStructureDataPopup(layer, event);
+      const structureData = { title: '', color: null };
+      this.openStructureDataPopup(layer, event, structureData);
     });
 
     this.setState({ map });
@@ -161,9 +177,11 @@ export default class AFMapWindow extends Component {
       <Modal.Body>
         <div id="map" />
         <AFMapPopup
-          show={this.state.showStructureDataPopup} onSubmit={this.onStructureDataPopupSubmit}
+          show={this.state.showStructureDataPopup}
+          onSubmit={this.onStructureDataPopupSubmit}
           onCancel={this.onStructureDataPopupCancel}
-          layer={this.state.currentLayer} layerData={this.state.currentLayerData} />
+          structureData={this.state.structureData}
+          layer={this.state.currentLayer} />
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick.bind(this)} bsStyle="success">

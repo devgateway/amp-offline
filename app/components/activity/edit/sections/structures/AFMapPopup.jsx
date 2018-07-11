@@ -17,7 +17,8 @@ export default class AFMapPopup extends Component {
     show: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
-    layer: PropTypes.object
+    layer: PropTypes.object,
+    structureData: PropTypes.object
   };
 
   constructor(props) {
@@ -25,12 +26,29 @@ export default class AFMapPopup extends Component {
     logger.log('constructor');
     this.handleSaveBtnClick = this.handleSaveBtnClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.state = { title: props.layer && props.layer.structureData ? props.layer.structureData.title : '' };
+    this.handleCancel = this.handleCancel.bind(this);
+    this.state = {
+      title: (this.props.structureData ? this.props.structureData.title : ''),
+      color: (this.props.structureData ? this.props.structureData.color : null)
+    };
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.structureData) {
+      this.setState({ title: newProps.structureData.title, color: newProps.structureData.color });
+    } else {
+      this.setState({ title: '', color: null });
+    }
+  }
+
+  handleCancel(layer) {
+    this.setState({ title: '' });
+    this.props.onCancel(layer);
   }
 
   handleSaveBtnClick(layer) {
     const { onSubmit } = this.props;
-    onSubmit(layer, this.state.title);
+    onSubmit((layer.layer || layer), this.state.title, this.state.color);
   }
 
   handleChange(obj) {
@@ -38,7 +56,7 @@ export default class AFMapPopup extends Component {
   }
 
   render() {
-    const { onCancel, layer } = this.props;
+    const { layer } = this.props;
     const { title } = this.state;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
@@ -54,7 +72,7 @@ export default class AFMapPopup extends Component {
         <Button onClick={this.handleSaveBtnClick.bind(null, layer)} bsStyle="success">
           {translate('Submit')}
         </Button>
-        <Button onClick={onCancel.bind(null, layer)}>
+        <Button onClick={this.handleCancel.bind(null, layer)}>
           {translate('Cancel')}
         </Button>
       </Modal.Footer>
