@@ -54,10 +54,15 @@ export default class AFMapWindow extends Component {
     };
   }
 
-  onStructureDataPopupCancel(layer) {
+  onStructureDataPopupCancel(layer, del) {
     this.setState({ showStructureDataPopup: false });
-    this.state.map.removeLayer(layer.layer || layer);
-    // TODO: we need a list of existing layers and remove it.
+    if (del) {
+      this.state.map.removeLayer(layer.layer || layer);
+      const newLayersList = this.state.layersList.slice();
+      const index = newLayersList.findIndex((item) => (item.layer._leaflet_id === layer._leaflet_id));
+      newLayersList.splice(index, 1);
+      this.setState({ layersList: newLayersList });
+    }
   }
 
   onStructureDataPopupSubmit(layer, title, color) {
@@ -141,7 +146,8 @@ export default class AFMapWindow extends Component {
         featureGroup: drawnItems,
         poly: {
           allowIntersection: false
-        }
+        },
+        remove: false
       },
       draw: {
         polygon: {

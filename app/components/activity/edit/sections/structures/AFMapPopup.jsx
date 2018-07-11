@@ -35,20 +35,29 @@ export default class AFMapPopup extends Component {
 
   componentWillReceiveProps(newProps) {
     if (newProps.structureData) {
-      this.setState({ title: newProps.structureData.title, color: newProps.structureData.color });
+      this.setState({
+        title: newProps.structureData.title,
+        color: newProps.structureData.color,
+        isNew: (!newProps.structureData.title)
+      });
     } else {
-      this.setState({ title: '', color: null });
+      this.setState({ title: '', color: null, isNew: true });
     }
   }
 
   handleCancel(layer) {
     this.setState({ title: '' });
-    this.props.onCancel(layer);
+    const del = this.state.isNew;
+    this.props.onCancel(layer, del);
   }
 
   handleSaveBtnClick(layer) {
     const { onSubmit } = this.props;
-    onSubmit((layer.layer || layer), this.state.title, this.state.color);
+    if (this.state.title) {
+      onSubmit((layer.layer || layer), this.state.title, this.state.color);
+    } else {
+      alert(translate('emptyTitle'));
+    }
   }
 
   handleChange(obj) {
