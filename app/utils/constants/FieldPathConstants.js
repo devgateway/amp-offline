@@ -62,3 +62,4 @@ export const FIELD_PATH = 'field-path';
 export const FIELD_OPTIONS = 'possible-options';
 export const LIST_MAX_SIZE = 'size-limit';
 export const REGEX_PATTERN = 'regex-pattern';
+export const FIELD_NAME = 'field_name';

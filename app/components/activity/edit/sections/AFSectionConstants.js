@@ -36,12 +36,13 @@ export const SECTIONS = [
   ORGANIZATIONS,
   FUNDING,
   CONTACTS,
+  RELATED_DOCUMENTS,
   /*
   COMPONENTS,
   STRUCTURES,
   ISSUES_SECTION,
   M_E,
-  RELATED_DOCUMENTS */
+  */
 ];
 
 export const SECTIONS_FM_PATH = {};
@@ -58,7 +59,7 @@ SECTIONS_FM_PATH[STRUCTURES] = null;
 SECTIONS_FM_PATH[ISSUES_SECTION] = null;
 SECTIONS_FM_PATH[CONTACTS] = FMC.ACTIVITY_CONTACT;
 SECTIONS_FM_PATH[M_E] = null;
-SECTIONS_FM_PATH[RELATED_DOCUMENTS] = null;
+SECTIONS_FM_PATH[RELATED_DOCUMENTS] = AC.ACTIVITY_DOCUMENTS;
 
 /** stores field paths roots only to link to the section and use this mapping for validation error */
 export const FIELDS_PER_SECTIONS = {};

@@ -363,5 +363,8 @@
   "Exchange Rate": "Exchange Rate",
   "Fixed Exchange Rate": "Fixed Exchange Rate",
   "contact office address": "contact office address",
-  "Contact Information": "Contact Information"
+  "Contact Information": "Contact Information",
+  "Resource Name": "Resource Name",
+  "Document Type": "Document Type",
+  "Year": "Year"
 }

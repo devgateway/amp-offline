@@ -13,6 +13,12 @@ export const TITLE = 'title';
 export const WEB_LINK = 'web_link';
 export const DESCRIPTION = 'description';
 export const ADDING_DATE = 'adding_date';
+export const YEAR_OF_PUBLICATION = 'year_of_publication';
+export const FILE_SIZE = 'file_size';
+export const TYPE = 'type';
+/* merged field used to display either URL or file name */
+export const RESOURCE_NAME = 'resource_name';
+export const ACTION = 'action';
 
 /** Repository File System constants */
 
