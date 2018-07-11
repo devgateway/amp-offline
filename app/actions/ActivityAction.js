@@ -87,6 +87,7 @@ export function loadActivityForActivityForm(activityId) {
       }).then(data => {
         dispatch({ type: ACTIVITY_LOADED_FOR_AF });
         ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
+        ResourceAction.loadHydratedResourcesForActivity(data.activity)(dispatch, ownProps);
         return data;
       })
     });
