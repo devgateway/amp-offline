@@ -48,6 +48,24 @@ const ResourceManager = {
   },
 
   /**
+   * Retrieves [{ resource, content }] information
+   * @param uuids resources uuids
+   * @return {[{ resource, content }]}
+   */
+  findResourcesByUuidsWithContent(uuids) {
+    return ResourceHelper.findResourcesByUuids(uuids)
+      .then(resources => {
+        const cIds = resources.map(r => r[CONTENT_ID]).filter(id => id);
+        return RepositoryHelper.findContentsByIds(cIds).then(Utils.toMapByKey).then(cMap =>
+          resources.map(resource => {
+            const cId = resource && resource[CONTENT_ID];
+            const content = cId && cMap.get(cId);
+            return { resource, content };
+          }));
+      });
+  },
+
+  /**
    * Delete resource together with content
    * @param uuid
    * @return {*}

@@ -1,5 +1,5 @@
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
-import { CREATOR_EMAIL, ORPHAN, UUID, TEAM } from '../utils/constants/ResourceConstants';
+import { CREATOR_EMAIL, ORPHAN, UUID, TEAM, CONTENT_ID } from '../utils/constants/ResourceConstants';
 import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
 import ResourceManager from '../modules/resource/ResourceManager';
@@ -19,6 +19,10 @@ export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
 export const RESOURCES_LOAD_FULFILLED = 'RESOURCES_LOAD_FULFILLED';
 export const RESOURCES_LOAD_REJECTED = 'RESOURCES_LOAD_REJECTED';
+export const RESOURCES_CONTENT_LOAD = 'RESOURCES_CONTENT_LOAD';
+export const RESOURCES_CONTENT_LOAD_PENDING = 'RESOURCES_CONTENT_LOAD_PENDING';
+export const RESOURCES_CONTENT_LOAD_FULFILLED = 'RESOURCES_CONTENT_LOAD_FULFILLED';
+export const RESOURCES_CONTENT_LOAD_REJECTED = 'RESOURCES_CONTENT_LOAD_REJECTED';
 export const RESOURCES_SAVE = 'RESOURCES_SAVE';
 export const RESOURCES_SAVE_PENDING = 'RESOURCES_SAVE_PENDING';
 export const RESOURCES_SAVE_FULFILLED = 'RESOURCES_SAVE_FULFILLED';
@@ -39,7 +43,7 @@ const logger = new Logger('ResourceAction');
  */
 export const deleteOrphanResources = () => {
   logger.log('deleteOrphanResources');
-  const filter = Utils.toMap(ORPHAN, { $eq: true });
+  const filter = Utils.toMap(ORPHAN, true);
   return RepositoryHelper.findAllContents(filter)
     .then(contents => Promise.all(contents.map(ResourceManager.deleteContent)));
 };
@@ -47,13 +51,20 @@ export const deleteOrphanResources = () => {
 export const loadHydratedResourcesForActivity = (activity) => (dispatch, ownProps) => {
   const unhydratedIds = getActivityResourceUuids(activity);
   return configureResourceManagers()(dispatch, ownProps)
-    .then(() => loadHydratedResources(unhydratedIds)(dispatch, ownProps));
+    .then(() => loadHydratedResources(unhydratedIds)(dispatch, ownProps))
+    .then(() =>
+      loadContents(_getResourcesContentIds(ownProps().resourceReducer.resourcesByUuids))(dispatch, ownProps));
 };
 
 export const loadHydratedResources = (uuids) => (dispatch, ownProps) => dispatch({
   type: RESOURCES_LOAD,
   payload: _hydrateResources(uuids, ownProps().userReducer.teamMember.id,
     ownProps().resourceReducer.resourceFieldsManager, ownProps().activityReducer.activity)
+});
+
+export const loadContents = (ids) => (dispatch) => dispatch({
+  type: RESOURCES_CONTENT_LOAD,
+  payload: RepositoryHelper.findContentsByIds(ids).then(contents => _mapByField(contents, 'id'))
 });
 
 export const unloadResources = () => (dispatch) => dispatch({ type: RESOURCES_UNLOADED });
@@ -80,7 +91,7 @@ const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
 }));
 
 const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([
-  ResourceHelper.findResourceByUuid(uuids),
+  ResourceHelper.findResourcesByUuids(uuids),
   FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
@@ -89,28 +100,35 @@ const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity)
     return rh.hydrateEntities(resources);
   }
   return [];
-}).then((resources) => _flagAsFullyHydrated(resources, resourceFieldsManager, activity)).then(_mapById);
+}).then((resources) => _flagAsFullyHydrated(resources, resourceFieldsManager, activity)).then(_mapByField);
 
 const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
-  const adocsMap = activity && Utils.toMapByKey(_getActivityResources(activity, false), UUID);
-  resources.forEach(r => {
-    r[TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
-    if (adocsMap) {
-      const ar = adocsMap.get(r[UUID]);
-      ar[TMP_ENTITY_VALIDATOR] = r[TMP_ENTITY_VALIDATOR];
-    }
-  });
+  if (resources && resources.length) {
+    const rMap = Utils.toMapByKey(resources, UUID);
+    const ars = activity[AC.ACTIVITY_DOCUMENTS];
+    ars.forEach(ar => {
+      const r = rMap.get(ar[UUID]);
+      if (r) {
+        r[TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
+        ar[UUID] = r;
+        ar[TMP_ENTITY_VALIDATOR] = r[TMP_ENTITY_VALIDATOR];
+      }
+    });
+  }
   return resources;
 };
 
-const _mapById = (resources) => {
-  const resourcesByUuids = {};
-  resources.forEach(r => (resourcesByUuids[r[UUID]] = r));
-  return resourcesByUuids;
+const _mapByField = (elements, fieldName = UUID) => {
+  const elementsByField = {};
+  elements.forEach(el => (elementsByField[el[fieldName]] = el));
+  return elementsByField;
 };
 
 const _getHydratedActivityResources = (activity, resourcesByUuid) =>
   getActivityResourceUuids(activity).map(uuid => resourcesByUuid[uuid]);
+
+const _getResourcesContentIds = (resourcesByUuids) =>
+  Object.values(resourcesByUuids).map(r => r[CONTENT_ID]).filter(id => id);
 
 const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
   const rh = new ResourceHydrator(fieldsDef);

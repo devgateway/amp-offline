@@ -99,6 +99,7 @@ export function unloadActivity() {
       type: ACTIVITY_UNLOADED
     });
     ContactAction.unloadContacts()(dispatch);
+    ResourceAction.unloadResources()(dispatch);
   };
 }
 

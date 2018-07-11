@@ -9,6 +9,10 @@ export const FILE_NAME = 'file_name';
 export const CONTENT_TYPE = 'content-type';
 export const TEAM = 'team';
 export const CREATOR_EMAIL = 'creator_email';
+export const TITLE = 'title';
+export const WEB_LINK = 'web_link';
+export const DESCRIPTION = 'description';
+export const ADDING_DATE = 'adding_date';
 
 /** Repository File System constants */
 

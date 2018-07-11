@@ -39,6 +39,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
     contactsByIds: PropTypes.object.isRequired,
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
     activityWorkspace: PropTypes.object.isRequired,
+    resourceReducer: PropTypes.object.isRequired,
   };
 
   static defaultProps = {

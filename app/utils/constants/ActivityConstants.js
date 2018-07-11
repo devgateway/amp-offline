@@ -211,6 +211,7 @@ export const AP_SECTION_IDS =
     },
     { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES },
     { key: 'APContact', hash: '#APContact', value: 'Contact Information', fmPath: FMC.ACTIVITY_CONTACT },
+    { key: 'APDocument', hash: '#APDocument', value: 'Related Documents', sectionPath: ACTIVITY_DOCUMENTS },
   ];
 
 /** Column counts for each section **/

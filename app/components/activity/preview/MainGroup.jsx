@@ -15,6 +15,7 @@ import APFundingSection from './sections/funding/APFundingSection';
 import APRelatedOrganizations from './sections/APRelatedOrganizations';
 import APIssues from './sections/issues/APIssues';
 import APContact from './sections/APContact';
+import APDocument from './sections/APDocument';
 
 const logger = new Logger('AP Main group');
 
@@ -61,6 +62,11 @@ export default class MainGroup extends Component {
       <APContact
         fieldNameClass={styles.hidden} fieldValueClass={styles.box_field_value_tight}
         columns={AC.ACTIVITY_CONTACT_COLS} fmPath={FMC.ACTIVITY_CONTACT} />
+      <APDocument
+        sectionPath={AC.ACTIVITY_DOCUMENTS}
+        fieldNameClass={[styles.section_field_name, styles.noborder].join(' ')}
+        fieldValueClass={[styles.section_field_value, styles.noborder].join(' ')}
+      />
     </div>);
   }
 }

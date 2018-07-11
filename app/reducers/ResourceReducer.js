@@ -3,6 +3,9 @@ import {
   RESOURCE_MANAGERS_FULFILLED,
   RESOURCE_MANAGERS_PENDING,
   RESOURCE_MANAGERS_REJECTED,
+  RESOURCES_CONTENT_LOAD_FULFILLED,
+  RESOURCES_CONTENT_LOAD_PENDING,
+  RESOURCES_CONTENT_LOAD_REJECTED,
   RESOURCES_LOAD_FULFILLED,
   RESOURCES_LOAD_PENDING,
   RESOURCES_LOAD_REJECTED,
@@ -19,14 +22,18 @@ const logger = new Logger('ResourceReducer');
 const defaultState = {
   isResourcesLoading: false,
   isResourcesLoaded: false,
+  isContentsLoading: false,
+  isContentsLoaded: false,
   isResourceSaving: false,
   isResourcesSaved: false,
   saveError: null,
   isResourceManagersLoading: false,
   isResourceManagersLoaded: false,
   resourcesError: null,
+  contentsError: null,
   managersError: null,
   resourcesByUuids: {},
+  contentsByIds: {},
   resourceFieldsManager: null,
 };
 
@@ -46,6 +53,17 @@ const resourceReducer = (state = defaultState, action: Object) => {
       };
     case RESOURCES_LOAD_REJECTED:
       return { ...state, isResourcesLoading: false, isResourcesLoaded: false, resourcesError: action.payload };
+    case RESOURCES_CONTENT_LOAD_PENDING:
+      return { ...state, isContentsLoading: true, isContentsLoaded: false, contentsError: null };
+    case RESOURCES_CONTENT_LOAD_FULFILLED:
+      return {
+        ...state,
+        isContentsLoading: false,
+        isContentsLoaded: true,
+        contentsByIds: { ...state.contentsByIds, ...action.payload }
+      };
+    case RESOURCES_CONTENT_LOAD_REJECTED:
+      return { ...state, isContentsLoading: false, isContentsLoaded: false, contentsError: action.payload };
     case RESOURCE_MANAGERS_PENDING:
       return {
         ...state,
