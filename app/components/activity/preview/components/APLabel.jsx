@@ -28,7 +28,8 @@ export default class APLabel extends Component {
   }
 
   tooltip() {
-    return <Tooltip id="tooltip" >{translate(this.props.tooltip)}</Tooltip>;
+    const { tooltip, dontTranslate } = this.props;
+    return <Tooltip id="tooltip" >{dontTranslate ? tooltip : translate(this.props.tooltip)}</Tooltip>;
   }
 
   render() {
