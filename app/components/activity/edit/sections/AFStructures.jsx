@@ -153,8 +153,8 @@ class AFStructures extends Component {
         newStructures.push({
           [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
-          [AC.STRUCTURES_LATITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LAT],
-          [AC.STRUCTURES_LONGITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LNG],
+          [AC.STRUCTURES_LATITUDE]: String(l.layer.getLatLng()[AC.STRUCTURES_LAT]),
+          [AC.STRUCTURES_LONGITUDE]: String(l.layer.getLatLng()[AC.STRUCTURES_LNG]),
           [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
           [AC.STRUCTURES_COORDINATES]: [],
           id: l.structureData.id || Math.random()
@@ -167,8 +167,8 @@ class AFStructures extends Component {
           [AC.STRUCTURES_COORDINATES]: [],
           id: l.structureData.id || Math.random(),
           [AC.STRUCTURES_COORDINATES]: l.layer.getLatLngs()[0].map(loc => ({
-            [AC.STRUCTURES_LATITUDE]: loc.lat,
-            [AC.STRUCTURES_LONGITUDE]: loc.lng
+            [AC.STRUCTURES_LATITUDE]: String(loc.lat),
+            [AC.STRUCTURES_LONGITUDE]: String(loc.lng)
           }))
         });
       }
