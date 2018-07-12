@@ -83,7 +83,8 @@ class AFStructures extends Component {
         bsStyle="primary" className={afStyles.button}
         onClick={this.openMap.bind(this, structure)}>{translate('Map')}
       </Button>
-      {structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON ? <Button
+      {structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON
+        ? <Button
           bsStyle="primary" className={afStyles.button}
           onClick={this.handleViewCoordinates.bind(this, structure)}>{translate('View')}
         </Button>
@@ -109,7 +110,8 @@ class AFStructures extends Component {
           [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
           [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE],
-          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION]
+          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
         },
         currentPolygon: null
       });
@@ -121,7 +123,8 @@ class AFStructures extends Component {
           [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
           id: structure.id,
           [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
-          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION]
+          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON
         },
         currentPoint: null
       });
@@ -146,18 +149,32 @@ class AFStructures extends Component {
       if (index > -1) {
         newStructures.splice(index, 1);
       }
-      // TODO: diferenciar entre punto y poligono.
-      newStructures.push({
-        [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
-        [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
-        [AC.STRUCTURES_LATITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LAT],
-        [AC.STRUCTURES_LONGITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LNG],
-        [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
-        [AC.STRUCTURES_COORDINATES]: [],
-        id: l.structureData.id || Math.random()
-      });
+      if (l.structureData[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+        newStructures.push({
+          [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
+          [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_LATITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LAT],
+          [AC.STRUCTURES_LONGITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LNG],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
+          [AC.STRUCTURES_COORDINATES]: [],
+          id: l.structureData.id || Math.random()
+        });
+      } else {
+        newStructures.push({
+          [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
+          [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
+          [AC.STRUCTURES_COORDINATES]: [],
+          id: l.structureData.id || Math.random(),
+          [AC.STRUCTURES_COORDINATES]: l.layer.getLatLngs()[0].map(loc => ({
+            [AC.STRUCTURES_LATITUDE]: loc.lat,
+            [AC.STRUCTURES_LONGITUDE]: loc.lng
+          }))
+        });
+      }
     });
     this.setState({ structures: newStructures, showMapDialog: false });
+    this.context.activity[AC.STRUCTURES] = newStructures;
   }
 
   render() {

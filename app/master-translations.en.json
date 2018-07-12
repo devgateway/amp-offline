@@ -29,7 +29,6 @@
   "AMP Offline Help": "AMP Offline Help",
   "About": "About",
   "Synchronize": "Synchronize",
-  "Loading...": "Loading...",
   "Add Activity": "Add Activity",
   "goback": "Go Back",
   "clickToPreviewActivity": "Click to preview the activity",
@@ -140,6 +139,8 @@
   "Title": "Title",
   "Submit": "Submit",
   "emptyTitle": "Title cant be empty.",
+  "Map": "Map",
+  "View": "View",
   "Issues Section": "Issues Section",
   "Regional Observations": "Regional Observations",
   "Contacts": "Contacts",
@@ -378,6 +379,5 @@
   "Add Measure": "Add Measure",
   "Delete Measure": "Delete Measure",
   "Add Actor": "Add Actor",
-  "Delete Actor": "Delete Actor",
-  "Loading...": "Loading..."
+  "Delete Actor": "Delete Actor"
 }

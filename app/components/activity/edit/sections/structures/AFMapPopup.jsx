@@ -31,7 +31,8 @@ export default class AFMapPopup extends Component {
     this.state = {
       [AC.STRUCTURES_TITLE]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_TITLE] : ''),
       [AC.STRUCTURES_DESCRIPTION]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_DESCRIPTION] : '',
-      color: (this.props.structureData ? this.props.structureData.color : null)
+      color: (this.props.structureData ? this.props.structureData.color : null),
+      [AC.STRUCTURES_SHAPE]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_SHAPE] : null,
     };
   }
 
@@ -42,6 +43,7 @@ export default class AFMapPopup extends Component {
         color: newProps.structureData.color,
         isNew: (!newProps.structureData[AC.STRUCTURES_TITLE]),
         [AC.STRUCTURES_DESCRIPTION]: newProps.structureData[AC.STRUCTURES_DESCRIPTION],
+        [AC.STRUCTURES_SHAPE]: newProps.structureData[AC.STRUCTURES_SHAPE]
       });
     } else {
       this.setState({ [AC.STRUCTURES_TITLE]: '', color: null, isNew: true, [AC.STRUCTURES_DESCRIPTION]: '' });
@@ -58,7 +60,7 @@ export default class AFMapPopup extends Component {
     const { onSubmit, structureData } = this.props;
     if (this.state[AC.STRUCTURES_TITLE]) {
       onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE], this.state.color
-        , this.state[AC.STRUCTURES_DESCRIPTION]);
+        , this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE]);
     } else {
       alert(translate('emptyTitle'));
     }
