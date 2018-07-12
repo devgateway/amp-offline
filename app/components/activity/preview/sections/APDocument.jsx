@@ -13,6 +13,7 @@ import ActionIcon from '../../../common/ActionIcon';
 import docSyles from './APDocument.css';
 import ActionUrl from '../../../common/ActionUrl';
 import FileDialog from '../../../../modules/util/FileDialog';
+import RepositoryManager from '../../../../modules/repository/RepositoryManager';
 
 /**
  * Activity Preview Documents section
@@ -25,21 +26,17 @@ class APDocument extends Component {
     resourceReducer: PropTypes.shape({
       isResourcesLoading: PropTypes.bool,
       isResourcesLoaded: PropTypes.bool,
-      isContentsLoading: PropTypes.bool,
-      isContentsLoaded: PropTypes.bool,
       isResourceManagersLoading: PropTypes.bool,
       isResourceManagersLoaded: PropTypes.bool,
       resourceFieldsManager: PropTypes.instanceOf(FieldsManager),
       resourcesByUuids: PropTypes.object,
-      contentsByIds: PropTypes.object,
     }).isRequired,
     buildSimpleField: PropTypes.func.isRequired,
   };
 
   getResources() {
-    const { isResourcesLoaded, isResourceManagersLoaded, isContentsLoaded, resourcesByUuids } =
-      this.props.resourceReducer;
-    if (isResourcesLoaded && isResourceManagersLoaded && isContentsLoaded) {
+    const { isResourcesLoaded, isResourceManagersLoaded, resourcesByUuids } = this.props.resourceReducer;
+    if (isResourcesLoaded && isResourceManagersLoaded) {
       const resourcesUuids = getActivityResourceUuids(this.props.activity, false);
       return resourcesUuids.map(uuid => resourcesByUuids[uuid]).filter(r => r);
     }
@@ -55,9 +52,7 @@ class APDocument extends Component {
     const resData = {};
     const fileName = resource[RC.FILE_NAME];
     if (fileName) {
-      const { contentsByIds } = this.props.resourceReducer;
-      const content = contentsByIds[resource[RC.CONTENT_ID]];
-      const srcFile = content && content[RC.PATH];
+      const srcFile = RepositoryManager.getFullContentFilePath(resource[RC.CONTENT_ID]);
       resData.urlText = fileName;
       resData.action = srcFile ? () => FileDialog.saveDialog(srcFile, fileName) : null;
     }
@@ -97,8 +92,8 @@ class APDocument extends Component {
   }
 
   renderNoResources() {
-    const { isResourcesLoading, isResourceManagersLoading, isContentsLoading } = this.props.resourceReducer;
-    if (isResourcesLoading || isResourceManagersLoading || isContentsLoading) {
+    const { isResourcesLoading, isResourceManagersLoading } = this.props.resourceReducer;
+    if (isResourcesLoading || isResourceManagersLoading) {
       return <Loading />;
     }
     return (
