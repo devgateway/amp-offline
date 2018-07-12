@@ -9,14 +9,19 @@ import ActionUrl from './ActionUrl';
  */
 export default class ActionIcon extends Component {
   static propTypes = {
-    iconClassName: PropTypes.string.isRequired,
+    iconClassName: PropTypes.string,
+    iconElement: PropTypes.object,
     href: PropTypes.string, // external URL
     navUrl: PropTypes.string, // navigation link
     onClick: PropTypes.func, // a custom onClick action
   };
 
   getIcon() {
-    return <span className={this.props.iconClassName} />;
+    const { iconElement, iconClassName } = this.props;
+    if (iconElement) {
+      return iconElement;
+    }
+    return <span className={iconClassName} />;
   }
 
   render() {
