@@ -69,17 +69,22 @@ class APDocument extends Component {
     const { resourceReducer, buildSimpleField } = this.props;
     const { resourceFieldsManager } = resourceReducer;
     const resData = this.getResourceUrlData(resource);
+    const isAccessible = resData.url || resData.action;
+    const tooltip = translate('ClickToDownload');
     return (
       <div key={resource.id} className={[styles.box_table, styles.table_raw].join(' ')}>
         <div key="doc-title" className={docSyles.header}>
           <span key="header" className={styles.section_subtitle_class}>
             <span>{resource[RC.TITLE]}</span>
             <span>&nbsp;&nbsp;-&nbsp;&nbsp;</span>
-            <ActionUrl urlContent={resData.urlText} href={resData.url} onClick={resData.action} />
+            <ActionUrl urlContent={resData.urlText} href={resData.url} onClick={resData.action} tooltip={tooltip} />
           </span>
+          {isAccessible &&
           <span key="download" className={docSyles.downloadIconContainer}>
-            <ActionIcon iconClassName={docSyles.downloadIcon} href={resData.url} onClick={resData.action} />
+            <ActionIcon
+              iconClassName={docSyles.downloadIcon} href={resData.url} onClick={resData.action} tooltip={tooltip} />
           </span>
+          }
         </div>
         <div key="content">
           {[
