@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
+import * as AC from '../../../../../utils/constants/ActivityConstants';
 
 const logger = new Logger('Map Modal');
 
@@ -28,7 +29,8 @@ export default class AFMapPopup extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.state = {
-      title: (this.props.structureData ? this.props.structureData.title : ''),
+      [AC.STRUCTURES_TITLE]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_TITLE] : ''),
+      [AC.STRUCTURES_DESCRIPTION]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_DESCRIPTION] : '',
       color: (this.props.structureData ? this.props.structureData.color : null)
     };
   }
@@ -36,32 +38,34 @@ export default class AFMapPopup extends Component {
   componentWillReceiveProps(newProps) {
     if (newProps.structureData) {
       this.setState({
-        title: newProps.structureData.title,
+        [AC.STRUCTURES_TITLE]: newProps.structureData[AC.STRUCTURES_TITLE],
         color: newProps.structureData.color,
-        isNew: (!newProps.structureData.title)
+        isNew: (!newProps.structureData[AC.STRUCTURES_TITLE]),
+        [AC.STRUCTURES_DESCRIPTION]: newProps.structureData[AC.STRUCTURES_DESCRIPTION],
       });
     } else {
-      this.setState({ title: '', color: null, isNew: true });
+      this.setState({ [AC.STRUCTURES_TITLE]: '', color: null, isNew: true, [AC.STRUCTURES_DESCRIPTION]: '' });
     }
   }
 
   handleCancel(layer) {
-    this.setState({ title: '' });
+    this.setState({ [AC.STRUCTURES_TITLE]: '', color: null, [AC.STRUCTURES_DESCRIPTION]: '' });
     const del = this.state.isNew;
     this.props.onCancel(layer, del);
   }
 
   handleSaveBtnClick(layer) {
     const { onSubmit, structureData } = this.props;
-    if (this.state.title) {
-      onSubmit((layer.layer || layer), structureData.id, this.state.title, this.state.color);
+    if (this.state[AC.STRUCTURES_TITLE]) {
+      onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE], this.state.color
+        , this.state[AC.STRUCTURES_DESCRIPTION]);
     } else {
       alert(translate('emptyTitle'));
     }
   }
 
   handleChange(obj) {
-    this.setState({ title: obj.target.value });
+    this.setState({ [AC.STRUCTURES_TITLE]: obj.target.value });
   }
 
   render() {

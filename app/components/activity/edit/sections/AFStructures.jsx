@@ -108,7 +108,8 @@ class AFStructures extends Component {
           id: structure.id,
           [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
-          [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE]
+          [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE],
+          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION]
         },
         currentPolygon: null
       });
@@ -119,7 +120,8 @@ class AFStructures extends Component {
         currentPolygon: {
           [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
           id: structure.id,
-          [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE]
+          [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
+          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION]
         },
         currentPoint: null
       });
@@ -147,6 +149,7 @@ class AFStructures extends Component {
       // TODO: diferenciar entre punto y poligono.
       newStructures.push({
         [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
+        [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
         [AC.STRUCTURES_LATITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LAT],
         [AC.STRUCTURES_LONGITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LNG],
         [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,

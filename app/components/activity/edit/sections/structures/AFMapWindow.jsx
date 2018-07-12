@@ -64,7 +64,7 @@ export default class AFMapWindow extends Component {
     }
   }
 
-  onStructureDataPopupSubmit(layer, id, title, color) {
+  onStructureDataPopupSubmit(layer, id, title, color, description) {
     this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
     const newLayersList = this.state.layersList.slice();
     const index = newLayersList.findIndex((item) => (item.structureData.id === id));
@@ -73,7 +73,7 @@ export default class AFMapWindow extends Component {
     } else {
       id = Math.random();
     }
-    const newLayer = { layer, structureData: { title, color, id } };
+    const newLayer = { layer, structureData: { title, color, id, description } };
     newLayersList.push(newLayer);
     this.setState({ layersList: newLayersList });
   }
@@ -133,7 +133,12 @@ export default class AFMapWindow extends Component {
       const newLayersList = this.state.layersList.slice();
       newLayersList.push({
         layer: marker,
-        structureData: { title: this.props.point[AC.STRUCTURES_TITLE], color: null, id: this.props.point.id }
+        structureData: {
+          [AC.STRUCTURES_TITLE]: this.props.point[AC.STRUCTURES_TITLE],
+          color: null,
+          id: this.props.point.id,
+          [AC.STRUCTURES_DESCRIPTION]: this.props.point[AC.STRUCTURES_DESCRIPTION]
+        }
       });
       this.setState({ layersList: newLayersList });
     }
@@ -172,7 +177,7 @@ export default class AFMapWindow extends Component {
       const layer = event.layer;
       layer.on('click', (event2) => (this.handleMarkerClick(event2)));
       drawnItems.addLayer(layer);
-      const structureData = { title: '', color: null };
+      const structureData = { [AC.STRUCTURES_TITLE]: '', color: null };
       this.openStructureDataPopup(layer, event, structureData);
     });
 
