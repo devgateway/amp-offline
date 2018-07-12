@@ -34,8 +34,7 @@ export default class AFMapWindow extends Component {
     onSave: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
     point: PropTypes.object,
-    polygon: PropTypes.array,
-    structures: PropTypes.array.isRequired
+    polygon: PropTypes.array
   };
 
   constructor(props) {
@@ -65,14 +64,16 @@ export default class AFMapWindow extends Component {
     }
   }
 
-  onStructureDataPopupSubmit(layer, title, color) {
+  onStructureDataPopupSubmit(layer, id, title, color) {
     this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
     const newLayersList = this.state.layersList.slice();
-    const index = newLayersList.findIndex((item) => (item.layer._leaflet_id === layer._leaflet_id));
+    const index = newLayersList.findIndex((item) => (item.structureData.id === id));
     if (index > -1) {
       newLayersList.splice(index, 1);
+    } else {
+      id = Math.random();
     }
-    const newLayer = { layer, structureData: { title, color } };
+    const newLayer = { layer, structureData: { title, color, id } };
     newLayersList.push(newLayer);
     this.setState({ layersList: newLayersList });
   }
@@ -85,7 +86,12 @@ export default class AFMapWindow extends Component {
 
   handleSaveBtnClick() {
     const { onSave } = this.props;
-    onSave();
+    onSave(this.state.layersList);
+  }
+
+  handleCancelBtnClick() {
+    this.setState({ layersList: [] });
+    this.props.onModalClose();
   }
 
   handleMarkerClick(event) {
@@ -127,7 +133,7 @@ export default class AFMapWindow extends Component {
       const newLayersList = this.state.layersList.slice();
       newLayersList.push({
         layer: marker,
-        structureData: { title: this.props.point[AC.STRUCTURES_TITLE], color: null }
+        structureData: { title: this.props.point[AC.STRUCTURES_TITLE], color: null, id: this.props.point.id }
       });
       this.setState({ layersList: newLayersList });
     }
@@ -174,7 +180,6 @@ export default class AFMapWindow extends Component {
   }
 
   render() {
-    const { onModalClose } = this.props;
     return (<Modal show={this.props.show} onEntered={this.generateMap.bind(this)} bsSize="large">
       <Modal.Header>
         <Modal.Title>
@@ -194,7 +199,7 @@ export default class AFMapWindow extends Component {
         <Button onClick={this.handleSaveBtnClick.bind(this)} bsStyle="success">
           {translate('Save')}
         </Button>
-        <Button onClick={onModalClose}>
+        <Button onClick={this.handleCancelBtnClick.bind(this)}>
           {translate('Cancel')}
         </Button>
       </Modal.Footer>

@@ -52,9 +52,9 @@ export default class AFMapPopup extends Component {
   }
 
   handleSaveBtnClick(layer) {
-    const { onSubmit } = this.props;
+    const { onSubmit, structureData } = this.props;
     if (this.state.title) {
-      onSubmit((layer.layer || layer), this.state.title, this.state.color);
+      onSubmit((layer.layer || layer), structureData.id, this.state.title, this.state.color);
     } else {
       alert(translate('emptyTitle'));
     }

@@ -53,8 +53,8 @@ class AFStructures extends Component {
     super(props);
     logger.log('constructor');
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleMap = this.handleMap.bind(this);
-    this.handleView = this.handleView.bind(this);
+    this.openMap = this.openMap.bind(this);
+    this.handleViewCoordinates = this.handleViewCoordinates.bind(this);
     this.handleSaveMap = this.handleSaveMap.bind(this);
     this.handleCloseMap = this.handleCloseMap.bind(this);
     this.state = {
@@ -81,12 +81,11 @@ class AFStructures extends Component {
     return (<Col md={12} lg={12}>
       <Button
         bsStyle="primary" className={afStyles.button}
-        onClick={this.handleMap.bind(this, structure)}>{translate('Map')}
+        onClick={this.openMap.bind(this, structure)}>{translate('Map')}
       </Button>
-      {structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON ?
-        <Button
+      {structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON ? <Button
           bsStyle="primary" className={afStyles.button}
-          onClick={this.handleView.bind(this, structure)}>{translate('View')}
+          onClick={this.handleViewCoordinates.bind(this, structure)}>{translate('View')}
         </Button>
         : null}
       <Button
@@ -96,16 +95,17 @@ class AFStructures extends Component {
     </Col>);
   }
 
-  handleView(structure) {
+  handleViewCoordinates(structure) {
     this.setState({ showViewDialog: true, viewStructure: structure });
   }
 
-  handleMap(structure) {
+  openMap(structure) {
     if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
       this.setState({
         showMapDialog: true,
         viewStructure: structure,
         currentPoint: {
+          id: structure.id,
           [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
           [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE]
@@ -116,7 +116,11 @@ class AFStructures extends Component {
       this.setState({
         showMapDialog: true,
         viewStructure: structure,
-        currentPolygon: structure[AC.STRUCTURES_COORDINATES],
+        currentPolygon: {
+          [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
+          id: structure.id,
+          [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE]
+        },
         currentPoint: null
       });
     }
@@ -133,10 +137,24 @@ class AFStructures extends Component {
     this.setState({ showMapDialog: false });
   }
 
-  /* eslint-disable class-methods-use-this */
-  handleSaveMap() {
-    alert('handleSaveMap');
-    // TODO: add new structures to state.structures.
+  handleSaveMap(layersList) {
+    const newStructures = this.state.structures.slice();
+    layersList.forEach(l => {
+      const index = newStructures.findIndex(s => (s.id === l.structureData.id));
+      if (index > -1) {
+        newStructures.splice(index, 1);
+      }
+      // TODO: diferenciar entre punto y poligono.
+      newStructures.push({
+        [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
+        [AC.STRUCTURES_LATITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LAT],
+        [AC.STRUCTURES_LONGITUDE]: l.layer.getLatLng()[AC.STRUCTURES_LNG],
+        [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
+        [AC.STRUCTURES_COORDINATES]: [],
+        id: l.structureData.id || Math.random()
+      });
+    });
+    this.setState({ structures: newStructures, showMapDialog: false });
   }
 
   render() {
@@ -154,8 +172,7 @@ class AFStructures extends Component {
         onModalClose={this.handleCloseMap}
         onSave={this.handleSaveMap}
         polygon={this.state.currentPolygon}
-        point={this.state.currentPoint}
-        structures={this.state.structures} />
+        point={this.state.currentPoint} />
 
       <Grid className={afStyles.full_width}>
         {this.state.structures.map((s, i) => (
