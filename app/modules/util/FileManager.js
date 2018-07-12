@@ -42,7 +42,7 @@ const FileManager = {
       if (process.env.NODE_ENV === 'production') {
         resourcesPath = path.join(process.resourcesPath, ASAR_DIR);
       } else {
-        resourcesPath = APP_DIRECTORY;
+        resourcesPath = path.resolve(APP_DIRECTORY);
       }
     }
     return resourcesPath;
@@ -76,12 +76,16 @@ const FileManager = {
     return path.basename(fromPath);
   },
 
+  extname(fromPath) {
+    return path.extname(fromPath);
+  },
+
   /**
    * Builds the full path for built-in resources
    * @param pathParts
    */
   getFullPathForBuiltInResources(...pathParts) {
-    return path.join(this.getResourcesPath(), pathParts.join('/'));
+    return path.join(this.getResourcesPath(), ...pathParts);
   },
 
   /**

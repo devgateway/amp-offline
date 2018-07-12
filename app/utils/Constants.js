@@ -60,6 +60,7 @@ export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
 export const STATIC_DIR = 'static';
 export const IMAGES_DIR = 'images';
+export const DOC_ICONS = 'doc-icons';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
