@@ -28,9 +28,9 @@ export default class APMeasures extends Component {
     const content = [];
     let date = '';
     if (this.props.activityFieldsManager.isFieldPathEnabled(`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_DATE}`)) {
-      date = ` - ${createFormattedDate(this.props.measure[AC.MEASURE_DATE])}`;
+      date = ` ${createFormattedDate(this.props.measure[AC.MEASURE_DATE])}`;
     }
-    const measure = `${this.props.measure.name}${date}`;
+    const measure = `${this.props.measure.name || ''}${date}`;
     content.push(<div className={styles.measures}>{measure}</div>);
     this.props.measure[AC.ACTORS].forEach((actor) => {
       content.push(<APActor activityFieldsManager={this.props.activityFieldsManager} actor={actor} />);
