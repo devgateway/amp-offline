@@ -14,3 +14,8 @@
   margin-left: 3px;
   content: url('../../../../assets/images/download.svg');
 }
+.urlIcon {
+  width: 20px;
+  margin-left: 3px;
+  content: url('../../../../assets/images/goto_url.svg');
+}
