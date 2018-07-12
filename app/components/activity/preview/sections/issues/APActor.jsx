@@ -24,7 +24,7 @@ export default class APActors extends Component {
 
   render() {
     if (this.props.activityFieldsManager.isFieldPathEnabled(`${AC.ISSUES}~${AC.MEASURES}~${AC.ACTORS}`)) {
-      return (<div className={styles.actors}>{this.props.actor.name}</div>);
+      return (<div className={styles.actors}>{this.props.actor.name || ''}</div>);
     } else {
       return null;
     }
