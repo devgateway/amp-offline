@@ -32,9 +32,9 @@ class APIssues extends Component {
       this.props.activity[AC.ISSUES].forEach((issue) => {
         let date = '';
         if (this.props.activityFieldsManager.isFieldPathEnabled(`${AC.ISSUES}~${AC.ISSUE_DATE}`)) {
-          date = ` - ${createFormattedDate(issue[AC.ISSUE_DATE])}`;
+          date = ` ${createFormattedDate(issue[AC.ISSUE_DATE])}`;
         }
-        content.push(<div className={styles.issues}>{`${issue.name}${date}`}</div>);
+        content.push(<div className={styles.issues}>{`${issue.name || ''}${date}`}</div>);
         issue[AC.MEASURES].forEach((measure) => {
           content.push(<APMeasure activityFieldsManager={this.props.activityFieldsManager} measure={measure} />);
         });
