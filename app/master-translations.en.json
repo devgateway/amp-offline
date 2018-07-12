@@ -364,5 +364,12 @@
   "Fixed Exchange Rate": "Fixed Exchange Rate",
   "contact office address": "contact office address",
   "Contact Information": "Contact Information",
-  "ClickToDownload": "Click here to download document"
+  "ClickToDownload": "Click here to download document",
+  "Add Issue": "Add Issue",
+  "Delete Issue": "Delete Issue",
+  "Add Measure": "Add Measure",
+  "Delete Measure": "Delete Measure",
+  "Add Actor": "Add Actor",
+  "Delete Actor": "Delete Actor",
+  "Loading...": "Loading..."
 }
