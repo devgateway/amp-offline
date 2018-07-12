@@ -8,6 +8,7 @@ import AFPrograms from './AFPrograms';
 import AFSectors from './AFSectors';
 import AFOrganizations from './AFOrganizations';
 import AFFunding from './AFFunding';
+import AFIssues from './AFIssues';
 import { AFContactsPage } from '../../../../containers/ContactPage';
 import AFStructures from './AFStructures';
 
@@ -38,6 +39,8 @@ const loadSection = (sectionName) => {
       return <AFContactsPage />;
     case SC.STRUCTURES:
       return <AFStructures />;
+    case SC.ISSUES_SECTION:
+      return <AFIssues />;
     /*
     case SC.COMPONENTS:
       return <AFComponents />;
