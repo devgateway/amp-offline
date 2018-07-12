@@ -1,0 +1,41 @@
+.tree {
+  background-image: url('../../../../../assets/images/tree_dot.gif');
+  background-repeat: no-repeat;
+  height: 27px;
+  padding-left: 13px;
+}
+
+.actor {
+  padding-left: 15px;
+}
+
+.measure {
+  padding-left: 15px;
+}
+
+.table {
+  width: 100%;
+}
+
+.addButton {
+  width: 20px;
+  margin-bottom: 6px;
+}
+
+.addButton > a {
+  background-image: url('../../../../../assets/images/ico_add.gif');
+  background-repeat: no-repeat;
+  padding: 1em;
+  background-position: center;
+}
+
+.delete {
+  background-image: url('../../../../../assets/images/ico_del.gif');
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 1em;
+}
+
+.delete_actor {
+  padding-left: 10px;
+}
