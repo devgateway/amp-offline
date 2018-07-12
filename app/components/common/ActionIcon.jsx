@@ -13,6 +13,7 @@ export default class ActionIcon extends Component {
     href: PropTypes.string, // external URL
     navUrl: PropTypes.string, // navigation link
     onClick: PropTypes.func, // a custom onClick action
+    tooltip: PropTypes.string,
   };
 
   getIcon() {
@@ -20,7 +21,7 @@ export default class ActionIcon extends Component {
   }
 
   render() {
-    const { href, onClick, navUrl } = this.props;
-    return <ActionUrl urlContent={this.getIcon()} onClick={onClick} href={href} navUrl={navUrl} />;
+    const { href, onClick, navUrl, tooltip } = this.props;
+    return <ActionUrl urlContent={this.getIcon()} onClick={onClick} href={href} navUrl={navUrl} tooltip={tooltip} />;
   }
 }
