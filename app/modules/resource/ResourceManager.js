@@ -59,8 +59,8 @@ const ResourceManager = {
         return RepositoryHelper.findContentsByIds(cIds).then(Utils.toMapByKey).then(cMap =>
           resources.map(resource => {
             const cId = resource && resource[CONTENT_ID];
-            const content = cId && cMap.get(cId);
-            return { resource, content };
+            resource[CONTENT_ID] = cId && cMap.get(cId);
+            return resource;
           }));
       });
   },

@@ -19,10 +19,6 @@ export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
 export const RESOURCES_LOAD_FULFILLED = 'RESOURCES_LOAD_FULFILLED';
 export const RESOURCES_LOAD_REJECTED = 'RESOURCES_LOAD_REJECTED';
-export const RESOURCES_CONTENT_LOAD = 'RESOURCES_CONTENT_LOAD';
-export const RESOURCES_CONTENT_LOAD_PENDING = 'RESOURCES_CONTENT_LOAD_PENDING';
-export const RESOURCES_CONTENT_LOAD_FULFILLED = 'RESOURCES_CONTENT_LOAD_FULFILLED';
-export const RESOURCES_CONTENT_LOAD_REJECTED = 'RESOURCES_CONTENT_LOAD_REJECTED';
 export const RESOURCES_SAVE = 'RESOURCES_SAVE';
 export const RESOURCES_SAVE_PENDING = 'RESOURCES_SAVE_PENDING';
 export const RESOURCES_SAVE_FULFILLED = 'RESOURCES_SAVE_FULFILLED';
@@ -51,20 +47,13 @@ export const deleteOrphanResources = () => {
 export const loadHydratedResourcesForActivity = (activity) => (dispatch, ownProps) => {
   const unhydratedIds = getActivityResourceUuids(activity);
   return configureResourceManagers()(dispatch, ownProps)
-    .then(() => loadHydratedResources(unhydratedIds)(dispatch, ownProps))
-    .then(() =>
-      loadContents(_getResourcesContentIds(ownProps().resourceReducer.resourcesByUuids))(dispatch, ownProps));
+    .then(() => loadHydratedResources(unhydratedIds)(dispatch, ownProps));
 };
 
 export const loadHydratedResources = (uuids) => (dispatch, ownProps) => dispatch({
   type: RESOURCES_LOAD,
   payload: _hydrateResources(uuids, ownProps().userReducer.teamMember.id,
     ownProps().resourceReducer.resourceFieldsManager, ownProps().activityReducer.activity)
-});
-
-export const loadContents = (ids) => (dispatch) => dispatch({
-  type: RESOURCES_CONTENT_LOAD,
-  payload: RepositoryHelper.findContentsByIds(ids).then(contents => _mapByField(contents, 'id'))
 });
 
 export const unloadResources = () => (dispatch) => dispatch({ type: RESOURCES_UNLOADED });
@@ -91,7 +80,7 @@ const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
 }));
 
 const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([
-  ResourceHelper.findResourcesByUuids(uuids),
+  ResourceManager.findResourcesByUuidsWithContent(uuids),
   FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
@@ -127,9 +116,6 @@ const _mapByField = (elements, fieldName = UUID) => {
 const _getHydratedActivityResources = (activity, resourcesByUuid) =>
   getActivityResourceUuids(activity).map(uuid => resourcesByUuid[uuid]);
 
-const _getResourcesContentIds = (resourcesByUuids) =>
-  Object.values(resourcesByUuids).map(r => r[CONTENT_ID]).filter(id => id);
-
 const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
   const rh = new ResourceHydrator(fieldsDef);
   _cleanupTmpFields(resources);
@@ -143,6 +129,10 @@ const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
 const _cleanupTmpFields = (resources) => {
   resources.forEach(r => {
     delete r[TMP_ENTITY_VALIDATOR];
+    const content = r[CONTENT_ID];
+    if (content) {
+      r[CONTENT_ID] = r[CONTENT_ID].id;
+    }
   });
   return resources;
 };

@@ -75,7 +75,7 @@ const RepositoryManager = {
    * @return {*|string}
    */
   getFullContentFilePath(content) {
-    return FileManager.getFullPath(REPOSITORY_DIR, this._getContentPath(content));
+    return content && FileManager.getFullPath(REPOSITORY_DIR, this._getContentPath(content));
   },
 
   /**
