@@ -13,6 +13,7 @@ import Loading from '../../../common/Loading';
 import {
   ACTION,
   ADDING_DATE,
+  CONTENT_ID,
   FILE_NAME,
   FILE_SIZE,
   RESOURCE_NAME,
@@ -25,11 +26,14 @@ import {
   from '../../../../utils/constants/ResourceConstants';
 import * as docStyles from './document/AFDocument.css';
 import * as listStyles from '../components/AFList.css';
-import * as apDocStyles from '../../preview/sections/APDocument.css';
 import translate from '../../../../utils/translate';
 import APLabel from '../../preview/components/APLabel';
 import DateUtils from '../../../../utils/DateUtils';
 import ActionIcon from '../../../common/ActionIcon';
+import RepositoryManager from '../../../../modules/repository/RepositoryManager';
+import FileDialog from '../../../../modules/util/FileDialog';
+import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
+import FileManager from '../../../../modules/util/FileManager';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,
@@ -88,18 +92,20 @@ class AFDocument extends Component {
   }
 
   onDelete(uuid) {
-    // TODO
-    console.log(uuid);
+    const aDocs = this.context.activity[ACTIVITY_DOCUMENTS];
+    this.context.activity[ACTIVITY_DOCUMENTS] = aDocs.filter(ad => ad[UUID][UUID] !== uuid);
+    this.setState({ docs: this.getDocuments() });
   }
 
   getDocuments(context = this.context) {
     const docs = context.activity[ACTIVITY_DOCUMENTS] || [];
     return docs.map(ac => {
       const doc = ac[UUID];
-      // TODO actual action
-      const action = doc[FILE_NAME] ? null : null;
-      doc[RESOURCE_NAME] = doc[WEB_LINK] || doc[FILE_NAME];
-      doc[ACTION] = { href: doc[WEB_LINK], action };
+      const srcFile = RepositoryManager.getFullContentFilePath(doc[CONTENT_ID]);
+      const fileName = doc[FILE_NAME];
+      const action = fileName && srcFile ? () => FileDialog.saveDialog(srcFile, fileName) : null;
+      doc[RESOURCE_NAME] = doc[WEB_LINK] || fileName;
+      doc[ACTION] = { href: doc[WEB_LINK], action, fileName };
       return doc;
     });
   }
@@ -143,7 +149,7 @@ class AFDocument extends Component {
     if (fd && fd.field_type === 'date') {
       value = DateUtils.createFormattedDate(value);
     }
-    value = value || '';
+    value = `${value || ''}`;
     return <APLabel label={value} tooltip={value} dontTranslate labelClass={docStyles.cell} />;
   }
 
@@ -151,10 +157,19 @@ class AFDocument extends Component {
     return <a onClick={this.onDelete.bind(this, cell)} className={listStyles.delete} href={null} />;
   }
 
+  // eslint-disable-next-line react/sort-comp
+  onIconError(e) {
+    e.target.onerror = null;
+    e.target.src = StaticAssetsUtils.getDocIconPath('default.icon.gif');
+  }
+
   toAction(cell) {
     if (cell.href || cell.action) {
-      // TODO user url and AF specific icons for download, but confirm w VG if simply go w download button for docs
-      return <ActionIcon iconClassName={apDocStyles.downloadIcon} href={cell.href} onClick={cell.action} />;
+      const extension = cell.fileName && FileManager.extname(cell.fileName).substring(1);
+      const iconFile = (extension && `${extension}.gif`) || (cell.href && 'ico_attachment.png');
+      const srcIcon = StaticAssetsUtils.getStaticImagePath('doc-icons', iconFile);
+      const iconElement = <img src={srcIcon} alt="" onError={this.onIconError} />;
+      return <ActionIcon iconElement={iconElement} href={cell.href} onClick={cell.action} />;
     }
     return null;
   }
