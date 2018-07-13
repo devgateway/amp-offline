@@ -1,5 +1,7 @@
 import Logger from '../modules/util/LoggerManager';
 import {
+  PENDING_RESOURCE_DOC_UPDATED,
+  PENDING_RESOURCE_WEB_UPDATED,
   RESOURCE_MANAGERS_FULFILLED,
   RESOURCE_MANAGERS_PENDING,
   RESOURCE_MANAGERS_REJECTED,
@@ -28,6 +30,8 @@ const defaultState = {
   managersError: null,
   resourcesByUuids: {},
   resourceFieldsManager: null,
+  pendingWebResource: null,
+  pendingDocResource: null,
 };
 
 const resourceReducer = (state = defaultState, action: Object) => {
@@ -83,6 +87,10 @@ const resourceReducer = (state = defaultState, action: Object) => {
       }
       return { ...state };
     }
+    case PENDING_RESOURCE_WEB_UPDATED:
+      return { ...state, pendingWebResource: action.actionData };
+    case PENDING_RESOURCE_DOC_UPDATED:
+      return { ...state, pendingDocResource: action.actionData };
     default:
       return state;
   }

@@ -1,5 +1,15 @@
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
-import { CREATOR_EMAIL, ORPHAN, UUID, TEAM, CONTENT_ID } from '../utils/constants/ResourceConstants';
+import {
+  CREATOR_EMAIL,
+  ORPHAN,
+  UUID,
+  TEAM,
+  CONTENT_ID,
+  PUBLIC,
+  PRIVATE,
+  CLIENT_ADDING_DATE,
+  CLIENT_YEAR_OF_PUBLICATION
+} from '../utils/constants/ResourceConstants';
 import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
 import ResourceManager from '../modules/resource/ResourceManager';
@@ -14,6 +24,7 @@ import EntityValidator from '../modules/field/EntityValidator';
 import ResourceHelper from '../modules/helpers/ResourceHelper';
 import { RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
+import DateUtils from '../utils/DateUtils';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -28,6 +39,8 @@ export const RESOURCE_MANAGERS_PENDING = 'RESOURCE_MANAGERS_PENDING';
 export const RESOURCE_MANAGERS_FULFILLED = 'RESOURCE_MANAGERS_FULFILLED';
 export const RESOURCE_MANAGERS_REJECTED = 'RESOURCE_MANAGERS_REJECTED';
 export const RESOURCES_UNLOADED = 'RESOURCES_UNLOADED';
+export const PENDING_RESOURCE_WEB_UPDATED = 'PENDING_RESOURCE_WEB_UPDATED';
+export const PENDING_RESOURCE_DOC_UPDATED = 'PENDING_RESOURCE_DOC_UPDATED';
 
 
 const logger = new Logger('ResourceAction');
@@ -64,6 +77,26 @@ export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownPro
     _getHydratedActivityResources(activity, ownProps().resourceReducer.resourcesByUuids),
     ownProps().userReducer.teamMember[WORKSPACE_ID], ownProps().userReducer.userData.email,
     ownProps().resourceReducer.resourceFieldsManager.fieldsDef)
+});
+
+export const prepareNewResourceForSave = (resource) => (dispatch, ownProps) => {
+  const createdAt = new Date();
+  resource[CLIENT_ADDING_DATE] = DateUtils.getISODateForAPI(createdAt);
+  resource[CLIENT_YEAR_OF_PUBLICATION] = `${createdAt.getFullYear()}`;
+  resource[CREATOR_EMAIL] = ownProps().userReducer.userData.email;
+  resource[TEAM] = ownProps().userReducer.teamMember[WORKSPACE_ID];
+  resource[PRIVATE] = true;
+  resource[PUBLIC] = false;
+};
+
+export const updatePendingWebResource = (resource) => (dispatch) => dispatch({
+  type: PENDING_RESOURCE_WEB_UPDATED,
+  actionData: resource
+});
+
+export const updatePendingDocResource = (resource) => (dispatch) => dispatch({
+  type: PENDING_RESOURCE_DOC_UPDATED,
+  actionData: resource
 });
 
 export const configureResourceManagers = () => (dispatch, ownProps) => dispatch({
@@ -166,4 +199,11 @@ export const buildNewActivityResource = (resourceFieldsManager) => {
     [AC.DOCUMENT_TYPE]: RELATED_DOCUMENTS,
     [UUID]: resource,
   };
+};
+
+export const buildNewResource = (resourceFieldsManager) => {
+  const resource = {};
+  ResourceHelper.stampClientChange(resource);
+  resource[TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  return resource;
 };
