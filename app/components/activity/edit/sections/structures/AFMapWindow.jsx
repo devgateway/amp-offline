@@ -12,7 +12,7 @@ import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsMan
 import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import FileManager from '../../../../../modules/util/FileManager';
-import { MAP_MARKER_IMAGE } from '../../../../../utils/Constants';
+import { MAP_MARKER_IMAGE, MAP_MARKER_SHADOW } from '../../../../../utils/Constants';
 import AFMapPopup from './AFMapPopup';
 
 const logger = new Logger('Map Modal');
@@ -20,7 +20,8 @@ const myIcon = L.icon({
   iconUrl: MAP_MARKER_IMAGE,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
-  popupAnchor: [-3, -76]
+  popupAnchor: [-3, -76],
+  shadowUrl: MAP_MARKER_SHADOW
 });
 
 /**
