@@ -36,16 +36,18 @@ class AFStructures extends Component {
     content.push(<Col md={3} lg={3} key={Math.random()}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_DESCRIPTION}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
-    content.push(<Col md={3} lg={3} key={Math.random()}>
-      <AFField
-        fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.NUMBER}
-        extraParams={{ readonly: true }} />
-    </Col>);
-    content.push(<Col md={3} lg={3} key={Math.random()}>
-      <AFField
-        fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER}
-        extraParams={{ readonly: true }} />
-    </Col>);
+    if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+      content.push(<Col md={3} lg={3} key={Math.random()}>
+        <AFField
+          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.NUMBER}
+          extraParams={{ readonly: true }} />
+      </Col>);
+      content.push(<Col md={3} lg={3} key={Math.random()}>
+        <AFField
+          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER}
+          extraParams={{ readonly: true }} />
+      </Col>);
+    }
     return content;
   }
 
@@ -101,10 +103,16 @@ class AFStructures extends Component {
   }
 
   openMap(structure) {
-    if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+    if (!structure) {
+      // Open map to add structure.
       this.setState({
         showMapDialog: true,
-        viewStructure: structure,
+        currentPoint: null,
+        currentPolygon: null
+      });
+    } else if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+      this.setState({
+        showMapDialog: true,
         currentPoint: {
           id: structure.id,
           [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
@@ -118,7 +126,6 @@ class AFStructures extends Component {
     } else {
       this.setState({
         showMapDialog: true,
-        viewStructure: structure,
         currentPolygon: {
           [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
           id: structure.id,
@@ -180,6 +187,11 @@ class AFStructures extends Component {
   render() {
     this.preProcessForIds();
     return (<div className={afStyles.full_width}>
+
+      <Button
+        bsStyle="primary" className={afStyles.button}
+        onClick={this.openMap.bind(this, null)}>{translate('Add Structure')}
+      </Button>
 
       <AFViewStructure
         show={this.state.showViewDialog}

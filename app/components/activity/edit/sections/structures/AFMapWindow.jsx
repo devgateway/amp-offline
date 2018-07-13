@@ -79,14 +79,13 @@ export default class AFMapWindow extends Component {
   }
 
   openStructureDataPopup(e, layer, structureData) {
-    /* Note: If we want to use leaflet's popup with a React component as content then we need to add react-leaflet
-    * lib and convert the current js map definition (leaflet) to React components: https://react-leaflet.js.org */
     this.setState({ showStructureDataPopup: true, currentLayer: layer, structureData });
   }
 
   handleSaveBtnClick() {
     const { onSave } = this.props;
     onSave(this.state.layersList);
+    this.setState({ layersList: [] });
   }
 
   handleCancelBtnClick() {
@@ -124,45 +123,7 @@ export default class AFMapWindow extends Component {
     // This object groups all layers at the same time.
     const drawnItems = L.featureGroup().addTo(map);
 
-    // Load point.
-    if (this.props.point) {
-      const marker = L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]],
-        { icon: myIcon });
-      marker.on('click', (event) => this.handleMarkerClick(event));
-      drawnItems.addLayer(marker);
-      const newLayersList = this.state.layersList.slice();
-      newLayersList.push({
-        layer: marker,
-        structureData: {
-          [AC.STRUCTURES_TITLE]: this.props.point[AC.STRUCTURES_TITLE],
-          color: null,
-          id: this.props.point.id,
-          [AC.STRUCTURES_DESCRIPTION]: this.props.point[AC.STRUCTURES_DESCRIPTION],
-          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
-        }
-      });
-      this.setState({ layersList: newLayersList });
-    }
-
-    // Load polygon.
-    if (this.props.polygon) {
-      const polygon = L.polygon(this.props.polygon[AC.STRUCTURES_COORDINATES]
-        .map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])));
-      polygon.on('click', (event) => this.handleMarkerClick(event));
-      drawnItems.addLayer(polygon);
-      const newLayersList = this.state.layersList.slice();
-      newLayersList.push({
-        layer: polygon,
-        structureData: {
-          [AC.STRUCTURES_TITLE]: this.props.polygon[AC.STRUCTURES_TITLE],
-          color: null,
-          id: this.props.polygon.id,
-          [AC.STRUCTURES_DESCRIPTION]: this.props.polygon[AC.STRUCTURES_DESCRIPTION],
-          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON
-        }
-      });
-      this.setState({ layersList: newLayersList });
-    }
+    this.loadExistingStructure(drawnItems);
 
     // Setup controls.
     map.addControl(new L.Control.Draw({
@@ -200,6 +161,53 @@ export default class AFMapWindow extends Component {
     });
 
     this.setState({ map });
+  }
+
+  loadExistingStructure(drawnItems) {
+    if (this.props.point || this.props.polygon) {
+      // Load point.
+      if (this.props.point) {
+        const marker = L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]],
+          { icon: myIcon });
+        marker.on('click', (event) => this.handleMarkerClick(event));
+        drawnItems.addLayer(marker);
+        const newLayersList = this.state.layersList.slice();
+        newLayersList.push({
+          layer: marker,
+          structureData: {
+            [AC.STRUCTURES_TITLE]: this.props.point[AC.STRUCTURES_TITLE],
+            color: null,
+            id: this.props.point.id,
+            [AC.STRUCTURES_DESCRIPTION]: this.props.point[AC.STRUCTURES_DESCRIPTION],
+            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
+          }
+        });
+        this.setState({ layersList: newLayersList });
+      }
+
+      // Load polygon.
+      if (this.props.polygon) {
+        const polygon = L.polygon(this.props.polygon[AC.STRUCTURES_COORDINATES]
+          .map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])));
+        polygon.on('click', (event) => this.handleMarkerClick(event));
+        drawnItems.addLayer(polygon);
+        const newLayersList = this.state.layersList.slice();
+        newLayersList.push({
+          layer: polygon,
+          structureData: {
+            [AC.STRUCTURES_TITLE]: this.props.polygon[AC.STRUCTURES_TITLE],
+            color: null,
+            id: this.props.polygon.id,
+            [AC.STRUCTURES_DESCRIPTION]: this.props.polygon[AC.STRUCTURES_DESCRIPTION],
+            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON
+          }
+        });
+        this.setState({ layersList: newLayersList });
+      }
+    } else {
+      // This is "Add Structure" case.
+      this.setState({ layersList: [] });
+    }
   }
 
   render() {
