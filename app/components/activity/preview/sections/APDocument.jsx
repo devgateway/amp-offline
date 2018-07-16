@@ -38,7 +38,12 @@ class APDocument extends Component {
     const { isResourcesLoaded, isResourceManagersLoaded, resourcesByUuids } = this.props.resourceReducer;
     if (isResourcesLoaded && isResourceManagersLoaded) {
       const resourcesUuids = getActivityResourceUuids(this.props.activity, false);
-      return resourcesUuids.map(uuid => resourcesByUuids[uuid]).filter(r => r);
+      return resourcesUuids.map(uuid => {
+        const r = { ...resourcesByUuids[uuid] };
+        r[RC.ADDING_DATE] = r[RC.ADDING_DATE] || r[RC.CLIENT_ADDING_DATE];
+        r[RC.YEAR_OF_PUBLICATION] = r[RC.YEAR_OF_PUBLICATION] || r[RC.CLIENT_YEAR_OF_PUBLICATION];
+        return r;
+      }).filter(r => r);
     }
     return [];
   }
