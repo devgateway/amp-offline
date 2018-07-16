@@ -69,7 +69,7 @@ const FileManager = {
   },
 
   joinPath(...pathParts) {
-    return path.join(pathParts);
+    return path.join(...pathParts);
   },
 
   basename(fromPath) {
@@ -221,6 +221,17 @@ const FileManager = {
    */
   statSync(...pathParts) {
     const fullPath = this.getFullPath(...pathParts);
+    if (fs.existsSync(fullPath)) {
+      return fs.statSync(fullPath);
+    }
+  },
+
+  /**
+   * Provides statistics synchronously for a full path
+   * @param fullPath
+   * @return {*}
+   */
+  statSyncFullPath(fullPath) {
     if (fs.existsSync(fullPath)) {
       return fs.statSync(fullPath);
     }

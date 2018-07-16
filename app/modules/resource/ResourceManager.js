@@ -33,6 +33,20 @@ const ResourceManager = {
   },
 
   /**
+   * Uploads a file to a hydrated resource, by storing the content hydrated as well. No DB calls are done.
+   * @param resource the hydrated resource
+   * @param srcFilePath the file to store
+   */
+  uploadFileToHydratedResource(resource, srcFilePath) {
+    if (resource && srcFilePath) {
+      RepositoryManager.init(false);
+      const content = RepositoryManager.storeLocalFileToRepository(srcFilePath);
+      resource[FILE_NAME] = FileManager.basename(srcFilePath);
+      resource[CONTENT_ID] = content;
+    }
+  },
+
+  /**
    * Retrieves { resource, content } information
    * @param uuid resource uuid
    * @return {{ resource, content }}
