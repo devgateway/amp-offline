@@ -33,11 +33,27 @@ export default class AFMapWindow extends Component {
   static propTypes = {
     onModalClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
     point: PropTypes.object,
     polygon: PropTypes.object
   };
+
+  static translateLeaflet() {
+    // Setup controls (with translations).
+    L.drawLocal.draw.toolbar.buttons.polygon = translate('Draw a polygon');
+    L.drawLocal.draw.toolbar.buttons.marker = translate('Draw a marker');
+    L.drawLocal.draw.toolbar.buttons.rectangle = translate('Draw a rectangle');
+    L.drawLocal.draw.toolbar.buttons.polyline = translate('Draw a polyline');
+    L.drawLocal.draw.handlers.polyline.tooltip.start = translate('Click to start drawing line');
+    L.drawLocal.draw.handlers.polyline.tooltip.cont = translate('Click to continue drawing line');
+    L.drawLocal.draw.handlers.polyline.tooltip.end = translate('Click last point to finish line');
+    L.drawLocal.draw.handlers.rectangle.tooltip.start = translate('Click and drag to draw rectangle');
+    L.drawLocal.draw.handlers.simpleshape.tooltip.end = translate('Release mouse to finish drawing');
+    L.drawLocal.draw.handlers.polygon.tooltip.start = translate('Click to start drawing shape');
+    L.drawLocal.draw.handlers.polygon.tooltip.cont = translate('Click to continue drawing shape');
+    L.drawLocal.draw.handlers.polygon.tooltip.end = translate('Click first point to close this shape');
+    L.drawLocal.draw.handlers.marker.tooltip.start = translate('Click map to place marker');
+  }
 
   constructor(props) {
     super(props);
@@ -138,20 +154,8 @@ export default class AFMapWindow extends Component {
     // Load point/polygon.
     this.loadExistingStructure(drawnItems);
 
-    // Setup controls (with translations).
-    L.drawLocal.draw.toolbar.buttons.polygon = translate('Draw a polygon');
-    L.drawLocal.draw.toolbar.buttons.marker = translate('Draw a marker');
-    L.drawLocal.draw.toolbar.buttons.rectangle = translate('Draw a rectangle');
-    L.drawLocal.draw.toolbar.buttons.polyline = translate('Draw a polyline');
-    L.drawLocal.draw.handlers.polyline.tooltip.start = translate('Click to start drawing line');
-    L.drawLocal.draw.handlers.polyline.tooltip.cont = translate('Click to continue drawing line');
-    L.drawLocal.draw.handlers.polyline.tooltip.end = translate('Click last point to finish line');
-    L.drawLocal.draw.handlers.rectangle.tooltip.start = translate('Click and drag to draw rectangle');
-    L.drawLocal.draw.handlers.simpleshape.tooltip.end = translate('Release mouse to finish drawing');
-    L.drawLocal.draw.handlers.polygon.tooltip.start = translate('Click to start drawing shape');
-    L.drawLocal.draw.handlers.polygon.tooltip.cont = translate('Click to continue drawing shape');
-    L.drawLocal.draw.handlers.polygon.tooltip.end = translate('Click first point to close this shape');
-    L.drawLocal.draw.handlers.marker.tooltip.start = translate('Click map to place marker');
+    AFMapWindow.translateLeaflet();
+
     map.addControl(new L.Control.Draw({
       edit: {
         featureGroup: drawnItems,
