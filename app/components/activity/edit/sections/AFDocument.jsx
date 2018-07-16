@@ -136,6 +136,16 @@ class AFDocument extends Component {
     this.setState({ docs: this.getDocuments() });
   }
 
+  getDocSizeToDisplay(doc) {
+    let size = doc[FILE_SIZE];
+    if (size) {
+      // AMP doesn't use GS format here (since that may not have digits)
+      size = Math.round(size * 1000) / 1000;
+      size = size.toFixed((size && (size < 1 ? 3 : 2)) || 1);
+    }
+    return size;
+  }
+
   getDocuments(context = this.context) {
     const docs = context.activity[ACTIVITY_DOCUMENTS] || [];
     return docs.map(ac => {
@@ -144,6 +154,7 @@ class AFDocument extends Component {
       const fileName = doc[FILE_NAME];
       const action = fileName && srcFile ? () => FileDialog.saveDialog(srcFile, fileName) : null;
       doc[RESOURCE_NAME] = doc[WEB_LINK] || fileName;
+      doc[FILE_SIZE] = this.getDocSizeToDisplay(doc);
       doc[ACTION] = { href: doc[WEB_LINK], action, fileName };
       doc[ADDING_DATE] = doc[ADDING_DATE] || doc[CLIENT_ADDING_DATE];
       doc[YEAR_OF_PUBLICATION] = doc[YEAR_OF_PUBLICATION] || doc[CLIENT_YEAR_OF_PUBLICATION];

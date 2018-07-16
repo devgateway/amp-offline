@@ -10,11 +10,18 @@ import { ALWAYS_REQUIRED, TMP_ENTITY_VALIDATOR } from '../../../utils/constants/
 import * as Types from '../../activity/edit/components/AFComponentTypes';
 import translate from '../../../utils/translate';
 import { FIELD_REQUIRED } from '../../../utils/constants/FieldPathConstants';
+import FileDialog from '../../../modules/util/FileDialog';
+import FileManager from '../../../modules/util/FileManager';
+import ResourceManager from '../../../modules/resource/ResourceManager';
+import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
+import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
+import * as Utils from '../../../utils/Utils';
 
 
 const logger = new Logger('ResourceForm');
 // columns size
 const CS = 4;
+const getMaxSizeMB = () => GlobalSettingsManager.getSettingByKey(GS_MAXIMUM_FILE_SIZE_MB);
 
 /**
  * Resource Form
@@ -86,20 +93,37 @@ export default class ResourceForm extends Component {
     const { resource, resourceReducer } = this.props;
     const errors = resource[TMP_ENTITY_VALIDATOR].areAllConstraintsMet(resource);
     // workaround as a custom validation, since no dependency logic available yet
-    if (this.isDoc) {
-      // TODO
-    } else {
-      const webLinkDef = { ...resourceReducer.resourceFieldsManager.getFieldDef(RC.WEB_LINK) };
-      webLinkDef[FIELD_REQUIRED] = ALWAYS_REQUIRED;
-      errors.push(...resource[TMP_ENTITY_VALIDATOR].validateField(resource, false, webLinkDef, RC.WEB_LINK));
+    const extraFieldRequired = this.isDoc ? RC.FILE_NAME : RC.WEB_LINK;
+    const fieldDef = { ...resourceReducer.resourceFieldsManager.getFieldDef(extraFieldRequired) };
+    fieldDef[FIELD_REQUIRED] = ALWAYS_REQUIRED;
+    const fieldError = resource[TMP_ENTITY_VALIDATOR].validateField(resource, false, fieldDef, extraFieldRequired);
+    if (this.isDoc && fieldError.length) {
+      fieldError[0].errorMessage = translate('FileNotAvailable');
     }
-    return errors;
+    return errors.concat(fieldError);
   }
 
   onCancel() {
     this.updateFunc(null);
     if (this.props.onCancel) {
       this.props.onCancel(this.props.type);
+    }
+  }
+
+  onFileUpload() {
+    const srcPath = FileDialog.openSingleFileDialog();
+    // TODO find mime type
+    if (srcPath) {
+      const maxSizeMB = getMaxSizeMB();
+      const { size } = FileManager.statSyncFullPath(srcPath);
+      if ((maxSizeMB * 1024 * 1024) < size) {
+        return alert(translate('FileSizeLimitExceeded').replace('{size}', maxSizeMB));
+      }
+      const { resource } = this.props;
+      ResourceManager.uploadFileToHydratedResource(resource, srcPath);
+      resource[RC.FILE_SIZE] = Utils.simplifyDataSize(size, 'MB').value;
+      this.validate();
+      this.updateFunc(resource);
     }
   }
 
@@ -112,7 +136,22 @@ export default class ResourceForm extends Component {
   }
 
   getFileUpload() {
-    return 'TODO';
+    const { resource } = this.props;
+    const fileNameOrMsg = resource[RC.FILE_NAME] || translate('No file chosen');
+    const content = resource[RC.FILE_NAME] && resource[RC.CONTENT_ID];
+    const size = resource[RC.FILE_SIZE] * 1024 * 1024;
+    const uploadConfirm = content && `File '${fileNameOrMsg}' ${translate('FileUploaded')} '${size}' bytes`;
+    return (
+      <Col lg={CS} md={CS}>
+        <AFField fieldPath={RC.FILE_NAME} customLabel={'File'} parent={resource} type={Types.CUSTOM} >
+          <Button onClick={this.onFileUpload.bind(this)}>
+            {translate('Choose file')}
+          </Button>
+          <span>{fileNameOrMsg}</span>
+          {uploadConfirm && <div>{uploadConfirm}</div>}
+        </AFField>
+      </Col>
+    );
   }
 
   render() {

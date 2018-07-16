@@ -369,5 +369,11 @@
   "Document Type": "Document Type",
   "Year": "Year",
   "Add New Document": "Add New Document",
-  "Add New Web Link": "Add New Web Link"
+  "Add New Web Link": "Add New Web Link",
+  "FileNotAvailable": "File not submited or upload has not finished",
+  "File": "File",
+  "Choose file": "Choose file",
+  "No file chosen": "No file chosen",
+  "FileUploaded": "was uploaded, with size",
+  "FileSizeLimitExceeded": "The file size limit is {size} MB. This file exceeds the limit."
 }

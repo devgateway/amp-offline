@@ -31,10 +31,36 @@ const FileDialog = {
     }
     try {
       FileManager.copyDataFileSyncUsingFullPaths(srcFilePath, dstFilePath);
+      return dstFilePath;
     } catch (error) {
       logger.error(error);
     }
-  }
+    return null;
+  },
+
+  /**
+   * Opens electron dialog to choose file(s)
+   * @see https://github.com/electron/electron/blob/master/docs/api/dialog.md
+   * @param options
+   * @return {string[]} file paths
+   */
+  openDialog(options = {}) {
+    const files = DIALOG.showOpenDialog(options);
+    if (!files.length) {
+      logger.warn('No file(s) selected');
+    }
+    return files;
+  },
+
+  /**
+   * Opens electron dialog to choose a single file
+   * @return {String} file path
+   */
+  openSingleFileDialog() {
+    const files = this.openDialog({ multiSelections: false });
+    return files.length ? files[0] : null;
+  },
+
 };
 
 export default FileDialog;

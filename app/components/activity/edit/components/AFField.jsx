@@ -290,8 +290,8 @@ class AFField extends Component {
   _getCustom() {
     const { children } = this.props;
     const isArray = Array.isArray(children);
-    let cs = isArray ? children : [children];
-    cs = React.Children.map(children, child => React.cloneElement(child, { onChange: this.onChange }));
+    let cs = (isArray ? children : [children]).filter(child => child);
+    cs = React.Children.map(cs, child => React.cloneElement(child, { onChange: this.onChange }));
     return cs;
   }
 
