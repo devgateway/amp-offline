@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as ResourceAction from '../actions/ResourceAction';
 import Logger from '../modules/util/LoggerManager';
 import AFDocument from '../components/activity/edit/sections/AFDocument';
+import ResourceForm from '../components/resource/edit/ResourceForm';
 
 const logger = new Logger('Resource Page');
 
@@ -18,6 +19,5 @@ function mapDispatchToProps(dispatch, ownProps) {
   return bindActionCreators(ResourceAction, dispatch, ownProps);
 }
 
-// May export other pages when adding resources manager
-// eslint-disable-next-line import/prefer-default-export
 export const AFDocumentPage = connect(mapStateToProps, mapDispatchToProps)(AFDocument);
+export const ResourceFormPage = connect(mapStateToProps, mapDispatchToProps)(ResourceForm);

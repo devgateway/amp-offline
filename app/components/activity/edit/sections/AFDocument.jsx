@@ -2,28 +2,33 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { Panel } from 'react-bootstrap';
+import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
 import { FIELD_NAME } from '../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
-import { ACTIVITY_DOCUMENTS } from '../../../../utils/constants/ActivityConstants';
+import { ACTIVITY_DOCUMENTS, DOCUMENT_TYPE } from '../../../../utils/constants/ActivityConstants';
 import Loading from '../../../common/Loading';
 import {
   ACTION,
   ADDING_DATE,
+  CLIENT_ADDING_DATE,
+  CLIENT_YEAR_OF_PUBLICATION,
   CONTENT_ID,
   FILE_NAME,
   FILE_SIZE,
   RESOURCE_NAME,
   TITLE,
   TYPE,
+  TYPE_DOC_RESOURCE,
+  TYPE_WEB_RESOURCE,
   UUID,
   WEB_LINK,
   YEAR_OF_PUBLICATION
-}
-  from '../../../../utils/constants/ResourceConstants';
+} from '../../../../utils/constants/ResourceConstants';
 import * as docStyles from './document/AFDocument.css';
 import * as listStyles from '../components/AFList.css';
 import translate from '../../../../utils/translate';
@@ -34,6 +39,7 @@ import RepositoryManager from '../../../../modules/repository/RepositoryManager'
 import FileDialog from '../../../../modules/util/FileDialog';
 import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
+import { buildNewResource } from '../../../../actions/ResourceAction';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,
@@ -69,6 +75,8 @@ class AFDocument extends Component {
 
   static propTypes = {
     resourceReducer: PropTypes.object.isRequired,
+    updatePendingWebResource: PropTypes.func.isRequired,
+    updatePendingDocResource: PropTypes.func.isRequired,
   };
 
   constructor(props, context) {
@@ -76,8 +84,12 @@ class AFDocument extends Component {
     this.toAPLabel = this.toAPLabel.bind(this);
     this.toDelete = this.toDelete.bind(this);
     this.toAction = this.toAction.bind(this);
+    this.onAdd = this.onAdd.bind(this);
+    this.onCancel = this.onCancel.bind(this);
     this.state = {
       docs: this.getDocuments(context),
+      docFormOpened: false,
+      linkFormOpened: false,
     };
   }
 
@@ -91,6 +103,33 @@ class AFDocument extends Component {
     };
   }
 
+  onAdd(resource) {
+    if (!this.context.activity[ACTIVITY_DOCUMENTS]) {
+      this.context.activity[ACTIVITY_DOCUMENTS] = [];
+    }
+    this.context.activity[ACTIVITY_DOCUMENTS].push({
+      [DOCUMENT_TYPE]: RELATED_DOCUMENTS,
+      [UUID]: resource,
+    });
+    const newState = { docs: this.getDocuments() };
+    if (resource[FILE_NAME]) {
+      this.props.updatePendingDocResource(null);
+      newState.docFormOpened = false;
+    } else {
+      this.props.updatePendingWebResource(null);
+      newState.linkFormOpened = false;
+    }
+    this.setState(newState);
+  }
+
+  onCancel(resourceType) {
+    if (resourceType === TYPE_DOC_RESOURCE) {
+      this.setState({ docFormOpened: false });
+    } else {
+      this.setState({ linkFormOpened: false });
+    }
+  }
+
   onDelete(uuid) {
     const aDocs = this.context.activity[ACTIVITY_DOCUMENTS];
     this.context.activity[ACTIVITY_DOCUMENTS] = aDocs.filter(ad => ad[UUID][UUID] !== uuid);
@@ -100,14 +139,25 @@ class AFDocument extends Component {
   getDocuments(context = this.context) {
     const docs = context.activity[ACTIVITY_DOCUMENTS] || [];
     return docs.map(ac => {
-      const doc = ac[UUID];
+      const doc = { ...ac[UUID] };
       const srcFile = RepositoryManager.getFullContentFilePath(doc[CONTENT_ID]);
       const fileName = doc[FILE_NAME];
       const action = fileName && srcFile ? () => FileDialog.saveDialog(srcFile, fileName) : null;
       doc[RESOURCE_NAME] = doc[WEB_LINK] || fileName;
       doc[ACTION] = { href: doc[WEB_LINK], action, fileName };
+      doc[ADDING_DATE] = doc[ADDING_DATE] || doc[CLIENT_ADDING_DATE];
+      doc[YEAR_OF_PUBLICATION] = doc[YEAR_OF_PUBLICATION] || doc[CLIENT_YEAR_OF_PUBLICATION];
       return doc;
     });
+  }
+
+  getPendingOrNewResource(resourceType) {
+    const { pendingWebResource, pendingDocResource, resourceFieldsManager } = this.props.resourceReducer;
+    let resource = resourceType === TYPE_DOC_RESOURCE ? pendingDocResource : pendingWebResource;
+    if (!resource) {
+      resource = buildNewResource(resourceFieldsManager);
+    }
+    return resource;
   }
 
   getDocListHeaders() {
@@ -157,8 +207,7 @@ class AFDocument extends Component {
     return <a onClick={this.onDelete.bind(this, cell)} className={listStyles.delete} href={null} />;
   }
 
-  // eslint-disable-next-line react/sort-comp
-  onIconError(e) {
+  handleIconError(e) {
     e.target.onerror = null;
     e.target.src = StaticAssetsUtils.getDocIconPath('default.icon.gif');
   }
@@ -168,7 +217,7 @@ class AFDocument extends Component {
       const extension = cell.fileName && FileManager.extname(cell.fileName).substring(1);
       const iconFile = (extension && `${extension}.gif`) || (cell.href && 'ico_attachment.png');
       const srcIcon = StaticAssetsUtils.getStaticImagePath('doc-icons', iconFile);
-      const iconElement = <img src={srcIcon} alt="" onError={this.onIconError} />;
+      const iconElement = <img src={srcIcon} alt="" onError={this.handleIconError} />;
       return <ActionIcon iconElement={iconElement} href={cell.href} onClick={cell.action} />;
     }
     return null;
@@ -184,6 +233,22 @@ class AFDocument extends Component {
     );
   }
 
+  renderResourcePanel(resourceType) {
+    const isDoc = resourceType === TYPE_DOC_RESOURCE;
+    const header = isDoc ? 'Add New Document' : 'Add New Web Link';
+    const openStateField = isDoc ? 'docFormOpened' : 'linkFormOpened';
+    return (
+      <Panel
+        key={`add-${resourceType}`} expanded={this.state[openStateField]} collapsible header={translate(header)}
+        onSelect={() => this.setState({ [openStateField]: !this.state[openStateField] })}>
+        {this.state[openStateField] &&
+        <ResourceFormPage
+          type={resourceType} resource={this.getPendingOrNewResource(resourceType)}
+          onAdd={this.onAdd} onCancel={this.onCancel} />}
+      </Panel>
+    );
+  }
+
   render() {
     const { resourcesError, contentsError, managersError } = this.props.resourceReducer;
     const errors = [resourcesError, contentsError, managersError].filter(e => e);
@@ -194,11 +259,12 @@ class AFDocument extends Component {
     if (isResourcesLoading || isContentsLoading || isResourceManagersLoading) {
       return <Loading />;
     }
-    // TODO adding docs
 
     return (
       <div>
         {this.renderDocList()}
+        {this.renderResourcePanel(TYPE_DOC_RESOURCE)}
+        {this.renderResourcePanel(TYPE_WEB_RESOURCE)}
       </div>
     );
   }
