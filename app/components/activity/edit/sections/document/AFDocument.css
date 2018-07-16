@@ -1,3 +1,6 @@
+.listContainer {
+  margin-bottom: 15px;
+}
 .headerContainer {
   background-color: #f8f9fc;
   font-size: 12px;
@@ -28,4 +31,9 @@
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 0.85em;
+}
+
+.formHeader {
+  text-align: center;
+  color: #4A687A;
 }

@@ -227,7 +227,9 @@ class AFDocument extends Component {
     const headers = this.getDocListHeaders();
 
     return (
-      <BootstrapTable data={this.state.docs} hover headerContainerClass={docStyles.headerContainer}>
+      <BootstrapTable
+        data={this.state.docs} hover
+        headerContainerClass={docStyles.headerContainer} tableContainerClass={docStyles.listContainer} >
         {headers}
       </BootstrapTable>
     );
@@ -237,9 +239,10 @@ class AFDocument extends Component {
     const isDoc = resourceType === TYPE_DOC_RESOURCE;
     const header = isDoc ? 'Add New Document' : 'Add New Web Link';
     const openStateField = isDoc ? 'docFormOpened' : 'linkFormOpened';
+    const headerEl = <div className={docStyles.formHeader}>{translate(header)}</div>;
     return (
       <Panel
-        key={`add-${resourceType}`} expanded={this.state[openStateField]} collapsible header={translate(header)}
+        key={`add-${resourceType}`} expanded={this.state[openStateField]} collapsible header={headerEl}
         onSelect={() => this.setState({ [openStateField]: !this.state[openStateField] })}>
         {this.state[openStateField] &&
         <ResourceFormPage

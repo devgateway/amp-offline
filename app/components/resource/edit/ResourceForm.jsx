@@ -50,13 +50,14 @@ export default class ResourceForm extends Component {
     super(props);
     logger.debug('constructor');
     this.isDoc = props.type === RC.TYPE_DOC_RESOURCE;
+    this.updateFunc = this.isDoc ? props.updatePendingDocResource : props.updatePendingWebResource;
   }
 
   getChildContext() {
     const { resource, resourceReducer } = this.props;
     return {
       activity: this.context.activity,
-      isSaveAndSubmit: this.context.isSaveAndSubmit,
+      isSaveAndSubmit: false,
       validationResult: resource.errors,
       activityFieldsManager: resourceReducer.resourceFieldsManager,
       activityValidator: resource && resource[TMP_ENTITY_VALIDATOR],
@@ -64,7 +65,7 @@ export default class ResourceForm extends Component {
   }
 
   componentDidMount() {
-    this.getUpdateFunc()(this.props.resource);
+    this.updateFunc(this.props.resource);
   }
 
   onAdd() {
@@ -74,7 +75,7 @@ export default class ResourceForm extends Component {
     if (errors.length) {
       const msg = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join(' ');
       logger.error(`Resource validation errors: ${msg}`);
-      this.getUpdateFunc()(Object.assign({}, resource));
+      this.updateFunc(Object.assign({}, resource));
     } else if (onAdd) {
       onAdd(resource);
     }
@@ -96,14 +97,10 @@ export default class ResourceForm extends Component {
   }
 
   onCancel() {
-    this.getUpdateFunc()(null);
+    this.updateFunc(null);
     if (this.props.onCancel) {
       this.props.onCancel(this.props.type);
     }
-  }
-
-  getUpdateFunc() {
-    return this.isDoc ? this.props.updatePendingDocResource : this.props.updatePendingWebResource;
   }
 
   getLink() {
@@ -143,14 +140,16 @@ export default class ResourceForm extends Component {
             {this.isDoc ? this.getFileUpload() : this.getLink()}
           </Row>
           <Row key="action-buttons">
-            <ButtonToolbar>
-              <Button key="add" bsStyle="success" onClick={this.onAdd.bind(this)}>
-                {translate('Add')}
-              </Button>
-              <Button key="cancel" bsStyle="success" onClick={this.onCancel.bind(this)}>
-                {translate('Cancel')}
-              </Button>
-            </ButtonToolbar>
+            <Col lg={2 * CS} md={2 * CS}>
+              <ButtonToolbar>
+                <Button key="add" bsStyle="success" onClick={this.onAdd.bind(this)}>
+                  {translate('Add')}
+                </Button>
+                <Button key="cancel" bsStyle="success" onClick={this.onCancel.bind(this)}>
+                  {translate('Cancel')}
+                </Button>
+              </ButtonToolbar>
+            </Col>
           </Row>
         </Grid>
       </FormGroup>
