@@ -33,6 +33,7 @@ export default class AFMapWindow extends Component {
   static propTypes = {
     onModalClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
     point: PropTypes.object,
     polygon: PropTypes.object
@@ -44,13 +45,15 @@ export default class AFMapWindow extends Component {
     this.openStructureDataPopup = this.openStructureDataPopup.bind(this);
     this.onStructureDataPopupCancel = this.onStructureDataPopupCancel.bind(this);
     this.onStructureDataPopupSubmit = this.onStructureDataPopupSubmit.bind(this);
+    this.onStructureDataPopupDelete = this.onStructureDataPopupDelete.bind(this);
     this.handleMarkerClick = this.handleMarkerClick.bind(this);
     this.state = {
       showStructureDataPopup: false,
       map: null,
       currentLayer: null,
       structureData: null,
-      layersList: []
+      layersList: [],
+      deletedLayersList: []
     };
   }
 
@@ -79,18 +82,25 @@ export default class AFMapWindow extends Component {
     this.setState({ layersList: newLayersList });
   }
 
+  onStructureDataPopupDelete(layer, structureData) {
+    this.onStructureDataPopupCancel(layer, true);
+    const newDeletedList = this.state.deletedLayersList.slice();
+    newDeletedList.push({ id: structureData.id });
+    this.setState({ deletedLayersList: newDeletedList });
+  }
+
   openStructureDataPopup(e, layer, structureData) {
     this.setState({ showStructureDataPopup: true, currentLayer: layer, structureData });
   }
 
   handleSaveBtnClick() {
     const { onSave } = this.props;
-    onSave(this.state.layersList);
-    this.setState({ layersList: [] });
+    onSave(this.state.layersList, this.state.deletedLayersList);
+    this.setState({ layersList: [], deletedLayersList: [] });
   }
 
   handleCancelBtnClick() {
-    this.setState({ layersList: [] });
+    this.setState({ layersList: [], deletedLayersList: [] });
     this.props.onModalClose();
   }
 
@@ -172,7 +182,8 @@ export default class AFMapWindow extends Component {
         [AC.STRUCTURES_TITLE]: '',
         color: null,
         [AC.STRUCTURES_DESCRIPTION]: '',
-        [AC.STRUCTURES_SHAPE]: (layer._latlng ? AC.STRUCTURES_POINT : AC.STRUCTURES_POLYGON)
+        [AC.STRUCTURES_SHAPE]: (layer._latlng ? AC.STRUCTURES_POINT : AC.STRUCTURES_POLYGON),
+        edit: false
       };
       this.openStructureDataPopup(layer, event, structureData);
     });
@@ -196,7 +207,8 @@ export default class AFMapWindow extends Component {
             color: null,
             id: this.props.point.id,
             [AC.STRUCTURES_DESCRIPTION]: this.props.point[AC.STRUCTURES_DESCRIPTION],
-            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
+            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
+            edit: true
           }
         });
         this.setState({ layersList: newLayersList });
@@ -214,7 +226,8 @@ export default class AFMapWindow extends Component {
             color: null,
             id: this.props.polygon.id,
             [AC.STRUCTURES_DESCRIPTION]: this.props.polygon[AC.STRUCTURES_DESCRIPTION],
-            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON
+            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
+            edit: true
           }
         });
         this.setState({ layersList: newLayersList });
@@ -238,6 +251,7 @@ export default class AFMapWindow extends Component {
           show={this.state.showStructureDataPopup}
           onSubmit={this.onStructureDataPopupSubmit}
           onCancel={this.onStructureDataPopupCancel}
+          onDelete={this.onStructureDataPopupDelete}
           structureData={this.state.structureData}
           layer={this.state.currentLayer} />
       </Modal.Body>

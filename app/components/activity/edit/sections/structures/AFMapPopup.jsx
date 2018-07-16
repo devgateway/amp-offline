@@ -18,6 +18,7 @@ export default class AFMapPopup extends Component {
     show: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
     layer: PropTypes.object,
     structureData: PropTypes.object
   };
@@ -28,6 +29,7 @@ export default class AFMapPopup extends Component {
     this.handleSaveBtnClick = this.handleSaveBtnClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handleDeleteBtnClick = this.handleDeleteBtnClick.bind(this);
     this.state = {
       [AC.STRUCTURES_TITLE]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_TITLE] : ''),
       [AC.STRUCTURES_DESCRIPTION]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_DESCRIPTION] : '',
@@ -50,14 +52,15 @@ export default class AFMapPopup extends Component {
     }
   }
 
-  handleCancel(layer) {
+  handleCancel() {
+    const { layer } = this.props;
     this.setState({ [AC.STRUCTURES_TITLE]: '', color: null, [AC.STRUCTURES_DESCRIPTION]: '' });
     const del = this.state.isNew;
     this.props.onCancel(layer, del);
   }
 
-  handleSaveBtnClick(layer) {
-    const { onSubmit, structureData } = this.props;
+  handleSaveBtnClick() {
+    const { onSubmit, structureData, layer } = this.props;
     if (this.state[AC.STRUCTURES_TITLE]) {
       onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE], this.state.color
         , this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE]);
@@ -66,12 +69,16 @@ export default class AFMapPopup extends Component {
     }
   }
 
+  handleDeleteBtnClick() {
+    const { layer, structureData } = this.props;
+    this.props.onDelete(layer, structureData);
+  }
+
   handleChange(obj) {
     this.setState({ [AC.STRUCTURES_TITLE]: obj.target.value });
   }
 
   render() {
-    const { layer } = this.props;
     const { title } = this.state;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
@@ -84,10 +91,15 @@ export default class AFMapPopup extends Component {
         <input type={'text'} value={title} onChange={this.handleChange} />
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={this.handleSaveBtnClick.bind(null, layer)} bsStyle="success">
+        <Button onClick={this.handleSaveBtnClick} bsStyle="success">
           {translate('Submit')}
         </Button>
-        <Button onClick={this.handleCancel.bind(null, layer)}>
+        {!this.state.isNew
+          ? (<Button onClick={this.handleDeleteBtnClick} bsStyle="danger">
+            {translate('Delete')}
+          </Button>)
+          : null}
+        <Button onClick={this.handleCancel}>
           {translate('Cancel')}
         </Button>
       </Modal.Footer>

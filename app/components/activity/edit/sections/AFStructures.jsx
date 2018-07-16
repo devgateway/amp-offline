@@ -149,7 +149,8 @@ class AFStructures extends Component {
     this.setState({ showMapDialog: false });
   }
 
-  handleSaveMap(layersList) {
+  handleSaveMap(layersList, deletedLayersList) {
+    // Add new layer or replace with changes.
     const newStructures = this.state.structures.slice();
     layersList.forEach(l => {
       const index = newStructures.findIndex(s => (s.id === l.structureData.id));
@@ -178,6 +179,13 @@ class AFStructures extends Component {
             [AC.STRUCTURES_LONGITUDE]: String(loc.lng)
           }))
         });
+      }
+    });
+    // Remove deleted layers.
+    deletedLayersList.forEach(l => {
+      const index = newStructures.findIndex(s => (s.id === l.id));
+      if (index > -1) {
+        newStructures.splice(index, 1);
       }
     });
     this.setState({ structures: newStructures, showMapDialog: false });
