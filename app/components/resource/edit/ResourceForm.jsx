@@ -14,7 +14,7 @@ import FileDialog from '../../../modules/util/FileDialog';
 import FileManager from '../../../modules/util/FileManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
 import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
-import * as Utils from '../../../utils/Utils';
+import * as URLUtils from '../../../utils/URLUtils';
 
 
 const logger = new Logger('ResourceForm');
@@ -87,6 +87,9 @@ export default class ResourceForm extends Component {
   onAdd() {
     const { onAdd, prepareNewResourceForSave, resource } = this.props;
     prepareNewResourceForSave(resource);
+    if (!this.isDoc && resource[RC.WEB_LINK]) {
+      resource[RC.WEB_LINK] = URLUtils.normalizeUrl(resource[RC.WEB_LINK], 'http');
+    }
     const errors = this.validate();
     if (errors.length) {
       const msg = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join(' ');
