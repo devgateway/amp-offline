@@ -88,8 +88,8 @@ export default class AFViewStructure extends Component {
         onShow={this.onShow.bind(this)}
         onHide={this.close.bind(this)}
         style={{ paddingTop }}
-        bsClass={`${styles.save_as_draft} modal`}
-        bsSize="small"
+        bsClass={[styles.save_as_draft, 'modal'].join(' ')}
+        bsSize="medium"
       >
         <Modal.Header closeButton>
           <Modal.Title className={styles.save_as_draft_header_title}>
@@ -98,7 +98,7 @@ export default class AFViewStructure extends Component {
         </Modal.Header>
         <Modal.Body>
           <div>
-            <table>
+            <table className={stylesStructure.box}>
               <thead>
                 <tr>
                   <th>{translate('Latitude')}</th>
