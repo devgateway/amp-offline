@@ -416,8 +416,14 @@
   font-size: 1.2em;
   font-weight: bold;
   border-radius: 5px;
+  margin-top: 10px;
 }
 
 .structures_coordinates_table {
-  width: 100%;
+  width: 50%;
+}
+
+.structures_coordinates_value {
+  border: none;
+  font-weight: bold;
 }

@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Section from './Section';
 import Logger from '../../../../modules/util/LoggerManager';
 import * as AC from '../../../../utils/constants/ActivityConstants';
+import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 
 const logger = new Logger('AP structures');
@@ -39,29 +40,27 @@ class APStructures extends Component {
     if (isPoint) {
       const content = [];
       content.push(
-        <td>{buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LATITUDE]}`, true, null, false, structure)}</td>);
+        buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LATITUDE]}`, true, null, false, structure));
       content.push(
-        <td>{buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LONGITUDE]}`, true, null, false, structure)}</td>);
-      return (
-        <table className={styles.structures_coordinates_table}>
-          <tbody>
-            <tr>{content}</tr>
-          </tbody>
-        </table>);
+        buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LONGITUDE]}`, true, null, false, structure));
+      return content;
     } else {
       const content = [];
       structure[AC.STRUCTURES_COORDINATES].forEach(c => {
         content.push(
           <tr>
             <td>{buildSimpleField(`${[AC.STRUCTURES]}~${AC.STRUCTURES_COORDINATES}~${[AC.STRUCTURES_LATITUDE]}`,
-              true, null, false, c)}</td>
+              true, null, true, c, null, { noTitle: true, fieldValueClass: styles.structures_coordinates_value })}</td>
             <td>{buildSimpleField(`${[AC.STRUCTURES]}~${AC.STRUCTURES_COORDINATES}~${[AC.STRUCTURES_LONGITUDE]}`,
-              true, null, false, c)}</td>
+              true, null, true, c, null, { noTitle: true, fieldValueClass: styles.structures_coordinates_value })}</td>
           </tr>);
       });
       return (
         <table className={styles.structures_coordinates_table}>
           <tbody>
+            <thead>
+              <th><span className={styles.section_field_name}>{translate('Coordinates')}</span></th>
+            </thead>
             {content}
           </tbody>
         </table>);
