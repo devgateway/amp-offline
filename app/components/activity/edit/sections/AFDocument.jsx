@@ -137,12 +137,10 @@ class AFDocument extends Component {
   }
 
   getDocSizeToDisplay(doc) {
-    let size = doc[FILE_SIZE];
-    if (size) {
-      // AMP doesn't use GS format here (since that may not have digits)
-      size = Math.round(size * 1000) / 1000;
-      size = size.toFixed((size && (size < 1 ? 3 : 2)) || 1);
-    }
+    let size = doc[FILE_SIZE] || 0;
+    // AMP doesn't use GS format here (since that may not have digits)
+    size = Math.round(size * 1000) / 1000;
+    size = size.toFixed((size && (size < 1 ? 3 : 2)) || 1);
     return size;
   }
 
