@@ -12,7 +12,6 @@ import translate from '../../../utils/translate';
 import { FIELD_REQUIRED } from '../../../utils/constants/FieldPathConstants';
 import FileDialog from '../../../modules/util/FileDialog';
 import FileManager from '../../../modules/util/FileManager';
-import ResourceManager from '../../../modules/resource/ResourceManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
 import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../../utils/Utils';
@@ -43,6 +42,7 @@ export default class ResourceForm extends Component {
     updatePendingWebResource: PropTypes.func.isRequired,
     updatePendingDocResource: PropTypes.func.isRequired,
     prepareNewResourceForSave: PropTypes.func.isRequired,
+    uploadFileToPendingResourceAsync: PropTypes.func.isRequired,
   };
 
   static childContextTypes = {
@@ -58,6 +58,9 @@ export default class ResourceForm extends Component {
     logger.debug('constructor');
     this.isDoc = props.type === RC.TYPE_DOC_RESOURCE;
     this.updateFunc = this.isDoc ? props.updatePendingDocResource : props.updatePendingWebResource;
+    this.state = {
+      uploadingSize: null,
+    };
   }
 
   getChildContext() {
@@ -73,6 +76,12 @@ export default class ResourceForm extends Component {
 
   componentDidMount() {
     this.updateFunc(this.props.resource);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.uploadingSize && !nextProps.resourceReducer.isFileUploading) {
+      this.onUploadComplete();
+    }
   }
 
   onAdd() {
@@ -119,12 +128,18 @@ export default class ResourceForm extends Component {
       if ((maxSizeMB * 1024 * 1024) < size) {
         return alert(translate('FileSizeLimitExceeded').replace('{size}', maxSizeMB));
       }
-      const { resource } = this.props;
-      ResourceManager.uploadFileToHydratedResource(resource, srcPath);
-      resource[RC.FILE_SIZE] = Utils.simplifyDataSize(size, 'MB').value;
-      this.validate();
-      this.updateFunc(resource);
+      this.setState({ uploadingSize: size });
+      this.props.uploadFileToPendingResourceAsync(srcPath);
     }
+  }
+
+  onUploadComplete() {
+    const { resource } = this.props;
+    const { isFileUploaded } = this.props.resourceReducer;
+    resource[RC.FILE_SIZE] = isFileUploaded ? Utils.simplifyDataSize(this.state.uploadingSize, 'MB').value : 0;
+    this.validate();
+    this.setState({ uploadingSize: null });
+    this.updateFunc(resource);
   }
 
   getLink() {
@@ -137,18 +152,24 @@ export default class ResourceForm extends Component {
 
   getFileUpload() {
     const { resource } = this.props;
+    const { isFileUploading, uploadError } = this.props.resourceReducer;
+    const { uploadingSize } = this.state;
+    // following AMP message format
+    const uploadingMessage = isFileUploading && `${translate('FileUploading')} ${uploadingSize} bytes`;
     const fileNameOrMsg = resource[RC.FILE_NAME] || translate('No file chosen');
-    const content = resource[RC.FILE_NAME] && resource[RC.CONTENT_ID];
+    const content = !uploadError && resource[RC.FILE_NAME] && resource[RC.CONTENT_ID];
     const size = resource[RC.FILE_SIZE] * 1024 * 1024;
     const uploadConfirm = content && `File '${fileNameOrMsg}' ${translate('FileUploaded')} '${size}' bytes`;
+    const uploadFailed = uploadError && translate('FileUploadFailed');
+    const uploadStatusMsg = uploadingMessage || uploadFailed || uploadConfirm;
     return (
       <Col lg={CS} md={CS}>
         <AFField fieldPath={RC.FILE_NAME} customLabel={'File'} parent={resource} type={Types.CUSTOM} >
-          <Button onClick={this.onFileUpload.bind(this)}>
+          <Button onClick={this.onFileUpload.bind(this)} disabled={isFileUploading}>
             {translate('Choose file')}
           </Button>
-          <span>{fileNameOrMsg}</span>
-          {uploadConfirm && <div>{uploadConfirm}</div>}
+          <span hidden={isFileUploading}>{fileNameOrMsg}</span>
+          {uploadStatusMsg && <div>{uploadStatusMsg}</div>}
         </AFField>
       </Col>
     );
@@ -156,6 +177,7 @@ export default class ResourceForm extends Component {
 
   render() {
     const { resource } = this.props;
+    const { isFileUploading } = this.props.resourceReducer;
     return (
       <FormGroup>
         <Grid>
@@ -181,10 +203,10 @@ export default class ResourceForm extends Component {
           <Row key="action-buttons">
             <Col lg={2 * CS} md={2 * CS}>
               <ButtonToolbar>
-                <Button key="add" bsStyle="success" onClick={this.onAdd.bind(this)}>
+                <Button key="add" bsStyle="success" onClick={this.onAdd.bind(this)} disabled={isFileUploading}>
                   {translate('Add')}
                 </Button>
-                <Button key="cancel" bsStyle="success" onClick={this.onCancel.bind(this)}>
+                <Button key="cancel" bsStyle="success" onClick={this.onCancel.bind(this)} disabled={isFileUploading}>
                   {translate('Cancel')}
                 </Button>
               </ButtonToolbar>

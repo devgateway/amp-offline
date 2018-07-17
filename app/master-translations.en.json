@@ -375,5 +375,7 @@
   "Choose file": "Choose file",
   "No file chosen": "No file chosen",
   "FileUploaded": "was uploaded, with size",
-  "FileSizeLimitExceeded": "The file size limit is {size} MB. This file exceeds the limit."
+  "FileSizeLimitExceeded": "The file size limit is {size} MB. This file exceeds the limit.",
+  "FileUploading": "Upload started, please wait ...",
+  "FileUploadFailed": "Upload failed! Please try again."
 }

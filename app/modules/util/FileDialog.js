@@ -45,7 +45,7 @@ const FileDialog = {
    * @return {string[]} file paths
    */
   openDialog(options = {}) {
-    const files = DIALOG.showOpenDialog(options);
+    const files = DIALOG.showOpenDialog(options) || [];
     if (!files.length) {
       logger.warn('No file(s) selected');
     }
