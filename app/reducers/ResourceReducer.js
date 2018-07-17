@@ -2,6 +2,9 @@ import Logger from '../modules/util/LoggerManager';
 import {
   PENDING_RESOURCE_DOC_UPDATED,
   PENDING_RESOURCE_WEB_UPDATED,
+  RESOURCE_FILE_UPLOAD_FULFILLED,
+  RESOURCE_FILE_UPLOAD_PENDING,
+  RESOURCE_FILE_UPLOAD_REJECTED,
   RESOURCE_MANAGERS_FULFILLED,
   RESOURCE_MANAGERS_PENDING,
   RESOURCE_MANAGERS_REJECTED,
@@ -23,7 +26,10 @@ const defaultState = {
   isResourcesLoaded: false,
   isResourceSaving: false,
   isResourcesSaved: false,
+  isFileUploading: false,
+  isFileUploaded: false,
   saveError: null,
+  uploadError: null,
   isResourceManagersLoading: false,
   isResourceManagersLoaded: false,
   resourcesError: null,
@@ -91,6 +97,12 @@ const resourceReducer = (state = defaultState, action: Object) => {
       return { ...state, pendingWebResource: action.actionData };
     case PENDING_RESOURCE_DOC_UPDATED:
       return { ...state, pendingDocResource: action.actionData };
+    case RESOURCE_FILE_UPLOAD_PENDING:
+      return { ...state, isFileUploading: true, isFileUploaded: false, uploadError: null };
+    case RESOURCE_FILE_UPLOAD_FULFILLED:
+      return { ...state, isFileUploading: false, isFileUploaded: true };
+    case RESOURCE_FILE_UPLOAD_REJECTED:
+      return { ...state, isFileUploading: false, uploadError: action.payload };
     default:
       return state;
   }

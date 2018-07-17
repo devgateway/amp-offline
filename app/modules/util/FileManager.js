@@ -186,6 +186,20 @@ const FileManager = {
   },
 
   /**
+   * Copies asynchronously a file from a full path to the relative path (specified as parts if needed)
+   * @param fromPath full source path
+   * @param toPathParts relative path parts of the destination
+   * @return {Promise}
+   */
+  copyDataFileAsync(fromPath, ...toPathParts) {
+    const toPath = this.getFullPath(...toPathParts);
+    return new Promise((resolve, reject) => fs.copy(fromPath, toPath, err => {
+      if (err) reject(err);
+      resolve();
+    }));
+  },
+
+  /**
    * Copies synchronously a file from a full path to another full path
    * @param fromPath full source path
    * @param toPath full destination path

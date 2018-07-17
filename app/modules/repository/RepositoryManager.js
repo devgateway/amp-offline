@@ -38,13 +38,17 @@ const RepositoryManager = {
   /**
    * Stores a local file to the repository directory
    * @param srcFilePath
+   * @param sync if to copy the file synchronously or provide a promise
    * @return the content metadata
    */
-  storeLocalFileToRepository(srcFilePath) {
+  storeLocalFileToRepository(srcFilePath, sync) {
     this.init(false);
     const content = this._buildContent(srcFilePath);
-    FileManager.copyDataFileSync(srcFilePath, REPOSITORY_DIR, content[PATH]);
-    return content;
+    if (sync) {
+      FileManager.copyDataFileSync(srcFilePath, REPOSITORY_DIR, content[PATH]);
+      return content;
+    }
+    return FileManager.copyDataFileAsync(srcFilePath, REPOSITORY_DIR, content[PATH]).then(() => content);
   },
 
   _buildContent(srcFilePath) {

@@ -41,6 +41,10 @@ export const RESOURCE_MANAGERS_REJECTED = 'RESOURCE_MANAGERS_REJECTED';
 export const RESOURCES_UNLOADED = 'RESOURCES_UNLOADED';
 export const PENDING_RESOURCE_WEB_UPDATED = 'PENDING_RESOURCE_WEB_UPDATED';
 export const PENDING_RESOURCE_DOC_UPDATED = 'PENDING_RESOURCE_DOC_UPDATED';
+export const RESOURCE_FILE_UPLOAD = 'RESOURCE_FILE_UPLOAD';
+export const RESOURCE_FILE_UPLOAD_PENDING = 'RESOURCE_FILE_UPLOAD_PENDING';
+export const RESOURCE_FILE_UPLOAD_FULFILLED = 'RESOURCE_FILE_UPLOAD_FULFILLED';
+export const RESOURCE_FILE_UPLOAD_REJECTED = 'RESOURCE_FILE_UPLOAD_REJECTED';
 
 
 const logger = new Logger('ResourceAction');
@@ -98,6 +102,14 @@ export const updatePendingDocResource = (resource) => (dispatch) => dispatch({
   type: PENDING_RESOURCE_DOC_UPDATED,
   actionData: resource
 });
+
+export const uploadFileToPendingResourceAsync = (srcFile) => (dispatch, ownProps) => {
+  const resource = ownProps().resourceReducer.pendingDocResource;
+  return dispatch({
+    type: RESOURCE_FILE_UPLOAD,
+    payload: ResourceManager.uploadFileToHydratedResource(resource, srcFile)
+  });
+};
 
 export const configureResourceManagers = () => (dispatch, ownProps) => dispatch({
   type: RESOURCE_MANAGERS,

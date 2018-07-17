@@ -23,7 +23,7 @@ const ResourceManager = {
     logger.log('saveOrUpdateResource');
     if (srcFilePath) {
       RepositoryManager.init(false);
-      const content = RepositoryManager.storeLocalFileToRepository(srcFilePath);
+      const content = RepositoryManager.storeLocalFileToRepository(srcFilePath, true);
       resource[FILE_NAME] = FileManager.basename(srcFilePath);
       resource[CONTENT_ID] = content.id;
       return RepositoryHelper.saveOrUpdateContent(content)
@@ -33,17 +33,23 @@ const ResourceManager = {
   },
 
   /**
-   * Uploads a file to a hydrated resource, by storing the content hydrated as well. No DB calls are done.
+   * Uploads async a file to a hydrated resource, by storing the content hydrated as well. No DB calls are done.
    * @param resource the hydrated resource
    * @param srcFilePath the file to store
+   * @return {Promise}
    */
   uploadFileToHydratedResource(resource, srcFilePath) {
     if (resource && srcFilePath) {
       RepositoryManager.init(false);
-      const content = RepositoryManager.storeLocalFileToRepository(srcFilePath);
-      resource[FILE_NAME] = FileManager.basename(srcFilePath);
-      resource[CONTENT_ID] = content;
+      resource[CONTENT_ID] = null;
+      return RepositoryManager.storeLocalFileToRepository(srcFilePath, false)
+        .then(content => {
+          resource[FILE_NAME] = FileManager.basename(srcFilePath);
+          resource[CONTENT_ID] = content;
+          return content;
+        });
     }
+    return Promise.resolve();
   },
 
   /**
