@@ -28,6 +28,22 @@ class AFStructures extends Component {
     activity: PropTypes.object.isRequired
   };
 
+  static detectShapePoint(structure) {
+    let isPoint = false;
+    if (!structure[AC.STRUCTURES_SHAPE]) {
+      if (!structure[AC.STRUCTURES_LATITUDE] || !structure[AC.STRUCTURES_LONGITUDE]) {
+        isPoint = false;
+      } else {
+        isPoint = true;
+      }
+    } else if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+      isPoint = true;
+    } else {
+      isPoint = false;
+    }
+    return isPoint;
+  }
+
   static generateDataRow(structure) {
     const content = [];
     content.push(<Col md={3} lg={3} key={Math.random()}>
@@ -36,7 +52,7 @@ class AFStructures extends Component {
     content.push(<Col md={3} lg={3} key={Math.random()}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_DESCRIPTION}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
-    if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+    if (AFStructures.detectShapePoint(structure)) {
       content.push(<Col md={3} lg={3} key={Math.random()}>
         <AFField
           fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.NUMBER}
@@ -85,8 +101,7 @@ class AFStructures extends Component {
         bsStyle="primary" className={afStyles.button}
         onClick={this.openMap.bind(this, structure)}>{translate('Map')}
       </Button>
-      {(structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON
-        || structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYLINE)
+      {!AFStructures.detectShapePoint(structure)
         ? <Button
           bsStyle="primary" className={afStyles.button}
           onClick={this.handleViewCoordinates.bind(this, structure)}>{translate('View')}
@@ -111,7 +126,7 @@ class AFStructures extends Component {
         currentPoint: null,
         currentPolygon: null
       });
-    } else if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+    } else if (AFStructures.detectShapePoint(structure)) {
       this.setState({
         showMapDialog: true,
         currentPoint: {
@@ -158,7 +173,7 @@ class AFStructures extends Component {
       if (index > -1) {
         newStructures.splice(index, 1);
       }
-      if (l.structureData[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+      if (AFStructures.detectShapePoint(l.structureData)) {
         newStructures.push({
           [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
