@@ -146,6 +146,7 @@ export const STRUCTURES_LNG = 'lng';
 export const STRUCTURES_SHAPE = 'shape';
 export const STRUCTURES_POINT = 'Point';
 export const STRUCTURES_POLYGON = 'Polygon';
+export const STRUCTURES_POLYLINE = 'Polyline';
 export const STRUCTURES_COORDINATES = 'coordinates';
 export const COMPONENT_TYPE = 'component_type';
 export const COMPONENT_TITLE = 'component_title';

@@ -85,7 +85,8 @@ class AFStructures extends Component {
         bsStyle="primary" className={afStyles.button}
         onClick={this.openMap.bind(this, structure)}>{translate('Map')}
       </Button>
-      {structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON
+      {(structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON
+        || structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYLINE)
         ? <Button
           bsStyle="primary" className={afStyles.button}
           onClick={this.handleViewCoordinates.bind(this, structure)}>{translate('View')}
