@@ -1,6 +1,6 @@
 import RepositoryManager from '../repository/RepositoryManager';
 import FileManager from '../util/FileManager';
-import { CONTENT_ID, FILE_NAME, ORPHAN } from '../../utils/constants/ResourceConstants';
+import { CONTENT_ID, CONTENT_TYPE, FILE_NAME, FILE_SIZE, ORPHAN } from '../../utils/constants/ResourceConstants';
 import RepositoryHelper from '../helpers/RepositoryHelper';
 import ResourceHelper from '../helpers/ResourceHelper';
 import * as Utils from '../../utils/Utils';
@@ -41,11 +41,14 @@ const ResourceManager = {
   uploadFileToHydratedResource(resource, srcFilePath) {
     if (resource && srcFilePath) {
       RepositoryManager.init(false);
-      resource[CONTENT_ID] = null;
+      [CONTENT_ID, FILE_NAME, FILE_SIZE, CONTENT_TYPE].forEach(field => (resource[field] = null));
       return RepositoryManager.storeLocalFileToRepository(srcFilePath, false)
         .then(content => {
+          const size = FileManager.statSyncFullPath(srcFilePath).size;
           resource[FILE_NAME] = FileManager.basename(srcFilePath);
           resource[CONTENT_ID] = content;
+          resource[CONTENT_TYPE] = FileManager.contentType(srcFilePath);
+          resource[FILE_SIZE] = Utils.simplifyDataSize(size, 'MB').value;
           return content;
         });
     }

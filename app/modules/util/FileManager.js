@@ -1,9 +1,13 @@
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import mimeTypes from 'mime-types';
+import readChunk from 'read-chunk';
 import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
+
+const fileType = require('file-type');
 
 const app = ELECTRON_APP;
 
@@ -249,6 +253,28 @@ const FileManager = {
     if (fs.existsSync(fullPath)) {
       return fs.statSync(fullPath);
     }
+  },
+
+  /**
+   * Detects actual mime type based on binary file, with fallback to file extension and lastly to octet-stream
+   * @param fullPath
+   * @return {string}
+   */
+  mimeType(fullPath) {
+    const buffer = readChunk.sync(fullPath, 0, 4100);
+    const fType = fileType(buffer);
+    return (fType && fType.mime) || mimeTypes.lookup(path.extname(fullPath)) || 'application/octet-stream';
+  },
+
+  /**
+   * Detects content type including actual mime based on binary file if possible
+   * @param fullPath
+   * @return {string}
+   */
+  contentType(fullPath) {
+    const mime = this.mimeType(fullPath);
+    const charset = mimeTypes.charset(mime) || 'utf8';
+    return `${mime}; charset=${charset}`;
   },
 
   /**

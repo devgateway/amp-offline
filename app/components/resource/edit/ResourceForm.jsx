@@ -121,7 +121,6 @@ export default class ResourceForm extends Component {
 
   onFileUpload() {
     const srcPath = FileDialog.openSingleFileDialog();
-    // TODO find mime type
     if (srcPath) {
       const maxSizeMB = getMaxSizeMB();
       const { size } = FileManager.statSyncFullPath(srcPath);
@@ -135,8 +134,6 @@ export default class ResourceForm extends Component {
 
   onUploadComplete() {
     const { resource } = this.props;
-    const { isFileUploaded } = this.props.resourceReducer;
-    resource[RC.FILE_SIZE] = isFileUploaded ? Utils.simplifyDataSize(this.state.uploadingSize, 'MB').value : 0;
     this.validate();
     this.setState({ uploadingSize: null });
     this.updateFunc(resource);
