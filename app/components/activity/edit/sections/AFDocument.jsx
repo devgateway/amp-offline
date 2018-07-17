@@ -236,10 +236,13 @@ class AFDocument extends Component {
 
   renderDocList() {
     const headers = this.getDocListHeaders();
+    const options = {
+      withoutNoDataText: true,
+    };
 
     return (
       <BootstrapTable
-        data={this.state.docs} hover
+        data={this.state.docs} options={options} hover
         headerContainerClass={docStyles.headerContainer} tableContainerClass={docStyles.listContainer} >
         {headers}
       </BootstrapTable>

@@ -15,6 +15,7 @@ import FileManager from '../../../modules/util/FileManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
 import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
 import * as URLUtils from '../../../utils/URLUtils';
+import * as resStyles from './ResourceForm.css';
 
 
 const logger = new Logger('ResourceForm');
@@ -163,12 +164,12 @@ export default class ResourceForm extends Component {
     const uploadFailed = uploadError && translate('FileUploadFailed');
     const uploadStatusMsg = uploadingMessage || uploadFailed || uploadConfirm;
     return (
-      <Col lg={CS} md={CS}>
+      <Col lg={2 * CS} md={2 * CS}>
         <AFField fieldPath={RC.FILE_NAME} customLabel={'File'} parent={resource} type={Types.CUSTOM} >
           <Button onClick={this.onFileUpload.bind(this)} disabled={isFileUploading}>
             {translate('Choose file')}
           </Button>
-          <span hidden={isFileUploading}>{fileNameOrMsg}</span>
+          <span hidden={isFileUploading} className={resStyles.fileName}>{fileNameOrMsg}</span>
           {uploadStatusMsg && <div>{uploadStatusMsg}</div>}
         </AFField>
       </Col>
