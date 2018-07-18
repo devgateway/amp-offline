@@ -58,8 +58,8 @@ export default class AFMapWindow extends Component {
     const maxZoom = 11;
     const lat = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LATITUDE));
     const lng = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LONGITUDE));
-    const cp = 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-
+    const cp = translate('mapCR')
+      .replace('%basemap%', '<a href=\'http://openstreetmap.org/copyright\' target=\'_blank\'>OpenStreetMap</a>');
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
     const map = L.map(node).setView([lat, lng], minZoom);
 
