@@ -2,6 +2,7 @@ import Logger from '../modules/util/LoggerManager';
 import {
   PENDING_RESOURCE_DOC_UPDATED,
   PENDING_RESOURCE_WEB_UPDATED,
+  RESOURCE_CREATED,
   RESOURCE_FILE_UPLOAD_FULFILLED,
   RESOURCE_FILE_UPLOAD_PENDING,
   RESOURCE_FILE_UPLOAD_REJECTED,
@@ -18,6 +19,7 @@ import {
 } from '../actions/ResourceAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
 import FieldsManager from '../modules/field/FieldsManager';
+import { UUID } from '../utils/constants/ResourceConstants';
 
 const logger = new Logger('ResourceReducer');
 
@@ -56,6 +58,16 @@ const resourceReducer = (state = defaultState, action: Object) => {
       };
     case RESOURCES_LOAD_REJECTED:
       return { ...state, isResourcesLoading: false, isResourcesLoaded: false, resourcesError: action.payload };
+    case RESOURCE_CREATED: {
+      const resource = action.actionData;
+      return {
+        ...state,
+        resourcesByUuids: {
+          ...state.resourcesByUuids,
+          [resource[UUID]]: resource
+        }
+      };
+    }
     case RESOURCE_MANAGERS_PENDING:
       return {
         ...state,

@@ -30,6 +30,7 @@ export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
 export const RESOURCES_LOAD_FULFILLED = 'RESOURCES_LOAD_FULFILLED';
 export const RESOURCES_LOAD_REJECTED = 'RESOURCES_LOAD_REJECTED';
+export const RESOURCE_CREATED = 'RESOURCE_CREATED';
 export const RESOURCES_SAVE = 'RESOURCES_SAVE';
 export const RESOURCES_SAVE_PENDING = 'RESOURCES_SAVE_PENDING';
 export const RESOURCES_SAVE_FULFILLED = 'RESOURCES_SAVE_FULFILLED';
@@ -71,6 +72,11 @@ export const loadHydratedResources = (uuids) => (dispatch, ownProps) => dispatch
   type: RESOURCES_LOAD,
   payload: _hydrateResources(uuids, ownProps().userReducer.teamMember.id,
     ownProps().resourceReducer.resourceFieldsManager, ownProps().activityReducer.activity)
+});
+
+export const loadNewResource = (resource) => (dispatch) => dispatch({
+  type: RESOURCE_CREATED,
+  actionData: resource
 });
 
 export const unloadResources = () => (dispatch) => dispatch({ type: RESOURCES_UNLOADED });
@@ -163,12 +169,18 @@ const _getHydratedActivityResources = (activity, resourcesByUuid) =>
 
 const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
   const rh = new ResourceHydrator(fieldsDef);
+  let contents = resources.map(r => r[CONTENT_ID]).filter(c => c);
   _cleanupTmpFields(resources);
   return rh.dehydrateEntities(resources)
     .then(() => ResourceHelper.findResourcesByUuids(resources.map(r => r[UUID])))
     .then(Utils.toMapByKey)
     .then(rMap => _getOnlyNewResources(resources, rMap, teamId, email))
-    .then(ResourceHelper.saveOrUpdateResourceCollection);
+    .then(ResourceHelper.saveOrUpdateResourceCollection)
+    .then(rs => {
+      const cIds = new Set(Utils.flattenToListByKey(rs, CONTENT_ID).filter(cId => cId));
+      contents = contents.filter(c => cIds.has(c.id));
+      return contents.length ? RepositoryHelper.saveOrUpdateContentCollection(contents) : contents;
+    });
 };
 
 const _cleanupTmpFields = (resources) => {
