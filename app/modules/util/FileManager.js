@@ -69,11 +69,15 @@ const FileManager = {
    * @return {string}
    */
   getFullPath(...pathParts) {
-    return path.join(this.getDataPath(), pathParts.join('/'));
+    return this.joinPath(this.getDataPath(), ...pathParts);
   },
 
   joinPath(...pathParts) {
     return path.join(...pathParts);
+  },
+
+  splitPath(somePath) {
+    return somePath.split(path.sep);
   },
 
   basename(fromPath) {
@@ -232,6 +236,11 @@ const FileManager = {
     }
   },
 
+  rmdirSync(...pathParts) {
+    const fullPath = this.getFullPath(...pathParts);
+    fs.rmdirSync(fullPath);
+  },
+
   /**
    * Provides statistics synchronously
    * @param pathParts
@@ -288,8 +297,8 @@ const FileManager = {
 
   /**
    * Lists files from the folder synchronously
-   * @param full folder path
-   * @return {*}
+   * @param fullPath folder path
+   * @return {string[]}
    */
   readdirSyncFullPath(fullPath) {
     return fs.readdirSync(fullPath);

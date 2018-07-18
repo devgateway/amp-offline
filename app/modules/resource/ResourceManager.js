@@ -41,6 +41,17 @@ const ResourceManager = {
   uploadFileToHydratedResource(resource, srcFilePath) {
     if (resource && srcFilePath) {
       RepositoryManager.init(false);
+      // it is not possible to change a saved resource, hence this is a temporary content that will be replaced
+      const tmpContent = resource[CONTENT_ID];
+      if (tmpContent) {
+        try {
+          RepositoryManager.deleteFromRepository(tmpContent);
+        } catch (error) {
+          const tmpPath = RepositoryManager.getFullContentFilePath(tmpContent);
+          logger.error(`Could not properly cleanup temporary content or its folders (${tmpPath}): "${error}". 
+          A new atempt will be done later by the cleanup task.`);
+        }
+      }
       [CONTENT_ID, FILE_NAME, FILE_SIZE, CONTENT_TYPE].forEach(field => (resource[field] = null));
       return RepositoryManager.storeLocalFileToRepository(srcFilePath, false)
         .then(content => {

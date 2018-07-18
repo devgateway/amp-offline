@@ -96,8 +96,19 @@ const RepositoryManager = {
    * @param content the file metadata
    */
   deleteFromRepository(content) {
-    const fullFilePath = FileManager.getFullPath(REPOSITORY_DIR, this._getContentPath(content));
+    const relativePath = this._getContentPath(content);
+    const fullFilePath = FileManager.getFullPath(REPOSITORY_DIR, relativePath);
     FileManager.deleteFile(fullFilePath);
+
+    let dirsToCheck = FileManager.splitPath(relativePath).filter(p => p);
+    while (dirsToCheck && dirsToCheck.length > 1) {
+      dirsToCheck.pop();
+      if (FileManager.readdirSync(REPOSITORY_DIR, ...dirsToCheck).length) {
+        dirsToCheck = null;
+      } else {
+        FileManager.rmdirSync(REPOSITORY_DIR, ...dirsToCheck);
+      }
+    }
   },
 
   /**
