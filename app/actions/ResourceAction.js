@@ -59,7 +59,8 @@ export const deleteOrphanResources = () => {
   logger.log('deleteOrphanResources');
   const filter = Utils.toMap(ORPHAN, true);
   return RepositoryHelper.findAllContents(filter)
-    .then(contents => Promise.all(contents.map(ResourceManager.deleteContent)));
+    .then(contents => Promise.all(contents.map(ResourceManager.deleteContent)))
+    .then(ResourceManager.cleanupUnreferencedContent);
 };
 
 export const loadHydratedResourcesForActivity = (activity) => (dispatch, ownProps) => {

@@ -1,6 +1,13 @@
 import RepositoryManager from '../repository/RepositoryManager';
 import FileManager from '../util/FileManager';
-import { CONTENT_ID, CONTENT_TYPE, FILE_NAME, FILE_SIZE, ORPHAN } from '../../utils/constants/ResourceConstants';
+import {
+  CONTENT_ID,
+  CONTENT_TYPE,
+  FILE_NAME,
+  FILE_SIZE,
+  ORPHAN,
+  PATH,
+} from '../../utils/constants/ResourceConstants';
 import RepositoryHelper from '../helpers/RepositoryHelper';
 import ResourceHelper from '../helpers/ResourceHelper';
 import * as Utils from '../../utils/Utils';
@@ -39,18 +46,13 @@ const ResourceManager = {
    * @return {Promise}
    */
   uploadFileToHydratedResource(resource, srcFilePath) {
+    logger.info('uploadFileToHydratedResource');
     if (resource && srcFilePath) {
       RepositoryManager.init(false);
       // it is not possible to change a saved resource, hence this is a temporary content that will be replaced
       const tmpContent = resource[CONTENT_ID];
       if (tmpContent) {
-        try {
-          RepositoryManager.deleteFromRepository(tmpContent);
-        } catch (error) {
-          const tmpPath = RepositoryManager.getFullContentFilePath(tmpContent);
-          logger.error(`Could not properly cleanup temporary content or its folders (${tmpPath}): "${error}". 
-          A new atempt will be done later by the cleanup task.`);
-        }
+        this._attemptToDeleteContent(tmpContent);
       }
       [CONTENT_ID, FILE_NAME, FILE_SIZE, CONTENT_TYPE].forEach(field => (resource[field] = null));
       return RepositoryManager.storeLocalFileToRepository(srcFilePath, false)
@@ -64,6 +66,54 @@ const ResourceManager = {
         });
     }
     return Promise.resolve();
+  },
+
+  _attemptToDeleteContent(content) {
+    logger.info('_attemptToDeleteContent');
+    try {
+      RepositoryManager.deleteFromRepository(content);
+    } catch (error) {
+      const tmpPath = RepositoryManager.getFullContentFilePath(content);
+      logger.error(`Could not properly cleanup temporary content or its folders (${tmpPath}): "${error}". 
+          A new atempt will be done later by the cleanup task.`);
+    }
+  },
+
+  /**
+   * 1. Deletes content that is not referenced in resources
+   * 2. Deletes files and folders that are not referenced in used content
+   * @return {Promise}
+   */
+  cleanupUnreferencedContent() {
+    logger.info('cleanupUnreferencedContent');
+    return Promise.all([
+      ResourceHelper.findAllResources(Utils.toMap(CONTENT_ID, { $exists: true }), Utils.toMap(CONTENT_ID, 1)),
+      RepositoryHelper.findAllContents()
+    ]).then(([resources, contents]) => {
+      const usedCIds = new Set(Utils.flattenToListByKey(resources, CONTENT_ID));
+      const usedTree = new Map();
+      const contentsToDelete = [];
+      contents.forEach(c => {
+        if (usedCIds.has(c.id)) {
+          ResourceManager._addUsedPathsTree(usedTree, c[PATH]);
+        } else {
+          contentsToDelete.push(c);
+        }
+      });
+      return Promise.all(contentsToDelete.map(c => ResourceManager.deleteContent(c)))
+        .then(() => RepositoryManager.cleanupUnusedContent(usedTree));
+    });
+  },
+
+  _addUsedPathsTree(usedTree, cPath) {
+    const pathParts = FileManager.splitPath(cPath).filter(p => p);
+    let subTree = usedTree;
+    pathParts.forEach(p => {
+      if (!subTree.has(p)) {
+        subTree.set(p, new Map());
+      }
+      subTree = subTree.get(p);
+    });
   },
 
   /**

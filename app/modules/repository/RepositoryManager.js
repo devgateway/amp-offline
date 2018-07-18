@@ -5,6 +5,8 @@ import Logger from '../util/LoggerManager';
 
 const logger = new Logger('RepositoryManager');
 
+const DO_NOT_DELETE = ['.gitignore'];
+
 /**
  * Repository Manager
  *
@@ -33,6 +35,46 @@ const RepositoryManager = {
         throw error;
       }
     }
+  },
+
+  /**
+   * Deletes files and directories that are not found under the specified tree of used content paths
+   * @param usedPathsTree use tree of content paths
+   */
+  cleanupUnusedContent(usedPathsTree) {
+    this._didCleanUp(usedPathsTree);
+  },
+
+  _didCleanUp(usedTree, ...pathParts) {
+    const currentPath = (pathParts && pathParts.length && pathParts[pathParts.length - 1]) || null;
+    let canDelete = currentPath && (!usedTree || !usedTree.has(currentPath)) && !DO_NOT_DELETE.includes(currentPath);
+    try {
+      const fullPath = FileManager.getFullPath(REPOSITORY_DIR, ...pathParts);
+      const stat = FileManager.statSyncFullPath(fullPath);
+      if (!stat) {
+        logger.warn(`Path not found: ${fullPath}`);
+      } if (stat.isFile()) {
+        // FILE
+        if (canDelete) {
+          FileManager.deleteFile(fullPath);
+        }
+      } else {
+        // DIR
+        const filesOrDirs = FileManager.readdirSync(REPOSITORY_DIR, ...pathParts);
+        let isEmpty = !filesOrDirs.length;
+        if (filesOrDirs.length) {
+          const subTree = currentPath ? ((usedTree && usedTree.get(currentPath)) || null) : usedTree;
+          isEmpty = !filesOrDirs.filter(fileOrDir => !this._didCleanUp(subTree, ...pathParts, fileOrDir)).length;
+        }
+        if (canDelete && isEmpty) {
+          FileManager.rmdirSync(REPOSITORY_DIR, ...pathParts);
+        }
+      }
+    } catch (error) {
+      logger.error(error);
+      canDelete = false;
+    }
+    return canDelete;
   },
 
   /**
