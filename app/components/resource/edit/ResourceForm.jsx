@@ -20,7 +20,7 @@ import * as resStyles from './ResourceForm.css';
 
 const logger = new Logger('ResourceForm');
 // columns size
-const CS = 4;
+const CS = 6;
 const getMaxSizeMB = () => GlobalSettingsManager.getSettingByKey(GS_MAXIMUM_FILE_SIZE_MB);
 
 /**
@@ -181,7 +181,7 @@ export default class ResourceForm extends Component {
     const { isFileUploading } = this.props.resourceReducer;
     return (
       <FormGroup>
-        <Grid>
+        <Grid componentClass={resStyles.resourceContainer}>
           <Row key="main-def">
             <Col lg={CS} md={CS}>
               <AFField fieldPath={RC.TITLE} parent={resource} type={Types.INPUT_TYPE} />
