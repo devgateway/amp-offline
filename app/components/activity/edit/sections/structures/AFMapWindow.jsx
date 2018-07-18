@@ -131,7 +131,8 @@ export default class AFMapWindow extends Component {
     const maxZoom = 11;
     const lat = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LATITUDE));
     const lng = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LONGITUDE));
-    const cp = 'Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    const cp = translate('mapCR')
+      .replace('%basemap%', '<a href=\'http://openstreetmap.org/copyright\' target=\'_blank\'>OpenStreetMap</a>');
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
     const map = L.map(node, { zoomControl: false }).setView([lat, lng], minZoom);
     let tilesPath = '';
@@ -139,6 +140,7 @@ export default class AFMapWindow extends Component {
     if (process.env.NODE_ENV === 'production') {
       tilesPath = `file://${path.join(FileManager.getDataPath(), tilesFiles)}`;
     } else {
+      // TODO: After the code for Resources is merged, use a function from FileManager for development too.
       tilesPath = `file://${global.__dirname}/../${tilesFiles}`;
     }
     L.tileLayer(tilesPath, {

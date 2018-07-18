@@ -18,5 +18,6 @@
   "urlNotWorking": "AMP Server is unreachable or wrong URL.",
   "noConnectionToRegistry": "AMP Registry app is unreachable. You can chose 'Other' option to set the URL directly or try to reload the countries options list.",
   "customHint": "Please enter AMP application URL. You can copy it from the AMP Client download page. Please refer to User Manual for more help.",
-  "timeoutError": "Connection timeout. Please check your internet connection."
+  "timeoutError": "Connection timeout. Please check your internet connection.",
+  "loadingMessage": "Loading..."
 }
