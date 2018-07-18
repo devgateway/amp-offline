@@ -127,8 +127,10 @@ export function saveActivity(activity) {
       payload: _saveActivity(activity, ownProps().userReducer.teamMember,
         ownProps().activityReducer.activityFieldsManager.fieldsDef, dispatch)
         .then((savedActivity) =>
-          ContactAction.dehydrateAndSaveActivityContacts(savedActivity)(dispatch, ownProps)
-           .then(() => savedActivity)
+          Promise.all([
+            ContactAction.dehydrateAndSaveActivityContacts(savedActivity)(dispatch, ownProps),
+            ResourceAction.dehydrateAndSaveActivityResources(activity)(dispatch, ownProps)
+          ]).then(() => savedActivity)
         )
     });
   };
@@ -181,7 +183,7 @@ const _getActivity = (activityId, teamMemberId) => {
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
-  return dehydrator.dehydrateEntity(activity).then(dehydratedActivity => {
+  return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
     const modifiedOn = DateUtils.getISODateForAPI();
     if (!dehydratedActivity[TEAM]) {
       dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];

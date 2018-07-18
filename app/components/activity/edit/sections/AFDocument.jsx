@@ -77,6 +77,7 @@ class AFDocument extends Component {
     resourceReducer: PropTypes.object.isRequired,
     updatePendingWebResource: PropTypes.func.isRequired,
     updatePendingDocResource: PropTypes.func.isRequired,
+    loadNewResource: PropTypes.func.isRequired,
   };
 
   constructor(props, context) {
@@ -111,6 +112,7 @@ class AFDocument extends Component {
       [DOCUMENT_TYPE]: RELATED_DOCUMENTS,
       [UUID]: resource,
     });
+    this.props.loadNewResource(resource);
     const newState = { docs: this.getDocuments() };
     if (resource[FILE_NAME]) {
       this.props.updatePendingDocResource(null);
