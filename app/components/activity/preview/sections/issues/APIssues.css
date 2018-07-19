@@ -1,5 +1,7 @@
 .issues {
   font-weight: bold;
+  display: list-item;
+  list-style-position: inside;
 }
 
 .nodata {

@@ -130,9 +130,22 @@ export const SOURCE_ROLE = 'source_role';
 export const AMP_FUNDING_ID = 'amp_funding_id';
 export const ISSUES = 'issues';
 export const ISSUE_DATE = 'issue_date';
+export const ISSUE_NAME = 'name';
 export const MEASURES = 'measures';
+export const MEASURE_NAME = 'name';
 export const MEASURE_DATE = 'measure_date';
 export const ACTORS = 'actors';
+export const ACTOR_NAME = 'name';
+export const STRUCTURES = 'structures';
+export const STRUCTURES_TITLE = 'title';
+export const STRUCTURES_DESCRIPTION = 'description';
+export const STRUCTURES_LATITUDE = 'latitude';
+export const STRUCTURES_LONGITUDE = 'longitude';
+export const STRUCTURES_SHAPE = 'shape';
+export const STRUCTURES_POINT = 'Point';
+export const STRUCTURES_POLYGON = 'Polygon';
+export const STRUCTURES_POLYLINE = 'Polyline';
+export const STRUCTURES_COORDINATES = 'coordinates';
 export const COMPONENT_TYPE = 'component_type';
 export const COMPONENT_TITLE = 'component_title';
 export const COMPONENT_FUNDING = 'funding';
@@ -213,6 +226,7 @@ export const AP_SECTION_IDS =
     },
     { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES },
     { key: 'APContact', hash: '#APContact', value: 'Contact Information', fmPath: FMC.ACTIVITY_CONTACT },
+    { key: 'APStructures', hash: '#APStructures', value: 'Structures', sectionPath: STRUCTURES },
     { key: 'APDocument', hash: '#APDocument', value: 'Related Documents', sectionPath: ACTIVITY_DOCUMENTS },
   ];
 

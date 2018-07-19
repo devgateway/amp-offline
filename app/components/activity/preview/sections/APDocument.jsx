@@ -75,6 +75,7 @@ class APDocument extends Component {
     const { resourceFieldsManager } = resourceReducer;
     const resData = this.getResourceUrlData(resource);
     const isAccessible = resData.url || resData.action;
+    const iconClass = (resData.url && docSyles.urlIcon) || (resData.action && docSyles.downloadIcon);
     const tooltip = translate('ClickToDownload');
     return (
       <div key={resource.id} className={[styles.box_table, styles.table_raw].join(' ')}>
@@ -87,7 +88,7 @@ class APDocument extends Component {
           {isAccessible &&
           <span key="download" className={docSyles.downloadIconContainer}>
             <ActionIcon
-              iconClassName={docSyles.downloadIcon} href={resData.url} onClick={resData.action} tooltip={tooltip} />
+              iconClassName={iconClass} href={resData.url} onClick={resData.action} tooltip={tooltip} />
           </span>
           }
         </div>
