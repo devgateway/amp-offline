@@ -52,7 +52,7 @@ const ResourceManager = {
       // it is not possible to change a saved resource, hence this is a temporary content that will be replaced
       const tmpContent = resource[CONTENT_ID];
       if (tmpContent) {
-        this._attemptToDeleteContent(tmpContent);
+        RepositoryManager.attemptToDeleteContent(tmpContent);
       }
       [CONTENT_ID, FILE_NAME, FILE_SIZE, CONTENT_TYPE].forEach(field => (resource[field] = null));
       return RepositoryManager.storeLocalFileToRepository(srcFilePath, false)
@@ -66,17 +66,6 @@ const ResourceManager = {
         });
     }
     return Promise.resolve();
-  },
-
-  _attemptToDeleteContent(content) {
-    logger.info('_attemptToDeleteContent');
-    try {
-      RepositoryManager.deleteFromRepository(content);
-    } catch (error) {
-      const tmpPath = RepositoryManager.getFullContentFilePath(content);
-      logger.error(`Could not properly cleanup temporary content or its folders (${tmpPath}): "${error}". 
-          A new atempt will be done later by the cleanup task.`);
-    }
   },
 
   /**

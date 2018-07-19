@@ -95,12 +95,12 @@ export function loadActivityForActivityForm(activityId) {
 }
 
 export function unloadActivity() {
-  return (dispatch) => {
+  return (dispatch, ownProps) => {
     dispatch({
       type: ACTIVITY_UNLOADED
     });
-    ContactAction.unloadContacts()(dispatch);
-    ResourceAction.unloadResources()(dispatch);
+    ContactAction.unloadContacts()(dispatch, ownProps);
+    ResourceAction.unloadResources()(dispatch, ownProps);
   };
 }
 

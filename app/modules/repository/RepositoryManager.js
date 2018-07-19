@@ -134,11 +134,29 @@ const RepositoryManager = {
   },
 
   /**
+   * Attempts to delete safely a content from repository files
+   * @param content
+   */
+  attemptToDeleteContent(content) {
+    logger.info('attemptToDeleteContent');
+    try {
+      RepositoryManager.deleteFromRepository(content);
+    } catch (error) {
+      const tmpPath = RepositoryManager.getFullContentFilePath(content);
+      logger.error(`Could not properly cleanup temporary content or its folders (${tmpPath}): "${error}". 
+          A new atempt will be done later by the cleanup task.`);
+    }
+  },
+
+  /**
    * Deletes a file from the repository
    * @param content the file metadata
    */
   deleteFromRepository(content) {
     const relativePath = this._getContentPath(content);
+    if (!relativePath) {
+      return;
+    }
     const fullFilePath = FileManager.getFullPath(REPOSITORY_DIR, relativePath);
     FileManager.deleteFile(fullFilePath);
 
@@ -160,7 +178,7 @@ const RepositoryManager = {
    * @private
    */
   _getContentPath(content: Object) {
-    return content[PATH];
+    return content && content[PATH];
   },
 
 };

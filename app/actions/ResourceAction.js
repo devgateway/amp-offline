@@ -30,6 +30,7 @@ import FileDialog from '../modules/util/FileDialog';
 import Notification from '../modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_RESOURCE } from '../utils/constants/ErrorConstants';
 import { addMessage } from './NotificationAction';
+import RepositoryManager from '../modules/repository/RepositoryManager';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -85,7 +86,12 @@ export const loadNewResource = (resource) => (dispatch) => dispatch({
   actionData: resource
 });
 
-export const unloadResources = () => (dispatch) => dispatch({ type: RESOURCES_UNLOADED });
+export const unloadResources = () => (dispatch, ownProps) => {
+  const { pendingDocResource } = ownProps().resourceReducer;
+  const content = pendingDocResource && pendingDocResource[CONTENT_ID];
+  RepositoryManager.attemptToDeleteContent(content);
+  dispatch({ type: RESOURCES_UNLOADED });
+};
 
 export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownProps) => dispatch({
   type: RESOURCES_SAVE,
