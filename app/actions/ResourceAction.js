@@ -1,5 +1,15 @@
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
-import { CREATOR_EMAIL, ORPHAN, UUID, TEAM, CONTENT_ID } from '../utils/constants/ResourceConstants';
+import {
+  CREATOR_EMAIL,
+  ORPHAN,
+  UUID,
+  TEAM,
+  CONTENT_ID,
+  PUBLIC,
+  PRIVATE,
+  CLIENT_ADDING_DATE,
+  CLIENT_YEAR_OF_PUBLICATION
+} from '../utils/constants/ResourceConstants';
 import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
 import ResourceManager from '../modules/resource/ResourceManager';
@@ -14,15 +24,19 @@ import EntityValidator from '../modules/field/EntityValidator';
 import ResourceHelper from '../modules/helpers/ResourceHelper';
 import { RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
+import DateUtils from '../utils/DateUtils';
+import FileManager from '../modules/util/FileManager';
+import FileDialog from '../modules/util/FileDialog';
+import Notification from '../modules/helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_RESOURCE } from '../utils/constants/ErrorConstants';
+import { addMessage } from './NotificationAction';
+import RepositoryManager from '../modules/repository/RepositoryManager';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
 export const RESOURCES_LOAD_FULFILLED = 'RESOURCES_LOAD_FULFILLED';
 export const RESOURCES_LOAD_REJECTED = 'RESOURCES_LOAD_REJECTED';
-export const RESOURCES_CONTENT_LOAD = 'RESOURCES_CONTENT_LOAD';
-export const RESOURCES_CONTENT_LOAD_PENDING = 'RESOURCES_CONTENT_LOAD_PENDING';
-export const RESOURCES_CONTENT_LOAD_FULFILLED = 'RESOURCES_CONTENT_LOAD_FULFILLED';
-export const RESOURCES_CONTENT_LOAD_REJECTED = 'RESOURCES_CONTENT_LOAD_REJECTED';
+export const RESOURCE_CREATED = 'RESOURCE_CREATED';
 export const RESOURCES_SAVE = 'RESOURCES_SAVE';
 export const RESOURCES_SAVE_PENDING = 'RESOURCES_SAVE_PENDING';
 export const RESOURCES_SAVE_FULFILLED = 'RESOURCES_SAVE_FULFILLED';
@@ -32,6 +46,12 @@ export const RESOURCE_MANAGERS_PENDING = 'RESOURCE_MANAGERS_PENDING';
 export const RESOURCE_MANAGERS_FULFILLED = 'RESOURCE_MANAGERS_FULFILLED';
 export const RESOURCE_MANAGERS_REJECTED = 'RESOURCE_MANAGERS_REJECTED';
 export const RESOURCES_UNLOADED = 'RESOURCES_UNLOADED';
+export const PENDING_RESOURCE_WEB_UPDATED = 'PENDING_RESOURCE_WEB_UPDATED';
+export const PENDING_RESOURCE_DOC_UPDATED = 'PENDING_RESOURCE_DOC_UPDATED';
+export const RESOURCE_FILE_UPLOAD = 'RESOURCE_FILE_UPLOAD';
+export const RESOURCE_FILE_UPLOAD_PENDING = 'RESOURCE_FILE_UPLOAD_PENDING';
+export const RESOURCE_FILE_UPLOAD_FULFILLED = 'RESOURCE_FILE_UPLOAD_FULFILLED';
+export const RESOURCE_FILE_UPLOAD_REJECTED = 'RESOURCE_FILE_UPLOAD_REJECTED';
 
 
 const logger = new Logger('ResourceAction');
@@ -45,15 +65,14 @@ export const deleteOrphanResources = () => {
   logger.log('deleteOrphanResources');
   const filter = Utils.toMap(ORPHAN, true);
   return RepositoryHelper.findAllContents(filter)
-    .then(contents => Promise.all(contents.map(ResourceManager.deleteContent)));
+    .then(contents => Promise.all(contents.map(ResourceManager.deleteContent)))
+    .then(ResourceManager.cleanupUnreferencedContent);
 };
 
 export const loadHydratedResourcesForActivity = (activity) => (dispatch, ownProps) => {
   const unhydratedIds = getActivityResourceUuids(activity);
   return configureResourceManagers()(dispatch, ownProps)
-    .then(() => loadHydratedResources(unhydratedIds)(dispatch, ownProps))
-    .then(() =>
-      loadContents(_getResourcesContentIds(ownProps().resourceReducer.resourcesByUuids))(dispatch, ownProps));
+    .then(() => loadHydratedResources(unhydratedIds)(dispatch, ownProps));
 };
 
 export const loadHydratedResources = (uuids) => (dispatch, ownProps) => dispatch({
@@ -62,12 +81,17 @@ export const loadHydratedResources = (uuids) => (dispatch, ownProps) => dispatch
     ownProps().resourceReducer.resourceFieldsManager, ownProps().activityReducer.activity)
 });
 
-export const loadContents = (ids) => (dispatch) => dispatch({
-  type: RESOURCES_CONTENT_LOAD,
-  payload: RepositoryHelper.findContentsByIds(ids).then(contents => _mapByField(contents, 'id'))
+export const loadNewResource = (resource) => (dispatch) => dispatch({
+  type: RESOURCE_CREATED,
+  actionData: resource
 });
 
-export const unloadResources = () => (dispatch) => dispatch({ type: RESOURCES_UNLOADED });
+export const unloadResources = () => (dispatch, ownProps) => {
+  const { pendingDocResource } = ownProps().resourceReducer;
+  const content = pendingDocResource && pendingDocResource[CONTENT_ID];
+  RepositoryManager.attemptToDeleteContent(content);
+  dispatch({ type: RESOURCES_UNLOADED });
+};
 
 export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownProps) => dispatch({
   type: RESOURCES_SAVE,
@@ -76,6 +100,34 @@ export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownPro
     ownProps().userReducer.teamMember[WORKSPACE_ID], ownProps().userReducer.userData.email,
     ownProps().resourceReducer.resourceFieldsManager.fieldsDef)
 });
+
+export const prepareNewResourceForSave = (resource) => (dispatch, ownProps) => {
+  const createdAt = new Date();
+  resource[CLIENT_ADDING_DATE] = DateUtils.getISODateForAPI(createdAt);
+  resource[CLIENT_YEAR_OF_PUBLICATION] = `${createdAt.getFullYear()}`;
+  resource[CREATOR_EMAIL] = ownProps().userReducer.userData.email;
+  resource[TEAM] = ownProps().userReducer.teamMember[WORKSPACE_ID];
+  resource[PRIVATE] = true;
+  resource[PUBLIC] = false;
+};
+
+export const updatePendingWebResource = (resource) => (dispatch) => dispatch({
+  type: PENDING_RESOURCE_WEB_UPDATED,
+  actionData: resource
+});
+
+export const updatePendingDocResource = (resource) => (dispatch) => dispatch({
+  type: PENDING_RESOURCE_DOC_UPDATED,
+  actionData: resource
+});
+
+export const uploadFileToPendingResourceAsync = (srcFile) => (dispatch, ownProps) => {
+  const resource = ownProps().resourceReducer.pendingDocResource;
+  return dispatch({
+    type: RESOURCE_FILE_UPLOAD,
+    payload: ResourceManager.uploadFileToHydratedResource(resource, srcFile)
+  });
+};
 
 export const configureResourceManagers = () => (dispatch, ownProps) => dispatch({
   type: RESOURCE_MANAGERS,
@@ -91,7 +143,7 @@ const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
 }));
 
 const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([
-  ResourceHelper.findResourcesByUuids(uuids),
+  ResourceManager.findResourcesByUuidsWithContent(uuids),
   FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
@@ -127,22 +179,29 @@ const _mapByField = (elements, fieldName = UUID) => {
 const _getHydratedActivityResources = (activity, resourcesByUuid) =>
   getActivityResourceUuids(activity).map(uuid => resourcesByUuid[uuid]);
 
-const _getResourcesContentIds = (resourcesByUuids) =>
-  Object.values(resourcesByUuids).map(r => r[CONTENT_ID]).filter(id => id);
-
 const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
   const rh = new ResourceHydrator(fieldsDef);
+  let contents = resources.map(r => r[CONTENT_ID]).filter(c => c);
   _cleanupTmpFields(resources);
   return rh.dehydrateEntities(resources)
     .then(() => ResourceHelper.findResourcesByUuids(resources.map(r => r[UUID])))
     .then(Utils.toMapByKey)
     .then(rMap => _getOnlyNewResources(resources, rMap, teamId, email))
-    .then(ResourceHelper.saveOrUpdateResourceCollection);
+    .then(ResourceHelper.saveOrUpdateResourceCollection)
+    .then(rs => {
+      const cIds = new Set(Utils.flattenToListByKey(rs, CONTENT_ID).filter(cId => cId));
+      contents = contents.filter(c => cIds.has(c.id));
+      return contents.length ? RepositoryHelper.saveOrUpdateContentCollection(contents) : contents;
+    });
 };
 
 const _cleanupTmpFields = (resources) => {
   resources.forEach(r => {
     delete r[TMP_ENTITY_VALIDATOR];
+    const content = r[CONTENT_ID];
+    if (content) {
+      r[CONTENT_ID] = r[CONTENT_ID].id;
+    }
   });
   return resources;
 };
@@ -177,3 +236,23 @@ export const buildNewActivityResource = (resourceFieldsManager) => {
     [UUID]: resource,
   };
 };
+
+export const buildNewResource = (resourceFieldsManager) => {
+  const resource = {};
+  ResourceHelper.stampClientChange(resource);
+  resource[TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  return resource;
+};
+
+export const saveFileDialog = (srcFile, fileName) => (dispatch) => {
+  if (!srcFile || !FileManager.statSyncFullPath(srcFile)) {
+    dispatch(addMessage(toNotif('FileNotAvailable')));
+  } else {
+    const saveResult = FileDialog.saveDialog(srcFile, fileName);
+    if (saveResult === null) {
+      dispatch(addMessage(toNotif('unexpectedError')));
+    }
+  }
+};
+
+const toNotif = (message) => new Notification({ message, origin: NOTIFICATION_ORIGIN_RESOURCE, translateMsg: true });

@@ -59,3 +59,6 @@ export const COUNTRY = 'Country';
 export const RELATED_DOCUMENTS = 'Related Documents';
 
 export const TMP_ENTITY_VALIDATOR = 'entity-validator';
+
+/** Required status */
+export const ALWAYS_REQUIRED = 'Y';

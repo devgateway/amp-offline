@@ -376,5 +376,18 @@
   "Delete Measure": "Delete Measure",
   "Add Actor": "Add Actor",
   "Delete Actor": "Delete Actor",
-  "ClickToDownload": "Click here to download document"
+  "ClickToDownload": "Click here to download document",
+  "Resource Name": "Resource Name",
+  "Document Type": "Document Type",
+  "Year": "Year",
+  "Add New Document": "Add New Document",
+  "Add New Web Link": "Add New Web Link",
+  "FileNotAvailable": "File not submited or upload has not finished",
+  "File": "File",
+  "Choose file": "Choose file",
+  "No file chosen": "No file chosen",
+  "FileUploaded": "was uploaded, with size",
+  "FileSizeLimitExceeded": "The file size limit is {size} MB. This file exceeds the limit.",
+  "FileUploading": "Upload started, please wait ...",
+  "FileUploadFailed": "Upload failed! Please try again."
 }

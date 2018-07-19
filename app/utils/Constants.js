@@ -60,6 +60,7 @@ export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
 export const STATIC_DIR = 'static';
 export const IMAGES_DIR = 'images';
+export const DOC_ICONS = 'doc-icons';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -91,7 +92,6 @@ export const SYNCUP_TYPE_RESOURCES_PULL = 'resources';
 export const SYNCUP_TYPE_RESOURCES_PUSH = 'resources-push';
 export const SYNCUP_TYPE_RESOURCE_FIELDS = 'resource-fields';
 export const SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES = 'resource-possible-values-fields';
-
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';

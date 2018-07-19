@@ -1,11 +1,14 @@
 import Logger from '../modules/util/LoggerManager';
 import {
+  PENDING_RESOURCE_DOC_UPDATED,
+  PENDING_RESOURCE_WEB_UPDATED,
+  RESOURCE_CREATED,
+  RESOURCE_FILE_UPLOAD_FULFILLED,
+  RESOURCE_FILE_UPLOAD_PENDING,
+  RESOURCE_FILE_UPLOAD_REJECTED,
   RESOURCE_MANAGERS_FULFILLED,
   RESOURCE_MANAGERS_PENDING,
   RESOURCE_MANAGERS_REJECTED,
-  RESOURCES_CONTENT_LOAD_FULFILLED,
-  RESOURCES_CONTENT_LOAD_PENDING,
-  RESOURCES_CONTENT_LOAD_REJECTED,
   RESOURCES_LOAD_FULFILLED,
   RESOURCES_LOAD_PENDING,
   RESOURCES_LOAD_REJECTED,
@@ -16,25 +19,27 @@ import {
 } from '../actions/ResourceAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
 import FieldsManager from '../modules/field/FieldsManager';
+import { UUID } from '../utils/constants/ResourceConstants';
 
 const logger = new Logger('ResourceReducer');
 
 const defaultState = {
   isResourcesLoading: false,
   isResourcesLoaded: false,
-  isContentsLoading: false,
-  isContentsLoaded: false,
   isResourceSaving: false,
   isResourcesSaved: false,
+  isFileUploading: false,
+  isFileUploaded: false,
   saveError: null,
+  uploadError: null,
   isResourceManagersLoading: false,
   isResourceManagersLoaded: false,
   resourcesError: null,
-  contentsError: null,
   managersError: null,
   resourcesByUuids: {},
-  contentsByIds: {},
   resourceFieldsManager: null,
+  pendingWebResource: null,
+  pendingDocResource: null,
 };
 
 const resourceReducer = (state = defaultState, action: Object) => {
@@ -53,17 +58,16 @@ const resourceReducer = (state = defaultState, action: Object) => {
       };
     case RESOURCES_LOAD_REJECTED:
       return { ...state, isResourcesLoading: false, isResourcesLoaded: false, resourcesError: action.payload };
-    case RESOURCES_CONTENT_LOAD_PENDING:
-      return { ...state, isContentsLoading: true, isContentsLoaded: false, contentsError: null };
-    case RESOURCES_CONTENT_LOAD_FULFILLED:
+    case RESOURCE_CREATED: {
+      const resource = action.actionData;
       return {
         ...state,
-        isContentsLoading: false,
-        isContentsLoaded: true,
-        contentsByIds: { ...state.contentsByIds, ...action.payload }
+        resourcesByUuids: {
+          ...state.resourcesByUuids,
+          [resource[UUID]]: resource
+        }
       };
-    case RESOURCES_CONTENT_LOAD_REJECTED:
-      return { ...state, isContentsLoading: false, isContentsLoaded: false, contentsError: action.payload };
+    }
     case RESOURCE_MANAGERS_PENDING:
       return {
         ...state,
@@ -101,6 +105,16 @@ const resourceReducer = (state = defaultState, action: Object) => {
       }
       return { ...state };
     }
+    case PENDING_RESOURCE_WEB_UPDATED:
+      return { ...state, pendingWebResource: action.actionData };
+    case PENDING_RESOURCE_DOC_UPDATED:
+      return { ...state, pendingDocResource: action.actionData };
+    case RESOURCE_FILE_UPLOAD_PENDING:
+      return { ...state, isFileUploading: true, isFileUploaded: false, uploadError: null };
+    case RESOURCE_FILE_UPLOAD_FULFILLED:
+      return { ...state, isFileUploading: false, isFileUploaded: true };
+    case RESOURCE_FILE_UPLOAD_REJECTED:
+      return { ...state, isFileUploading: false, uploadError: action.payload };
     default:
       return state;
   }

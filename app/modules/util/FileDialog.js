@@ -16,7 +16,8 @@ const FileDialog = {
    * @param srcFilePath the source path of the file
    * @param srcFileTitle (optional) the file name to suggest to save as. If not specified, then the last path segment
    * of the srcFilePath will be used
-   * @return {string} the destination path of the file
+   * @return {string|undefined|null} the destination path of the file,
+   *  undefined if no destination selected or null if a problem occured
    */
   saveDialog(srcFilePath, srcFileTitle = null) {
     srcFileTitle = srcFileTitle || path.basename(srcFilePath);
@@ -31,10 +32,36 @@ const FileDialog = {
     }
     try {
       FileManager.copyDataFileSyncUsingFullPaths(srcFilePath, dstFilePath);
+      return dstFilePath;
     } catch (error) {
       logger.error(error);
     }
-  }
+    return null;
+  },
+
+  /**
+   * Opens electron dialog to choose file(s)
+   * @see https://github.com/electron/electron/blob/master/docs/api/dialog.md
+   * @param options
+   * @return {string[]} file paths
+   */
+  openDialog(options = {}) {
+    const files = DIALOG.showOpenDialog(options) || [];
+    if (!files.length) {
+      logger.warn('No file(s) selected');
+    }
+    return files;
+  },
+
+  /**
+   * Opens electron dialog to choose a single file
+   * @return {String} file path
+   */
+  openSingleFileDialog() {
+    const files = this.openDialog({ multiSelections: false });
+    return files.length ? files[0] : null;
+  },
+
 };
 
 export default FileDialog;

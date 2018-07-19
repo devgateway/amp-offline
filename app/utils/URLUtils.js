@@ -33,7 +33,7 @@ const urlUtils = {
     return url && (typeof url === 'string') && url.match(URL_PATTERN);
   },
 
-  normalizeUrl(url) {
+  normalizeUrl(url, fallbackProtocol = 'https') {
     if (url) {
       url = url.trim();
       while (url.endsWith('/')) {
@@ -43,7 +43,7 @@ const urlUtils = {
         while (url.startsWith('/')) {
           url.substr(1, url.length);
         }
-        url = `https://${url}`;
+        url = `${fallbackProtocol}://${url}`;
       }
     }
     return url;
