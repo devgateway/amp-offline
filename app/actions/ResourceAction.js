@@ -25,6 +25,11 @@ import ResourceHelper from '../modules/helpers/ResourceHelper';
 import { RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import DateUtils from '../utils/DateUtils';
+import FileManager from '../modules/util/FileManager';
+import FileDialog from '../modules/util/FileDialog';
+import Notification from '../modules/helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_RESOURCE } from '../utils/constants/ErrorConstants';
+import { addMessage } from './NotificationAction';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -232,3 +237,16 @@ export const buildNewResource = (resourceFieldsManager) => {
   resource[TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
   return resource;
 };
+
+export const saveFileDialog = (srcFile, fileName) => (dispatch) => {
+  if (!srcFile || !FileManager.statSyncFullPath(srcFile)) {
+    dispatch(addMessage(toNotif('FileNotAvailable')));
+  } else {
+    const saveResult = FileDialog.saveDialog(srcFile, fileName);
+    if (saveResult === null) {
+      dispatch(addMessage(toNotif('unexpectedError')));
+    }
+  }
+};
+
+const toNotif = (message) => new Notification({ message, origin: NOTIFICATION_ORIGIN_RESOURCE, translateMsg: true });

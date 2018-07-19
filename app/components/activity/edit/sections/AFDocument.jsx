@@ -36,7 +36,6 @@ import APLabel from '../../preview/components/APLabel';
 import DateUtils from '../../../../utils/DateUtils';
 import ActionIcon from '../../../common/ActionIcon';
 import RepositoryManager from '../../../../modules/repository/RepositoryManager';
-import FileDialog from '../../../../modules/util/FileDialog';
 import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
 import { buildNewResource } from '../../../../actions/ResourceAction';
@@ -78,6 +77,7 @@ class AFDocument extends Component {
     updatePendingWebResource: PropTypes.func.isRequired,
     updatePendingDocResource: PropTypes.func.isRequired,
     loadNewResource: PropTypes.func.isRequired,
+    saveFileDialog: PropTypes.func.isRequired,
   };
 
   constructor(props, context) {
@@ -152,7 +152,7 @@ class AFDocument extends Component {
       const doc = { ...ac[UUID] };
       const srcFile = RepositoryManager.getFullContentFilePath(doc[CONTENT_ID]);
       const fileName = doc[FILE_NAME];
-      const action = fileName && srcFile ? () => FileDialog.saveDialog(srcFile, fileName) : null;
+      const action = fileName && srcFile ? () => this.props.saveFileDialog(srcFile, fileName) : null;
       doc[RESOURCE_NAME] = doc[WEB_LINK] || fileName;
       doc[FILE_SIZE] = this.getDocSizeToDisplay(doc);
       doc[ACTION] = { href: doc[WEB_LINK], action, fileName };
