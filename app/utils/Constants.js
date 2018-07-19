@@ -88,6 +88,7 @@ export const SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES = 'activity-possible-values-fi
 export const SYNCUP_TYPE_CONTACT_FIELDS = 'contact-fields';
 export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fields';
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
+export const SYNCUP_TYPE_MAP_TILES = 'map_tiles';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';
@@ -118,6 +119,8 @@ export const
   TRANSPARENT_FLAG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=';
 export const HELP_PDF_FILENAME = 'amp-help';
 export const HELP_DIR = 'help';
+
+export const MAP_TILES_DIR = 'assets/map-tiles';
 
 export const DG_COMPANY_NAME = 'Development Gateway';
 export const DG_ADDRESS_1 = '1110 Vermont Ave, NW, Suite 500';

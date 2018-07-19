@@ -17,6 +17,7 @@ import ContactPossibleValuesSyncUpManager from './syncupManagers/ContactPossible
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
+import MapTilesSyncUpManager from './syncupManagers/MapTilesSyncUpManager';
 import * as Utils from '../../utils/Utils';
 import * as SS from './SyncUpUnitState';
 import {
@@ -28,7 +29,8 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
-  SYNCUP_TYPE_WORKSPACES
+  SYNCUP_TYPE_WORKSPACES,
+  SYNCUP_TYPE_MAP_TILES
 } from '../../utils/Constants';
 
 /**

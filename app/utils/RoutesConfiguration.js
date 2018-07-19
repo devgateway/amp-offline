@@ -30,7 +30,8 @@ import {
   URL_CONNECTIVITY_CHECK_EP,
   USER_PROFILE_URL,
   WORKSPACE_MEMBER_URL,
-  WORKSPACE_SETTINGS_URL
+  WORKSPACE_SETTINGS_URL,
+  MAP_TILES_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -169,7 +170,13 @@ const routesConfiguration = [{
   method: 'GET',
   requiredAuth: false,
   regularAmpUrl: true,
+}, {
+  url: MAP_TILES_URL,
+  method: 'GET',
+  requiredAuth: true,
+  regularAmpUrl: true,
 }
+
 ];
 
 module.exports = routesConfiguration;
