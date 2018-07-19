@@ -65,12 +65,14 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
    * @param fieldsManager (optional) custom fields manager. Activity Fields Manager used by default.
    * @return {null|APField}
    */
-  buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false, parent = null, fieldsManager = null) {
+  buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false, parent = null, fieldsManager = null
+    , options) {
+    const options_ = options || {};
     const fmPath = ACTIVITY_FIELDS_FM_PATH[path];
     fieldsManager = fieldsManager || this.context.activityFieldsManager;
     if (fieldsManager.isFieldPathEnabled(path)
       && (!fmPath || FeatureManager.isFMSettingEnabled(fmPath, false))) {
-      const title = fieldsManager.getFieldLabelTranslation(path);
+      const title = (options_.noTitle ? '' : fieldsManager.getFieldLabelTranslation(path));
       let valuePath = path;
       if (parent) {
         const fieldPathParts = path.split('~');
@@ -99,7 +101,8 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         return (<APField
           key={Utils.stringToUniqueId(path)} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline}
           separator={false}
-          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
+          fieldNameClass={this.props.fieldNameClass}
+          fieldValueClass={options_.fieldValueClass || this.props.fieldValueClass} />);
       }
     }
   }

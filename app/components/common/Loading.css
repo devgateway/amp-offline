@@ -1,0 +1,21 @@
+.loading {
+  width: 200px;
+  height: 100px;
+  background-color: white;
+  z-index: 999999999;
+  display: block;
+  border: 3px solid darkgrey;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.loading > span {
+  position: relative;
+  top: 39px;
+}
+
+.loading > img {
+  position: relative;
+  top: 38px;
+}

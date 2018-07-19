@@ -13,7 +13,6 @@ export default class AFNumber extends Component {
   static propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func,
-    readonly: PropTypes.bool,
     extraParams: PropTypes.object
     // TODO: Add number check functions.
   };
@@ -78,8 +77,9 @@ export default class AFNumber extends Component {
   }
 
   render() {
+    const params = this.props.extraParams || {};
     return (<FormControl
       componentClass="input" value={this.state.value} onChange={this.handleChange.bind(this)}
-      disabled={this.props.readonly || false} onBlur={this.handleBlur.bind(this)} />);
+      disabled={params.readonly || false} onBlur={this.handleBlur.bind(this)} />);
   }
 }
