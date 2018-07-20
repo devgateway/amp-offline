@@ -5,6 +5,7 @@ import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import * as CC from '../../../utils/constants/ContactConstants';
+import * as RC from '../../../utils/constants/ResourceConstants';
 import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
@@ -15,6 +16,8 @@ import SyncUpManagerInterface from './SyncUpManagerInterface';
 import Logger from '../../util/LoggerManager';
 import ContactHelper from '../../helpers/ContactHelper';
 import { getActivityContactIds } from '../../../actions/ContactAction';
+import { getActivityResourceUuids } from '../../../actions/ResourceAction';
+import ResourceHelper from '../../helpers/ResourceHelper';
 
 const logger = new Logger('Activity push to AMP manager');
 
@@ -169,6 +172,13 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         const error = translate('rejectActivityWhenContactUnsynced').replace('%contacts%', cNames);
         return this._processPushResult({ activity, error });
       }
+      return this._getUnsyncedResources(activity);
+    }).then(unsyncedResources => {
+      if (unsyncedResources.length) {
+        const rNames = unsyncedResources.map(r => `"${r[RC.WEB_LINK] || r[RC.FILE_NAME]}"`).join(', ');
+        const error = translate('rejectActivityWhenResourceUnsynced').replace('%resources%', rNames);
+        return this._processPushResult({ activity, error });
+      }
       return this._pushActivity(activity);
     });
   }
@@ -192,6 +202,11 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const contactIds = getActivityContactIds(activity);
     return ContactHelper.findContactsByIds(contactIds)
       .then(contacts => contacts.filter(c => ContactHelper.isModifiedOnClient(c)));
+  }
+
+  _getUnsyncedResources(activity) {
+    const resourceUuids = getActivityResourceUuids(activity);
+    return ResourceHelper.findAllResourcesModifiedOnClientByUuids(resourceUuids);
   }
 
   /**
