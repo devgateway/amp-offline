@@ -12,7 +12,6 @@ import Loading from '../../../common/Loading';
 import ActionIcon from '../../../common/ActionIcon';
 import docSyles from './APDocument.css';
 import ActionUrl from '../../../common/ActionUrl';
-import FileDialog from '../../../../modules/util/FileDialog';
 import RepositoryManager from '../../../../modules/repository/RepositoryManager';
 
 /**
@@ -32,6 +31,7 @@ class APDocument extends Component {
       resourcesByUuids: PropTypes.object,
     }).isRequired,
     buildSimpleField: PropTypes.func.isRequired,
+    saveFileDialog: PropTypes.func.isRequired,
   };
 
   getResources() {
@@ -59,7 +59,7 @@ class APDocument extends Component {
     if (fileName) {
       const srcFile = RepositoryManager.getFullContentFilePath(resource[RC.CONTENT_ID]);
       resData.urlText = fileName;
-      resData.action = srcFile ? () => FileDialog.saveDialog(srcFile, fileName) : null;
+      resData.action = srcFile ? () => this.props.saveFileDialog(srcFile, fileName) : null;
     }
     const url = resource[RC.WEB_LINK];
     if (url) {
