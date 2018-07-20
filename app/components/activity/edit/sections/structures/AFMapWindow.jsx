@@ -12,7 +12,7 @@ import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsMan
 import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import FileManager from '../../../../../modules/util/FileManager';
-import { MAP_MARKER_IMAGE, MAP_MARKER_SHADOW } from '../../../../../utils/Constants';
+import { MAP_MARKER_IMAGE, MAP_MARKER_SHADOW, POLYGON_BASE_COLOR } from '../../../../../utils/Constants';
 import AFMapPopup from './AFMapPopup';
 
 const logger = new Logger('Map Modal');
@@ -220,12 +220,12 @@ export default class AFMapWindow extends Component {
         this.setState({ layersList: newLayersList });
       } else {
         // Load polygon.
-        let color = 'blue';
+        let color = POLYGON_BASE_COLOR;
         if (this.props.polygon[AC.STRUCTURES_COLOR]) {
           color = this.props.polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
         }
         const polygon = L.polygon(this.props.polygon[AC.STRUCTURES_COORDINATES].map(c =>
-          ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color });
+          ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: '0.5' });
         polygon.on('click', (event) => this.handleMarkerClick(event));
         drawnItems.addLayer(polygon);
         const newLayersList = this.state.layersList.slice();
