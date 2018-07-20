@@ -122,6 +122,7 @@ export function reportFieldValidation(fieldPath, validationResult) {
 
 export function saveActivity(activity) {
   return (dispatch, ownProps) => {
+    ResourceAction.tryToAutoAddPendingResourcesToActivity(activity)(dispatch, ownProps);
     dispatch({
       type: ACTIVITY_SAVE,
       payload: _saveActivity(activity, ownProps().userReducer.teamMember,
