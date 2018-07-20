@@ -10,6 +10,7 @@ import afStyles from '../ActivityForm.css';
 import * as Types from '../components/AFComponentTypes';
 import translate from '../../../../utils/translate';
 import AFViewStructure from './structures/AFViewStructure';
+import AFMapWindow from './structures/AFMapWindow';
 
 const logger = new Logger('AF Structures');
 
@@ -54,7 +55,16 @@ class AFStructures extends Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleMap = this.handleMap.bind(this);
     this.handleView = this.handleView.bind(this);
-    this.state = { structures: props.activity[AC.STRUCTURES] || [], showViewDialog: false, viewStructure: null };
+    this.handleSaveMap = this.handleSaveMap.bind(this);
+    this.handleCloseMap = this.handleCloseMap.bind(this);
+    this.state = {
+      structures: props.activity[AC.STRUCTURES] || [],
+      showViewDialog: false,
+      viewStructure: null,
+      showMapDialog: false,
+      currentPoint: null,
+      currentPolygon: null
+    };
   }
 
   preProcessForIds() {
@@ -91,9 +101,25 @@ class AFStructures extends Component {
     this.setState({ showViewDialog: true, viewStructure: structure });
   }
 
-  /* eslint-disable class-methods-use-this */
-  handleMap() {
-    // TODO: To be implemented.
+  handleMap(structure) {
+    if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+      this.setState({
+        showMapDialog: true,
+        viewStructure: structure,
+        currentPoint: {
+          [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
+          [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE]
+        },
+        currentPolygon: null
+      });
+    } else {
+      this.setState({
+        showMapDialog: true,
+        viewStructure: structure,
+        currentPolygon: structure[AC.STRUCTURES_COORDINATES],
+        currentPoint: null
+      });
+    }
   }
 
   handleDelete(structure, i) {
@@ -103,14 +129,32 @@ class AFStructures extends Component {
     this.context.activity[AC.STRUCTURES] = newStructures;
   }
 
+  handleCloseMap() {
+    this.setState({ showMapDialog: false });
+  }
+
+  /* eslint-disable class-methods-use-this */
+  handleSaveMap() {
+    logger.log('handleSaveMap');
+  }
+
   render() {
     this.preProcessForIds();
     return (<div className={afStyles.full_width}>
+
       <AFViewStructure
         show={this.state.showViewDialog}
         structure={this.state.viewStructure}
         onClose={() => this.setState({ showViewDialog: false, viewStructure: null })}
       />
+
+      <AFMapWindow
+        show={this.state.showMapDialog}
+        onModalClose={this.handleCloseMap}
+        onSave={this.handleSaveMap}
+        polygon={this.state.currentPolygon}
+        point={this.state.currentPoint} />
+
       <Grid className={afStyles.full_width}>
         {this.state.structures.map((s, i) => (
           <Panel key={Math.random()} header={translate('Structure')}>
