@@ -6,15 +6,13 @@ import * as RC from '../../../utils/constants/ResourceConstants';
 import AFField from '../../activity/edit/components/AFField';
 import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
-import { ALWAYS_REQUIRED, TMP_ENTITY_VALIDATOR } from '../../../utils/constants/ValueConstants';
+import { TMP_ENTITY_VALIDATOR } from '../../../utils/constants/ValueConstants';
 import * as Types from '../../activity/edit/components/AFComponentTypes';
 import translate from '../../../utils/translate';
-import { FIELD_REQUIRED } from '../../../utils/constants/FieldPathConstants';
 import FileDialog from '../../../modules/util/FileDialog';
 import FileManager from '../../../modules/util/FileManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
 import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
-import * as URLUtils from '../../../utils/URLUtils';
 import * as resStyles from './ResourceForm.css';
 
 
@@ -43,6 +41,7 @@ export default class ResourceForm extends Component {
     updatePendingWebResource: PropTypes.func.isRequired,
     updatePendingDocResource: PropTypes.func.isRequired,
     prepareNewResourceForSave: PropTypes.func.isRequired,
+    validate: PropTypes.func.isRequired,
     uploadFileToPendingResourceAsync: PropTypes.func.isRequired,
   };
 
@@ -87,11 +86,7 @@ export default class ResourceForm extends Component {
 
   onAdd() {
     const { onAdd, prepareNewResourceForSave, resource } = this.props;
-    prepareNewResourceForSave(resource);
-    if (!this.isDoc && resource[RC.WEB_LINK]) {
-      resource[RC.WEB_LINK] = URLUtils.normalizeUrl(resource[RC.WEB_LINK], 'http');
-    }
-    const errors = this.validate();
+    const errors = prepareNewResourceForSave(resource, this.isDoc);
     if (errors.length) {
       const msg = errors.map(e => `[${e.path}]: ${e.errorMessage}`).join(' ');
       logger.error(`Resource validation errors: ${msg}`);
@@ -99,21 +94,6 @@ export default class ResourceForm extends Component {
     } else if (onAdd) {
       onAdd(resource);
     }
-  }
-
-  // eslint-disable-next-line react/sort-comp
-  validate() {
-    const { resource, resourceReducer } = this.props;
-    const errors = resource[TMP_ENTITY_VALIDATOR].areAllConstraintsMet(resource);
-    // workaround as a custom validation, since no dependency logic available yet
-    const extraFieldRequired = this.isDoc ? RC.FILE_NAME : RC.WEB_LINK;
-    const fieldDef = { ...resourceReducer.resourceFieldsManager.getFieldDef(extraFieldRequired) };
-    fieldDef[FIELD_REQUIRED] = ALWAYS_REQUIRED;
-    const fieldError = resource[TMP_ENTITY_VALIDATOR].validateField(resource, false, fieldDef, extraFieldRequired);
-    if (this.isDoc && fieldError.length) {
-      fieldError[0].errorMessage = translate('FileNotAvailable');
-    }
-    return errors.concat(fieldError);
   }
 
   onCancel() {
@@ -137,8 +117,8 @@ export default class ResourceForm extends Component {
   }
 
   onUploadComplete() {
-    const { resource } = this.props;
-    this.validate();
+    const { resource, validate } = this.props;
+    validate(resource, this.isDoc);
     this.setState({ uploadingSize: null });
     this.updateFunc(resource);
   }

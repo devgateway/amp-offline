@@ -8,7 +8,9 @@ import {
   PUBLIC,
   PRIVATE,
   CLIENT_ADDING_DATE,
-  CLIENT_YEAR_OF_PUBLICATION
+  CLIENT_YEAR_OF_PUBLICATION,
+  FILE_NAME,
+  WEB_LINK
 } from '../utils/constants/ResourceConstants';
 import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
@@ -17,12 +19,12 @@ import Logger from '../modules/util/LoggerManager';
 import ResourceHydrator from '../modules/helpers/ResourceHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import { SYNCUP_TYPE_RESOURCE_FIELDS } from '../utils/Constants';
-import { PREFIX_RESOURCE } from '../utils/constants/FieldPathConstants';
+import { FIELD_REQUIRED, PREFIX_RESOURCE } from '../utils/constants/FieldPathConstants';
 import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import EntityValidator from '../modules/field/EntityValidator';
 import ResourceHelper from '../modules/helpers/ResourceHelper';
-import { RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
+import { ALWAYS_REQUIRED, RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import DateUtils from '../utils/DateUtils';
 import FileManager from '../modules/util/FileManager';
@@ -31,6 +33,8 @@ import Notification from '../modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_RESOURCE } from '../utils/constants/ErrorConstants';
 import { addMessage } from './NotificationAction';
 import RepositoryManager from '../modules/repository/RepositoryManager';
+import translate from '../utils/translate';
+import * as URLUtils from '../utils/URLUtils';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -86,12 +90,7 @@ export const loadNewResource = (resource) => (dispatch) => dispatch({
   actionData: resource
 });
 
-export const unloadResources = () => (dispatch, ownProps) => {
-  const { pendingDocResource } = ownProps().resourceReducer;
-  const content = pendingDocResource && pendingDocResource[CONTENT_ID];
-  RepositoryManager.attemptToDeleteContent(content);
-  dispatch({ type: RESOURCES_UNLOADED });
-};
+export const unloadResources = () => (dispatch) => dispatch({ type: RESOURCES_UNLOADED });
 
 export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownProps) => dispatch({
   type: RESOURCES_SAVE,
@@ -101,7 +100,61 @@ export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownPro
     ownProps().resourceReducer.resourceFieldsManager.fieldsDef)
 });
 
-export const prepareNewResourceForSave = (resource) => (dispatch, ownProps) => {
+export const addNewActivityResource = (activity, resource, isDoc) => (dispatch, ownProps) => {
+  logger.info('addNewActivityResource');
+  if (!activity[AC.ACTIVITY_DOCUMENTS]) {
+    activity[AC.ACTIVITY_DOCUMENTS] = [];
+  }
+  activity[AC.ACTIVITY_DOCUMENTS].push({
+    [AC.DOCUMENT_TYPE]: RELATED_DOCUMENTS,
+    [UUID]: resource,
+  });
+  loadNewResource(resource)(dispatch, ownProps);
+  clearPendingDoc(isDoc)(dispatch, ownProps);
+};
+
+const clearPendingDoc = (isDoc) => (dispatch, ownProps) => {
+  if (isDoc) {
+    updatePendingDocResource(null)(dispatch, ownProps);
+  } else {
+    updatePendingWebResource(null)(dispatch, ownProps);
+  }
+};
+
+/**
+ * Tries to add pending resource to the activity and clears up pending resource if wasn't able to
+ * @param activity
+ * @return {Function}
+ */
+export const tryToAutoAddPendingResourcesToActivity = (activity) => (dispatch, ownProps) => {
+  logger.info('tryToAutoAddPendingResourcesToActivity');
+  const { pendingWebResource, pendingDocResource } = ownProps().resourceReducer;
+  _tryToAutoAddPendingResourcesToActivity(activity, pendingWebResource, false)(dispatch, ownProps);
+  _tryToAutoAddPendingResourcesToActivity(activity, pendingDocResource, true)(dispatch, ownProps);
+};
+
+const _tryToAutoAddPendingResourcesToActivity = (activity, resource, isDoc) => (dispatch, ownProps) => {
+  if (resource) {
+    const errors = prepareNewResourceForSave(resource, isDoc)(dispatch, ownProps);
+    if (!errors.length) {
+      addNewActivityResource(activity, resource, isDoc)(dispatch, ownProps);
+    } else {
+      if (isDoc) {
+        RepositoryManager.attemptToDeleteContent(resource[CONTENT_ID]);
+      }
+      clearPendingDoc(isDoc)(dispatch, ownProps);
+    }
+  }
+};
+
+/**
+ * Prepares a new resource to be saved
+ * @param resource
+ * @param isDoc
+ * @return {[{ errorMessage, path }]} the list of errors
+ */
+export const prepareNewResourceForSave = (resource, isDoc) => (dispatch, ownProps) => {
+  logger.info('prepareNewResourceForSave');
   const createdAt = new Date();
   resource[CLIENT_ADDING_DATE] = DateUtils.getISODateForAPI(createdAt);
   resource[CLIENT_YEAR_OF_PUBLICATION] = `${createdAt.getFullYear()}`;
@@ -109,6 +162,25 @@ export const prepareNewResourceForSave = (resource) => (dispatch, ownProps) => {
   resource[TEAM] = ownProps().userReducer.teamMember[WORKSPACE_ID];
   resource[PRIVATE] = true;
   resource[PUBLIC] = false;
+  if (!isDoc && resource[WEB_LINK]) {
+    resource[WEB_LINK] = URLUtils.normalizeUrl(resource[WEB_LINK], 'http');
+  }
+  return validate(resource, isDoc)(dispatch, ownProps);
+};
+
+export const validate = (resource, isDoc) => (dispatch, ownProps) => {
+  logger.debug('validate');
+  const { resourceFieldsManager } = ownProps().resourceReducer;
+  const errors = resource[TMP_ENTITY_VALIDATOR].areAllConstraintsMet(resource);
+  // workaround as a custom validation, since no dependency logic available yet
+  const extraFieldRequired = isDoc ? FILE_NAME : WEB_LINK;
+  const fieldDef = { ...resourceFieldsManager.getFieldDef(extraFieldRequired) };
+  fieldDef[FIELD_REQUIRED] = ALWAYS_REQUIRED;
+  const fieldError = resource[TMP_ENTITY_VALIDATOR].validateField(resource, false, fieldDef, extraFieldRequired);
+  if (isDoc && fieldError.length) {
+    fieldError[0].errorMessage = translate('FileNotAvailable');
+  }
+  return errors.concat(fieldError);
 };
 
 export const updatePendingWebResource = (resource) => (dispatch) => dispatch({
@@ -225,16 +297,6 @@ const _getActivityResources = (activity, asIds = true) => {
     docs.forEach(d => resources.add((asIds && d[UUID] && d[UUID][UUID]) || d[UUID]));
   }
   return Array.from(resources);
-};
-
-export const buildNewActivityResource = (resourceFieldsManager) => {
-  const resource = {};
-  ResourceHelper.stampClientChange(resource);
-  resource[TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
-  return {
-    [AC.DOCUMENT_TYPE]: RELATED_DOCUMENTS,
-    [UUID]: resource,
-  };
 };
 
 export const buildNewResource = (resourceFieldsManager) => {

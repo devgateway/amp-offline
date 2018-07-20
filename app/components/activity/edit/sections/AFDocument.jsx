@@ -10,7 +10,7 @@ import { FIELD_NAME } from '../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
-import { ACTIVITY_DOCUMENTS, DOCUMENT_TYPE } from '../../../../utils/constants/ActivityConstants';
+import { ACTIVITY_DOCUMENTS } from '../../../../utils/constants/ActivityConstants';
 import Loading from '../../../common/Loading';
 import {
   ACTION,
@@ -74,9 +74,7 @@ class AFDocument extends Component {
 
   static propTypes = {
     resourceReducer: PropTypes.object.isRequired,
-    updatePendingWebResource: PropTypes.func.isRequired,
-    updatePendingDocResource: PropTypes.func.isRequired,
-    loadNewResource: PropTypes.func.isRequired,
+    addNewActivityResource: PropTypes.func.isRequired,
     saveFileDialog: PropTypes.func.isRequired,
   };
 
@@ -105,22 +103,10 @@ class AFDocument extends Component {
   }
 
   onAdd(resource) {
-    if (!this.context.activity[ACTIVITY_DOCUMENTS]) {
-      this.context.activity[ACTIVITY_DOCUMENTS] = [];
-    }
-    this.context.activity[ACTIVITY_DOCUMENTS].push({
-      [DOCUMENT_TYPE]: RELATED_DOCUMENTS,
-      [UUID]: resource,
-    });
-    this.props.loadNewResource(resource);
+    const isDoc = !!resource[FILE_NAME];
+    this.props.addNewActivityResource(this.context.activity, resource, isDoc);
     const newState = { docs: this.getDocuments() };
-    if (resource[FILE_NAME]) {
-      this.props.updatePendingDocResource(null);
-      newState.docFormOpened = false;
-    } else {
-      this.props.updatePendingWebResource(null);
-      newState.linkFormOpened = false;
-    }
+    newState[isDoc ? 'docFormOpened' : 'linkFormOpened'] = false;
     this.setState(newState);
   }
 
