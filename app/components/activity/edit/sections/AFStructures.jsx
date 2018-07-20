@@ -21,7 +21,8 @@ const logger = new Logger('AF Structures');
 class AFStructures extends Component {
 
   static contextTypes = {
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    activityFieldsManager: PropTypes.object
   };
 
   static propTypes = {

@@ -30,6 +30,11 @@ const myIcon = L.icon({
  * @author Gabriel Inchauspe
  */
 export default class AFMapWindow extends Component {
+
+  static contextTypes = {
+    activityFieldsManager: PropTypes.object
+  };
+
   static propTypes = {
     onModalClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,

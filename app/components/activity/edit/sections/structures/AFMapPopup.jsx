@@ -1,9 +1,11 @@
+/* eslint-disable camelcase */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import PossibleValuesManager from '../../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('Map Modal');
 
@@ -13,6 +15,10 @@ const logger = new Logger('Map Modal');
  * @author Gabriel Inchauspe
  */
 export default class AFMapPopup extends Component {
+
+  static contextTypes = {
+    activityFieldsManager: PropTypes.object
+  };
 
   static propTypes = {
     show: PropTypes.bool.isRequired,
@@ -27,9 +33,10 @@ export default class AFMapPopup extends Component {
     super(props);
     logger.log('constructor');
     this.handleSaveBtnClick = this.handleSaveBtnClick.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleDeleteBtnClick = this.handleDeleteBtnClick.bind(this);
+    this.handleChangeColor = this.handleChangeColor.bind(this);
     this.state = {
       [AC.STRUCTURES_TITLE]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_TITLE] : ''),
       [AC.STRUCTURES_DESCRIPTION]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_DESCRIPTION] : '',
@@ -79,12 +86,35 @@ export default class AFMapPopup extends Component {
     this.props.onDelete(layer, structureData);
   }
 
-  handleChange(obj) {
+  handleChangeTitle(obj) {
     this.setState({ [AC.STRUCTURES_TITLE]: obj.target.value });
   }
 
+  handleChangeColor(id, colors) {
+    const newColor = PossibleValuesManager.findOption(colors, id);
+    this.setState({ [AC.STRUCTURES_COLOR]: newColor });
+  }
+
+  generateColorList() {
+    const { structure_color } = this.state;
+    const content = [];
+    const colors = this.context.activityFieldsManager.possibleValuesMap[`${AC.STRUCTURES}~${AC.STRUCTURES_COLOR}`];
+    Object.values(colors).forEach(c => {
+      const color = c.value.substring(0, 7);
+      const text = c.value.substring(8);
+      content.push(<div>
+        <input
+          type="radio" name="color" value={c.id} checked={(structure_color && structure_color.id === c.id)}
+          onChange={this.handleChangeColor.bind(null, c.id, colors)} />
+        <div style={{ width: 25, height: 25, color, 'background-color': color }} />
+        <span>{text}</span>
+      </div>);
+    });
+    return <div>{content}</div>;
+  }
+
   render() {
-    const { title, structure_color } = this.state;
+    const { title } = this.state;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
         <Modal.Title>
@@ -92,9 +122,8 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {translate('Title')}
-        <input type={'text'} value={title} onChange={this.handleChange} />
-        color: <span>{structure_color ? structure_color.value : null}</span>
+        <span>{translate('Title')}:</span> <input type={'text'} value={title} onChange={this.handleChangeTitle} />
+        {this.generateColorList()}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick} bsStyle="success">
