@@ -33,7 +33,7 @@ export default class AFMapPopup extends Component {
     this.state = {
       [AC.STRUCTURES_TITLE]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_TITLE] : ''),
       [AC.STRUCTURES_DESCRIPTION]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_DESCRIPTION] : '',
-      color: (this.props.structureData ? this.props.structureData.color : null),
+      [AC.STRUCTURES_COLOR]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_COLOR] : null),
       [AC.STRUCTURES_SHAPE]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_SHAPE] : null,
     };
   }
@@ -42,19 +42,24 @@ export default class AFMapPopup extends Component {
     if (newProps.structureData) {
       this.setState({
         [AC.STRUCTURES_TITLE]: newProps.structureData[AC.STRUCTURES_TITLE],
-        color: newProps.structureData.color,
+        [AC.STRUCTURES_COLOR]: newProps.structureData[AC.STRUCTURES_COLOR],
         isNew: (!newProps.structureData[AC.STRUCTURES_TITLE]),
         [AC.STRUCTURES_DESCRIPTION]: newProps.structureData[AC.STRUCTURES_DESCRIPTION],
         [AC.STRUCTURES_SHAPE]: newProps.structureData[AC.STRUCTURES_SHAPE]
       });
     } else {
-      this.setState({ [AC.STRUCTURES_TITLE]: '', color: null, isNew: true, [AC.STRUCTURES_DESCRIPTION]: '' });
+      this.setState({
+        [AC.STRUCTURES_TITLE]: '',
+        [AC.STRUCTURES_COLOR]: null,
+        isNew: true,
+        [AC.STRUCTURES_DESCRIPTION]: ''
+      });
     }
   }
 
   handleCancel() {
     const { layer } = this.props;
-    this.setState({ [AC.STRUCTURES_TITLE]: '', color: null, [AC.STRUCTURES_DESCRIPTION]: '' });
+    this.setState({ [AC.STRUCTURES_TITLE]: '', [AC.STRUCTURES_COLOR]: null, [AC.STRUCTURES_DESCRIPTION]: '' });
     const del = this.state.isNew;
     this.props.onCancel(layer, del);
   }
@@ -62,8 +67,8 @@ export default class AFMapPopup extends Component {
   handleSaveBtnClick() {
     const { onSubmit, structureData, layer } = this.props;
     if (this.state[AC.STRUCTURES_TITLE]) {
-      onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE], this.state.color
-        , this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE]);
+      onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE]
+        , this.state[AC.STRUCTURES_COLOR], this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE]);
     } else {
       alert(translate('emptyTitle'));
     }
@@ -79,7 +84,7 @@ export default class AFMapPopup extends Component {
   }
 
   render() {
-    const { title } = this.state;
+    const { title, structure_color } = this.state;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
         <Modal.Title>
@@ -89,6 +94,7 @@ export default class AFMapPopup extends Component {
       <Modal.Body>
         {translate('Title')}
         <input type={'text'} value={title} onChange={this.handleChange} />
+        color: <span>{structure_color ? structure_color.value : null}</span>
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick} bsStyle="success">

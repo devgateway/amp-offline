@@ -145,6 +145,7 @@ class AFStructures extends Component {
         currentPolygon: {
           [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
           id: structure.id,
+          [AC.STRUCTURES_COLOR]: structure[AC.STRUCTURES_COLOR],
           [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
           [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON
