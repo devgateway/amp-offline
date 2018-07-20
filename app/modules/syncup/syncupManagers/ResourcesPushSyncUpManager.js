@@ -7,7 +7,7 @@ import { RESOURCE_PUSH_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
-import { ACTIVITY_DOCUMENTS } from '../../../utils/constants/ActivityConstants';
+import * as AC from '../../../utils/constants/ActivityConstants';
 import { CONTENT_ID, CONTENT_TYPE, FILE_NAME, UUID } from '../../../utils/constants/ResourceConstants';
 import RepositoryHelper from '../../helpers/RepositoryHelper';
 import RepositoryManager from '../../repository/RepositoryManager';
@@ -39,12 +39,35 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
 
   doSyncUp() {
     return ResourceHelper.findAllResourcesModifiedOnClient()
+      .then(this._ignoreUnreferencedResources.bind(this))
       .then(this._getResourcesWithContent.bind(this))
       .then(this._pushResources.bind(this))
       .then(() => {
         this.done = true;
         return this.done;
       });
+  }
+
+  /**
+   * Ignores pushing resources that are not currently used in any activity.
+   *
+   * As of now, resources support is available only through Activity Form in AMP Offline. When a resource is removed
+   * from activity, we follow the same approach as in AMP and only remove the link, but not the resource itself.
+   * However we'll skip pushing such orphan resource in order so that AF doesn't become a hack
+   * solution for the Resource Manager.
+   * BUT ->
+   * TODO if we can actually delete the resource until Resource Manager will be available to allow this operation
+   * @param resources
+   * @return {Promise<T>}
+   * @private
+   */
+  _ignoreUnreferencedResources(resources) {
+    const resByUuid = Utils.toMapByKey(resources, UUID);
+    const uuids = Array.from(resByUuid.keys());
+    const filter = Utils.toMap(AC.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: uuids }) });
+    return ActivityHelper.findAllNonRejected(filter, Utils.toMap(AC.ACTIVITY_DOCUMENTS, 1))
+      .then(activities => activities.flatMap(a => a[AC.ACTIVITY_DOCUMENTS].map(ad => ad[UUID])))
+      .then(usedUuids => usedUuids.map(uuid => resByUuid.get(uuid)));
   }
 
   _getResourcesWithContent(resources) {
@@ -125,10 +148,10 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _updateResourceToActualIdInActivities(tmpResourceUuid, newResourceUuid) {
-    const filter = Utils.toMap(ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, tmpResourceUuid) });
+    const filter = Utils.toMap(AC.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, tmpResourceUuid) });
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
       activities.forEach(activity => {
-        activity[ACTIVITY_DOCUMENTS].forEach(ad => {
+        activity[AC.ACTIVITY_DOCUMENTS].forEach(ad => {
           if (ad[UUID] === tmpResourceUuid) {
             ad[UUID] = newResourceUuid;
           }
