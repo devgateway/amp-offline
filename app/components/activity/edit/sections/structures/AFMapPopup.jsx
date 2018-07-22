@@ -106,7 +106,7 @@ export default class AFMapPopup extends Component {
         <input
           type="radio" name="color" value={c.id} checked={(structure_color && structure_color.id === c.id)}
           onChange={this.handleChangeColor.bind(null, c.id, colors)} />
-        <div style={{ width: 25, height: 25, color, 'background-color': color }} />
+        <div style={{ width: 25, height: 25, color, backgroundColor: color }} />
         <span>{text}</span>
       </div>);
     });
