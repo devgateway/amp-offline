@@ -6,6 +6,7 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import PossibleValuesManager from '../../../../../modules/field/PossibleValuesManager';
+import styles from './AFMapWindow.css';
 
 const logger = new Logger('Map Modal');
 const SQUARE = 25;
@@ -106,10 +107,10 @@ export default class AFMapPopup extends Component {
       content.push(<div>
         <input
           type="radio" name="color" value={c.id} checked={(structure_color && structure_color.id === c.id)}
-          onChange={this.handleChangeColor.bind(null, c.id, colors)} />
-        <span>{text}</span>
+          onChange={this.handleChangeColor.bind(null, c.id, colors)} className={styles.colorItem} />
+        <span className={styles.colorItem}>{text}</span>
         <svg width={SQUARE} height={SQUARE}>
-          <rect width={SQUARE} height={SQUARE} style={{ fill: color }} />
+          <rect width={SQUARE} height={SQUARE} style={{ fill: color, x: 5, y: 5 }} />
         </svg>
       </div>);
     });

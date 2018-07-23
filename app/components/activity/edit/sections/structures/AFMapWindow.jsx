@@ -24,6 +24,7 @@ const myIcon = L.icon({
   popupAnchor: [-3, -76],
   shadowUrl: MAP_MARKER_SHADOW
 });
+const OPACITY = '0.5';
 
 /**
  * Map Modal
@@ -240,7 +241,7 @@ export default class AFMapWindow extends Component {
           color = this.props.polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
         }
         const polygon = L.polygon(this.props.polygon[AC.STRUCTURES_COORDINATES].map(c =>
-          ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: '0.5' });
+          ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: OPACITY });
         polygon.on('click', (event) => this.handleMarkerClick(event));
         drawnItems.addLayer(polygon);
         const newLayersList = this.state.layersList.slice();
