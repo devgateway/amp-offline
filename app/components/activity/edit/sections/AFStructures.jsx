@@ -195,7 +195,8 @@ class AFStructures extends Component {
           [AC.STRUCTURES_COORDINATES]: l.layer.getLatLngs()[0].map(loc => ({
             [AC.STRUCTURES_LATITUDE]: String(loc.lat),
             [AC.STRUCTURES_LONGITUDE]: String(loc.lng)
-          }))
+          })),
+          [AC.STRUCTURES_COLOR]: l.structureData[AC.STRUCTURES_COLOR]
         });
       }
     });
