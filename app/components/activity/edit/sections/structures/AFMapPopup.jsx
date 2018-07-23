@@ -8,6 +8,7 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import PossibleValuesManager from '../../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('Map Modal');
+const SQUARE = 25;
 
 /**
  * Map Title Popup
@@ -106,8 +107,10 @@ export default class AFMapPopup extends Component {
         <input
           type="radio" name="color" value={c.id} checked={(structure_color && structure_color.id === c.id)}
           onChange={this.handleChangeColor.bind(null, c.id, colors)} />
-        <div style={{ width: 25, height: 25, color, backgroundColor: color }} />
         <span>{text}</span>
+        <svg width={SQUARE} height={SQUARE}>
+          <rect width={SQUARE} height={SQUARE} style={{ fill: color }} />
+        </svg>
       </div>);
     });
     return <div>{content}</div>;
