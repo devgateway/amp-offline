@@ -43,6 +43,17 @@ const ResourceHelper = {
   },
 
   /**
+   * Finds all resource by uuids that were modified on the AMP Offline client
+   * @param uuids
+   * @return {Promise}
+   */
+  findAllResourcesModifiedOnClientByUuids(uuids) {
+    logger.debug('findResourcesByUuids');
+    const filterRule = { uuid: { $in: uuids } };
+    return ResourceHelper.findAllResourcesModifiedOnClient(filterRule);
+  },
+
+  /**
    * Finds all resources modified on the AMP Offline client
    * @param filterRule optional additional filter rule
    * @return {Promise}
