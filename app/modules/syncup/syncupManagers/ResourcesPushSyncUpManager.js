@@ -55,9 +55,7 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
    * As of now, resources support is available only through Activity Form in AMP Offline. When a resource is removed
    * from activity, we follow the same approach as in AMP and only remove the link, but not the resource itself.
    * However we'll skip pushing such orphan resource in order so that AF doesn't become a hack
-   * solution for the Resource Manager.
-   * BUT ->
-   * TODO if we can actually delete the resource until Resource Manager will be available to allow this operation
+   * solution for the Resource Manager. Confirmed with Vanessa Goas.
    * @param resources
    * @return {Promise<T>}
    * @private
