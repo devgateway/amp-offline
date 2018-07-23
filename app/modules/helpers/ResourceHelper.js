@@ -108,8 +108,12 @@ const ResourceHelper = {
     return !!resource[CLIENT_CHANGE_ID];
   },
 
+  /**
+   * Cleans up local fields. This is not currently needed for AMP.
+   * @param resource
+   * @return {{}} a resource copy without local fields
+   */
   cleanupLocalData(resource) {
-    // TODO do we need to cleanup?
     const cleanResource = { ...resource };
     if (this.isNewResource(resource)) {
       delete cleanResource.uuid;
