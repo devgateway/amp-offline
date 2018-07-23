@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable camelcase */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
@@ -89,7 +90,7 @@ export default class AFMapWindow extends Component {
     }
   }
 
-  onStructureDataPopupSubmit(layer, id, title, structures_color, description, shape) {
+  onStructureDataPopupSubmit(layer, id, title, structure_color, description, shape) {
     this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
     const newLayersList = this.state.layersList.slice();
     const index = newLayersList.findIndex((item) => (item.structureData.id === id));
@@ -98,9 +99,18 @@ export default class AFMapWindow extends Component {
     } else {
       id = Math.random();
     }
-    const newLayer = { layer, structureData: { title, structures_color, id, description, shape } };
-    newLayersList.push(newLayer);
+    if (shape !== AC.STRUCTURES_POINT && structure_color && structure_color.value) {
+      layer.options.color = structure_color.value.substring(0, 7);
+    }
+    const newStructure = { layer, structureData: { title, structure_color, id, description, shape } };
+    newLayersList.push(newStructure);
     this.setState({ layersList: newLayersList });
+
+    // Update the layer to reflect color change.
+    if (shape !== AC.STRUCTURES_POINT) {
+      this.state.map.removeLayer(layer.layer || layer);
+      this.state.map.addLayer(layer.layer || layer);
+    }
   }
 
   onStructureDataPopupDelete(layer, structureData) {
