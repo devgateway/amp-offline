@@ -114,7 +114,7 @@ export default class AFMapPopup extends Component {
   }
 
   render() {
-    const { title } = this.state;
+    const { title, shape } = this.state;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
         <Modal.Title>
@@ -123,7 +123,7 @@ export default class AFMapPopup extends Component {
       </Modal.Header>
       <Modal.Body>
         <span>{translate('Title')}:</span> <input type={'text'} value={title} onChange={this.handleChangeTitle} />
-        {this.generateColorList()}
+        {shape !== AC.STRUCTURES_POINT ? this.generateColorList() : null}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick} bsStyle="success">
