@@ -174,7 +174,7 @@ const routesConfiguration = [{
   url: MAP_TILES_URL,
   method: 'GET',
   requiredAuth: true,
-  regularAmpUrl: true,
+  isBinary: true
 }
 
 ];

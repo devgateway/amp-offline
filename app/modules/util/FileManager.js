@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import extract from 'extract-zip';
 import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
@@ -74,10 +75,10 @@ const FileManager = {
 
   /**
    * Creates a data directory synchronously if it doesn't exist
-   * @param dirName
+   * @param pathParts
    */
-  createDataDir(dirName) {
-    const fullPath = this.getFullPath(dirName);
+  createDataDir(...pathParts) {
+    const fullPath = this.getFullPath(...pathParts);
     fs.ensureDirSync(fullPath);
     return fullPath;
   },
@@ -239,6 +240,21 @@ const FileManager = {
     const to = path.join(os.tmpdir(), `${Utils.numberRandom()}-${file}`);
     fs.writeFileSync(to, fs.readFileSync(from));
     return to;
+  },
+
+  getAbsolutePath(...pathParts) {
+    if (process.env.NODE_ENV === 'production') {
+      alert('to be implemented!!!');
+      // TODO: iMPLEMENT.
+    } else {
+      return this.getFullPath(global.__dirname, ...pathParts);
+    }
+  },
+
+  extractZip(directory, callback, ...pathParts) {
+    const fullPath = this.getAbsolutePath(...pathParts);
+    const dir = this.getAbsolutePath(directory);
+    return extract(fullPath, { dir }, callback);
   }
 };
 
