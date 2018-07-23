@@ -11,6 +11,7 @@ import * as AC from '../../../utils/constants/ActivityConstants';
 import { CONTENT_ID, CONTENT_TYPE, FILE_NAME, UUID } from '../../../utils/constants/ResourceConstants';
 import RepositoryHelper from '../../helpers/RepositoryHelper';
 import RepositoryManager from '../../repository/RepositoryManager';
+import MultipartFormBuilder from '../../connectivity/MultipartFormBuilder';
 
 const logger = new Logger('ResourcesPushSyncUpManager');
 
@@ -78,7 +79,7 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
     return RepositoryHelper.findContentsByIds(contentIds).then(Utils.toMapByKey)
       .then(contentsById => resources.map(resource => ({
         resource,
-        content: resource[CONTENT_ID] && contentsById[resource[CONTENT_ID]]
+        content: resource[CONTENT_ID] && contentsById.get(resource[CONTENT_ID])
       })));
   }
 
@@ -111,19 +112,12 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _buildFormData(resource, content) {
-    const formData = {
-      resource: ResourceHelper.cleanupLocalData(resource)
-    };
+    const form = new MultipartFormBuilder().addJsonParam('resource', resource);
     if (content) {
-      formData.file = {
-        value: RepositoryManager.createContentReadStream(content),
-        options: {
-          filename: resource[FILE_NAME],
-          contentType: resource[CONTENT_TYPE]
-        }
-      };
+      const readStream = RepositoryManager.createContentReadStream(content);
+      form.addFileParam('file', resource[FILE_NAME], resource[CONTENT_TYPE], readStream);
     }
-    return formData;
+    return form.getMultipartForm();
   }
 
   _processResult({ resource, pushResult, error }) {
