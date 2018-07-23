@@ -28,6 +28,22 @@ class AFStructures extends Component {
     activity: PropTypes.object.isRequired
   };
 
+  static detectShapePoint(structure) {
+    let isPoint = false;
+    if (!structure[AC.STRUCTURES_SHAPE]) {
+      if (!structure[AC.STRUCTURES_LATITUDE] || !structure[AC.STRUCTURES_LONGITUDE]) {
+        isPoint = false;
+      } else {
+        isPoint = true;
+      }
+    } else if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+      isPoint = true;
+    } else {
+      isPoint = false;
+    }
+    return isPoint;
+  }
+
   static generateDataRow(structure) {
     const content = [];
     content.push(<Col md={3} lg={3} key={Math.random()}>
@@ -36,16 +52,18 @@ class AFStructures extends Component {
     content.push(<Col md={3} lg={3} key={Math.random()}>
       <AFField fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_DESCRIPTION}`} parent={structure} type={Types.TEXT_AREA} />
     </Col>);
-    content.push(<Col md={3} lg={3} key={Math.random()}>
-      <AFField
-        fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.NUMBER}
-        extraParams={{ readonly: true }} />
-    </Col>);
-    content.push(<Col md={3} lg={3} key={Math.random()}>
-      <AFField
-        fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER}
-        extraParams={{ readonly: true }} />
-    </Col>);
+    if (AFStructures.detectShapePoint(structure)) {
+      content.push(<Col md={3} lg={3} key={Math.random()}>
+        <AFField
+          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.NUMBER}
+          extraParams={{ readonly: true }} />
+      </Col>);
+      content.push(<Col md={3} lg={3} key={Math.random()}>
+        <AFField
+          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER}
+          extraParams={{ readonly: true }} />
+      </Col>);
+    }
     return content;
   }
 
@@ -53,8 +71,8 @@ class AFStructures extends Component {
     super(props);
     logger.log('constructor');
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleMap = this.handleMap.bind(this);
-    this.handleView = this.handleView.bind(this);
+    this.openMap = this.openMap.bind(this);
+    this.handleViewCoordinates = this.handleViewCoordinates.bind(this);
     this.handleSaveMap = this.handleSaveMap.bind(this);
     this.handleCloseMap = this.handleCloseMap.bind(this);
     this.state = {
@@ -81,13 +99,12 @@ class AFStructures extends Component {
     return (<Col md={12} lg={12}>
       <Button
         bsStyle="primary" className={afStyles.button}
-        onClick={this.handleMap.bind(this, structure)}>{translate('Map')}
+        onClick={this.openMap.bind(this, structure)}>{translate('Map')}
       </Button>
-      {(structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYGON
-        || structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POLYLINE)
+      {!AFStructures.detectShapePoint(structure)
         ? <Button
           bsStyle="primary" className={afStyles.button}
-          onClick={this.handleView.bind(this, structure)}>{translate('View')}
+          onClick={this.handleViewCoordinates.bind(this, structure)}>{translate('View')}
         </Button>
         : null}
       <Button
@@ -97,26 +114,41 @@ class AFStructures extends Component {
     </Col>);
   }
 
-  handleView(structure) {
+  handleViewCoordinates(structure) {
     this.setState({ showViewDialog: true, viewStructure: structure });
   }
 
-  handleMap(structure) {
-    if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+  openMap(structure) {
+    if (!structure) {
+      // Open map to add structure.
       this.setState({
         showMapDialog: true,
-        viewStructure: structure,
+        currentPoint: null,
+        currentPolygon: null
+      });
+    } else if (AFStructures.detectShapePoint(structure)) {
+      this.setState({
+        showMapDialog: true,
         currentPoint: {
+          id: structure.id,
+          [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
-          [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE]
+          [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE],
+          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
         },
         currentPolygon: null
       });
     } else {
       this.setState({
         showMapDialog: true,
-        viewStructure: structure,
-        currentPolygon: structure[AC.STRUCTURES_COORDINATES],
+        currentPolygon: {
+          [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
+          id: structure.id,
+          [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
+          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON
+        },
         currentPoint: null
       });
     }
@@ -133,14 +165,57 @@ class AFStructures extends Component {
     this.setState({ showMapDialog: false });
   }
 
-  /* eslint-disable class-methods-use-this */
-  handleSaveMap() {
-    logger.log('handleSaveMap');
+  handleSaveMap(layersList, deletedLayersList) {
+    // Add new layer or replace with changes.
+    const newStructures = this.state.structures.slice();
+    layersList.forEach(l => {
+      const index = newStructures.findIndex(s => (s.id === l.structureData.id));
+      if (index > -1) {
+        newStructures.splice(index, 1);
+      }
+      if (AFStructures.detectShapePoint(l.structureData)) {
+        newStructures.push({
+          [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
+          [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_LATITUDE]: String(l.layer.getLatLng()[AC.STRUCTURES_LAT]),
+          [AC.STRUCTURES_LONGITUDE]: String(l.layer.getLatLng()[AC.STRUCTURES_LNG]),
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
+          [AC.STRUCTURES_COORDINATES]: [],
+          id: l.structureData.id || Math.random()
+        });
+      } else {
+        newStructures.push({
+          [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
+          [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
+          [AC.STRUCTURES_COORDINATES]: [],
+          id: l.structureData.id || Math.random(),
+          [AC.STRUCTURES_COORDINATES]: l.layer.getLatLngs()[0].map(loc => ({
+            [AC.STRUCTURES_LATITUDE]: String(loc.lat),
+            [AC.STRUCTURES_LONGITUDE]: String(loc.lng)
+          }))
+        });
+      }
+    });
+    // Remove deleted layers.
+    deletedLayersList.forEach(l => {
+      const index = newStructures.findIndex(s => (s.id === l.id));
+      if (index > -1) {
+        newStructures.splice(index, 1);
+      }
+    });
+    this.setState({ structures: newStructures, showMapDialog: false });
+    this.context.activity[AC.STRUCTURES] = newStructures;
   }
 
   render() {
     this.preProcessForIds();
     return (<div className={afStyles.full_width}>
+
+      <Button
+        bsStyle="primary" className={afStyles.button}
+        onClick={this.openMap.bind(this, null)}>{translate('Add Structure')}
+      </Button>
 
       <AFViewStructure
         show={this.state.showViewDialog}
