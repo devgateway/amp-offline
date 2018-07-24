@@ -137,11 +137,7 @@ export default class AFMapWindow extends Component {
     const map = L.map(node, { zoomControl: false }).setView([lat, lng], minZoom);
     let tilesPath = '';
     const tilesFiles = 'assets/map-tiles/{z}/{x}/{y}.png';
-    if (process.env.NODE_ENV === 'production') {
-      tilesPath = `file://${path.join(FileManager.getDataPath(), tilesFiles)}`;
-    } else {
-      tilesPath = `file://${FileManager.getAbsolutePath('..', tilesFiles)}`;
-    }
+    tilesPath = `file://${FileManager.getAbsolutePath(tilesFiles)}`;
     L.tileLayer(tilesPath, {
       maxZoom,
       minZoom,

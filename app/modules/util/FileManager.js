@@ -242,8 +242,8 @@ const FileManager = {
   },
 
   /**
-   * Returns the full absolute path (to the /app directory).
-   * ie: C:\Users\user1\App Data\Local\AmpOffline\app
+   * Returns the full absolute path.
+   * ie: C:\Users\user1\App Data\Local\AmpOffline
    * @param pathParts
    * @returns {*|string}
    */
@@ -251,7 +251,8 @@ const FileManager = {
     if (process.env.NODE_ENV === 'production') {
       return this.getFullPath(...pathParts);
     } else {
-      return this.getFullPath(global.__dirname, ...pathParts);
+      // Notice the '..' because __dirname points to /app subdir.
+      return this.getFullPath(global.__dirname, '..', ...pathParts);
     }
   }
 };
