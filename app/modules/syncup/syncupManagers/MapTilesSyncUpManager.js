@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+import extract from 'extract-zip';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { MAP_TILES_URL } from '../../connectivity/AmpApiConstants';
@@ -18,11 +19,13 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
     return new Promise((resolve, reject) => {
       if (!this.checkIfTilesExist()) {
         return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true }).then((tiles) => {
+          // Write down .zip file.
           FileManager.writeDataFileSync(tiles, ASSETS_DIRECTORY, TILES_ZIP_FILE);
-          const dir = FileManager.getFullPath('..', ASSETS_DIRECTORY);
-          return FileManager.extractZip(dir, this.afterExtract.bind(null, resolve, reject)
-            , '..', ASSETS_DIRECTORY, TILES_ZIP_FILE);
-        });
+          // Extract .zip file using absolute paths.
+          const zipFile = this.getAbsolutePath('..', ASSETS_DIRECTORY, TILES_ZIP_FILE);
+          const dir = this.getAbsolutePath('..', ASSETS_DIRECTORY);
+          return extract(zipFile, { dir }, this.afterExtract.bind(null, resolve, reject));
+        }).catch(reject);
       } else {
         return resolve();
       }

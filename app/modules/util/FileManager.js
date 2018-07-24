@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import extract from 'extract-zip';
 import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
@@ -248,12 +247,6 @@ const FileManager = {
     } else {
       return this.getFullPath(global.__dirname, ...pathParts);
     }
-  },
-
-  extractZip(directory, callback, ...pathParts) {
-    const fullPath = this.getAbsolutePath(...pathParts);
-    const dir = this.getAbsolutePath(directory);
-    return extract(fullPath, { dir }, callback);
   }
 };
 
