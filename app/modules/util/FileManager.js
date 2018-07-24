@@ -244,8 +244,7 @@ const FileManager = {
 
   getAbsolutePath(...pathParts) {
     if (process.env.NODE_ENV === 'production') {
-      alert('to be implemented!!!');
-      // TODO: iMPLEMENT.
+      return this.getFullPath(...pathParts);
     } else {
       return this.getFullPath(global.__dirname, ...pathParts);
     }
