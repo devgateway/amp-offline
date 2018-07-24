@@ -79,7 +79,8 @@ export default class SyncUpRunner {
   /** Sync up run no 2 */
   static _SYNC_RUN_2 = 2;
 
-  static _SECOND_RUN_SKIP = new Set([SYNCUP_TYPE_ACTIVITIES_PUSH, SYNCUP_TYPE_CONTACTS_PUSH]);
+  static _SECOND_RUN_SKIP = new Set([SYNCUP_TYPE_ACTIVITIES_PUSH, SYNCUP_TYPE_CONTACTS_PUSH,
+    SYNCUP_TYPE_RESOURCES_PUSH]);
 
   /**
    * Generates a new instance of the Sync Up Runner. This must be only instance per user request.

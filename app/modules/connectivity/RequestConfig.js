@@ -56,7 +56,7 @@ const RequestConfig = {
 
     if (body !== undefined) {
       if (routeConfiguration.isForm) {
-        requestConfig.formData = body;
+        requestConfig.multipart = body;
       } else {
         requestConfig.body = body;
       }
