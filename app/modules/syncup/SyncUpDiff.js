@@ -15,8 +15,7 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
-  SYNCUP_TYPE_WORKSPACES,
-  SYNCUP_TYPE_MAP_TILES
+  SYNCUP_TYPE_WORKSPACES
 } from '../../utils/Constants';
 import { throwSyncUpError } from './syncupManagers/SyncUpManagerInterface';
 import Logger from '../../modules/util/LoggerManager';
@@ -76,10 +75,6 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES:
       case SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES:
         diff = Array.from(new Set((this._syncUpDiff[type] || []).concat(diff)));
-        break;
-      case SYNCUP_TYPE_MAP_TILES:
-        debugger;
-        diff = [];
         break;
       default:
         throwSyncUpError(`SyncUpDiff merge not implemented for type = ${type}`);
