@@ -22,8 +22,8 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
           // Write down .zip file.
           FileManager.writeDataFileSync(tiles, ASSETS_DIRECTORY, TILES_ZIP_FILE);
           // Extract .zip file using absolute paths.
-          const zipFile = this.getAbsolutePath('..', ASSETS_DIRECTORY, TILES_ZIP_FILE);
-          const dir = this.getAbsolutePath('..', ASSETS_DIRECTORY);
+          const zipFile = FileManager.getAbsolutePath('..', ASSETS_DIRECTORY, TILES_ZIP_FILE);
+          const dir = FileManager.getAbsolutePath('..', ASSETS_DIRECTORY);
           return extract(zipFile, { dir }, this.afterExtract.bind(null, resolve, reject));
         }).catch(reject);
       } else {
