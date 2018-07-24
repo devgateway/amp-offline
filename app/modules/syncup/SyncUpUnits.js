@@ -25,7 +25,7 @@ export default class SyncUpUnits {
   }
 
   /**
-   * Waits for the unit promise to fulfil and cactches any errors within erros list and resolves (no rejection)
+   * Waits for the unit promise to fulfil and catches any errors within errors list and resolves (no rejection)
    * @param unitPromise
    * @return {Promise}
    * @private

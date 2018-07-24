@@ -124,6 +124,7 @@ export const
   TRANSPARENT_FLAG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=';
 export const HELP_PDF_FILENAME = 'amp-help';
 export const HELP_DIR = 'help';
+export const ENDS_WITH_PUNCTUATION_REGEX = /[.!?,;:]$/;
 
 export const DG_COMPANY_NAME = 'Development Gateway';
 export const DG_ADDRESS_1 = '1110 Vermont Ave, NW, Suite 500';
