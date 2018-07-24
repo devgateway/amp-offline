@@ -390,5 +390,6 @@
   "FileSizeLimitExceeded": "The file size limit is {size} MB. This file exceeds the limit.",
   "FileUploading": "Upload started, please wait ...",
   "FileUploadFailed": "Upload failed! Please try again.",
-  "rejectActivityWhenResourceUnsynced": "The new resource(s) %resources% used by the activity could not be synced to AMP. Activity cannot be synced."
+  "rejectActivityWhenResourceUnsynced": "The new resource(s) %resources% used by the activity could not be synced to AMP. Activity cannot be synced.",
+  "resourcesDeletedFromActivity": "The %titles% document(s) were deleted on AMP and as a result the document(s) were also removed from %activityInfo% activity before its sync up."
 }

@@ -7,11 +7,12 @@ import {
 import { RESOURCE_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
-import { ACTIVITY_DOCUMENTS, AMP_ID } from '../../../utils/constants/ActivityConstants';
+import { ACTIVITY_DOCUMENTS, AMP_ID, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import ResourceManager from '../../resource/ResourceManager';
-import { UUID } from '../../../utils/constants/ResourceConstants';
+import { TITLE, UUID } from '../../../utils/constants/ResourceConstants';
+import translate from '../../../utils/translate';
 
 const logger = new Logger('ResourcesPullSyncUpManager');
 
@@ -33,14 +34,15 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
 
   removeEntries() {
     const removedResourcesIds = this.diff.removed;
-    return ResourceManager.deleteAllResourcesWithContent(removedResourcesIds).then(() => {
-      // clear diff immediately
-      this.diff.removed = [];
-      return this.unlinkRemovedResourcesFromActivities(removedResourcesIds);
-    });
+    return ResourceManager.findResourcesByUuidsWithContent(removedResourcesIds)
+      .then(deletedResources => ResourceManager.deleteAllResourcesWithContent(removedResourcesIds).then(() => {
+        // clear diff immediately
+        this.diff.removed = [];
+        return this.unlinkRemovedResourcesFromActivities(removedResourcesIds, Utils.toMapByKey(deletedResources, UUID));
+      }));
   }
 
-  unlinkRemovedResourcesFromActivities(removedResourcesIds) {
+  unlinkRemovedResourcesFromActivities(removedResourcesIds, removedResourcesMap) {
     if (!removedResourcesIds || !removedResourcesIds.length) {
       return removedResourcesIds;
     }
@@ -58,16 +60,34 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
     const filter = activityIdsToIgnore.length ? { $and: [uuidFilter, ampIdFilter] } : uuidFilter;
 
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
-      activities.forEach(activity => this.unlinkRemovedResourcesFromActivity(activity, removedResourcesIds));
+      activities.forEach(activity =>
+        this.unlinkRemovedResourcesFromActivity(activity, removedResourcesIds, removedResourcesMap));
       return ActivityHelper.saveOrUpdateCollection(activities);
     });
   }
 
-  unlinkRemovedResourcesFromActivity(activity, removedResourcesIds) {
+  unlinkRemovedResourcesFromActivity(activity, removedResourcesIds, removedResourcesMap) {
     let resources = activity[ACTIVITY_DOCUMENTS];
     if (resources && resources.length) {
-      resources = resources.filter(ar => !removedResourcesIds.includes(ar[UUID]));
+      const removedResources = [];
+      resources = resources.filter(ar => {
+        const uuid = ar[UUID];
+        if (removedResourcesIds.includes(uuid)) {
+          removedResources.push(removedResourcesMap.get(uuid) || uuid);
+          return false;
+        }
+        return true;
+      });
       activity[ACTIVITY_DOCUMENTS] = resources;
+      if (removedResources.length) {
+        const titles = removedResources.map(r => `"${r[TITLE] || r[UUID] || r}"`).join(', ');
+        const formattedAmpId = activity[AMP_ID] ? `(${activity[AMP_ID]})` : '';
+        const activityInfo = `"${formattedAmpId}${activity[PROJECT_TITLE]}"`;
+        const msg = translate('resourcesDeletedFromActivity')
+          .replace('%titles%', titles).replace('%activityInfo', activityInfo);
+        this.addWarning(msg);
+        logger.warn(msg);
+      }
     }
   }
 
