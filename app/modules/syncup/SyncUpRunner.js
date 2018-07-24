@@ -267,10 +267,11 @@ export default class SyncUpRunner {
     const unitLeftOver = this._syncUpDiffLeftOver.getSyncUpDiff(type);
     const state = this._getStateOrSetBasedOnLeftOver(type, originalDiff, unitLeftOver, syncUpManager.done);
     const status = SS.STATE_TO_STATUS[state] || SYNCUP_STATUS_FAIL;
-    if (!error && syncUpManager.errors && syncUpManager.errors.length) {
-      error = syncUpManager.errors.join('. ');
+    if (!error) {
+      error = this._getMessages(syncUpManager.errors);
     }
-    let unitResult = { type, status, state, error };
+    const warning = this._getMessages(syncUpManager.warnings);
+    let unitResult = { type, status, state, error, warning };
     // if no changes in the second run, keep run 1 result
     if (this._syncRunNo === SyncUpRunner._SYNC_RUN_2 && state === SS.NO_CHANGES) {
       unitResult = this._unitsResult.get(type);
@@ -280,6 +281,12 @@ export default class SyncUpRunner {
     }
     this._remainingSyncUpTypes.delete(syncUpManager.type);
     return unitResult;
+  }
+
+  _getMessages(messages) {
+    if (messages && messages.length) {
+      return Utils.joinMessages(messages);
+    }
   }
 
   _addStats(syncUpManager: SyncUpManagerInterface, unitResult, prevUnitResult) {
@@ -365,11 +372,20 @@ export default class SyncUpRunner {
     const status = this._getStatus(unitsResult);
     logger.log(`SyncUp ${status}`);
     const syncUpDiff = status === SYNCUP_STATUS_SUCCESS ? null : this._syncUpDiffLeftOver.syncUpDiff;
+    let warnings;
     if (unitsResult.length) {
-      errors = this._collectErrors(unitsResult, errors);
+      const messages = this._collectMessages(unitsResult, errors);
+      errors = messages.errors;
+      warnings = messages.warnings;
     }
     return SyncUpRunner.buildResult({
-      status, userId: this._userId, units: unitsResult, errors, syncUpDiff, syncTimestamp: this._currentTimestamp
+      status,
+      userId: this._userId,
+      units: unitsResult,
+      errors,
+      warnings,
+      syncUpDiff,
+      syncTimestamp: this._currentTimestamp
     });
   }
 
@@ -394,13 +410,14 @@ export default class SyncUpRunner {
     return SYNCUP_STATUS_PARTIAL;
   }
 
-  static buildResult({ status, userId, units, errors, syncUpDiff, syncTimestamp }) {
+  static buildResult({ status, userId, units, errors, warnings, syncUpDiff, syncTimestamp }) {
     const syncDate = new Date();
     const syncUpGlobalResult = {
       status,
       'requested-by': userId,
       units,
       errors,
+      warnings,
       'sync-date': syncDate.toISOString()
     };
     syncUpGlobalResult[SYNCUP_DATETIME_FIELD] = syncTimestamp;
@@ -410,7 +427,7 @@ export default class SyncUpRunner {
     return syncUpGlobalResult;
   }
 
-  _collectErrors(unitsResult, errors = []) {
+  _collectMessages(unitsResult, errors = []) {
     const existingErrors = new Set();
     errors = errors.filter(err => {
       const errMsg = err.toString();
@@ -420,7 +437,7 @@ export default class SyncUpRunner {
       existingErrors.add(errMsg);
       return true;
     });
-    return unitsResult.reduce((errorsList, unitResult) => {
+    errors = unitsResult.reduce((errorsList, unitResult) => {
       if (unitResult.error) {
         const errMsg = unitResult.error.toString();
         if (!existingErrors.has(errMsg)) {
@@ -430,6 +447,8 @@ export default class SyncUpRunner {
       }
       return errorsList;
     }, errors);
+    const warnings = unitsResult.map(ur => ur.warning).filter(w => w);
+    return { errors, warnings };
   }
 
   /**
