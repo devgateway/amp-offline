@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable camelcase */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
@@ -12,7 +13,7 @@ import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsMan
 import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import FileManager from '../../../../../modules/util/FileManager';
-import { MAP_MARKER_IMAGE, MAP_MARKER_SHADOW } from '../../../../../utils/Constants';
+import { MAP_MARKER_IMAGE, MAP_MARKER_SHADOW, POLYGON_BASE_COLOR } from '../../../../../utils/Constants';
 import AFMapPopup from './AFMapPopup';
 
 const logger = new Logger('Map Modal');
@@ -23,6 +24,7 @@ const myIcon = L.icon({
   popupAnchor: [-3, -76],
   shadowUrl: MAP_MARKER_SHADOW
 });
+const OPACITY = '0.5';
 
 /**
  * Map Modal
@@ -30,6 +32,11 @@ const myIcon = L.icon({
  * @author Gabriel Inchauspe
  */
 export default class AFMapWindow extends Component {
+
+  static contextTypes = {
+    activityFieldsManager: PropTypes.object
+  };
+
   static propTypes = {
     onModalClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
@@ -84,7 +91,7 @@ export default class AFMapWindow extends Component {
     }
   }
 
-  onStructureDataPopupSubmit(layer, id, title, color, description, shape) {
+  onStructureDataPopupSubmit(layer, id, title, structure_color, description, shape) {
     this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
     const newLayersList = this.state.layersList.slice();
     const index = newLayersList.findIndex((item) => (item.structureData.id === id));
@@ -93,9 +100,18 @@ export default class AFMapWindow extends Component {
     } else {
       id = Math.random();
     }
-    const newLayer = { layer, structureData: { title, color, id, description, shape } };
-    newLayersList.push(newLayer);
+    if (shape !== AC.STRUCTURES_POINT && structure_color && structure_color.value) {
+      layer.options.color = structure_color.value.substring(0, 7);
+    }
+    const newStructure = { layer, structureData: { title, structure_color, id, description, shape } };
+    newLayersList.push(newStructure);
     this.setState({ layersList: newLayersList });
+
+    // Update the layer to reflect color change.
+    if (shape !== AC.STRUCTURES_POINT) {
+      this.state.map.removeLayer(layer.layer || layer);
+      this.state.map.addLayer(layer.layer || layer);
+    }
   }
 
   onStructureDataPopupDelete(layer, structureData) {
@@ -181,7 +197,7 @@ export default class AFMapWindow extends Component {
       drawnItems.addLayer(layer);
       const structureData = {
         [AC.STRUCTURES_TITLE]: '',
-        color: null,
+        [AC.STRUCTURES_COLOR]: null,
         [AC.STRUCTURES_DESCRIPTION]: '',
         [AC.STRUCTURES_SHAPE]: (layer._latlng ? AC.STRUCTURES_POINT : AC.STRUCTURES_POLYGON),
         edit: false
@@ -205,7 +221,7 @@ export default class AFMapWindow extends Component {
           layer: marker,
           structureData: {
             [AC.STRUCTURES_TITLE]: this.props.point[AC.STRUCTURES_TITLE],
-            color: null,
+            [AC.STRUCTURES_COLOR]: null,
             id: this.props.point.id,
             [AC.STRUCTURES_DESCRIPTION]: this.props.point[AC.STRUCTURES_DESCRIPTION],
             [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
@@ -215,8 +231,12 @@ export default class AFMapWindow extends Component {
         this.setState({ layersList: newLayersList });
       } else {
         // Load polygon.
-        const polygon = L.polygon(this.props.polygon[AC.STRUCTURES_COORDINATES]
-          .map(c => ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])));
+        let color = POLYGON_BASE_COLOR;
+        if (this.props.polygon[AC.STRUCTURES_COLOR]) {
+          color = this.props.polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
+        }
+        const polygon = L.polygon(this.props.polygon[AC.STRUCTURES_COORDINATES].map(c =>
+          ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: OPACITY });
         polygon.on('click', (event) => this.handleMarkerClick(event));
         drawnItems.addLayer(polygon);
         const newLayersList = this.state.layersList.slice();
@@ -224,7 +244,7 @@ export default class AFMapWindow extends Component {
           layer: polygon,
           structureData: {
             [AC.STRUCTURES_TITLE]: this.props.polygon[AC.STRUCTURES_TITLE],
-            color: null,
+            [AC.STRUCTURES_COLOR]: this.props.polygon[AC.STRUCTURES_COLOR],
             id: this.props.polygon.id,
             [AC.STRUCTURES_DESCRIPTION]: this.props.polygon[AC.STRUCTURES_DESCRIPTION],
             [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
