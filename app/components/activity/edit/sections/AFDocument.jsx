@@ -7,6 +7,7 @@ import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
 import { FIELD_NAME } from '../../../../utils/constants/FieldPathConstants';
+import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
@@ -39,6 +40,7 @@ import RepositoryManager from '../../../../modules/repository/RepositoryManager'
 import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
 import { buildNewResource } from '../../../../actions/ResourceAction';
+import FeatureManager from '../../../../modules/util/FeatureManager';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,
@@ -85,6 +87,8 @@ class AFDocument extends Component {
     this.toAction = this.toAction.bind(this);
     this.onAdd = this.onAdd.bind(this);
     this.onCancel = this.onCancel.bind(this);
+    this.allowAddDocuments = FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DOCUMENTS_ADD_DOCUMENT);
+    this.allowAddWebLinks = FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DOCUMENTS_ADD_WEBLINK);
     this.state = {
       docs: this.getDocuments(context),
       docFormOpened: false,
@@ -159,7 +163,8 @@ class AFDocument extends Component {
 
   getDocListHeaders() {
     const { resourceFieldsManager } = this.props.resourceReducer;
-    const fieldsDef = AF_FIELDS.map(f => resourceFieldsManager.fieldsDef.find(fd => f === fd[FIELD_NAME]));
+    const allFieldsDef = resourceFieldsManager.fieldsDef;
+    const fieldsDef = AF_FIELDS.map(f => allFieldsDef.find(fd => f === fd[FIELD_NAME])).filter(fd => fd);
     const headers = [<TableHeaderColumn key={UUID} dataField={UUID} isKey hidden />].concat(fieldsDef.map(fd => {
       const fieldName = fd[FIELD_NAME];
       const formatExtraData = { fd };
@@ -266,8 +271,8 @@ class AFDocument extends Component {
     return (
       <div>
         {this.renderDocList()}
-        {this.renderResourcePanel(TYPE_DOC_RESOURCE)}
-        {this.renderResourcePanel(TYPE_WEB_RESOURCE)}
+        {this.allowAddDocuments && this.renderResourcePanel(TYPE_DOC_RESOURCE)}
+        {this.allowAddWebLinks && this.renderResourcePanel(TYPE_WEB_RESOURCE)}
       </div>
     );
   }
