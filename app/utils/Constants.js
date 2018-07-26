@@ -44,6 +44,8 @@ export const COLLECTION_RESOURCES = 'resources';
 export const COLLECTION_REPOSITORY = 'repository';
 export const COLLECTION_GAZETTEER = 'gazetteer';
 
+export const GAZETTEER_DISTANCE = 2;
+
 export const DB_FILE_PREFIX = 'database';
 export const DB_FILE_EXTENSION = '.db';
 // TODO: Find a better way to store the key.
