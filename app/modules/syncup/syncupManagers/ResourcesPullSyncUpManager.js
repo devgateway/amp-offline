@@ -53,9 +53,9 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
     // a dependency to pull resources after activities, but if some activity pull fails, we should still skip it here.
     // In the 2nd fringe case we agreed that for simplicity we'll remove the resource link from activity
     // and notify the user.
-    const activitiesPullDiff = this.totalSyncUpDiff.get(SYNCUP_TYPE_ACTIVITIES_PULL);
+    const activitiesPullDiff = this.totalSyncUpDiff[SYNCUP_TYPE_ACTIVITIES_PULL] || {};
     const activityIdsToIgnore = [].concat(activitiesPullDiff.saved || []).concat(activitiesPullDiff.removed || []);
-    const uuidFilter = Utils.toMap(ACTIVITY_DOCUMENTS, { [UUID]: { $in: removedResourcesIds } });
+    const uuidFilter = Utils.toMap(ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: removedResourcesIds }) });
     const ampIdFilter = activityIdsToIgnore.length && Utils.toMap(AMP_ID, { $nin: activityIdsToIgnore });
     const filter = activityIdsToIgnore.length ? { $and: [uuidFilter, ampIdFilter] } : uuidFilter;
 
@@ -81,10 +81,10 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
       activity[ACTIVITY_DOCUMENTS] = resources;
       if (removedResources.length) {
         const titles = removedResources.map(r => `"${r[TITLE] || r[UUID] || r}"`).join(', ');
-        const formattedAmpId = activity[AMP_ID] ? `(${activity[AMP_ID]})` : '';
+        const formattedAmpId = activity[AMP_ID] ? `(${activity[AMP_ID]}) ` : '';
         const activityInfo = `"${formattedAmpId}${activity[PROJECT_TITLE]}"`;
         const msg = translate('resourcesDeletedFromActivity')
-          .replace('%titles%', titles).replace('%activityInfo', activityInfo);
+          .replace('%titles%', titles).replace('%activityInfo%', activityInfo);
         this.addWarning(msg);
         logger.warn(msg);
       }
