@@ -122,7 +122,7 @@ class AFField extends Component {
       this.props.parent, asDraft, this.fieldDef, this.props.fieldPath);
     // TODO check if its still needed to have innerComponentValidationError, additionally to API rules
     this.context.activityValidator.processValidationResult(
-      this.props.parent, errors, this.props.fieldPath, innerComponentValidationError);
+      this.props.parent, this.props.fieldPath, innerComponentValidationError);
     this.setState({ value });
     this._processValidation(errors);
   }
