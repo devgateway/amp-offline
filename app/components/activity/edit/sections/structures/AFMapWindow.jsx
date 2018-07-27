@@ -13,16 +13,28 @@ import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsMan
 import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import FileManager from '../../../../../modules/util/FileManager';
-import { MAP_MARKER_IMAGE, MAP_MARKER_SHADOW, POLYGON_BASE_COLOR } from '../../../../../utils/Constants';
+import {
+  MAP_MARKER_IMAGE,
+  MAP_MARKER_SHADOW,
+  POLYGON_BASE_COLOR,
+  MAP_MARKER_CIRCLE_RED
+} from '../../../../../utils/Constants';
 import AFMapPopup from './AFMapPopup';
+import GazetteerHelper from '../../../../../modules/helpers/GazetteerHelper';
 
 const logger = new Logger('Map Modal');
-const myIcon = L.icon({
+const myIconMarker = L.icon({
   iconUrl: MAP_MARKER_IMAGE,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [-3, -76],
   shadowUrl: MAP_MARKER_SHADOW
+});
+const circleIconMarker = L.icon({
+  iconUrl: MAP_MARKER_CIRCLE_RED,
+  iconSize: [20, 20],
+  iconAnchor: [5, 5],
+  popupAnchor: [0, 0]
 });
 const OPACITY = '0.5';
 
@@ -76,7 +88,8 @@ export default class AFMapWindow extends Component {
       currentLayer: null,
       structureData: null,
       layersList: [],
-      deletedLayersList: []
+      deletedLayersList: [],
+      locateText: null
     };
   }
 
@@ -119,6 +132,10 @@ export default class AFMapWindow extends Component {
     const newDeletedList = this.state.deletedLayersList.slice();
     newDeletedList.push({ id: structureData.id });
     this.setState({ deletedLayersList: newDeletedList });
+  }
+
+  onLocateTextChange(control) {
+    this.setState({ locateText: control.target.value });
   }
 
   openStructureDataPopup(e, layer, structureData) {
@@ -186,7 +203,7 @@ export default class AFMapWindow extends Component {
         circle: false,
         circlemarker: false,
         marker: {
-          icon: myIcon
+          icon: myIconMarker
         }
       }
     }));
@@ -213,7 +230,7 @@ export default class AFMapWindow extends Component {
       // Load point.
       if (this.props.point) {
         const marker = L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]],
-          { icon: myIcon });
+          { icon: myIconMarker });
         marker.on('click', (event) => this.handleMarkerClick(event));
         drawnItems.addLayer(marker);
         const newLayersList = this.state.layersList.slice();
@@ -259,6 +276,15 @@ export default class AFMapWindow extends Component {
     }
   }
 
+  fuzzySearch() {
+    const text = this.state.locateText;
+    return GazetteerHelper.findAllByNameFuzzy(text).then(data => {
+      console.warn(data.length);
+      console.warn(data.map(i => i.name));
+      return data;
+    });
+  }
+
   render() {
     return (<Modal show={this.props.show} onEntered={this.generateMap.bind(this)} bsSize="large">
       <Modal.Header>
@@ -268,6 +294,10 @@ export default class AFMapWindow extends Component {
       </Modal.Header>
       <Modal.Body>
         <div id="map" />
+        <div className={styles.gazetteer_container}>
+          <input type="text" value={this.state.locateText} onChange={this.onLocateTextChange.bind(this)} />
+          <Button onClick={this.fuzzySearch.bind(this)}>{translate('Locate')}</Button>
+        </div>
         <AFMapPopup
           show={this.state.showStructureDataPopup}
           onSubmit={this.onStructureDataPopupSubmit}
