@@ -13,6 +13,7 @@ export default class SyncUpManagerInterface {
     this._type = type;
     this.done = false;
     this._errors = [];
+    this._warnings = [];
     this._details = {};
     if (this.doSyncUp === undefined) {
       throwSyncUpError('SyncUpManagerInterface.doSyncUp not implemented');
@@ -50,6 +51,14 @@ export default class SyncUpManagerInterface {
    */
   get errors() {
     return this._errors;
+  }
+
+  addWarning(warning) {
+    this._warnings.push(warning);
+  }
+
+  get warnings() {
+    return this._warnings;
   }
 
   set lastSyncUpDate(lastSyncTimestamp) {
