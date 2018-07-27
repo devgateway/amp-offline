@@ -98,10 +98,10 @@ const FileManager = {
 
   /**
    * Creates a data directory synchronously if it doesn't exist
-   * @param dirName
+   * @param pathParts
    */
-  createDataDir(dirName) {
-    const fullPath = this.getFullPath(dirName);
+  createDataDir(...pathParts) {
+    const fullPath = this.getFullPath(...pathParts);
     fs.ensureDirSync(fullPath);
     return fullPath;
   },
@@ -325,6 +325,21 @@ const FileManager = {
     const to = path.join(os.tmpdir(), `${Utils.numberRandom()}-${file}`);
     fs.writeFileSync(to, fs.readFileSync(from));
     return to;
+  },
+
+  /**
+   * Returns the full absolute path.
+   * ie: C:\Users\user1\App Data\Local\AmpOffline
+   * @param pathParts
+   * @returns {*|string}
+   */
+  getAbsolutePath(...pathParts) {
+    if (process.env.NODE_ENV === 'production') {
+      return this.getFullPath(...pathParts);
+    } else {
+      // Notice the '..' because __dirname points to /app subdir.
+      return this.getFullPath(global.__dirname, '..', ...pathParts);
+    }
   }
 };
 
