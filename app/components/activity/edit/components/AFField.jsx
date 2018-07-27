@@ -65,7 +65,6 @@ class AFField extends Component {
 
   static defaultProps = {
     showLabel: true,
-    showRequired: true,
     inline: false
   };
 
@@ -128,8 +127,11 @@ class AFField extends Component {
   }
 
   getLabel() {
-    const required = (this.requiredND || this.alwaysRequired || this.props.forceRequired)
-      && this.props.showRequired === true;
+    const { showRequired, parent, forceRequired } = this.props;
+    const { activityValidator } = this.context;
+    const toShowRequired = showRequired === undefined ?
+      activityValidator.isRequiredDependencyMet(parent, this.fieldDef) : showRequired;
+    const required = toShowRequired && (this.requiredND || this.alwaysRequired || forceRequired);
     if (this.props.showLabel === false) {
       if (required) {
         return <span className={styles.required} />;
