@@ -47,6 +47,7 @@ export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2
 export const LAST_SYNC_TIME_PARAM = 'last-sync-time';
 
 export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
+export const MAP_TILES_URL = '/gis/map-tiles';
 
 export const DOWNLOAD_UPGRADE_URL = '/amp/download-upgrade'; // TODO: this url will change for sure.
 export const PLATFORM_WINDOWS = 'windows';

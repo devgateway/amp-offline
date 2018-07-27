@@ -141,6 +141,7 @@ export const STRUCTURES_TITLE = 'title';
 export const STRUCTURES_DESCRIPTION = 'description';
 export const STRUCTURES_LATITUDE = 'latitude';
 export const STRUCTURES_LONGITUDE = 'longitude';
+export const STRUCTURES_COLOR = 'structure_color';
 export const STRUCTURES_LAT = 'lat';
 export const STRUCTURES_LNG = 'lng';
 export const STRUCTURES_SHAPE = 'shape';

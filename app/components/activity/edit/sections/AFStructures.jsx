@@ -21,7 +21,8 @@ const logger = new Logger('AF Structures');
 class AFStructures extends Component {
 
   static contextTypes = {
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    activityFieldsManager: PropTypes.object
   };
 
   static propTypes = {
@@ -145,6 +146,7 @@ class AFStructures extends Component {
         currentPolygon: {
           [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
           id: structure.id,
+          [AC.STRUCTURES_COLOR]: structure[AC.STRUCTURES_COLOR],
           [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
           [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON
@@ -193,7 +195,8 @@ class AFStructures extends Component {
           [AC.STRUCTURES_COORDINATES]: l.layer.getLatLngs()[0].map(loc => ({
             [AC.STRUCTURES_LATITUDE]: String(loc.lat),
             [AC.STRUCTURES_LONGITUDE]: String(loc.lng)
-          }))
+          })),
+          [AC.STRUCTURES_COLOR]: l.structureData[AC.STRUCTURES_COLOR]
         });
       }
     });
