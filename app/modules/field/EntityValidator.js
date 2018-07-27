@@ -189,16 +189,15 @@ export default class EntityValidator {
 
   _validateRequiredField(objects, fieldDef, fieldPath, asDraft) {
     logger.log('_validateRequiredField');
-    if (!this._requiredCheckDependencyMet(objects, fieldDef, fieldPath)) {
-      return;
-    }
     let isRequired = fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft);
     if (this.excludedFields.filter(f => (fieldDef.field_name === f)).length > 0) {
       isRequired = false;
     }
     if (isRequired) {
       objects.forEach(obj => {
-        this.processValidationResult(obj, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
+        if (this.isRequiredDependencyMet(obj, fieldDef, fieldPath)) {
+          this.processValidationResult(obj, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
+        }
       });
     }
   }
@@ -473,15 +472,31 @@ export default class EntityValidator {
     return true;
   }
 
-  _requiredCheckDependencyMet(objects, fieldDef) {
+  /**
+   * Checks for any dependencies that must be met in order to lookup for the "required" field def rule
+   * @param parent the parent of the field
+   * @param fieldDef the field def to check if has any dependency to match first before its required status is enforced
+   * @return {boolean} true if to enforce the "required" rule
+   */
+  isRequiredDependencyMet(parent, fieldDef) {
     const dependencies = fieldDef.dependencies;
+    // by default is met, hence the workflow can proceed to validate the "required" rule
+    let met = true;
     if (dependencies && dependencies.length) {
-      if (dependencies.includes(DEPENDENCY_PROJECT_CODE_ON_BUDGET) || dependencies.includes(DEPENDENCY_ON_BUDGET)) {
-        return this._isActivityOnBudget();
-      }
+      dependencies.forEach(dep => {
+        // eslint-disable-next-line default-case
+        switch (dep) {
+          case DEPENDENCY_ON_BUDGET:
+          case DEPENDENCY_PROJECT_CODE_ON_BUDGET:
+            met = met && this._isActivityOnBudget();
+            break;
+          case DEPENDENCY_TRANSACTION_PRESENT:
+            met = met && this._hasTransactions(parent);
+            break;
+        }
+      });
     }
-    // by default proceed checking the dependency for all fields
-    return true;
+    return met;
   }
 
   _validateDependencies(objects, fieldPath, fieldDef) {
@@ -500,12 +515,8 @@ export default class EntityValidator {
       }
       objects.forEach(obj => {
         const hydratedValue = obj[fieldDef.field_name];
-        const value = this._getValue(obj, fieldDef, this._wasHydrated(fieldPath));
         if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_VALID)) {
           this.processValidationResult(obj, fieldPath, this._validateImplementationLocationValid());
-        }
-        if (dependencies.includes(DEPENDENCY_TRANSACTION_PRESENT)) {
-          this.processValidationResult(obj, fieldPath, this._validateAsRequiredIfHasTransactions(value, obj));
         }
         if (dependencies.includes(DEPENDENCY_COMPONENT_FUNDING_ORG_VALID)) {
           const validationResult = this._validateComponentFundingOrgValid(hydratedValue);
@@ -579,11 +590,9 @@ export default class EntityValidator {
     return onOffBudget && onOffBudget === ON_BUDGET;
   }
 
-  _validateAsRequiredIfHasTransactions(value, fundingItem) {
+  _hasTransactions(fundingItem) {
     const fundingDetails = fundingItem && fundingItem[FUNDING_DETAILS];
-    const hasFundings = fundingDetails && fundingDetails.length;
-    const isValid = !hasFundings || !!value;
-    return isValid || translate('requiredField');
+    return fundingDetails && fundingDetails.length;
   }
 
   _validateComponentFundingOrgValid(compFundOrg) {
