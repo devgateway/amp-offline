@@ -9,5 +9,11 @@
 }
 
 .gazetteer_container {
-
+  width: 300px;
+  position: absolute;
+  top: 27px;
+  right: 50px;
+  z-index: 9999;
+  background-color: white;
+  padding: 5px;
 }

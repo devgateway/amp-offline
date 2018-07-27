@@ -89,7 +89,8 @@ export default class AFMapWindow extends Component {
       structureData: null,
       layersList: [],
       deletedLayersList: [],
-      locateText: null
+      locateText: null,
+      gazetteerGroup: null
     };
   }
 
@@ -104,7 +105,8 @@ export default class AFMapWindow extends Component {
     }
   }
 
-  onStructureDataPopupSubmit(layer, id, title, structure_color, description, shape) {
+  onStructureDataPopupSubmit(layer, id, title, structure_color, description, shape, isGazetteer) {
+    debugger
     this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
     const newLayersList = this.state.layersList.slice();
     const index = newLayersList.findIndex((item) => (item.structureData.id === id));
@@ -145,17 +147,27 @@ export default class AFMapWindow extends Component {
   handleSaveBtnClick() {
     const { onSave } = this.props;
     onSave(this.state.layersList, this.state.deletedLayersList);
-    this.setState({ layersList: [], deletedLayersList: [] });
+    this.setState({ layersList: [], deletedLayersList: [], locateText: null, gazetteerGroup: null });
   }
 
   handleCancelBtnClick() {
-    this.setState({ layersList: [], deletedLayersList: [] });
+    this.setState({ layersList: [], deletedLayersList: [], locateText: null, gazetteerGroup: null });
     this.props.onModalClose();
   }
 
   handleMarkerClick(event) {
     const layer = this.state.layersList.find((item) => (item.layer._leaflet_id === event.target._leaflet_id));
     this.openStructureDataPopup(event, event.target, layer.structureData);
+  }
+
+  handleGazetteerMarkerClick(event, location) {
+    const structureData = {
+      [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
+      [AC.STRUCTURES_TITLE]: location.name,
+      isGazetteer: true
+    };
+    this.openStructureDataPopup(event, event.target, structureData);
+    // TODO: cuando se grabe un punto del gazetteer tengo q sacarlo del gazetteerGroup y meterlo al de los layers comunes.
   }
 
   generateMap() {
@@ -182,7 +194,7 @@ export default class AFMapWindow extends Component {
     const drawnItems = L.featureGroup().addTo(map);
 
     // Load point/polygon.
-    this.loadExistingStructure(drawnItems);
+    this.loadExistingStructure(drawnItems, this.props.point || this.props.polygon);
 
     AFMapWindow.translateLeaflet();
 
@@ -279,8 +291,20 @@ export default class AFMapWindow extends Component {
   fuzzySearch() {
     const text = this.state.locateText;
     return GazetteerHelper.findAllByNameFuzzy(text).then(data => {
-      console.warn(data.length);
-      console.warn(data.map(i => i.name));
+      // Clean previous search.
+      if (this.state.gazetteerGroup) {
+        this.state.map.removeLayer(this.state.gazetteerGroup);
+      }
+      if (data.length > 0) {
+        const gazetteerGroup = L.featureGroup().addTo(this.state.map);
+        this.setState({ gazetteerGroup });
+        data.forEach(l => {
+          const marker = L.marker([l[AC.STRUCTURES_LATITUDE], l[AC.STRUCTURES_LONGITUDE]],
+            { icon: circleIconMarker });
+          marker.on('click', (event) => this.handleGazetteerMarkerClick(event, l));
+          gazetteerGroup.addLayer(marker);
+        });
+      }
       return data;
     });
   }

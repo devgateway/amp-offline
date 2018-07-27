@@ -54,7 +54,8 @@ export default class AFMapPopup extends Component {
         [AC.STRUCTURES_COLOR]: newProps.structureData[AC.STRUCTURES_COLOR],
         isNew: (!newProps.structureData[AC.STRUCTURES_TITLE]),
         [AC.STRUCTURES_DESCRIPTION]: newProps.structureData[AC.STRUCTURES_DESCRIPTION],
-        [AC.STRUCTURES_SHAPE]: newProps.structureData[AC.STRUCTURES_SHAPE]
+        [AC.STRUCTURES_SHAPE]: newProps.structureData[AC.STRUCTURES_SHAPE],
+        isGazetteer: newProps.structureData.isGazetteer
       });
     } else {
       this.setState({
@@ -76,8 +77,9 @@ export default class AFMapPopup extends Component {
   handleSaveBtnClick() {
     const { onSubmit, structureData, layer } = this.props;
     if (this.state[AC.STRUCTURES_TITLE]) {
-      onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE]
-        , this.state[AC.STRUCTURES_COLOR], this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE]);
+      onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE],
+        this.state[AC.STRUCTURES_COLOR], this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE],
+        this.state.isGazetteer);
     } else {
       alert(translate('emptyTitle'));
     }
@@ -104,7 +106,7 @@ export default class AFMapPopup extends Component {
     Object.values(colors).forEach(c => {
       const color = c.value.substring(0, 7);
       const text = c.value.substring(8);
-      content.push(<div>
+      content.push(<div key={Math.random()}>
         <input
           type="radio" name="color" value={c.id} checked={(structure_color && structure_color.id === c.id)}
           onChange={this.handleChangeColor.bind(null, c.id, colors)} className={styles.colorItem} />
@@ -114,11 +116,11 @@ export default class AFMapPopup extends Component {
         </svg>
       </div>);
     });
-    return <div>{content}</div>;
+    return <div key={Math.random()}>{content}</div>;
   }
 
   render() {
-    const { title, shape } = this.state;
+    const { title, shape, isGazetteer } = this.state;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
         <Modal.Title>
@@ -126,14 +128,15 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <span>{translate('Title')}:</span> <input type={'text'} value={title} onChange={this.handleChangeTitle} />
+        <span>{translate('Title')}:</span>
+        <input type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer} />
         {shape !== AC.STRUCTURES_POINT ? this.generateColorList() : null}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick} bsStyle="success">
           {translate('Submit')}
         </Button>
-        {!this.state.isNew
+        {!this.state.isNew && !this.state.isGazetteer
           ? (<Button onClick={this.handleDeleteBtnClick} bsStyle="danger">
             {translate('Delete')}
           </Button>)
