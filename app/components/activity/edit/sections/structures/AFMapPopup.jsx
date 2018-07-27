@@ -134,7 +134,7 @@ export default class AFMapPopup extends Component {
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick} bsStyle="success">
-          {translate('Submit')}
+          {isGazetteer ? translate('Select') : translate('Submit')}
         </Button>
         {!this.state.isNew && !this.state.isGazetteer
           ? (<Button onClick={this.handleDeleteBtnClick} bsStyle="danger">

@@ -106,7 +106,6 @@ export default class AFMapWindow extends Component {
   }
 
   onStructureDataPopupSubmit(layer, id, title, structure_color, description, shape, isGazetteer) {
-    debugger
     this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
     const newLayersList = this.state.layersList.slice();
     const index = newLayersList.findIndex((item) => (item.structureData.id === id));
@@ -119,8 +118,21 @@ export default class AFMapWindow extends Component {
       layer.options.color = structure_color.value.substring(0, 7);
     }
     const newStructure = { layer, structureData: { title, structure_color, id, description, shape } };
+
+    // Add som extra data we need for a gazetteer point.
+    if (isGazetteer) {
+      newStructure.structureData[AC.STRUCTURES_LAT] = layer.getLatLng()[AC.STRUCTURES_LAT];
+      newStructure.structureData[AC.STRUCTURES_LNG] = layer.getLatLng()[AC.STRUCTURES_LNG];
+    }
     newLayersList.push(newStructure);
     this.setState({ layersList: newLayersList });
+
+    if (isGazetteer) {
+      // Replace gazetteer point to a regular marker.
+      this.loadExistingStructure(this.state.drawnItems, newStructure.structureData, null);
+      // TODO: delete original gazetteer point.
+      this.state.map.removeLayer(layer.layer || layer);
+    }
 
     // Update the layer to reflect color change.
     if (shape !== AC.STRUCTURES_POINT) {
@@ -167,7 +179,6 @@ export default class AFMapWindow extends Component {
       isGazetteer: true
     };
     this.openStructureDataPopup(event, event.target, structureData);
-    // TODO: cuando se grabe un punto del gazetteer tengo q sacarlo del gazetteerGroup y meterlo al de los layers comunes.
   }
 
   generateMap() {
@@ -192,9 +203,10 @@ export default class AFMapWindow extends Component {
 
     // This object groups all layers at the same time.
     const drawnItems = L.featureGroup().addTo(map);
+    this.setState({ drawnItems });
 
     // Load point/polygon.
-    this.loadExistingStructure(drawnItems, this.props.point || this.props.polygon);
+    this.loadExistingStructure(drawnItems, this.props.point, this.props.polygon);
 
     AFMapWindow.translateLeaflet();
 
@@ -237,11 +249,11 @@ export default class AFMapWindow extends Component {
     this.setState({ map });
   }
 
-  loadExistingStructure(drawnItems) {
-    if (this.props.point || this.props.polygon) {
+  loadExistingStructure(drawnItems, point, polygon) {
+    if (point || polygon) {
       // Load point.
-      if (this.props.point) {
-        const marker = L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]],
+      if (point) {
+        const marker = L.marker([point[AC.STRUCTURES_LAT], point[AC.STRUCTURES_LNG]],
           { icon: myIconMarker });
         marker.on('click', (event) => this.handleMarkerClick(event));
         drawnItems.addLayer(marker);
@@ -249,10 +261,10 @@ export default class AFMapWindow extends Component {
         newLayersList.push({
           layer: marker,
           structureData: {
-            [AC.STRUCTURES_TITLE]: this.props.point[AC.STRUCTURES_TITLE],
+            [AC.STRUCTURES_TITLE]: point[AC.STRUCTURES_TITLE],
             [AC.STRUCTURES_COLOR]: null,
-            id: this.props.point.id,
-            [AC.STRUCTURES_DESCRIPTION]: this.props.point[AC.STRUCTURES_DESCRIPTION],
+            id: point.id,
+            [AC.STRUCTURES_DESCRIPTION]: point[AC.STRUCTURES_DESCRIPTION],
             [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
             edit: true
           }
@@ -261,21 +273,21 @@ export default class AFMapWindow extends Component {
       } else {
         // Load polygon.
         let color = POLYGON_BASE_COLOR;
-        if (this.props.polygon[AC.STRUCTURES_COLOR]) {
-          color = this.props.polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
+        if (polygon[AC.STRUCTURES_COLOR]) {
+          color = polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
         }
-        const polygon = L.polygon(this.props.polygon[AC.STRUCTURES_COORDINATES].map(c =>
+        const newPolygon = L.polygon(polygon[AC.STRUCTURES_COORDINATES].map(c =>
           ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: OPACITY });
-        polygon.on('click', (event) => this.handleMarkerClick(event));
-        drawnItems.addLayer(polygon);
+        newPolygon.on('click', (event) => this.handleMarkerClick(event));
+        drawnItems.addLayer(newPolygon);
         const newLayersList = this.state.layersList.slice();
         newLayersList.push({
-          layer: polygon,
+          layer: newPolygon,
           structureData: {
-            [AC.STRUCTURES_TITLE]: this.props.polygon[AC.STRUCTURES_TITLE],
-            [AC.STRUCTURES_COLOR]: this.props.polygon[AC.STRUCTURES_COLOR],
-            id: this.props.polygon.id,
-            [AC.STRUCTURES_DESCRIPTION]: this.props.polygon[AC.STRUCTURES_DESCRIPTION],
+            [AC.STRUCTURES_TITLE]: polygon[AC.STRUCTURES_TITLE],
+            [AC.STRUCTURES_COLOR]: polygon[AC.STRUCTURES_COLOR],
+            id: polygon.id,
+            [AC.STRUCTURES_DESCRIPTION]: polygon[AC.STRUCTURES_DESCRIPTION],
             [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
             edit: true
           }
