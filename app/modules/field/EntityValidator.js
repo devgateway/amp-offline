@@ -189,6 +189,9 @@ export default class EntityValidator {
 
   _validateRequiredField(objects, fieldDef, fieldPath, asDraft) {
     logger.log('_validateRequiredField');
+    if (!this._requiredCheckDependencyMet(objects, fieldDef, fieldPath)) {
+      return;
+    }
     let isRequired = fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft);
     if (this.excludedFields.filter(f => (fieldDef.field_name === f)).length > 0) {
       isRequired = false;
@@ -470,6 +473,17 @@ export default class EntityValidator {
     return true;
   }
 
+  _requiredCheckDependencyMet(objects, fieldDef) {
+    const dependencies = fieldDef.dependencies;
+    if (dependencies && dependencies.length) {
+      if (dependencies.includes(DEPENDENCY_PROJECT_CODE_ON_BUDGET) || dependencies.includes(DEPENDENCY_ON_BUDGET)) {
+        return this._isActivityOnBudget();
+      }
+    }
+    // by default proceed checking the dependency for all fields
+    return true;
+  }
+
   _validateDependencies(objects, fieldPath, fieldDef) {
     const dependencies = fieldDef.dependencies;
     if (dependencies && dependencies.length) {
@@ -489,13 +503,6 @@ export default class EntityValidator {
         const value = this._getValue(obj, fieldDef, this._wasHydrated(fieldPath));
         if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_VALID)) {
           this.processValidationResult(obj, fieldPath, this._validateImplementationLocationValid());
-        }
-        if (dependencies.includes(DEPENDENCY_ON_BUDGET)) {
-          // TODO based on AMP-27099 outcome, we may need to switch back to _validateOnBudgetRequiredOtherwiseNotAllowed
-          this.processValidationResult(obj, fieldPath, this._validateOnBudgetRequiredOtherwiseAllowed(value));
-        }
-        if (dependencies.includes(DEPENDENCY_PROJECT_CODE_ON_BUDGET)) {
-          this.processValidationResult(obj, fieldPath, this._validateOnBudgetRequiredOtherwiseAllowed(value));
         }
         if (dependencies.includes(DEPENDENCY_TRANSACTION_PRESENT)) {
           this.processValidationResult(obj, fieldPath, this._validateAsRequiredIfHasTransactions(value, obj));
@@ -567,27 +574,9 @@ export default class EntityValidator {
     return isValid || translate('invalidImplLoc');
   }
 
-  _validateOnBudgetRequiredOtherwiseNotAllowed(value) {
-    const validOrError = this._validateOnBudgetOrErrorLabel(value);
-    return validOrError === true || translate(validOrError);
-  }
-
-  _validateOnBudgetRequiredOtherwiseAllowed(value) {
-    let validOrError = this._validateOnBudgetOrErrorLabel(value);
-    if (validOrError === 'notConfigurable') {
-      // following AMP validation rules, when a field like project_code may be optionally be present
-      validOrError = true;
-    }
-    return validOrError === true || translate(validOrError);
-  }
-
-  _validateOnBudgetOrErrorLabel(value) {
+  _isActivityOnBudget() {
     const onOffBudget = this._entity[ACTIVITY_BUDGET] && this._entity[ACTIVITY_BUDGET].value;
-    const isOnBudget = onOffBudget && onOffBudget === ON_BUDGET;
-    const requiredAndNotConfigured = isOnBudget && !value;
-    const isValid = !!((isOnBudget && value) || (!isOnBudget && !value));
-    const errLabel = requiredAndNotConfigured ? 'requiredField' : 'notConfigurable';
-    return isValid || errLabel;
+    return onOffBudget && onOffBudget === ON_BUDGET;
   }
 
   _validateAsRequiredIfHasTransactions(value, fundingItem) {
