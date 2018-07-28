@@ -313,6 +313,9 @@ export default class AFMapWindow extends Component {
           const marker = L.marker([l[AC.STRUCTURES_LATITUDE], l[AC.STRUCTURES_LONGITUDE]],
             { icon: circleIconMarker });
           marker.on('click', (event) => this.handleGazetteerMarkerClick(event, l));
+          marker.bindTooltip(`${translate('Name')}: ${l.name} - ${translate('Lat')}: ${l[AC.STRUCTURES_LATITUDE]} 
+            - ${translate('Lng')}: ${l[AC.STRUCTURES_LONGITUDE]}`)
+            .openTooltip();
           gazetteerGroup.addLayer(marker);
         });
       }
