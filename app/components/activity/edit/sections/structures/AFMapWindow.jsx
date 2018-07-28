@@ -33,7 +33,7 @@ const myIconMarker = L.icon({
 const circleIconMarker = L.icon({
   iconUrl: MAP_MARKER_CIRCLE_RED,
   iconSize: [20, 20],
-  iconAnchor: [5, 5],
+  iconAnchor: [9, 9],
   popupAnchor: [0, 0]
 });
 const OPACITY = '0.5';
@@ -119,7 +119,7 @@ export default class AFMapWindow extends Component {
     }
     const newStructure = { layer, structureData: { title, structure_color, id, description, shape } };
 
-    // Add som extra data we need for a gazetteer point.
+    // Add extra data we need for a gazetteer point.
     if (isGazetteer) {
       newStructure.structureData[AC.STRUCTURES_LAT] = layer.getLatLng()[AC.STRUCTURES_LAT];
       newStructure.structureData[AC.STRUCTURES_LNG] = layer.getLatLng()[AC.STRUCTURES_LNG];
@@ -128,9 +128,8 @@ export default class AFMapWindow extends Component {
     this.setState({ layersList: newLayersList });
 
     if (isGazetteer) {
-      // Replace gazetteer point to a regular marker.
+      // Replace gazetteer point with a regular marker.
       this.loadExistingStructure(this.state.drawnItems, newStructure.structureData, null);
-      // TODO: delete original gazetteer point.
       this.state.map.removeLayer(layer.layer || layer);
     }
 
