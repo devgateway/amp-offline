@@ -3,7 +3,7 @@
 import levenshtein from 'fast-levenshtein';
 import * as DatabaseManager from '../database/DatabaseManager';
 import Logger from '../util/LoggerManager';
-import { COLLECTION_GAZETTEER, GAZETTEER_DISTANCE } from '../../utils/Constants';
+import { COLLECTION_GAZETTEER } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Gazetteer helper');
@@ -38,10 +38,15 @@ const GazetteerHelper = {
       // Note: dont use shorthand or "this" will have inconsistent values.
       $where: function () {
         const collator = { useCollator: true, sensitivity: 'base', ignorePunctuation: true };
-        return (levenshtein.get(this.name, name, collator) <= GAZETTEER_DISTANCE
+        return (levenshtein.get(this.name, name, collator) <= GazetteerHelper._getDistance(name)
           || Utils.compareWithCollate(this.name, name, collator) === 0);
       }
     }, COLLECTION_GAZETTEER);
+  },
+
+  _getDistance(name) {
+    const length = name.length;
+    return Math.trunc(length / 3);
   },
 
   saveOrUpdateLocation(location) {
