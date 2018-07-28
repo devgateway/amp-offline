@@ -128,8 +128,10 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <span>{translate('Title')}:</span>
-        <input type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer} />
+        <span>{translate('Title')}</span>
+        <input
+          type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer}
+          className="form-control" />
         {shape !== AC.STRUCTURES_POINT ? this.generateColorList() : null}
       </Modal.Body>
       <Modal.Footer>

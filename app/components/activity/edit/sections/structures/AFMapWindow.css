@@ -16,4 +16,15 @@
   z-index: 9999;
   background-color: white;
   padding: 5px;
+  border-radius: 5px;
+  border: 1px solid darkgray;
+}
+
+.locate_button {
+  float: right;
+}
+
+.locate_search {
+  width: auto;
+  display: initial;
 }

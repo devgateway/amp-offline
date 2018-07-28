@@ -330,8 +330,10 @@ export default class AFMapWindow extends Component {
       <Modal.Body>
         <div id="map" />
         <div className={styles.gazetteer_container}>
-          <input type="text" value={this.state.locateText} onChange={this.onLocateTextChange.bind(this)} />
-          <Button onClick={this.fuzzySearch.bind(this)}>{translate('Locate')}</Button>
+          <input
+            type="text" value={this.state.locateText} onChange={this.onLocateTextChange.bind(this)}
+            className={['form-control', styles.locate_search].join(' ')} />
+          <Button onClick={this.fuzzySearch.bind(this)} className={styles.locate_button}>{translate('Locate')}</Button>
         </div>
         <AFMapPopup
           show={this.state.showStructureDataPopup}
