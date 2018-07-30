@@ -3,7 +3,7 @@
 import levenshtein from 'fast-levenshtein';
 import * as DatabaseManager from '../database/DatabaseManager';
 import Logger from '../util/LoggerManager';
-import { COLLECTION_GAZETTEER } from '../../utils/Constants';
+import { COLLECTION_GAZETTEER, GAZETTEER_DISTANCE_DIVIDE } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Gazetteer helper');
@@ -44,9 +44,16 @@ const GazetteerHelper = {
     }, COLLECTION_GAZETTEER);
   },
 
+  /**
+   * Following AMP's logic we change the 'Levenshtein distance' according to the word length.
+   * @param name
+   * @returns {number}
+   * @private
+   */
   _getDistance(name) {
     const length = name.length;
-    return Math.trunc(length / 3);
+    // Int part.
+    return Math.trunc(length / GAZETTEER_DISTANCE_DIVIDE);
   },
 
   saveOrUpdateLocation(location) {

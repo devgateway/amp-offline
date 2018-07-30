@@ -235,7 +235,7 @@ const Utils = {
 
   compareWithCollate(text1, text2, collator) {
     collator = collator || { sensitivity: 'base', ignorePunctuation: true };
-    return new Intl.Collator(undefined, collator).compare(text1, text2);
+    return new Intl.Collator('us', collator).compare(text1, text2);
   }
 };
 
