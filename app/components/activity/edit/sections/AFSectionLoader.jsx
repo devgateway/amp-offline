@@ -10,6 +10,7 @@ import AFOrganizations from './AFOrganizations';
 import AFFunding from './AFFunding';
 import AFIssues from './AFIssues';
 import { AFContactsPage } from '../../../../containers/ContactPage';
+import AFStructures from './AFStructures';
 
 /**
  * Loads AF section
@@ -36,6 +37,8 @@ const loadSection = (sectionName) => {
       return <AFFunding />;
     case SC.CONTACTS:
       return <AFContactsPage />;
+    case SC.STRUCTURES:
+      return <AFStructures />;
     case SC.ISSUES_SECTION:
       return <AFIssues />;
     /*

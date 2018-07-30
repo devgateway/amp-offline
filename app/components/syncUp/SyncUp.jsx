@@ -142,9 +142,6 @@ class SyncUp extends Component {
             onClick={startSyncUpIfConnectionAvailable}
           />
         </div>
-        <div className={styles.display_inline}>
-          <div className={classes({ [styles.loader]: loadingSyncHistory || syncUpInProgress })} />
-        </div>
         <hr />
         {this.selectContentElementToDraw()}
 

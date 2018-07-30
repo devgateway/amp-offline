@@ -1,0 +1,9 @@
+.map {
+  width: 870px;
+  height: 600px;
+  border: 1px solid lightgrey;
+}
+
+.colorItem {
+  vertical-align: super;
+}

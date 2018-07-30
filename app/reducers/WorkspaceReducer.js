@@ -17,7 +17,8 @@ const defaultState = {
   workspacesLoading: false,
   workspaceList: [],
   workspaceFilterGeneration: false,
-  workspaceFilter: undefined
+  workspaceFilter: undefined,
+  workspaceProcessing: false
 };
 
 export default function workspaceReducer(state = defaultState, action: Object) {
@@ -26,12 +27,14 @@ export default function workspaceReducer(state = defaultState, action: Object) {
     case STATE_WORKSPACES_LOADING:
       return Object.assign({}, state, {
         workspacesLoading: true,
-        workspaceList: []
+        workspaceList: [],
+        workspaceProcessing: false
       });
     case STATE_WORKSPACES_LOADED:
       return Object.assign({}, state, {
         workspacesLoading: false,
-        workspaceList: action.actionData
+        workspaceList: action.actionData,
+        workspaceProcessing: false
       });
     case STATE_WORKSPACES_ERROR:
       return Object.assign({}, state, {
@@ -46,7 +49,7 @@ export default function workspaceReducer(state = defaultState, action: Object) {
     }
     case STATE_SELECT_WORKSPACE:
       return Object.assign({}, state, {
-        workspaceProcessing: false,
+        workspaceProcessing: true,
         currentWorkspace: action.actionData.workspace,
         currentWorkspaceSettings: action.actionData.workspaceSettings,
         workspaceFilterGeneration: false,
