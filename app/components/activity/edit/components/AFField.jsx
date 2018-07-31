@@ -37,7 +37,6 @@ class AFField extends Component {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
-    isSaveAndSubmit: PropTypes.bool.isRequired
   };
 
   static propTypes = {
@@ -100,9 +99,7 @@ class AFField extends Component {
     if (!this.fieldExists) {
       return;
     }
-    if (this.context.isSaveAndSubmit) {
-      this.onChange(this.state.value, false);
-    } else if (nextProps.validationResult) {
+    if (nextProps.validationResult) {
       this._processValidation(this.props.parent.errors);
     } else if (nextProps.parent[this.fieldName] !== this.state.value ||
       nextProps.forceRequired !== this.props.forceRequired) {
