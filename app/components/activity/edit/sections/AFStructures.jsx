@@ -186,16 +186,22 @@ class AFStructures extends Component {
           id: l.structureData.id || Math.random()
         });
       } else {
+        const coordinates = l.layer._latlngs[1] !== undefined
+          ? l.layer._latlngs.map(loc => ({
+            [AC.STRUCTURES_LATITUDE]: String(loc.lat),
+            [AC.STRUCTURES_LONGITUDE]: String(loc.lng)
+          }))
+          : l.layer._latlngs[0].map(loc => ({
+            [AC.STRUCTURES_LATITUDE]: String(loc.lat),
+            [AC.STRUCTURES_LONGITUDE]: String(loc.lng)
+          }));
         newStructures.push({
           [AC.STRUCTURES_TITLE]: l.structureData[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
           [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
           [AC.STRUCTURES_COORDINATES]: [],
           id: l.structureData.id || Math.random(),
-          [AC.STRUCTURES_COORDINATES]: l.layer.getLatLngs()[0].map(loc => ({
-            [AC.STRUCTURES_LATITUDE]: String(loc.lat),
-            [AC.STRUCTURES_LONGITUDE]: String(loc.lng)
-          })),
+          [AC.STRUCTURES_COORDINATES]: coordinates,
           [AC.STRUCTURES_COLOR]: l.structureData[AC.STRUCTURES_COLOR]
         });
       }
