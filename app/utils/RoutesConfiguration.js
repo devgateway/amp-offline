@@ -31,7 +31,8 @@ import {
   USER_PROFILE_URL,
   WORKSPACE_MEMBER_URL,
   WORKSPACE_SETTINGS_URL,
-  MAP_TILES_URL
+  MAP_TILES_URL,
+  GAZETTEER_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -175,6 +176,10 @@ const routesConfiguration = [{
   method: 'GET',
   requiredAuth: true,
   isBinary: true
+}, {
+  url: GAZETTEER_URL,
+  method: 'GET',
+  requiredAuth: true
 }
 
 ];

@@ -92,6 +92,7 @@ export const SYNCUP_TYPE_CONTACT_FIELDS = 'contact-fields';
 export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fields';
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_TYPE_MAP_TILES = 'map_tiles';
+export const SYNCUP_TYPE_GAZETTEER = 'gazetteer';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';
