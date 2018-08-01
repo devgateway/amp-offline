@@ -231,6 +231,11 @@ const Utils = {
   isReleaseBranch() {
     const branch = this.getBranch();
     return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
+  },
+
+  compareWithCollate(text1, text2, collator) {
+    collator = collator || { sensitivity: 'base', ignorePunctuation: true };
+    return new Intl.Collator('us', collator).compare(text1, text2);
   }
 };
 
