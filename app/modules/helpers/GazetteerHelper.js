@@ -34,12 +34,13 @@ const GazetteerHelper = {
 
   findAllByNameFuzzy(name) {
     logger.debug('findAllByNameFuzzy');
+    const trimmedName = name ? name.trim() : '';
     return DatabaseManager.findAll({
       // Note: dont use shorthand or "this" will have inconsistent values.
       $where: function () {
         const collator = { useCollator: true, sensitivity: 'base', ignorePunctuation: true };
-        return (levenshtein.get(this.name, name, collator) <= GazetteerHelper._getDistance(name)
-          || Utils.compareWithCollate(this.name, name, collator) === 0);
+        return (levenshtein.get(this.name.trim(), trimmedName, collator) <= GazetteerHelper._getDistance(trimmedName)
+          || Utils.compareWithCollate(this.name, trimmedName, collator) === 0);
       }
     }, COLLECTION_GAZETTEER);
   },
