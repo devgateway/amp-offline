@@ -219,7 +219,7 @@ export default class ActivityForm extends Component {
 
   _validateActivity(asDraft) {
     let validationError;
-    // TODO to adjust oonce AMP-XXX is fixed to properly define activive
+    // TODO to adjust this list once is fixed to properly define activity
     const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID, FUNDING_ACTIVE_LIST]);
     this.activity[IS_DRAFT] = asDraft;
     const errors = this.activityValidator.areAllConstraintsMet(this.activity, asDraft, fieldPathsToSkipSet);

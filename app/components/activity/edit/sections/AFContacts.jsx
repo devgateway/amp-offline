@@ -54,7 +54,13 @@ class AFContacts extends Component {
   }
 
   componentWillMount() {
-    this.setState({ activity: this.context.activity });
+    const { activity } = this.context;
+    this.setState({ activity });
+    ACTIVITY_CONTACT_PATHS.forEach(acp => {
+      if (this.context.activityFieldsManager.isFieldPathEnabled(acp) && !activity[acp]) {
+        activity[acp] = [];
+      }
+    });
     this.props.loadSummaryForNotLoadedContacts();
   }
 
