@@ -3,7 +3,7 @@ import extract from 'extract-zip';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { MAP_TILES_URL } from '../../connectivity/AmpApiConstants';
-import { TILES_ZIP_FILE, ASSETS_DIRECTORY, SYNCUP_TYPE_ASSETS, MAP_TILES_DIR } from '../../../utils/Constants';
+import { TILES_ZIP_FILE, ASSETS_DIRECTORY, SYNCUP_TYPE_MAP_TILES, MAP_TILES_DIR } from '../../../utils/Constants';
 import FileManager from '../../util/FileManager';
 import Logger from '../../util/LoggerManager';
 
@@ -12,7 +12,7 @@ const logger = new Logger('Map tiles manager');
 export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_ASSETS);
+    super(SYNCUP_TYPE_MAP_TILES);
   }
 
   doAtomicSyncUp() {
