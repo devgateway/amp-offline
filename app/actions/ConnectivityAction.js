@@ -34,6 +34,11 @@ export function isConnectivityCheckInProgress() {
   return store.getState().ampConnectionStatusReducer.updateInProgress;
 }
 
+export function isAmpAccessible() {
+  const connectivityStatus = store.getState().ampConnectionStatusReducer.status;
+  return isValidConnectionByStatus(connectivityStatus) && connectivityStatus.isAmpClientEnabled;
+}
+
 export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus) {
   const serverId = getRegisteredServerId();
   return connectivityStatus && connectivityStatus.isAmpAvailable && connectivityStatus.isAmpCompatible &&
@@ -44,9 +49,9 @@ function getRegisteredServerId() {
   return store.getState().ampConnectionStatusReducer.serverId;
 }
 
-export function getErrorLabel(connectivityStatus: ConnectivityStatus) {
+export function getStatusErrorLabel(connectivityStatus: ConnectivityStatus, unavailableLabel = 'urlNotWorking') {
   if (!connectivityStatus.isAmpAvailable) {
-    return 'urlNotWorking';
+    return unavailableLabel;
   }
   const registeredServerId = getRegisteredServerId();
   if (registeredServerId && !connectivityStatus.serverIdMatch) {
@@ -56,7 +61,7 @@ export function getErrorLabel(connectivityStatus: ConnectivityStatus) {
     return 'serverIdentityMissing';
   }
   // TODO custom messages for other use cases (e.g. AMPOFFLINE-1079, AMPOFFLINE-1140)
-  return 'urlNotWorking';
+  return unavailableLabel;
 }
 
 export function configureConnectionInformation(connectionInformation) {

@@ -8,7 +8,7 @@ import {
   connectivityCheck,
   isValidConnectionByStatus,
   isConnectivityCheckInProgress,
-  getErrorLabel
+  getStatusErrorLabel
 } from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
@@ -88,6 +88,7 @@ export function setupComplete(setupConfig) {
 function configureAndSaveSetup(setupConfig) {
   logger.log('setupComplete');
   return configureAndTestConnectivity(setupConfig)
+    .then(() => connectivityCheck())
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
     .then(() => true);
 }
@@ -167,14 +168,14 @@ export function configureAndTestConnectivity(setupConfig) {
         setupConfig.urls = [goodUrl].concat(setupConfig.urls.filter(u => u !== goodUrl));
         return Promise.resolve(goodUrl);
       }
-      return Promise.reject(translate(getErrorLabel(connectivityStatus)));
+      return Promise.reject(translate(getStatusErrorLabel(connectivityStatus)));
     });
 }
 
 function testAMPUrl(url) {
   return URLUtils.getPossibleUrlSetupFixes(url).reduce((currentPromise, fixedUrl) =>
       currentPromise.then(result => {
-        if (result && result.connectivityStatus && result.connectivityStatus.isAmpAvailable) {
+        if (isValidConnectionByStatus(result && result.connectivityStatus)) {
           return Promise.resolve(result);
         }
         return waitConfigureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl))
