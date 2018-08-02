@@ -3,7 +3,7 @@ import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import Logger from '../../util/LoggerManager';
 import {
   DB_FILE_PREFIX,
-  SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_GAZETTEER,
   COLLECTION_GAZETTEER,
   DB_FILE_EXTENSION
 } from '../../../utils/Constants';
@@ -17,7 +17,7 @@ const logger = new Logger('Gazetteer manager');
 export default class GazetteerSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_ASSETS);
+    super(SYNCUP_TYPE_GAZETTEER);
   }
 
   doAtomicSyncUp() {
