@@ -1,14 +1,19 @@
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import mimeTypes from 'mime-types';
+import readChunk from 'read-chunk';
 import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
+
+const fileType = require('file-type');
 
 const app = ELECTRON_APP;
 
 let dataPath;
 let resourcesPath;
+let downloadPath;
 
 /**
  * System File Manager that is intended to handle proper root directory detection in dev & prod mode. It servers as a
@@ -41,10 +46,21 @@ const FileManager = {
       if (process.env.NODE_ENV === 'production') {
         resourcesPath = path.join(process.resourcesPath, ASAR_DIR);
       } else {
-        resourcesPath = APP_DIRECTORY;
+        resourcesPath = path.resolve(APP_DIRECTORY);
       }
     }
     return resourcesPath;
+  },
+
+  /**
+   * Provides the user default download directory
+   * @return {*}
+   */
+  getDownloadPath() {
+    if (!downloadPath) {
+      downloadPath = app.getPath('downloads');
+    }
+    return downloadPath;
   },
 
   /**
@@ -53,15 +69,23 @@ const FileManager = {
    * @return {string}
    */
   getFullPath(...pathParts) {
-    return path.join(this.getDataPath(), pathParts.join('/'));
+    return this.joinPath(this.getDataPath(), ...pathParts);
   },
 
   joinPath(...pathParts) {
-    return path.join(pathParts);
+    return path.join(...pathParts);
+  },
+
+  splitPath(somePath) {
+    return somePath.split(path.sep);
   },
 
   basename(fromPath) {
     return path.basename(fromPath);
+  },
+
+  extname(fromPath) {
+    return path.extname(fromPath);
   },
 
   /**
@@ -69,7 +93,7 @@ const FileManager = {
    * @param pathParts
    */
   getFullPathForBuiltInResources(...pathParts) {
-    return path.join(this.getResourcesPath(), pathParts.join('/'));
+    return path.join(this.getResourcesPath(), ...pathParts);
   },
 
   /**
@@ -121,6 +145,16 @@ const FileManager = {
   },
 
   /**
+   * Creates a read stream
+   * @param pathParts
+   * @return {*}
+   */
+  createReadStream(...pathParts) {
+    const fullPath = this.getFullPath(...pathParts);
+    return fs.createReadStream(fullPath);
+  },
+
+  /**
    * Reads a text file synchronously
    * @param pathParts
    * @return {*}
@@ -160,6 +194,20 @@ const FileManager = {
   },
 
   /**
+   * Copies asynchronously a file from a full path to the relative path (specified as parts if needed)
+   * @param fromPath full source path
+   * @param toPathParts relative path parts of the destination
+   * @return {Promise}
+   */
+  copyDataFileAsync(fromPath, ...toPathParts) {
+    const toPath = this.getFullPath(...toPathParts);
+    return new Promise((resolve, reject) => fs.copy(fromPath, toPath, err => {
+      if (err) reject(err);
+      resolve();
+    }));
+  },
+
+  /**
    * Copies synchronously a file from a full path to another full path
    * @param fromPath full source path
    * @param toPath full destination path
@@ -188,6 +236,11 @@ const FileManager = {
     }
   },
 
+  rmdirSync(...pathParts) {
+    const fullPath = this.getFullPath(...pathParts);
+    fs.rmdirSync(fullPath);
+  },
+
   /**
    * Provides statistics synchronously
    * @param pathParts
@@ -201,6 +254,39 @@ const FileManager = {
   },
 
   /**
+   * Provides statistics synchronously for a full path
+   * @param fullPath
+   * @return {*}
+   */
+  statSyncFullPath(fullPath) {
+    if (fs.existsSync(fullPath)) {
+      return fs.statSync(fullPath);
+    }
+  },
+
+  /**
+   * Detects actual mime type based on binary file, with fallback to file extension and lastly to octet-stream
+   * @param fullPath
+   * @return {string}
+   */
+  mimeType(fullPath) {
+    const buffer = readChunk.sync(fullPath, 0, 4100);
+    const fType = fileType(buffer);
+    return (fType && fType.mime) || mimeTypes.lookup(path.extname(fullPath)) || 'application/octet-stream';
+  },
+
+  /**
+   * Detects content type including actual mime based on binary file if possible
+   * @param fullPath
+   * @return {string}
+   */
+  contentType(fullPath) {
+    const mime = this.mimeType(fullPath);
+    const charset = mimeTypes.charset(mime) || 'utf8';
+    return `${mime}; charset=${charset}`;
+  },
+
+  /**
    * Lists files from the folder synchronously
    * @param pathParts
    * @return {*}
@@ -211,8 +297,8 @@ const FileManager = {
 
   /**
    * Lists files from the folder synchronously
-   * @param full folder path
-   * @return {*}
+   * @param fullPath folder path
+   * @return {string[]}
    */
   readdirSyncFullPath(fullPath) {
     return fs.readdirSync(fullPath);

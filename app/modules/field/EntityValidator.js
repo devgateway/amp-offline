@@ -263,8 +263,9 @@ export default class EntityValidator {
           }
         }
       } else if (fieldDef.field_type === 'string') {
-        // TODO multilingual support Iteration 2+
-        if (!(typeof value === 'string' || value instanceof String)) {
+        if (this._wasValidatedSeparately(obj, errors, fieldPath, fieldDef, asDraft)) {
+          // TODO multilingual support Iteration 2+
+        } else if (!(typeof value === 'string' || value instanceof String)) {
           this.processValidationResult(obj, errors, fieldPath, this.invalidString.replace('%value%', value));
         } else {
           if (fieldDef.field_length && fieldDef.field_length < value.length) {
@@ -281,13 +282,7 @@ export default class EntityValidator {
         if (!Number.isInteger(value) && !this._isAllowInvalidNumber(value, fieldPath)) {
           this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
         } else {
-          const hValue = obj[fieldDef.field_name];
-          const entityValidator = hValue[VC_TMP_ENTITY_VALIDATOR];
-          if (entityValidator) {
-            let validationError = entityValidator.areAllConstraintsMet(entityValidator._entity, asDraft);
-            validationError = validationError.length ? validationError.join('. ') : null;
-            this.processValidationResult(obj, errors, fieldPath, validationError);
-          }
+          this._wasValidatedSeparately(obj, errors, fieldPath, fieldDef, asDraft);
         }
       } else if (fieldDef.field_type === 'float') {
         if (value !== +value || value.toString().indexOf('e') > -1) {
@@ -337,6 +332,18 @@ export default class EntityValidator {
     const isContactId = (parts.length === 2 && ACTIVITY_CONTACT_PATHS.includes(parts[0]) && CONTACT === parts[1]) ||
       (parts.length === 1 && this.excludedFields.includes(parts[0]));
     if (isContactId && `${value}`.startsWith(CLIENT_CHANGE_ID_PREFIX)) {
+      return true;
+    }
+    return false;
+  }
+
+  _wasValidatedSeparately(obj, errors, fieldPath, fieldDef, asDraft) {
+    const hValue = obj[fieldDef.field_name];
+    const entityValidator = hValue && hValue[VC_TMP_ENTITY_VALIDATOR];
+    if (entityValidator) {
+      let validationError = entityValidator.areAllConstraintsMet(entityValidator._entity, asDraft);
+      validationError = validationError.length ? validationError.join('. ') : null;
+      this.processValidationResult(obj, errors, fieldPath, validationError);
       return true;
     }
     return false;

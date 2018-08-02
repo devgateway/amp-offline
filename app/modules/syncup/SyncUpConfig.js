@@ -14,6 +14,10 @@ import ContactsPullSyncUpManager from './syncupManagers/ContactsPullSyncUpManage
 import ContactsPushSyncUpManager from './syncupManagers/ContactsPushSyncUpManager';
 import ContactFieldsSyncUpManager from './syncupManagers/ContactFieldsSyncUpManager';
 import ContactPossibleValuesSyncUpManager from './syncupManagers/ContactPossibleValuesSyncUpManager';
+import ResourcesPullSyncUpManager from './syncupManagers/ResourcesPullSyncUpManager';
+import ResourcesPushSyncUpManager from './syncupManagers/ResourcesPushSyncUpManager';
+import ResourceFieldsSyncUpManager from './syncupManagers/ResourceFieldsSyncUpManager';
+import ResourcePossibleValuesSyncUpManager from './syncupManagers/ResourcePossibleValuesSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
@@ -21,11 +25,18 @@ import MapTilesSyncUpManager from './syncupManagers/MapTilesSyncUpManager';
 import * as Utils from '../../utils/Utils';
 import * as SS from './SyncUpUnitState';
 import {
+  SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_CONTACT_FIELDS,
-  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES, SYNCUP_TYPE_CONTACTS_PULL, SYNCUP_TYPE_CONTACTS_PUSH,
+  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
+  SYNCUP_TYPE_CONTACTS_PULL,
+  SYNCUP_TYPE_CONTACTS_PUSH,
+  SYNCUP_TYPE_RESOURCE_FIELDS,
+  SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES,
+  SYNCUP_TYPE_RESOURCES_PULL,
+  SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
@@ -43,7 +54,8 @@ export default class SyncUpConfig {
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
-    ContactsPushSyncUpManager,
+    ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
+    ResourcePossibleValuesSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager, MapTilesSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
@@ -67,12 +79,20 @@ export default class SyncUpConfig {
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_CONTACTS_PUSH] = SS.STATES_FINISH;
     // we need to pull contacts before activities push, to unlink deleted contacts from activities
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_CONTACTS_PULL] = SS.STATES_FINISH;
+    // we need to pull resources before activities push, to unlink deleted resources from activities
+    dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_RESOURCES_PULL] = SS.STATES_FINISH;
+    dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_RESOURCES_PUSH] = SS.STATES_FINISH;
     // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
     dependencies[SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] =
       Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_CONTACT_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES] =
+      Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
+    // pull resources once activities were pulled, so that we remove any resource only from non-conflicting activities
+    dependencies[SYNCUP_TYPE_RESOURCES_PULL] = Utils.toMap(SYNCUP_TYPE_ACTIVITIES_PULL, SS.STATES_FINISH);
+    dependencies[SYNCUP_TYPE_RESOURCE_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
+    dependencies[SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES] =
       Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_MAP_TILES] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     return dependencies;
