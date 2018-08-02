@@ -25,7 +25,11 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
           const zipFile = FileManager.getAbsolutePath(ASSETS_DIRECTORY, TILES_ZIP_FILE);
           const dir = FileManager.getAbsolutePath(ASSETS_DIRECTORY);
           return extract(zipFile, { dir }, this.afterExtract.bind(null, resolve, reject));
-        }).catch(reject);
+        }).catch(() => {
+          // Dont reject in case of error because not all servers have map-tiles.zip document available.
+          logger.warn('No map-tiles.zip in this country.');
+          return resolve();
+        });
       } else {
         return resolve();
       }
