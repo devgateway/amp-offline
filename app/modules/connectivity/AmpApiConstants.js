@@ -25,6 +25,11 @@ export const CONTACT_PUSH_URL = '/contact';
 export const CONTACT_SINGLE_FIELDS_TREE_URL = '/contact/fields';
 export const CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL = '/contact/ws-member-fields';
 export const CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS = '/contact/field/values';
+export const RESOURCE_PULL_URL = '/resource';
+export const RESOURCE_PUSH_URL = '/resource';
+export const RESOURCE_SINGLE_FIELDS_TREE_URL = '/resource/fields';
+export const RESOURCE_FIELDS_PER_WORKSPACE_MEMBER_URL = '/resource/ws-member-fields';
+export const RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS = '/resource/field/values';
 export const DOWNLOAD_UPDATE_BINARY_URL = '/amp/amp-offline-release';
 export const ELECTRON_UPDATER_CHECK_URL = '/amp/offline';
 export const CHANGE_PASSWORD_URL = '/aim/showChangePassword.do';
@@ -47,6 +52,7 @@ export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2
 export const LAST_SYNC_TIME_PARAM = 'last-sync-time';
 
 export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
+export const MAP_TILES_URL = '/gis/map-tiles';
 
 export const DOWNLOAD_UPGRADE_URL = '/amp/download-upgrade'; // TODO: this url will change for sure.
 export const PLATFORM_WINDOWS = 'windows';

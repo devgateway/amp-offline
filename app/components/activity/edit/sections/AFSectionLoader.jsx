@@ -11,6 +11,7 @@ import AFFunding from './AFFunding';
 import AFIssues from './AFIssues';
 import { AFContactsPage } from '../../../../containers/ContactPage';
 import AFStructures from './AFStructures';
+import { AFDocumentPage } from '../../../../containers/ResourcePage';
 
 /**
  * Loads AF section
@@ -41,6 +42,8 @@ const loadSection = (sectionName) => {
       return <AFStructures />;
     case SC.ISSUES_SECTION:
       return <AFIssues />;
+    case SC.RELATED_DOCUMENTS:
+      return <AFDocumentPage />;
     /*
     case SC.COMPONENTS:
       return <AFComponents />;

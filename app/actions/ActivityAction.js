@@ -34,6 +34,7 @@ import ActivityStatusValidation from '../modules/activity/ActivityStatusValidati
 import DateUtils from '../utils/DateUtils';
 import LoggerManager from '../modules/util/LoggerManager';
 import * as ContactAction from './ContactAction';
+import * as ResourceAction from './ResourceAction';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -65,6 +66,7 @@ export function loadActivityForActivityPreview(activityId) {
         currentLanguage: ownProps().translationReducer.lang
       }).then(data => {
         ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
+        ResourceAction.loadHydratedResourcesForActivity(data.activity)(dispatch, ownProps);
         return data;
       })
     });
@@ -85,6 +87,7 @@ export function loadActivityForActivityForm(activityId) {
       }).then(data => {
         dispatch({ type: ACTIVITY_LOADED_FOR_AF });
         ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
+        ResourceAction.loadHydratedResourcesForActivity(data.activity)(dispatch, ownProps);
         return data;
       })
     });
@@ -92,11 +95,12 @@ export function loadActivityForActivityForm(activityId) {
 }
 
 export function unloadActivity() {
-  return (dispatch) => {
+  return (dispatch, ownProps) => {
     dispatch({
       type: ACTIVITY_UNLOADED
     });
-    ContactAction.unloadContacts()(dispatch);
+    ContactAction.unloadContacts()(dispatch, ownProps);
+    ResourceAction.unloadResources()(dispatch, ownProps);
   };
 }
 
@@ -118,13 +122,16 @@ export function reportFieldValidation(fieldPath, validationResult) {
 
 export function saveActivity(activity) {
   return (dispatch, ownProps) => {
+    ResourceAction.tryToAutoAddPendingResourcesToActivity(activity)(dispatch, ownProps);
     dispatch({
       type: ACTIVITY_SAVE,
       payload: _saveActivity(activity, ownProps().userReducer.teamMember,
         ownProps().activityReducer.activityFieldsManager.fieldsDef, dispatch)
         .then((savedActivity) =>
-          ContactAction.dehydrateAndSaveActivityContacts(savedActivity)(dispatch, ownProps)
-           .then(() => savedActivity)
+          Promise.all([
+            ContactAction.dehydrateAndSaveActivityContacts(savedActivity)(dispatch, ownProps),
+            ResourceAction.dehydrateAndSaveActivityResources(activity)(dispatch, ownProps)
+          ]).then(() => savedActivity)
         )
     });
   };
@@ -177,7 +184,7 @@ const _getActivity = (activityId, teamMemberId) => {
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
-  return dehydrator.dehydrateEntity(activity).then(dehydratedActivity => {
+  return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
     const modifiedOn = DateUtils.getISODateForAPI();
     if (!dehydratedActivity[TEAM]) {
       dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];

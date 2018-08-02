@@ -1,11 +1,15 @@
+/* eslint-disable camelcase */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import PossibleValuesManager from '../../../../../modules/field/PossibleValuesManager';
+import styles from './AFMapWindow.css';
 
 const logger = new Logger('Map Modal');
+const SQUARE = 25;
 
 /**
  * Map Title Popup
@@ -13,6 +17,10 @@ const logger = new Logger('Map Modal');
  * @author Gabriel Inchauspe
  */
 export default class AFMapPopup extends Component {
+
+  static contextTypes = {
+    activityFieldsManager: PropTypes.object
+  };
 
   static propTypes = {
     show: PropTypes.bool.isRequired,
@@ -27,13 +35,14 @@ export default class AFMapPopup extends Component {
     super(props);
     logger.log('constructor');
     this.handleSaveBtnClick = this.handleSaveBtnClick.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleDeleteBtnClick = this.handleDeleteBtnClick.bind(this);
+    this.handleChangeColor = this.handleChangeColor.bind(this);
     this.state = {
       [AC.STRUCTURES_TITLE]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_TITLE] : ''),
       [AC.STRUCTURES_DESCRIPTION]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_DESCRIPTION] : '',
-      color: (this.props.structureData ? this.props.structureData.color : null),
+      [AC.STRUCTURES_COLOR]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_COLOR] : null),
       [AC.STRUCTURES_SHAPE]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_SHAPE] : null,
     };
   }
@@ -42,19 +51,25 @@ export default class AFMapPopup extends Component {
     if (newProps.structureData) {
       this.setState({
         [AC.STRUCTURES_TITLE]: newProps.structureData[AC.STRUCTURES_TITLE],
-        color: newProps.structureData.color,
+        [AC.STRUCTURES_COLOR]: newProps.structureData[AC.STRUCTURES_COLOR],
         isNew: (!newProps.structureData[AC.STRUCTURES_TITLE]),
         [AC.STRUCTURES_DESCRIPTION]: newProps.structureData[AC.STRUCTURES_DESCRIPTION],
-        [AC.STRUCTURES_SHAPE]: newProps.structureData[AC.STRUCTURES_SHAPE]
+        [AC.STRUCTURES_SHAPE]: newProps.structureData[AC.STRUCTURES_SHAPE],
+        isGazetteer: newProps.structureData.isGazetteer
       });
     } else {
-      this.setState({ [AC.STRUCTURES_TITLE]: '', color: null, isNew: true, [AC.STRUCTURES_DESCRIPTION]: '' });
+      this.setState({
+        [AC.STRUCTURES_TITLE]: '',
+        [AC.STRUCTURES_COLOR]: null,
+        isNew: true,
+        [AC.STRUCTURES_DESCRIPTION]: ''
+      });
     }
   }
 
   handleCancel() {
     const { layer } = this.props;
-    this.setState({ [AC.STRUCTURES_TITLE]: '', color: null, [AC.STRUCTURES_DESCRIPTION]: '' });
+    this.setState({ [AC.STRUCTURES_TITLE]: '', [AC.STRUCTURES_COLOR]: null, [AC.STRUCTURES_DESCRIPTION]: '' });
     const del = this.state.isNew;
     this.props.onCancel(layer, del);
   }
@@ -62,8 +77,9 @@ export default class AFMapPopup extends Component {
   handleSaveBtnClick() {
     const { onSubmit, structureData, layer } = this.props;
     if (this.state[AC.STRUCTURES_TITLE]) {
-      onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE], this.state.color
-        , this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE]);
+      onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE],
+        this.state[AC.STRUCTURES_COLOR], this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE],
+        this.state.isGazetteer);
     } else {
       alert(translate('emptyTitle'));
     }
@@ -74,12 +90,37 @@ export default class AFMapPopup extends Component {
     this.props.onDelete(layer, structureData);
   }
 
-  handleChange(obj) {
+  handleChangeTitle(obj) {
     this.setState({ [AC.STRUCTURES_TITLE]: obj.target.value });
   }
 
+  handleChangeColor(id, colors) {
+    const newColor = PossibleValuesManager.findOption(colors, id);
+    this.setState({ [AC.STRUCTURES_COLOR]: newColor });
+  }
+
+  generateColorList() {
+    const { structure_color } = this.state;
+    const content = [];
+    const colors = this.context.activityFieldsManager.possibleValuesMap[`${AC.STRUCTURES}~${AC.STRUCTURES_COLOR}`];
+    Object.values(colors).forEach(c => {
+      const color = c.value.substring(0, 7);
+      const text = c.value.substring(8);
+      content.push(<div key={Math.random()}>
+        <input
+          type="radio" name="color" value={c.id} checked={(structure_color && structure_color.id === c.id)}
+          onChange={this.handleChangeColor.bind(null, c.id, colors)} className={styles.colorItem} />
+        <span className={styles.colorItem}>{text}</span>
+        <svg width={SQUARE} height={SQUARE}>
+          <rect width={SQUARE} height={SQUARE} style={{ fill: color, x: 5, y: 5 }} />
+        </svg>
+      </div>);
+    });
+    return <div key={Math.random()}>{content}</div>;
+  }
+
   render() {
-    const { title } = this.state;
+    const { title, shape, isGazetteer } = this.state;
     return (<Modal show={this.props.show} bsSize="small">
       <Modal.Header>
         <Modal.Title>
@@ -87,14 +128,17 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {translate('Title')}
-        <input type={'text'} value={title} onChange={this.handleChange} />
+        <span>{translate('Title')}</span>
+        <input
+          type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer}
+          className="form-control" />
+        {shape !== AC.STRUCTURES_POINT ? this.generateColorList() : null}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick} bsStyle="success">
-          {translate('Submit')}
+          {isGazetteer ? translate('Select') : translate('Submit')}
         </Button>
-        {!this.state.isNew
+        {!this.state.isNew && !this.state.isGazetteer
           ? (<Button onClick={this.handleDeleteBtnClick} bsStyle="danger">
             {translate('Delete')}
           </Button>)
