@@ -11,6 +11,10 @@ import {
   SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_FEATURE_MANAGER,
   SYNCUP_TYPE_GS,
+  SYNCUP_TYPE_RESOURCE_FIELDS,
+  SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES,
+  SYNCUP_TYPE_RESOURCES_PULL,
+  SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_TRANSLATIONS,
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
@@ -56,15 +60,18 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_EXCHANGE_RATES:
       case SYNCUP_TYPE_ACTIVITY_FIELDS: // TODO update once AMP-25568 is also done, as part of AMPOFFLINE-270
       case SYNCUP_TYPE_CONTACT_FIELDS:
+      case SYNCUP_TYPE_RESOURCE_FIELDS:
       case SYNCUP_TYPE_FEATURE_MANAGER:
       case SYNCUP_TYPE_ACTIVITIES_PUSH:
       case SYNCUP_TYPE_CONTACTS_PUSH:
+      case SYNCUP_TYPE_RESOURCES_PUSH:
         diff = diff || this._syncUpDiff[type] || [];
         break;
       case SYNCUP_TYPE_USERS:
       case SYNCUP_TYPE_WORKSPACE_MEMBERS:
       case SYNCUP_TYPE_ACTIVITIES_PULL:
       case SYNCUP_TYPE_CONTACTS_PULL:
+      case SYNCUP_TYPE_RESOURCES_PULL:
         diff.removed = (this._syncUpDiff[type] ? (this._syncUpDiff[type].removed || []) : []).concat(diff.removed);
         diff.removed = Array.from(new Set(diff.removed)); // get unique entries; keep array as it is expected everywhere
         diff.saved = (this._syncUpDiff[type] ? (this._syncUpDiff[type].saved || []) : []).concat(diff.saved);
@@ -74,6 +81,7 @@ export default class SyncUpDiff {
       // a list of elements to sync up
       case SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES:
       case SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES:
+      case SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES:
         diff = Array.from(new Set((this._syncUpDiff[type] || []).concat(diff)));
         break;
       default:

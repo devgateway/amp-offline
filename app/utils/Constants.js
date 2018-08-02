@@ -63,6 +63,7 @@ export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
 export const STATIC_DIR = 'static';
 export const IMAGES_DIR = 'images';
+export const DOC_ICONS = 'doc-icons';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -90,6 +91,10 @@ export const SYNCUP_TYPE_CONTACTS_PUSH = 'contacts-push';
 export const SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES = 'activity-possible-values-fields';
 export const SYNCUP_TYPE_CONTACT_FIELDS = 'contact-fields';
 export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fields';
+export const SYNCUP_TYPE_RESOURCES_PULL = 'resources';
+export const SYNCUP_TYPE_RESOURCES_PUSH = 'resources-push';
+export const SYNCUP_TYPE_RESOURCE_FIELDS = 'resource-fields';
+export const SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES = 'resource-possible-values-fields';
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_TYPE_MAP_TILES = 'map_tiles';
 export const SYNCUP_TYPE_GAZETTEER = 'gazetteer';
@@ -104,6 +109,7 @@ export const SYNCUP_DIFF_LEFTOVER = 'syncup-diff-leftover';
 export const SYNCUP_DEPENDENCY_CHECK_INTERVAL = 10;
 export const SYNCUP_DETAILS_SYNCED = 'synced';
 export const SYNCUP_DETAILS_UNSYNCED = 'unsynced';
+export const SYNCUP_RESOURCE_PULL_BATCH_SIZE = 100;
 
 export const ACTIVITY_STATUS_DRAFT = 'ACTIVITY_STATUS_DRAFT';
 export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';
@@ -123,6 +129,7 @@ export const
   TRANSPARENT_FLAG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=';
 export const HELP_PDF_FILENAME = 'amp-help';
 export const HELP_DIR = 'help';
+export const ENDS_WITH_PUNCTUATION_REGEX = /[.!?,;:]$/;
 
 export const MAP_TILES_DIR = 'map-tiles';
 export const TILES_ZIP_FILE = 'map-tiles.zip';

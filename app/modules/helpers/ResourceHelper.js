@@ -3,6 +3,12 @@ import { COLLECTION_RESOURCES } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import { CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID } from '../../utils/constants/EntityConstants';
+import {
+  CLIENT_ADDING_DATE,
+  CLIENT_YEAR_OF_PUBLICATION,
+  CONTENT_ID,
+  CONTENT_TYPE
+} from '../../utils/constants/ResourceConstants';
 
 const logger = new Logger('ResourceHelper');
 
@@ -37,6 +43,17 @@ const ResourceHelper = {
   },
 
   /**
+   * Finds all resource by uuids that were modified on the AMP Offline client
+   * @param uuids
+   * @return {Promise}
+   */
+  findAllResourcesModifiedOnClientByUuids(uuids) {
+    logger.debug('findResourcesByUuids');
+    const filterRule = { uuid: { $in: uuids } };
+    return ResourceHelper.findAllResourcesModifiedOnClient(filterRule);
+  },
+
+  /**
    * Finds all resources modified on the AMP Offline client
    * @param filterRule optional additional filter rule
    * @return {Promise}
@@ -50,6 +67,17 @@ const ResourceHelper = {
   findAllResources(filterRule, projections) {
     logger.debug('findAllResources');
     return DatabaseManager.findAll(filterRule, COLLECTION_RESOURCES, projections);
+  },
+
+  countAllResourcesModifiedOnClient(filterRule = {}) {
+    logger.debug('countAllResourcesModifiedOnClient');
+    filterRule[CLIENT_CHANGE_ID] = { $exists: true };
+    return ResourceHelper.countAllResources(filterRule);
+  },
+
+  countAllResources(filterRule = {}) {
+    logger.debug('countAllResources');
+    return DatabaseManager.count(filterRule, COLLECTION_RESOURCES);
   },
 
   stampClientChange(resource) {
@@ -80,8 +108,12 @@ const ResourceHelper = {
     return !!resource[CLIENT_CHANGE_ID];
   },
 
+  /**
+   * Cleans up local fields. This is not currently needed for AMP.
+   * @param resource
+   * @return {{}} a resource copy without local fields
+   */
   cleanupLocalData(resource) {
-    // TODO do we need to cleanup?
     const cleanResource = { ...resource };
     if (this.isNewResource(resource)) {
       delete cleanResource.uuid;
@@ -90,7 +122,21 @@ const ResourceHelper = {
     delete cleanResource.id;
     delete cleanResource._id;
     delete cleanResource[INTERNAL_ID];
+    delete cleanResource[CONTENT_ID];
+    delete cleanResource[CONTENT_TYPE];
+    delete cleanResource[CLIENT_ADDING_DATE];
+    delete cleanResource[CLIENT_YEAR_OF_PUBLICATION];
     return cleanResource;
+  },
+
+  /**
+   * Copy local specific data from source resource to destination resource
+   * @param src the source resource
+   * @param dst the destination resource
+   */
+  copyLocalData(src, dst) {
+    dst[CONTENT_ID] = src[dst];
+    dst[CONTENT_TYPE] = src[dst];
   },
 
   /**

@@ -26,7 +26,7 @@ const ConnectionHelper = {
     logger.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
   /**
