@@ -8,7 +8,7 @@ import {
 import PossibleValuesManager from '../field/PossibleValuesManager';
 import PossibleValuesHelper from './PossibleValuesHelper';
 
-const logger = new Logger('ContactHydrator');
+const logger = new Logger('AbstractEntityHydrator');
 
 /**
  * A base class to be reused by different entities hydrators for common logic (moved here from ActivityHydrator).
