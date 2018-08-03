@@ -115,17 +115,20 @@ export default class AFMapPopup extends Component {
     Object.values(colors).forEach(c => {
       const color = c.value.substring(0, 7);
       const text = c.value.substring(8);
-      content.push(<div key={Math.random()}>
+      content.push(<div key={Math.random()} className={styles.colors}>
         <input
           type="radio" name="color" value={c.id} checked={(structure_color && structure_color.id === c.id)}
           onChange={this.handleChangeColor.bind(null, c.id, colors)} className={styles.colorItem} />
-        <span className={styles.colorItem}>{text}</span>
         <svg width={SQUARE} height={SQUARE}>
           <rect width={SQUARE} height={SQUARE} style={{ fill: color, x: 5, y: 5 }} />
         </svg>
+        <span className={styles.colorItem}>{text}</span>
       </div>);
     });
-    return <div key={Math.random()}>{content}</div>;
+    return (<div key={Math.random()} className={styles.color_container}>
+      <span className={styles.label}>{translate('Select a color')}</span>
+      <div>{content}</div>
+    </div>);
   }
 
   render() {
@@ -137,7 +140,7 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <AFLabel value={translate('Title')} required />
+        <AFLabel value={translate('Title')} required className={styles.label} />
         <input
           ref="title"
           type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer}
