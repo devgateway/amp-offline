@@ -7,6 +7,7 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import PossibleValuesManager from '../../../../../modules/field/PossibleValuesManager';
+import AFLabel from '../../components/AFLabel';
 import styles from './AFMapWindow.css';
 
 const logger = new Logger('Map Modal');
@@ -136,7 +137,7 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <span>* {translate('Title')}</span>
+        <AFLabel value={translate('Title')} required />
         <input
           ref="title"
           type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer}
