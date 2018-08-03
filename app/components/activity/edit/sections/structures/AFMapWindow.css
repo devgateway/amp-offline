@@ -28,3 +28,15 @@
   width: auto;
   display: initial;
 }
+
+.label {
+  font-weight: bold;
+}
+
+.colors {
+  margin-left: 15px;
+}
+
+.color_container {
+  margin-top: 10px;
+}
