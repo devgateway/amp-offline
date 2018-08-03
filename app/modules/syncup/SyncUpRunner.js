@@ -23,6 +23,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_GAZETTEER,
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES,
@@ -200,6 +201,7 @@ export default class SyncUpRunner {
     changes[SYNCUP_TYPE_RESOURCE_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
+    changes[SYNCUP_TYPE_GAZETTEER] = true;
     changes[SYNCUP_TYPE_MAP_TILES] = true;
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
     // TODO workaround until AMPOFFLINE-908 with a more accurate activities to push detection will come
