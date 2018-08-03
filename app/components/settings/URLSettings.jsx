@@ -159,7 +159,8 @@ class URLSettings extends Component {
       afterDeleteRow: this.handleDeletedRow.bind(this),
       insertModal: this.constructor.createCustomInsertModal,
       insertFailIndicator: translate('duplicateUrl'),
-      handleConfirmDeleteRow: this.handleConfirmDelete.bind(this)
+      handleConfirmDeleteRow: this.handleConfirmDelete.bind(this),
+      noDataText: translate('noDataText'),
     };
     const selectRow = {
       mode: 'checkbox'
