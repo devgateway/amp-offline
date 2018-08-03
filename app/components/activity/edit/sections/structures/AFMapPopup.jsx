@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+/* eslint-disable react/no-string-refs */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
@@ -6,6 +7,7 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import PossibleValuesManager from '../../../../../modules/field/PossibleValuesManager';
+import AFLabel from '../../components/AFLabel';
 import styles from './AFMapWindow.css';
 
 const logger = new Logger('Map Modal');
@@ -67,6 +69,12 @@ export default class AFMapPopup extends Component {
     }
   }
 
+  componentDidUpdate() {
+    if (this.refs.title) {
+      this.refs.title.focus();
+    }
+  }
+
   handleCancel() {
     const { layer } = this.props;
     this.setState({ [AC.STRUCTURES_TITLE]: '', [AC.STRUCTURES_COLOR]: null, [AC.STRUCTURES_DESCRIPTION]: '' });
@@ -76,8 +84,9 @@ export default class AFMapPopup extends Component {
 
   handleSaveBtnClick() {
     const { onSubmit, structureData, layer } = this.props;
-    if (this.state[AC.STRUCTURES_TITLE]) {
-      onSubmit((layer.layer || layer), structureData.id, this.state[AC.STRUCTURES_TITLE],
+    const title = this.state[AC.STRUCTURES_TITLE].trim();
+    if (title) {
+      onSubmit((layer.layer || layer), structureData.id, title,
         this.state[AC.STRUCTURES_COLOR], this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE],
         this.state.isGazetteer);
     } else {
@@ -131,8 +140,9 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <span className={styles.label}>{translate('Title')}</span>
+        <AFLabel value={translate('Title')} required className={styles.label} />
         <input
+          ref="title"
           type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer}
           className="form-control" />
         {shape !== AC.STRUCTURES_POINT ? this.generateColorList() : null}
