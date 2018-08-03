@@ -26,6 +26,7 @@ import {
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES,
+  SYNCUP_TYPE_MAP_TILES,
   SYNCUP_TYPE_RESOURCE_FIELDS,
   SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_TRANSLATIONS,
@@ -199,6 +200,7 @@ export default class SyncUpRunner {
     changes[SYNCUP_TYPE_RESOURCE_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
+    changes[SYNCUP_TYPE_MAP_TILES] = true;
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
     // TODO workaround until AMPOFFLINE-908 with a more accurate activities to push detection will come
     const hasWsMembersChanges = SyncUpDiff.hasChanges(changes[SYNCUP_TYPE_WORKSPACE_MEMBERS]);
