@@ -2,16 +2,49 @@
   border-bottom: 1px solid grey;
   width: 100%;
   margin-bottom: 10px;
+  display: grid;
 }
 
 .delete {
   background-image: url('../../../../../assets/images/ico_del.gif');
   background-repeat: no-repeat;
   padding: 0.5em;
-  /*position: relative;
-  top: 40px;*/
+  top: 34px;
+  position: relative;
 }
 
 .delete:hover {
   text-decoration: none;
+}
+
+.row {
+  width: 100%;
+  min-width: 100%;
+}
+
+.cell_3 {
+  max-width: 30%;
+  float: left;
+  padding: 5px;
+  min-width: 30%;
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
+.cell_2 {
+  max-width: 49%;
+  float: left;
+  padding: 5px;
+  min-width: 49%;
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
+.cell_5 {
+  max-width: 19%;
+  float: left;
+  padding: 5px;
+  min-width: 19%;
+  max-height: 70px;
+  margin-bottom: 25px;
 }
