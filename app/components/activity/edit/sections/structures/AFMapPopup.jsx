@@ -136,7 +136,7 @@ export default class AFMapPopup extends Component {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <span>{translate('Title')}</span>
+        <span>* {translate('Title')}</span>
         <input
           ref="title"
           type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer}
