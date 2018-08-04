@@ -2,7 +2,6 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Grid, Col } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
