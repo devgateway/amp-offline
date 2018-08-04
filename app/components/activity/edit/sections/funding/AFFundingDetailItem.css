@@ -1,7 +1,7 @@
 .grid {
-  border-bottom: 1px solid grey;
+  /*border-bottom: 1px solid grey;*/
   width: 100%;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
   display: grid;
 }
 
@@ -22,29 +22,38 @@
   min-width: 100%;
 }
 
+.cell_1 {
+  max-width: 100%;
+  float: left;
+  padding: 5px;
+  min-width: 100%;
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
 .cell_3 {
   max-width: 30%;
   float: left;
   padding: 5px;
-  min-width: 30%;
+  min-width: 20%;
   max-height: 70px;
   margin-bottom: 25px;
 }
 
 .cell_2 {
-  max-width: 49%;
+  max-width: 50%;
   float: left;
   padding: 5px;
-  min-width: 49%;
+  min-width: 40%;
   max-height: 70px;
   margin-bottom: 25px;
 }
 
-.cell_5 {
-  max-width: 19%;
+.cell_10 {
+  max-width: 10%;
   float: left;
   padding: 5px;
-  min-width: 19%;
+  min-width: 5%;
   max-height: 70px;
   margin-bottom: 25px;
 }

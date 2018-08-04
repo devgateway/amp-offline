@@ -76,7 +76,7 @@ export default class AFFundingDetailItem extends Component {
             fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
             fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} /> : null}
           <AFField
-            parent={this.props.fundingDetail} className={styles.cell_2}
+            parent={this.props.fundingDetail} className={styles.cell_3}
             fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`}
             filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
             fmPath={pledgeFMPath} />
@@ -85,7 +85,7 @@ export default class AFFundingDetailItem extends Component {
             fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
             fmPath={fixedExchangeRateFMPath}
             extraParams={{ bigger: 0 }} />
-          <div className={styles.cell_5}>
+          <div className={styles.cell_10}>
             <a
               onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
               className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
