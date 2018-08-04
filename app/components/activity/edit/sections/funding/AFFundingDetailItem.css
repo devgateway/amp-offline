@@ -49,6 +49,15 @@
   margin-bottom: 25px;
 }
 
+.cell_4 {
+  max-width: 25%;
+  float: left;
+  padding: 5px;
+  min-width: 20%;
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
 .cell_10 {
   max-width: 10%;
   float: left;

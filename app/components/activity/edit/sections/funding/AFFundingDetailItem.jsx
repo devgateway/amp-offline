@@ -81,7 +81,7 @@ export default class AFFundingDetailItem extends Component {
             filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
             fmPath={pledgeFMPath} />
           <AFField
-            parent={this.props.fundingDetail} className={styles.cell_3}
+            parent={this.props.fundingDetail} className={styles.cell_4}
             fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
             fmPath={fixedExchangeRateFMPath}
             extraParams={{ bigger: 0 }} />
