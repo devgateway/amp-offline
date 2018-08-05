@@ -268,7 +268,7 @@ class AFField extends Component {
   }
 
   _getDate() {
-    return (<AFDate value={this.state.value} onChange={this.onChange} />);
+    return (<AFDate value={this.state.value} onChange={this.onChange} extraParams={this.props.extraParams} />);
   }
 
   _getBoolean() {
