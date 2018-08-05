@@ -240,7 +240,7 @@ class AFStructures extends Component {
         point={this.state.currentPoint} />
 
       <Grid className={afStyles.full_width}>
-        {this.state.structures.map((s, i) => (
+        {this.state.structures.sort((a, b) => (a[AC.STRUCTURES_TITLE] > b[AC.STRUCTURES_TITLE])).map((s, i) => (
           <Panel key={Math.random()} header={translate('Structure')}>
             <Row>{AFStructures.generateDataRow(s)}</Row>
             <Row>{this.generateButtonRow(s, i)}</Row>
