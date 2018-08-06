@@ -5,3 +5,7 @@
 .error > a {
   color: #a94442 !important;
 }
+
+.funding_org {
+  padding-top: 15px;
+}

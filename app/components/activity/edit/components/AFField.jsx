@@ -241,8 +241,19 @@ class AFField extends Component {
   }
 
   _toAFOptions(options) {
-    return PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
-      (option.visible ? new AFOption(option) : null)).filter(afOption => afOption !== null);
+    const { afOptionFormatter, sortByDisplayValue } = this.props.extraParams || {};
+    const afOptions = PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
+      (option.visible ? this._toAFOption(option, afOptionFormatter) : null)).filter(afOption => afOption !== null);
+    if (sortByDisplayValue) {
+      AFOption.sortByDisplayValue(afOptions);
+    }
+    return afOptions;
+  }
+
+  _toAFOption(option, afOptionFormatter) {
+    const afOption = new AFOption(option);
+    afOption.valueFormatter = afOptionFormatter;
+    return afOption;
   }
 
   _getRichTextEditor() {
@@ -268,7 +279,7 @@ class AFField extends Component {
   }
 
   _getDate() {
-    return (<AFDate value={this.state.value} onChange={this.onChange} />);
+    return (<AFDate value={this.state.value} onChange={this.onChange} extraParams={this.props.extraParams} />);
   }
 
   _getBoolean() {
