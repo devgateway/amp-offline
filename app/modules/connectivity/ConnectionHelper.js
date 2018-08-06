@@ -142,7 +142,8 @@ const ConnectionHelper = {
         // Being here means the server might not be accessible.
         const isAMPunreachable = error && ERRORS_NO_AMP_SERVER.includes(error.code);
         const errorCode = isAMPunreachable ? ERROR_CODE_NO_CONNECTIVITY : undefined;
-        const message = isAMPunreachable ? translate('AMPUnreachableError') : error || (body && body.error) || translate('unknownNetworkError');
+        const message = isAMPunreachable
+          ? translate('AMPUnreachableError') : error || (body && body.error) || translate('unknownNetworkError');
         // We need to detect statusCode 403 to throw a security error.
         const origin = (response && response.statusCode === 403)
           ? NOTIFICATION_ORIGIN_API_SECURITY
