@@ -22,15 +22,13 @@ export default class GazetteerSyncUpManager extends AbstractAtomicSyncUpManager 
 
   doAtomicSyncUp() {
     logger.debug('doAtomicSyncUp');
-    return new Promise((resolve, reject) => {
-      if (!this.checkIfGazetteerExist()) {
-        return ConnectionHelper.doGet({ url: GAZETTEER_URL, shouldRetry: true }).then((locations) => (
-          GazetteerHelper.saveOrUpdateLocationCollection(locations)
-        )).catch(reject);
-      } else {
-        return resolve();
-      }
-    });
+    if (!this.checkIfGazetteerExist()) {
+      return ConnectionHelper.doGet({ url: GAZETTEER_URL, shouldRetry: true }).then((locations) => (
+        GazetteerHelper.saveOrUpdateLocationCollection(locations)
+      ));
+    } else {
+      return Promise.resolve();
+    }
   }
 
   checkIfGazetteerExist() {
