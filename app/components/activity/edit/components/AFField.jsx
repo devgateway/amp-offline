@@ -37,6 +37,7 @@ class AFField extends Component {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
+    validationResult: PropTypes.array,
   };
 
   static propTypes = {
@@ -99,7 +100,7 @@ class AFField extends Component {
     if (!this.fieldExists) {
       return;
     }
-    if (nextProps.validationResult) {
+    if (nextProps.validationResult || nextContext.validationResult) {
       this._processValidation(this.props.parent.errors);
     }
     if (nextProps.parent[this.fieldName] !== this.state.value ||
