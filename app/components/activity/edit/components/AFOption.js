@@ -46,18 +46,37 @@ export default class AFOption {
   }
 
   get displayValue() {
-    if (this._displayHierarchicalValue) {
-      return this.hierarchicalValue;
+    let valueToDisplay = this.formattedValue;
+    if (!valueToDisplay && this._displayHierarchicalValue) {
+      valueToDisplay = this.hierarchicalValue;
     }
-    return this.translatedValue;
+    return valueToDisplay || this.translatedValue;
   }
 
   get displayFullValue() {
-    return this.hierarchicalValue || this.translatedValue;
+    return this.formattedValue || this.hierarchicalValue || this.translatedValue;
   }
 
   get hierarchicalDepth() {
     return this[HIERARCHICAL_VALUE_DEPTH];
+  }
+
+  get formattedValue() {
+    if (this._valueFormatter) {
+      return this._valueFormatter(this);
+    }
+    return null;
+  }
+
+  set valueFormatter(valueFormatter) {
+    this._valueFormatter = valueFormatter;
+  }
+
+  static sortByDisplayValue(afOptions) {
+    if (afOptions && afOptions.length) {
+      afOptions.sort((o1, o2) => o1.displayValue.localeCompare(o2.displayValue));
+    }
+    return afOptions;
   }
 
 }
