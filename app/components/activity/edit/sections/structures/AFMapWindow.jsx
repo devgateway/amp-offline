@@ -13,16 +13,28 @@ import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsMan
 import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import FileManager from '../../../../../modules/util/FileManager';
-import { MAP_MARKER_IMAGE, MAP_MARKER_SHADOW, POLYGON_BASE_COLOR } from '../../../../../utils/Constants';
+import {
+  MAP_MARKER_IMAGE,
+  MAP_MARKER_SHADOW,
+  POLYGON_BASE_COLOR,
+  MAP_MARKER_CIRCLE_RED
+} from '../../../../../utils/Constants';
 import AFMapPopup from './AFMapPopup';
+import GazetteerHelper from '../../../../../modules/helpers/GazetteerHelper';
 
 const logger = new Logger('Map Modal');
-const myIcon = L.icon({
+const myIconMarker = L.icon({
   iconUrl: MAP_MARKER_IMAGE,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [-3, -76],
   shadowUrl: MAP_MARKER_SHADOW
+});
+const circleIconMarker = L.icon({
+  iconUrl: MAP_MARKER_CIRCLE_RED,
+  iconSize: [20, 20],
+  iconAnchor: [9, 9],
+  popupAnchor: [0, 0]
 });
 const OPACITY = '0.5';
 
@@ -76,7 +88,9 @@ export default class AFMapWindow extends Component {
       currentLayer: null,
       structureData: null,
       layersList: [],
-      deletedLayersList: []
+      deletedLayersList: [],
+      locateText: null,
+      gazetteerGroup: null
     };
   }
 
@@ -91,7 +105,7 @@ export default class AFMapWindow extends Component {
     }
   }
 
-  onStructureDataPopupSubmit(layer, id, title, structure_color, description, shape) {
+  onStructureDataPopupSubmit(layer, id, title, structure_color, description, shape, isGazetteer) {
     this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
     const newLayersList = this.state.layersList.slice();
     const index = newLayersList.findIndex((item) => (item.structureData.id === id));
@@ -104,8 +118,20 @@ export default class AFMapWindow extends Component {
       layer.options.color = structure_color.value.substring(0, 7);
     }
     const newStructure = { layer, structureData: { title, structure_color, id, description, shape } };
+
+    // Add extra data we need for a gazetteer point.
+    if (isGazetteer) {
+      newStructure.structureData[AC.STRUCTURES_LAT] = layer.getLatLng()[AC.STRUCTURES_LAT];
+      newStructure.structureData[AC.STRUCTURES_LNG] = layer.getLatLng()[AC.STRUCTURES_LNG];
+    }
     newLayersList.push(newStructure);
     this.setState({ layersList: newLayersList });
+
+    if (isGazetteer) {
+      // Replace gazetteer point with a regular marker.
+      this.loadExistingStructure(this.state.drawnItems, newStructure.structureData, null);
+      this.state.map.removeLayer(layer.layer || layer);
+    }
 
     // Update the layer to reflect color change.
     if (shape !== AC.STRUCTURES_POINT) {
@@ -121,6 +147,10 @@ export default class AFMapWindow extends Component {
     this.setState({ deletedLayersList: newDeletedList });
   }
 
+  onLocateTextChange(control) {
+    this.setState({ locateText: control.target.value });
+  }
+
   openStructureDataPopup(e, layer, structureData) {
     this.setState({ showStructureDataPopup: true, currentLayer: layer, structureData });
   }
@@ -128,17 +158,26 @@ export default class AFMapWindow extends Component {
   handleSaveBtnClick() {
     const { onSave } = this.props;
     onSave(this.state.layersList, this.state.deletedLayersList);
-    this.setState({ layersList: [], deletedLayersList: [] });
+    this.setState({ layersList: [], deletedLayersList: [], locateText: null, gazetteerGroup: null });
   }
 
   handleCancelBtnClick() {
-    this.setState({ layersList: [], deletedLayersList: [] });
+    this.setState({ layersList: [], deletedLayersList: [], locateText: null, gazetteerGroup: null });
     this.props.onModalClose();
   }
 
   handleMarkerClick(event) {
     const layer = this.state.layersList.find((item) => (item.layer._leaflet_id === event.target._leaflet_id));
     this.openStructureDataPopup(event, event.target, layer.structureData);
+  }
+
+  handleGazetteerMarkerClick(event, location) {
+    const structureData = {
+      [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
+      [AC.STRUCTURES_TITLE]: location.name,
+      isGazetteer: true
+    };
+    this.openStructureDataPopup(event, event.target, structureData);
   }
 
   generateMap() {
@@ -163,9 +202,10 @@ export default class AFMapWindow extends Component {
 
     // This object groups all layers at the same time.
     const drawnItems = L.featureGroup().addTo(map);
+    this.setState({ drawnItems });
 
     // Load point/polygon.
-    this.loadExistingStructure(drawnItems);
+    this.loadExistingStructure(drawnItems, this.props.point, this.props.polygon);
 
     AFMapWindow.translateLeaflet();
 
@@ -186,7 +226,7 @@ export default class AFMapWindow extends Component {
         circle: false,
         circlemarker: false,
         marker: {
-          icon: myIcon
+          icon: myIconMarker
         }
       }
     }));
@@ -208,22 +248,22 @@ export default class AFMapWindow extends Component {
     this.setState({ map });
   }
 
-  loadExistingStructure(drawnItems) {
-    if (this.props.point || this.props.polygon) {
+  loadExistingStructure(drawnItems, point, polygon) {
+    if (point || polygon) {
       // Load point.
-      if (this.props.point) {
-        const marker = L.marker([this.props.point[AC.STRUCTURES_LAT], this.props.point[AC.STRUCTURES_LNG]],
-          { icon: myIcon });
+      if (point) {
+        const marker = L.marker([point[AC.STRUCTURES_LAT], point[AC.STRUCTURES_LNG]],
+          { icon: myIconMarker });
         marker.on('click', (event) => this.handleMarkerClick(event));
         drawnItems.addLayer(marker);
         const newLayersList = this.state.layersList.slice();
         newLayersList.push({
           layer: marker,
           structureData: {
-            [AC.STRUCTURES_TITLE]: this.props.point[AC.STRUCTURES_TITLE],
+            [AC.STRUCTURES_TITLE]: point[AC.STRUCTURES_TITLE],
             [AC.STRUCTURES_COLOR]: null,
-            id: this.props.point.id,
-            [AC.STRUCTURES_DESCRIPTION]: this.props.point[AC.STRUCTURES_DESCRIPTION],
+            id: point.id,
+            [AC.STRUCTURES_DESCRIPTION]: point[AC.STRUCTURES_DESCRIPTION],
             [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
             edit: true
           }
@@ -232,21 +272,21 @@ export default class AFMapWindow extends Component {
       } else {
         // Load polygon.
         let color = POLYGON_BASE_COLOR;
-        if (this.props.polygon[AC.STRUCTURES_COLOR]) {
-          color = this.props.polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
+        if (polygon[AC.STRUCTURES_COLOR]) {
+          color = polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
         }
-        const polygon = L.polygon(this.props.polygon[AC.STRUCTURES_COORDINATES].map(c =>
+        const newPolygon = L.polygon(polygon[AC.STRUCTURES_COORDINATES].map(c =>
           ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: OPACITY });
-        polygon.on('click', (event) => this.handleMarkerClick(event));
-        drawnItems.addLayer(polygon);
+        newPolygon.on('click', (event) => this.handleMarkerClick(event));
+        drawnItems.addLayer(newPolygon);
         const newLayersList = this.state.layersList.slice();
         newLayersList.push({
-          layer: polygon,
+          layer: newPolygon,
           structureData: {
-            [AC.STRUCTURES_TITLE]: this.props.polygon[AC.STRUCTURES_TITLE],
-            [AC.STRUCTURES_COLOR]: this.props.polygon[AC.STRUCTURES_COLOR],
-            id: this.props.polygon.id,
-            [AC.STRUCTURES_DESCRIPTION]: this.props.polygon[AC.STRUCTURES_DESCRIPTION],
+            [AC.STRUCTURES_TITLE]: polygon[AC.STRUCTURES_TITLE],
+            [AC.STRUCTURES_COLOR]: polygon[AC.STRUCTURES_COLOR],
+            id: polygon.id,
+            [AC.STRUCTURES_DESCRIPTION]: polygon[AC.STRUCTURES_DESCRIPTION],
             [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
             edit: true
           }
@@ -259,6 +299,30 @@ export default class AFMapWindow extends Component {
     }
   }
 
+  fuzzySearch() {
+    const text = this.state.locateText;
+    return GazetteerHelper.findAllByNameFuzzy(text).then(data => {
+      // Clean previous search.
+      if (this.state.gazetteerGroup) {
+        this.state.map.removeLayer(this.state.gazetteerGroup);
+      }
+      if (data.length > 0) {
+        const gazetteerGroup = L.featureGroup().addTo(this.state.map);
+        this.setState({ gazetteerGroup });
+        data.forEach(l => {
+          const marker = L.marker([l[AC.STRUCTURES_LATITUDE], l[AC.STRUCTURES_LONGITUDE]],
+            { icon: circleIconMarker });
+          marker.on('click', (event) => this.handleGazetteerMarkerClick(event, l));
+          marker.bindTooltip(`${translate('Name')}: ${l.name} - ${translate('Lat')}: ${l[AC.STRUCTURES_LATITUDE]} 
+            - ${translate('Lng')}: ${l[AC.STRUCTURES_LONGITUDE]}`)
+            .openTooltip();
+          gazetteerGroup.addLayer(marker);
+        });
+      }
+      return data;
+    });
+  }
+
   render() {
     return (<Modal show={this.props.show} onEntered={this.generateMap.bind(this)} bsSize="large">
       <Modal.Header>
@@ -268,6 +332,12 @@ export default class AFMapWindow extends Component {
       </Modal.Header>
       <Modal.Body>
         <div id="map" />
+        <div className={styles.gazetteer_container}>
+          <input
+            type="text" value={this.state.locateText} onChange={this.onLocateTextChange.bind(this)}
+            className={['form-control', styles.locate_search].join(' ')} />
+          <Button onClick={this.fuzzySearch.bind(this)} className={styles.locate_button}>{translate('Locate')}</Button>
+        </div>
         <AFMapPopup
           show={this.state.showStructureDataPopup}
           onSubmit={this.onStructureDataPopupSubmit}

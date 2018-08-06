@@ -8,6 +8,7 @@ import userReducer from './UserReducer';
 import desktopReducer from './DesktopReducer';
 import activityReducer from './ActivityReducer';
 import contactReducer from './ContactReducer';
+import resourceReducer from './ResourceReducer';
 import ampConnectionStatusReducer from './AmpConnectionStatusReducer';
 import startUpReducer from './StartUpReducer';
 import notificationReducer from './NotificationReducer';
@@ -28,6 +29,7 @@ const combinedReducers = combineReducers({
   desktopReducer,
   activityReducer,
   contactReducer,
+  resourceReducer,
   ampConnectionStatusReducer,
   startUpReducer,
   notificationReducer,

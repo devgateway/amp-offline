@@ -187,6 +187,8 @@ export const CONTACT = 'contact';
 export const ORGANIZATION_GROUP = 'organization_group';
 export const FIXED_EXCHANGE_RATE = 'fixed_exchange_rate';
 export const PRIMARY_CONTACT = 'mark_as_primary';
+export const ACTIVITY_DOCUMENTS = 'activity_documents';
+export const DOCUMENT_TYPE = 'document_type';
 export const ISO2 = 'iso2';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
@@ -227,7 +229,8 @@ export const AP_SECTION_IDS =
     },
     { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES },
     { key: 'APContact', hash: '#APContact', value: 'Contact Information', fmPath: FMC.ACTIVITY_CONTACT },
-    { key: 'APStructures', hash: '#APStructures', value: 'Structures', sectionPath: STRUCTURES }
+    { key: 'APStructures', hash: '#APStructures', value: 'Structures', sectionPath: STRUCTURES },
+    { key: 'APDocument', hash: '#APDocument', value: 'Related Documents', sectionPath: ACTIVITY_DOCUMENTS },
   ];
 
 /** Column counts for each section **/
