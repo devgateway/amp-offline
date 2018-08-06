@@ -40,6 +40,7 @@ export default class ActivityPreview extends Component {
       contactFieldsManager: PropTypes.instanceOf(FieldsManager),
       contactsByIds: PropTypes.object,
     }).isRequired,
+    resourceReducer: PropTypes.object.isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     params: PropTypes.shape({
@@ -60,6 +61,7 @@ export default class ActivityPreview extends Component {
     userReducer: PropTypes.object,
     contactFieldsManager: PropTypes.instanceOf(FieldsManager),
     contactsByIds: PropTypes.object,
+    resourceReducer: PropTypes.object,
   };
 
   constructor(props) {
@@ -76,7 +78,8 @@ export default class ActivityPreview extends Component {
       contactsByIds: this.props.contactReducer.contactsByIds,
       currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
-      currencyRatesManager: this.props.activityReducer.currencyRatesManager
+      currencyRatesManager: this.props.activityReducer.currencyRatesManager,
+      resourceReducer: this.props.resourceReducer,
     };
   }
 

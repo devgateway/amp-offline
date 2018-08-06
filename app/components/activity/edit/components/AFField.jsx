@@ -95,13 +95,14 @@ class AFField extends Component {
     this._processValidation(this.props.parent.errors);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
     if (!this.fieldExists) {
       return;
     }
     if (nextProps.validationResult) {
       this._processValidation(this.props.parent.errors);
-    } else if (nextProps.parent[this.fieldName] !== this.state.value ||
+    }
+    if (nextProps.parent[this.fieldName] !== this.state.value ||
       nextProps.forceRequired !== this.props.forceRequired) {
       this.onChange(nextProps.parent[this.fieldName], false);
     }
@@ -287,8 +288,8 @@ class AFField extends Component {
   _getCustom() {
     const { children } = this.props;
     const isArray = Array.isArray(children);
-    let cs = isArray ? children : [children];
-    cs = React.Children.map(children, child => React.cloneElement(child, { onChange: this.onChange }));
+    let cs = (isArray ? children : [children]).filter(child => child);
+    cs = React.Children.map(cs, child => React.cloneElement(child, { onChange: this.onChange }));
     return cs;
   }
 

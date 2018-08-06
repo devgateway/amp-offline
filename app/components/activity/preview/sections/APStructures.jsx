@@ -87,7 +87,7 @@ class APStructures extends Component {
     const { activity, buildSimpleField } = this.props;
     if (activity[AC.STRUCTURES]) {
       return (
-        <div>{activity[AC.STRUCTURES].map(s => (
+        <div>{activity[AC.STRUCTURES].sort((a, b) => (a[AC.STRUCTURES_TITLE] > b[AC.STRUCTURES_TITLE])).map(s => (
           <div key={Math.random()}>
             <div className={styles.structure_title}>{s[AC.STRUCTURES_TITLE]}</div>
             {buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_TITLE]}`, true, null, false, s)}

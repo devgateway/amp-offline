@@ -7,3 +7,36 @@
 .colorItem {
   vertical-align: super;
 }
+
+.gazetteer_container {
+  width: 300px;
+  position: absolute;
+  top: 27px;
+  right: 50px;
+  z-index: 9999;
+  background-color: white;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid darkgray;
+}
+
+.locate_button {
+  float: right;
+}
+
+.locate_search {
+  width: auto;
+  display: initial;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.colors {
+  margin-left: 15px;
+}
+
+.color_container {
+  margin-top: 10px;
+}
