@@ -23,7 +23,7 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
         const start = new Date();
         const writeStream = FileManager.createWriteStream(ASSETS_DIRECTORY, TILES_ZIP_FILE);
         return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true, writeStream }).then(() => {
-          logger.warn(`Tiles downloaded in: ${new Date() - start}ms`);
+          logger.info(`Tiles downloaded in: ${new Date() - start}ms`);
           // Extract .zip file using absolute paths.
           const zipFile = FileManager.getAbsolutePath(ASSETS_DIRECTORY, TILES_ZIP_FILE);
           const dir = FileManager.getAbsolutePath(ASSETS_DIRECTORY);
