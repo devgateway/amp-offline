@@ -4,8 +4,7 @@ import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { MAP_TILES_URL } from '../../connectivity/AmpApiConstants';
 import {
-  TILES_ZIP_FILE, ASSETS_DIRECTORY, SYNCUP_TYPE_MAP_TILES, MAP_TILES_DIR,
-  UPDATES_DIR, UPDATE_TMP_FILE
+  TILES_ZIP_FILE, ASSETS_DIRECTORY, SYNCUP_TYPE_MAP_TILES, MAP_TILES_DIR
 } from '../../../utils/Constants';
 import FileManager from '../../util/FileManager';
 import Logger from '../../util/LoggerManager';
