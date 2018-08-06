@@ -1,5 +1,5 @@
 import stringifyObject from 'stringify-object';
-// import translate from '../../utils/translate';
+import translate from '../../utils/translate';
 import * as constants from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -23,9 +23,9 @@ export default class NotificationHelper {
    * @param severity
    */
   constructor({
-    message, origin, errorCode, errorObject, translateMsg = true,
-    severity = constants.NOTIFICATION_SEVERITY_ERROR
-  }) {
+                message, origin, errorCode, errorObject, translateMsg = true,
+                severity = constants.NOTIFICATION_SEVERITY_ERROR
+              }) {
     logger.log('constructor');
     this.translateMsg = translateMsg;
     if (errorObject) {
@@ -68,7 +68,7 @@ export default class NotificationHelper {
         if (fromAPI && message.charAt(0) === '(' && message.charAt(message.length - 1) === ')') {
           message = message.substring(1, message.length - 1);
         }
-        retMessage = message;
+        retMessage = this.translateMsg ? translate(message) : message;
       }
     } catch (err) {
       logger.warn(err);
