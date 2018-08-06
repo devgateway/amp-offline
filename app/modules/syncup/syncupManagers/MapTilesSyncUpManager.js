@@ -18,7 +18,9 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
   doAtomicSyncUp() {
     return new Promise((resolve, reject) => {
       if (!this.checkIfTilesExist()) {
+        logger.warn('Start downloading tiles');
         return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true }).then((tiles) => {
+          logger.warn('Finished downloading tiles');
           // Write down .zip file.
           FileManager.writeDataFileSync(tiles, ASSETS_DIRECTORY, TILES_ZIP_FILE);
           // Extract .zip file using absolute paths.

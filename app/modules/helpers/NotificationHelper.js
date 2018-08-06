@@ -68,7 +68,7 @@ export default class NotificationHelper {
         if (fromAPI && message.charAt(0) === '(' && message.charAt(message.length - 1) === ')') {
           message = message.substring(1, message.length - 1);
         }
-        retMessage = this.translateMsg ? translate(message) : message;
+        retMessage = message;
       }
     } catch (err) {
       logger.warn(err);
