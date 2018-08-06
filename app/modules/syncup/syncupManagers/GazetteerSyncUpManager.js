@@ -25,7 +25,7 @@ export default class GazetteerSyncUpManager extends AbstractAtomicSyncUpManager 
     return new Promise((resolve, reject) => {
       if (!this.checkIfGazetteerExist()) {
         return ConnectionHelper.doGet({ url: GAZETTEER_URL, shouldRetry: true }).then((locations) => (
-          GazetteerHelper.saveOrUpdateLocationCollection(locations)
+          GazetteerHelper.saveOrUpdateLocationCollection(locations).then(resolve).catch(reject)
         )).catch(reject);
       } else {
         return resolve();
