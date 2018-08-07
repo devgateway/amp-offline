@@ -3,7 +3,9 @@ import extract from 'extract-zip';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { MAP_TILES_URL } from '../../connectivity/AmpApiConstants';
-import { TILES_ZIP_FILE, ASSETS_DIRECTORY, SYNCUP_TYPE_MAP_TILES, MAP_TILES_DIR } from '../../../utils/Constants';
+import {
+  TILES_ZIP_FILE, ASSETS_DIRECTORY, SYNCUP_TYPE_MAP_TILES, MAP_TILES_DIR
+} from '../../../utils/Constants';
 import FileManager from '../../util/FileManager';
 import Logger from '../../util/LoggerManager';
 
@@ -18,9 +20,10 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
   doAtomicSyncUp() {
     return new Promise((resolve, reject) => {
       if (!this.checkIfTilesExist()) {
-        return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true }).then((tiles) => {
-          // Write down .zip file.
-          FileManager.writeDataFileSync(tiles, ASSETS_DIRECTORY, TILES_ZIP_FILE);
+        const start = new Date();
+        const writeStream = FileManager.createWriteStream(ASSETS_DIRECTORY, TILES_ZIP_FILE);
+        return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true, writeStream }).then(() => {
+          logger.info(`Tiles downloaded in: ${new Date() - start}ms`);
           // Extract .zip file using absolute paths.
           const zipFile = FileManager.getAbsolutePath(ASSETS_DIRECTORY, TILES_ZIP_FILE);
           const dir = FileManager.getAbsolutePath(ASSETS_DIRECTORY);
