@@ -15,3 +15,4 @@ export const PROJECTS_VALIDATION = 'Projects Validation';
 export const GS_ON = 'On';
 export const GS_LATITUDE = 'Country Latitude';
 export const GS_LONGITUDE = 'Country Longitude';
+export const GS_MAXIMUM_FILE_SIZE_MB = 'Maximum file size (MB)';

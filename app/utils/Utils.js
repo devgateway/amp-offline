@@ -9,7 +9,7 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
-import { RELEASE_BRANCHES } from './Constants';
+import { RELEASE_BRANCHES, ENDS_WITH_PUNCTUATION_REGEX } from './Constants';
 
 const Utils = {
 
@@ -156,6 +156,16 @@ const Utils = {
     return '';
   },
 
+  joinMessages(messages: Array, endPunctuationIfMissing = '.') {
+    return messages && messages.map(m => {
+      const msg = `${m}`;
+      if (!msg.match(ENDS_WITH_PUNCTUATION_REGEX)) {
+        return `${msg}${endPunctuationIfMissing}`;
+      }
+      return msg;
+    });
+  },
+
   /**
    * Show in the highest unit or exact unit if such is given
    * @param bytes
@@ -231,6 +241,11 @@ const Utils = {
   isReleaseBranch() {
     const branch = this.getBranch();
     return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
+  },
+
+  compareWithCollate(text1, text2, collator) {
+    collator = collator || { sensitivity: 'base', ignorePunctuation: true };
+    return new Intl.Collator('us', collator).compare(text1, text2);
   }
 };
 

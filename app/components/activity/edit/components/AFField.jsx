@@ -37,7 +37,8 @@ class AFField extends Component {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
-    isSaveAndSubmit: PropTypes.bool.isRequired
+    isSaveAndSubmit: PropTypes.bool.isRequired,
+    validationResult: PropTypes.array,
   };
 
   static propTypes = {
@@ -96,15 +97,16 @@ class AFField extends Component {
     this._processValidation(this.props.parent.errors);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
     if (!this.fieldExists) {
       return;
     }
     if (this.context.isSaveAndSubmit) {
       this.onChange(this.state.value, false);
-    } else if (nextProps.validationResult) {
+    } else if (nextProps.validationResult || nextContext.validationResult) {
       this._processValidation(this.props.parent.errors);
-    } else if (nextProps.parent[this.fieldName] !== this.state.value ||
+    }
+    if (nextProps.parent[this.fieldName] !== this.state.value ||
       nextProps.forceRequired !== this.props.forceRequired) {
       this.onChange(nextProps.parent[this.fieldName], false);
     }
@@ -239,8 +241,19 @@ class AFField extends Component {
   }
 
   _toAFOptions(options) {
-    return PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
-      (option.visible ? new AFOption(option) : null)).filter(afOption => afOption !== null);
+    const { afOptionFormatter, sortByDisplayValue } = this.props.extraParams || {};
+    const afOptions = PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
+      (option.visible ? this._toAFOption(option, afOptionFormatter) : null)).filter(afOption => afOption !== null);
+    if (sortByDisplayValue) {
+      AFOption.sortByDisplayValue(afOptions);
+    }
+    return afOptions;
+  }
+
+  _toAFOption(option, afOptionFormatter) {
+    const afOption = new AFOption(option);
+    afOption.valueFormatter = afOptionFormatter;
+    return afOption;
   }
 
   _getRichTextEditor() {
@@ -266,7 +279,7 @@ class AFField extends Component {
   }
 
   _getDate() {
-    return (<AFDate value={this.state.value} onChange={this.onChange} />);
+    return (<AFDate value={this.state.value} onChange={this.onChange} extraParams={this.props.extraParams} />);
   }
 
   _getBoolean() {
@@ -290,8 +303,8 @@ class AFField extends Component {
   _getCustom() {
     const { children } = this.props;
     const isArray = Array.isArray(children);
-    let cs = isArray ? children : [children];
-    cs = React.Children.map(children, child => React.cloneElement(child, { onChange: this.onChange }));
+    let cs = (isArray ? children : [children]).filter(child => child);
+    cs = React.Children.map(cs, child => React.cloneElement(child, { onChange: this.onChange }));
     return cs;
   }
 
