@@ -23,9 +23,9 @@ export default class NotificationHelper {
    * @param severity
    */
   constructor({
-    message, origin, errorCode, errorObject, translateMsg = true,
-    severity = constants.NOTIFICATION_SEVERITY_ERROR
-  }) {
+                message, origin, errorCode, errorObject, translateMsg = true,
+                severity = constants.NOTIFICATION_SEVERITY_ERROR
+              }) {
     logger.log('constructor');
     this.translateMsg = translateMsg;
     if (errorObject) {

@@ -10,8 +10,11 @@ import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
 import { ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION } from '../../../../utils/constants/FeatureManagerConstants';
 import { RESPONSIBLE_ORGANIZATION_BUDGETS_PATH } from '../../../../utils/constants/FieldPathConstants';
+import AFOption from '../components/AFOption';
 
 const logger = new Logger('AF organizations');
+
+const orgFormatter = (org: AFOption) => `(${org[AC.EXTRA_INFO][AC.ACRONYM].trim()}) - ${org.translatedValue.trim()}`;
 
 /**
  * Organizations Section
@@ -63,6 +66,7 @@ class AFOrganizations extends Component {
   render() {
     const validationError = this.getValidationError();
     const validationStyle = `${afStyles.activity_form_control} ${afStyles.help_block}`;
+    const extraParams = { afOptionFormatter: orgFormatter, sortByDisplayValue: true };
     return (<div className={afStyles.full_width}>
       <Grid className={afStyles.full_width}>
         <Row>
@@ -77,7 +81,7 @@ class AFOrganizations extends Component {
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity}
-              fieldPath={AC.DONOR_ORGANIZATION}
+              fieldPath={AC.DONOR_ORGANIZATION} extraParams={extraParams}
               fmPath={ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
           </Col>
         </Row>
@@ -85,36 +89,39 @@ class AFOrganizations extends Component {
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.RESPONSIBLE_ORGANIZATION}
-              extraParams={{ custom: {
-                [RESPONSIBLE_ORGANIZATION_BUDGETS_PATH]: BudgetCode(RESPONSIBLE_ORGANIZATION_BUDGETS_PATH)
-              } }}
+              extraParams={{
+                custom: {
+                  [RESPONSIBLE_ORGANIZATION_BUDGETS_PATH]: BudgetCode(RESPONSIBLE_ORGANIZATION_BUDGETS_PATH)
+                },
+                ...extraParams }}
               onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
-              parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY} onAfterUpdate={this.checkValidationError} />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12} lg={12}>
-            <AFField
-              parent={this.props.activity} fieldPath={AC.IMPLEMENTING_AGENCY}
+              parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY} extraParams={extraParams}
               onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
-              parent={this.props.activity} fieldPath={AC.BENEFICIARY_AGENCY}
+              parent={this.props.activity} fieldPath={AC.IMPLEMENTING_AGENCY} extraParams={extraParams}
               onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
-              parent={this.props.activity} fieldPath={AC.CONTRACTING_AGENCY}
+              parent={this.props.activity} fieldPath={AC.BENEFICIARY_AGENCY} extraParams={extraParams}
+              onAfterUpdate={this.checkValidationError} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12} lg={12}>
+            <AFField
+              parent={this.props.activity} fieldPath={AC.CONTRACTING_AGENCY} extraParams={extraParams}
               onAfterUpdate={this.checkValidationError} />
           </Col>
         </Row>

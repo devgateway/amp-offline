@@ -22,6 +22,7 @@ import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpMana
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
 import MapTilesSyncUpManager from './syncupManagers/MapTilesSyncUpManager';
+import GazetteerSyncUpManager from './syncupManagers/GazetteerSyncUpManager';
 import * as Utils from '../../utils/Utils';
 import * as SS from './SyncUpUnitState';
 import {
@@ -41,7 +42,8 @@ import {
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
   SYNCUP_TYPE_WORKSPACES,
-  SYNCUP_TYPE_MAP_TILES
+  SYNCUP_TYPE_MAP_TILES,
+  SYNCUP_TYPE_GAZETTEER
 } from '../../utils/Constants';
 
 /**
@@ -56,7 +58,8 @@ export default class SyncUpConfig {
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
     ResourcePossibleValuesSyncUpManager,
-    GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager, MapTilesSyncUpManager];
+    GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager, MapTilesSyncUpManager,
+    GazetteerSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
   static _initCollection() {
@@ -95,6 +98,7 @@ export default class SyncUpConfig {
     dependencies[SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES] =
       Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_MAP_TILES] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
+    dependencies[SYNCUP_TYPE_GAZETTEER] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     return dependencies;
   }
 
