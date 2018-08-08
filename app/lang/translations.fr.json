@@ -19,5 +19,6 @@
   "noConnectionToRegistry": "L'application Répertoire PGA est inacessible. Veuillez choisir l'option 'Autre' pour définir l'URL directement ou essayer de recharger la liste des options des pays.",
   "customHint": "Veuillez saisir l'URL de l'application PGA. Vous pouvez le copier à partir de la page de téléchargement du client PGA. Veuillez vous reporter au manuel de l'utilisateur pour plus d'aide.",
   "timeoutError": "Délai de connection dépassé. Vérifiez votre connexion Internet.",
+  "serverIdentityMissing": "Identité du serveur AMP manquante.",
   "loadingMessage":"Chargement en cours...."
 }
