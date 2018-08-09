@@ -246,7 +246,8 @@ export default class SyncUpRunner {
       unitPromise = syncUpManager.doSyncUp(this._syncUpDiffLeftOver.getSyncUpDiff(type))
         .then(() => this._buildUnitResult(syncUpManager))
         .catch(error => {
-          logger.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${error.stack}"`);
+          const errorStack = error && error.stack;
+          logger.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${errorStack}"`);
           // We are not rolling back any data saved until here. We collect the leftover and resume the next sync from
           // where we left up to the latest. Dependencies will manage other units.
           return this._buildUnitResult(syncUpManager, error);
