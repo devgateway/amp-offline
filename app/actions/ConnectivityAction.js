@@ -42,7 +42,7 @@ export function isAmpAccessible() {
 export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus) {
   const serverId = getRegisteredServerId();
   return connectivityStatus && connectivityStatus.isAmpAvailable && connectivityStatus.isAmpCompatible &&
-    (!serverId || connectivityStatus.serverIdMatch);
+    ((!serverId && connectivityStatus.serverId) || connectivityStatus.serverIdMatch);
 }
 
 function getRegisteredServerId() {
