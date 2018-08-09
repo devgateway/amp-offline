@@ -3,7 +3,13 @@ import SetupManager from '../modules/setup/SetupManager';
 import { LANGUAGE_ENGLISH, SETUP_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
 import Logger from '../modules/util/LoggerManager';
-import { configureConnectionInformation, connectivityCheck, isConnectivityCheckInProgress } from './ConnectivityAction';
+import {
+  configureConnectionInformation,
+  connectivityCheck,
+  isValidConnectionByStatus,
+  isConnectivityCheckInProgress,
+  getStatusErrorLabel
+} from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
 import * as Utils from '../utils/Utils';
@@ -82,6 +88,7 @@ export function setupComplete(setupConfig) {
 function configureAndSaveSetup(setupConfig) {
   logger.log('setupComplete');
   return configureAndTestConnectivity(setupConfig)
+    .then(() => connectivityCheck())
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
     .then(() => true);
 }
@@ -131,7 +138,7 @@ export function testUrlResultProcessed(url) {
 function waitConfigureConnectionInformation(connectionInformation) {
   return Utils.waitWhile(isConnectivityCheckInProgress, RESPONSE_CHECK_INTERVAL_MS)
     .then(() => configureConnectionInformation(connectionInformation))
-    .then(connectivityCheck);
+    .then(() => connectivityCheck(false));
 }
 
 export function configureAndTestConnectivity(setupConfig) {
@@ -145,7 +152,7 @@ export function configureAndTestConnectivity(setupConfig) {
     return currentPromise
       .then(({ connectivityStatus }) => {
         lastIndex = index;
-        if (connectivityStatus && connectivityStatus.isAmpAvailable) {
+        if (isValidConnectionByStatus(connectivityStatus)) {
           // at least one url worked, halt here
           return Promise.resolve({ connectivityStatus, fixedUrl: url });
         }
@@ -154,21 +161,21 @@ export function configureAndTestConnectivity(setupConfig) {
       .catch(() => testAMPUrl(url));
   }, Promise.resolve())
     .then(({ connectivityStatus, fixedUrl }) => {
-      if (connectivityStatus && connectivityStatus.isAmpAvailable) {
+      if (isValidConnectionByStatus(connectivityStatus)) {
         // set the good url to be the first one to use
         setupConfig.urls[lastIndex] = fixedUrl;
         const goodUrl = setupConfig.urls[lastIndex];
         setupConfig.urls = [goodUrl].concat(setupConfig.urls.filter(u => u !== goodUrl));
         return Promise.resolve(goodUrl);
       }
-      return Promise.reject(translate('urlNotWorking'));
+      return Promise.reject(translate(getStatusErrorLabel(connectivityStatus)));
     });
 }
 
 function testAMPUrl(url) {
   return URLUtils.getPossibleUrlSetupFixes(url).reduce((currentPromise, fixedUrl) =>
       currentPromise.then(result => {
-        if (result && result.connectivityStatus && result.connectivityStatus.isAmpAvailable) {
+        if (isValidConnectionByStatus(result && result.connectivityStatus)) {
           return Promise.resolve(result);
         }
         return waitConfigureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl))

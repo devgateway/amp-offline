@@ -97,6 +97,7 @@ export const SYNCUP_TYPE_RESOURCE_FIELDS = 'resource-fields';
 export const SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES = 'resource-possible-values-fields';
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_TYPE_MAP_TILES = 'map_tiles';
+export const SYNCUP_TYPE_GAZETTEER = 'gazetteer';
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';

@@ -8,6 +8,7 @@ import { ORG_ROLE_NAMES } from './ValueConstants';
  */
 
 export const FUNDING_ACTIVE_LIST = 'fundings~active_list';
+export const FUNDING_TYPE_OF_ASSISTANCE = `${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`;
 export const FUNDING_DETAILS_PATH = 'fundings~funding_details';
 export const FUNDING_CURRENCY_PATH = 'fundings~funding_details~currency';
 export const ADJUSTMENT_TYPE_PATH = 'fundings~funding_details~adjustment_type';
