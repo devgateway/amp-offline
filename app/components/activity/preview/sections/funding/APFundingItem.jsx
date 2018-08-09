@@ -104,7 +104,7 @@ class APFundingItem extends Component {
           <td
             className={styles.right_text}>
             {`${rawNumberToFormattedString(convertedAmount)} ${this.props.wsCurrency}`}</td>
-          <td className={[styles.right_text, styles.exchange_rate].join(' ')}>{this.insertFixedExchangeRateCell()}</td>
+          <td className={styles.exchange_rate}>{this.insertFixedExchangeRateCell()}</td>
         </tr>
         {this.insertPledgeRow()}
       </tbody>);
