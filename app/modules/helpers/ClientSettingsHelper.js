@@ -83,6 +83,12 @@ const ClientSettingsHelper = {
     return this.findAll(filter);
   },
 
+  findAllSettingsByNames(names) {
+    logger.debug('findAllSettingsByNames');
+    const filter = { name: { $in: names } };
+    return this.findAll(filter);
+  },
+
   findAll(filter) {
     return DatabaseManager.findAll(filter, COLLECTION_CLIENT_SETTINGS);
   },

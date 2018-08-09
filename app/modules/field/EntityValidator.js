@@ -43,6 +43,8 @@ import FieldsManager from './FieldsManager';
 import { ON_BUDGET, TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
+import ValidationErrorsCollector from './ValidationErrorsCollector';
+import ValidationError from './ValidationError';
 
 const logger = new Logger('EntityValidator');
 
@@ -60,6 +62,7 @@ export default class EntityValidator {
     this._fieldsManager = fieldsManager;
     this._otherProjectTitles = new Set(otherProjectTitles);
     this.excludedFields = excludedFields || [];
+    this.errorsCollector = new ValidationErrorsCollector();
   }
 
   set entity(entity) {
@@ -68,24 +71,24 @@ export default class EntityValidator {
 
   areAllConstraintsMet(entity, asDraft, fieldPathsToSkipSet) {
     logger.log('areAllConstraintsMet');
-    const errors = [];
+    this.errorsCollector.clear();
     this._initGenericErrors();
-    this._areAllConstraintsMet([entity], this._fieldsDef, asDraft, undefined, fieldPathsToSkipSet, errors);
-    return errors;
+    this._areAllConstraintsMet([entity], this._fieldsDef, asDraft, undefined, fieldPathsToSkipSet);
+    return this.errorsCollector.errors;
   }
 
-  _areAllConstraintsMet(objects, fieldsDef, asDraft, currentPath, fieldPathsToSkipSet, errors) {
+  _areAllConstraintsMet(objects, fieldsDef, asDraft, currentPath, fieldPathsToSkipSet) {
     logger.log('_areAllConstraintsMet');
     fieldsDef.forEach(fd => {
       const fieldPath = `${currentPath ? `${currentPath}~` : ''}${fd.field_name}`;
       this._clearErrorState(objects, fieldPath);
       if (!fieldPathsToSkipSet || !fieldPathsToSkipSet.has(fieldPath)) {
         const isList = fd.field_type === 'list';
-        this._validateRequiredField(objects, fd, fieldPath, asDraft, isList, errors);
-        this._validateDependencies(objects, errors, fieldPath, fd);
+        this._validateRequiredField(objects, fd, fieldPath, asDraft);
+        this._validateDependencies(objects, fieldPath, fd);
         // once required fields are checked, exclude objects without values from further validation
         const objectsWithFDValues = objects.filter(o => o[fd.field_name] !== null && o[fd.field_name] !== undefined);
-        this._validateValue(objectsWithFDValues, asDraft, fd, fieldPath, isList, errors);
+        this._validateValue(objectsWithFDValues, asDraft, fd, fieldPath, isList);
         if (isList && fd.importable === true) {
           let childrenObj = objectsWithFDValues.map(o => o[fd.field_name]);
           // isList === either an actual list or a complex object
@@ -95,8 +98,7 @@ export default class EntityValidator {
               return curr;
             }, []);
           }
-          this._areAllConstraintsMet(childrenObj, fd.children, asDraft, fieldPath,
-            fieldPathsToSkipSet, errors);
+          this._areAllConstraintsMet(childrenObj, fd.children, asDraft, fieldPath, fieldPathsToSkipSet);
         }
       }
     });
@@ -113,22 +115,25 @@ export default class EntityValidator {
     });
   }
 
-  processValidationResult(parent, errors, fieldPath, validationResult) {
+  processValidationResult(parent, fieldPath, validationResult) {
     if (validationResult === true || validationResult === null || validationResult === undefined) return;
-    const error = {
-      path: fieldPath,
-      errorMessage: validationResult
-    };
+    const error = new ValidationError(fieldPath, validationResult);
     if (!parent.errors) {
       parent.errors = [];
     }
     parent.errors.push(error);
-    errors.push(error);
+    this.errorsCollector.addError(error);
   }
 
   validateField(parent, asDraft, fieldDef, mainFieldPath) {
-    let fieldPath = mainFieldPath;
     this._initGenericErrors();
+    this.errorsCollector.clear();
+    this._validateField(parent, asDraft, fieldDef, mainFieldPath);
+    return this.errorsCollector.errors;
+  }
+
+  _validateField(parent, asDraft, fieldDef, mainFieldPath) {
+    let fieldPath = mainFieldPath;
     // normally we fieldPath includes fieldDef field name, but checking it just in case
     if (fieldPath.endsWith(fieldDef.field_name)) {
       if (fieldPath === fieldDef.field_name) {
@@ -137,15 +142,12 @@ export default class EntityValidator {
         fieldPath = fieldPath.substring(0, fieldPath.length - fieldDef.field_name.length - 1);
       }
     }
-    const errors = [];
-    this._areAllConstraintsMet([parent], [fieldDef], asDraft, fieldPath, null, errors);
-    errors.push(...this._validateDependentFields(asDraft, mainFieldPath));
-    return errors;
+    this._areAllConstraintsMet([parent], [fieldDef], asDraft, fieldPath, null);
+    this._validateDependentFields(asDraft, mainFieldPath);
   }
 
   _validateDependentFields(asDraft, mainFieldPath) {
     // TODO going custom until we have more generic dependencies definition in API
-    const errors = [];
     let dependencies = [];
     if (mainFieldPath === ACTIVITY_BUDGET) {
       dependencies = [DEPENDENCY_PROJECT_CODE_ON_BUDGET, DEPENDENCY_ON_BUDGET];
@@ -167,10 +169,9 @@ export default class EntityValidator {
           depth -= 1;
           parents = flattenedParents;
         }
-        parents.forEach(par => errors.push(...this.validateField(par, asDraft, fieldDef, fieldPath)));
+        parents.forEach(par => this._validateField(par, asDraft, fieldDef, fieldPath));
       }
     });
-    return errors;
   }
 
   _validateValueIfRequired(value, asDraft, fieldDef) {
@@ -186,7 +187,7 @@ export default class EntityValidator {
     return invalidValue ? translate('requiredField') : true;
   }
 
-  _validateRequiredField(objects, fieldDef, fieldPath, asDraft, isList, errors) {
+  _validateRequiredField(objects, fieldDef, fieldPath, asDraft) {
     logger.log('_validateRequiredField');
     let isRequired = fieldDef.required === 'Y' || (fieldDef.required === 'ND' && !asDraft);
     if (this.excludedFields.filter(f => (fieldDef.field_name === f)).length > 0) {
@@ -194,7 +195,9 @@ export default class EntityValidator {
     }
     if (isRequired) {
       objects.forEach(obj => {
-        this.processValidationResult(obj, errors, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
+        if (this.isRequiredDependencyMet(obj, fieldDef, fieldPath)) {
+          this.processValidationResult(obj, fieldPath, this._validateRequired(obj[fieldDef.field_name], true));
+        }
       });
     }
   }
@@ -211,7 +214,7 @@ export default class EntityValidator {
     this.invalidDate = translate('invalidDate').replace('%gs-format%', gsDateFormat);
   }
 
-  _validateValue(objects, asDraft, fieldDef, fieldPath, isList, errors) {
+  _validateValue(objects, asDraft, fieldDef, fieldPath, isList) {
     logger.log('_validateValue');
     const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath);
     const wasHydrated = this._wasHydrated(fieldPath);
@@ -236,7 +239,7 @@ export default class EntityValidator {
         if (!Array.isArray(value)) {
           // for complex objects it is also a list of properties
           if (!(value instanceof Object)) {
-            this.processValidationResult(obj, errors, fieldPath, this.invalidValueError);
+            this.processValidationResult(obj, fieldPath, this.invalidValueError);
           }
         } else if (fieldDef.importable) {
           if (percentageChild) {
@@ -244,67 +247,62 @@ export default class EntityValidator {
             const childrenValues = value.filter(child => child && child instanceof Object
               && this._hasValue(child[percentageChild.field_name]));
             const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name);
-            this.processValidationResult(obj, errors, fieldPath, totError);
+            this.processValidationResult(obj, fieldPath, totError);
           }
           if (uniqueConstraint) {
-            this.processValidationResult(obj, errors, fieldPath, this.uniqueValuesValidator(value, uniqueConstraint));
+            this.processValidationResult(obj, fieldPath, this.uniqueValuesValidator(value, uniqueConstraint));
           }
           if (noMultipleValues) {
             const noMultipleValuesError = this.noMultipleValuesValidator(value, fieldDef.field_name);
-            this.processValidationResult(obj, errors, fieldPath, noMultipleValuesError);
+            this.processValidationResult(obj, fieldPath, noMultipleValuesError);
           }
           if (noParentChildMixing) {
             const idOnlyFieldPath = `${fieldPath}~${idOnlyField.field_name}`;
             const noParentChildMixingError = this.noParentChildMixing(value, idOnlyFieldPath, idOnlyField.field_name);
-            this.processValidationResult(obj, errors, fieldPath, noParentChildMixingError);
+            this.processValidationResult(obj, fieldPath, noParentChildMixingError);
           }
           if (maxListSize && value.length > maxListSize) {
-            this.processValidationResult(obj, errors, fieldPath, listLengthError);
+            this.processValidationResult(obj, fieldPath, listLengthError);
           }
         }
       } else if (fieldDef.field_type === 'string') {
-        // TODO multilingual support Iteration 2+
-        if (!(typeof value === 'string' || value instanceof String)) {
-          this.processValidationResult(obj, errors, fieldPath, this.invalidString.replace('%value%', value));
+        if (this._wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft)) {
+          // TODO multilingual support Iteration 2+
+        } else if (!(typeof value === 'string' || value instanceof String)) {
+          this.processValidationResult(obj, fieldPath, this.invalidString.replace('%value%', value));
         } else {
           if (fieldDef.field_length && fieldDef.field_length < value.length) {
-            this.processValidationResult(obj, errors, fieldPath, stringLengthError);
+            this.processValidationResult(obj, fieldPath, stringLengthError);
           }
           if (fieldPath === PROJECT_TITLE) {
-            this.processValidationResult(obj, errors, fieldPath, this.projectTitleValidator(value));
+            this.processValidationResult(obj, fieldPath, this.projectTitleValidator(value));
           }
           if (regexPattern && !regexPattern.test(value)) {
-            this.processValidationResult(obj, errors, fieldPath, regexError);
+            this.processValidationResult(obj, fieldPath, regexError);
           }
         }
       } else if (fieldDef.field_type === 'long') {
         if (!Number.isInteger(value) && !this._isAllowInvalidNumber(value, fieldPath)) {
-          this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, fieldPath, this.invalidNumber.replace('%value%', value));
         } else {
-          const hValue = obj[fieldDef.field_name];
-          const entityValidator = hValue[VC_TMP_ENTITY_VALIDATOR];
-          if (entityValidator) {
-            let validationError = entityValidator.areAllConstraintsMet(entityValidator._entity, asDraft);
-            validationError = validationError.length ? validationError.join('. ') : null;
-            this.processValidationResult(obj, errors, fieldPath, validationError);
-          }
+          this._wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft);
         }
       } else if (fieldDef.field_type === 'float') {
         if (value !== +value || value.toString().indexOf('e') > -1) {
-          this.processValidationResult(obj, errors, fieldPath, this.invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, fieldPath, this.invalidNumber.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'boolean') {
         if (!(typeof value === 'boolean' || value instanceof Boolean)) {
-          this.processValidationResult(obj, errors, fieldPath, this.invalidBoolean.replace('%value%', value));
+          this.processValidationResult(obj, fieldPath, this.invalidBoolean.replace('%value%', value));
         }
       } else if (fieldDef.field_type === 'date') {
         if (!(typeof value === 'string' || value instanceof String)
           || !(value !== '' && DateUtils.isValidDateFormat(value, INTERNAL_DATE_FORMAT))) {
-          this.processValidationResult(obj, errors, fieldPath, this.invalidDate.replace('%value%', value));
+          this.processValidationResult(obj, fieldPath, this.invalidDate.replace('%value%', value));
         }
       }
       if (fieldDef.percentage === true) {
-        this.processValidationResult(obj, errors, fieldPath, this.percentValueValidator(value, fieldPath));
+        this.processValidationResult(obj, fieldPath, this.percentValueValidator(value, fieldPath));
       }
     });
   }
@@ -337,6 +335,18 @@ export default class EntityValidator {
     const isContactId = (parts.length === 2 && ACTIVITY_CONTACT_PATHS.includes(parts[0]) && CONTACT === parts[1]) ||
       (parts.length === 1 && this.excludedFields.includes(parts[0]));
     if (isContactId && `${value}`.startsWith(CLIENT_CHANGE_ID_PREFIX)) {
+      return true;
+    }
+    return false;
+  }
+
+  _wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft) {
+    const hValue = obj[fieldDef.field_name];
+    const entityValidator = hValue && hValue[VC_TMP_ENTITY_VALIDATOR];
+    if (entityValidator) {
+      let validationError = entityValidator.areAllConstraintsMet(entityValidator._entity, asDraft);
+      validationError = validationError.length ? validationError.join('. ') : null;
+      this.processValidationResult(obj, fieldPath, validationError);
       return true;
     }
     return false;
@@ -469,39 +479,55 @@ export default class EntityValidator {
     return true;
   }
 
-  _validateDependencies(objects, errors, fieldPath, fieldDef) {
+  /**
+   * Checks for any dependencies that must be met in order to lookup for the "required" field def rule
+   * @param parent the parent of the field
+   * @param fieldDef the field def to check if has any dependency to match first before its required status is enforced
+   * @return {boolean} true if to enforce the "required" rule
+   */
+  isRequiredDependencyMet(parent, fieldDef) {
+    const dependencies = fieldDef.dependencies;
+    // by default is met, hence the workflow can proceed to validate the "required" rule
+    let met = true;
+    if (dependencies && dependencies.length) {
+      dependencies.forEach(dep => {
+        // eslint-disable-next-line default-case
+        switch (dep) {
+          case DEPENDENCY_ON_BUDGET:
+          case DEPENDENCY_PROJECT_CODE_ON_BUDGET:
+            met = met && this._isActivityOnBudget();
+            break;
+          case DEPENDENCY_TRANSACTION_PRESENT:
+            met = met && this._hasTransactions(parent);
+            break;
+        }
+      });
+    }
+    return met;
+  }
+
+  _validateDependencies(objects, fieldPath, fieldDef) {
     const dependencies = fieldDef.dependencies;
     if (dependencies && dependencies.length) {
       const hasLocations = this._hasLocations();
       // reporting some dependency errors only for the top objects
       if (hasLocations && dependencies.includes(DEPENDENCY_IMPLEMENTATION_LEVEL_PRESENT)) {
-        this.processValidationResult(this._entity, errors, LOCATIONS, this._validateImplementationLevelPresent());
+        this.processValidationResult(this._entity, LOCATIONS, this._validateImplementationLevelPresent());
       }
       if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LEVEL_VALID)) {
-        this.processValidationResult(this._entity, errors, LOCATIONS, this._validateImplementationLevelValid());
+        this.processValidationResult(this._entity, LOCATIONS, this._validateImplementationLevelValid());
       }
       if (hasLocations && dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT)) {
-        this.processValidationResult(this._entity, errors, LOCATIONS, this._validateImplementationLocationPresent());
+        this.processValidationResult(this._entity, LOCATIONS, this._validateImplementationLocationPresent());
       }
       objects.forEach(obj => {
         const hydratedValue = obj[fieldDef.field_name];
-        const value = this._getValue(obj, fieldDef, this._wasHydrated(fieldPath));
         if (dependencies.includes(DEPENDENCY_IMPLEMENTATION_LOCATION_VALID)) {
-          this.processValidationResult(obj, errors, fieldPath, this._validateImplementationLocationValid());
-        }
-        if (dependencies.includes(DEPENDENCY_ON_BUDGET)) {
-          // TODO based on AMP-27099 outcome, we may need to switch back to _validateOnBudgetRequiredOtherwiseNotAllowed
-          this.processValidationResult(obj, errors, fieldPath, this._validateOnBudgetRequiredOtherwiseAllowed(value));
-        }
-        if (dependencies.includes(DEPENDENCY_PROJECT_CODE_ON_BUDGET)) {
-          this.processValidationResult(obj, errors, fieldPath, this._validateOnBudgetRequiredOtherwiseAllowed(value));
-        }
-        if (dependencies.includes(DEPENDENCY_TRANSACTION_PRESENT)) {
-          this.processValidationResult(obj, errors, fieldPath, this._validateAsRequiredIfHasTransactions(value, obj));
+          this.processValidationResult(obj, fieldPath, this._validateImplementationLocationValid());
         }
         if (dependencies.includes(DEPENDENCY_COMPONENT_FUNDING_ORG_VALID)) {
           const validationResult = this._validateComponentFundingOrgValid(hydratedValue);
-          this.processValidationResult(obj, errors, fieldPath, validationResult);
+          this.processValidationResult(obj, fieldPath, validationResult);
         }
       });
     }
@@ -511,7 +537,7 @@ export default class EntityValidator {
       const hydratedValue = obj[fieldName];
       if (hydratedValue && ACTIVITY_CONTACT_PATHS.includes(fieldName)) {
         const validationResult = this._isUniquePrimaryContact(hydratedValue, fieldName);
-        this.processValidationResult(this._entity, errors, fieldName, validationResult);
+        this.processValidationResult(this._entity, fieldName, validationResult);
       }
     });
   }
@@ -566,34 +592,14 @@ export default class EntityValidator {
     return isValid || translate('invalidImplLoc');
   }
 
-  _validateOnBudgetRequiredOtherwiseNotAllowed(value) {
-    const validOrError = this._validateOnBudgetOrErrorLabel(value);
-    return validOrError === true || translate(validOrError);
-  }
-
-  _validateOnBudgetRequiredOtherwiseAllowed(value) {
-    let validOrError = this._validateOnBudgetOrErrorLabel(value);
-    if (validOrError === 'notConfigurable') {
-      // following AMP validation rules, when a field like project_code may be optionally be present
-      validOrError = true;
-    }
-    return validOrError === true || translate(validOrError);
-  }
-
-  _validateOnBudgetOrErrorLabel(value) {
+  _isActivityOnBudget() {
     const onOffBudget = this._entity[ACTIVITY_BUDGET] && this._entity[ACTIVITY_BUDGET].value;
-    const isOnBudget = onOffBudget && onOffBudget === ON_BUDGET;
-    const requiredAndNotConfigured = isOnBudget && !value;
-    const isValid = !!((isOnBudget && value) || (!isOnBudget && !value));
-    const errLabel = requiredAndNotConfigured ? 'requiredField' : 'notConfigurable';
-    return isValid || errLabel;
+    return onOffBudget && onOffBudget === ON_BUDGET;
   }
 
-  _validateAsRequiredIfHasTransactions(value, fundingItem) {
+  _hasTransactions(fundingItem) {
     const fundingDetails = fundingItem && fundingItem[FUNDING_DETAILS];
-    const hasFundings = fundingDetails && fundingDetails.length;
-    const isValid = !hasFundings || !!value;
-    return isValid || translate('requiredField');
+    return fundingDetails && fundingDetails.length;
   }
 
   _validateComponentFundingOrgValid(compFundOrg) {
