@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../../utils/translate';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APFundingItem.css';
@@ -9,6 +10,7 @@ import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP Funding item');
 
@@ -22,12 +24,20 @@ class APFundingItem extends Component {
     wsCurrency: PropTypes.string.isRequired
   };
   static contextTypes = {
-    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager)
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager),
   };
 
   constructor(props) {
     super(props);
     logger.log('constructor');
+  }
+
+  getDisasterResponse() {
+    if (this.props.item[AC.DISASTER_RESPONSE] === true) {
+      return this.context.activityFieldsManager.getFieldLabelTranslation(FPC.DISASTER_RESPONSE_PATH);
+    }
+    return '';
   }
 
   insertPledgeRow() {
@@ -89,6 +99,7 @@ class APFundingItem extends Component {
       <tbody>
         <tr className={styles.row}>
           <td className={styles.left_text}>{translate(this.props.item[AC.ADJUSTMENT_TYPE].value)}</td>
+          <td className={styles.disaster_response}>{this.getDisasterResponse()}</td>
           <td className={styles.right_text}>{createFormattedDate(this.props.item[AC.TRANSACTION_DATE])}</td>
           <td
             className={styles.right_text}>

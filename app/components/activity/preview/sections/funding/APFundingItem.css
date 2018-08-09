@@ -1,11 +1,15 @@
 .right_text {
   text-align: right;
-  width: 29%;
+  width: 20%;
   padding-right: 35px;
 }
 
+.disaster_response {
+  width: 20%;
+}
+
 .left_text {
-  width: 30%;
+  width: 20%;
   padding-left: 20px;
 }
 
