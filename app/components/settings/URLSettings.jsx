@@ -92,7 +92,7 @@ class URLSettings extends Component {
         const isChanged = isAvailable !== urlDs.availability.isAvailable;
         if (isChanged) {
           urlDs.url = goodUrl || url;
-          urlDs.availability.isAvailable = !!goodUrl;
+          urlDs.availability.isAvailable = isAvailable;
           urlDs.availability.errorMessage = errorMessage;
         }
         const newDataSource = dataSource.filter(ds => ds.id === urlDs.id || ds.url !== urlDs.url);
@@ -132,6 +132,7 @@ class URLSettings extends Component {
     const { dataSource } = this.state;
     const dsUrl = dataSource.find(ds => ds.id === row.id);
     dsUrl.url = URLUtils.normalizeUrl(cellValue);
+    dsUrl.availability = {};
     this.props.onUrlTest(dsUrl.url);
     this.handleChange(dataSource);
   }
