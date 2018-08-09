@@ -19,13 +19,18 @@ export default class ConnectivityStatus {
    * @param isAmpCompatible
    * @param ampVersion
    * @param latestAmpOffline
+   * @param serverId the AMP server identifier
+   * @param serverIdMatch true if locally registered server id matched the one provided
    */
-  constructor(isAmpAvailable, isAmpClientEnabled, isAmpCompatible, ampVersion, latestAmpOffline) {
+  constructor(isAmpAvailable, isAmpClientEnabled, isAmpCompatible, ampVersion, latestAmpOffline, serverId: String,
+    serverIdMatch: boolean) {
     this._isAmpAvailable = isAmpAvailable;
     this._isAmpClientEnabled = isAmpClientEnabled;
     this._isAmpCompatible = isAmpCompatible;
     this._ampVersion = ampVersion;
     this._latestAmpOffline = latestAmpOffline;
+    this._serverId = serverId;
+    this._serverIdMatch = serverIdMatch;
   }
 
   /**
@@ -61,6 +66,20 @@ export default class ConnectivityStatus {
    */
   get latestAmpOffline() {
     return this._latestAmpOffline;
+  }
+
+  /**
+   * @return {String} the AMP server identifier
+   */
+  get serverId() {
+    return this._serverId;
+  }
+
+  /**
+   * @return {boolean} if AMP server id matched with the one registered by AMP Offline
+   */
+  get serverIdMatch() {
+    return this._serverIdMatch;
   }
 }
 
