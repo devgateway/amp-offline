@@ -45,7 +45,10 @@ export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus
     (!serverId || connectivityStatus.serverIdMatch);
 }
 
-function getRegisteredServerId() {
+/**
+ * @return {String} the server id registered on the client
+ */
+export function getRegisteredServerId() {
   return store.getState().ampConnectionStatusReducer.serverId;
 }
 

@@ -381,6 +381,7 @@
   "urlNotWorking": "AMP Server is unreachable or wrong URL.",
   "serverIdentityMismatch": "AMP Server identity mismatch.",
   "serverIdentityMissing": "AMP Server identity missing.",
+  "urlChanges": "We have detected changes to the URL for AMP. Please click Open Settings Page to review and make changes.",
   "Save": "Save",
   "validUrlRequired": "Please provide at least one working AMP Server URL.",
   "invalidUrl": "Invalid URL",

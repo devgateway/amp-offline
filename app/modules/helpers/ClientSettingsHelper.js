@@ -3,6 +3,7 @@ import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import Logger from '../../modules/util/LoggerManager';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Client settings helper');
 
@@ -87,6 +88,10 @@ const ClientSettingsHelper = {
     logger.debug('findAllSettingsByNames');
     const filter = { name: { $in: names } };
     return this.findAll(filter);
+  },
+
+  findAllSettingsByNamesAndMapByKey(names) {
+    return this.findAllSettingsByNames(names).then(Utils.toMapByKey);
   },
 
   findAll(filter) {
