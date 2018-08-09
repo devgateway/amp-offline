@@ -7,7 +7,7 @@ import SyncUpManager from '../modules/syncup/SyncUpManager';
 import Logger from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import { connectivityCheck } from './ConnectivityAction';
+import { connectivityCheck, getStatusErrorLabel, isAmpAccessible } from './ConnectivityAction';
 import { ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
 
 // Types of redux actions
@@ -42,10 +42,10 @@ export function loadSyncUpHistory() {
 
 export function startSyncUpIfConnectionAvailable() {
   return connectivityCheck().then(status => {
-    if (status.isAmpAvailable) {
+    if (isAmpAccessible(status)) {
       return startSyncUp();
     }
-    store.dispatch(syncConnectionUnavailable());
+    store.dispatch(syncConnectionUnavailable(translate(getStatusErrorLabel(status, 'AMPUnreachableError'))));
     return null;
   });
 }
@@ -133,9 +133,9 @@ function syncUpInProgress() {
   };
 }
 
-function syncConnectionUnavailable() {
+function syncConnectionUnavailable(errorMessage) {
   return {
     type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,
-    actionData: { errorMessage: translate('AMPUnreachableError') }
+    actionData: { errorMessage }
   };
 }

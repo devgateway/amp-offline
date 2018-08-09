@@ -16,6 +16,7 @@ export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
 export const ACTIVITY_IMPORT_URL = '/activity';
 export const ACTIVITY_EXPORT_URL = '/activity/project';
+export const GAZETTEER_URL = '/gis/locators';
 // TODO remove as part of AMPOFFLINE-270
 export const ACTIVITY_SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
 export const ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
@@ -44,6 +45,8 @@ export const AMP_OFFLINE_ENABLED = 'amp-offline-enabled';
 export const AMP_OFFLINE_COMPATIBLE = 'amp-offline-compatible';
 export const LATEST_AMP_OFFLINE = 'latest-amp-offline';
 export const AMP_VERSION = 'amp-version';
+export const AMP_SERVER_ID = 'server-id';
+export const AMP_SERVER_ID_MATCH = 'server-id-match';
 export const API_SHORT_DATE_FORMAT = 'YYYY-MM-DD';
 export const API_LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZZ';
 export const TRANSLATIONS_PARAM = 'translations';
