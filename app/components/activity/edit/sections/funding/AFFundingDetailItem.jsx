@@ -7,6 +7,7 @@ import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
+import * as Types from '../../components/AFComponentTypes';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
@@ -39,18 +40,22 @@ export default class AFFundingDetailItem extends Component {
     const orgGroupName = this.props.funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
     let fixedExchangeRateFMPath;
     let pledgeFMPath;
+    let disasterResponseFMPath;
     switch (this.props.type) {
       case VC.COMMITMENTS:
         fixedExchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
         pledgeFMPath = FMC.ACTIVITY_COMMITMENTS_PLEDGES;
+        disasterResponseFMPath = FMC.ACTIVITY_COMMITMENTS_DISASTER_RESPONSE;
         break;
       case VC.DISBURSEMENTS:
         fixedExchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
         pledgeFMPath = FMC.ACTIVITY_DISBURSEMENTS_PLEDGES;
+        disasterResponseFMPath = FMC.ACTIVITY_DISBURSEMENTS_DISASTER_RESPONSE;
         break;
       case VC.EXPENDITURES:
         fixedExchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
         pledgeFMPath = FMC.ACTIVITY_EXPENDITURES_PLEDGES;
+        disasterResponseFMPath = FMC.ACTIVITY_EXPENDITURES_DISASTER_RESPONSE;
         break;
       default:
         break;
@@ -70,6 +75,10 @@ export default class AFFundingDetailItem extends Component {
           <AFField
             parent={this.props.fundingDetail} className={styles.cell_3}
             fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />
+          <AFField
+            parent={this.props.fundingDetail} className={styles.cell_3}
+            type={Types.RADIO_BOOLEAN} fmPath={disasterResponseFMPath}
+            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`} />
           {(this.props.fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
             parent={this.props.fundingDetail} className={styles.cell_3}
             fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
