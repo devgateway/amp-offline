@@ -1,6 +1,6 @@
 import store from '../index';
 import * as UrlUtils from '../utils/URLUtils';
-import { UPDATE_URL, VERSION } from '../utils/Constants';
+import { UPDATE_URL } from '../utils/Constants';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import { connectivityCheck, getStatusErrorLabel, isAmpAccessible, MANDATORY_UPDATE } from './ConnectivityAction';
 import UpdateManager from '../modules/update/UpdateManager';
@@ -37,16 +37,15 @@ export function dismissUpdate() {
 }
 
 export function isMandatoryUpdate() {
-  const ampConnectionStatusReducer = store.getState().ampConnectionStatusReducer;
-  return getMandatoryValue(ampConnectionStatusReducer && ampConnectionStatusReducer.status) === true;
+  return getMandatoryValue() === true;
 }
 
 export function isOptionalUpdate() {
-  const ampConnectionStatusReducer = store.getState().ampConnectionStatusReducer;
-  return getMandatoryValue(ampConnectionStatusReducer && ampConnectionStatusReducer.status) === false;
+  return getMandatoryValue() === false;
 }
 
-function getMandatoryValue(status: ConnectivityStatus) {
+function getMandatoryValue() {
+  const { status } = store.getState().ampConnectionStatusReducer || {};
   return status && status.latestAmpOffline && status.latestAmpOffline[MANDATORY_UPDATE];
 }
 
@@ -56,10 +55,15 @@ export function getNewClientVersion() {
   return status && status.latestAmpOffline && status.latestAmpOffline.version;
 }
 
+function isClientFromAMPNewer() {
+  const isMandatory = getMandatoryValue();
+  return isMandatory === true || isMandatory === false;
+}
+
 export function isCheckForUpdates() {
   const { syncUpReducer, activityReducer, updateReducer, ampConnectionStatusReducer } = store.getState();
   const { proceedToUpdateDownload, confirmationPending, updatePending, updateInProgress } = updateReducer;
-  return didSetupComplete() && updateReducer.newUpdateToCheck && getNewClientVersion() !== VERSION
+  return didSetupComplete() && updateReducer.newUpdateToCheck && isClientFromAMPNewer()
     && !(activityReducer.isActivityLoadedForAf || syncUpReducer.syncUpInProgress
       || ampConnectionStatusReducer.updateInProgress
       || proceedToUpdateDownload || confirmationPending || updatePending || updateInProgress);
