@@ -25,13 +25,18 @@ import {
   LOCATIONS,
   ORGANIZATION,
   PRIMARY_CONTACT,
-  PROJECT_TITLE
+  PROJECT_TITLE,
+  TRANSACTION_TYPE,
+  DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED,
+  DISASTER_RESPONSE
 } from '../../utils/constants/ActivityConstants';
 import {
   ACTIVITY_CONTACT_PATHS,
   DO_NOT_HYDRATE_FIELDS_LIST,
   RELATED_ORGS_PATHS,
-  LIST_MAX_SIZE, REGEX_PATTERN,
+  LIST_MAX_SIZE,
+  REGEX_PATTERN,
+  FIELD_NAME,
 } from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT, GS_DEFAULT_NUMBER_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
@@ -40,7 +45,11 @@ import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
 import FieldsManager from './FieldsManager';
-import { ON_BUDGET, TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
+import {
+  DISBURSEMENTS,
+  ON_BUDGET,
+  TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR
+} from '../../utils/constants/ValueConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
 import ValidationErrorsCollector from './ValidationErrorsCollector';
@@ -489,6 +498,14 @@ export default class EntityValidator {
     const dependencies = fieldDef.dependencies;
     // by default is met, hence the workflow can proceed to validate the "required" rule
     let met = true;
+    // eslint-disable-next-line default-case
+    switch (fieldDef[FIELD_NAME]) {
+      case DISASTER_RESPONSE: {
+        const hasReqDep = dependencies && dependencies.includes(DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED);
+        met = hasReqDep && this._matchesTransactionType(parent, DISBURSEMENTS);
+        break;
+      }
+    }
     if (dependencies && dependencies.length) {
       dependencies.forEach(dep => {
         // eslint-disable-next-line default-case
@@ -600,6 +617,11 @@ export default class EntityValidator {
   _hasTransactions(fundingItem) {
     const fundingDetails = fundingItem && fundingItem[FUNDING_DETAILS];
     return fundingDetails && fundingDetails.length;
+  }
+
+  _matchesTransactionType(fundingDetail, trnType) {
+    const fundingType = fundingDetail && fundingDetail[TRANSACTION_TYPE];
+    return fundingType && fundingType.value === trnType;
   }
 
   _validateComponentFundingOrgValid(compFundOrg) {
