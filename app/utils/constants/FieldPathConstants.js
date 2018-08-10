@@ -13,6 +13,7 @@ export const FUNDING_DETAILS_PATH = 'fundings~funding_details';
 export const FUNDING_CURRENCY_PATH = 'fundings~funding_details~currency';
 export const ADJUSTMENT_TYPE_PATH = 'fundings~funding_details~adjustment_type';
 export const TRANSACTION_TYPE_PATH = 'fundings~funding_details~transaction_type';
+export const DISASTER_RESPONSE_PATH = `${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`;
 export const ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH = 'activity_internal_ids~internal_id';
 export const ACTIVITY_INTERNAL_IDS_ORGANIZATION_PATH = 'activity_internal_ids~organization';
 export const LOCATION_PATH = 'locations~location';
