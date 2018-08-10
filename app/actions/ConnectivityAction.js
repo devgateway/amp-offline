@@ -16,6 +16,7 @@ import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import * as CSC from '../utils/constants/ClientSettingsConstants';
 import { configureOnLoad } from './SetupAction';
 import * as Utils from '../utils/Utils';
+import VersionUtils from '../utils/VersionUtils';
 
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
@@ -117,7 +118,7 @@ function _processResult(data, lastConnectivityStatus: ConnectivityStatus) {
         lastConnectivityStatus.isAmpClientEnabled,
         lastConnectivityStatus.isAmpCompatible,
         lastConnectivityStatus.ampVersion,
-        lastConnectivityStatus.latestAmpOffline,
+        preProcessLatestAmpOffline(lastConnectivityStatus.latestAmpOffline),
         lastConnectivityStatus.serverId,
         lastConnectivityStatus.serverIdMatch
       );
@@ -125,21 +126,24 @@ function _processResult(data, lastConnectivityStatus: ConnectivityStatus) {
   } else {
     const isAmpClientEnabled = data[AMP_OFFLINE_ENABLED] === true;
     const isAmpCompatible = data[AMP_OFFLINE_COMPATIBLE] === true;
-    const latestAmpOffline = data[LATEST_AMP_OFFLINE];
+    const latestAmpOffline = preProcessLatestAmpOffline(data[LATEST_AMP_OFFLINE]);
     const version = data[AMP_VERSION];
-    // Process data related to version upgrades.
-    if (latestAmpOffline) {
-      if (isAmpCompatible === false || latestAmpOffline.critical === true) {
-        latestAmpOffline[MANDATORY_UPDATE] = true;
-      } else if (latestAmpOffline.version !== version) {
-        latestAmpOffline[MANDATORY_UPDATE] = false;
-      }
-    }
     status = new ConnectivityStatus(true, isAmpClientEnabled, isAmpCompatible, version, latestAmpOffline,
       data[AMP_SERVER_ID], data[AMP_SERVER_ID_MATCH]);
   }
   store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: status });
   return status;
+}
+
+function preProcessLatestAmpOffline(latestAmpOffline) {
+  if (latestAmpOffline) {
+    if (VersionUtils.compareVersion(latestAmpOffline.version, VERSION) > 0) {
+      latestAmpOffline[MANDATORY_UPDATE] = latestAmpOffline.critical === true;
+    } else {
+      latestAmpOffline[MANDATORY_UPDATE] = null;
+    }
+  }
+  return latestAmpOffline;
 }
 
 function isValidAmpResponse(response) {
