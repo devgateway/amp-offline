@@ -249,7 +249,7 @@
   "Add": "Add",
   "Delete": "Delete",
   "requiredField": "Field is required!",
-  "invalidNumber": "The value \"%value%\" is not a valid number (%gs-format%).",
+  "invalidNumber2": "Number not in a valid format",
   "invalidString": "The value \"%value%\" is not a valid string.",
   "invalidFormat-generic": "Invalid format.",
   "invalidFormat-email~value": "incorrect email format!",
