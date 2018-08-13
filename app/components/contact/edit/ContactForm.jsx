@@ -37,7 +37,6 @@ class ContactForm extends Component {
     activity: PropTypes.object,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityValidator: PropTypes.instanceOf(EntityValidator),
-    isSaveAndSubmit: PropTypes.bool,
     updateContact: PropTypes.func.isRequired,
   };
 

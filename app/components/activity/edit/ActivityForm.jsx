@@ -60,7 +60,6 @@ export default class ActivityForm extends Component {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
-    isSaveAndSubmit: PropTypes.bool,
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     currentWorkspaceSettings: PropTypes.object
   };
@@ -77,7 +76,6 @@ export default class ActivityForm extends Component {
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       activityValidator: this.activityValidator,
-      isSaveAndSubmit: this.state.isSaveAndSubmit,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
       currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings
     };
@@ -101,7 +99,6 @@ export default class ActivityForm extends Component {
       showSaveDialog: false,
       isSaving: false,
       isGoToDesktop: false,
-      isSaveAndSubmit: false
     });
   }
 
@@ -222,7 +219,7 @@ export default class ActivityForm extends Component {
 
   _validateActivity(asDraft) {
     let validationError;
-    // TODO to adjust oonce AMP-XXX is fixed to properly define activive
+    // TODO to adjust this list once is fixed to properly define activity
     const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID, FUNDING_ACTIVE_LIST]);
     this.activity[IS_DRAFT] = asDraft;
     const errors = this.activityValidator.areAllConstraintsMet(this.activity, asDraft, fieldPathsToSkipSet);
@@ -230,7 +227,7 @@ export default class ActivityForm extends Component {
       validationError = this._handleSaveErrors(errors);
     }
     this.props.reportActivityValidation(errors);
-    this.setState({ isSaveAndSubmit: !asDraft, validationError });
+    this.setState({ validationError });
     return validationError;
   }
 
