@@ -28,7 +28,8 @@ import {
   PROJECT_TITLE,
   TRANSACTION_TYPE,
   DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED,
-  DISASTER_RESPONSE
+  DISASTER_RESPONSE,
+  DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED
 } from '../../utils/constants/ActivityConstants';
 import {
   ACTIVITY_CONTACT_PATHS,
@@ -46,6 +47,7 @@ import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
 import FieldsManager from './FieldsManager';
 import {
+  COMMITMENTS,
   DISBURSEMENTS,
   ON_BUDGET,
   TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR
@@ -496,16 +498,9 @@ export default class EntityValidator {
    */
   isRequiredDependencyMet(parent, fieldDef) {
     const dependencies = fieldDef.dependencies;
-    // by default is met, hence the workflow can proceed to validate the "required" rule
-    let met = true;
+    // by default is met (unless disaster response), hence the workflow can proceed to validate the "required" rule
+    let met = DISASTER_RESPONSE !== fieldDef[FIELD_NAME];
     // eslint-disable-next-line default-case
-    switch (fieldDef[FIELD_NAME]) {
-      case DISASTER_RESPONSE: {
-        const hasReqDep = dependencies && dependencies.includes(DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED);
-        met = hasReqDep && this._matchesTransactionType(parent, DISBURSEMENTS);
-        break;
-      }
-    }
     if (dependencies && dependencies.length) {
       dependencies.forEach(dep => {
         // eslint-disable-next-line default-case
@@ -516,6 +511,12 @@ export default class EntityValidator {
             break;
           case DEPENDENCY_TRANSACTION_PRESENT:
             met = met && this._hasTransactions(parent);
+            break;
+          case DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED:
+            met = met || this._matchesTransactionType(parent, DISBURSEMENTS);
+            break;
+          case DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED:
+            met = met || this._matchesTransactionType(parent, COMMITMENTS);
             break;
         }
       });
