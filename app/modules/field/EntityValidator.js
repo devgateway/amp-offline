@@ -33,7 +33,7 @@ import {
   RELATED_ORGS_PATHS,
   LIST_MAX_SIZE, REGEX_PATTERN,
 } from '../../utils/constants/FieldPathConstants';
-import { DEFAULT_DATE_FORMAT, GS_DEFAULT_NUMBER_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
+import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import Logger from '../util/LoggerManager';
