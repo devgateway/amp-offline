@@ -125,6 +125,15 @@ export default class ProjectList extends Component {
     );
   }
 
+  static renderPaginationShowsTotal(start, to, total) {
+    return (
+      <span>
+        {translate('tablesRowsCount').replace('%from%', start).replace('%to%', to).replace('%total%', total)}
+      </span>
+    );
+  }
+
+
   handlerClickCleanFiltered() {
     this.refs[AC.AMP_ID].cleanFiltered();
     this.refs[AC.PROJECT_TITLE].cleanFiltered();
@@ -137,6 +146,7 @@ export default class ProjectList extends Component {
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
     paginationOptions.sizePerPageDropDown = this.constructor.renderSizePerPageDropdown;
     paginationOptions.noDataText = translate('noDataText');
+    paginationOptions.paginationShowsTotal = ProjectList.renderPaginationShowsTotal;
     const pagination = paginationOptions.usePagination;
     return (
       <div className={style.container}>

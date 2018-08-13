@@ -26,7 +26,13 @@ const DEFAULT_SETTINGS = [
     visible: false,
     type: CS.SETTING_TYPE_BOOLEAN,
     value: false
-  }
+  },
+  {
+    id: CS.AMP_SERVER_ID,
+    name: CS.AMP_SERVER_ID,
+    visible: false,
+    type: CS.SETTING_TYPE_STRING,
+  },
 ];
 
 export default DEFAULT_SETTINGS;
