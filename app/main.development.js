@@ -64,6 +64,27 @@ app.on('ready', async () => {
     }
   });
 
+  // we need to explicitly set application menu in MacOS to enable there Copy & Paste shortcuts
+  // there are libs that can configure entire menu, but since we want to rather stick to AmpOffline menu, limiting to:
+  if (process.platform === 'darwin') {
+    Menu.setApplicationMenu(Menu.buildFromTemplate([
+      {
+        label: 'Edit',
+        submenu: [
+          { role: 'undo' },
+          { role: 'redo' },
+          { type: 'separator' },
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+          { role: 'pasteandmatchstyle' },
+          { role: 'delete' },
+          { role: 'selectall' }
+        ]
+      }
+    ]));
+  }
+
   if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools();
     mainWindow.webContents.on('context-menu', (e, props) => {
