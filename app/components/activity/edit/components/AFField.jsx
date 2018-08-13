@@ -38,7 +38,6 @@ class AFField extends Component {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
-    isSaveAndSubmit: PropTypes.bool.isRequired,
     validationResult: PropTypes.array,
   };
 
@@ -101,9 +100,7 @@ class AFField extends Component {
     if (!this.fieldExists) {
       return;
     }
-    if (this.context.isSaveAndSubmit) {
-      this.onChange(this.state.value, false);
-    } else if (nextProps.validationResult || nextContext.validationResult) {
+    if (nextProps.validationResult || nextContext.validationResult) {
       this._processValidation(this.props.parent.errors);
     }
     if (nextProps.parent[this.fieldName] !== this.state.value ||
