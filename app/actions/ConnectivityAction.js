@@ -100,11 +100,11 @@ export function connectivityCheck(saveResult = true) {
       return ConnectionHelper.doGet({ url, paramsMap });
     })
     .then(data => _processResult(data, lastConnectivityStatus))
-    .then(result => (saveResult ? _saveConnectivityStatus(result) : result))
     .catch(error => {
       logger.error(`Couldn't check the connection status. Error: ${error}`);
       return _processResult(null, lastConnectivityStatus);
-    });
+    })
+    .then(result => (saveResult ? _saveConnectivityStatus(result) : result));
 }
 
 function _processResult(data, lastConnectivityStatus: ConnectivityStatus) {
