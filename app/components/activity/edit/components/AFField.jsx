@@ -23,6 +23,7 @@ import AFCheckbox from './AFCheckbox';
 import FeatureManager from '../../../../modules/util/FeatureManager';
 import AFMultiSelect from './AFMultiSelect';
 import translate from '../../../../utils/translate';
+import AFRadioBoolean from './AFRadioBoolean';
 
 const logger = new Logger('AF field');
 
@@ -37,7 +38,6 @@ class AFField extends Component {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
-    isSaveAndSubmit: PropTypes.bool.isRequired,
     validationResult: PropTypes.array,
   };
 
@@ -100,9 +100,7 @@ class AFField extends Component {
     if (!this.fieldExists) {
       return;
     }
-    if (this.context.isSaveAndSubmit) {
-      this.onChange(this.state.value, false);
-    } else if (nextProps.validationResult || nextContext.validationResult) {
+    if (nextProps.validationResult || nextContext.validationResult) {
       this._processValidation(this.props.parent.errors);
     }
     if (nextProps.parent[this.fieldName] !== this.state.value ||
@@ -190,7 +188,9 @@ class AFField extends Component {
       case Types.LABEL:
         return this._getValueAsLabel();
       case Types.CHECKBOX:
-        return this._getBoolean();
+        return this._getCheckbox();
+      case Types.RADIO_BOOLEAN:
+        return this._getRadioBoolean();
       case Types.INPUT_TYPE:
         return this._getInput();
       case Types.MULTI_SELECT:
@@ -284,8 +284,12 @@ class AFField extends Component {
     return (<AFDate value={this.state.value} onChange={this.onChange} extraParams={this.props.extraParams} />);
   }
 
-  _getBoolean() {
+  _getCheckbox() {
     return (<AFCheckbox value={this.state.value} onChange={this.onChange} />);
+  }
+
+  _getRadioBoolean() {
+    return <AFRadioBoolean value={this.state.value} onChange={this.onChange} />;
   }
 
   _getMultiSelect() {
