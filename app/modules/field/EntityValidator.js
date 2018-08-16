@@ -356,7 +356,7 @@ export default class EntityValidator {
     const entityValidator = hValue && hValue[VC_TMP_ENTITY_VALIDATOR];
     if (entityValidator) {
       let validationError = entityValidator.areAllConstraintsMet(entityValidator._entity, asDraft);
-      validationError = validationError.length ? validationError.join('. ') : null;
+      validationError = validationError.length ? Utils.joinMessages(validationError.map(ve => ve.toString())) : null;
       this.processValidationResult(obj, fieldPath, validationError);
       return true;
     }
