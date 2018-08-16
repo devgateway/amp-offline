@@ -2,7 +2,12 @@ import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_RESOURCES } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
-import { CLIENT_CHANGE_ID, CLIENT_CHANGE_ID_PREFIX, INTERNAL_ID } from '../../utils/constants/EntityConstants';
+import {
+  CLIENT_CHANGE_ID,
+  CLIENT_CHANGE_ID_PREFIX,
+  INTERNAL_ID,
+  VALIDATE_ON_CHANGE_ONLY
+} from '../../utils/constants/EntityConstants';
 import {
   CLIENT_ADDING_DATE,
   CLIENT_YEAR_OF_PUBLICATION,
@@ -126,6 +131,7 @@ const ResourceHelper = {
     delete cleanResource[CONTENT_TYPE];
     delete cleanResource[CLIENT_ADDING_DATE];
     delete cleanResource[CLIENT_YEAR_OF_PUBLICATION];
+    delete cleanResource[VALIDATE_ON_CHANGE_ONLY];
     return cleanResource;
   },
 
