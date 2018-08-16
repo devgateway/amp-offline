@@ -45,7 +45,7 @@ export function startSyncUpIfConnectionAvailable() {
     if (isAmpAccessible(status)) {
       return startSyncUp();
     }
-    store.dispatch(syncConnectionUnavailable(translate(getStatusErrorLabel(status, 'AMPUnreachableError'))));
+    store.dispatch(syncConnectionUnavailable(translate(getStatusErrorLabel(status))));
     return null;
   });
 }

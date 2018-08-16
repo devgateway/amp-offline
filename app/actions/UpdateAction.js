@@ -93,7 +93,7 @@ export function downloadUpdate(/* id */) {
     if (isAmpAccessible(status)) {
       return updater.downloadUpdate();
     }
-    return Promise.reject(translate(getStatusErrorLabel(status, 'AMPUnreachableError')));
+    return Promise.reject(translate(getStatusErrorLabel(status)));
   });
   downloadPromise.then(() => {
     store.dispatch({ type: STATE_UPDATE_STARTED });
