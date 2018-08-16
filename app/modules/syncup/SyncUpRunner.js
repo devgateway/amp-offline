@@ -249,7 +249,7 @@ export default class SyncUpRunner {
           logger.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${error.stack}"`);
           // We are not rolling back any data saved until here. We collect the leftover and resume the next sync from
           // where we left up to the latest. Dependencies will manage other units.
-          return this._buildUnitResult(syncUpManager, error);
+          return this._buildUnitResult(syncUpManager, error.message || error);
         });
       this._syncUpDependency.setState(type, SS.IN_PROGRESS);
     }
