@@ -8,7 +8,8 @@ import Logger from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import { connectivityCheck, getStatusErrorLabel, isAmpAccessible } from './ConnectivityAction';
-import { ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
+import { ERROR_CODE_ACCESS_DENIED, ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
+import NotificationHelper from '../modules/helpers/NotificationHelper';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -74,15 +75,24 @@ export function startSyncUp(historyData) {
       }
     ).catch((err) => {
       logger.error(err);
-      const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY
-        ? `${translate('defaultSyncError')}: ${err.message}`
-        : translate('defaultSyncError');
+      const errorMessage = getSyncErrorByCode(err);
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage } });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });
   }
   return Promise.resolve();
+}
+
+function getSyncErrorByCode(error: NotificationHelper) {
+  switch (error.errorCode) {
+    case ERROR_CODE_NO_CONNECTIVITY:
+      return `${translate('defaultSyncError')} ${error.message}`;
+    case ERROR_CODE_ACCESS_DENIED:
+      return error.message;
+    default:
+      return translate('defaultSyncError');
+  }
 }
 
 export function checkIfToForceSyncUp() {

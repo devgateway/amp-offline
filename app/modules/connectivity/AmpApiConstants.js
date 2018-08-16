@@ -78,3 +78,9 @@ export const ARCH64_NODE_OS_OPTIONS = new Set(['arm64', 'ppc64', 'x64']);
 export const ARCH64_USER_AGENT_OPTIONS = ['x86_64', 'amd64'];
 
 export const RESPONSE_CHECK_INTERVAL_MS = 100;
+
+export const API_ERROR_TO_AMP_OFFLINE_ERROR_BY_CODE = {
+  '0004': {
+    '(Not allowed) AMP Offline is not compatible': 'ampServerIncompatibleContinueToUse'
+  }
+};
