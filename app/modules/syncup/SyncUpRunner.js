@@ -316,7 +316,7 @@ export default class SyncUpRunner {
         } else {
           logger.error(`Unexpected use case for "${type}" that was not skipped through expected means, has no
           leftover, but still is not done. Possibly a bug. Fallback to FAIL state.`);
-          state = SS.STATES_PENDING.includes(state) ? SS.FAIL : state;
+          state = (SS.STATES_PENDING.includes(state) || state === SS.IN_PROGRESS) ? SS.FAIL : state;
         }
       } else if (unitLeftOver !== true) {
         // this is not an atomic sync, let's compare original diff vs leftover to see if at least something was synced
