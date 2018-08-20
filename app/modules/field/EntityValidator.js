@@ -25,13 +25,19 @@ import {
   LOCATIONS,
   ORGANIZATION,
   PRIMARY_CONTACT,
-  PROJECT_TITLE
+  PROJECT_TITLE,
+  TRANSACTION_TYPE,
+  DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED,
+  DISASTER_RESPONSE,
+  DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED
 } from '../../utils/constants/ActivityConstants';
 import {
   ACTIVITY_CONTACT_PATHS,
   DO_NOT_HYDRATE_FIELDS_LIST,
   RELATED_ORGS_PATHS,
-  LIST_MAX_SIZE, REGEX_PATTERN,
+  LIST_MAX_SIZE,
+  REGEX_PATTERN,
+  FIELD_NAME,
 } from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
@@ -40,7 +46,12 @@ import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
 import FieldsManager from './FieldsManager';
-import { ON_BUDGET, TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
+import {
+  COMMITMENTS,
+  DISBURSEMENTS,
+  ON_BUDGET,
+  TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR
+} from '../../utils/constants/ValueConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
 import ValidationErrorsCollector from './ValidationErrorsCollector';
@@ -89,7 +100,7 @@ export default class EntityValidator {
         // once required fields are checked, exclude objects without values from further validation
         const objectsWithFDValues = objects.filter(o => o[fd.field_name] !== null && o[fd.field_name] !== undefined);
         this._validateValue(objectsWithFDValues, asDraft, fd, fieldPath, isList);
-        if (isList && fd.importable === true) {
+        if (isList && fd.importable === true && !this._firstLevelOnly) {
           let childrenObj = objectsWithFDValues.map(o => o[fd.field_name]);
           // isList === either an actual list or a complex object
           if (Array.isArray(childrenObj[0])) {
@@ -128,7 +139,9 @@ export default class EntityValidator {
   validateField(parent, asDraft, fieldDef, mainFieldPath) {
     this._initGenericErrors();
     this.errorsCollector.clear();
+    this._firstLevelOnly = true;
     this._validateField(parent, asDraft, fieldDef, mainFieldPath);
+    this._firstLevelOnly = false;
     return this.errorsCollector.errors;
   }
 
@@ -486,8 +499,9 @@ export default class EntityValidator {
    */
   isRequiredDependencyMet(parent, fieldDef) {
     const dependencies = fieldDef.dependencies;
-    // by default is met, hence the workflow can proceed to validate the "required" rule
-    let met = true;
+    // by default is met (unless disaster response), hence the workflow can proceed to validate the "required" rule
+    let met = DISASTER_RESPONSE !== fieldDef[FIELD_NAME];
+    // eslint-disable-next-line default-case
     if (dependencies && dependencies.length) {
       dependencies.forEach(dep => {
         // eslint-disable-next-line default-case
@@ -498,6 +512,12 @@ export default class EntityValidator {
             break;
           case DEPENDENCY_TRANSACTION_PRESENT:
             met = met && this._hasTransactions(parent);
+            break;
+          case DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED:
+            met = met || this._matchesTransactionType(parent, DISBURSEMENTS);
+            break;
+          case DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED:
+            met = met || this._matchesTransactionType(parent, COMMITMENTS);
             break;
         }
       });
@@ -599,6 +619,11 @@ export default class EntityValidator {
   _hasTransactions(fundingItem) {
     const fundingDetails = fundingItem && fundingItem[FUNDING_DETAILS];
     return fundingDetails && fundingDetails.length;
+  }
+
+  _matchesTransactionType(fundingDetail, trnType) {
+    const fundingType = fundingDetail && fundingDetail[TRANSACTION_TYPE];
+    return fundingType && fundingType.value === trnType;
   }
 
   _validateComponentFundingOrgValid(compFundOrg) {

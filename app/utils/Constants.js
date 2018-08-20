@@ -25,6 +25,7 @@ export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
 export const UPDATE_URL = '/update';
 export const SETUP_URL = '/setup';
+export const SETTINGS_URL = '/settings';
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_WORKPACES = 'workspaces';
@@ -121,6 +122,8 @@ export const RATE_SAME_CURRENCY = 1;
 export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
 export const VERSION = pkg.version;
+export const VERSION_PATTERN = /(\d+)\.(\d+)(\.(\d+))?(-\w+)?/;
+export const VERSION_PATTERN_GROUPS_TO_EXTRACT = [1, 2, 4, 5];
 export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
 export const ASSETS_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
