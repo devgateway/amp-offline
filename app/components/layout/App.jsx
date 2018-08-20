@@ -4,12 +4,15 @@ import styles from './App.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
 import UpdateTrigger from '../update/UpdateTrigger';
+import SettingsTrigger from '../settings/SettingsTrigger';
+import { IS_CHECK_URL_CHANGES } from '../../modules/util/ElectronApp';
 
 const logger = new Logger('App(layout)');
 
 export default class App extends Component {
 
   static propTypes = {
+    router: PropTypes.object.isRequired,
     children: PropTypes.element.isRequired,
     selectWorkspace: PropTypes.func.isRequired,
     /* eslint-disable react/forbid-prop-types */
@@ -27,6 +30,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.disableUpdates = +process.env.DISABLE_UPDATE;
+    this.isCheckUrlChanges = IS_CHECK_URL_CHANGES;
   }
 
   render() {
@@ -51,6 +55,7 @@ export default class App extends Component {
         </div>
         <Footer />
         {!this.disableUpdates && <UpdateTrigger />}
+        {this.isCheckUrlChanges && <SettingsTrigger location={this.props.router.location} />}
       </div>
     );
   }

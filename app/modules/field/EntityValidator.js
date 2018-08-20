@@ -102,7 +102,7 @@ export default class EntityValidator {
         // once required fields are checked, exclude objects without values from further validation
         const objectsWithFDValues = objects.filter(o => o[fd.field_name] !== null && o[fd.field_name] !== undefined);
         this._validateValue(objectsWithFDValues, asDraft, fd, fieldPath, isList);
-        if (isList && fd.importable === true) {
+        if (isList && fd.importable === true && !this._firstLevelOnly) {
           let childrenObj = objectsWithFDValues.map(o => o[fd.field_name]);
           // isList === either an actual list or a complex object
           if (Array.isArray(childrenObj[0])) {
@@ -141,7 +141,9 @@ export default class EntityValidator {
   validateField(parent, asDraft, fieldDef, mainFieldPath) {
     this._initGenericErrors();
     this.errorsCollector.clear();
+    this._firstLevelOnly = true;
     this._validateField(parent, asDraft, fieldDef, mainFieldPath);
+    this._firstLevelOnly = false;
     return this.errorsCollector.errors;
   }
 

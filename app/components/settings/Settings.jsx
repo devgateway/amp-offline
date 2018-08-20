@@ -18,9 +18,12 @@ const logger = new Logger('Settings Page');
  */
 export default class Settings extends Component {
   static propTypes = {
+    settingsPageLoaded: PropTypes.func.isRequired,
     isSettingsLoading: PropTypes.bool.isRequired,
     isSettingsLoaded: PropTypes.bool.isRequired,
     settings: PropTypes.array,
+    newUrls: PropTypes.array,
+    newUrlsProcessed: PropTypes.func.isRequired,
     errorMessage: PropTypes.string,
     loadSettings: PropTypes.func.isRequired,
     saveSettings: PropTypes.func.isRequired,
@@ -34,6 +37,7 @@ export default class Settings extends Component {
     logger.debug('constructor');
     this.state = {
       settings: undefined,
+      hasNewUrls: false,
       urlAvailable: new Map()
     };
   }
@@ -42,18 +46,31 @@ export default class Settings extends Component {
     this.props.loadSettings();
   }
 
+  componentDidMount() {
+    this.props.settingsPageLoaded();
+  }
+
   componentWillReceiveProps(nextProps) {
-    const { isSettingsLoaded, settings, urlTestResult } = nextProps;
+    const { isSettingsLoaded, settings, urlTestResult, newUrls } = nextProps;
     const { urlAvailable } = this.state;
+    let { hasNewUrls } = this.state;
     if (isSettingsLoaded && settings && !this.state.settings) {
       const urlSetting = settings.find(s => s.id === CSC.SETUP_CONFIG);
+      if (newUrls) {
+        urlSetting.value.urls = newUrls;
+        hasNewUrls = true;
+      }
       urlSetting.value.urls.forEach(url => { urlAvailable.set(url, false); });
-      this.setState({ settings });
+      this.setState({ settings, hasNewUrls });
     }
     if (urlTestResult && urlTestResult.url) {
       urlAvailable.set(urlTestResult.url, !!urlTestResult.goodUrl);
       this.setState({ urlAvailable });
     }
+  }
+
+  componentWillUnmount() {
+    this.props.newUrlsProcessed();
   }
 
   onSettingChange(settingId, newSetting) {
@@ -79,6 +96,14 @@ export default class Settings extends Component {
     return new Set(this.state.urlAvailable.values()).has(true);
   }
 
+  saveSettings() {
+    const { hasNewUrls, settings } = this.state;
+    this.props.saveSettings(settings, hasNewUrls);
+    if (hasNewUrls) {
+      this.setState({ hasNewUrls: false });
+    }
+  }
+
   renderSettings() {
     const { settings } = this.state;
     const { isUrlTestInProgress, isSettingsSaving } = this.props;
@@ -94,7 +119,7 @@ export default class Settings extends Component {
         </div>
         <div className={styles.row}>
           <Button
-            bsStyle="success" disabled={!canSave} onClick={() => this.props.saveSettings(settings)}>
+            bsStyle="success" disabled={!canSave} onClick={this.saveSettings.bind(this)}>
             {translate('Save')}
           </Button>
           <FormControl.Feedback />
