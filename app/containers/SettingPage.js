@@ -4,7 +4,7 @@ import Settings from '../components/settings/Settings';
 import * as SettingAction from '../actions/SettingAction';
 
 function mapStateToProps({ settingReducer, setupReducer, translationReducer }) {
-  const { isSettingsLoading, isSettingsLoaded, settings, errorMessage, isSettingsSaving, isSettingsSaved }
+  const { isSettingsLoading, isSettingsLoaded, settings, errorMessage, isSettingsSaving, isSettingsSaved, newUrls }
     = settingReducer;
   const { urlTestResult, isUrlTestInProgress } = setupReducer;
   return {
@@ -13,6 +13,7 @@ function mapStateToProps({ settingReducer, setupReducer, translationReducer }) {
     isSettingsSaving,
     isSettingsSaved,
     settings,
+    newUrls,
     errorMessage,
     isUrlTestInProgress,
     urlTestResult,

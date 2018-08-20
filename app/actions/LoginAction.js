@@ -113,7 +113,7 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
     actionData: { isInactivityTimeout }
   });
   UrlUtils.forwardTo(LOGIN_URL);
-  return ampOfflineInit();
+  return ampOfflineInit(true);
 }
 
 export function changePasswordOnline() {
