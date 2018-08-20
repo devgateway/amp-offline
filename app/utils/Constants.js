@@ -25,6 +25,7 @@ export const ACTIVITY_PREVIEW_URL = '/activity/preview';
 export const ACTIVITY_EDIT_URL = '/activity/edit';
 export const UPDATE_URL = '/update';
 export const SETUP_URL = '/setup';
+export const SETTINGS_URL = '/settings';
 
 export const COLLECTION_USERS = 'users';
 export const COLLECTION_WORKPACES = 'workspaces';

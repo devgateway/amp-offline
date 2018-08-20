@@ -1,6 +1,8 @@
 import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
 import { LANGUAGE_ENGLISH, SETUP_URL } from '../utils/Constants';
+import * as CSC from '../utils/constants/ClientSettingsConstants';
+import * as GSC from '../utils/constants/GlobalSettingsConstants';
 import * as URLUtils from '../utils/URLUtils';
 import Logger from '../modules/util/LoggerManager';
 import {
@@ -9,12 +11,17 @@ import {
   isValidConnectionByStatus,
   isConnectivityCheckInProgress,
   getStatusErrorLabel,
+  getRegisteredServerId,
   getLeastCriticalStatus
 } from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
 import * as Utils from '../utils/Utils';
-import { RESPONSE_CHECK_INTERVAL_MS } from '../modules/connectivity/AmpApiConstants';
+import { AMP_SERVER_ID, RESPONSE_CHECK_INTERVAL_MS } from '../modules/connectivity/AmpApiConstants';
+import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
+import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
+import { newUrlsDetected } from './SettingAction';
+import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -33,6 +40,9 @@ export const STATE_URL_TEST_RESULT_PENDING = 'STATE_URL_TEST_RESULT_PENDING';
 export const STATE_URL_TEST_RESULT_FULFILLED = 'STATE_URL_TEST_RESULT_FULFILLED';
 export const STATE_URL_TEST_RESULT_REJECTED = 'STATE_URL_TEST_RESULT_REJECTED';
 export const STATE_URL_TEST_RESULT_PROCESSED = 'STATE_URL_TEST_RESULT_PROCESSED';
+export const STATE_AMP_REGISTRY_CHECK_PENDING = 'STATE_AMP_REGISTRY_CHECK_PENDING';
+export const STATE_AMP_REGISTRY_CHECK_COMPLETED = 'STATE_AMP_REGISTRY_CHECK_COMPLETED';
+
 
 const logger = new Logger('Setup action');
 
@@ -178,7 +188,7 @@ function testAMPUrl(url) {
   let relevantUrlResult;
   return URLUtils.getPossibleUrlSetupFixes(url).reduce((currentPromise, fixedUrl) =>
       currentPromise.then(result => {
-        relevantUrlResult = getRelevanResult(relevantUrlResult, result);
+        relevantUrlResult = getRelevantResult(relevantUrlResult, result);
         if (isValidConnectionByStatus(result && result.connectivityStatus)) {
           return Promise.resolve(result);
         }
@@ -187,7 +197,7 @@ function testAMPUrl(url) {
       })
     , Promise.resolve())
     .then(result => {
-      relevantUrlResult = getRelevanResult(relevantUrlResult, result);
+      relevantUrlResult = getRelevantResult(relevantUrlResult, result);
       if (isValidConnectionByStatus(result && result.connectivityStatus) || !relevantUrlResult) {
         return result;
       }
@@ -195,7 +205,7 @@ function testAMPUrl(url) {
     });
 }
 
-function getRelevanResult(r1, r2) {
+function getRelevantResult(r1, r2) {
   if (r1 && r2) {
     const s1 = r1.connectivityStatus;
     const s2 = r2.connectivityStatus;
@@ -210,3 +220,110 @@ export function loadSetupOptions() {
     payload: SetupManager.getSetupOptions()
   });
 }
+
+export function checkAmpRegistryForUpdates() {
+  if (!didSetupComplete() || !IS_CHECK_URL_CHANGES) {
+    ampRegistryCheckComplete();
+    return Promise.resolve();
+  }
+  ampRegistryCheckPending();
+  return ClientSettingsHelper.findAllSettingsByNamesAndMapByKey(
+    [CSC.SETUP_CONFIG, CSC.AMP_SETTINGS_FROM_AMP_REGISTRY, CSC.LAST_AMP_SETTINGS_STATUS])
+    .then(smap => {
+      const setupConfigSetting = smap.get(CSC.SETUP_CONFIG);
+      const prevAmpRegistrySetting = smap.get(CSC.AMP_SETTINGS_FROM_AMP_REGISTRY);
+      const prevStatusSetting = smap.get(CSC.LAST_AMP_SETTINGS_STATUS);
+      return getAmpRegistrySetting(setupConfigSetting)
+        .then(ampRegistryCountry => {
+          const newUrls = getNewUrls(ampRegistryCountry, setupConfigSetting, prevAmpRegistrySetting, prevStatusSetting);
+          if (newUrls) {
+            prevAmpRegistrySetting.value = ampRegistryCountry || prevAmpRegistrySetting.value;
+            prevStatusSetting.value = CSC.LAST_AMP_SETTINGS_STATUS_PENDING;
+            return ClientSettingsHelper.saveOrUpdateCollection([prevAmpRegistrySetting, prevStatusSetting])
+              .then(() => newUrlsDetected(newUrls));
+          }
+          ampRegistryCheckComplete();
+          return newUrls;
+        });
+    })
+    .catch(error => {
+      // since runs at startup, any error shouldn't block the chain
+      logger.error(error);
+      ampRegistryCheckComplete();
+    });
+}
+
+function getAmpRegistrySetting(setupConfigSetting) {
+  const serverId = getRegisteredServerId();
+  const countryGS = GlobalSettingsManager.getSettingByKey(GSC.DEFAULT_COUNTRY);
+  let iso2 = setupConfigSetting.value.iso2 || countryGS;
+  iso2 = iso2 && iso2.toLowerCase();
+  return SetupManager.getSetupOptions()
+    .then(ampRegistrySettings => {
+      const ampRegistryCountry = ampRegistrySettings.find(s => isSettingForAmp(s, serverId, iso2));
+      if (ampRegistryCountry) {
+        ampRegistryCountry.urls = ampRegistryCountry.urls.map(URLUtils.normalizeUrl);
+      }
+      return ampRegistryCountry;
+    });
+}
+
+function isSettingForAmp(registrySetting, serverId, iso2) {
+  if (serverId && registrySetting[AMP_SERVER_ID]) {
+    return registrySetting[AMP_SERVER_ID] === serverId;
+  }
+  return registrySetting.iso2 && iso2 && (registrySetting.iso2.toLowerCase() === iso2);
+}
+
+function getNewUrls(ampRegistryCountry, setupConfigSetting, prevAmpRegistrySetting, prevStatusSetting) {
+  const currentUrls = setupConfigSetting.value.urls;
+  let newUrls = ampRegistryCountry && new Set(ampRegistryCountry.urls);
+  const prevUrls = prevAmpRegistrySetting && prevAmpRegistrySetting.value && new Set(prevAmpRegistrySetting.value.urls);
+  const isPrevUrlsPending = prevStatusSetting && prevStatusSetting.value === CSC.LAST_AMP_SETTINGS_STATUS_PENDING;
+  if (newUrls && prevUrls && !isPrevUrlsPending) {
+    // check if previously reviewed URLs match new URLs to see if to report new URLs or not anymore
+    if (newUrls.size === prevUrls.size && ampRegistryCountry.urls.every(url => prevUrls.has(url))) {
+      newUrls = null;
+    }
+  } else if (!newUrls && isPrevUrlsPending) {
+    // if the latest URLs cannot be detected (e.g. connectivity issue), then use any pending URLs from previous check
+    newUrls = prevUrls;
+  }
+  if (newUrls) {
+    let matchingUrlsCount = 0;
+    const newUrlsCount = newUrls.size;
+    currentUrls.forEach(url => {
+      if (newUrls.has(url)) {
+        matchingUrlsCount += 1;
+      } else {
+        newUrls.add(url);
+      }
+    });
+    if (matchingUrlsCount === newUrlsCount) {
+      newUrls = null;
+    }
+  }
+  return newUrls && Array.from(newUrls.keys());
+}
+
+export const ampRegistryCheckPending = () => store.dispatch({ type: STATE_AMP_REGISTRY_CHECK_PENDING });
+
+export const ampRegistryCheckComplete = () => store.dispatch({ type: STATE_AMP_REGISTRY_CHECK_COMPLETED });
+
+export const newUrlsReviewed = () =>
+  ClientSettingsHelper.findAllSettingsByNamesAndMapByKey(
+    [CSC.SETUP_CONFIG, CSC.AMP_SETTINGS_FROM_AMP_REGISTRY, CSC.LAST_AMP_SETTINGS_STATUS])
+    .then(smap => {
+      const setupConfigSetting = smap.get(CSC.SETUP_CONFIG);
+      const lastStatusSetting = smap.get(CSC.LAST_AMP_SETTINGS_STATUS);
+      lastStatusSetting.value = CSC.LAST_AMP_SETTINGS_STATUS_REVIEWED;
+      const urls = setupConfigSetting.value.urls;
+      setupConfigSetting.value = smap.get(CSC.AMP_SETTINGS_FROM_AMP_REGISTRY).value;
+      setupConfigSetting.value.urls = urls;
+      return ClientSettingsHelper.saveOrUpdateCollection([lastStatusSetting, setupConfigSetting]);
+    });
+
+export const didUrlChangesCheckComplete = () => {
+  const { setupReducer, settingReducer } = store.getState();
+  return setupReducer.isAmpRegistryChecked && !settingReducer.newUrls;
+};
