@@ -56,6 +56,8 @@ import PossibleValuesManager from './PossibleValuesManager';
 import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
 import ValidationErrorsCollector from './ValidationErrorsCollector';
 import ValidationError from './ValidationError';
+import * as Utils from '../../utils/Utils';
+import { CLIENT_CHANGE_ID, VALIDATE_ON_CHANGE_ONLY } from '../../utils/constants/EntityConstants';
 
 const logger = new Logger('EntityValidator');
 
@@ -357,8 +359,11 @@ export default class EntityValidator {
     const hValue = obj[fieldDef.field_name];
     const entityValidator = hValue && hValue[VC_TMP_ENTITY_VALIDATOR];
     if (entityValidator) {
+      if (entityValidator._entity[VALIDATE_ON_CHANGE_ONLY] && !entityValidator._entity[CLIENT_CHANGE_ID]) {
+        return true;
+      }
       let validationError = entityValidator.areAllConstraintsMet(entityValidator._entity, asDraft);
-      validationError = validationError.length ? validationError.join('. ') : null;
+      validationError = validationError.length ? Utils.joinMessages(validationError.map(ve => ve.toString())) : null;
       this.processValidationResult(obj, fieldPath, validationError);
       return true;
     }

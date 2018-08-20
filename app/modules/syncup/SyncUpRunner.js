@@ -250,7 +250,7 @@ export default class SyncUpRunner {
           logger.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${errorStack}"`);
           // We are not rolling back any data saved until here. We collect the leftover and resume the next sync from
           // where we left up to the latest. Dependencies will manage other units.
-          return this._buildUnitResult(syncUpManager, error);
+          return this._buildUnitResult(syncUpManager, error.message || error);
         });
       this._syncUpDependency.setState(type, SS.IN_PROGRESS);
     }
@@ -317,7 +317,7 @@ export default class SyncUpRunner {
         } else {
           logger.error(`Unexpected use case for "${type}" that was not skipped through expected means, has no
           leftover, but still is not done. Possibly a bug. Fallback to FAIL state.`);
-          state = SS.STATES_PENDING.includes(state) ? SS.FAIL : state;
+          state = (SS.STATES_PENDING.includes(state) || state === SS.IN_PROGRESS) ? SS.FAIL : state;
         }
       } else if (unitLeftOver !== true) {
         // this is not an atomic sync, let's compare original diff vs leftover to see if at least something was synced
