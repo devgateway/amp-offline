@@ -39,7 +39,7 @@ import {
   REGEX_PATTERN,
   FIELD_NAME,
 } from '../../utils/constants/FieldPathConstants';
-import { DEFAULT_DATE_FORMAT, GS_DEFAULT_NUMBER_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
+import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import Logger from '../util/LoggerManager';
@@ -218,11 +218,10 @@ export default class EntityValidator {
   }
 
   _initGenericErrors() {
-    const gsNumberFormat = GlobalSettingsManager.getSettingByKey(GS_DEFAULT_NUMBER_FORMAT);
     const gsDateFormat = GlobalSettingsManager.getSettingByKey(DEFAULT_DATE_FORMAT);
     this.invalidValueError = translate('invalidValue');
     this.invalidString = translate('invalidString');
-    this.invalidNumber = translate('invalidNumber').replace('%gs-format%', gsNumberFormat);
+    this.invalidNumber = translate('invalidNumber2');
     this.invalidBoolean = translate('invalidBoolean');
     this.invalidTitle = translate('duplicateTitle');
     // though we'll validate internal format, we have to report user friendly format
@@ -298,13 +297,13 @@ export default class EntityValidator {
         }
       } else if (fieldDef.field_type === 'long') {
         if (!Number.isInteger(value) && !this._isAllowInvalidNumber(value, fieldPath)) {
-          this.processValidationResult(obj, fieldPath, this.invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, fieldPath, this.invalidNumber);
         } else {
           this._wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft);
         }
       } else if (fieldDef.field_type === 'float') {
         if (value !== +value || value.toString().indexOf('e') > -1) {
-          this.processValidationResult(obj, fieldPath, this.invalidNumber.replace('%value%', value));
+          this.processValidationResult(obj, fieldPath, this.invalidNumber);
         }
       } else if (fieldDef.field_type === 'boolean') {
         if (!(typeof value === 'boolean' || value instanceof Boolean)) {
