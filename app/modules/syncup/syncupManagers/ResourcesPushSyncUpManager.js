@@ -66,7 +66,7 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
     const filter = Utils.toMap(AC.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: uuids }) });
     return ActivityHelper.findAllNonRejected(filter, Utils.toMap(AC.ACTIVITY_DOCUMENTS, 1))
       .then(activities => activities.flatMap(a => a[AC.ACTIVITY_DOCUMENTS].map(ad => ad[UUID])))
-      .then(usedUuids => usedUuids.map(uuid => resByUuid.get(uuid)));
+      .then(usedUuids => usedUuids.map(uuid => resByUuid.get(uuid)).filter(r => r));
   }
 
   _getResourcesWithContent(resources) {

@@ -163,7 +163,7 @@ const Utils = {
         return `${msg}${endPunctuationIfMissing}`;
       }
       return msg;
-    });
+    }).join(' ');
   },
 
   /**

@@ -24,4 +24,8 @@ export default class ValidationError {
   get errorMessage() {
     return this._errorMessage;
   }
+
+  toString() {
+    return `${this.path} : ${this.errorMessage}`;
+  }
 }
