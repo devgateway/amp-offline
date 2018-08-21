@@ -35,6 +35,7 @@ import { addMessage } from './NotificationAction';
 import RepositoryManager from '../modules/repository/RepositoryManager';
 import translate from '../utils/translate';
 import * as URLUtils from '../utils/URLUtils';
+import { VALIDATE_ON_CHANGE_ONLY } from '../utils/constants/EntityConstants';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -234,6 +235,7 @@ const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
       const r = rMap.get(ar[UUID]);
       if (r) {
         r[TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
+        r[VALIDATE_ON_CHANGE_ONLY] = true;
         ar[UUID] = r;
         ar[TMP_ENTITY_VALIDATOR] = r[TMP_ENTITY_VALIDATOR];
       }
