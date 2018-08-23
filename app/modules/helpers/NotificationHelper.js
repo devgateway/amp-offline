@@ -61,6 +61,7 @@ export default class NotificationHelper {
       if (message instanceof Error) {
         retMessage = message.message;
         logger.error(message.stack);
+        this.translateMsg = false;
       } else if (message instanceof Object) {
         const fields = Object.keys(message);
         if (fields && message[fields[0]] && !isNaN(fields[0])) {
@@ -68,16 +69,18 @@ export default class NotificationHelper {
         } else {
           retMessage = stringifyObject(message, { inlineCharacterLimit: 200 });
         }
+        this.translateMsg = false;
       } else {
         // In order to translate some error messages from the API we need to sanitize it first.
         if (fromAPI && message.charAt(0) === '(' && message.charAt(message.length - 1) === ')') {
           message = message.substring(1, message.length - 1);
         }
-        retMessage = this.translateMsg ? translate(message) : message;
+        retMessage = message;
       }
     } catch (err) {
       logger.warn(err);
       retMessage = stringifyObject(message());
+      this.translateMsg = false;
     }
     return retMessage;
   }
@@ -87,7 +90,7 @@ export default class NotificationHelper {
   }
 
   get message() {
-    return this._message;
+    return this._message && this.translateMsg ? translate(this._message) : this._message;
   }
 
   get details() {
