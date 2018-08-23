@@ -22,5 +22,6 @@
   "customHint": "Veuillez saisir l'URL de l'application PGA. Vous pouvez le copier à partir de la page de téléchargement du client PGA. Veuillez vous reporter au manuel de l'utilisateur pour plus d'aide.",
   "timeoutError": "Délai de connection dépassé. Vérifiez votre connexion Internet.",
   "serverIdentityMissing": "L'identité du serveur PGA est manquante",
+  "aboutIdentity": "L'application PGA stocke un identifiant unique qui ne change pas avec le temps. PGA Hors Ligne enregistre l'identifiant PGA lors de la configuration initiale pour garantir la synchronisation des données avec la même application PGA afin d'éviter toute corruption. Les URL PGA qui pointent vers un serveur PGA sans identifiant ou identifiant différent ne peuvent pas être utilisées.",
   "loadingMessage":"Chargement en cours...."
 }
