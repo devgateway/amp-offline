@@ -16,20 +16,24 @@ export default class NotificationHelper {
    * The severity defines if is information, a warning or an error (default).
    *
    * @param message
+   * @param details use this to add more details that need to be used separately from original message (e.g. as tooltip)
    * @param origin
    * @param errorCode
    * @param errorObject
    * @param translateMsg translate the message or not (default true for now, since was used this since AMPOFFLINE-122)
+   * @param translateDetails if to translate the details or not
    * @param severity
    */
   constructor({
-                message, origin, errorCode, errorObject, translateMsg = true,
+                message, details, origin, errorCode, errorObject, translateMsg = true, translateDetails = true,
                 severity = constants.NOTIFICATION_SEVERITY_ERROR
               }) {
     logger.log('constructor');
     this.translateMsg = translateMsg;
+    this.translateDetails = translateDetails;
     if (errorObject) {
       this.message = errorObject.message;
+      this.details = errorObject.details;
       this.internalCode = errorObject.internalCode;
       this.origin = errorObject.origin;
       this.severity = errorObject.severity;
@@ -39,6 +43,7 @@ export default class NotificationHelper {
       if (message) {
         this.message = this.processMessageParams(message);
       }
+      this.details = details;
       this.severity = severity;
       if (origin) {
         this.origin = origin;
@@ -85,6 +90,10 @@ export default class NotificationHelper {
     return this._message;
   }
 
+  get details() {
+    return this._details && this.translateDetails ? translate(this._details) : this._details;
+  }
+
   get internalCode() {
     return this._internalCode;
   }
@@ -99,6 +108,10 @@ export default class NotificationHelper {
 
   set message(message) {
     this._message = message;
+  }
+
+  set details(details) {
+    this._details = details;
   }
 
   set internalCode(internalCode) {
