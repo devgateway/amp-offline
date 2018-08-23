@@ -22,5 +22,6 @@
   "customHint": "Please enter AMP application URL. You can copy it from the AMP Client download page. Please refer to User Manual for more help.",
   "timeoutError": "Connection timeout. Please check your internet connection.",
   "serverIdentityMissing": "AMP Server identity missing.",
+  "aboutIdentity": "AMP application stores a unique identifier that doesn't change over time. AMP Offline registers AMP identifier during initial setup to ensure that data will be synchronized with the same AMP application to avoid corruption. AMP URLs pointing to an AMP server with no identifier or different indetifier cannot be used.",
   "loadingMessage": "Loading..."
 }

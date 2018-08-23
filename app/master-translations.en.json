@@ -385,6 +385,7 @@
   "urlNotWorking": "AMP Server is unreachable or wrong URL.",
   "serverIdentityMismatch": "AMP Server identity mismatch.",
   "serverIdentityMissing": "AMP Server identity missing.",
+  "aboutIdentity": "AMP application stores a unique identifier that doesn't change over time. AMP Offline registers AMP identifier during initial setup to ensure that data will be synchronized with the same AMP application to avoid corruption. AMP URLs pointing to an AMP server with no identifier or different indetifier cannot be used.",
   "urlChanges": "We have detected changes to the URL for AMP. Please click Open Settings Page to review and make changes.",
   "ampServerIncompatible": "AMP Offline is not compatible with AMP. Please contact the administrator.",
   "ampServerIncompatibleContinueToUse": "AMP Offline is not compatible with AMP. Please contact the administrator. You can continue to use AMP Offline without data request or sync with AMP.",
