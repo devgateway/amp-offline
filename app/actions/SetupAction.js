@@ -10,7 +10,7 @@ import {
   connectivityCheck,
   isValidConnectionByStatus,
   isConnectivityCheckInProgress,
-  getStatusErrorLabel,
+  getStatusNotification,
   getRegisteredServerId,
   getLeastCriticalStatus
 } from './ConnectivityAction';
@@ -22,6 +22,7 @@ import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import { newUrlsDetected } from './SettingAction';
 import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
+import NotificationHelper from '../modules/helpers/NotificationHelper';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -155,7 +156,7 @@ function waitConfigureConnectionInformation(connectionInformation) {
 export function configureAndTestConnectivity(setupConfig) {
   const hasUrls = setupConfig && setupConfig.urls && setupConfig.urls.length;
   if (!hasUrls) {
-    return Promise.reject(translate('wrongSetup'));
+    return Promise.reject(new NotificationHelper({ message: 'wrongSetup' }));
   }
   let lastIndex = 0;
   return setupConfig.urls.reduce((currentPromise, url, index) => {
@@ -179,7 +180,7 @@ export function configureAndTestConnectivity(setupConfig) {
         setupConfig.urls = [goodUrl].concat(setupConfig.urls.filter(u => u !== goodUrl));
         return Promise.resolve(goodUrl);
       }
-      return Promise.reject(translate(getStatusErrorLabel(connectivityStatus, true)));
+      return Promise.reject(getStatusNotification(connectivityStatus, true));
     });
 }
 
