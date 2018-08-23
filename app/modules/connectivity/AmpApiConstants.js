@@ -53,6 +53,15 @@ export const TRANSLATIONS_PARAM = 'translations';
 export const PARAM_AMPOFFLINE_AGENT = 'AMPOffline';
 export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2+json';
 export const LAST_SYNC_TIME_PARAM = 'last-sync-time';
+export const AMP_ERROR_NO_ERROR = 'AMP_ERROR_NO_ERROR';
+export const AMP_ERROR_NOT_AVAILABLE = 'AMP_ERROR_NOT_AVAILABLE';
+export const AMP_ERROR_NO_SERVER_ID = 'AMP_ERROR_NO_SERVER_ID';
+export const AMP_ERROR_SERVER_ID_MISMATCH = 'AMP_ERROR_SERVER_ID_MISMATCH';
+export const AMP_ERROR_NOT_COMPATIBLE = 'AMP_ERROR_NOT_COMPATIBLE';
+export const AMP_ERROR_OFFLINE_DISABLED = 'AMP_ERROR_OFFLINE_DISABLED';
+export const AMP_ERRORS_BY_PRIORITY_ASC = [AMP_ERROR_NO_ERROR, AMP_ERROR_OFFLINE_DISABLED, AMP_ERROR_NOT_COMPATIBLE,
+  AMP_ERROR_SERVER_ID_MISMATCH, AMP_ERROR_NO_SERVER_ID, AMP_ERROR_NOT_AVAILABLE];
+export const AMP_ERRORS_BY_PRIORITY_DESC = AMP_ERRORS_BY_PRIORITY_ASC.slice().reverse();
 
 export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
 export const MAP_TILES_URL = '/gis/map-tiles';
@@ -69,3 +78,9 @@ export const ARCH64_NODE_OS_OPTIONS = new Set(['arm64', 'ppc64', 'x64']);
 export const ARCH64_USER_AGENT_OPTIONS = ['x86_64', 'amd64'];
 
 export const RESPONSE_CHECK_INTERVAL_MS = 100;
+
+export const API_ERROR_TO_AMP_OFFLINE_ERROR_BY_CODE = {
+  '0004': {
+    '(Not allowed) AMP Offline is not compatible': 'ampServerIncompatibleContinueToUse'
+  }
+};

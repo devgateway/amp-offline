@@ -1,6 +1,7 @@
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
 import {
+  AMP_ERRORS_BY_PRIORITY_ASC,
   AMP_OFFLINE_COMPATIBLE,
   AMP_OFFLINE_ENABLED,
   AMP_SERVER_ID,
@@ -17,6 +18,13 @@ import * as CSC from '../utils/constants/ClientSettingsConstants';
 import { configureOnLoad } from './SetupAction';
 import * as Utils from '../utils/Utils';
 import VersionUtils from '../utils/VersionUtils';
+import Notification from '../modules/helpers/NotificationHelper';
+import {
+  NOTIFICATION_ORIGIN_API_GENERAL,
+  NOTIFICATION_SEVERITY_ERROR,
+} from '../utils/constants/ErrorConstants';
+import translate from '../utils/translate';
+import { addFullscreenAlert } from './NotificationAction';
 
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
@@ -53,7 +61,29 @@ export function getRegisteredServerId() {
   return store.getState().ampConnectionStatusReducer.serverId;
 }
 
-export function getStatusErrorLabel(connectivityStatus: ConnectivityStatus, unavailableLabel = 'urlNotWorking') {
+export function compareConnectivityStatus(s1: ConnectivityStatus, s2: ConnectivityStatus) {
+  const error1 = AMP_ERRORS_BY_PRIORITY_ASC.indexOf(s1.ampErrorCode);
+  const error2 = AMP_ERRORS_BY_PRIORITY_ASC.indexOf(s2.ampErrorCode);
+  return error1 - error2;
+}
+
+export function getLeastCriticalStatus(s1: ConnectivityStatus, s2: ConnectivityStatus) {
+  const compareResult = compareConnectivityStatus(s1, s2);
+  if (compareResult > 0) {
+    return s2;
+  }
+  return s1;
+}
+
+export function getLeastCriticalStatusFromList(statuses: Array) {
+  if (statuses && statuses.length) {
+    return statuses.sort(compareConnectivityStatus)[0];
+  }
+  return null;
+}
+
+export function getStatusErrorLabel(connectivityStatus: ConnectivityStatus, isSetup = false) {
+  const unavailableLabel = isSetup ? 'urlNotWorking' : 'AMPUnreachableError';
   if (!connectivityStatus.isAmpAvailable) {
     return unavailableLabel;
   }
@@ -64,7 +94,10 @@ export function getStatusErrorLabel(connectivityStatus: ConnectivityStatus, unav
   if (!connectivityStatus.serverId) {
     return 'serverIdentityMissing';
   }
-  // TODO custom messages for other use cases (e.g. AMPOFFLINE-1079, AMPOFFLINE-1140)
+  if (!connectivityStatus.isAmpCompatible) {
+    return isSetup ? 'ampServerIncompatible' : 'ampServerIncompatibleContinueToUse';
+  }
+  // TODO custom messages for other use cases (e.g. AMPOFFLINE-100, AMPOFFLINE-1140)
   return unavailableLabel;
 }
 
@@ -84,10 +117,10 @@ export function loadConnectionInformation() {
 
 /**
  * Checks and updates the connectivity status
- * @param saveResult if the result must be saved or not
+ * @param isCheckingAlternative if the connectivity check is for testing a different URL
  * @returns ConnectivityStatus
  */
-export function connectivityCheck(saveResult = true) {
+export function connectivityCheck(isCheckingAlternative: boolean = false) {
   logger.log('connectivityCheck');
   store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
   // we should introduce a manager here to keep the actions simple
@@ -102,15 +135,15 @@ export function connectivityCheck(saveResult = true) {
       }
       return ConnectionHelper.doGet({ url, paramsMap });
     })
-    .then(data => _processResult(data, lastConnectivityStatus))
+    .then(data => _processResult(data, lastConnectivityStatus, isCheckingAlternative))
     .catch(error => {
       logger.error(`Couldn't check the connection status. Error: ${error}`);
-      return _processResult(null, lastConnectivityStatus);
+      return _processResult(null, lastConnectivityStatus, isCheckingAlternative);
     })
-    .then(result => (saveResult ? _saveConnectivityStatus(result) : result));
+    .then(result => (isCheckingAlternative ? result : _saveConnectivityStatus(result)));
 }
 
-function _processResult(data, lastConnectivityStatus: ConnectivityStatus) {
+function _processResult(data, lastConnectivityStatus: ConnectivityStatus, isCheckingAlternative: boolean) {
   let status;
   if (!isValidAmpResponse(data)) {
     if (lastConnectivityStatus === undefined) {
@@ -135,6 +168,9 @@ function _processResult(data, lastConnectivityStatus: ConnectivityStatus) {
       data[AMP_SERVER_ID], data[AMP_SERVER_ID_MATCH]);
   }
   store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: status });
+  if (!isCheckingAlternative) {
+    reportCompatibilityError(lastConnectivityStatus, status);
+  }
   return status;
 }
 
@@ -152,6 +188,20 @@ function preProcessLatestAmpOffline(latestAmpOffline) {
 function isValidAmpResponse(response) {
   const keys = (response && response instanceof Object && Object.keys(response)) || null;
   return keys && CONNECTIVITY_RESPONSE_FIELDS.some(field => keys.includes(field));
+}
+
+function reportCompatibilityError(lastConnectivityStatus: ConnectivityStatus, currentStatus: ConnectivityStatus) {
+  if ((!lastConnectivityStatus || lastConnectivityStatus.isAmpCompatible) && !currentStatus.isAmpCompatible) {
+    const notUpgradable = !currentStatus.latestAmpOffline || currentStatus.latestAmpOffline[MANDATORY_UPDATE] === null;
+    if (notUpgradable) {
+      const incompatibilityNotification = new Notification({
+        message: translate('ampServerIncompatibleContinueToUse'),
+        origin: NOTIFICATION_ORIGIN_API_GENERAL,
+        severity: NOTIFICATION_SEVERITY_ERROR
+      });
+      store.dispatch(addFullscreenAlert(incompatibilityNotification));
+    }
+  }
 }
 
 function _getLastConnectivityStatus() {
