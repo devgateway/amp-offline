@@ -169,14 +169,14 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     return this._getUnsyncedContacts(activity).then(unsyncedContacts => {
       if (unsyncedContacts.length) {
         const cNames = unsyncedContacts.map(c => `"${c[CC.NAME] || ''} ${c[CC.LAST_NAME] || ''}"`).join(', ');
-        const error = translate('rejectActivityWhenContactUnsynced').replace('%contacts%', cNames);
+        const error = translate('rejectActivityWhenContactUnsynced2').replace('%contacts%', cNames);
         return Promise.reject(error);
       }
       return this._getUnsyncedResources(activity);
     }).then(unsyncedResources => {
       if (unsyncedResources.length) {
         const rNames = unsyncedResources.map(r => `"${r[RC.WEB_LINK] || r[RC.FILE_NAME]}"`).join(', ');
-        const error = translate('rejectActivityWhenResourceUnsynced').replace('%resources%', rNames);
+        const error = translate('rejectActivityWhenResourceUnsynced2').replace('%resources%', rNames);
         return Promise.reject(error);
       }
       return this._pushActivity(activity);
