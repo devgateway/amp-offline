@@ -18,6 +18,11 @@ const logger = new Logger('Settings Page');
  */
 export default class Settings extends Component {
   static propTypes = {
+    router: PropTypes.object.isRequired,
+    route: PropTypes.object.isRequired,
+    allowNavigationTo: PropTypes.string,
+    confirmToLeave: PropTypes.func.isRequired,
+    triggerPathChange: PropTypes.func.isRequired,
     settingsPageLoaded: PropTypes.func.isRequired,
     isSettingsLoading: PropTypes.bool.isRequired,
     isSettingsLoaded: PropTypes.bool.isRequired,
@@ -43,7 +48,9 @@ export default class Settings extends Component {
   }
 
   componentWillMount() {
+    const { router, route } = this.props;
     this.props.loadSettings();
+    this.unregisterLeaveHook = router.setRouteLeaveHook(route, this.onRouterWillLeave.bind(this));
   }
 
   componentDidMount() {
@@ -51,15 +58,20 @@ export default class Settings extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isSettingsLoaded, settings, urlTestResult, newUrls } = nextProps;
+    const { isSettingsLoaded, settings, urlTestResult, newUrls, allowNavigationTo, triggerPathChange } = nextProps;
     const { urlAvailable } = this.state;
     let { hasNewUrls } = this.state;
+    if (allowNavigationTo) {
+      this.props.newUrlsProcessed();
+      triggerPathChange(allowNavigationTo);
+    }
     if (isSettingsLoaded && settings && !this.state.settings) {
       const urlSetting = settings.find(s => s.id === CSC.SETUP_CONFIG);
       if (newUrls) {
         urlSetting.value.urls = newUrls;
         hasNewUrls = true;
       }
+      this.initialUrls = new Set(urlSetting.value.urls);
       urlSetting.value.urls.forEach(url => { urlAvailable.set(url, false); });
       this.setState({ settings, hasNewUrls });
     }
@@ -70,7 +82,20 @@ export default class Settings extends Component {
   }
 
   componentWillUnmount() {
-    this.props.newUrlsProcessed();
+    this.unregisterLeaveHook();
+  }
+
+  onRouterWillLeave(nextLocation) {
+    const nextPath = nextLocation.pathname;
+    logger.log(`nextPath=${nextPath}`);
+    if (this.didSettingsChance()) {
+      if (this.props.allowNavigationTo === nextPath) {
+        return true;
+      }
+      this.props.confirmToLeave(nextPath);
+      return false;
+    }
+    return true;
   }
 
   onSettingChange(settingId, newSetting) {
@@ -90,6 +115,12 @@ export default class Settings extends Component {
       }
     }
     this.setState({ settings, urlAvailable });
+  }
+
+  didSettingsChance() {
+    const { hasNewUrls, settings } = this.state;
+    const urls = settings.find(s => s.id === CSC.SETUP_CONFIG).value.urls;
+    return hasNewUrls || this.initialUrls.size !== urls.length || urls.some(url => !this.initialUrls.has(url));
   }
 
   isAtLeastOneValidUrl() {

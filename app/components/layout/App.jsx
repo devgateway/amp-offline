@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Logger from '../../modules/util/LoggerManager';
 import styles from './App.css';
 import Footer from './Footer';
@@ -19,8 +20,12 @@ export default class App extends Component {
     workspaceReducer: PropTypes.object.isRequired,
     userReducer: PropTypes.object.isRequired,
     loginReducer: PropTypes.object.isRequired,
-    translationReducer: PropTypes.object.isRequired
+    translationReducer: PropTypes.object.isRequired,
     /* eslint-enable react/forbid-prop-types */
+    /* eslint-disable react/no-unused-prop-types */
+    goToPath: PropTypes.func.isRequired,
+    appReducer: PropTypes.object.isRequired,
+    /* eslint-enable react/no-unused-prop-types */
   };
 
   static contextTypes = {
@@ -31,6 +36,13 @@ export default class App extends Component {
     super(props);
     this.disableUpdates = +process.env.DISABLE_UPDATE;
     this.isCheckUrlChanges = IS_CHECK_URL_CHANGES;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { appReducer, goToPath } = nextProps;
+    if (appReducer.pathToNavigate) {
+      goToPath(appReducer.pathToNavigate);
+    }
   }
 
   render() {
