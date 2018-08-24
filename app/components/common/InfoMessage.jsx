@@ -10,7 +10,7 @@ const logger = new Logger('Info message');
  */
 export default class InfoMessage extends Component {
   static propTypes = {
-    message: PropTypes.string.isRequired,
+    message: PropTypes.object.isRequired,
     type: PropTypes.oneOf(['success', 'info']),
     timeout: PropTypes.number
   };

@@ -7,7 +7,7 @@ import SyncUpManager from '../modules/syncup/SyncUpManager';
 import Logger from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import { connectivityCheck, getStatusErrorLabel, isAmpAccessible } from './ConnectivityAction';
+import { connectivityCheck, getStatusNotification, isAmpAccessible } from './ConnectivityAction';
 import { ERROR_CODE_ACCESS_DENIED, ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
 
@@ -46,7 +46,7 @@ export function startSyncUpIfConnectionAvailable() {
     if (isAmpAccessible(status)) {
       return startSyncUp();
     }
-    store.dispatch(syncConnectionUnavailable(translate(getStatusErrorLabel(status))));
+    store.dispatch(syncConnectionUnavailable(getStatusNotification(status).message));
     return null;
   });
 }

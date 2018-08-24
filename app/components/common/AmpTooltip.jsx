@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
+import * as styles from './CommonStyles.css';
 
 const logger = new Logger('AmpTooltip');
 
@@ -33,7 +34,7 @@ export default class AmpTooltip extends Component {
 
   render() {
     const { id, tooltip, content, className, placement } = this.props;
-    const tooltipElement = <Tooltip id={id}>{tooltip}</Tooltip>;
+    const tooltipElement = <Tooltip id={id}><span className={styles.justify}>{tooltip}</span></Tooltip>;
     return (<OverlayTrigger placement={placement} overlay={tooltipElement}>
       <span className={className}>
         {content}

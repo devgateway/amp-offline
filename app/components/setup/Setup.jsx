@@ -6,13 +6,15 @@ import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import * as styles from './Setup.css';
 import { LOGIN_URL, OTHER_ID } from '../../utils/Constants';
 import * as URLUtils from '../../utils/URLUtils';
-import ErrorMessage from '../common/ErrorMessage';
 import AFOption from '../activity/edit/components/AFOption';
 import AFDropDown from '../activity/edit/components/AFDropDown';
 import translate from '../../utils/translate';
 import AFLabel from '../activity/edit/components/AFLabel';
 import InProgress from '../common/InProgress';
 import SetupManager from '../../modules/setup/SetupManager';
+import Notification from '../../modules/helpers/NotificationHelper';
+import SimpleNotification from '../common/SimpleNotification';
+import ErrorMessage from '../common/ErrorMessage';
 
 /**
  * First time application setup
@@ -31,7 +33,7 @@ export default class Setup extends Component {
     defaultLang: PropTypes.string.isRequired,
     languageList: PropTypes.array.isRequired,
     /* eslint-enable react/no-unused-prop-types */
-    errorMessage: PropTypes.string,
+    errorMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Notification)]),
     setupComplete: PropTypes.func.isRequired
   };
 
@@ -138,6 +140,11 @@ export default class Setup extends Component {
     </div>);
   }
 
+  renderErrorMessage(errorMessage) {
+    return errorMessage instanceof Notification ?
+      <SimpleNotification notification={errorMessage} /> : <ErrorMessage message={translate(errorMessage)} />;
+  }
+
   render() {
     const { errorMessage, isSetupOptionsLoading, isSetupOptionsLoadFailed, isSetupComplete, loadSetupOptions } =
       this.props;
@@ -166,7 +173,7 @@ export default class Setup extends Component {
         </span>
       </div>
       <div className={styles.row}>
-        {displayError && <ErrorMessage message={displayError} />}
+        {displayError && this.renderErrorMessage(displayError)}
       </div>
       <div className={styles.row} hidden={hideProgress}>
         <InProgress title={this.getLoadingMessage()} />
