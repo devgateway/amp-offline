@@ -11,7 +11,8 @@ import {
   isValidConnectionByStatus,
   isConnectivityCheckInProgress,
   getStatusErrorLabel,
-  getRegisteredServerId
+  getRegisteredServerId,
+  getLeastCriticalStatus
 } from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
@@ -148,7 +149,7 @@ export function testUrlResultProcessed(url) {
 function waitConfigureConnectionInformation(connectionInformation) {
   return Utils.waitWhile(isConnectivityCheckInProgress, RESPONSE_CHECK_INTERVAL_MS)
     .then(() => configureConnectionInformation(connectionInformation))
-    .then(() => connectivityCheck(false));
+    .then(() => connectivityCheck(true));
 }
 
 export function configureAndTestConnectivity(setupConfig) {
@@ -178,20 +179,39 @@ export function configureAndTestConnectivity(setupConfig) {
         setupConfig.urls = [goodUrl].concat(setupConfig.urls.filter(u => u !== goodUrl));
         return Promise.resolve(goodUrl);
       }
-      return Promise.reject(translate(getStatusErrorLabel(connectivityStatus)));
+      return Promise.reject(translate(getStatusErrorLabel(connectivityStatus, true)));
     });
 }
 
 function testAMPUrl(url) {
+  // since we try to fix the url automatically, we will track the result of the relevant URL to report if none work
+  let relevantUrlResult;
   return URLUtils.getPossibleUrlSetupFixes(url).reduce((currentPromise, fixedUrl) =>
       currentPromise.then(result => {
+        relevantUrlResult = getRelevantResult(relevantUrlResult, result);
         if (isValidConnectionByStatus(result && result.connectivityStatus)) {
           return Promise.resolve(result);
         }
         return waitConfigureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl))
           .then(connectivityStatus => ({ connectivityStatus, fixedUrl }));
       })
-    , Promise.resolve());
+    , Promise.resolve())
+    .then(result => {
+      relevantUrlResult = getRelevantResult(relevantUrlResult, result);
+      if (isValidConnectionByStatus(result && result.connectivityStatus) || !relevantUrlResult) {
+        return result;
+      }
+      return relevantUrlResult;
+    });
+}
+
+function getRelevantResult(r1, r2) {
+  if (r1 && r2) {
+    const s1 = r1.connectivityStatus;
+    const s2 = r2.connectivityStatus;
+    return getLeastCriticalStatus(s1, s2) === s1 ? r1 : r2;
+  }
+  return r1 || r2;
 }
 
 export function loadSetupOptions() {

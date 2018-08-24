@@ -1,3 +1,4 @@
+import * as ApiC from './AmpApiConstants';
 /**
  * Connectivity status
  *
@@ -80,6 +81,18 @@ export default class ConnectivityStatus {
    */
   get serverIdMatch() {
     return this._serverIdMatch;
+  }
+
+  /**
+   * @return {string} the AMP connectivity error code
+   */
+  get ampErrorCode() {
+    if (!this.isAmpAvailable) return ApiC.AMP_ERROR_NOT_AVAILABLE;
+    if (!this.serverId) return ApiC.AMP_ERROR_NO_SERVER_ID;
+    if (!this.serverIdMatch) return ApiC.AMP_ERROR_SERVER_ID_MISMATCH;
+    if (!this.isAmpCompatible) return ApiC.AMP_ERROR_NOT_COMPATIBLE;
+    if (!this.isAmpClientEnabled) return ApiC.AMP_ERROR_OFFLINE_DISABLED;
+    return ApiC.AMP_ERROR_NO_ERROR;
   }
 }
 

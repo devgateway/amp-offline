@@ -16,6 +16,8 @@
   "setupFor": "Configurer pour",
   "wrongSetup": "Paramètres de configuration du pays incorrects. Veuillez réessayer.",
   "urlNotWorking": "Serveur PGA inaccessible ou URL erronée.",
+  "ampServerIncompatible": "MGAE Hors Ligne n'est pas compatible avec le MGAE. Veuillez contacter l'administrateur.",
+  "ampServerIncompatibleContinueToUse": "MGAE Hors Ligne n'est pas compatible avec le MGAE. Veuillez contacter l'administrateur. Vous pouvez continuer à utiliser MGAE Hors Ligne sans demande de données ni synchronisation avec le MGAE.",
   "noConnectionToRegistry": "L'application Répertoire PGA est inacessible. Veuillez choisir l'option 'Autre' pour définir l'URL directement ou essayer de recharger la liste des options des pays.",
   "customHint": "Veuillez saisir l'URL de l'application PGA. Vous pouvez le copier à partir de la page de téléchargement du client PGA. Veuillez vous reporter au manuel de l'utilisateur pour plus d'aide.",
   "timeoutError": "Délai de connection dépassé. Vérifiez votre connexion Internet.",

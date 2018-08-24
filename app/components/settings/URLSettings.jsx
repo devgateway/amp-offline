@@ -54,7 +54,7 @@ class URLSettings extends Component {
     }
     return (<div>
       <AmpTooltip tooltip={tooltip} content={content} />
-      <div>{availability.errorMessage}</div>
+      <div className={settingsStyle.urlError}>{availability.errorMessage}</div>
     </div>);
   }
 
