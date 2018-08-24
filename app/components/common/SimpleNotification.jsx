@@ -28,7 +28,7 @@ export default class SimpleNotification extends Component {
   render() {
     const { message, details, severity } = this.props.notification;
     const infoTooltip = details ? <InfoTooltip tooltip={details} /> : null;
-    const displayMessage = infoTooltip ? <span><span>{message}</span>{infoTooltip}</span> : message;
+    const displayMessage = infoTooltip ? <span><span>{message}</span>{infoTooltip}</span> : <span>{message}</span>;
     if (this.props.asSimpleText) {
       return displayMessage;
     }
