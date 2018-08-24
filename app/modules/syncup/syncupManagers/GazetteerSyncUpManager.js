@@ -22,16 +22,8 @@ export default class GazetteerSyncUpManager extends AbstractAtomicSyncUpManager 
 
   doAtomicSyncUp() {
     logger.debug('doAtomicSyncUp');
-    if (!this.checkIfGazetteerExist()) {
-      return ConnectionHelper.doGet({ url: GAZETTEER_URL, shouldRetry: true }).then((locations) => (
-        GazetteerHelper.saveOrUpdateLocationCollection(locations)
-      ));
-    } else {
-      return Promise.resolve();
-    }
-  }
-
-  checkIfGazetteerExist() {
-    return FileManager.existsSync(DB_FILE_PREFIX, `${COLLECTION_GAZETTEER}${DB_FILE_EXTENSION}`);
+    return ConnectionHelper.doGet({ url: GAZETTEER_URL, shouldRetry: true }).then((locations) => (
+      GazetteerHelper.saveOrUpdateLocationCollection(locations)
+    ));
   }
 }
