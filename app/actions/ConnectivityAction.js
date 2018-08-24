@@ -82,23 +82,30 @@ export function getLeastCriticalStatusFromList(statuses: Array) {
   return null;
 }
 
-export function getStatusErrorLabel(connectivityStatus: ConnectivityStatus, isSetup = false) {
+/**
+ * Converts connectivity status to NotificationHelper message
+ * @param connectivityStatus
+ * @param isSetup in setup mode some status is handled with a different message
+ * @return {NotificationHelper}
+ */
+export function getStatusNotification(connectivityStatus: ConnectivityStatus, isSetup = false) {
   const unavailableLabel = isSetup ? 'urlNotWorking' : 'AMPUnreachableError';
-  if (!connectivityStatus.isAmpAvailable) {
-    return unavailableLabel;
-  }
   const registeredServerId = getRegisteredServerId();
-  if (registeredServerId && !connectivityStatus.serverIdMatch) {
-    return 'serverIdentityMismatch';
-  }
-  if (!connectivityStatus.serverId) {
-    return 'serverIdentityMissing';
-  }
-  if (!connectivityStatus.isAmpCompatible) {
-    return isSetup ? 'ampServerIncompatible' : 'ampServerIncompatibleContinueToUse';
+  let message = unavailableLabel;
+  let details;
+  if (!connectivityStatus.isAmpAvailable) {
+    message = unavailableLabel;
+  } else if (registeredServerId && !connectivityStatus.serverIdMatch) {
+    message = 'serverIdentityMismatch';
+    details = 'aboutIdentity';
+  } else if (!connectivityStatus.serverId) {
+    message = 'serverIdentityMissing';
+    details = 'aboutIdentity';
+  } else if (!connectivityStatus.isAmpCompatible) {
+    message = isSetup ? 'ampServerIncompatible' : 'ampServerIncompatibleContinueToUse';
   }
   // TODO custom messages for other use cases (e.g. AMPOFFLINE-100, AMPOFFLINE-1140)
-  return unavailableLabel;
+  return new Notification({ message, details });
 }
 
 export function configureConnectionInformation(connectionInformation) {

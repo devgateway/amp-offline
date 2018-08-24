@@ -16,20 +16,24 @@ export default class NotificationHelper {
    * The severity defines if is information, a warning or an error (default).
    *
    * @param message
+   * @param details use this to add more details that need to be used separately from original message (e.g. as tooltip)
    * @param origin
    * @param errorCode
    * @param errorObject
    * @param translateMsg translate the message or not (default true for now, since was used this since AMPOFFLINE-122)
+   * @param translateDetails if to translate the details or not
    * @param severity
    */
   constructor({
-                message, origin, errorCode, errorObject, translateMsg = true,
+                message, details, origin, errorCode, errorObject, translateMsg = true, translateDetails = true,
                 severity = constants.NOTIFICATION_SEVERITY_ERROR
               }) {
     logger.log('constructor');
     this.translateMsg = translateMsg;
+    this.translateDetails = translateDetails;
     if (errorObject) {
       this.message = errorObject.message;
+      this.details = errorObject.details;
       this.internalCode = errorObject.internalCode;
       this.origin = errorObject.origin;
       this.severity = errorObject.severity;
@@ -39,6 +43,7 @@ export default class NotificationHelper {
       if (message) {
         this.message = this.processMessageParams(message);
       }
+      this.details = details;
       this.severity = severity;
       if (origin) {
         this.origin = origin;
@@ -56,6 +61,7 @@ export default class NotificationHelper {
       if (message instanceof Error) {
         retMessage = message.message;
         logger.error(message.stack);
+        this.translateMsg = false;
       } else if (message instanceof Object) {
         const fields = Object.keys(message);
         if (fields && message[fields[0]] && !isNaN(fields[0])) {
@@ -63,16 +69,18 @@ export default class NotificationHelper {
         } else {
           retMessage = stringifyObject(message, { inlineCharacterLimit: 200 });
         }
+        this.translateMsg = false;
       } else {
         // In order to translate some error messages from the API we need to sanitize it first.
         if (fromAPI && message.charAt(0) === '(' && message.charAt(message.length - 1) === ')') {
           message = message.substring(1, message.length - 1);
         }
-        retMessage = this.translateMsg ? translate(message) : message;
+        retMessage = message;
       }
     } catch (err) {
       logger.warn(err);
       retMessage = stringifyObject(message());
+      this.translateMsg = false;
     }
     return retMessage;
   }
@@ -82,7 +90,11 @@ export default class NotificationHelper {
   }
 
   get message() {
-    return this._message;
+    return this._message && this.translateMsg ? translate(this._message) : this._message;
+  }
+
+  get details() {
+    return this._details && this.translateDetails ? translate(this._details) : this._details;
   }
 
   get internalCode() {
@@ -99,6 +111,10 @@ export default class NotificationHelper {
 
   set message(message) {
     this._message = message;
+  }
+
+  set details(details) {
+    this._details = details;
   }
 
   set internalCode(internalCode) {

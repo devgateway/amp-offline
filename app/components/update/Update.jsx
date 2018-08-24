@@ -3,8 +3,10 @@ import * as PropTypes from 'prop-types';
 import { Modal } from 'react-bootstrap';
 import translate from '../../utils/translate';
 import ConnectivityStatus from '../../modules/connectivity/ConnectivityStatus';
-import ErrorMessage from '../common/ErrorMessage';
 import InProgress from '../common/InProgress';
+import NotificationHelper from '../../modules/helpers/NotificationHelper';
+import SimpleNotification from '../common/SimpleNotification';
+import ErrorMessage from '../common/ErrorMessage';
 
 /**
  * Update screen to download the installer and proceed with the update
@@ -13,7 +15,7 @@ import InProgress from '../common/InProgress';
  */
 export default class Update extends Component {
   static propTypes = {
-    errorMessage: PropTypes.string,
+    errorMessage: PropTypes.oneOfType([PropTypes.instanceOf(NotificationHelper), PropTypes.string]),
     downloadingUpdate: PropTypes.bool.isRequired,
     downloadedUpdate: PropTypes.bool.isRequired,
     installingUpdate: PropTypes.bool.isRequired,
@@ -23,6 +25,11 @@ export default class Update extends Component {
     progressData: PropTypes.object,
     connectivityStatus: PropTypes.instanceOf(ConnectivityStatus).isRequired
   };
+
+  static renderError(errorMessage) {
+    return errorMessage instanceof NotificationHelper ?
+      <SimpleNotification notification={errorMessage} /> : <ErrorMessage message={errorMessage} />;
+  }
 
   constructor(props) {
     super(props);
@@ -68,7 +75,7 @@ export default class Update extends Component {
     const anyErrorMessage = errorMessage || this.state.errorMessage;
     return (
       <div>
-        {anyErrorMessage && <ErrorMessage message={anyErrorMessage} />}
+        {anyErrorMessage && Update.renderError(anyErrorMessage)}
         <Modal show={!anyErrorMessage}>
           <Modal.Header>
             <Modal.Title>{translate('updateInProgress')}</Modal.Title>

@@ -15,6 +15,8 @@ import * as URLUtils from '../../utils/URLUtils';
 import { testUrlByKeepingCurrentSetup, testUrlResultProcessed } from '../../actions/SetupAction';
 import URLInsertModal from './URLInsertModal';
 import settingsStyle from './Settings.css';
+import SimpleNotification from '../common/SimpleNotification';
+import Notification from '../../modules/helpers/NotificationHelper';
 
 const logger = new Logger('List Setting');
 
@@ -39,6 +41,16 @@ class URLSettings extends Component {
     return <URLInsertModal {...props} />;
   }
 
+  static getUrlError(errorMessage) {
+    const errorEl = errorMessage instanceof Notification ?
+      <SimpleNotification notification={errorMessage} asSimpleText /> : translate(errorMessage);
+    return (
+      <div className={settingsStyle.urlError}>
+        {errorEl}
+      </div>
+    );
+  }
+
   static availabilityFormatter(availability) {
     let tooltip;
     let content;
@@ -49,12 +61,12 @@ class URLSettings extends Component {
       tooltip = translate('connectionUp');
       content = <Glyphicon glyph="glyphicon glyphicon-ok-circle text-success" />;
     } else {
-      tooltip = translate('connectionDown');
+      tooltip = availability.errorMessage.message || translate('connectionDown');
       content = <Glyphicon glyph="glyphicon glyphicon-remove-circle text-danger" />;
     }
     return (<div>
       <AmpTooltip tooltip={tooltip} content={content} />
-      <div className={settingsStyle.urlError}>{availability.errorMessage}</div>
+      {availability.errorMessage && URLSettings.getUrlError(availability.errorMessage)}
     </div>);
   }
 
