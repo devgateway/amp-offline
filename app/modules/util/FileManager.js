@@ -114,7 +114,7 @@ const FileManager = {
    */
   writeDataFile(data, ...pathParts) {
     const fullPath = this.getFullPath(...pathParts);
-    this.deleteFile(fullPath);
+    this.deleteFileSync(fullPath);
     return new Promise((resolve, reject) => fs.writeFile(fullPath, data, (err) => {
       if (err) {
         return reject(err);
@@ -130,7 +130,7 @@ const FileManager = {
    */
   writeDataFileSync(data, ...pathParts) {
     const fullPath = this.getFullPath(...pathParts);
-    this.deleteFile(fullPath);
+    this.deleteFileSync(fullPath);
     fs.writeFileSync(fullPath, data);
   },
 
@@ -230,7 +230,7 @@ const FileManager = {
    * Deletes specified path synchronously
    * @param fullPath
    */
-  deleteFile(fullPath) {
+  deleteFileSync(fullPath) {
     if (fs.existsSync(fullPath)) {
       fs.unlinkSync(fullPath);
     }

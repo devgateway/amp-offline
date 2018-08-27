@@ -19,6 +19,7 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
 
   doAtomicSyncUp() {
     return new Promise((resolve, reject) => {
+      MapTilesSyncUpManager.cleanup();
       FileManager.createDataDir(ASSETS_DIRECTORY, MAP_TILES_DIR);
       const start = new Date();
       const writeStream = FileManager.createWriteStream(ASSETS_DIRECTORY, TILES_ZIP_FILE);
@@ -30,9 +31,7 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
         return extract(zipFile, { dir }, MapTilesSyncUpManager.afterExtract.bind(null, resolve, reject));
       }).catch((error) => {
         logger.error(error);
-        // Dont reject in case of error because not all servers have map-tiles.zip document available.
-        logger.warn('No map-tiles.zip in this country.');
-        return resolve();
+        return reject(error);
       });
     });
   }
@@ -42,7 +41,11 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
       logger.error(e);
       return reject();
     }
-    FileManager.deleteFile(FileManager.getFullPath(ASSETS_DIRECTORY, TILES_ZIP_FILE));
     return resolve();
+  }
+
+  static cleanup() {
+    FileManager.deleteFileSync(FileManager.getFullPath(ASSETS_DIRECTORY, TILES_ZIP_FILE));
+    FileManager.rmdirSync(ASSETS_DIRECTORY, MAP_TILES_DIR);
   }
 }
