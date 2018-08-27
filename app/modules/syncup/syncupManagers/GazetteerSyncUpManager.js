@@ -1,14 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import Logger from '../../util/LoggerManager';
-import {
-  DB_FILE_PREFIX,
-  SYNCUP_TYPE_GAZETTEER,
-  COLLECTION_GAZETTEER,
-  DB_FILE_EXTENSION
-} from '../../../utils/Constants';
+import { SYNCUP_TYPE_GAZETTEER } from '../../../utils/Constants';
 import { GAZETTEER_URL } from '../../connectivity/AmpApiConstants';
-import FileManager from '../../util/FileManager';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import GazetteerHelper from '../../helpers/GazetteerHelper';
 
