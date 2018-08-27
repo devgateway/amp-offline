@@ -17,7 +17,7 @@ export default class GazetteerSyncUpManager extends AbstractAtomicSyncUpManager 
   doAtomicSyncUp() {
     logger.debug('doAtomicSyncUp');
     return ConnectionHelper.doGet({ url: GAZETTEER_URL, shouldRetry: true }).then((locations) => (
-      GazetteerHelper.saveOrUpdateLocationCollection(locations)
+      GazetteerHelper.replaceAllLocations(locations)
     ));
   }
 }
