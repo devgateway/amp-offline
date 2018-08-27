@@ -186,7 +186,6 @@ export default class SyncUpRunner {
     body['amp-ids'] = this._ampIds;
     return ConnectionHelper.doPost({ url: SYNC_URL, body, shouldRetry: true }).then((changes) => {
       this._currentTimestamp = changes[SYNCUP_DATETIME_FIELD];
-      logger.warn(changes);
       return changes;
     });
   }
