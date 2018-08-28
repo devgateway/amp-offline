@@ -19,24 +19,32 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
 
   doAtomicSyncUp() {
     return new Promise((resolve, reject) => {
-      MapTilesSyncUpManager.cleanup();
-      FileManager.createDataDir(ASSETS_DIRECTORY, MAP_TILES_DIR);
-      const start = new Date();
-      const writeStream = FileManager.createWriteStream(ASSETS_DIRECTORY, TILES_ZIP_FILE);
-      return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true, writeStream }).then(() => {
-        logger.info(`Tiles downloaded in: ${new Date() - start}ms`);
-        // Extract .zip file using absolute paths.
-        const zipFile = FileManager.getAbsolutePath(ASSETS_DIRECTORY, TILES_ZIP_FILE);
-        const dir = FileManager.getAbsolutePath(ASSETS_DIRECTORY);
-        return extract(zipFile, { dir }, MapTilesSyncUpManager.afterExtract.bind(null, resolve, reject));
-      }).catch((error) => {
-        logger.error(error);
-        return reject(error);
-      });
+      // Just in case something fails when dealing with file/dir operations.
+      try {
+        MapTilesSyncUpManager.cleanup(true);
+        FileManager.createDataDir(ASSETS_DIRECTORY, MAP_TILES_DIR);
+        const start = new Date();
+        const writeStream = FileManager.createWriteStream(ASSETS_DIRECTORY, TILES_ZIP_FILE);
+        return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true, writeStream }).then(() => {
+          logger.info(`Tiles downloaded in: ${new Date() - start}ms`);
+          // Extract .zip file using absolute paths.
+          const zipFile = FileManager.getAbsolutePath(ASSETS_DIRECTORY, TILES_ZIP_FILE);
+          const dir = FileManager.getAbsolutePath(ASSETS_DIRECTORY);
+          return extract(zipFile, { dir }, MapTilesSyncUpManager.afterExtract.bind(null, resolve, reject));
+        }).catch((error) => {
+          // TODO:
+          logger.error(error);
+          return reject(error);
+        });
+      } catch (e) {
+        logger.error(e);
+        return reject(e);
+      }
     });
   }
 
   static afterExtract(resolve, reject, e) {
+    MapTilesSyncUpManager.cleanup(false);
     if (e) {
       logger.error(e);
       return reject();
@@ -44,8 +52,10 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
     return resolve();
   }
 
-  static cleanup() {
+  static cleanup(dirToo) {
     FileManager.deleteFileSync(FileManager.getFullPath(ASSETS_DIRECTORY, TILES_ZIP_FILE));
-    FileManager.rmdirSync(ASSETS_DIRECTORY, MAP_TILES_DIR);
+    if (dirToo) {
+      FileManager.rmNotEmptyDirSync(ASSETS_DIRECTORY, MAP_TILES_DIR);
+    }
   }
 }

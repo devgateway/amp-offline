@@ -3,6 +3,7 @@ import os from 'os';
 import path from 'path';
 import mimeTypes from 'mime-types';
 import readChunk from 'read-chunk';
+import rimraf from 'rimraf';
 import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
@@ -239,6 +240,11 @@ const FileManager = {
   rmdirSync(...pathParts) {
     const fullPath = this.getFullPath(...pathParts);
     fs.rmdirSync(fullPath);
+  },
+
+  rmNotEmptyDirSync(...pathParts) {
+    const fullPath = this.getFullPath(...pathParts);
+    rimraf.sync(fullPath);
   },
 
   /**
