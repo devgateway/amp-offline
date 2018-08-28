@@ -32,7 +32,6 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
           const dir = FileManager.getAbsolutePath(ASSETS_DIRECTORY);
           return extract(zipFile, { dir }, MapTilesSyncUpManager.afterExtract.bind(null, resolve, reject));
         }).catch((error) => {
-          // TODO:
           logger.error(error);
           return reject(error);
         });
