@@ -120,7 +120,8 @@ const TranslationManager = {
 
   removeLanguageFile(lang) {
     logger.log('removeLanguageFile');
-    FileManager.deleteFileSync(FileManager.getFullPath(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
+    FileManager.deleteFileSync(FileManager.getFullPath(FS_LOCALES_DIRECTORY,
+      `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
   }
 };
 
