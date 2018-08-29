@@ -270,7 +270,7 @@ function getAmpRegistrySetting(setupConfigSetting) {
 }
 
 function isSettingForAmp(registrySetting, serverId, iso2) {
-  if (serverId && registrySetting[AMP_SERVER_ID]) {
+  if (serverId) {
     return registrySetting[AMP_SERVER_ID] === serverId;
   }
   return registrySetting.iso2 && iso2 && (registrySetting.iso2.toLowerCase() === iso2);
