@@ -19,7 +19,10 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
 
   doAtomicSyncUp() {
     return new Promise((resolve, reject) => {
-      if (!this.checkIfTilesExist()) {
+      // Just in case something fails when dealing with file/dir operations.
+      try {
+        MapTilesSyncUpManager.cleanup(true);
+        FileManager.createDataDir(ASSETS_DIRECTORY, MAP_TILES_DIR);
         const start = new Date();
         const writeStream = FileManager.createWriteStream(ASSETS_DIRECTORY, TILES_ZIP_FILE);
         return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true, writeStream }).then(() => {
@@ -27,28 +30,31 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
           // Extract .zip file using absolute paths.
           const zipFile = FileManager.getAbsolutePath(ASSETS_DIRECTORY, TILES_ZIP_FILE);
           const dir = FileManager.getAbsolutePath(ASSETS_DIRECTORY);
-          return extract(zipFile, { dir }, this.afterExtract.bind(null, resolve, reject));
-        }).catch(() => {
-          // Dont reject in case of error because not all servers have map-tiles.zip document available.
-          logger.warn('No map-tiles.zip in this country.');
-          return resolve();
+          return extract(zipFile, { dir }, MapTilesSyncUpManager.afterExtract.bind(null, resolve, reject));
+        }).catch((error) => {
+          logger.error(error);
+          return reject(error);
         });
-      } else {
-        return resolve();
+      } catch (e) {
+        logger.error(e);
+        return reject(e);
       }
     });
   }
 
-  checkIfTilesExist() {
-    return FileManager.existsSync(ASSETS_DIRECTORY, MAP_TILES_DIR);
-  }
-
-  afterExtract(resolve, reject, e) {
+  static afterExtract(resolve, reject, e) {
+    MapTilesSyncUpManager.cleanup(false);
     if (e) {
       logger.error(e);
       return reject();
     }
-    FileManager.deleteFile(FileManager.getFullPath(ASSETS_DIRECTORY, TILES_ZIP_FILE));
     return resolve();
+  }
+
+  static cleanup(dirToo) {
+    FileManager.deleteFileSync(FileManager.getFullPath(ASSETS_DIRECTORY, TILES_ZIP_FILE));
+    if (dirToo) {
+      FileManager.rmNotEmptyDirSync(ASSETS_DIRECTORY, MAP_TILES_DIR);
+    }
   }
 }

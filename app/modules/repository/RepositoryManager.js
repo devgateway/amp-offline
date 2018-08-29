@@ -56,7 +56,7 @@ const RepositoryManager = {
       } if (stat.isFile()) {
         // FILE
         if (canDelete) {
-          FileManager.deleteFile(fullPath);
+          FileManager.deleteFileSync(fullPath);
         }
       } else {
         // DIR
@@ -158,7 +158,7 @@ const RepositoryManager = {
       return;
     }
     const fullFilePath = FileManager.getFullPath(REPOSITORY_DIR, relativePath);
-    FileManager.deleteFile(fullFilePath);
+    FileManager.deleteFileSync(fullFilePath);
 
     let dirsToCheck = FileManager.splitPath(relativePath).filter(p => p);
     while (dirsToCheck && dirsToCheck.length > 1) {
