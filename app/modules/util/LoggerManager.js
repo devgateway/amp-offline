@@ -26,7 +26,7 @@ export default class LoggerManager {
         .sort()
         .reverse()
         .slice(NR_LOG_FILES)
-        .forEach(filename => FileManager.deleteFile(path.join(logDirFullPath, filename)));
+        .forEach(filename => FileManager.deleteFileSync(path.join(logDirFullPath, filename)));
 
       const date = new Date();
       let file = `${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;

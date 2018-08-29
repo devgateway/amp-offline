@@ -18,7 +18,7 @@ export default class UpdateManager {
     logger.log('downloadInstaller');
     const installerTmpFile = FileManager.getFullPath(UPDATES_DIR, UPDATE_TMP_FILE);
     FileManager.createDataDir(UPDATES_DIR);
-    FileManager.deleteFile(installerTmpFile);
+    FileManager.deleteFileSync(installerTmpFile);
     const writeStream = FileManager.createWriteStream(UPDATES_DIR, UPDATE_TMP_FILE);
     return ConnectionHelper.doGet({
       url: DOWNLOAD_UPDATE_BINARY_URL,

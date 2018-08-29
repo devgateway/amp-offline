@@ -76,6 +76,11 @@ const GazetteerHelper = {
     logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
     return DatabaseManager.removeAll(idsFilter, COLLECTION_GAZETTEER);
+  },
+
+  replaceAllLocations(locations) {
+    logger.log('replaceAllLocations');
+    return DatabaseManager.replaceCollection(locations, COLLECTION_GAZETTEER);
   }
 };
 
