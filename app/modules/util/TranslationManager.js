@@ -53,6 +53,24 @@ const TranslationManager = {
           FileManager.copyDataFileSync(fullFileName, FS_LOCALES_DIRECTORY, matches[0]);
         }
       });
+    } else {
+      /* To fix AMPOFFLINE-1195 we need to add any new {key|text} pair from master-translations.en.json
+      to the files in FS_LOCALES_DIRECTORY */
+      const localTranslationFilePath = FileManager.getFullPath(FS_LOCALES_DIRECTORY);
+      const masterContent = JSON.parse(FileManager.readTextDataFileSync(masterTranslationsFileName));
+      FileManager.readdirSyncFullPath(localTranslationFilePath).forEach(tmpTrnFileName => {
+        const matches = tmpTrnFileName.match(/^((translations\.)([a-z]{2})(.json))/);
+        if (matches) {
+          const localContent = JSON.parse(FileManager.readTextDataFileSync(localTranslationFilePath, tmpTrnFileName));
+          Object.keys(masterContent).forEach(k => {
+            // Only add new messages.
+            if (!localContent[k]) {
+              localContent[k] = masterContent[k];
+            }
+          });
+          FileManager.writeDataFileSync(JSON.stringify(localContent), localTranslationFilePath, tmpTrnFileName);
+        }
+      });
     }
   },
 
