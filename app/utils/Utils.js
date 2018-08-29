@@ -246,6 +246,10 @@ const Utils = {
   compareWithCollate(text1, text2, collator) {
     collator = collator || { sensitivity: 'base', ignorePunctuation: true };
     return new Intl.Collator('us', collator).compare(text1, text2);
+  },
+
+  arrayFlatMap(array: Array) {
+    return array.reduce((result, elem) => result.concat(elem), []);
   }
 };
 

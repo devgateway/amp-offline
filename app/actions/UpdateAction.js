@@ -2,13 +2,13 @@ import store from '../index';
 import * as UrlUtils from '../utils/URLUtils';
 import { UPDATE_URL } from '../utils/Constants';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
-import { connectivityCheck, getStatusErrorLabel, isAmpAccessible, MANDATORY_UPDATE } from './ConnectivityAction';
+import { connectivityCheck, getStatusNotification, isAmpAccessible, MANDATORY_UPDATE } from './ConnectivityAction';
 import UpdateManager from '../modules/update/UpdateManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import { UPDATE_INSTALLER_PATH } from '../utils/constants/ClientSettingsConstants';
 import ElectronUpdaterManager from '../modules/update/ElectronUpdaterManager';
 import { didSetupComplete, didUrlChangesCheckComplete } from './SetupAction';
-import translate from '../utils/translate';
+import NotificationHelper from '../modules/helpers/NotificationHelper';
 
 export const STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING = 'STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING';
 export const STATE_DOWNLOAD_UPDATE_CONFIRMED = 'STATE_DOWNLOAD_UPDATE_CONFIRMED';
@@ -91,16 +91,21 @@ export function downloadUpdate(/* id */) {
   const updater: ElectronUpdaterManager = ElectronUpdaterManager.getUpdater(updateProgress);
   const downloadPromise = connectivityCheck().then(status => {
     if (isAmpAccessible(status)) {
-      return updater.downloadUpdate();
+      return updater.downloadUpdate().catch(errorMsg => {
+        if (errorMsg instanceof String) {
+          return new NotificationHelper({ message: errorMsg, translateMsg: false });
+        }
+        return errorMsg;
+      });
     }
-    return Promise.reject(translate(getStatusErrorLabel(status)));
+    return Promise.reject(getStatusNotification(status));
   });
   downloadPromise.then(() => {
     store.dispatch({ type: STATE_UPDATE_STARTED });
     return updater.startUpdate();
   }).catch(error => store.dispatch({
     type: STATE_UPDATE_FAILED,
-    errorMessage: error.toString()
+    errorMessage: error
   }));
   return dispatch => dispatch({
     type: STATE_DOWNLOAD_UPDATE,

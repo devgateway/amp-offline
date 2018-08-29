@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { routerReducer as routing } from 'react-router-redux';
+import appReducer from './AppReducer';
 import loginReducer from './LoginReducer';
 import workspaceReducer from './WorkspaceReducer';
 import translationReducer from './TranslationReducer';
@@ -20,6 +21,7 @@ import helpReducer from './HelpReducer';
 import { STATE_LOGOUT } from '../actions/LoginAction';
 
 const combinedReducers = combineReducers({
+  appReducer,
   loginReducer,
   workspaceReducer,
   routing,

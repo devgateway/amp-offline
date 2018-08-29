@@ -5,14 +5,18 @@ import * as CSC from '../utils/constants/ClientSettingsConstants';
 import { configureAndTestConnectivity, newUrlsReviewed } from './SetupAction';
 import Notification from '../modules/helpers/NotificationHelper';
 import {
-  NOTIFICATION_ORIGIN_SETTINGS, NOTIFICATION_SEVERITY_ERROR,
-  NOTIFICATION_SEVERITY_INFO
+  NOTIFICATION_ORIGIN_SETTINGS,
+  NOTIFICATION_SEVERITY_ERROR,
+  NOTIFICATION_SEVERITY_INFO,
+  NOTIFICATION_SEVERITY_WARNING
 } from '../utils/constants/ErrorConstants';
 import translate from '../utils/translate';
 import Logger from '../modules/util/LoggerManager';
-import { addMessage } from './NotificationAction';
+import { addConfirmationAlert, addMessage } from './NotificationAction';
 import * as UrlUtils from '../utils/URLUtils';
 import { SETTINGS_URL } from '../utils/Constants';
+import FollowUp from '../components/notifications/followup';
+import ConfirmationAlert from '../components/notifications/confirmationAlert';
 
 const STATE_LOAD_SETTINGS = 'STATE_LOAD_SETTINGS';
 export const STATE_LOAD_SETTINGS_PENDING = 'STATE_LOAD_SETTINGS_PENDING';
@@ -25,6 +29,7 @@ export const STATE_SAVE_SETTINGS_REJECTED = 'STATE_SAVE_SETTINGS_REJECTED';
 export const STATE_URL_CHANGE_DETECTED = 'STATE_URL_CHANGE_DETECTED';
 export const STATE_GO_TO_SETTINGS = 'STATE_GO_TO_SETTINGS';
 export const STATE_SETTINGS_PAGE_LOADED = 'STATE_SETTINGS_PAGE_LOADED';
+export const STATE_LEAVE_UNSAVED_SETTINGS = 'STATE_LEAVE_UNSAVED_SETTINGS';
 
 const logger = new Logger('Settings Action');
 
@@ -80,4 +85,19 @@ export const newUrlsProcessed = () => (dispatch) => dispatch({ type: STATE_URL_C
 
 export function goToSettingsPage() {
   UrlUtils.forwardTo(SETTINGS_URL);
+}
+
+export const confirmToLeave = (nextPath) => dispatch => dispatch(addConfirmationAlert(leaveConfirmation(nextPath)));
+
+function leaveConfirmation(nextPath) {
+  const leaveNotification = new Notification({
+    message: translate('leaveSettingsNotSaved'),
+    origin: NOTIFICATION_ORIGIN_SETTINGS,
+    severity: NOTIFICATION_SEVERITY_WARNING
+  });
+  const proceed = new FollowUp({
+    type: STATE_LEAVE_UNSAVED_SETTINGS,
+    actionData: nextPath
+  }, translate('Yes'));
+  return new ConfirmationAlert(leaveNotification, [proceed], true);
 }

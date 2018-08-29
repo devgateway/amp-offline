@@ -7,7 +7,7 @@ const logger = new Logger('Warn message');
 export default class WarnMessage extends Component {
 
   static propTypes = {
-    message: PropTypes.string.isRequired
+    message: PropTypes.object.isRequired
   };
 
   render() {
