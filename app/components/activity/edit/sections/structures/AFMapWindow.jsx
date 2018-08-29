@@ -63,6 +63,12 @@ export default class AFMapWindow extends Component {
     L.drawLocal.draw.toolbar.buttons.marker = translate('Draw a marker');
     L.drawLocal.draw.toolbar.buttons.rectangle = translate('Draw a rectangle');
     L.drawLocal.draw.toolbar.buttons.polyline = translate('Draw a polyline');
+    L.drawLocal.draw.toolbar.finish.title = translate('Finish drawing');
+    L.drawLocal.draw.toolbar.finish.text = translate('Finish');
+    L.drawLocal.draw.toolbar.undo.title = translate('Delete last point drawn');
+    L.drawLocal.draw.toolbar.undo.text = translate('Delete last point');
+    L.drawLocal.draw.toolbar.actions.title = translate('Cancel drawing');
+    L.drawLocal.draw.toolbar.actions.text = translate('Cancel');
     L.drawLocal.draw.handlers.polyline.tooltip.start = translate('Click to start drawing line');
     L.drawLocal.draw.handlers.polyline.tooltip.cont = translate('Click to continue drawing line');
     L.drawLocal.draw.handlers.polyline.tooltip.end = translate('Click last point to finish line');
