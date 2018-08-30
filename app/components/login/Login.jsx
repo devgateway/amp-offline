@@ -103,6 +103,7 @@ export default class Login extends Component {
             </tr>
           </tbody>
         </table>
+        <span><h2>{translate('testing_label_1')}</h2></span>
         <Button
           type="button" className={`btn btn-success ${(this.props.loginReducer.loginProcessing ? 'disabled' : '')}`}
           onClick={() => {
