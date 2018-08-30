@@ -43,7 +43,8 @@ import {
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
   SYNCUP_TYPE_WORKSPACES,
   SYNCUP_TYPE_MAP_TILES,
-  SYNCUP_TYPE_GAZETTEER
+  SYNCUP_TYPE_GAZETTEER,
+  SYNCUP_TYPE_TRANSLATIONS
 } from '../../utils/Constants';
 
 /**
@@ -52,8 +53,8 @@ import {
  */
 export default class SyncUpConfig {
 
-  static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
-    WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
+  static _COLLECTION = [TranslationSyncUpManager, UsersSyncUpManager, WorkspaceSyncUpManager,
+    WorkspaceSettingsSyncUpManager, WorkspaceMemberSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
@@ -64,6 +65,7 @@ export default class SyncUpConfig {
 
   static _initCollection() {
     const dependencies = {};
+    dependencies[SYNCUP_TYPE_USERS] = Utils.toMap(SYNCUP_TYPE_TRANSLATIONS, SS.STATES_FINISH);
     // Note: current user won't be even able to start the sync if he/she has no right
     dependencies[SYNCUP_TYPE_WORKSPACE_SETTINGS] = Utils.toMap(SYNCUP_TYPE_WORKSPACES, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH] = Utils.toMap(SYNCUP_TYPE_USERS, SS.STATES_SUCCESS);
