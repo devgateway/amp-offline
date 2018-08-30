@@ -53,8 +53,8 @@ import {
  */
 export default class SyncUpConfig {
 
-  static _COLLECTION = [TranslationSyncUpManager, UsersSyncUpManager, WorkspaceSyncUpManager,
-    WorkspaceSettingsSyncUpManager, WorkspaceMemberSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
+  static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
+    WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
