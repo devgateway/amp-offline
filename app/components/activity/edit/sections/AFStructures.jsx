@@ -57,11 +57,11 @@ class AFStructures extends Component {
     if (AFStructures.detectShapePoint(structure)) {
       content.push(<Col md={3} lg={3} key={Math.random()}>
         <AFField
-          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.NUMBER} />
+          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.TEXT_AREA} />
       </Col>);
       content.push(<Col md={3} lg={3} key={Math.random()}>
         <AFField
-          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER} />
+          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.TEXT_AREA} />
       </Col>);
     }
     return content;
