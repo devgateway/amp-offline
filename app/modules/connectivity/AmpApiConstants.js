@@ -50,6 +50,7 @@ export const AMP_SERVER_ID_MATCH = 'server-id-match';
 export const API_SHORT_DATE_FORMAT = 'YYYY-MM-DD';
 export const API_LONG_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZZ';
 export const TRANSLATIONS_PARAM = 'translations';
+export const LANGUAGE_PARAM = 'language';
 export const PARAM_AMPOFFLINE_AGENT = 'AMPOffline';
 export const POSSIBLE_VALUES_V2_MEDIA_TYPE = 'application/vnd.possible-values-v2+json';
 export const LAST_SYNC_TIME_PARAM = 'last-sync-time';
