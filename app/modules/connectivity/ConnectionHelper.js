@@ -18,7 +18,7 @@ import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginActio
 import translate from '../../utils/translate';
 import Logger from '../../modules/util/LoggerManager';
 import * as URLUtils from '../../utils/URLUtils';
-import * as ApiC from './AmpApiConstants';
+import ApiErrorConverter from './ApiErrorConverter';
 
 const logger = new Logger('Connection helper');
 
@@ -145,7 +145,7 @@ const ConnectionHelper = {
         const errorCode = isAMPunreachable ? ERROR_CODE_NO_CONNECTIVITY :
           (isAccessDenied ? ERROR_CODE_ACCESS_DENIED : undefined);
         const message = isAMPunreachable ? translate('AMPUnreachableError') :
-          error || (this._getLocalError(body && body.error)) || translate('unknownNetworkError');
+          error || (ApiErrorConverter.toLocalError(body && body.error)) || translate('unknownNetworkError');
         // We need to detect statusCode 403 to throw a security error.
         const origin = isAccessDenied ? NOTIFICATION_ORIGIN_API_SECURITY : NOTIFICATION_ORIGIN_API_NETWORK;
         return this._reportError(message, origin, errorCode);
@@ -159,28 +159,8 @@ const ConnectionHelper = {
 
   _reportError(message, origin, errorCode, errorObject) {
     return Promise.reject(ErrorNotificationHelper.createNotification({ message, origin, errorCode, errorObject }));
-  },
-
-  _getLocalError(apiError) {
-    let mappedError;
-    if (apiError && typeof apiError === 'object') {
-      Object.keys(apiError).some(code => {
-        const codeMappings = ApiC.API_ERROR_TO_AMP_OFFLINE_ERROR_BY_CODE[code];
-        if (codeMappings) {
-          return apiError[code].some(apiMessage => {
-            const localError = codeMappings[apiMessage];
-            if (localError) {
-              mappedError = translate(localError);
-              return true;
-            }
-            return false;
-          });
-        }
-        return false;
-      });
-    }
-    return mappedError || apiError;
   }
+
 };
 
 module.exports = ConnectionHelper;
