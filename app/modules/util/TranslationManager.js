@@ -5,7 +5,8 @@ import {
   FS_LOCALES_DIRECTORY,
   LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
-  LANGUAGE_TRANSLATIONS_FILE
+  LANGUAGE_TRANSLATIONS_FILE,
+  ASAR_DIR
 } from '../../utils/Constants';
 import TranslationSyncUpManager from '../syncup/syncupManagers/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
@@ -41,8 +42,8 @@ const TranslationManager = {
     let masterTranslationsFileName = FileManager.getFullPath(APP_DIRECTORY, masterFileName);
     let tempTranslationFilePath = FileManager.getFullPath(APP_DIRECTORY, FS_LOCALES_DIRECTORY);
     if (process.env.NODE_ENV === 'production') {
-      masterTranslationsFileName = `${process.resourcesPath}/app.asar/${masterFileName}`;
-      tempTranslationFilePath = `${process.resourcesPath}/app.asar/${FS_LOCALES_DIRECTORY}`;
+      masterTranslationsFileName = `${process.resourcesPath}/${ASAR_DIR}/${masterFileName}`;
+      tempTranslationFilePath = `${process.resourcesPath}/${ASAR_DIR}/${FS_LOCALES_DIRECTORY}`;
     }
     FileManager.copyDataFileSync(masterTranslationsFileName, FS_LOCALES_DIRECTORY, masterFileName);
     if (!isSetupComplete) {
@@ -56,19 +57,19 @@ const TranslationManager = {
     } else {
       /* To fix AMPOFFLINE-1195 we need to add any new {key|text} pair from master-translations.en.json
       to the files in FS_LOCALES_DIRECTORY */
-      const localTranslationFilePath = FileManager.getFullPath(FS_LOCALES_DIRECTORY);
-      const masterContent = JSON.parse(FileManager.readTextDataFileSync(masterTranslationsFileName));
-      FileManager.readdirSyncFullPath(localTranslationFilePath).forEach(tmpTrnFileName => {
+      const options = { encoding: 'utf-8', dontChangePath: true };
+      const masterContent = JSON.parse(FileManager.readDataFileSync(options, masterTranslationsFileName));
+      FileManager.readdirSync(FS_LOCALES_DIRECTORY).forEach(tmpTrnFileName => {
         const matches = tmpTrnFileName.match(/^((translations\.)([a-z]{2})(.json))/);
         if (matches) {
-          const localContent = JSON.parse(FileManager.readTextDataFileSync(localTranslationFilePath, tmpTrnFileName));
+          const localContent = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, tmpTrnFileName));
           Object.keys(masterContent).forEach(k => {
             // Only add new messages.
             if (!localContent[k]) {
               localContent[k] = masterContent[k];
             }
           });
-          FileManager.writeDataFileSync(JSON.stringify(localContent), localTranslationFilePath, tmpTrnFileName);
+          FileManager.writeDataFileSync(JSON.stringify(localContent), FS_LOCALES_DIRECTORY, tmpTrnFileName);
         }
       });
     }

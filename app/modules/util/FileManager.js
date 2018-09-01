@@ -180,8 +180,12 @@ const FileManager = {
    * @return {*}
    */
   readDataFileSync(options, ...pathParts) {
-    const fullPath = this.getFullPath(...pathParts);
-    return fs.readFileSync(fullPath, options);
+    if (options && options.dontChangePath) {
+      return fs.readFileSync(pathParts[0], options);
+    } else {
+      const fullPath = this.getFullPath(...pathParts);
+      return fs.readFileSync(fullPath, options);
+    }
   },
 
   /**
