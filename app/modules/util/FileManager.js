@@ -187,11 +187,11 @@ const FileManager = {
   /**
    * Reads any file from given path synchronously and with the given options
    * @param options
-   * @param pathParts
+   * @param _path
    * @returns {Buffer | string | * | void}
    */
-  readFileInPathSync(options, ...pathParts) {
-    return fs.readFileSync(pathParts[0], options);
+  readFileInPathSync(options, _path) {
+    return fs.readFileSync(_path, options);
   },
 
   /**
