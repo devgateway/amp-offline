@@ -4,7 +4,7 @@ import {
   FS_LOCALES_DIRECTORY,
   LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
-  LANGUAGE_TRANSLATIONS_FILE,
+  LANGUAGE_TRANSLATIONS_FILE
 } from '../../utils/Constants';
 import TranslationSyncUpManager from '../syncup/syncupManagers/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
