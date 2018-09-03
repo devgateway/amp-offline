@@ -53,8 +53,8 @@ const TranslationManager = {
     } else {
       /* To fix AMPOFFLINE-1195 we need to add any new {key|text} pair from master-translations.en.json
       to the files in FS_LOCALES_DIRECTORY */
-      const options = { encoding: 'utf-8', dontChangePath: true };
-      const masterContent = JSON.parse(FileManager.readDataFileSync(options, masterTranslationsFileName));
+      const options = { encoding: 'utf-8' };
+      const masterContent = JSON.parse(FileManager.readFileInPathSync(options, masterTranslationsFileName));
       FileManager.readdirSync(FS_LOCALES_DIRECTORY).forEach(tmpTrnFileName => {
         const matches = tmpTrnFileName.match(/^((translations\.)([a-z]{2})(.json))/);
         if (matches) {

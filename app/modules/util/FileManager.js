@@ -180,12 +180,18 @@ const FileManager = {
    * @return {*}
    */
   readDataFileSync(options, ...pathParts) {
-    if (options && options.dontChangePath) {
-      return fs.readFileSync(pathParts[0], options);
-    } else {
-      const fullPath = this.getFullPath(...pathParts);
-      return fs.readFileSync(fullPath, options);
-    }
+    const fullPath = this.getFullPath(...pathParts);
+    return fs.readFileSync(fullPath, options);
+  },
+
+  /**
+   * Reads any file from given path synchronously and with the given options
+   * @param options
+   * @param pathParts
+   * @returns {Buffer | string | * | void}
+   */
+  readFileInPathSync(options, ...pathParts) {
+    return fs.readFileSync(pathParts[0], options);
   },
 
   /**
