@@ -39,12 +39,8 @@ const TranslationManager = {
     FileManager.createDataDir(FS_LOCALES_DIRECTORY);
     // Copy master translations file.
     const masterFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
-    let masterTranslationsFileName = FileManager.getFullPath(APP_DIRECTORY, masterFileName);
-    let tempTranslationFilePath = FileManager.getFullPath(APP_DIRECTORY, FS_LOCALES_DIRECTORY);
-    if (process.env.NODE_ENV === 'production') {
-      masterTranslationsFileName = `${process.resourcesPath}/${ASAR_DIR}/${masterFileName}`;
-      tempTranslationFilePath = `${process.resourcesPath}/${ASAR_DIR}/${FS_LOCALES_DIRECTORY}`;
-    }
+    const masterTranslationsFileName = FileManager.getFullPathForBuiltInResources(masterFileName);
+    const tempTranslationFilePath = FileManager.getFullPathForBuiltInResources(FS_LOCALES_DIRECTORY);
     FileManager.copyDataFileSync(masterTranslationsFileName, FS_LOCALES_DIRECTORY, masterFileName);
     if (!isSetupComplete) {
       FileManager.readdirSyncFullPath(tempTranslationFilePath).forEach(tmpTrnFileName => {
