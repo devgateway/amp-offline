@@ -1,12 +1,10 @@
 import Backend from 'i18next-sync-fs-backend';
 import i18next from 'i18next';
 import {
-  APP_DIRECTORY,
   FS_LOCALES_DIRECTORY,
   LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
   LANGUAGE_TRANSLATIONS_FILE,
-  ASAR_DIR
 } from '../../utils/Constants';
 import TranslationSyncUpManager from '../syncup/syncupManagers/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
