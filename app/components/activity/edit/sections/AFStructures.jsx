@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Panel, Row, Button } from 'react-bootstrap';
+import isNumber from 'is-number';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { STRUCTURES } from './AFSectionConstants';
@@ -57,16 +58,18 @@ class AFStructures extends Component {
     if (AFStructures.detectShapePoint(structure)) {
       content.push(<Col md={3} lg={3} key={Math.random()}>
         <AFField
-          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.NUMBER}
-          extraParams={{ readonly: true }} />
+          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LATITUDE}`} parent={structure} type={Types.TEXT_AREA} />
       </Col>);
       content.push(<Col md={3} lg={3} key={Math.random()}>
         <AFField
-          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.NUMBER}
-          extraParams={{ readonly: true }} />
+          fieldPath={`${AC.STRUCTURES}~${AC.STRUCTURES_LONGITUDE}`} parent={structure} type={Types.TEXT_AREA} />
       </Col>);
     }
     return content;
+  }
+
+  static checkLatLng(structure) {
+    return isNumber(structure[AC.STRUCTURES_LATITUDE]) && isNumber(structure[AC.STRUCTURES_LONGITUDE]);
   }
 
   constructor(props) {
@@ -77,6 +80,7 @@ class AFStructures extends Component {
     this.handleViewCoordinates = this.handleViewCoordinates.bind(this);
     this.handleSaveMap = this.handleSaveMap.bind(this);
     this.handleCloseMap = this.handleCloseMap.bind(this);
+    this.handleAddEmptyStructure = this.handleAddEmptyStructure.bind(this);
     this.state = {
       structures: props.activity[AC.STRUCTURES] || [],
       showViewDialog: false,
@@ -129,18 +133,22 @@ class AFStructures extends Component {
         currentPolygon: null
       });
     } else if (AFStructures.detectShapePoint(structure)) {
-      this.setState({
-        showMapDialog: true,
-        currentPoint: {
-          id: structure.id,
-          [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
-          [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
-          [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE],
-          [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
-          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
-        },
-        currentPolygon: null
-      });
+      if (AFStructures.checkLatLng(structure)) {
+        this.setState({
+          showMapDialog: true,
+          currentPoint: {
+            id: structure.id,
+            [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
+            [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
+            [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE],
+            [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
+            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
+          },
+          currentPolygon: null
+        });
+      } else {
+        alert(translate('wrongLatLng'));
+      }
     } else {
       this.setState({
         showMapDialog: true,
@@ -166,6 +174,21 @@ class AFStructures extends Component {
 
   handleCloseMap() {
     this.setState({ showMapDialog: false });
+  }
+
+  handleAddEmptyStructure() {
+    const newStructures = this.state.structures.slice();
+    newStructures.push({
+      [AC.STRUCTURES_TITLE]: '',
+      [AC.STRUCTURES_DESCRIPTION]: '',
+      [AC.STRUCTURES_LATITUDE]: null,
+      [AC.STRUCTURES_LONGITUDE]: null,
+      [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
+      [AC.STRUCTURES_COORDINATES]: [],
+      id: Math.random()
+    });
+    this.setState({ structures: newStructures });
+    this.context.activity[AC.STRUCTURES] = newStructures;
   }
 
   handleSaveMap(layersList, deletedLayersList) {
@@ -224,7 +247,7 @@ class AFStructures extends Component {
 
       <Button
         bsStyle="primary" className={afStyles.button}
-        onClick={this.openMap.bind(this, null)}>{translate('Add Structure')}
+        onClick={this.handleAddEmptyStructure}>{translate('Add Structure')}
       </Button>
 
       <AFViewStructure
