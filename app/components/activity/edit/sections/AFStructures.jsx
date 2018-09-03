@@ -12,6 +12,7 @@ import * as Types from '../components/AFComponentTypes';
 import translate from '../../../../utils/translate';
 import AFViewStructure from './structures/AFViewStructure';
 import AFMapWindow from './structures/AFMapWindow';
+import MapTilesUtils from '../../../../utils/MapTilesUtils';
 
 const logger = new Logger('AF Structures');
 
@@ -102,10 +103,10 @@ class AFStructures extends Component {
 
   generateButtonRow(structure, i) {
     return (<Col md={12} lg={12}>
-      <Button
+      {(MapTilesUtils.detectContent()) ? <Button
         bsStyle="primary" className={afStyles.button}
         onClick={this.openMap.bind(this, structure)}>{translate('Map')}
-      </Button>
+      </Button> : null}
       {!AFStructures.detectShapePoint(structure)
         ? <Button
           bsStyle="primary" className={afStyles.button}
