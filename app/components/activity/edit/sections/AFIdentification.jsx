@@ -15,7 +15,8 @@ const logger = new Logger('AF identification');
 const CUSTOM_TYPE = {
   [AC.BUDGET_CODE_PROJECT_ID]: Types.INPUT_TYPE,
   [AC.CRIS_NUMBER]: Types.INPUT_TYPE,
-  [AC.GOVERNMENT_APPROVAL_PROCEDURES]: Types.RADIO_BOOLEAN
+  [AC.GOVERNMENT_APPROVAL_PROCEDURES]: Types.RADIO_BOOLEAN,
+  [AC.JOINT_CRITERIA]: Types.RADIO_BOOLEAN
 };
 
 /**
@@ -61,7 +62,8 @@ class AFIdentification extends Component {
     // TODO update the layout per Llanoc design. If not available, adjust to work. For now grouping fields as in AMP.
     const leftColumn = [AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.PROJECT_COMMENTS, AC.OBJECTIVE, AC.LESSONS_LEARNED,
       AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.DESCRIPTION, AC.RESULTS].map(this.mapSimpleFieldDef);
-    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID, AC.GOVERNMENT_APPROVAL_PROCEDURES].map(this.mapSimpleFieldDef);
+    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID, AC.GOVERNMENT_APPROVAL_PROCEDURES, AC.JOINT_CRITERIA]
+      .map(this.mapSimpleFieldDef);
     rightColumn.push(
       (<AFField
         key={AC.ACTIVITY_BUDGET}
