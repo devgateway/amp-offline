@@ -61,45 +61,55 @@ export default class AFFundingDetailItem extends Component {
         break;
     }
     return (<div className={afStyles.full_width}>
-      <div className={styles.grid}>
-        <div className={styles.row}>
-          <AFField
-            parent={this.props.fundingDetail} className={styles.cell_3}
-            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.ADJUSTMENT_TYPE}`} />
-          <AFField
-            parent={this.props.fundingDetail} className={styles.cell_3}
-            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} />
-          <AFField
-            parent={this.props.fundingDetail} className={styles.cell_3}
-            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject />
-          <AFField
-            parent={this.props.fundingDetail} className={styles.cell_3}
-            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />
-          <AFField
-            parent={this.props.fundingDetail} className={styles.cell_3}
-            type={Types.RADIO_BOOLEAN} fmPath={disasterResponseFMPath}
-            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`} />
-          {(this.props.fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
-            parent={this.props.fundingDetail} className={styles.cell_3}
-            fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
-            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} /> : null}
-          <AFField
-            parent={this.props.fundingDetail} className={styles.cell_3}
-            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`}
-            filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
-            fmPath={pledgeFMPath} />
-          <AFField
-            parent={this.props.fundingDetail} className={styles.cell_4}
-            fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
-            fmPath={fixedExchangeRateFMPath}
-            extraParams={{ bigger: 0 }} />
-          <div className={styles.cell_10}>
-            <a
-              onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
-              className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
-          </div>
-        </div>
-      </div>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <div className={styles.row}>
+                <AFField
+                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.ADJUSTMENT_TYPE}`} />
+                <AFField
+                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} />
+                <AFField
+                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject />
+                <AFField
+                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />
+                <AFField
+                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  type={Types.RADIO_BOOLEAN} fmPath={disasterResponseFMPath}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`} />
+                {(this.props.fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
+                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} /> : null}
+                <AFField
+                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`}
+                  filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
+                  fmPath={pledgeFMPath} />
+                <AFField
+                  parent={this.props.fundingDetail} className={styles.cell_4}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
+                  fmPath={fixedExchangeRateFMPath}
+                  extraParams={{ bigger: 0 }} />
+              </div>
+            </td>
+            <td className={styles.delete_col}>
+              <div className={styles.grid}>
+                <div className={styles.cell_10}>
+                  <a
+                    onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
+                    className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>);
   }
 }
