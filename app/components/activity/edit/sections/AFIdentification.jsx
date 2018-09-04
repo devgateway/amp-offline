@@ -15,6 +15,7 @@ const logger = new Logger('AF identification');
 const CUSTOM_TYPE = {
   [AC.BUDGET_CODE_PROJECT_ID]: Types.INPUT_TYPE,
   [AC.CRIS_NUMBER]: Types.INPUT_TYPE,
+  [AC.GOVERNMENT_APPROVAL_PROCEDURES]: Types.RADIO_BOOLEAN
 };
 
 /**
@@ -60,7 +61,7 @@ class AFIdentification extends Component {
     // TODO update the layout per Llanoc design. If not available, adjust to work. For now grouping fields as in AMP.
     const leftColumn = [AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.PROJECT_COMMENTS, AC.OBJECTIVE, AC.LESSONS_LEARNED,
       AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.DESCRIPTION, AC.RESULTS].map(this.mapSimpleFieldDef);
-    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID].map(this.mapSimpleFieldDef);
+    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID, AC.GOVERNMENT_APPROVAL_PROCEDURES].map(this.mapSimpleFieldDef);
     rightColumn.push(
       (<AFField
         key={AC.ACTIVITY_BUDGET}
@@ -77,18 +78,18 @@ class AFIdentification extends Component {
     rightColumn.push(...[AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT].map(this.mapSimpleFieldDef));
 
     return (
-      <div className={afStyles.full_width} >
-        <Grid className={afStyles.full_width} >
+      <div className={afStyles.full_width}>
+        <Grid className={afStyles.full_width}>
           <Row key="title-full-row">
-            <Col md={12} lg={12} >
+            <Col md={12} lg={12}>
               <AFField key={AC.PROJECT_TITLE} parent={this.props.activity} fieldPath={AC.PROJECT_TITLE} />
             </Col>
           </Row>
           <Row key="col-split-data">
-            <Col key="left-col" md={6} lg={6} >
+            <Col key="left-col" md={6} lg={6}>
               {leftColumn}
             </Col>
-            <Col key="right-col" md={6} lg={6} >
+            <Col key="right-col" md={6} lg={6}>
               {rightColumn}
             </Col>
           </Row>
