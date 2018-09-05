@@ -1,14 +1,14 @@
 import store from '../index';
 import * as UrlUtils from '../utils/URLUtils';
-import { UPDATE_URL, VERSION } from '../utils/Constants';
+import { UPDATE_URL } from '../utils/Constants';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
-import { connectivityCheck, MANDATORY_UPDATE } from './ConnectivityAction';
+import { connectivityCheck, getStatusNotification, isAmpAccessible, MANDATORY_UPDATE } from './ConnectivityAction';
 import UpdateManager from '../modules/update/UpdateManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import { UPDATE_INSTALLER_PATH } from '../utils/constants/ClientSettingsConstants';
 import ElectronUpdaterManager from '../modules/update/ElectronUpdaterManager';
-import { didSetupComplete } from './SetupAction';
-import translate from '../utils/translate';
+import { didSetupComplete, didUrlChangesCheckComplete } from './SetupAction';
+import NotificationHelper from '../modules/helpers/NotificationHelper';
 
 export const STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING = 'STATE_DOWNLOAD_UPDATE_CONFIRMATION_PENDING';
 export const STATE_DOWNLOAD_UPDATE_CONFIRMED = 'STATE_DOWNLOAD_UPDATE_CONFIRMED';
@@ -37,16 +37,15 @@ export function dismissUpdate() {
 }
 
 export function isMandatoryUpdate() {
-  const ampConnectionStatusReducer = store.getState().ampConnectionStatusReducer;
-  return getMandatoryValue(ampConnectionStatusReducer && ampConnectionStatusReducer.status) === true;
+  return getMandatoryValue() === true;
 }
 
 export function isOptionalUpdate() {
-  const ampConnectionStatusReducer = store.getState().ampConnectionStatusReducer;
-  return getMandatoryValue(ampConnectionStatusReducer && ampConnectionStatusReducer.status) === false;
+  return getMandatoryValue() === false;
 }
 
-function getMandatoryValue(status: ConnectivityStatus) {
+function getMandatoryValue() {
+  const { status } = store.getState().ampConnectionStatusReducer || {};
   return status && status.latestAmpOffline && status.latestAmpOffline[MANDATORY_UPDATE];
 }
 
@@ -56,11 +55,16 @@ export function getNewClientVersion() {
   return status && status.latestAmpOffline && status.latestAmpOffline.version;
 }
 
+function isClientFromAMPNewer() {
+  const isMandatory = getMandatoryValue();
+  return isMandatory === true || isMandatory === false;
+}
+
 export function isCheckForUpdates() {
   const { syncUpReducer, activityReducer, updateReducer, ampConnectionStatusReducer } = store.getState();
   const { proceedToUpdateDownload, confirmationPending, updatePending, updateInProgress } = updateReducer;
-  return didSetupComplete() && updateReducer.newUpdateToCheck && getNewClientVersion() !== VERSION
-    && !(activityReducer.isActivityLoadedForAf || syncUpReducer.syncUpInProgress
+  return didSetupComplete() && updateReducer.newUpdateToCheck && isClientFromAMPNewer()
+    && !(activityReducer.isActivityLoadedForAf || syncUpReducer.syncUpInProgress || didUrlChangesCheckComplete()
       || ampConnectionStatusReducer.updateInProgress
       || proceedToUpdateDownload || confirmationPending || updatePending || updateInProgress);
 }
@@ -86,17 +90,22 @@ export function downloadUpdate(/* id */) {
   // const downloadPromise = UpdateManager.downloadInstaller(id);
   const updater: ElectronUpdaterManager = ElectronUpdaterManager.getUpdater(updateProgress);
   const downloadPromise = connectivityCheck().then(status => {
-    if (status.isAmpAvailable) {
-      return updater.downloadUpdate();
+    if (isAmpAccessible(status)) {
+      return updater.downloadUpdate().catch(errorMsg => {
+        if (errorMsg instanceof String) {
+          return new NotificationHelper({ message: errorMsg, translateMsg: false });
+        }
+        return errorMsg;
+      });
     }
-    return Promise.reject(translate('AMPUnreachableError'));
+    return Promise.reject(getStatusNotification(status));
   });
   downloadPromise.then(() => {
     store.dispatch({ type: STATE_UPDATE_STARTED });
     return updater.startUpdate();
   }).catch(error => store.dispatch({
     type: STATE_UPDATE_FAILED,
-    errorMessage: error.toString()
+    errorMessage: error
   }));
   return dispatch => dispatch({
     type: STATE_DOWNLOAD_UPDATE,

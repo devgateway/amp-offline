@@ -1,23 +1,31 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Logger from '../../modules/util/LoggerManager';
 import styles from './App.css';
 import Footer from './Footer';
 import Navbar from './Navbar';
 import UpdateTrigger from '../update/UpdateTrigger';
+import SettingsTrigger from '../settings/SettingsTrigger';
+import { IS_CHECK_URL_CHANGES } from '../../modules/util/ElectronApp';
 
 const logger = new Logger('App(layout)');
 
 export default class App extends Component {
 
   static propTypes = {
+    router: PropTypes.object.isRequired,
     children: PropTypes.element.isRequired,
     selectWorkspace: PropTypes.func.isRequired,
     /* eslint-disable react/forbid-prop-types */
     workspaceReducer: PropTypes.object.isRequired,
     userReducer: PropTypes.object.isRequired,
     loginReducer: PropTypes.object.isRequired,
-    translationReducer: PropTypes.object.isRequired
+    translationReducer: PropTypes.object.isRequired,
     /* eslint-enable react/forbid-prop-types */
+    /* eslint-disable react/no-unused-prop-types */
+    goToPath: PropTypes.func.isRequired,
+    appReducer: PropTypes.object.isRequired,
+    /* eslint-enable react/no-unused-prop-types */
   };
 
   static contextTypes = {
@@ -27,6 +35,14 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.disableUpdates = +process.env.DISABLE_UPDATE;
+    this.isCheckUrlChanges = IS_CHECK_URL_CHANGES;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { appReducer, goToPath } = nextProps;
+    if (appReducer.pathToNavigate) {
+      goToPath(appReducer.pathToNavigate);
+    }
   }
 
   render() {
@@ -51,6 +67,7 @@ export default class App extends Component {
         </div>
         <Footer />
         {!this.disableUpdates && <UpdateTrigger />}
+        {this.isCheckUrlChanges && <SettingsTrigger location={this.props.router.location} />}
       </div>
     );
   }

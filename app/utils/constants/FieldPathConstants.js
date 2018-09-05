@@ -8,10 +8,12 @@ import { ORG_ROLE_NAMES } from './ValueConstants';
  */
 
 export const FUNDING_ACTIVE_LIST = 'fundings~active_list';
+export const FUNDING_TYPE_OF_ASSISTANCE = `${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`;
 export const FUNDING_DETAILS_PATH = 'fundings~funding_details';
 export const FUNDING_CURRENCY_PATH = 'fundings~funding_details~currency';
 export const ADJUSTMENT_TYPE_PATH = 'fundings~funding_details~adjustment_type';
 export const TRANSACTION_TYPE_PATH = 'fundings~funding_details~transaction_type';
+export const DISASTER_RESPONSE_PATH = `${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`;
 export const ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH = 'activity_internal_ids~internal_id';
 export const ACTIVITY_INTERNAL_IDS_ORGANIZATION_PATH = 'activity_internal_ids~organization';
 export const LOCATION_PATH = 'locations~location';
@@ -56,8 +58,11 @@ ACTIVITY_FIELDS_FM_PATH[AC.MODIFIED_ON] = FM.ACTIVITY_LAST_UPDATED_ON;
 /* Possible Options fields path prefixes */
 export const PREFIX_ACTIVITY = null;
 export const PREFIX_CONTACT = 'contact';
+export const PREFIX_RESOURCE = 'resource';
 
 export const FIELD_PATH = 'field-path';
 export const FIELD_OPTIONS = 'possible-options';
 export const LIST_MAX_SIZE = 'size-limit';
 export const REGEX_PATTERN = 'regex-pattern';
+export const FIELD_NAME = 'field_name';
+export const FIELD_REQUIRED = 'required';

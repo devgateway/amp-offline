@@ -57,7 +57,8 @@ export default class WorkspacePage extends Component {
 
   selectContentElementToDraw() {
     logger.log('selectContentElementToDraw');
-    if (this.props.workspaceReducer.workspacesLoading !== false || this.state.showWorkspaces === false) {
+    if (this.props.workspaceReducer.workspacesLoading !== false || this.state.showWorkspaces === false
+      || this.props.workspaceReducer.workspaceProcessing) {
       return <Loading />;
     }
     if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {

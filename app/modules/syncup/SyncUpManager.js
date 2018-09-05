@@ -102,9 +102,9 @@ export default class SyncUpManager {
     return this._startSyncUp()
       .then(result => {
         if (result && result.status === SYNCUP_STATUS_FAIL && !result.units) {
-          let error = result.errors && result.errors.length && result.errors.join(' ');
-          error = error || translate('unexpectedError');
-          logger.error(error);
+          // if cannot start, there would be one reason only
+          const error = result.errors && result.errors.length ? result.errors[0] : translate('unexpectedError');
+          logger.error(JSON.stringify(error));
           return Promise.reject(error);
         }
         syncResult = result;

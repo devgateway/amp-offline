@@ -25,12 +25,18 @@ import {
   POSSIBLE_VALUES_V2_MEDIA_TYPE,
   POST_TRANSLATIONS_URL,
   RESET_PASSWORD_URL,
+  RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  RESOURCE_PULL_URL,
+  RESOURCE_PUSH_URL,
+  RESOURCE_SINGLE_FIELDS_TREE_URL,
   SYNC_URL,
   TEST_URL,
   URL_CONNECTIVITY_CHECK_EP,
   USER_PROFILE_URL,
   WORKSPACE_MEMBER_URL,
-  WORKSPACE_SETTINGS_URL
+  WORKSPACE_SETTINGS_URL,
+  MAP_TILES_URL,
+  GAZETTEER_URL
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -160,6 +166,23 @@ const routesConfiguration = [{
   method: 'POST',
   requiredAuth: true
 }, {
+  url: RESOURCE_PULL_URL,
+  method: 'POST',
+  requiredAuth: true
+}, {
+  url: RESOURCE_PUSH_URL,
+  method: 'PUT',
+  isForm: true,
+  requiredAuth: true
+}, {
+  url: RESOURCE_SINGLE_FIELDS_TREE_URL,
+  method: 'GET',
+  requiredAuth: true
+}, {
+  url: RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
+  requiredAuth: true
+}, {
   url: CHANGE_PASSWORD_URL,
   method: 'GET',
   requiredAuth: false,
@@ -169,7 +192,17 @@ const routesConfiguration = [{
   method: 'GET',
   requiredAuth: false,
   regularAmpUrl: true,
+}, {
+  url: MAP_TILES_URL,
+  method: 'GET',
+  requiredAuth: true,
+  isBinary: true
+}, {
+  url: GAZETTEER_URL,
+  method: 'GET',
+  requiredAuth: true
 }
+
 ];
 
 module.exports = routesConfiguration;

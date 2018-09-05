@@ -130,9 +130,25 @@ export const SOURCE_ROLE = 'source_role';
 export const AMP_FUNDING_ID = 'amp_funding_id';
 export const ISSUES = 'issues';
 export const ISSUE_DATE = 'issue_date';
+export const ISSUE_NAME = 'name';
 export const MEASURES = 'measures';
+export const MEASURE_NAME = 'name';
 export const MEASURE_DATE = 'measure_date';
 export const ACTORS = 'actors';
+export const ACTOR_NAME = 'name';
+export const STRUCTURES = 'structures';
+export const STRUCTURES_TITLE = 'title';
+export const STRUCTURES_DESCRIPTION = 'description';
+export const STRUCTURES_LATITUDE = 'latitude';
+export const STRUCTURES_LONGITUDE = 'longitude';
+export const STRUCTURES_COLOR = 'structure_color';
+export const STRUCTURES_LAT = 'lat';
+export const STRUCTURES_LNG = 'lng';
+export const STRUCTURES_SHAPE = 'shape';
+export const STRUCTURES_POINT = 'Point';
+export const STRUCTURES_POLYGON = 'Polygon';
+export const STRUCTURES_POLYLINE = 'Polyline';
+export const STRUCTURES_COORDINATES = 'coordinates';
 export const COMPONENT_TYPE = 'component_type';
 export const COMPONENT_TITLE = 'component_title';
 export const COMPONENT_FUNDING = 'funding';
@@ -140,6 +156,7 @@ export const COMPONENT_DESCRIPTION = 'description';
 export const COMPONENT_ORGANIZATION = 'component_organization';
 export const FUNDING_AMOUNT_ID = 'amp_funding_amount_id';
 export const EXTRA_INFO = 'extra_info';
+export const VALUE = 'value';
 export const ACRONYM = 'acronym';
 export const TYPE_OF_COOPERATION = 'type_of_cooperation';
 export const ANNUAL_PROJECT_BUDGET_ID = 'annual_project_budget_id';
@@ -170,6 +187,9 @@ export const CONTACT = 'contact';
 export const ORGANIZATION_GROUP = 'organization_group';
 export const FIXED_EXCHANGE_RATE = 'fixed_exchange_rate';
 export const PRIMARY_CONTACT = 'mark_as_primary';
+export const ACTIVITY_DOCUMENTS = 'activity_documents';
+export const DOCUMENT_TYPE = 'document_type';
+export const ISO2 = 'iso2';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
@@ -184,6 +204,8 @@ export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
 export const DEPENDENCY_ON_BUDGET = 'on_budget';
 export const DEPENDENCY_TRANSACTION_PRESENT = 'transaction_present';
 export const DEPENDENCY_COMPONENT_FUNDING_ORG_VALID = 'organization_present';
+export const DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED = 'disbursements_disaster_response_required';
+export const DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED = 'commitments_disaster_response_required';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
@@ -209,6 +231,8 @@ export const AP_SECTION_IDS =
     },
     { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES },
     { key: 'APContact', hash: '#APContact', value: 'Contact Information', fmPath: FMC.ACTIVITY_CONTACT },
+    { key: 'APStructures', hash: '#APStructures', value: 'Structures', sectionPath: STRUCTURES },
+    { key: 'APDocument', hash: '#APDocument', value: 'Related Documents', sectionPath: ACTIVITY_DOCUMENTS },
   ];
 
 /** Column counts for each section **/

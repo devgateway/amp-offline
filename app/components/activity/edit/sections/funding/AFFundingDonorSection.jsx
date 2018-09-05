@@ -107,10 +107,10 @@ export default class AFFundingDonorSection extends Component {
       <div className={styles.header}>
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding}
           className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
@@ -135,7 +135,8 @@ export default class AFFundingDonorSection extends Component {
       {this._filterFundings(this.state.fundingList).map((g, i) => (
         <Panel
           header={this._generateComplexHeader(i, g)}
-          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible expanded={this.state.openFundingDonorSection[i].open}
+          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible
+          expanded={this.state.openFundingDonorSection[i] ? this.state.openFundingDonorSection[i].open : false}
           onSelect={() => {
             const newOpenState = this.state.openFundingDonorSection;
             newOpenState[i].open = !newOpenState[i].open;

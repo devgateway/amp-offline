@@ -65,9 +65,10 @@ class AFFunding extends Component {
     }
   }
 
-  handleDonorSelect(value) {
+  handleDonorSelect(values) {
     logger.debug('handleDonorSelect');
-    if (value) {
+    if (values) {
+      const value = (values instanceof Array) ? values[values.length - 1][AC.ORGANIZATION] : values;
       const fundingItem = {};
       fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
         id: value.id,
@@ -78,8 +79,7 @@ class AFFunding extends Component {
       // Find the 'Donor' org type if enabled.
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
         const donorList = this.context.activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
-        const donorOrg = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
-        fundingItem[AC.SOURCE_ROLE] = donorOrg;
+        fundingItem[AC.SOURCE_ROLE] = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
       }
       fundingItem[AC.FUNDING_DETAILS] = [];
       fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();

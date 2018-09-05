@@ -12,7 +12,14 @@ import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
-import { checkIfSetupComplete, configureDefaults } from './SetupAction';
+import {
+  ampRegistryCheckComplete,
+  checkAmpRegistryForUpdates,
+  checkIfSetupComplete,
+  configureDefaults
+} from './SetupAction';
+import RepositoryManager from '../modules/repository/RepositoryManager';
+import { deleteOrphanResources } from './ResourceAction';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -42,17 +49,32 @@ export function ampOfflineStartUp() {
         .then(() => configureDefaults(isSetupComplete))
     )
     .then(ampOfflineInit)
-    .then(initLanguage);
+    .then(initLanguage)
+    .then(() => nonCriticalRoutinesStartup());
 }
 
-export function ampOfflineInit() {
+export function ampOfflineInit(isPostLogout = false) {
   store.dispatch(loadAllLanguages());
   return checkIfSetupComplete()
     .then(loadConnectionInformation)
     .then(scheduleConnectivityCheck)
     .then(loadGlobalSettings)
     .then(() => loadFMTree())
-    .then(loadCurrencyRatesOnStartup);
+    .then(loadCurrencyRatesOnStartup)
+    .then(() => (isPostLogout ? postLogoutInit() : null));
+}
+
+function nonCriticalRoutinesStartup() {
+  RepositoryManager.init(true);
+  return checkAmpRegistryForUpdates()
+    .then(deleteOrphanResources);
+}
+
+/**
+ * During logout, the redux state is reset as a simplest solution. Manually handle few post logout reinit actions.
+ */
+function postLogoutInit() {
+  ampRegistryCheckComplete();
 }
 
 // exporting timer from a function since we cannot export let

@@ -83,10 +83,14 @@ export default class AFListSelector extends Component {
   }
 
   getListValues() {
-    this.state.values.forEach(value => {
-      const idOnlyFieldValue = value[this.idOnlyField];
+    const { afOptionFormatter } = this.props.extraParams || {};
+    this.state.values.forEach(entry => {
+      const idOnlyFieldValue = entry[this.idOnlyField];
       if (!idOnlyFieldValue.isAFOption) {
-        value[this.idOnlyField] = new AFOption({ ...idOnlyFieldValue, displayHierarchicalValue: true });
+        entry[this.idOnlyField] = new AFOption({ ...idOnlyFieldValue, displayHierarchicalValue: true });
+        if (afOptionFormatter) {
+          entry[this.idOnlyField].valueFormatter = afOptionFormatter;
+        }
       }
     });
     return this.state.values;

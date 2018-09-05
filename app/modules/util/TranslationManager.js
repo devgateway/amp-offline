@@ -1,7 +1,6 @@
 import Backend from 'i18next-sync-fs-backend';
 import i18next from 'i18next';
 import {
-  APP_DIRECTORY,
   FS_LOCALES_DIRECTORY,
   LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
@@ -38,12 +37,8 @@ const TranslationManager = {
     FileManager.createDataDir(FS_LOCALES_DIRECTORY);
     // Copy master translations file.
     const masterFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
-    let masterTranslationsFileName = FileManager.getFullPath(APP_DIRECTORY, masterFileName);
-    let tempTranslationFilePath = FileManager.getFullPath(APP_DIRECTORY, FS_LOCALES_DIRECTORY);
-    if (process.env.NODE_ENV === 'production') {
-      masterTranslationsFileName = `${process.resourcesPath}/app.asar/${masterFileName}`;
-      tempTranslationFilePath = `${process.resourcesPath}/app.asar/${FS_LOCALES_DIRECTORY}`;
-    }
+    const masterTranslationsFileName = FileManager.getFullPathForBuiltInResources(masterFileName);
+    const tempTranslationFilePath = FileManager.getFullPathForBuiltInResources(FS_LOCALES_DIRECTORY);
     FileManager.copyDataFileSync(masterTranslationsFileName, FS_LOCALES_DIRECTORY, masterFileName);
     if (!isSetupComplete) {
       FileManager.readdirSyncFullPath(tempTranslationFilePath).forEach(tmpTrnFileName => {
@@ -51,6 +46,24 @@ const TranslationManager = {
         if (matches) {
           const fullFileName = `${tempTranslationFilePath}/${tmpTrnFileName}`;
           FileManager.copyDataFileSync(fullFileName, FS_LOCALES_DIRECTORY, matches[0]);
+        }
+      });
+    } else {
+      /* To fix AMPOFFLINE-1195 we need to add any new {key|text} pair from master-translations.en.json
+      to the files in FS_LOCALES_DIRECTORY */
+      const options = { encoding: 'utf-8' };
+      const masterContent = JSON.parse(FileManager.readFileInPathSync(options, masterTranslationsFileName));
+      FileManager.readdirSync(FS_LOCALES_DIRECTORY).forEach(tmpTrnFileName => {
+        const matches = tmpTrnFileName.match(/^((translations\.)([a-z]{2})(.json))/);
+        if (matches) {
+          const localContent = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, tmpTrnFileName));
+          Object.keys(masterContent).forEach(k => {
+            // Only add new messages.
+            if (!localContent[k]) {
+              localContent[k] = masterContent[k];
+            }
+          });
+          FileManager.writeDataFileSync(JSON.stringify(localContent), FS_LOCALES_DIRECTORY, tmpTrnFileName);
         }
       });
     }
@@ -120,7 +133,8 @@ const TranslationManager = {
 
   removeLanguageFile(lang) {
     logger.log('removeLanguageFile');
-    FileManager.deleteFile(FileManager.getFullPath(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
+    FileManager.deleteFileSync(FileManager.getFullPath(FS_LOCALES_DIRECTORY,
+      `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
   }
 };
 

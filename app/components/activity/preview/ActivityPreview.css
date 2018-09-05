@@ -183,6 +183,14 @@
   margin-bottom: 20px;
 }
 
+.section_subtitle_class {
+  font-size: 1.1em;
+  font-weight: bold;
+  padding-bottom: 15px;
+  padding-top: 15px;
+  width: 100%;
+}
+
 .section_field_name {
   font-size: 0.85em;
   color: #767676;
@@ -343,6 +351,11 @@
   display: none;
 }
 
+.table_raw {
+  display: table-row;
+}
+
+
 .alignRight {
   text-align: right;
 }
@@ -399,10 +412,35 @@
   font-weight: bold;
 }
 
+.noborder {
+  border: 0;
+}
+
 .top_warning_text {
   color: red;
   margin-left: 10px;
   padding: 5px;
   display: inline-block;
   width: 100%;
+}
+
+.structure_title {
+  background-color: #f4f4f4;
+  color: #3a84b3;
+  border: 1px solid #ebebeb;
+  padding: 8px;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+  font-weight: bold;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.structures_coordinates_table {
+  width: 50%;
+}
+
+.structures_coordinates_value {
+  border: none;
+  font-weight: bold;
 }

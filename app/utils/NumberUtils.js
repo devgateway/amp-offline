@@ -17,6 +17,8 @@ import Utils from './Utils';
 import translate from './translate';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 
+require('./customNumeral');
+
 const logger = new Logger('Number utils');
 
 export default class NumberUtils {
@@ -60,6 +62,18 @@ export default class NumberUtils {
     const formatted = numeral(forceUnits ? number : NumberUtils.calculateInThousands(number))
       .format(GlobalSettingsManager.getSettingByKey(GS_DEFAULT_NUMBER_FORMAT));
     return formatted;
+  }
+
+  /**
+   * Parses the number based on its formatted representation
+   * @param formatted the formatted representation of the number
+   * @return {number} the parsed number or NaN if value cannot be parsed based on the preconfigured format
+   */
+  static formattedStringToRawNumberOrNaN(formatted: string) {
+    if (!numeral.validate(formatted)) {
+      return Number.NaN;
+    }
+    return NumberUtils.formattedStringToRawNumber(formatted);
   }
 
   static formattedStringToRawNumber(numberString) {
