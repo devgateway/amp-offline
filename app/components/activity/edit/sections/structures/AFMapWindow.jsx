@@ -96,7 +96,8 @@ export default class AFMapWindow extends Component {
       layersList: [],
       deletedLayersList: [],
       locateText: null,
-      gazetteerGroup: null
+      gazetteerGroup: null,
+      invalidPointId: null
     };
   }
 
@@ -163,12 +164,31 @@ export default class AFMapWindow extends Component {
 
   handleSaveBtnClick() {
     const { onSave } = this.props;
-    onSave(this.state.layersList, this.state.deletedLayersList);
-    this.setState({ layersList: [], deletedLayersList: [], locateText: null, gazetteerGroup: null });
+    /* If we opened the map for an invalid point (wrong lat/lng) then we need to change the id of the first layer
+    created in this map window for the original id so the list of structures is correctly updated (instead of
+    creating an extra structure). */
+    const auxLayersList = this.state.layersList.slice();
+    if (this.state.invalidPointId && auxLayersList.length > 0) {
+      auxLayersList[0].structureData.id = this.state.invalidPointId;
+    }
+    onSave(auxLayersList, this.state.deletedLayersList);
+    this.setState({
+      layersList: [],
+      deletedLayersList: [],
+      locateText: null,
+      gazetteerGroup: null,
+      invalidPointId: null
+    });
   }
 
   handleCancelBtnClick() {
-    this.setState({ layersList: [], deletedLayersList: [], locateText: null, gazetteerGroup: null });
+    this.setState({
+      layersList: [],
+      deletedLayersList: [],
+      locateText: null,
+      gazetteerGroup: null,
+      invalidPointId: null
+    });
     this.props.onModalClose();
   }
 
@@ -255,9 +275,13 @@ export default class AFMapWindow extends Component {
   }
 
   loadExistingStructure(drawnItems, point, polygon) {
-    if (point || polygon) {
-      // Load point.
-      if (point) {
+    // Load point.
+    if (point) {
+      /* First check if lat/long are valid (to mimic AMP coordinates can be empty or plain wrong),
+      if not save the id for later. */
+      if (point[AC.STRUCTURES_LATITUDE] === null && point[AC.STRUCTURES_LONGITUDE] === null) {
+        this.setState({ invalidPointId: point.id, layersList: [] });
+      } else {
         const marker = L.marker([point[AC.STRUCTURES_LAT], point[AC.STRUCTURES_LNG]],
           { icon: myIconMarker });
         marker.on('click', (event) => this.handleMarkerClick(event));
@@ -275,33 +299,30 @@ export default class AFMapWindow extends Component {
           }
         });
         this.setState({ layersList: newLayersList });
-      } else {
-        // Load polygon.
-        let color = POLYGON_BASE_COLOR;
-        if (polygon[AC.STRUCTURES_COLOR]) {
-          color = polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
-        }
-        const newPolygon = L.polygon(polygon[AC.STRUCTURES_COORDINATES].map(c =>
-          ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: OPACITY });
-        newPolygon.on('click', (event) => this.handleMarkerClick(event));
-        drawnItems.addLayer(newPolygon);
-        const newLayersList = this.state.layersList.slice();
-        newLayersList.push({
-          layer: newPolygon,
-          structureData: {
-            [AC.STRUCTURES_TITLE]: polygon[AC.STRUCTURES_TITLE],
-            [AC.STRUCTURES_COLOR]: polygon[AC.STRUCTURES_COLOR],
-            id: polygon.id,
-            [AC.STRUCTURES_DESCRIPTION]: polygon[AC.STRUCTURES_DESCRIPTION],
-            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
-            edit: true
-          }
-        });
-        this.setState({ layersList: newLayersList });
       }
     } else {
-      // This is "Add Structure" case.
-      this.setState({ layersList: [] });
+      // Load polygon.
+      let color = POLYGON_BASE_COLOR;
+      if (polygon[AC.STRUCTURES_COLOR]) {
+        color = polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
+      }
+      const newPolygon = L.polygon(polygon[AC.STRUCTURES_COORDINATES].map(c =>
+        ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: OPACITY });
+      newPolygon.on('click', (event) => this.handleMarkerClick(event));
+      drawnItems.addLayer(newPolygon);
+      const newLayersList = this.state.layersList.slice();
+      newLayersList.push({
+        layer: newPolygon,
+        structureData: {
+          [AC.STRUCTURES_TITLE]: polygon[AC.STRUCTURES_TITLE],
+          [AC.STRUCTURES_COLOR]: polygon[AC.STRUCTURES_COLOR],
+          id: polygon.id,
+          [AC.STRUCTURES_DESCRIPTION]: polygon[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
+          edit: true
+        }
+      });
+      this.setState({ layersList: newLayersList });
     }
   }
 
