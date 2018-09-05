@@ -97,7 +97,7 @@ export default class AFMapWindow extends Component {
       deletedLayersList: [],
       locateText: null,
       gazetteerGroup: null,
-      invalidPointId: null
+      invalidPoint: null,
     };
   }
 
@@ -145,6 +145,14 @@ export default class AFMapWindow extends Component {
       this.state.map.removeLayer(layer.layer || layer);
       this.state.map.addLayer(layer.layer || layer);
     }
+
+    // Cleanup title/description if we come from an invalid point so new structures wont be created with these data.
+    if (this.state.invalidPoint) {
+      const auxPoint = this.state.invalidPoint;
+      auxPoint[AC.STRUCTURES_TITLE] = null;
+      auxPoint[AC.STRUCTURES_DESCRIPTION] = null;
+      this.setState({ invalidPoint: auxPoint });
+    }
   }
 
   onStructureDataPopupDelete(layer, structureData) {
@@ -168,8 +176,8 @@ export default class AFMapWindow extends Component {
     created in this map window for the original id so the list of structures is correctly updated (instead of
     creating an extra structure). */
     const auxLayersList = this.state.layersList.slice();
-    if (this.state.invalidPointId && auxLayersList.length > 0) {
-      auxLayersList[0].structureData.id = this.state.invalidPointId;
+    if (this.state.invalidPoint && auxLayersList.length > 0) {
+      auxLayersList[0].structureData.id = this.state.invalidPoint.id;
     }
     onSave(auxLayersList, this.state.deletedLayersList);
     this.setState({
@@ -177,7 +185,7 @@ export default class AFMapWindow extends Component {
       deletedLayersList: [],
       locateText: null,
       gazetteerGroup: null,
-      invalidPointId: null
+      invalidPoint: null
     });
   }
 
@@ -187,7 +195,7 @@ export default class AFMapWindow extends Component {
       deletedLayersList: [],
       locateText: null,
       gazetteerGroup: null,
-      invalidPointId: null
+      invalidPoint: null
     });
     this.props.onModalClose();
   }
@@ -262,9 +270,11 @@ export default class AFMapWindow extends Component {
       layer.on('click', (event2) => (this.handleMarkerClick(event2)));
       drawnItems.addLayer(layer);
       const structureData = {
-        [AC.STRUCTURES_TITLE]: '',
+        [AC.STRUCTURES_TITLE]: (this.state.invalidPoint && this.state.invalidPoint[AC.STRUCTURES_TITLE])
+          ? this.state.invalidPoint[AC.STRUCTURES_TITLE] : '',
         [AC.STRUCTURES_COLOR]: null,
-        [AC.STRUCTURES_DESCRIPTION]: '',
+        [AC.STRUCTURES_DESCRIPTION]: (this.state.invalidPoint && this.state.invalidPoint[AC.STRUCTURES_DESCRIPTION])
+          ? this.state.invalidPoint[AC.STRUCTURES_DESCRIPTION] : '',
         [AC.STRUCTURES_SHAPE]: (layer._latlng ? AC.STRUCTURES_POINT : AC.STRUCTURES_POLYGON),
         edit: false
       };
@@ -280,7 +290,14 @@ export default class AFMapWindow extends Component {
       /* First check if lat/long are valid (to mimic AMP coordinates can be empty or plain wrong),
       if not save the id for later. */
       if (point[AC.STRUCTURES_LATITUDE] === null && point[AC.STRUCTURES_LONGITUDE] === null) {
-        this.setState({ invalidPointId: point.id, layersList: [] });
+        this.setState({
+          invalidPoint: {
+            id: point.id,
+            [AC.STRUCTURES_TITLE]: point[AC.STRUCTURES_TITLE],
+            [AC.STRUCTURES_DESCRIPTION]: point[AC.STRUCTURES_DESCRIPTION]
+          },
+          layersList: []
+        });
       } else {
         const marker = L.marker([point[AC.STRUCTURES_LAT], point[AC.STRUCTURES_LNG]],
           { icon: myIconMarker });
