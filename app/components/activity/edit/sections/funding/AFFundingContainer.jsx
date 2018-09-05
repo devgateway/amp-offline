@@ -8,6 +8,7 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
+import AFMTEFProjectionContainer from './AFMTEFProjectionContainer';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import translate from '../../../../../utils/translate';
@@ -34,10 +35,21 @@ export default class AFFundingContainer extends Component {
     logger.debug('constructor');
     this.state = {
       funding: this.props.funding,
-      stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS]
+      stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS],
+      mtefProjections: this.props.funding[AC.MTEF_PROJECTIONS]
     };
     this._addTransactionItem = this._addTransactionItem.bind(this);
     this._removeFundingDetailItem = this._removeFundingDetailItem.bind(this);
+    this._addMTEFProjectionItem = this._addMTEFProjectionItem.bind(this);
+    this._removeMTEFProjectionItem = this._removeMTEFProjectionItem.bind(this);
+  }
+
+  _addMTEFProjectionItem() {
+    debugger;
+  }
+
+  _removeMTEFProjectionItem() {
+    debugger;
   }
 
   _addTransactionItem(type) {
@@ -70,7 +82,6 @@ export default class AFFundingContainer extends Component {
   }
 
   render() {
-    // TODO: Implement 'MTEF Projections' table when available for sync.
     return (<div>
       <FormGroup>
         <Grid>
@@ -93,6 +104,9 @@ export default class AFFundingContainer extends Component {
       </FormGroup>
       <AFFundingClassificationPanel
         funding={this.state.funding} fundingDetails={this.state.stateFundingDetail} hasErrors={this.props.hasErrors} />
+      <AFMTEFProjectionContainer
+        mtefProjections={this.state.mtefProjections} hasErrors={this.props.hasErrors} funding={this.state.funding}
+        handleRemoveItem={this._removeMTEFProjectionItem} handleNewItem={this._addMTEFProjectionItem} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.COMMITMENTS}
