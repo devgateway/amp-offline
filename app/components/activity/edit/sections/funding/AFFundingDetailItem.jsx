@@ -96,6 +96,12 @@ export default class AFFundingDetailItem extends Component {
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
                   fmPath={fixedExchangeRateFMPath}
                   extraParams={{ bigger: 0 }} />
+                {this.props.type === VC.DISBURSEMENTS ? (<AFField
+                  parent={this.props.fundingDetail} className={styles.cell_1}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`} />) : null}
+                {this.props.type === VC.DISBURSEMENTS ? (<AFField
+                  parent={this.props.fundingDetail} className={styles.cell_1}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`} />) : null}
               </div>
             </td>
             <td className={styles.delete_col}>
