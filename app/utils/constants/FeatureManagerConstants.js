@@ -52,3 +52,13 @@ export const ACTIVITY_ISSUES_ADD_MEASURE = '/Activity Form/Issues Section/Issue/
 export const ACTIVITY_ISSUES_DELETE_MEASURE = '/Activity Form/Issues Section/Issue/Measure/Delete Item';
 export const ACTIVITY_ISSUES_ADD_ACTOR = '/Activity Form/Issues Section/Issue/Measure/Add Item';
 export const ACTIVITY_ISSUES_DELETE_ACTOR = '/Activity Form/Issues Section/Issue/Measure/Actor/Delete Item';
+
+export const MTEF_PROJECTIONS = '/Activity Form/Funding/Funding Group/Funding Item/MTEF Projections';
+export const MTEF_PROJECTIONS_AMOUNT =
+  '/Activity Form/Funding/Funding Group/Funding Item/MTEF Projections/MTEF Projections Table/Amount';
+export const MTEF_PROJECTIONS_CURRENCY =
+  '/Activity Form/Funding/Funding Group/Funding Item/MTEF Projections/MTEF Projections Table/Currency';
+export const MTEF_PROJECTIONS_PROJECTION =
+  '/Activity Form/Funding/Funding Group/Funding Item/MTEF Projections/MTEF Projections Table/MTEF Projection';
+export const MTEF_PROJECTIONS_DATE =
+  '/Activity Form/Funding/Funding Group/Funding Item/MTEF Projections/MTEF Projections Table/Projection Date';
