@@ -45,11 +45,28 @@ export default class AFFundingContainer extends Component {
   }
 
   _addMTEFProjectionItem() {
-    debugger;
+    logger.log('_addMTEFProjectionItem');
+    const mtefItem = {};
+    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(new Date());
+    mtefItem[AC.PROJECTION] = {};
+    mtefItem[AC.CURRENCY] = {};
+    mtefItem[AC.AMOUNT] = undefined;
+    const newFunding = this.state.funding;
+    if (newFunding[AC.MTEF_PROJECTIONS] === undefined) {
+      newFunding[AC.MTEF_PROJECTIONS] = [];
+    }
+    newFunding[AC.MTEF_PROJECTIONS].push(mtefItem);
+    this.setState({ funding: newFunding });
   }
 
-  _removeMTEFProjectionItem() {
-    debugger;
+  _removeMTEFProjectionItem(id) {
+    logger.debug('_removeMTEFProjectionItem');
+    if (confirm(translate('deleteMTEFProjectionItem'))) {
+      const mtefList = this.state.mtefProjections;
+      const index = this.state.mtefProjections.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
+      mtefList.splice(index, 1);
+      this.setState({ mtefProjections: mtefList });
+    }
   }
 
   _addTransactionItem(type) {

@@ -10,6 +10,7 @@ import afStyles from '../../ActivityForm.css';
 import { INPUT_TYPE } from '../../components/AFComponentTypes';
 import fundingStyles from './AFFundingContainer.css';
 import AFMTEFProjectionItem from './AFMTEFProjectionItem';
+import * as Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AF MTEF container');
 
@@ -54,9 +55,13 @@ export default class AFMTEFProjectionContainer extends Component {
         onSelect={() => {
           this.setState({ openMTEF: !this.state.openMTEF });
         }} className={hasErrors ? fundingStyles.error : ''}>
-        {mtefProjections.map((mtef) => (
-          <AFMTEFProjectionItem mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={Math.random()} />
-        ))}
+        {mtefProjections.map((mtef) => {
+          // Add a temporal_id field so we can delete items.
+          if (!mtef[AC.TEMPORAL_ID]) {
+            mtef[AC.TEMPORAL_ID] = Utils.numberRandom();
+          }
+          return <AFMTEFProjectionItem mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={Math.random()} />;
+        })}
         <Button bsStyle="primary" onClick={handleNewItem}>{translate('Add Projection')}</Button>
       </Panel>
     </div>);
