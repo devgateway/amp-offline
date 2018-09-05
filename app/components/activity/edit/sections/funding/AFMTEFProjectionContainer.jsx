@@ -1,13 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { Button, Col, FormGroup, Grid, Panel, Row } from 'react-bootstrap';
+import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
-import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
-import { INPUT_TYPE } from '../../components/AFComponentTypes';
 import fundingStyles from './AFFundingContainer.css';
 import AFMTEFProjectionItem from './AFMTEFProjectionItem';
 import * as Utils from '../../../../../utils/Utils';
