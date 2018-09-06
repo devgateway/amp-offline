@@ -96,7 +96,8 @@ export default class AFMapWindow extends Component {
       layersList: [],
       deletedLayersList: [],
       locateText: null,
-      gazetteerGroup: null
+      gazetteerGroup: null,
+      invalidPoint: null,
     };
   }
 
@@ -144,6 +145,14 @@ export default class AFMapWindow extends Component {
       this.state.map.removeLayer(layer.layer || layer);
       this.state.map.addLayer(layer.layer || layer);
     }
+
+    // Cleanup title/description if we come from an invalid point so new structures wont be created with these data.
+    if (this.state.invalidPoint) {
+      const auxPoint = this.state.invalidPoint;
+      auxPoint[AC.STRUCTURES_TITLE] = null;
+      auxPoint[AC.STRUCTURES_DESCRIPTION] = null;
+      this.setState({ invalidPoint: auxPoint });
+    }
   }
 
   onStructureDataPopupDelete(layer, structureData) {
@@ -163,12 +172,31 @@ export default class AFMapWindow extends Component {
 
   handleSaveBtnClick() {
     const { onSave } = this.props;
-    onSave(this.state.layersList, this.state.deletedLayersList);
-    this.setState({ layersList: [], deletedLayersList: [], locateText: null, gazetteerGroup: null });
+    /* If we opened the map for an invalid point (wrong lat/lng) then we need to change the id of the first layer
+    created in this map window for the original id so the list of structures is correctly updated (instead of
+    creating an extra structure). */
+    const auxLayersList = this.state.layersList.slice();
+    if (this.state.invalidPoint && auxLayersList.length > 0) {
+      auxLayersList[0].structureData.id = this.state.invalidPoint.id;
+    }
+    onSave(auxLayersList, this.state.deletedLayersList);
+    this.setState({
+      layersList: [],
+      deletedLayersList: [],
+      locateText: null,
+      gazetteerGroup: null,
+      invalidPoint: null
+    });
   }
 
   handleCancelBtnClick() {
-    this.setState({ layersList: [], deletedLayersList: [], locateText: null, gazetteerGroup: null });
+    this.setState({
+      layersList: [],
+      deletedLayersList: [],
+      locateText: null,
+      gazetteerGroup: null,
+      invalidPoint: null
+    });
     this.props.onModalClose();
   }
 
@@ -242,9 +270,11 @@ export default class AFMapWindow extends Component {
       layer.on('click', (event2) => (this.handleMarkerClick(event2)));
       drawnItems.addLayer(layer);
       const structureData = {
-        [AC.STRUCTURES_TITLE]: '',
+        [AC.STRUCTURES_TITLE]: (this.state.invalidPoint && this.state.invalidPoint[AC.STRUCTURES_TITLE])
+          ? this.state.invalidPoint[AC.STRUCTURES_TITLE] : '',
         [AC.STRUCTURES_COLOR]: null,
-        [AC.STRUCTURES_DESCRIPTION]: '',
+        [AC.STRUCTURES_DESCRIPTION]: (this.state.invalidPoint && this.state.invalidPoint[AC.STRUCTURES_DESCRIPTION])
+          ? this.state.invalidPoint[AC.STRUCTURES_DESCRIPTION] : '',
         [AC.STRUCTURES_SHAPE]: (layer._latlng ? AC.STRUCTURES_POINT : AC.STRUCTURES_POLYGON),
         edit: false
       };
@@ -255,9 +285,20 @@ export default class AFMapWindow extends Component {
   }
 
   loadExistingStructure(drawnItems, point, polygon) {
-    if (point || polygon) {
-      // Load point.
-      if (point) {
+    // Load point.
+    if (point) {
+      /* First check if lat/long are valid (to mimic AMP coordinates can be empty or plain wrong),
+      if not save the id for later. */
+      if (point[AC.STRUCTURES_LATITUDE] === null && point[AC.STRUCTURES_LONGITUDE] === null) {
+        this.setState({
+          invalidPoint: {
+            id: point.id,
+            [AC.STRUCTURES_TITLE]: point[AC.STRUCTURES_TITLE],
+            [AC.STRUCTURES_DESCRIPTION]: point[AC.STRUCTURES_DESCRIPTION]
+          },
+          layersList: []
+        });
+      } else {
         const marker = L.marker([point[AC.STRUCTURES_LAT], point[AC.STRUCTURES_LNG]],
           { icon: myIconMarker });
         marker.on('click', (event) => this.handleMarkerClick(event));
@@ -275,33 +316,30 @@ export default class AFMapWindow extends Component {
           }
         });
         this.setState({ layersList: newLayersList });
-      } else {
-        // Load polygon.
-        let color = POLYGON_BASE_COLOR;
-        if (polygon[AC.STRUCTURES_COLOR]) {
-          color = polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
-        }
-        const newPolygon = L.polygon(polygon[AC.STRUCTURES_COORDINATES].map(c =>
-          ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: OPACITY });
-        newPolygon.on('click', (event) => this.handleMarkerClick(event));
-        drawnItems.addLayer(newPolygon);
-        const newLayersList = this.state.layersList.slice();
-        newLayersList.push({
-          layer: newPolygon,
-          structureData: {
-            [AC.STRUCTURES_TITLE]: polygon[AC.STRUCTURES_TITLE],
-            [AC.STRUCTURES_COLOR]: polygon[AC.STRUCTURES_COLOR],
-            id: polygon.id,
-            [AC.STRUCTURES_DESCRIPTION]: polygon[AC.STRUCTURES_DESCRIPTION],
-            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
-            edit: true
-          }
-        });
-        this.setState({ layersList: newLayersList });
       }
     } else {
-      // This is "Add Structure" case.
-      this.setState({ layersList: [] });
+      // Load polygon.
+      let color = POLYGON_BASE_COLOR;
+      if (polygon[AC.STRUCTURES_COLOR]) {
+        color = polygon[AC.STRUCTURES_COLOR].value.substring(0, 7);
+      }
+      const newPolygon = L.polygon(polygon[AC.STRUCTURES_COORDINATES].map(c =>
+        ([c[AC.STRUCTURES_LATITUDE], c[AC.STRUCTURES_LONGITUDE]])), { color, opacity: OPACITY });
+      newPolygon.on('click', (event) => this.handleMarkerClick(event));
+      drawnItems.addLayer(newPolygon);
+      const newLayersList = this.state.layersList.slice();
+      newLayersList.push({
+        layer: newPolygon,
+        structureData: {
+          [AC.STRUCTURES_TITLE]: polygon[AC.STRUCTURES_TITLE],
+          [AC.STRUCTURES_COLOR]: polygon[AC.STRUCTURES_COLOR],
+          id: polygon.id,
+          [AC.STRUCTURES_DESCRIPTION]: polygon[AC.STRUCTURES_DESCRIPTION],
+          [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
+          edit: true
+        }
+      });
+      this.setState({ layersList: newLayersList });
     }
   }
 

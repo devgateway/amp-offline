@@ -164,7 +164,7 @@ export function configureAndTestConnectivity(setupConfig) {
     return currentPromise
       .then(({ connectivityStatus }) => {
         lastIndex = index;
-        if (isValidConnectionByStatus(connectivityStatus)) {
+        if (isValidConnectionByStatus(connectivityStatus, true)) {
           // at least one url worked, halt here
           return Promise.resolve({ connectivityStatus, fixedUrl: url });
         }
@@ -173,7 +173,7 @@ export function configureAndTestConnectivity(setupConfig) {
       .catch(() => testAMPUrl(url));
   }, Promise.resolve())
     .then(({ connectivityStatus, fixedUrl }) => {
-      if (isValidConnectionByStatus(connectivityStatus)) {
+      if (isValidConnectionByStatus(connectivityStatus, true)) {
         // set the good url to be the first one to use
         setupConfig.urls[lastIndex] = fixedUrl;
         const goodUrl = setupConfig.urls[lastIndex];
@@ -190,7 +190,7 @@ function testAMPUrl(url) {
   return URLUtils.getPossibleUrlSetupFixes(url).reduce((currentPromise, fixedUrl) =>
       currentPromise.then(result => {
         relevantUrlResult = getRelevantResult(relevantUrlResult, result);
-        if (isValidConnectionByStatus(result && result.connectivityStatus)) {
+        if (isValidConnectionByStatus(result && result.connectivityStatus, true)) {
           return Promise.resolve(result);
         }
         return waitConfigureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl))
@@ -199,7 +199,7 @@ function testAMPUrl(url) {
     , Promise.resolve())
     .then(result => {
       relevantUrlResult = getRelevantResult(relevantUrlResult, result);
-      if (isValidConnectionByStatus(result && result.connectivityStatus) || !relevantUrlResult) {
+      if (isValidConnectionByStatus(result && result.connectivityStatus, true) || !relevantUrlResult) {
         return result;
       }
       return relevantUrlResult;
