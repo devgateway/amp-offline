@@ -30,18 +30,43 @@ export default class AFFundingDetailItem extends Component {
     type: PropTypes.string
   };
 
+  generateRecipients(type, fundingDetail) {
+    const content = [];
+    let typeName = '';
+    switch (type) {
+      case VC.DISBURSEMENTS:
+        typeName = 'DISBURSEMENTS';
+        break;
+      case VC.COMMITMENTS:
+        typeName = 'COMMITMENTS';
+        break;
+      default:
+        break;
+    }
+    content.push(<AFField
+      parent={fundingDetail} className={styles.cell_2}
+      fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`}
+      fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE`]} />);
+    content.push(<AFField
+      parent={fundingDetail} className={styles.cell_2}
+      fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`}
+      fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION`]} />);
+    return content;
+  }
+
   render() {
+    const { type, fundingDetail, funding, removeFundingDetailItem } = this.props;
     // When adding a new item we select the default currency like in AMP.
-    if (!this.props.fundingDetail[AC.CURRENCY].id) {
+    if (!fundingDetail[AC.CURRENCY].id) {
       const currency = Object.values(this.context.activityFieldsManager.possibleValuesMap[FPC.FUNDING_CURRENCY_PATH])
         .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
-      this.props.fundingDetail[AC.CURRENCY] = currency[0];
+      fundingDetail[AC.CURRENCY] = currency[0];
     }
-    const orgGroupName = this.props.funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
+    const orgGroupName = funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
     let fixedExchangeRateFMPath;
     let pledgeFMPath;
     let disasterResponseFMPath;
-    switch (this.props.type) {
+    switch (type) {
       case VC.COMMITMENTS:
         fixedExchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
         pledgeFMPath = FMC.ACTIVITY_COMMITMENTS_PLEDGES;
@@ -60,55 +85,50 @@ export default class AFFundingDetailItem extends Component {
       default:
         break;
     }
-    return (<div className={afStyles.full_width}>
+    return (<div className={styles.full_width}>
       <table>
         <tbody>
           <tr>
             <td>
               <div className={styles.row}>
                 <AFField
-                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.ADJUSTMENT_TYPE}`} />
                 <AFField
-                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} />
                 <AFField
-                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject />
                 <AFField
-                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />
                 <AFField
-                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  parent={fundingDetail} className={styles.cell_3}
                   type={Types.RADIO_BOOLEAN} fmPath={disasterResponseFMPath}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`} />
-                {(this.props.fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
-                  parent={this.props.fundingDetail} className={styles.cell_3}
+                {(fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
+                  parent={fundingDetail} className={styles.cell_3}
                   fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} /> : null}
                 <AFField
-                  parent={this.props.fundingDetail} className={styles.cell_3}
+                  parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`}
                   filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
                   fmPath={pledgeFMPath} />
                 <AFField
-                  parent={this.props.fundingDetail} className={styles.cell_4}
+                  parent={fundingDetail} className={styles.cell_4}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
                   fmPath={fixedExchangeRateFMPath}
                   extraParams={{ bigger: 0 }} />
-                {this.props.type === VC.DISBURSEMENTS ? (<AFField
-                  parent={this.props.fundingDetail} className={styles.cell_1}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`} />) : null}
-                {this.props.type === VC.DISBURSEMENTS ? (<AFField
-                  parent={this.props.fundingDetail} className={styles.cell_1}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`} />) : null}
+                {this.generateRecipients(type, fundingDetail)}
               </div>
             </td>
             <td className={styles.delete_col}>
               <div className={styles.grid}>
                 <div className={styles.cell_10}>
                   <a
-                    onClick={this.props.removeFundingDetailItem.bind(this, this.props.fundingDetail[AC.TEMPORAL_ID])}
+                    onClick={removeFundingDetailItem.bind(this, fundingDetail[AC.TEMPORAL_ID])}
                     className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
                 </div>
               </div>
