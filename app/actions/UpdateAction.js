@@ -90,7 +90,7 @@ export function downloadUpdate(/* id */) {
   // const downloadPromise = UpdateManager.downloadInstaller(id);
   const updater: ElectronUpdaterManager = ElectronUpdaterManager.getUpdater(updateProgress);
   const downloadPromise = connectivityCheck().then(status => {
-    if (isAmpAccessible(status)) {
+    if (isAmpAccessible(status, true)) {
       return updater.downloadUpdate().catch(errorMsg => {
         if (errorMsg instanceof String) {
           return new NotificationHelper({ message: errorMsg, translateMsg: false });
