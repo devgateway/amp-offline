@@ -125,30 +125,24 @@ class AFStructures extends Component {
   }
 
   openMap(structure) {
-    if (!structure) {
-      // Open map to add structure.
+    if (AFStructures.detectShapePoint(structure)) {
+      const point = {
+        id: structure.id,
+        [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
+        [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
+        [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE],
+        [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
+        [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
+      };
+      if (!AFStructures.checkLatLng(structure)) {
+        point[AC.STRUCTURES_LATITUDE] = null;
+        point[AC.STRUCTURES_LONGITUDE] = null;
+      }
       this.setState({
         showMapDialog: true,
-        currentPoint: null,
+        currentPoint: point,
         currentPolygon: null
       });
-    } else if (AFStructures.detectShapePoint(structure)) {
-      if (AFStructures.checkLatLng(structure)) {
-        this.setState({
-          showMapDialog: true,
-          currentPoint: {
-            id: structure.id,
-            [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
-            [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
-            [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE],
-            [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
-            [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT
-          },
-          currentPolygon: null
-        });
-      } else {
-        alert(translate('wrongLatLng'));
-      }
     } else {
       this.setState({
         showMapDialog: true,

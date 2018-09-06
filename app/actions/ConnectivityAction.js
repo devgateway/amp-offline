@@ -43,15 +43,20 @@ export function isConnectivityCheckInProgress() {
   return store.getState().ampConnectionStatusReducer.updateInProgress;
 }
 
-export function isAmpAccessible() {
+export function isAmpAccessible(isSetup) {
   const connectivityStatus = store.getState().ampConnectionStatusReducer.status;
-  return isValidConnectionByStatus(connectivityStatus) && connectivityStatus.isAmpClientEnabled;
+  return isValidConnectionByStatus(connectivityStatus, isSetup) && connectivityStatus.isAmpClientEnabled;
 }
 
-export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus) {
+export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus, isSetup: boolean) {
   const serverId = getRegisteredServerId();
-  return connectivityStatus && connectivityStatus.isAmpAvailable && connectivityStatus.isAmpCompatible &&
-    ((!serverId && connectivityStatus.serverId) || connectivityStatus.serverIdMatch);
+  if (!connectivityStatus || !connectivityStatus.isAmpAvailable) {
+    return false;
+  }
+  if (connectivityStatus.serverIdMatch) {
+    return isSetup ? true : connectivityStatus.isAmpCompatible;
+  }
+  return (!serverId && connectivityStatus.serverId) && connectivityStatus.isAmpCompatible;
 }
 
 /**
