@@ -20,6 +20,7 @@ import {
 } from './SetupAction';
 import RepositoryManager from '../modules/repository/RepositoryManager';
 import { deleteOrphanResources } from './ResourceAction';
+import SetupManager from '../modules/setup/SetupManager';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -43,6 +44,7 @@ const logger = new Logger('Startup action');
 
 export function ampOfflineStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
+    .then(SetupManager.auditStartup)
     .then(checkIfSetupComplete)
     .then(isSetupComplete =>
       TranslationManager.initializeTranslations(isSetupComplete)
