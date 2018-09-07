@@ -8,10 +8,10 @@ import * as VC from '../../../../../utils/constants/ValueConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
-import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import translate from '../../../../../utils/translate';
+import FeatureManager from '../../../../../modules/util/FeatureManager';
 
 /**
  * @author Gabriel Inchauspe
@@ -19,6 +19,7 @@ import translate from '../../../../../utils/translate';
 export default class AFFundingDetailItem extends Component {
 
   static contextTypes = {
+    activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     currentWorkspaceSettings: PropTypes.object.isRequired
   };
@@ -30,23 +31,62 @@ export default class AFFundingDetailItem extends Component {
     type: PropTypes.string
   };
 
-  generateRecipients(type, fundingDetail) {
-    const content = [];
-    let typeName = '';
-    switch (type) {
-      case VC.DISBURSEMENTS:
-        typeName = 'DISBURSEMENTS';
-        break;
-      case VC.COMMITMENTS:
-        typeName = 'COMMITMENTS';
-        break;
-      default:
-        break;
+  _getOrgRoleFilter(typeName) {
+    const filter = [];
+    // TODO: crear un array con constant|value para que quede mas prolijo.
+    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY`])) {
+      filter.push({ path: 'value', value: VC.IMPLEMENTING_AGENCY });
     }
+    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY`])) {
+      filter.push({
+        path: 'value',
+        value: VC.CONTRACTING_AGENCY
+      });
+    }
+    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_BENEFICIARY_AGENCY`])) {
+      filter.push({
+        path: 'value',
+        value: VC.BENEFICIARY_AGENCY
+      });
+    }
+    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_DONOR_ORGANIZATION`])) {
+      filter.push({
+        path: 'value',
+        value: VC.DONOR_ORGANIZATION
+      });
+    }
+    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_EXECUTING_AGENCY`])) {
+      filter.push({ path: 'value', value: VC.EXECUTING_AGENCY });
+    }
+    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_REGIONAL_GROUP`])) {
+      filter.push({
+        path: 'value',
+        value: VC.REGIONAL_GROUP
+      });
+    }
+    if (FeatureManager
+      .isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZATION`])) {
+      filter.push({
+        path: 'value',
+        value: VC.RESPONSIBLE_ORGANIZATION
+      });
+    }
+    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP`])) {
+      filter.push({
+        path: 'value',
+        value: VC.SECTOR_GROUP
+      });
+    }
+    return filter;
+  }
+
+  generateRecipients(typeName, fundingDetail) {
+    const content = [];
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`}
-      fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE`]} />);
+      fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE`]}
+      filter={this._getOrgRoleFilter(typeName)} extraParams={{ isORFilter: true }} />);
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`}
@@ -66,16 +106,19 @@ export default class AFFundingDetailItem extends Component {
     let fixedExchangeRateFMPath;
     let pledgeFMPath;
     let disasterResponseFMPath;
+    let typeName = '';
     switch (type) {
       case VC.COMMITMENTS:
         fixedExchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
         pledgeFMPath = FMC.ACTIVITY_COMMITMENTS_PLEDGES;
         disasterResponseFMPath = FMC.ACTIVITY_COMMITMENTS_DISASTER_RESPONSE;
+        typeName = 'COMMITMENTS';
         break;
       case VC.DISBURSEMENTS:
         fixedExchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
         pledgeFMPath = FMC.ACTIVITY_DISBURSEMENTS_PLEDGES;
         disasterResponseFMPath = FMC.ACTIVITY_DISBURSEMENTS_DISASTER_RESPONSE;
+        typeName = 'DISBURSEMENTS';
         break;
       case VC.EXPENDITURES:
         fixedExchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
@@ -121,7 +164,7 @@ export default class AFFundingDetailItem extends Component {
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
                   fmPath={fixedExchangeRateFMPath}
                   extraParams={{ bigger: 0 }} />
-                {this.generateRecipients(type, fundingDetail)}
+                {this.generateRecipients(typeName, fundingDetail)}
               </div>
             </td>
             <td className={styles.delete_col}>
