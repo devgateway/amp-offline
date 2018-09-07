@@ -9,7 +9,7 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
-import { RELEASE_BRANCHES, ENDS_WITH_PUNCTUATION_REGEX } from './Constants';
+import { RELEASE_BRANCHES, ENDS_WITH_PUNCTUATION_REGEX, VERSION } from './Constants';
 
 const Utils = {
 
@@ -250,7 +250,11 @@ const Utils = {
 
   arrayFlatMap(array: Array) {
     return array.reduce((result, elem) => result.concat(elem), []);
-  }
+  },
+
+  versionAsFieldName() {
+    return VERSION.replace(/\./g, '_');
+  },
 };
 
 module.exports = Utils;

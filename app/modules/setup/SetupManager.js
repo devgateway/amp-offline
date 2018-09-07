@@ -9,7 +9,6 @@ import TranslationManager from '../util/TranslationManager';
 import translate from '../../utils/translate';
 import { NOTIFICATION_ORIGIN_SETUP } from '../../utils/constants/ErrorConstants';
 import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
-import { SETUP_CONFIG } from '../../utils/constants/ClientSettingsConstants';
 import {
   BASE_PORT,
   BASE_REST_URL,
@@ -17,12 +16,13 @@ import {
   CONNECTION_TIMEOUT,
   OTHER_ID,
   PROTOCOL,
-  SERVER_URL
+  SERVER_URL,
 } from '../../utils/Constants';
 import ConnectionInformation from '../connectivity/ConnectionInformation';
 import AssetsUtils from '../../utils/AssetsUtils';
 import SetupSyncUpManager from '../syncup/SetupSyncUpManager';
 import * as Utils from '../../utils/Utils';
+import * as CSC from '../../utils/constants/ClientSettingsConstants';
 
 /**
  * Setup Manager
@@ -36,7 +36,7 @@ const SetupManager = {
    * @return {Promise.<boolean>}
    */
   didSetupComplete() {
-    return ClientSettingsHelper.findSettingByName(SETUP_CONFIG)
+    return ClientSettingsHelper.findSettingByName(CSC.SETUP_CONFIG)
       .then(setupConfigSetting => !!(setupConfigSetting && setupConfigSetting.value));
   },
 
@@ -45,7 +45,7 @@ const SetupManager = {
    * @return {Promise.<ConnectionInformation>}
    */
   getConnectionInformation() {
-    return ClientSettingsHelper.findSettingByName(SETUP_CONFIG).then(setupConfigSetting => {
+    return ClientSettingsHelper.findSettingByName(CSC.SETUP_CONFIG).then(setupConfigSetting => {
       const isFallbackToDefault = +process.env.USE_TEST_AMP_URL;
       const fullUrl = setupConfigSetting && setupConfigSetting.value && setupConfigSetting.value.urls[0];
       const url = fullUrl || (isFallbackToDefault && SERVER_URL) || null;
@@ -100,7 +100,7 @@ const SetupManager = {
         origin: NOTIFICATION_ORIGIN_SETUP
       }));
     }
-    return ClientSettingsHelper.findSettingById(SETUP_CONFIG)
+    return ClientSettingsHelper.findSettingById(CSC.SETUP_CONFIG)
       .then(setupConfigSetting => {
         setupConfigSetting.value = setupConfig;
         return ClientSettingsHelper.saveOrUpdateSetting(setupConfigSetting);
@@ -119,7 +119,27 @@ const SetupManager = {
       return SetupSyncUpManager.syncUpMinimumData();
     }
     return Promise.resolve();
-  }
+  },
+
+  auditStartup() {
+    return ClientSettingsHelper.findSettingByName(CSC.STARTUP_AUDIT_LOGS).then(logs => {
+      const verAsFieldName = Utils.versionAsFieldName();
+      const currentVersionLog = logs.value[verAsFieldName] || {};
+      logs.value[verAsFieldName] = currentVersionLog;
+
+      const currentStartupTime = new Date().toISOString();
+      if (!currentVersionLog[CSC.FIRST_STARTED_AT]) {
+        currentVersionLog[CSC.FIRST_STARTED_AT] = currentStartupTime;
+      }
+      currentVersionLog[CSC.LAST_STARTED_AT] = currentStartupTime;
+      return ClientSettingsHelper.saveOrUpdateSetting(logs);
+    });
+  },
+
+  getCurrentVersionAuditLog() {
+    return ClientSettingsHelper.findSettingByName(CSC.STARTUP_AUDIT_LOGS)
+      .then(logs => logs.value[Utils.versionAsFieldName()] || {});
+  },
 
 };
 
