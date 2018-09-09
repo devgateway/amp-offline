@@ -32,51 +32,38 @@ export default class AFFundingDetailItem extends Component {
   };
 
   _getOrgRoleFilter(typeName) {
+    // TODO: agregar a cada opcion que ademas se fije si hay algo en la coleccion de la actividad.
     const filter = [];
-    // TODO: crear un array con constant|value para que quede mas prolijo.
-    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY`])) {
-      filter.push({ path: 'value', value: VC.IMPLEMENTING_AGENCY });
-    }
-    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY`])) {
-      filter.push({
-        path: 'value',
-        value: VC.CONTRACTING_AGENCY
-      });
-    }
-    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_BENEFICIARY_AGENCY`])) {
-      filter.push({
-        path: 'value',
-        value: VC.BENEFICIARY_AGENCY
-      });
-    }
-    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_DONOR_ORGANIZATION`])) {
-      filter.push({
-        path: 'value',
-        value: VC.DONOR_ORGANIZATION
-      });
-    }
-    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_EXECUTING_AGENCY`])) {
-      filter.push({ path: 'value', value: VC.EXECUTING_AGENCY });
-    }
-    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_REGIONAL_GROUP`])) {
-      filter.push({
-        path: 'value',
-        value: VC.REGIONAL_GROUP
-      });
-    }
-    if (FeatureManager
-      .isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZATION`])) {
-      filter.push({
-        path: 'value',
-        value: VC.RESPONSIBLE_ORGANIZATION
-      });
-    }
-    if (FeatureManager.isFMSettingEnabled(FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP`])) {
-      filter.push({
-        path: 'value',
-        value: VC.SECTOR_GROUP
-      });
-    }
+    const options = [{
+      value: VC.CONTRACTING_AGENCY,
+      id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY`
+    }, {
+      value: VC.BENEFICIARY_AGENCY,
+      id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_BENEFICIARY_AGENCY`
+    }, {
+      value: VC.DONOR_ORGANIZATION,
+      id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_DONOR_ORGANIZATION`
+    }, {
+      value: VC.REGIONAL_GROUP,
+      id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_EXECUTING_AGENCY`
+    }, {
+      value: VC.REGIONAL_GROUP,
+      id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_REGIONAL_GROUP`
+    }, {
+      value: VC.RESPONSIBLE_ORGANIZATION,
+      id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZATION`
+    }, {
+      value: VC.SECTOR_GROUP,
+      id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP`
+    }, {
+      value: VC.IMPLEMENTING_AGENCY,
+      id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY`
+    }];
+    options.forEach(o => {
+      if (FeatureManager.isFMSettingEnabled(FMC[o.id])) {
+        filter.push({ path: 'value', value: o.value });
+      }
+    });
     return filter;
   }
 

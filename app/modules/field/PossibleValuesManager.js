@@ -100,10 +100,10 @@ export default class PossibleValuesManager {
     return resVal;
   }
 
-  static setVisibility(options, fieldPath, filters) {
+  static setVisibility(options, fieldPath, filters, isORFilter = false) {
     options = { ...options };
     Object.values(options).forEach(option => {
-      option.visible = true;
+      option.visible = !isORFilter;
       if (LOCATION_PATH === fieldPath) {
         option.displayHierarchicalValue = true;
       }
@@ -113,10 +113,12 @@ export default class PossibleValuesManager {
         const filterBy = filter.value;
         Object.values(options).forEach(option => {
           const optionDataToCheck = FieldsManager.getValue(option, filter.path);
-          if (option.visible && optionDataToCheck && (
+          if ((isORFilter || option.visible) && optionDataToCheck && (
             (optionDataToCheck instanceof Array && optionDataToCheck.includes(filterBy)) ||
             (optionDataToCheck === filterBy))) {
             option.visible = true;
+          } else if (isORFilter) {
+            // Do nothing, keep it visible/invisible.
           } else {
             option.visible = false;
           }
