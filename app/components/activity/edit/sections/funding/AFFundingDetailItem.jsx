@@ -32,35 +32,43 @@ export default class AFFundingDetailItem extends Component {
   };
 
   _getOrgRoleFilter(typeName) {
-    // TODO: agregar a cada opcion que ademas se fije si hay algo en la coleccion de la actividad.
+    const activity = this.context.activity;
     const filter = [];
     const options = [{
       value: VC.CONTRACTING_AGENCY,
+      collection: AC.CONTRACTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY`
     }, {
       value: VC.BENEFICIARY_AGENCY,
+      collection: AC.BENEFICIARY_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_BENEFICIARY_AGENCY`
     }, {
       value: VC.DONOR_ORGANIZATION,
+      collection: AC.DONOR_ORGANIZATION,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_DONOR_ORGANIZATION`
     }, {
-      value: VC.REGIONAL_GROUP,
+      value: VC.EXECUTING_AGENCY,
+      collection: AC.EXECUTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_EXECUTING_AGENCY`
     }, {
       value: VC.REGIONAL_GROUP,
+      collection: AC.REGIONAL_GROUP,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_REGIONAL_GROUP`
     }, {
       value: VC.RESPONSIBLE_ORGANIZATION,
+      collection: AC.RESPONSIBLE_ORGANIZATION,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZATION`
     }, {
       value: VC.SECTOR_GROUP,
+      collection: AC.SECTOR_GROUP,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP`
     }, {
       value: VC.IMPLEMENTING_AGENCY,
+      collection: AC.IMPLEMENTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY`
     }];
     options.forEach(o => {
-      if (FeatureManager.isFMSettingEnabled(FMC[o.id])) {
+      if (FeatureManager.isFMSettingEnabled(FMC[o.id]) && activity[o.collection] && activity[o.collection].length > 0) {
         filter.push({ path: 'value', value: o.value });
       }
     });
