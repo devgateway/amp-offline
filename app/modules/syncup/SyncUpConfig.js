@@ -18,6 +18,7 @@ import ResourcesPullSyncUpManager from './syncupManagers/ResourcesPullSyncUpMana
 import ResourcesPushSyncUpManager from './syncupManagers/ResourcesPushSyncUpManager';
 import ResourceFieldsSyncUpManager from './syncupManagers/ResourceFieldsSyncUpManager';
 import ResourcePossibleValuesSyncUpManager from './syncupManagers/ResourcePossibleValuesSyncUpManager';
+import CommonPossibleValuesSyncUpManager from './syncupManagers/CommonPossibleValuesSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
@@ -58,7 +59,7 @@ export default class SyncUpConfig {
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
-    ResourcePossibleValuesSyncUpManager,
+    ResourcePossibleValuesSyncUpManager, CommonPossibleValuesSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager, MapTilesSyncUpManager,
     GazetteerSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
