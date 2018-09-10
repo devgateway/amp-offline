@@ -59,6 +59,7 @@ ACTIVITY_FIELDS_FM_PATH[AC.MODIFIED_ON] = FM.ACTIVITY_LAST_UPDATED_ON;
 export const PREFIX_ACTIVITY = null;
 export const PREFIX_CONTACT = 'contact';
 export const PREFIX_RESOURCE = 'resource';
+export const PREFIX_COMMON = 'common';
 
 export const FIELD_PATH = 'field-path';
 export const FIELD_OPTIONS = 'possible-options';

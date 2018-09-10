@@ -36,7 +36,8 @@ import {
   WORKSPACE_MEMBER_URL,
   WORKSPACE_SETTINGS_URL,
   MAP_TILES_URL,
-  GAZETTEER_URL
+  GAZETTEER_URL,
+  COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -180,6 +181,10 @@ const routesConfiguration = [{
   requiredAuth: true
 }, {
   url: RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
+  requiredAuth: true
+}, {
+  url: COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
   requiredAuth: true
 }, {
