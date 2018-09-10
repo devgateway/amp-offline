@@ -31,6 +31,11 @@ export default class AFFundingDetailItem extends Component {
     type: PropTypes.string
   };
 
+  constructor(props) {
+    super(props);
+    this.state = { selectedOrgRole: undefined };
+  }
+
   _getOrgRoleFilter(typeName) {
     const activity = this.context.activity;
     const filter = [];
@@ -75,17 +80,70 @@ export default class AFFundingDetailItem extends Component {
     return filter;
   }
 
+  _getRecipientOrgFilter() {
+    const filter = [];
+    if (this.state.selectedOrgRole) {
+      let collection = '';
+      switch (this.state.selectedOrgRole.value) {
+        case VC.IMPLEMENTING_AGENCY:
+          collection = AC.IMPLEMENTING_AGENCY;
+          break;
+        case VC.RESPONSIBLE_ORGANIZATION:
+          collection = AC.RESPONSIBLE_ORGANIZATION;
+          break;
+        case VC.REGIONAL_GROUP:
+          collection = AC.REGIONAL_GROUP;
+          break;
+        case VC.EXECUTING_AGENCY:
+          collection = AC.EXECUTING_AGENCY;
+          break;
+        case VC.DONOR_ORGANIZATION:
+          collection = AC.DONOR_ORGANIZATION;
+          break;
+        case VC.BENEFICIARY_AGENCY:
+          collection = AC.BENEFICIARY_AGENCY;
+          break;
+        case VC.CONTRACTING_AGENCY:
+          collection = AC.CONTRACTING_AGENCY;
+          break;
+        default:
+          break;
+      }
+      const role = this.context.activity[collection];
+      if (role) {
+        role.forEach(r => {
+          filter.push({ path: 'value', value: r.organization.value });
+        });
+      } else {
+        filter.push([{ path: 'value', value: 'fake' }]);
+      }
+    } else {
+      filter.push([{ path: 'value', value: 'fake' }]);
+    }
+    return filter;
+  }
+
+  handleSelectOrgRole(fundingDetail, role) {
+    if (role) {
+      this.setState({ selectedOrgRole: role });
+    } else {
+      this.setState({ selectedOrgRole: undefined });
+    }
+  }
+
   generateRecipients(typeName, fundingDetail) {
     const content = [];
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`}
       fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE`]}
-      filter={this._getOrgRoleFilter(typeName)} extraParams={{ isORFilter: true }} />);
+      filter={this._getOrgRoleFilter(typeName)} extraParams={{ isORFilter: true }}
+      onAfterUpdate={this.handleSelectOrgRole.bind(this, fundingDetail)} />);
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`}
-      fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION`]} />);
+      fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION`]}
+      filter={this._getRecipientOrgFilter(typeName)} extraParams={{ isORFilter: true }} />);
     return content;
   }
 
@@ -119,6 +177,7 @@ export default class AFFundingDetailItem extends Component {
         fixedExchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
         pledgeFMPath = FMC.ACTIVITY_EXPENDITURES_PLEDGES;
         disasterResponseFMPath = FMC.ACTIVITY_EXPENDITURES_DISASTER_RESPONSE;
+        typeName = 'EXPENDITURES';
         break;
       default:
         break;
