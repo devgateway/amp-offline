@@ -15,6 +15,7 @@ const logger = new Logger('AF identification');
 const CUSTOM_TYPE = {
   [AC.BUDGET_CODE_PROJECT_ID]: Types.INPUT_TYPE,
   [AC.CRIS_NUMBER]: Types.INPUT_TYPE,
+  [AC.GOVERNMENT_AGREEMENT_NUMBER]: Types.INPUT_TYPE,
 };
 
 /**
@@ -74,7 +75,8 @@ class AFIdentification extends Component {
         {budgetExtras}
       </div>);
     }
-    rightColumn.push(...[AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT].map(this.mapSimpleFieldDef));
+    rightColumn.push(...[AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT, AC.GOVERNMENT_AGREEMENT_NUMBER]
+      .map(this.mapSimpleFieldDef));
 
     return (
       <div className={afStyles.full_width}>
