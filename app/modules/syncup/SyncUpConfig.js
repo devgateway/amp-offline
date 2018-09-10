@@ -18,6 +18,7 @@ import ResourcesPullSyncUpManager from './syncupManagers/ResourcesPullSyncUpMana
 import ResourcesPushSyncUpManager from './syncupManagers/ResourcesPushSyncUpManager';
 import ResourceFieldsSyncUpManager from './syncupManagers/ResourceFieldsSyncUpManager';
 import ResourcePossibleValuesSyncUpManager from './syncupManagers/ResourcePossibleValuesSyncUpManager';
+import CommonPossibleValuesSyncUpManager from './syncupManagers/CommonPossibleValuesSyncUpManager';
 import CurrencyRatesSyncUpManager from './syncupManagers/CurrencyRatesSyncUpManager';
 import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
@@ -43,7 +44,8 @@ import {
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
   SYNCUP_TYPE_WORKSPACES,
   SYNCUP_TYPE_MAP_TILES,
-  SYNCUP_TYPE_GAZETTEER
+  SYNCUP_TYPE_GAZETTEER,
+  SYNCUP_TYPE_TRANSLATIONS
 } from '../../utils/Constants';
 
 /**
@@ -57,13 +59,14 @@ export default class SyncUpConfig {
     ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
-    ResourcePossibleValuesSyncUpManager,
+    ResourcePossibleValuesSyncUpManager, CommonPossibleValuesSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager, MapTilesSyncUpManager,
     GazetteerSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
   static _initCollection() {
     const dependencies = {};
+    dependencies[SYNCUP_TYPE_USERS] = Utils.toMap(SYNCUP_TYPE_TRANSLATIONS, SS.STATES_FINISH);
     // Note: current user won't be even able to start the sync if he/she has no right
     dependencies[SYNCUP_TYPE_WORKSPACE_SETTINGS] = Utils.toMap(SYNCUP_TYPE_WORKSPACES, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH] = Utils.toMap(SYNCUP_TYPE_USERS, SS.STATES_SUCCESS);

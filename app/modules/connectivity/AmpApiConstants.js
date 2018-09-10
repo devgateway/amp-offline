@@ -31,6 +31,7 @@ export const RESOURCE_PUSH_URL = '/resource';
 export const RESOURCE_SINGLE_FIELDS_TREE_URL = '/resource/fields';
 export const RESOURCE_FIELDS_PER_WORKSPACE_MEMBER_URL = '/resource/ws-member-fields';
 export const RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS = '/resource/field/values';
+export const COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS = '/common/field/values';
 export const DOWNLOAD_UPDATE_BINARY_URL = '/amp/amp-offline-release';
 export const ELECTRON_UPDATER_CHECK_URL = '/amp/offline';
 export const CHANGE_PASSWORD_URL = '/aim/showChangePassword.do';

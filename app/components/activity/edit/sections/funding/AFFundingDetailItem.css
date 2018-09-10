@@ -66,3 +66,7 @@
   max-height: 70px;
   margin-bottom: 25px;
 }
+
+.delete_col {
+  vertical-align: top;
+}

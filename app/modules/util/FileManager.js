@@ -185,6 +185,16 @@ const FileManager = {
   },
 
   /**
+   * Reads any file from given path synchronously and with the given options
+   * @param options
+   * @param _path
+   * @returns {Buffer | string | * | void}
+   */
+  readFileInPathSync(options, _path) {
+    return fs.readFileSync(_path, options);
+  },
+
+  /**
    * Copies synchronously a file from a full path to the relative path (specified as parts if needed)
    * @param fromPath full source path
    * @param toPathParts relative path parts of the destination
