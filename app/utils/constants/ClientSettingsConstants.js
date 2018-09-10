@@ -10,6 +10,7 @@ export const AMP_SETTINGS_FROM_AMP_REGISTRY = 'AMP Settings from AMP Registry';
 export const LAST_AMP_SETTINGS_STATUS = 'Last AMP Settings status';
 export const DEFAULT_SETUP_COMPLETE = 'Default Setup Complete';
 export const AMP_SERVER_ID = 'AMP Server Id';
+export const STARTUP_AUDIT_LOGS = 'Startup Audit Logs';
 
 export const SETTING_TYPE_BOOLEAN = 'boolean';
 export const SETTING_TYPE_STRING = 'string';
@@ -18,3 +19,5 @@ export const SETTING_TYPE_INTEGER = 'integer';
 
 export const LAST_AMP_SETTINGS_STATUS_PENDING = 'PENDING';
 export const LAST_AMP_SETTINGS_STATUS_REVIEWED = 'REVIEWED';
+export const FIRST_STARTED_AT = 'first-started-at';
+export const LAST_STARTED_AT = 'last-started-at';
