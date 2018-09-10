@@ -45,6 +45,13 @@ const DEFAULT_SETTINGS = [
     visible: false,
     type: CS.SETTING_TYPE_STRING,
   },
+  {
+    id: CS.STARTUP_AUDIT_LOGS,
+    name: CS.STARTUP_AUDIT_LOGS,
+    visible: false,
+    type: CS.SETTING_TYPE_OBJECT,
+    value: {},
+  },
 ];
 
 export default DEFAULT_SETTINGS;

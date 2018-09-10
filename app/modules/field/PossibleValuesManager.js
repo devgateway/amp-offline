@@ -86,6 +86,10 @@ export default class PossibleValuesManager {
     return Object.values(options).find(o => o.id === id);
   }
 
+  static findOptionByValue(options, value) {
+    return Object.values(options).find(o => o.value === value);
+  }
+
   static getOptionTranslation(option) {
     let resVal = option.value;
     const translations = option['translated-value'];

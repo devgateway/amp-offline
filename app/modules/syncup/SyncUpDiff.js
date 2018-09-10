@@ -21,7 +21,8 @@ import {
   SYNCUP_TYPE_USERS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS,
   SYNCUP_TYPE_WORKSPACE_SETTINGS,
-  SYNCUP_TYPE_WORKSPACES
+  SYNCUP_TYPE_WORKSPACES,
+  SYNCUP_TYPE_COMMON_POSSIBLE_VALUES
 } from '../../utils/Constants';
 import { throwSyncUpError } from './syncupManagers/SyncUpManagerInterface';
 import Logger from '../../modules/util/LoggerManager';
@@ -86,6 +87,7 @@ export default class SyncUpDiff {
       case SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES:
       case SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES:
       case SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES:
+      case SYNCUP_TYPE_COMMON_POSSIBLE_VALUES:
         diff = Array.from(new Set((this._syncUpDiff[type] || []).concat(diff)));
         break;
       default:
