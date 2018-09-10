@@ -31,7 +31,7 @@ export default class AFMTEFProjectionContainer extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       openMTEF: false
     };
@@ -58,7 +58,7 @@ export default class AFMTEFProjectionContainer extends Component {
           if (!mtef[AC.TEMPORAL_ID]) {
             mtef[AC.TEMPORAL_ID] = Utils.numberRandom();
           }
-          return <AFMTEFProjectionItem mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={Math.random()} />;
+          return <AFMTEFProjectionItem mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={mtef[AC.TEMPORAL_ID]} />;
         })}
         <Button bsStyle="primary" onClick={handleNewItem}>{translate('Add Projection')}</Button>
       </Panel>

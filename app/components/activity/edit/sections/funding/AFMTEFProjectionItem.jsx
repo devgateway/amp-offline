@@ -14,7 +14,7 @@ import translate from '../../../../../utils/translate';
 /**
  * @author Gabriel Inchauspe
  */
-export default class AFFundingDetailItem extends Component {
+export default class AFMTEFProjectionItem extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
