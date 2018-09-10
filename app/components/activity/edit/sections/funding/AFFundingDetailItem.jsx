@@ -66,7 +66,7 @@ export default class AFFundingDetailItem extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { selectedOrgRole: undefined };
+    this.state = { selectedOrgRole: props.fundingDetail[AC.RECIPIENT_ROLE] || undefined };
   }
 
   _getRecipientRoleFilter(typeName) {
@@ -124,7 +124,7 @@ export default class AFFundingDetailItem extends Component {
     return filter;
   }
 
-  handleSelectRecipientRole(fundingDetail, role) {
+  handleSelectRecipientRole(role) {
     if (role) {
       this.setState({ selectedOrgRole: role });
     } else {
@@ -139,7 +139,7 @@ export default class AFFundingDetailItem extends Component {
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`}
       fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE`]}
       filter={this._getRecipientRoleFilter(typeName)} extraParams={{ isORFilter: true }}
-      onAfterUpdate={this.handleSelectRecipientRole.bind(this, fundingDetail)} />);
+      onAfterUpdate={this.handleSelectRecipientRole.bind(this)} />);
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2} key={Math.random()}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`}
