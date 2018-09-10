@@ -55,6 +55,9 @@ export default class AFFundingDetailItem extends Component {
       case VC.CONTRACTING_AGENCY:
         collection = AC.CONTRACTING_AGENCY;
         break;
+      case VC.SECTOR_GROUP:
+        collection = AC.SECTOR_GROUP;
+        break;
       default:
         break;
     }
@@ -132,13 +135,13 @@ export default class AFFundingDetailItem extends Component {
   generateRecipients(typeName, fundingDetail) {
     const content = [];
     content.push(<AFField
-      parent={fundingDetail} className={styles.cell_2}
+      parent={fundingDetail} className={styles.cell_2} key={Math.random()}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`}
       fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE`]}
       filter={this._getRecipientRoleFilter(typeName)} extraParams={{ isORFilter: true }}
       onAfterUpdate={this.handleSelectRecipientRole.bind(this, fundingDetail)} />);
     content.push(<AFField
-      parent={fundingDetail} className={styles.cell_2}
+      parent={fundingDetail} className={styles.cell_2} key={Math.random()}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`}
       fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION`]}
       filter={this._getRecipientOrgFilter(typeName)} extraParams={{ isORFilter: true }} />);
