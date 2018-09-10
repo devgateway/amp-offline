@@ -31,6 +31,7 @@ export const SECTOR_PERCENTAGE = 'sector_percentage';
 export const FINANCING_INSTRUMENT = 'financing_instrument';
 export const MODALITIES = 'modalities';
 export const LINE_MINISTRY_RANK = 'line_ministry_rank';
+export const GOVERNMENT_AGREEMENT_NUMBER = 'government_agreement_number';
 export const FUNDING_STATUS = 'funding_status';
 export const LOCATIONS = 'locations';
 export const LOCATION = 'location';

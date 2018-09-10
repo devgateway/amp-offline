@@ -43,7 +43,7 @@ export function loadSyncUpHistory() {
 
 export function startSyncUpIfConnectionAvailable() {
   return connectivityCheck().then(status => {
-    if (isAmpAccessible(status)) {
+    if (isAmpAccessible(status, false)) {
       return startSyncUp();
     }
     store.dispatch(syncConnectionUnavailable(getStatusNotification(status).message));
