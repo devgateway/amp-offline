@@ -31,49 +31,72 @@ export default class AFFundingDetailItem extends Component {
     type: PropTypes.string
   };
 
+  static orgTypeNameToCollection(typeName) {
+    let collection = '';
+    switch (typeName) {
+      case VC.IMPLEMENTING_AGENCY:
+        collection = AC.IMPLEMENTING_AGENCY;
+        break;
+      case VC.RESPONSIBLE_ORGANIZATION:
+        collection = AC.RESPONSIBLE_ORGANIZATION;
+        break;
+      case VC.REGIONAL_GROUP:
+        collection = AC.REGIONAL_GROUP;
+        break;
+      case VC.EXECUTING_AGENCY:
+        collection = AC.EXECUTING_AGENCY;
+        break;
+      case VC.DONOR_ORGANIZATION:
+        collection = AC.DONOR_ORGANIZATION;
+        break;
+      case VC.BENEFICIARY_AGENCY:
+        collection = AC.BENEFICIARY_AGENCY;
+        break;
+      case VC.CONTRACTING_AGENCY:
+        collection = AC.CONTRACTING_AGENCY;
+        break;
+      default:
+        break;
+    }
+    return collection;
+  }
+
   constructor(props) {
     super(props);
     this.state = { selectedOrgRole: undefined };
   }
 
-  _getOrgRoleFilter(typeName) {
+  _getRecipientRoleFilter(typeName) {
     const activity = this.context.activity;
     const filter = [];
     const options = [{
       value: VC.CONTRACTING_AGENCY,
-      collection: AC.CONTRACTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY`
     }, {
       value: VC.BENEFICIARY_AGENCY,
-      collection: AC.BENEFICIARY_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_BENEFICIARY_AGENCY`
     }, {
       value: VC.DONOR_ORGANIZATION,
-      collection: AC.DONOR_ORGANIZATION,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_DONOR_ORGANIZATION`
     }, {
       value: VC.EXECUTING_AGENCY,
-      collection: AC.EXECUTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_EXECUTING_AGENCY`
     }, {
       value: VC.REGIONAL_GROUP,
-      collection: AC.REGIONAL_GROUP,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_REGIONAL_GROUP`
     }, {
       value: VC.RESPONSIBLE_ORGANIZATION,
-      collection: AC.RESPONSIBLE_ORGANIZATION,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZATION`
     }, {
       value: VC.SECTOR_GROUP,
-      collection: AC.SECTOR_GROUP,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP`
     }, {
       value: VC.IMPLEMENTING_AGENCY,
-      collection: AC.IMPLEMENTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY`
     }];
     options.forEach(o => {
-      if (FeatureManager.isFMSettingEnabled(FMC[o.id]) && activity[o.collection] && activity[o.collection].length > 0) {
+      const collection = AFFundingDetailItem.orgTypeNameToCollection(o.value);
+      if (FeatureManager.isFMSettingEnabled(FMC[o.id]) && activity[collection] && activity[collection].length > 0) {
         filter.push({ path: 'value', value: o.value });
       }
     });
@@ -83,32 +106,7 @@ export default class AFFundingDetailItem extends Component {
   _getRecipientOrgFilter() {
     const filter = [];
     if (this.state.selectedOrgRole) {
-      let collection = '';
-      switch (this.state.selectedOrgRole.value) {
-        case VC.IMPLEMENTING_AGENCY:
-          collection = AC.IMPLEMENTING_AGENCY;
-          break;
-        case VC.RESPONSIBLE_ORGANIZATION:
-          collection = AC.RESPONSIBLE_ORGANIZATION;
-          break;
-        case VC.REGIONAL_GROUP:
-          collection = AC.REGIONAL_GROUP;
-          break;
-        case VC.EXECUTING_AGENCY:
-          collection = AC.EXECUTING_AGENCY;
-          break;
-        case VC.DONOR_ORGANIZATION:
-          collection = AC.DONOR_ORGANIZATION;
-          break;
-        case VC.BENEFICIARY_AGENCY:
-          collection = AC.BENEFICIARY_AGENCY;
-          break;
-        case VC.CONTRACTING_AGENCY:
-          collection = AC.CONTRACTING_AGENCY;
-          break;
-        default:
-          break;
-      }
+      const collection = AFFundingDetailItem.orgTypeNameToCollection(this.state.selectedOrgRole.value);
       const role = this.context.activity[collection];
       if (role) {
         role.forEach(r => {
@@ -123,7 +121,7 @@ export default class AFFundingDetailItem extends Component {
     return filter;
   }
 
-  handleSelectOrgRole(fundingDetail, role) {
+  handleSelectRecipientRole(fundingDetail, role) {
     if (role) {
       this.setState({ selectedOrgRole: role });
     } else {
@@ -137,8 +135,8 @@ export default class AFFundingDetailItem extends Component {
       parent={fundingDetail} className={styles.cell_2}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`}
       fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE`]}
-      filter={this._getOrgRoleFilter(typeName)} extraParams={{ isORFilter: true }}
-      onAfterUpdate={this.handleSelectOrgRole.bind(this, fundingDetail)} />);
+      filter={this._getRecipientRoleFilter(typeName)} extraParams={{ isORFilter: true }}
+      onAfterUpdate={this.handleSelectRecipientRole.bind(this, fundingDetail)} />);
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2}
       fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`}
