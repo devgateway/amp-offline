@@ -14,7 +14,14 @@ import AFOption from '../components/AFOption';
 
 const logger = new Logger('AF organizations');
 
-const orgFormatter = (org: AFOption) => `(${org[AC.EXTRA_INFO][AC.ACRONYM].trim()}) - ${org.translatedValue.trim()}`;
+const orgFormatter = (org: AFOption) => {
+  const acronym = org[AC.EXTRA_INFO][AC.ACRONYM] ? org[AC.EXTRA_INFO][AC.ACRONYM].trim() : '';
+  const value = `${org.translatedValue.trim()}`;
+  if (acronym !== '') {
+    return `(${acronym}) - ${value}`;
+  }
+  return value;
+};
 
 /**
  * Organizations Section
