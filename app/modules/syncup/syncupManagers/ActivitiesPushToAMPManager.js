@@ -112,7 +112,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    */
   static _getValidUsers() {
     logger.log('_getValidUsers');
-    const filter = { $and: [{ 'is-banned': { $ne: true } }, { 'is-active': { $ne: true } }] };
+    const filter = { 'is-banned': { $ne: true } };
     const projections = { id: 1 };
     return UserHelper.findAllClientRegisteredUsersByExample(filter, projections);
   }
