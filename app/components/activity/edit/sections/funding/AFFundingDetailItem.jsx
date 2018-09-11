@@ -13,6 +13,17 @@ import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import translate from '../../../../../utils/translate';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
 
+const ORG_TYPE_NAME_2_COLLECTION = {
+  [VC.IMPLEMENTING_AGENCY]: AC.IMPLEMENTING_AGENCY,
+  [VC.RESPONSIBLE_ORGANIZATION]: AC.RESPONSIBLE_ORGANIZATION,
+  [VC.REGIONAL_GROUP]: AC.REGIONAL_GROUP,
+  [VC.EXECUTING_AGENCY]: AC.EXECUTING_AGENCY,
+  [VC.DONOR_ORGANIZATION]: AC.DONOR_ORGANIZATION,
+  [VC.BENEFICIARY_AGENCY]: AC.BENEFICIARY_AGENCY,
+  [VC.CONTRACTING_AGENCY]: AC.CONTRACTING_AGENCY,
+  [VC.SECTOR_GROUP]: AC.SECTOR_GROUP
+};
+
 /**
  * @author Gabriel Inchauspe
  */
@@ -30,39 +41,6 @@ export default class AFFundingDetailItem extends Component {
     funding: PropTypes.object.isRequired,
     type: PropTypes.string
   };
-
-  static orgTypeNameToCollection(typeName) {
-    let collection = '';
-    switch (typeName) {
-      case VC.IMPLEMENTING_AGENCY:
-        collection = AC.IMPLEMENTING_AGENCY;
-        break;
-      case VC.RESPONSIBLE_ORGANIZATION:
-        collection = AC.RESPONSIBLE_ORGANIZATION;
-        break;
-      case VC.REGIONAL_GROUP:
-        collection = AC.REGIONAL_GROUP;
-        break;
-      case VC.EXECUTING_AGENCY:
-        collection = AC.EXECUTING_AGENCY;
-        break;
-      case VC.DONOR_ORGANIZATION:
-        collection = AC.DONOR_ORGANIZATION;
-        break;
-      case VC.BENEFICIARY_AGENCY:
-        collection = AC.BENEFICIARY_AGENCY;
-        break;
-      case VC.CONTRACTING_AGENCY:
-        collection = AC.CONTRACTING_AGENCY;
-        break;
-      case VC.SECTOR_GROUP:
-        collection = AC.SECTOR_GROUP;
-        break;
-      default:
-        break;
-    }
-    return collection;
-  }
 
   constructor(props) {
     super(props);
@@ -98,7 +76,7 @@ export default class AFFundingDetailItem extends Component {
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY`
     }];
     options.forEach(o => {
-      const collection = AFFundingDetailItem.orgTypeNameToCollection(o.value);
+      const collection = ORG_TYPE_NAME_2_COLLECTION[o.value];
       if (FeatureManager.isFMSettingEnabled(FMC[o.id]) && activity[collection] && activity[collection].length > 0) {
         filter.push({ path: 'value', value: o.value });
       }
@@ -109,17 +87,13 @@ export default class AFFundingDetailItem extends Component {
   _getRecipientOrgFilter() {
     const filter = [];
     if (this.state.selectedOrgRole) {
-      const collection = AFFundingDetailItem.orgTypeNameToCollection(this.state.selectedOrgRole.value);
+      const collection = ORG_TYPE_NAME_2_COLLECTION[this.state.selectedOrgRole.value];
       const role = this.context.activity[collection];
       if (role) {
         role.forEach(r => {
           filter.push({ path: 'value', value: r.organization.value });
         });
-      } else {
-        filter.push([{ path: 'value', value: 'fake' }]);
       }
-    } else {
-      filter.push([{ path: 'value', value: 'fake' }]);
     }
     return filter;
   }
