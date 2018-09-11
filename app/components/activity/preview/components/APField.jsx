@@ -44,11 +44,14 @@ export default class APField extends Component {
 
   _getValue() {
     const classNames = `${this.props.fieldValueClass} ${this.displayClass}`;
-    const value = this.props.value ? this.props.value : translate('No Data');
+    // To handle boolean fields we dont want to show 'false' as 'No Data'.
+    const value = (this.props.value || this.props.value === false) ? this.props.value : translate('No Data');
     let displayValue;
     if (Array.isArray(value) && value.length > 1 && typeof value[0] === 'string') {
       // Improve the display of simple array of strings.
       displayValue = value.map((i) => (` ${i}`)).toString();
+    } else if (typeof value === 'boolean') {
+      displayValue = value === true ? translate('Yes') : translate('No');
     } else {
       displayValue = (this.props.inline && this.props.value instanceof String) ? `${value} ` : value;
     }
@@ -62,7 +65,8 @@ export default class APField extends Component {
   render() {
     const classNames = `${this.props.fieldNameClass} ${this.displayClass}`;
     return (<div className={this.displayClass}>
-      <div className={classNames}>{this.props.title}</div> {this._getValue()}
+      <div className={classNames}>{this.props.title}</div>
+      {this._getValue()}
       {this.useSeparator ? <hr /> : ''}
     </div>);
   }
