@@ -36,7 +36,7 @@ export default class AFFundingContainer extends Component {
     this.state = {
       funding: this.props.funding,
       stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS],
-      mtefProjections: this.props.funding[AC.MTEF_PROJECTIONS]
+      mtefProjections: this.props.funding[AC.MTEF_PROJECTIONS] || []
     };
     this._addTransactionItem = this._addTransactionItem.bind(this);
     this._removeFundingDetailItem = this._removeFundingDetailItem.bind(this);
