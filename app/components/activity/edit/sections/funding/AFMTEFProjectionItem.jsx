@@ -10,6 +10,9 @@ import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import translate from '../../../../../utils/translate';
+import * as Types from '../../components/AFComponentTypes';
+import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
+import { GS_YEARS_IN_RANGE, GS_YEAR_RANGE_START } from '../../../../../utils/constants/GlobalSettingsConstants';
 
 /**
  * @author Gabriel Inchauspe
@@ -26,6 +29,10 @@ export default class AFMTEFProjectionItem extends Component {
     removeMTEFItem: PropTypes.func.isRequired
   };
 
+  _convertDate() {
+    alert('convert');
+  }
+
   render() {
     const { mtefItem, removeMTEFItem } = this.props;
     // When adding a new item we select the default currency like in AMP.
@@ -34,6 +41,10 @@ export default class AFMTEFProjectionItem extends Component {
         .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
       mtefItem[AC.CURRENCY] = currency[0];
     }
+    const isFiscalCalendar = true; // TODO: necesito saber si el calendario activo es fiscal para mostrar 2 años.
+    const range = Number(GlobalSettingsManager.getSettingByKey(GS_YEARS_IN_RANGE));
+    const startYear = Number(GlobalSettingsManager.getSettingByKey(GS_YEAR_RANGE_START));
+    const yearsList = Array(range).fill().map((_, i) => i + startYear);
     return (<div className={afStyles.full_width}>
       <table>
         <tbody>
@@ -51,7 +62,8 @@ export default class AFMTEFProjectionItem extends Component {
                   fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.CURRENCY}`} defaultValueAsEmptyObject />
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_DATE}
-                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION_DATE}`} />
+                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION_DATE}`} type={Types.DATE_YEAR}
+                  extraParams={{ options: yearsList, isFiscalCalendar, convert: this._convertDate }} />
               </div>
             </td>
             <td className={styles.delete_col}>

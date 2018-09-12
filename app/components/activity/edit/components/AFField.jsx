@@ -24,6 +24,7 @@ import FeatureManager from '../../../../modules/util/FeatureManager';
 import AFMultiSelect from './AFMultiSelect';
 import translate from '../../../../utils/translate';
 import AFRadioBoolean from './AFRadioBoolean';
+import AFDateYear from './AFDateYear';
 
 const logger = new Logger('AF field');
 
@@ -195,6 +196,8 @@ class AFField extends Component {
         return this._getInput();
       case Types.MULTI_SELECT:
         return this._getMultiSelect();
+      case Types.DATE_YEAR:
+        return this._getDateYear();
       case Types.CUSTOM: {
         return this._getCustom();
       }
@@ -282,6 +285,10 @@ class AFField extends Component {
 
   _getDate() {
     return (<AFDate value={this.state.value} onChange={this.onChange} extraParams={this.props.extraParams} />);
+  }
+
+  _getDateYear() {
+    return (<AFDateYear value={this.state.value} onChange={this.onChange} extraParams={this.props.extraParams} />);
   }
 
   _getCheckbox() {
