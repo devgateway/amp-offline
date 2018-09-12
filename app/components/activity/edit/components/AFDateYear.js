@@ -37,8 +37,8 @@ export default class AFDateYear extends Component {
   render() {
     const { extraParams, options } = this.props;
     const defaultOption = <option key={-1} value={-1}>{translate('Choose One')}</option>;
-    /* TODO: Once we sync calendars data we can safely know the year for a given date (because a fiscal calendar can
-    start on any day/month. */
+    /* TODO: Once we sync calendars data AMPOFFLINE-1228) we can safely know the year for a given date
+    (because a fiscal calendar can start on any day/month. */
     const defaultValue = Moment(this.state.value).year();
     const years = options.map(option => {
       const label = extraParams.isFiscalCalendar ? `${option} / ${option + 1}` : option;

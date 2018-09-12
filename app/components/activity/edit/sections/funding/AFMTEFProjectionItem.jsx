@@ -37,7 +37,7 @@ export default class AFMTEFProjectionItem extends Component {
         .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
       mtefItem[AC.CURRENCY] = currency[0];
     }
-    const isFiscalCalendar = true; // TODO: Create a follow up ticket to sync calendars.
+    const isFiscalCalendar = true; // TODO: After we sync calendars data (AMPOFFLINE-1228) update this flag.
     const range = Number(GlobalSettingsManager.getSettingByKey(GS_YEARS_IN_RANGE));
     const startYear = Number(GlobalSettingsManager.getSettingByKey(GS_YEAR_RANGE_START));
     return (<div className={afStyles.full_width}>
