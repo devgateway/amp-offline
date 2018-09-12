@@ -125,7 +125,9 @@ const DesktopManager = {
     if (item[FUNDINGS]) {
       item[FUNDINGS].forEach((funding) => (
         funding[FUNDING_DETAILS].forEach((fd) => {
-          if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
+          if (!fd[TRANSACTION_TYPE] || !fd[ADJUSTMENT_TYPE]) {
+            logger.error(`Data Error: transaction_type or adjustment_type is undefined. ID: ${item.id}`);
+          } else if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
             amount += currencyRatesManager
               .convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
           }
