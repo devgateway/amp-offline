@@ -58,7 +58,7 @@ export default class AFMTEFProjectionItem extends Component {
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_DATE}
                   fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION_DATE}`} type={Types.DATE_YEAR}
-                  extraParams={{ range, startYear, isFiscalCalendar, convert: this._convertDate }} />
+                  extraParams={{ range, startYear, isFiscalCalendar }} />
               </div>
             </td>
             <td className={styles.delete_col}>
