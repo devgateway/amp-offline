@@ -1,11 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
-import Moment from 'moment';
 import { FormControl } from 'react-bootstrap';
-import DateUtils from '../../../../utils/DateUtils';
+import Moment from 'moment';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
+import DateUtils from '../../../../utils/DateUtils';
 
 const logger = new Logger('AF date year');
 
@@ -15,9 +15,7 @@ export default class AFDateYear extends Component {
     value: PropTypes.string,
     onChange: PropTypes.func,
     extraParams: PropTypes.object,
-    range: PropTypes.number,
-    isFiscalCalendar: PropTypes.bool,
-    convert: PropTypes.func
+    options: PropTypes.array.isRequired
   };
 
   constructor(props) {
@@ -26,34 +24,32 @@ export default class AFDateYear extends Component {
     this.state = { value: props.value };
   }
 
-  onDateChange(date: Moment) {
-    this.handleChange(date, date ? DateUtils.getISODateForAPI(date) : null);
-  }
-
-  handleChange(date, value) {
-    if (this.props.convert) {
-      this.props.convert(date, value);
-    }
+  handleChange(control) {
+    const format = DateUtils.getGSDateFormat().toUpperCase();
+    const value = Moment(`01/01/${control.target.value}`).format(format);
     if (this.props.onChange) {
       this.props.onChange(value);
     }
     this.setState({
-      value,
-      date
+      value
     });
   }
 
   render() {
-    debugger;
-    const extraParams = this.props.extraParams || {};
+    const { extraParams, options } = this.props;
     const defaultOption = <option key={-1} value={-1}>{translate('Choose One')}</option>;
-    const options = extraParams.options.map(option =>
-      <option key={option} value={option} selected={this.state.value === option}>{option}</option>);
+    /* TODO: Once we sync calendars data we can safely know the year for a given date (because a fiscal calendar can
+    start on any day/month. */
+    const defaultValue = Moment(this.state.value).year();
+    const years = options.map(option => {
+      const label = extraParams.isFiscalCalendar ? `${option} / ${option + 1}` : option;
+      return <option key={option} value={option}>{label}</option>;
+    });
     return (
       <FormControl
-        componentClass="select" value={this.state.value} onChange={this.handleChange.bind(this)}
+        componentClass="select" value={defaultValue} onChange={this.handleChange.bind(this)}
         placeholder={-1}>
-        {extraParams.noChooseOneOption ? options : [defaultOption].concat(options)}
+        {extraParams.noChooseOneOption ? years : [defaultOption].concat(years)}
       </FormControl>
     );
   }

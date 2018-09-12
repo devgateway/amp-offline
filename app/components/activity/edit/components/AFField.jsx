@@ -288,7 +288,10 @@ class AFField extends Component {
   }
 
   _getDateYear() {
-    return (<AFDateYear value={this.state.value} onChange={this.onChange} extraParams={this.props.extraParams} />);
+    const extraParams = this.props.extraParams || {};
+    const options = Array(extraParams.range).fill().map((_, i) => i + extraParams.startYear);
+    return (<AFDateYear
+      value={this.state.value} onChange={this.onChange} extraParams={extraParams} options={options} />);
   }
 
   _getCheckbox() {

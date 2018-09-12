@@ -29,10 +29,6 @@ export default class AFMTEFProjectionItem extends Component {
     removeMTEFItem: PropTypes.func.isRequired
   };
 
-  _convertDate() {
-    alert('convert');
-  }
-
   render() {
     const { mtefItem, removeMTEFItem } = this.props;
     // When adding a new item we select the default currency like in AMP.
@@ -41,10 +37,9 @@ export default class AFMTEFProjectionItem extends Component {
         .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
       mtefItem[AC.CURRENCY] = currency[0];
     }
-    const isFiscalCalendar = true; // TODO: necesito saber si el calendario activo es fiscal para mostrar 2 años.
+    const isFiscalCalendar = true; // TODO: Create a follow up ticket to sync calendars.
     const range = Number(GlobalSettingsManager.getSettingByKey(GS_YEARS_IN_RANGE));
     const startYear = Number(GlobalSettingsManager.getSettingByKey(GS_YEAR_RANGE_START));
-    const yearsList = Array(range).fill().map((_, i) => i + startYear);
     return (<div className={afStyles.full_width}>
       <table>
         <tbody>
@@ -63,7 +58,7 @@ export default class AFMTEFProjectionItem extends Component {
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_DATE}
                   fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION_DATE}`} type={Types.DATE_YEAR}
-                  extraParams={{ options: yearsList, isFiscalCalendar, convert: this._convertDate }} />
+                  extraParams={{ range, startYear, isFiscalCalendar, convert: this._convertDate }} />
               </div>
             </td>
             <td className={styles.delete_col}>
