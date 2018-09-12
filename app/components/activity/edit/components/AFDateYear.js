@@ -5,7 +5,7 @@ import { FormControl } from 'react-bootstrap';
 import Moment from 'moment';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
-import { INTERNAL_DATE_FORMAT } from '../../../../utils/Constants';
+import DateUtils from '../../../../utils/DateUtils';
 
 const logger = new Logger('AF date year');
 
@@ -25,7 +25,7 @@ export default class AFDateYear extends Component {
   }
 
   handleChange(control) {
-    const value = Moment(`01/01/${control.target.value}`).format(INTERNAL_DATE_FORMAT);
+    const value = DateUtils.getISODateForAPI(Moment(`01/01/${control.target.value}`));
     if (this.props.onChange) {
       this.props.onChange(value);
     }
