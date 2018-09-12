@@ -36,6 +36,7 @@ class APFundingOrganizationSection extends Component {
   _buildDonorInfo() {
     const content = [];
     const { buildSimpleField, funding } = this.props;
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.CONDITIONS]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DONOR_ORG_ID]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.TYPE_OF_ASSISTANCE]}`, true, null, false, funding));
