@@ -96,7 +96,10 @@ export default class AFFundingDetailContainer extends Component {
               fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
               removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
           })}
-          <Button bsStyle="primary" onClick={this._addTransactionItem.bind(this)}>{button}</Button>
+          <Button
+            className={fundingStyles.add_button} bsStyle="primary"
+            onClick={this._addTransactionItem.bind(this)}>{button}
+          </Button>
         </Panel>
       </div>);
     } else {
