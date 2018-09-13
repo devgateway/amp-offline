@@ -242,7 +242,8 @@ class AFField extends Component {
       logger.error(`Options not found for ${this.props.fieldPath}`);
       return [];
     }
-    return PossibleValuesManager.setVisibility(options, fieldPath, this.props.filter);
+    const isORFilter = (this.props.extraParams && this.props.extraParams.isORFilter) || false;
+    return PossibleValuesManager.setVisibility(options, fieldPath, this.props.filter, isORFilter);
   }
 
   _toAFOptions(options) {
