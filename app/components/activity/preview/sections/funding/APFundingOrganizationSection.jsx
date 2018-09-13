@@ -36,7 +36,6 @@ class APFundingOrganizationSection extends Component {
   _buildDonorInfo() {
     const content = [];
     const { buildSimpleField, funding } = this.props;
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.CONDITIONS]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DONOR_ORG_ID]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.TYPE_OF_ASSISTANCE]}`, true, null, false, funding));
@@ -58,6 +57,13 @@ class APFundingOrganizationSection extends Component {
     const content = [];
     const { buildSimpleField, funding } = this.props;
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.DONOR_OBJECTIVE]}`, true, null, false, funding));
+    return Tablify.addRows(content, 1);
+  }
+
+  _buildConditionsTable() {
+    const content = [];
+    const { buildSimpleField, funding } = this.props;
+    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.CONDITIONS]}`, true, null, false, funding));
     return Tablify.addRows(content, 1);
   }
 
@@ -119,6 +125,9 @@ class APFundingOrganizationSection extends Component {
       </table>
       <table className={styles.two_box_table}>
         <tbody>{this._buildDonorObjectiveTable()}</tbody>
+      </table>
+      <table className={styles.two_box_table}>
+        <tbody>{this._buildConditionsTable()}</tbody>
       </table>
       <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
