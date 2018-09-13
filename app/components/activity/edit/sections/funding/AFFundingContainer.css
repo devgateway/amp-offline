@@ -1,3 +1,7 @@
-.error > div > h4 > a{
+.error > div > h4 > a {
   color: #a94442;
+}
+
+.add_button {
+  margin-top: 10px;
 }
