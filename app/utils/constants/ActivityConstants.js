@@ -48,6 +48,7 @@ export const MODE_OF_PAYMENT = 'mode_of_payment';
 export const FUNDING_CLASSIFICATION_DATE = 'funding_classification_date';
 export const AGREEMENT = 'agreement';
 export const DONOR_OBJECTIVE = 'donor_objective';
+export const CONDITIONS = 'conditions';
 export const AGREEMENT_CODE = 'code';
 export const AGREEMENT_TITLE = 'title';
 export const PROJECT_CATEGORY = 'project_category';
