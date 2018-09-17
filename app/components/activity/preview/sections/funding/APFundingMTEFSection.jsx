@@ -25,19 +25,19 @@ class APFundingMTEFSection extends Component {
     funding: PropTypes.object.isRequired,
   };
 
-  static drawTable(funding, currency) {
-    const content = [];
-    funding[AC.MTEF_PROJECTIONS].forEach((mtef) => {
-      content.push(<APFundingMTEFItem item={mtef} key={Utils.numberRandom()} wsCurrency={currency} />);
-    });
-    return <table className={styles.funding_table}>{content}</table>;
+  static drawTable(mtef, currency) {
+    return (<table className={styles.funding_table}>
+      {<APFundingMTEFItem item={mtef} key={Utils.numberRandom()} wsCurrency={currency} />}
+    </table>);
   }
 
-  drawSubTotal(funding, currency) {
+  drawSubTotal(funding, currency, type) {
     let subtotal = 0;
     funding[AC.MTEF_PROJECTIONS].forEach(mtef => {
-      subtotal += this.context.currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT],
-        mtef[AC.CURRENCY].value, mtef[AC.PROJECTION_DATE], null, currency);
+      if (mtef[AC.PROJECTION].value === type) {
+        subtotal += this.context.currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT],
+          mtef[AC.CURRENCY].value, mtef[AC.PROJECTION_DATE], null, currency);
+      }
     });
     return (<div>
       <APFundingTotalItem
@@ -51,18 +51,31 @@ class APFundingMTEFSection extends Component {
   render() {
     logger.debug('render');
     const { funding } = this.props;
+    const types = [AC.PIPELINE, AC.PROJECTION];
     const currency = this.context.currentWorkspaceSettings.currency.code;
     if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)
       && funding[AC.MTEF_PROJECTIONS] && funding[AC.MTEF_PROJECTIONS].length > 0) {
-      return (
-        <div>
-          <div className={stylesMTEF.header}>
-            <APLabel label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()} />
-          </div>
-          {APFundingMTEFSection.drawTable(funding, currency)}
-          {this.drawSubTotal(funding, currency)}
+      const content = [];
+      types.forEach(type => {
+        let show = false;
+        funding[AC.MTEF_PROJECTIONS].forEach(mtef => {
+          if (mtef[AC.PROJECTION].value === type) {
+            show = true;
+            content.push(<div>
+              {APFundingMTEFSection.drawTable(mtef, currency)}
+            </div>);
+          }
+        });
+        if (show) {
+          content.push(this.drawSubTotal(funding, currency, type));
+        }
+      });
+      return (<div>
+        <div className={stylesMTEF.header}>
+          <APLabel label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()} />
         </div>
-      );
+        {content}
+      </div>);
     } else {
       return null;
     }
