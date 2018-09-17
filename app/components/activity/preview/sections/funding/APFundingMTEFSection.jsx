@@ -23,6 +23,14 @@ class APFundingTransactionTypeItem extends Component {
     funding: PropTypes.object.isRequired,
   };
 
+  static drawTable(funding, currency) {
+    const content = [];
+    funding[AC.MTEF_PROJECTIONS].forEach((mtef) => {
+      content.push(<APFundingMTEFItem item={mtef} key={Utils.numberRandom()} wsCurrency={currency} />);
+    });
+    return <table className={styles.funding_table}>{content}</table>;
+  }
+
   render() {
     logger.debug('render');
     const { funding } = this.props;
@@ -30,14 +38,17 @@ class APFundingTransactionTypeItem extends Component {
     if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
       return (
         <div>
-          <APLabel label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()} />
-          <div>
+          <div style={{ marginTop: '10px' }}>
+            <APLabel label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()} />
+          </div>
+          <APLabel
+            label={translate('Subtotal MTEF Projections Pipeline')} key={Math.random()}
+            labelClass={styles.mtef_group} />
+          {APFundingTransactionTypeItem.drawTable(funding, currency)}
+          <div style={{ paddingBottom: '40px' }}>
             <APLabel
-              label={translate('Subtotal MTEF Projections Pipeline')} labelClass={styles.funding_table}
-              key={Math.random()} />
-            {funding[AC.MTEF_PROJECTIONS].map(mtef => (
-              <APFundingMTEFItem item={mtef} key={Utils.numberRandom()} wsCurrency={currency} />
-            ))}
+              label={translate('Subtotal MTEF Projections Projection')} key={Math.random()}
+              labelClass={styles.mtef_group} />
           </div>
         </div>
       );
