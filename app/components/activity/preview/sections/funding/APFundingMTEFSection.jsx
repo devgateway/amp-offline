@@ -51,7 +51,8 @@ class APFundingMTEFSection extends Component {
     logger.debug('render');
     const { funding } = this.props;
     const currency = this.context.currentWorkspaceSettings.currency.code;
-    if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
+    if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)
+      && funding[AC.MTEF_PROJECTIONS] && funding[AC.MTEF_PROJECTIONS].length > 0) {
       return (
         <div>
           <div style={{ marginTop: '10px' }}>
