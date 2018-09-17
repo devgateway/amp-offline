@@ -9,10 +9,11 @@ import styles from './APFundingTransactionTypeItem.css';
 import APFundingMTEFItem from './APFundingMTEFItem';
 import Utils from '../../../../../utils/Utils';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
+import APFundingTotalItem from './APFundingTotalItem';
 
 const logger = new Logger('AP Funding MTEF section');
 
-class APFundingTransactionTypeItem extends Component {
+class APFundingMTEFSection extends Component {
 
   static contextTypes = {
     currentWorkspaceSettings: PropTypes.object.isRequired,
@@ -31,8 +32,19 @@ class APFundingTransactionTypeItem extends Component {
     return <table className={styles.funding_table}>{content}</table>;
   }
 
-  drawSubTotal() {
-    
+  drawSubTotal(funding, currency) {
+    let subtotal = 0;
+    funding[AC.MTEF_PROJECTIONS].forEach(mtef => {
+      subtotal += this.context.currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT],
+        mtef[AC.CURRENCY].value, mtef[AC.PROJECTION_DATE], null, currency);
+    });
+    return (<div>
+      <APFundingTotalItem
+        value={subtotal}
+        label={`${translate('Subtotal MTEF Projections Projection')}`.toUpperCase()}
+        currency={currency}
+        key={Math.random()} />
+    </div>);
   }
 
   render() {
@@ -46,14 +58,10 @@ class APFundingTransactionTypeItem extends Component {
             <APLabel label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()} />
           </div>
           <APLabel
-            label={translate('Subtotal MTEF Projections Pipeline')} key={Math.random()}
+            label={translate('Subtotal MTEF Projections Pipeline').toUpperCase()} key={Math.random()}
             labelClass={styles.mtef_group} />
-          {APFundingTransactionTypeItem.drawTable(funding, currency)}
-          <div style={{ paddingBottom: '40px' }}>
-            <APLabel
-              label={`${translate('Subtotal MTEF Projections Projection')}:`} key={Math.random()}
-              labelClass={styles.mtef_group} />
-          </div>
+          {APFundingMTEFSection.drawTable(funding, currency)}
+          {this.drawSubTotal(funding, currency)}
         </div>
       );
     } else {
@@ -63,4 +71,4 @@ class APFundingTransactionTypeItem extends Component {
 
 }
 
-export default APFundingTransactionTypeItem;
+export default APFundingMTEFSection;
