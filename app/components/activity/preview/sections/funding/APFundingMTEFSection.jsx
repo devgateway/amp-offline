@@ -6,6 +6,7 @@ import FeatureManager from '../../../../../modules/util/FeatureManager';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import styles from './APFundingTransactionTypeItem.css';
+import stylesMTEF from './APFundingMTEF.css';
 import APFundingMTEFItem from './APFundingMTEFItem';
 import Utils from '../../../../../utils/Utils';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
@@ -55,12 +56,9 @@ class APFundingMTEFSection extends Component {
       && funding[AC.MTEF_PROJECTIONS] && funding[AC.MTEF_PROJECTIONS].length > 0) {
       return (
         <div>
-          <div style={{ marginTop: '10px' }}>
+          <div className={stylesMTEF.header}>
             <APLabel label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()} />
           </div>
-          <APLabel
-            label={translate('Subtotal MTEF Projections Pipeline').toUpperCase()} key={Math.random()}
-            labelClass={styles.mtef_group} />
           {APFundingMTEFSection.drawTable(funding, currency)}
           {this.drawSubTotal(funding, currency)}
         </div>

@@ -6,6 +6,8 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import styles from './APFundingItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
+import translate from '../../../../../utils/translate';
+import stylesMTEF from './APFundingMTEF.css';
 
 const logger = new Logger('AP Funding MTEF item');
 
@@ -32,19 +34,19 @@ class APFundingMTEFItem extends Component {
 
   render() {
     const { item, wsCurrency } = this.props;
-    logger.log('render');
+    logger.debug('render');
     const convertedAmount = this.context.currencyRatesManager.convertAmountToCurrency(item[AC.AMOUNT],
       item[AC.CURRENCY].value, item[AC.PROJECTION_DATE], null, wsCurrency);
     return (
       <tbody>
         <tr className={styles.row}>
-          <td className={styles.left_text}>{item[AC.PROJECTION].value}</td>
-          <td style={{ width: '20%' }} />
+          <td className={styles.left_text}>{translate(item[AC.PROJECTION].value)}</td>
+          <td className={stylesMTEF.td_20} />
           <td className={styles.right_text}>{APFundingMTEFItem._formatDate(item[AC.PROJECTION_DATE])}</td>
           <td className={styles.right_text}>
             {`${rawNumberToFormattedString(convertedAmount)} ${wsCurrency}`}
           </td>
-          <td style={{ width: '11.5%' }} />
+          <td className={stylesMTEF.td_11} />
         </tr>
       </tbody>);
   }
