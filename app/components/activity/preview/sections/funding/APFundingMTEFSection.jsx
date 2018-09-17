@@ -31,6 +31,10 @@ class APFundingTransactionTypeItem extends Component {
     return <table className={styles.funding_table}>{content}</table>;
   }
 
+  drawSubTotal() {
+    
+  }
+
   render() {
     logger.debug('render');
     const { funding } = this.props;
@@ -47,7 +51,7 @@ class APFundingTransactionTypeItem extends Component {
           {APFundingTransactionTypeItem.drawTable(funding, currency)}
           <div style={{ paddingBottom: '40px' }}>
             <APLabel
-              label={translate('Subtotal MTEF Projections Projection')} key={Math.random()}
+              label={`${translate('Subtotal MTEF Projections Projection')}:`} key={Math.random()}
               labelClass={styles.mtef_group} />
           </div>
         </div>

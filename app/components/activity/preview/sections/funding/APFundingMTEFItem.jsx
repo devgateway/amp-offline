@@ -3,7 +3,6 @@ import Moment from 'moment';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import translate from '../../../../../utils/translate';
 import styles from './APFundingItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
@@ -39,12 +38,13 @@ class APFundingMTEFItem extends Component {
     return (
       <tbody>
         <tr className={styles.row}>
-          <td className={styles.left_text}>{translate('Projection')}</td>
+          <td className={styles.left_text}>{item[AC.PROJECTION].value}</td>
+          <td style={{ width: '20%' }} />
           <td className={styles.right_text}>{APFundingMTEFItem._formatDate(item[AC.PROJECTION_DATE])}</td>
-          <td
-            className={styles.right_text}>
+          <td className={styles.right_text}>
             {`${rawNumberToFormattedString(convertedAmount)} ${wsCurrency}`}
           </td>
+          <td style={{ width: '11.5%' }} />
         </tr>
       </tbody>);
   }
