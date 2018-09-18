@@ -42,7 +42,7 @@ class APFundingMTEFSection extends Component {
     return (<div>
       <APFundingTotalItem
         value={subtotal}
-        label={`${translate('Subtotal MTEF Projections Projection')}`.toUpperCase()}
+        label={`${translate(`Subtotal MTEF Projections ${type}`)}`.toUpperCase()}
         currency={currency}
         key={Math.random()} />
     </div>);

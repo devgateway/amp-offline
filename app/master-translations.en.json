@@ -442,7 +442,7 @@
   "rejectActivityWhenResourceUnsynced2": "The new resource(s) %resources% used by the activity could not be synced to AMP. Activity cannot be synced. Please delete this new resource(s) from the activity, then add the resource(s) again or sync the activity without them.",
   "resourcesDeletedFromActivity": "The %titles% document(s) were deleted on AMP and as a result the document(s) were also removed from %activityInfo% activity before its sync up.",
   "MTEF Projections": "MTEF Projections",
-  "Subtotal MTEF Projections Pipeline": "Subtotal MTEF Projections Pipeline",
+  "Subtotal MTEF Projections pipeline": "Subtotal MTEF Projections Pipeline",
   "Projection": "Projection",
-  "Subtotal MTEF Projections Projection": "Subtotal MTEF Projections Projection"
+  "Subtotal MTEF Projections projection": "Subtotal MTEF Projections Projection"
 }
