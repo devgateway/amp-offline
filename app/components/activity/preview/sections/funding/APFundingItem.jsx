@@ -21,8 +21,10 @@ class APFundingItem extends Component {
 
   static propTypes = {
     item: PropTypes.object.isRequired,
-    wsCurrency: PropTypes.string.isRequired
+    wsCurrency: PropTypes.string.isRequired,
+    buildSimpleField: PropTypes.func.isRequired
   };
+
   static contextTypes = {
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
@@ -70,17 +72,18 @@ class APFundingItem extends Component {
   }
 
   insertRecipientOrgRow() {
-    const { item } = this.props;
+    const { item, buildSimpleField } = this.props;
     if (item[AC.RECIPIENT_ORGANIZATION] && item[AC.RECIPIENT_ROLE]) {
-      const role = item[AC.RECIPIENT_ROLE];
-      const org = item[AC.RECIPIENT_ORGANIZATION];
+      const options = { noTitle: true };
       return (<tr>
         <td colSpan={AC.AP_FUNDINGS_TABLE_COLS} className={styles.left_text}>
           <span className={styles.recipient_row}>
             <span className={styles.normal}>{`${translate('Recipient')}: `}</span>
-            {translate(org.value)}
+            {buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.RECIPIENT_ORGANIZATION]}`,
+              true, null, true, item, null, options)}
             <span className={styles.normal}>{` ${translate('as the')} `}</span>
-            {translate(role.value)}
+            {buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.RECIPIENT_ROLE]}`,
+              true, null, true, item, null, options)}
           </span>
         </td>
       </tr>);
