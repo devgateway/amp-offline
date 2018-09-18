@@ -58,11 +58,11 @@ class APFundingItem extends Component {
     }
     if (this.props.item.pledge && FeatureManager.isFMSettingEnabled(pledgeFMPath)) {
       return (<tr className={styles.row}>
-        <td
-          colSpan={AC.AP_FUNDINGS_TABLE_COLS}
-          className={styles.left_text}>
-          <span>{`${translate('Source Pledge')}: `}</span>
-          <span className={styles.value}>{`${translate(this.props.item[AC.PLEDGE].value)}`}</span>
+        <td colSpan={AC.AP_FUNDINGS_TABLE_COLS} className={styles.left_text}>
+          <span className={styles.pledge_row}>
+            <span>{`${translate('Source Pledge')}: `}</span>
+            <span className={styles.value}>{`${translate(this.props.item[AC.PLEDGE].value)}`}</span>
+          </span>
         </td>
       </tr>);
     } else {
@@ -78,8 +78,10 @@ class APFundingItem extends Component {
       return (<tr>
         <td colSpan={AC.AP_FUNDINGS_TABLE_COLS} className={styles.left_text}>
           <span className={styles.recipient_row}>
-            <span className={styles.normal}>{translate('Recipient')}: </span>
-            {translate(org.value)}<span className={styles.normal}> {translate('as the')} </span>{translate(role.value)}
+            <span className={styles.normal}>{`${translate('Recipient')}: `}</span>
+            {translate(org.value)}
+            <span className={styles.normal}>{` ${translate('as the')} `}</span>
+            {translate(role.value)}
           </span>
         </td>
       </tr>);
