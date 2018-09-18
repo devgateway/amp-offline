@@ -27,7 +27,7 @@ class APFundingTransactionTypeItem extends Component {
   static propTypes = {
     fundingDetails: PropTypes.array.isRequired,
     group: PropTypes.object.isRequired,
-    buildSimpleField: PropTypes.func.isRequired
+    buildSimpleField: PropTypes.object.isRequired
   };
 
   constructor(props, context) {
@@ -38,7 +38,7 @@ class APFundingTransactionTypeItem extends Component {
 
   _filterFundingDetails() {
     return (this.props.fundingDetails.filter(o => o[AC.TRANSACTION_TYPE].id === this.props.group.trnType.id
-      && o[AC.ADJUSTMENT_TYPE].id === this.props.group.adjType.id));
+    && o[AC.ADJUSTMENT_TYPE].id === this.props.group.adjType.id));
   }
 
   _drawHeader() {
@@ -75,7 +75,7 @@ class APFundingTransactionTypeItem extends Component {
         buildSimpleField={this.props.buildSimpleField} />);
     });
     // Not worth the effort to use BootstrapTable here.
-    return <table className={styles.funding_table}>{content}</table>;
+    return <table className={styles.funding_table} >{content}</table>;
   }
 
   _drawSubTotalFooter() {
@@ -95,7 +95,7 @@ class APFundingTransactionTypeItem extends Component {
 
   render() {
     logger.log('render');
-    return (<div className={styles.table_container}>
+    return (<div className={styles.table_container} >
       <div>{this._drawHeader()}</div>
       <div>{this._drawDetail()}</div>
       <div>{this._drawSubTotalFooter()}</div>
