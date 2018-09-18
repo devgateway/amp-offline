@@ -32,3 +32,11 @@ td {
 .value {
   font-weight: normal;
 }
+
+.recipient_row {
+  font-size: 0.90em;
+}
+
+.normal {
+  font-weight: normal;
+}

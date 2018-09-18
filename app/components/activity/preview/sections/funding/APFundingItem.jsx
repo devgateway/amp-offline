@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { Component, PropTypes } from 'react';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
@@ -69,6 +70,24 @@ class APFundingItem extends Component {
     }
   }
 
+  insertRecipientOrgRow() {
+    const { item } = this.props;
+    if (item[AC.RECIPIENT_ORGANIZATION] && item[AC.RECIPIENT_ROLE]) {
+      const role = item[AC.RECIPIENT_ROLE];
+      const org = item[AC.RECIPIENT_ORGANIZATION];
+      return (<tr>
+        <td colSpan={AC.AP_FUNDINGS_TABLE_COLS} className={styles.left_text}>
+          <span className={styles.recipient_row}>
+            <span className={styles.normal}>{translate('Recipient')}: </span>
+            {translate(org.value)}<span className={styles.normal}> {translate('as the')} </span>{translate(role.value)}
+          </span>
+        </td>
+      </tr>);
+    } else {
+      return null;
+    }
+  }
+
   insertFixedExchangeRateCell() {
     let exchangeRateFMPath;
     switch (this.props.item[AC.TRANSACTION_TYPE].value) {
@@ -107,6 +126,7 @@ class APFundingItem extends Component {
           <td className={styles.exchange_rate}>{this.insertFixedExchangeRateCell()}</td>
         </tr>
         {this.insertPledgeRow()}
+        {this.insertRecipientOrgRow()}
       </tbody>);
   }
 }
