@@ -44,6 +44,7 @@ export const COLLECTION_CONTACTS = 'contacts';
 export const COLLECTION_RESOURCES = 'resources';
 export const COLLECTION_REPOSITORY = 'repository';
 export const COLLECTION_GAZETTEER = 'gazetteer';
+export const COLLECTION_CALENDARS = 'calendars';
 
 export const GAZETTEER_DISTANCE_DIVIDE = 3;
 
