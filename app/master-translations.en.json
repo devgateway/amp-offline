@@ -42,7 +42,7 @@
   "validatedActivitiesLegend": "Validated activities",
   "existingDraftsLegend": "Existing Drafts. These are activities that have been saved once and edited and saved as drafts.",
   "existingUnvalidatedLegend": "Existing Un-validated. These are activities that have been approved at least once by the workspace manager. These are edited activities that are not approved.",
-  "unsyncedLegend2": "Unsynced. These are activities created or updated in AMP Offline not yet syncronized with AMP.",
+  "unsyncedLegend2": "Unsynced. These are activities created or updated in AMP Offline not yet synchronized with AMP.",
   "privateWorkspaceWarning": "This activity has been created in a private workspace. It will not be visible in other workspaces.",
   "moreThanOneResultFound": "Query returned more than one result.",
   "unknownNetworkError": "Unknown network error",
