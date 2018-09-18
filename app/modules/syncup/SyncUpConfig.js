@@ -24,6 +24,7 @@ import FMSyncUpManager from './syncupManagers/FMSyncUpManager';
 import SyncUpDependency from './SyncUpDependency';
 import MapTilesSyncUpManager from './syncupManagers/MapTilesSyncUpManager';
 import GazetteerSyncUpManager from './syncupManagers/GazetteerSyncUpManager';
+import CalendarsSyncUpManager from './syncupManagers/CalendarsSyncUpManager';
 import * as Utils from '../../utils/Utils';
 import * as SS from './SyncUpUnitState';
 import {
@@ -61,7 +62,7 @@ export default class SyncUpConfig {
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
     ResourcePossibleValuesSyncUpManager, CommonPossibleValuesSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager, MapTilesSyncUpManager,
-    GazetteerSyncUpManager];
+    GazetteerSyncUpManager, CalendarsSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
   static _initCollection() {
