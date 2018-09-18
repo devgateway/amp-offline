@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import React, { Component, PropTypes } from 'react';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
