@@ -83,7 +83,8 @@ class APFundingOrganizationSection extends Component {
     });
     const sortedGroups = groups.sort(this.props.comparator);
     sortedGroups.forEach((group) => {
-      content.push(<APFundingTransactionTypeItem fundingDetails={fd} group={group} key={group.key} />);
+      content.push(<APFundingTransactionTypeItem
+        fundingDetails={fd} group={group} key={group.key} buildSimpleField={this.props.buildSimpleField} />);
     });
     return content;
   }
