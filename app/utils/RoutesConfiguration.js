@@ -7,6 +7,7 @@ import {
   AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
   AMP_REGISTRY_STAGING_SETTINGS_URL,
   AVAILABLE_LANGUAGES_URL,
+  CALENDAR_PULL_URL,
   CHANGE_PASSWORD_URL,
   CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
   CONTACT_PULL_URL,
@@ -206,8 +207,11 @@ const routesConfiguration = [{
   url: GAZETTEER_URL,
   method: 'GET',
   requiredAuth: true
+}, {
+  url: CALENDAR_PULL_URL,
+  method: 'GET',
+  requiredAuth: true,
 }
-
 ];
 
 module.exports = routesConfiguration;
