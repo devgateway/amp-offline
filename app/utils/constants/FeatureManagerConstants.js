@@ -99,7 +99,11 @@ export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Funding Flows OrgRole Selector/Add Sector Group`;
 
 export const MTEF_PROJECTIONS = `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections`;
-export const MTEF_PROJECTIONS_AMOUNT = `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/Amount`;
-export const MTEF_PROJECTIONS_CURRENCY = `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/Currency`;
-export const MTEF_PROJECTIONS_PROJECTION = `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/MTEF Projection`;
-export const MTEF_PROJECTIONS_DATE = `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/Projection Date`;
+export const MTEF_PROJECTIONS_AMOUNT =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/Amount`;
+export const MTEF_PROJECTIONS_CURRENCY =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/Currency`;
+export const MTEF_PROJECTIONS_PROJECTION =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/MTEF Projection`;
+export const MTEF_PROJECTIONS_DATE =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/Projection Date`;
