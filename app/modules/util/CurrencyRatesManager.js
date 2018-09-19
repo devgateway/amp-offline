@@ -65,13 +65,19 @@ export default class CurrencyRatesManager {
     return this.convertTransactionAmountToCurrency(fundingDetail, this._baseCurrency);
   }
 
+  convertAmountToCurrency(amount, currencyFrom, date, fixedExchangeRate, currencyTo) {
+    const currencyRate = this.convertCurrency(currencyFrom, currencyTo,
+      formatDateForCurrencyRates(date), fixedExchangeRate);
+    return amount * currencyRate;
+  }
+
   convertTransactionAmountToCurrency(fundingDetail, currencyTo) {
     const fixedExchangeRate = fundingDetail[AC.FIXED_EXCHANGE_RATE];
     const currencyFrom = fundingDetail[AC.CURRENCY].value;
-    const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
+    const transactionDate = fundingDetail[AC.TRANSACTION_DATE];
     const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
-    const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate, fixedExchangeRate);
-    return transactionAmount * currencyRate;
+    return this.convertAmountToCurrency(transactionAmount, currencyFrom, transactionDate, fixedExchangeRate,
+      currencyTo);
   }
 
   getExchangeRate(currenciesToSearch, timeDateToFind) {
