@@ -21,8 +21,10 @@ class APFundingItem extends Component {
 
   static propTypes = {
     item: PropTypes.object.isRequired,
-    wsCurrency: PropTypes.string.isRequired
+    wsCurrency: PropTypes.string.isRequired,
+    buildSimpleField: PropTypes.func.isRequired
   };
+
   static contextTypes = {
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
@@ -57,11 +59,32 @@ class APFundingItem extends Component {
     }
     if (this.props.item.pledge && FeatureManager.isFMSettingEnabled(pledgeFMPath)) {
       return (<tr className={styles.row}>
-        <td
-          colSpan={AC.AP_FUNDINGS_TABLE_COLS}
-          className={styles.left_text}>
-          <span>{`${translate('Source Pledge')}: `}</span>
-          <span className={styles.value}>{`${translate(this.props.item[AC.PLEDGE].value)}`}</span>
+        <td colSpan={AC.AP_FUNDINGS_TABLE_COLS} className={styles.left_text}>
+          <span className={styles.pledge_row}>
+            <span>{`${translate('Source Pledge')}: `}</span>
+            <span className={styles.value}>{`${translate(this.props.item[AC.PLEDGE].value)}`}</span>
+          </span>
+        </td>
+      </tr>);
+    } else {
+      return null;
+    }
+  }
+
+  insertRecipientOrgRow() {
+    const { item, buildSimpleField } = this.props;
+    if (item[AC.RECIPIENT_ORGANIZATION] && item[AC.RECIPIENT_ROLE]) {
+      const options = { noTitle: true };
+      return (<tr>
+        <td colSpan={AC.AP_FUNDINGS_TABLE_COLS} className={styles.left_text}>
+          <span className={styles.recipient_row}>
+            <span className={styles.normal}>{`${translate('Recipient')}: `}</span>
+            {buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.RECIPIENT_ORGANIZATION]}`,
+              true, null, true, item, null, options)}
+            <span className={styles.normal}>{` ${translate('as the')} `}</span>
+            {buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.RECIPIENT_ROLE]}`,
+              true, null, true, item, null, options)}
+          </span>
         </td>
       </tr>);
     } else {
@@ -107,6 +130,7 @@ class APFundingItem extends Component {
           <td className={styles.exchange_rate}>{this.insertFixedExchangeRateCell()}</td>
         </tr>
         {this.insertPledgeRow()}
+        {this.insertRecipientOrgRow()}
       </tbody>);
   }
 }
