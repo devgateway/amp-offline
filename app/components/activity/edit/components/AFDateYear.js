@@ -25,7 +25,10 @@ export default class AFDateYear extends Component {
   }
 
   handleChange(control) {
-    const value = DateUtils.getISODateForAPI(Moment(`01/01/${control.target.value}`));
+    let value = null;
+    if (control.target.value !== '-1') {
+      value = DateUtils.getISODateForAPI(Moment(`01/01/${control.target.value}`));
+    }
     if (this.props.onChange) {
       this.props.onChange(value);
     }
