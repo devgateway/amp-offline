@@ -18,7 +18,6 @@ class APFundingOrganizationSection extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    counter: PropTypes.number.isRequired,
     comparator: PropTypes.func.isRequired,
     buildSimpleField: PropTypes.func.isRequired
   };
