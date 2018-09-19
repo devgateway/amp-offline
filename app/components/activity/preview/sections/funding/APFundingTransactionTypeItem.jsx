@@ -26,7 +26,8 @@ class APFundingTransactionTypeItem extends Component {
 
   static propTypes = {
     fundingDetails: PropTypes.array.isRequired,
-    group: PropTypes.object.isRequired
+    group: PropTypes.object.isRequired,
+    buildSimpleField: PropTypes.object.isRequired
   };
 
   constructor(props, context) {
@@ -69,7 +70,9 @@ class APFundingTransactionTypeItem extends Component {
     const filteredFD = this._filterFundingDetails();
     const content = [];
     filteredFD.forEach((item) => {
-      content.push(<APFundingItem item={item} key={Utils.numberRandom()} wsCurrency={this._currency} />);
+      content.push(<APFundingItem
+        item={item} key={Utils.numberRandom()} wsCurrency={this._currency}
+        buildSimpleField={this.props.buildSimpleField} />);
     });
     // Not worth the effort to use BootstrapTable here.
     return <table className={styles.funding_table} >{content}</table>;
