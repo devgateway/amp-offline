@@ -14,7 +14,7 @@ const RequestConfig = {
    * A simple api connection builder
    * @param method
    * @param url
-   * @param paramsMap
+   * @param paramsMap can be a Map, Object or an Array of [key, value] pairs
    * @param body
    */
   /* adding {} to destructure method body so we can or can not send paramsMap
@@ -111,6 +111,8 @@ const RequestConfig = {
     if (paramsMap) {
       if (paramsMap instanceof Map) {
         paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
+      } else if (paramsMap instanceof Array) {
+        paramsMap.forEach(([key, value]) => kv.push(`${key}=${encodeURIComponent(value)}`));
       } else {
         Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
       }
