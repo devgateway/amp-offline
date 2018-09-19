@@ -1,4 +1,7 @@
 import {
+  STATE_CALENDAR_FULFILLED,
+  STATE_CALENDAR_PENDING,
+  STATE_CALENDAR_REJECTED,
   STATE_FM_FULFILLED,
   STATE_FM_PENDING,
   STATE_FM_REJECTED,
@@ -24,7 +27,8 @@ const defaultState = {
   fmTree: undefined,
   isFMTreeLoading: false,
   isFMTreeLoaded: false,
-  fmTreeError: undefined
+  fmTreeError: undefined,
+  calendar: undefined
 };
 
 export default function startUpReducer(state = defaultState, action: Object) {
@@ -70,6 +74,11 @@ export default function startUpReducer(state = defaultState, action: Object) {
       });
     case STATE_FM_REJECTED:
       return Object.assign({}, state, { fmTreeError: action.payload, isFMTreeLoading: false, isFMTreeLoaded: false });
+    case STATE_CALENDAR_PENDING:
+    case STATE_CALENDAR_REJECTED:
+      return Object.assign({}, state, { calendar: undefined });
+    case STATE_CALENDAR_FULFILLED:
+      return Object.assign({}, state, { calendar: action.payload });
     default:
       return state;
   }

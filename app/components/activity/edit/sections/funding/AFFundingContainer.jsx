@@ -45,7 +45,7 @@ export default class AFFundingContainer extends Component {
   }
 
   _addMTEFProjectionItem() {
-    logger.log('_addMTEFProjectionItem');
+    logger.debug('_addMTEFProjectionItem');
     const mtefItem = {};
     mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(new Date());
     mtefItem[AC.PROJECTION] = {};

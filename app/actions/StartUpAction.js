@@ -21,6 +21,8 @@ import {
 import RepositoryManager from '../modules/repository/RepositoryManager';
 import { deleteOrphanResources } from './ResourceAction';
 import SetupManager from '../modules/setup/SetupManager';
+import { GS_DEFAULT_CALENDAR } from '../utils/constants/GlobalSettingsConstants';
+import CalendarHelper from '../modules/helpers/CalendarHelper';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -39,6 +41,10 @@ export const STATE_FM_PENDING = 'STATE_FM_PENDING';
 export const STATE_FM_FULFILLED = 'STATE_FM_FULFILLED';
 export const STATE_FM_REJECTED = 'STATE_FM_REJECTED';
 const STATE_FM = 'STATE_FM';
+export const STATE_CALENDAR_PENDING = 'STATE_CALENDAR_PENDING';
+export const STATE_CALENDAR_FULFILLED = 'STATE_CALENDAR_FULFILLED';
+export const STATE_CALENDAR_REJECTED = 'STATE_CALENDAR_REJECTED';
+const STATE_CALENDAR = 'STATE_CALENDAR';
 
 const logger = new Logger('Startup action');
 
@@ -63,6 +69,7 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(loadGlobalSettings)
     .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup)
+    .then(loadCalendar)
     .then(() => (isPostLogout ? postLogoutInit() : null));
 }
 
@@ -116,6 +123,17 @@ export function loadGlobalSettings() {
     payload: gsPromise
   });
   return gsPromise;
+}
+
+export function loadCalendar() {
+  logger.log('loadCalendar');
+  const id = GlobalSettingsManager.getSettingByKey(GS_DEFAULT_CALENDAR);
+  const calendarPromise = CalendarHelper.findCalendarById(Number(id)).then(calendar => (calendar));
+  store.dispatch({
+    type: STATE_CALENDAR,
+    payload: calendarPromise
+  });
+  return calendarPromise;
 }
 
 /**
