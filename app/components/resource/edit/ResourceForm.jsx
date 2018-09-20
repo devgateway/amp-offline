@@ -14,6 +14,7 @@ import FileManager from '../../../modules/util/FileManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
 import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
 import * as resStyles from './ResourceForm.css';
+import { validate } from '../../../actions/ResourceAction';
 
 
 const logger = new Logger('ResourceForm');
@@ -40,7 +41,6 @@ export default class ResourceForm extends Component {
     updatePendingWebResource: PropTypes.func.isRequired,
     updatePendingDocResource: PropTypes.func.isRequired,
     prepareNewResourceForSave: PropTypes.func.isRequired,
-    validate: PropTypes.func.isRequired,
     uploadFileToPendingResourceAsync: PropTypes.func.isRequired,
   };
 
@@ -114,7 +114,7 @@ export default class ResourceForm extends Component {
   }
 
   onUploadComplete() {
-    const { resource, validate } = this.props;
+    const { resource } = this.props;
     validate(resource, this.isDoc);
     this.setState({ uploadingSize: null });
     this.updateFunc(resource);
