@@ -156,7 +156,7 @@ class AFDocument extends Component {
     const { pendingWebResource, pendingDocResource, resourceFieldsManager } = this.props.resourceReducer;
     let resource = resourceType === TYPE_DOC_RESOURCE ? pendingDocResource : pendingWebResource;
     if (!resource) {
-      resource = buildNewResource(resourceFieldsManager);
+      resource = buildNewResource(resourceFieldsManager, resourceType);
     }
     return resource;
   }

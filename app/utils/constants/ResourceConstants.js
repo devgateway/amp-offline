@@ -23,10 +23,11 @@ export const CLIENT_ADDING_DATE = 'client_adding_date';
 export const CLIENT_YEAR_OF_PUBLICATION = 'client_year_of_publication';
 /* merged field used to display either URL or file name */
 export const RESOURCE_NAME = 'resource_name';
+export const RESOURCE_TYPE = 'resource_type';
 export const ACTION = 'action';
 
-export const TYPE_DOC_RESOURCE = 'TYPE_DOC_RESOURCE';
-export const TYPE_WEB_RESOURCE = 'TYPE_WEB_RESOURCE';
+export const TYPE_DOC_RESOURCE = 'file';
+export const TYPE_WEB_RESOURCE = 'link';
 
 /** Repository File System constants */
 

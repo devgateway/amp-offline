@@ -10,7 +10,8 @@ import {
   CLIENT_ADDING_DATE,
   CLIENT_YEAR_OF_PUBLICATION,
   FILE_NAME,
-  WEB_LINK
+  WEB_LINK,
+  RESOURCE_TYPE
 } from '../utils/constants/ResourceConstants';
 import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
@@ -301,10 +302,11 @@ const _getActivityResources = (activity, asIds = true) => {
   return Array.from(resources);
 };
 
-export const buildNewResource = (resourceFieldsManager) => {
+export const buildNewResource = (resourceFieldsManager, resourceType) => {
   const resource = {};
   ResourceHelper.stampClientChange(resource);
   resource[TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  resource[RESOURCE_TYPE] = { id: resourceType, value: resourceType };
   return resource;
 };
 
