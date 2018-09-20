@@ -29,7 +29,6 @@ const getMaxSizeMB = () => GlobalSettingsManager.getSettingByKey(GS_MAXIMUM_FILE
 export default class ResourceForm extends Component {
   static contextTypes = {
     activity: PropTypes.object,
-    isSaveAndSubmit: PropTypes.bool.isRequired,
   };
 
   static propTypes = {
@@ -47,7 +46,6 @@ export default class ResourceForm extends Component {
 
   static childContextTypes = {
     activity: PropTypes.object,
-    isSaveAndSubmit: PropTypes.bool.isRequired,
     validationResult: PropTypes.array,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityValidator: PropTypes.instanceOf(EntityValidator),
@@ -67,7 +65,6 @@ export default class ResourceForm extends Component {
     const { resource, resourceReducer } = this.props;
     return {
       activity: this.context.activity,
-      isSaveAndSubmit: false,
       validationResult: resource.errors,
       activityFieldsManager: resourceReducer.resourceFieldsManager,
       activityValidator: resource && resource[TMP_ENTITY_VALIDATOR],
