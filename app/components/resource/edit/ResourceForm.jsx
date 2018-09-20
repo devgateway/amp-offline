@@ -142,7 +142,9 @@ export default class ResourceForm extends Component {
     const uploadStatusMsg = uploadingMessage || uploadFailed || uploadConfirm;
     return (
       <Col lg={2 * CS} md={2 * CS}>
-        <AFField fieldPath={RC.FILE_NAME} customLabel={'File'} parent={resource} type={Types.CUSTOM} >
+        <AFField
+          fieldPath={RC.FILE_NAME} customLabel={'File'} parent={resource} type={Types.CUSTOM}
+          showValidationError={!isFileUploading}>
           <Button onClick={this.onFileUpload.bind(this)} disabled={isFileUploading}>
             {translate('Choose file')}
           </Button>
