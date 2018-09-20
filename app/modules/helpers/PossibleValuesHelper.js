@@ -17,7 +17,7 @@ const optionSchema = {
   type: 'object',
   patternProperties: {
     // since we need an artificial "resource_type" options, then we may not be able to limit to numbers (AMP-25785)
-    '^(0|[1-9]+[0-9]*)|[A-Za-z]{4}$': {
+    '^(0|[1-9]+[0-9]*)|[A-Za-z]{3,4}$': {
       type: 'object',
       properties: {
         // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
