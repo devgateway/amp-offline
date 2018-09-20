@@ -17,7 +17,8 @@ export const ACTIVITY_SAME_AS_PROPOSED_APPROVAL_DATE =
 export const ACTIVITY_IDENTIFICATION = '/Activity Form/Identification';
 export const ACTIVITY_LAST_UPDATED_BY = '/Activity Form/Identification/Activity Last Updated by';
 export const ACTIVITY_LAST_UPDATED_ON = '/Activity Form/Identification/Activity Updated On';
-const AF_FUNDING_FUNDINGGROUP_FUNDINGITEM = '/Activity Form/Funding/Funding Group/Funding Item';
+const ACTIVITY_FUNDING = '/Activity Form/Funding';
+const AF_FUNDING_FUNDINGGROUP_FUNDINGITEM = `${ACTIVITY_FUNDING}/Funding Group/Funding Item`;
 export const ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Disbursement Order Id`;
 export const ACTIVITY_SECTORS = '/Activity Form/Sectors';
@@ -45,6 +46,10 @@ export const ACTIVITY_ORGANIZATIONS_IMPLEMENTING_AGENCY_ADD_FUNDING_AUTO = `${AC
 export const ACTIVITY_ORGANIZATIONS_REGIONAL_GROUP_ADD_FUNDING_AUTO = `${ACTIVITY_ORGANIZATIONS}/Regional Group/${ADD_FUNDING_AUTO}`;
 export const ACTIVITY_ORGANIZATIONS_RELATED_GOVERNMENT_ORGANIZATION_ADD_FUNDING_AUTO = `${ACTIVITY_ORGANIZATIONS}/Related Government Organization/${ADD_FUNDING_AUTO}`;
 export const ACTIVITY_ORGANIZATIONS_SECTOR_GROUP_ADD_FUNDING_AUTO = `${ACTIVITY_ORGANIZATIONS}/Sector Group/${ADD_FUNDING_AUTO}`;
+
+export const ACTIVITY_FUNDING_SEARCH = `${ACTIVITY_FUNDING}/Search Funding Organizations`;
+export const ACTIVITY_FUNDING_SEARCH_ORG_GROUP = `${ACTIVITY_FUNDING_SEARCH}/Search Organization Group`;
+export const ACTIVITY_FUNDING_SELECT_ORG_TYPE = `${ACTIVITY_FUNDING_SEARCH}/Select Organization type`;
 
 export const ACTIVITY_PROGRAM = '/Activity Form/Program';
 export const ACTIVITY_PLANNING = '/Activity Form/Planning';
