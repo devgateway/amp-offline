@@ -11,9 +11,9 @@ import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
-import Utils from '../../../../utils/Utils';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import styles from './funding/AFFunding.css';
+import AFUtils from './../util/AFUtils';
 
 const logger = new Logger('AF funding');
 
@@ -69,21 +69,7 @@ class AFFunding extends Component {
     logger.debug('handleDonorSelect');
     if (values) {
       const value = (values instanceof Array) ? values[values.length - 1][AC.ORGANIZATION] : values;
-      const fundingItem = {};
-      fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
-        id: value.id,
-        value: value.value,
-        extra_info: value.extra_info,
-        'translated-value': value['translated-value']
-      };
-      // Find the 'Donor' org type if enabled.
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
-        const donorList = this.context.activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
-        fundingItem[AC.SOURCE_ROLE] = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
-      }
-      fundingItem[AC.FUNDING_DETAILS] = [];
-      fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
-      fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
+      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value);
       const newFundingList = this.state.fundingList.slice();
       newFundingList.push(fundingItem);
       this.setState({ fundingList: newFundingList });
