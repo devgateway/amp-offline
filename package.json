@@ -207,7 +207,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-haiti-develop-tc9.ampsite.net",
+    "ampServerUrl": "amp-malawi-develop-tc9.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   },
