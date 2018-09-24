@@ -195,6 +195,10 @@ export const PRIMARY_CONTACT = 'mark_as_primary';
 export const ACTIVITY_DOCUMENTS = 'activity_documents';
 export const DOCUMENT_TYPE = 'document_type';
 export const ISO2 = 'iso2';
+export const MTEF_PROJECTIONS = 'mtef_projections';
+export const PROJECTION = 'projection';
+export const PIPELINE = 'pipeline';
+export const PROJECTION_DATE = 'projection_date';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';

@@ -8,6 +8,7 @@ import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import translate from '../../../../../utils/translate';
+import APFundingMTEFSection from './APFundingMTEFSection';
 
 const logger = new Logger('AP funding organization section');
 
@@ -60,6 +61,10 @@ class APFundingOrganizationSection extends Component {
     return Tablify.addRows(content, 1);
   }
 
+  _buildMTEFDetailSection() {
+    return <APFundingMTEFSection funding={this.props.funding} />;
+  }
+
   _buildFundingDetailSection() {
     const content = [];
     // Group the list of funding details by adjustment_type and transaction_type.
@@ -78,7 +83,8 @@ class APFundingOrganizationSection extends Component {
     });
     const sortedGroups = groups.sort(this.props.comparator);
     sortedGroups.forEach((group) => {
-      content.push(<APFundingTransactionTypeItem fundingDetails={fd} group={group} key={group.key} />);
+      content.push(<APFundingTransactionTypeItem
+        fundingDetails={fd} group={group} key={group.key} buildSimpleField={this.props.buildSimpleField} />);
     });
     return content;
   }
@@ -122,6 +128,7 @@ class APFundingOrganizationSection extends Component {
       <table className={styles.two_box_table}>
         <tbody>{this._buildFieldTable(`${[AC.FUNDINGS]}~${[AC.CONDITIONS]}`)}</tbody>
       </table>
+      <div className={styles.funding_detail}>{this._buildMTEFDetailSection()}</div>
       <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
     </div>);
