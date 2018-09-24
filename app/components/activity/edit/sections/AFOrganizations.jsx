@@ -108,6 +108,8 @@ class AFOrganizations extends Component {
     });
   }
 
+  // TODO: Implement removeItemAutomatically() once we always have the source_role field.
+
   handleAddOrganization() {
     // todo: agregar el funding solo si se agrego el org satisfactoriamente?
     // todo: y hay q implementar un remove funding tambien?

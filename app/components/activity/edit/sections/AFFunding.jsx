@@ -158,7 +158,7 @@ class AFFunding extends Component {
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
           return (<Tab
-            eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
+            eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.GROUP_VERSIONED_FUNDING]}
             title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
             tabClassName={funding.errors ? styles.error : ''}>
             <AFFundingDonorSection
@@ -177,13 +177,16 @@ class AFFunding extends Component {
   removeFundingItem(id) {
     logger.log('_removeFundingItem');
     if (confirm(translate('deleteFundingItem'))) {
+      const { activity } = this.context;
       const newFundingList = this.state.fundingList.slice();
       const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
       newFundingList.splice(index, 1);
       this.setState({ fundingList: newFundingList });
       // Remove from the activity.
-      const index2 = this.context.activity.fundings.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
-      this.context.activity.fundings.splice(index2, 1);
+      const index2 = activity.fundings.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      activity.fundings.splice(index2, 1);
+      /* TODO: Once we have the source_role even if disabled on FM we need to implement auto-remove funding orgs
+      when we have enabled the auto add funding. */
     }
   }
 
