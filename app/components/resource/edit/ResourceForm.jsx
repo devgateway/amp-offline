@@ -16,7 +16,6 @@ import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettings
 import * as resStyles from './ResourceForm.css';
 import { validate } from '../../../actions/ResourceAction';
 
-
 const logger = new Logger('ResourceForm');
 // columns size
 const CS = 6;
@@ -133,11 +132,12 @@ export default class ResourceForm extends Component {
     const { isFileUploading, uploadError } = this.props.resourceReducer;
     const { uploadingSize } = this.state;
     // following AMP message format
-    const uploadingMessage = isFileUploading && `${translate('FileUploading')} ${uploadingSize} bytes`;
+    const uploadingMessage = isFileUploading && `${translate('FileUploading')} ${uploadingSize} ${translate('Bytes')}`;
     const fileNameOrMsg = resource[RC.FILE_NAME] || translate('No file chosen');
     const content = !uploadError && resource[RC.FILE_NAME] && resource[RC.CONTENT_ID];
     const size = resource[RC.FILE_SIZE] * 1024 * 1024;
-    const uploadConfirm = content && `File '${fileNameOrMsg}' ${translate('FileUploaded')} '${size}' bytes`;
+    const uploadConfirm = content
+      && `${translate('File')} '${fileNameOrMsg}' ${translate('FileUploaded')} '${size}' ${translate('Bytes')}`;
     const uploadFailed = uploadError && translate('FileUploadFailed');
     const uploadStatusMsg = uploadingMessage || uploadFailed || uploadConfirm;
     return (
