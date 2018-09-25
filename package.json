@@ -75,6 +75,7 @@
     },
     "nsis": {
       "artifactName": "${name}-${version}.${ext}",
+      "installerLanguages": ["en_US", "fr_FR", "es_ES"],
       "displayLanguageSelector": true
     },
     "linux": {
