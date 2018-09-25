@@ -165,6 +165,7 @@ export const prepareNewResourceForSave = (resource, isDoc) => (dispatch, ownProp
   resource[TEAM] = ownProps().userReducer.teamMember[WORKSPACE_ID];
   resource[PRIVATE] = true;
   resource[PUBLIC] = false;
+  resource[TMP_ENTITY_VALIDATOR].entity = resource;
   if (!isDoc && resource[WEB_LINK]) {
     resource[WEB_LINK] = URLUtils.normalizeUrl(resource[WEB_LINK], 'http');
   }
