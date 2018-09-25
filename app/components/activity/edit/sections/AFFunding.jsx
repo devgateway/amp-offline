@@ -204,6 +204,7 @@ class AFFunding extends Component {
   }
 
   addFundingItem() {
+    // Refresh state to prevent AMPOFFLINE-1250
     this.setState({ fundingList: this.context.activity[AC.FUNDINGS] });
   }
 
