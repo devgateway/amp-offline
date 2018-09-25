@@ -8,6 +8,7 @@ import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import translate from '../../../../../utils/translate';
+import APFundingMTEFSection from './APFundingMTEFSection';
 
 const logger = new Logger('AP funding organization section');
 
@@ -57,6 +58,10 @@ class APFundingOrganizationSection extends Component {
     const { buildSimpleField, funding } = this.props;
     content.push(buildSimpleField(field, true, null, false, funding));
     return Tablify.addRows(content, 1);
+  }
+
+  _buildMTEFDetailSection() {
+    return <APFundingMTEFSection funding={this.props.funding} />;
   }
 
   _buildFundingDetailSection() {
@@ -122,6 +127,7 @@ class APFundingOrganizationSection extends Component {
       <table className={styles.two_box_table}>
         <tbody>{this._buildFieldTable(`${[AC.FUNDINGS]}~${[AC.CONDITIONS]}`)}</tbody>
       </table>
+      <div className={styles.funding_detail}>{this._buildMTEFDetailSection()}</div>
       <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
     </div>);

@@ -6,7 +6,6 @@ import APIdentification from './sections/APIdentification';
 import { APInternalIds } from './sections/APInternalIds';
 import APPlanning from './sections/APPlanning';
 import APLocation from './sections/APLocation';
-import APNationalPlanObjective from './sections/APNationalPlanObjective';
 import APProgram from './sections/APProgram';
 import APSector from './sections/APSector';
 import APFundingSources from './sections/APFundingSources';
@@ -44,9 +43,6 @@ export default class MainGroup extends Component {
       <APLocation
         sectionPath={AC.LOCATIONS} tablify columns={AC.ACTIVITY_LOCATION_COLS}
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
-      <APNationalPlanObjective
-        sectionPath={AC.NATIONAL_PLAN_OBJECTIVE}
-        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APProgram
         fieldNameClass={styles.sector_title} fmPath={FMC.ACTIVITY_PROGRAM}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />

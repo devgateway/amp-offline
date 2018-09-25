@@ -195,6 +195,10 @@ export const PRIMARY_CONTACT = 'mark_as_primary';
 export const ACTIVITY_DOCUMENTS = 'activity_documents';
 export const DOCUMENT_TYPE = 'document_type';
 export const ISO2 = 'iso2';
+export const MTEF_PROJECTIONS = 'mtef_projections';
+export const PROJECTION = 'projection';
+export const PIPELINE = 'pipeline';
+export const PROJECTION_DATE = 'projection_date';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
@@ -218,7 +222,6 @@ export const AP_SECTION_IDS =
     { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs', sectionPath: ACTIVITY_INTERNAL_IDS },
     { key: 'APPlanning', hash: '#APPlanning', value: 'Planning', fmPath: FMC.ACTIVITY_PLANNING },
     { key: 'APLocation', hash: '#APLocation', value: 'Location', sectionPath: LOCATIONS },
-    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan', sectionPath: NATIONAL_PLAN_OBJECTIVE },
     { key: 'APProgram', hash: '#APProgram', value: 'Program', fmPath: FMC.ACTIVITY_PROGRAM },
     { key: 'APSector', hash: '#APSector', value: 'Sectors', fmPath: FMC.ACTIVITY_SECTORS },
     {
