@@ -19,7 +19,6 @@ class APFundingOrganizationSection extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    counter: PropTypes.number.isRequired,
     comparator: PropTypes.func.isRequired,
     buildSimpleField: PropTypes.func.isRequired
   };
@@ -118,7 +117,7 @@ class APFundingOrganizationSection extends Component {
   render() {
     logger.debug('render');
     return (<div>
-      <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
+      <div className={styles.section_header} />
       <table className={styles.two_box_table}>
         <tbody>{this._buildDonorInfo()}</tbody>
       </table>
