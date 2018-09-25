@@ -36,6 +36,7 @@ class AFFunding extends Component {
     };
     this.handleDonorSelect = this.handleDonorSelect.bind(this);
     this.removeFundingItem = this.removeFundingItem.bind(this);
+    this.addFundingItem = this.addFundingItem.bind(this);
   }
 
   componentWillMount() {
@@ -180,6 +181,7 @@ class AFFunding extends Component {
               organization={funding[AC.FUNDING_DONOR_ORG_ID]}
               role={sourceRole}
               removeFundingItem={this.removeFundingItem}
+              addFundingItem={this.addFundingItem}
               hasErrors={this.hasErrors}
             />
           </Tab>);
@@ -199,6 +201,10 @@ class AFFunding extends Component {
       const index2 = this.context.activity.fundings.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
       this.context.activity.fundings.splice(index2, 1);
     }
+  }
+
+  addFundingItem() {
+    this.setState({ fundingList: this.context.activity[AC.FUNDINGS] });
   }
 
   generateOverviewTabContent() {
