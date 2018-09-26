@@ -53,7 +53,7 @@ class FundingSummary extends Component {
             const value = this.props.activityFundingTotals.getTotals(adjType, trnType, {});
             measuresTotals[`${adjType} ${trnType}`] = value;
           }
-          // Save these 2 flags for "Delivery Rate".
+          // Save these 2 flags for "Delivery rate".
           if (trnType === VC.COMMITMENTS && adjType === VC.ACTUAL) {
             actualCommitmentsAreEnabled = true;
           }

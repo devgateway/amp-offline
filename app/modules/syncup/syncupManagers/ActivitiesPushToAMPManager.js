@@ -284,9 +284,10 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _saveRejectedActivity(activity, rejectedId, error) {
-    const idToLog = activity[AC.AMP_ID] || activity.id;
-    const fieldNameToLog = activity[AC.AMP_ID] ? AC.AMP_ID : AC.INTERNAL_ID;
-    error = `(${fieldNameToLog} = ${idToLog}): ${error}`;
+    const ampId = activity[AC.AMP_ID] ? `${activity[AC.AMP_ID]} ` : '';
+    const idToLog = `${ampId}(${activity[AC.PROJECT_TITLE]})`;
+    const fieldNameToLog = `${activity[AC.AMP_ID] ? AC.AMP_ID : ''}(${AC.PROJECT_TITLE})`;
+    error = `${idToLog}: ${error}`;
     logger.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;

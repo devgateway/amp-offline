@@ -75,6 +75,7 @@
     },
     "nsis": {
       "artifactName": "${name}-${version}.${ext}",
+      "installerLanguages": ["en_US", "fr_FR", "es_ES"],
       "displayLanguageSelector": true
     },
     "linux": {
@@ -207,7 +208,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-haiti-develop-tc9.ampsite.net",
+    "ampServerUrl": "amp-malawi-develop-tc9.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   },
