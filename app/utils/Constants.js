@@ -60,6 +60,7 @@ export const LANGUAGE_ENGLISH = 'en';
 export const FS_LOCALES_DIRECTORY = 'lang';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
+export const LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC = 'must_sync_translation.json';
 
 export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
