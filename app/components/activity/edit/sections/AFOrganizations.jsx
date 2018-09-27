@@ -17,14 +17,16 @@ import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AF organizations');
 
-const orgTypes = ['BENEFICIARY_AGENCY',
-  'CONTRACTING_AGENCY',
-  'DONOR_ORGANIZATION',
-  'EXECUTING_AGENCY',
-  'IMPLEMENTING_AGENCY',
-  'REGIONAL_GROUP',
-  'RESPONSIBLE_ORGANIZATION',
-  'SECTOR_GROUP'];
+const orgTypes = {
+  [AC.BENEFICIARY_AGENCY]: 'BENEFICIARY_AGENCY',
+  [AC.CONTRACTING_AGENCY]: 'CONTRACTING_AGENCY',
+  [AC.DONOR_ORGANIZATION]: 'DONOR_ORGANIZATION',
+  [AC.EXECUTING_AGENCY]: 'EXECUTING_AGENCY',
+  [AC.IMPLEMENTING_AGENCY]: 'IMPLEMENTING_AGENCY',
+  [AC.REGIONAL_GROUP]: 'REGIONAL_GROUP',
+  [AC.RESPONSIBLE_ORGANIZATION]: 'RESPONSIBLE_ORGANIZATION',
+  [AC.SECTOR_GROUP]: 'SECTOR_GROUP'
+};
 
 const orgFormatter = (org: AFOption) => {
   const acronym = org[AC.EXTRA_INFO][AC.ACRONYM] ? org[AC.EXTRA_INFO][AC.ACRONYM].trim() : '';
@@ -53,7 +55,7 @@ class AFOrganizations extends Component {
     super(props);
     logger.log('constructor');
     this.setState({ validationError: undefined });
-    this.handleAddOrganization = this.handleAddOrganization.bind(this);
+    this.handleOrgListChange = this.handleOrgListChange.bind(this);
     this.checkValidationError = this.checkValidationError.bind(this);
     this.addFundingAutomatically = this.addFundingAutomatically.bind(this);
   }
@@ -88,32 +90,29 @@ class AFOrganizations extends Component {
     this.setState({ validationError });
   }
 
-  addFundingAutomatically() {
+  addFundingAutomatically(orgType) {
     // If "Add Funding Item Automatically" is enabled we check if every organization has a funding.
-    // TODO: ver de simplificar todo esto y solo agregar el org nuevo, no recorrer todo.
     const { activity } = this.props;
-    const fundingList = activity.fundings || [];
-    orgTypes.forEach(orgType => {
-      const fmc = `ACTIVITY_ORGANIZATIONS_${orgType}_ADD_FUNDING_AUTO`;
-      if (FeatureManager.isFMSettingEnabled(FMC[fmc]) && activity[AC[orgType]] && activity[AC[orgType]].length > 0) {
-        activity[AC[orgType]].forEach(org => {
-          if (!activity[AC.FUNDINGS]
-            || !activity[AC.FUNDINGS].find(f => f[AC.FUNDING_DONOR_ORG_ID].id === org[AC.ORGANIZATION].id)) {
-            const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, org[AC.ORGANIZATION]);
-            fundingList.push(fundingItem);
-            activity[AC.FUNDINGS] = fundingList;
-          }
-        });
-      }
-    });
+    const { activityFieldsManager } = this.context;
+    const fundingList = activity[AC.FUNDINGS] || [];
+    const orgTypeConstantName = orgTypes[orgType];
+    const fmc = `ACTIVITY_ORGANIZATIONS_${orgTypeConstantName}_ADD_FUNDING_AUTO`;
+    if (FeatureManager.isFMSettingEnabled(FMC[fmc])) {
+      activity[orgType].forEach(org => {
+        // TODO: Once AMPOFFLINE-1248 is done we should filter by source_role too like in AFFundingDonorSection.
+        if (!fundingList.find(f => (f[AC.FUNDING_DONOR_ORG_ID].id === org[AC.ORGANIZATION].id))) {
+          const fundingItem = AFUtils.createFundingItem(activityFieldsManager, org[AC.ORGANIZATION]);
+          fundingList.push(fundingItem);
+          activity[AC.FUNDINGS] = fundingList;
+        }
+      });
+    }
   }
 
   // TODO: Implement removeItemAutomatically() once we always have the source_role field.
 
-  handleAddOrganization() {
-    // todo: agregar el funding solo si se agrego el org satisfactoriamente?
-    // todo: y hay q implementar un remove funding tambien?
-    this.addFundingAutomatically();
+  handleOrgListChange(orgType) {
+    this.addFundingAutomatically(orgType);
     this.checkValidationError();
   }
 
@@ -149,35 +148,35 @@ class AFOrganizations extends Component {
                 },
                 ...extraParams
               }}
-              onAfterUpdate={this.handleAddOrganization} />
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.RESPONSIBLE_ORGANIZATION)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY} extraParams={extraParams}
-              onAfterUpdate={this.handleAddOrganization} />
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.EXECUTING_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.IMPLEMENTING_AGENCY} extraParams={extraParams}
-              onAfterUpdate={this.handleAddOrganization} />
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.IMPLEMENTING_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.BENEFICIARY_AGENCY} extraParams={extraParams}
-              onAfterUpdate={this.handleAddOrganization} />
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.BENEFICIARY_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.CONTRACTING_AGENCY} extraParams={extraParams}
-              onAfterUpdate={this.handleAddOrganization} />
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.CONTRACTING_AGENCY)} />
           </Col>
         </Row>
       </Grid>
