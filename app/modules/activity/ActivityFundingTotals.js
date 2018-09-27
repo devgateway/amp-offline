@@ -1,4 +1,5 @@
 import NumberUtils from '../../utils/NumberUtils';
+import * as AC from '../../utils/constants/ActivityConstants';
 
 /**
  * Activity funding totals helper
@@ -20,6 +21,25 @@ export default class ActivityFundingTotals {
 
   getTotals(adjType, trnType, filter) {
     return this._getTotals(filter, [adjType, trnType]);
+  }
+
+  getMTEFTotal() {
+    // TODO apply filter as well
+    let total = 0;
+    if (this._activity.fundings) {
+      this._activity.fundings.forEach(f => {
+        f[AC.MTEF_PROJECTIONS].forEach(mtef => {
+          total += this._currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT], mtef[AC.CURRENCY].value,
+            mtef[AC.PROJECTION_DATE], 0, this._currentWorkspaceSettings.currency.code);
+        });
+      });
+    }
+    total = NumberUtils.rawNumberToFormattedString(total);
+    total = total.toLocaleString('en-EN', {
+      currency: this._currentWorkspaceSettings.currency.code,
+      currencyDisplay: 'code'
+    });
+    return total;
   }
 
   _getTotals(filter, path) {

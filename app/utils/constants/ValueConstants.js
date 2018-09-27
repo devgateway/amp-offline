@@ -28,6 +28,7 @@ export const PLANNED_DISBURSEMENTS = 'Planned Disbursements';
 export const PLANNED_EXPENDITURES = 'Planned Expenditures';
 export const UNALLOCATED_DISBURSEMENTS = 'Unallocated Disbursements';
 export const DELIVERY_RATE = 'Delivery rate';
+export const MTEF_PROJECTIONS = 'Total MTEF Projections';
 
 export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
 export const TRANSACTION_TYPES = [COMMITMENTS, DISBURSEMENTS, EXPENDITURES];
