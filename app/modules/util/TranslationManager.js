@@ -73,6 +73,7 @@ const TranslationManager = {
             }
           });
           FileManager.writeDataFileSync(JSON.stringify(localContent), FS_LOCALES_DIRECTORY, tmpTrnFileName);
+          // To fix AMPOFFLINE-1240.
           if (Object.keys(mustSyncTranslations).length > 0 && tmpTrnFileName.indexOf('.en.') > -1) {
             FileManager.writeDataFileSync(JSON.stringify(mustSyncTranslations), FS_LOCALES_DIRECTORY,
               LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC);
