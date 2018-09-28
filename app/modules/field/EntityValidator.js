@@ -58,6 +58,7 @@ import ValidationErrorsCollector from './ValidationErrorsCollector';
 import ValidationError from './ValidationError';
 import * as Utils from '../../utils/Utils';
 import { CLIENT_CHANGE_ID, VALIDATE_ON_CHANGE_ONLY } from '../../utils/constants/EntityConstants';
+import * as RC from '../../utils/constants/ResourceConstants';
 
 const logger = new Logger('EntityValidator');
 
@@ -504,8 +505,8 @@ export default class EntityValidator {
    */
   isRequiredDependencyMet(parent, fieldDef) {
     const dependencies = fieldDef.dependencies;
-    // by default is met (unless disaster response), hence the workflow can proceed to validate the "required" rule
-    let met = DISASTER_RESPONSE !== fieldDef[FIELD_NAME];
+    // by default is met (unless an exception), hence the workflow can proceed to validate the "required" rule
+    let met = ![DISASTER_RESPONSE, RC.FILE_NAME, RC.WEB_LINK].includes(fieldDef[FIELD_NAME]);
     // eslint-disable-next-line default-case
     if (dependencies && dependencies.length) {
       dependencies.forEach(dep => {
@@ -523,6 +524,12 @@ export default class EntityValidator {
             break;
           case DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED:
             met = met || this._matchesTransactionType(parent, COMMITMENTS);
+            break;
+          case RC.DEPENDENCY_RESOURCE_TYPE_LINK:
+            met = met || this._matchesResourceType(parent, RC.TYPE_WEB_RESOURCE);
+            break;
+          case RC.DEPENDENCY_RESOURCE_TYPE_FILE:
+            met = met || this._matchesResourceType(parent, RC.TYPE_DOC_RESOURCE);
             break;
         }
       });
@@ -629,6 +636,10 @@ export default class EntityValidator {
   _matchesTransactionType(fundingDetail, trnType) {
     const fundingType = fundingDetail && fundingDetail[TRANSACTION_TYPE];
     return fundingType && fundingType.value === trnType;
+  }
+
+  _matchesResourceType(resource, resourceType) {
+    return resource && resource[RC.RESOURCE_TYPE].id === resourceType;
   }
 
   _validateComponentFundingOrgValid(compFundOrg) {
