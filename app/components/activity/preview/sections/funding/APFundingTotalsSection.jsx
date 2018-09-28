@@ -59,7 +59,7 @@ class APFundingTotalsSection extends Component {
       content.push(<APFundingTotalItem
         currency={translate(this._wsCurrency)} key={Utils.numberRandom()}
         value={Math.round((actualDisbursements / actualCommitments) * 100)}
-        label={translate('Delivery Rate')} isPercentage />);
+        label={translate('Delivery rate')} isPercentage />);
     }
     return (<div>{content}</div>);
   }
