@@ -24,7 +24,6 @@ export default class ActivityFundingTotals {
   }
 
   getMTEFTotal() {
-    // TODO apply filter as well
     let total = 0;
     if (this._activity.fundings) {
       this._activity.fundings.forEach(f => {
@@ -34,11 +33,7 @@ export default class ActivityFundingTotals {
         });
       });
     }
-    total = NumberUtils.rawNumberToFormattedString(total);
-    total = total.toLocaleString('en-EN', {
-      currency: this._currentWorkspaceSettings.currency.code,
-      currencyDisplay: 'code'
-    });
+    total = this._formatTotal(total);
     return total;
   }
 
@@ -72,11 +67,7 @@ export default class ActivityFundingTotals {
     if (path.length === 2) {
       value = this._buildStandardMeasureTotal(filter, path[0], path[1]);
     }
-    value = NumberUtils.rawNumberToFormattedString(value);
-    value = value.toLocaleString('en-EN', {
-      currency: this._currentWorkspaceSettings.currency.code,
-      currencyDisplay: 'code'
-    });
+    value = this._formatTotal(value);
     cache[filter] = value;
     return value;
   }
@@ -110,5 +101,14 @@ export default class ActivityFundingTotals {
     }
 
     return total;
+  }
+
+  _formatTotal(total) {
+    let value = NumberUtils.rawNumberToFormattedString(total);
+    value = value.toLocaleString('en-EN', {
+      currency: this._currentWorkspaceSettings.currency.code,
+      currencyDisplay: 'code'
+    });
+    return value;
   }
 }
