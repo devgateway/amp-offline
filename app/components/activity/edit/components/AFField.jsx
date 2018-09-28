@@ -51,6 +51,7 @@ class AFField extends Component {
     customLabel: PropTypes.string,
     showLabel: PropTypes.bool,
     showRequired: PropTypes.bool,
+    showValidationError: PropTypes.bool,
     inline: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
     type: PropTypes.string,
@@ -66,7 +67,8 @@ class AFField extends Component {
 
   static defaultProps = {
     showLabel: true,
-    inline: false
+    inline: false,
+    showValidationError: true,
   };
 
   constructor(props) {
@@ -345,7 +347,7 @@ class AFField extends Component {
     if (this.fieldExists === false || !this._isFullyInitialized()) {
       return null;
     }
-    const showValidationError = !(this.componentType === Types.LIST_SELECTOR ||
+    const showValidationError = this.props.showValidationError && !(this.componentType === Types.LIST_SELECTOR ||
       (this.componentType === Types.LABEL && !this.props.showLabel));
     return (
       <FormGroup

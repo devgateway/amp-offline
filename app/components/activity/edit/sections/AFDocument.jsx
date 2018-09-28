@@ -63,7 +63,6 @@ class AFDocument extends Component {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
     activity: PropTypes.object.isRequired,
-    isSaveAndSubmit: PropTypes.bool.isRequired,
   };
 
   static childContextTypes = {
@@ -71,7 +70,6 @@ class AFDocument extends Component {
     activity: PropTypes.object,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
-    isSaveAndSubmit: PropTypes.bool,
   };
 
   static propTypes = {
@@ -101,7 +99,6 @@ class AFDocument extends Component {
       activity: this.context.activity,
       activityFieldsManager: this.props.resourceReducer.resourceFieldsManager,
       activityValidator: this.context.activityValidator,
-      isSaveAndSubmit: this.context.isSaveAndSubmit,
       resourceReducer: this.props.resourceReducer,
     };
   }
@@ -156,7 +153,7 @@ class AFDocument extends Component {
     const { pendingWebResource, pendingDocResource, resourceFieldsManager } = this.props.resourceReducer;
     let resource = resourceType === TYPE_DOC_RESOURCE ? pendingDocResource : pendingWebResource;
     if (!resource) {
-      resource = buildNewResource(resourceFieldsManager);
+      resource = buildNewResource(resourceFieldsManager, resourceType);
     }
     return resource;
   }

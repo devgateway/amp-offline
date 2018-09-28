@@ -10,7 +10,8 @@ import {
   CLIENT_ADDING_DATE,
   CLIENT_YEAR_OF_PUBLICATION,
   FILE_NAME,
-  WEB_LINK
+  WEB_LINK,
+  RESOURCE_TYPE
 } from '../utils/constants/ResourceConstants';
 import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
@@ -19,12 +20,12 @@ import Logger from '../modules/util/LoggerManager';
 import ResourceHydrator from '../modules/helpers/ResourceHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import { SYNCUP_TYPE_RESOURCE_FIELDS } from '../utils/Constants';
-import { FIELD_REQUIRED, PREFIX_RESOURCE } from '../utils/constants/FieldPathConstants';
+import { PREFIX_RESOURCE } from '../utils/constants/FieldPathConstants';
 import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import EntityValidator from '../modules/field/EntityValidator';
 import ResourceHelper from '../modules/helpers/ResourceHelper';
-import { ALWAYS_REQUIRED, RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
+import { RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import DateUtils from '../utils/DateUtils';
 import FileManager from '../modules/util/FileManager';
@@ -36,6 +37,7 @@ import RepositoryManager from '../modules/repository/RepositoryManager';
 import translate from '../utils/translate';
 import * as URLUtils from '../utils/URLUtils';
 import { VALIDATE_ON_CHANGE_ONLY } from '../utils/constants/EntityConstants';
+import ValidationError from '../modules/field/ValidationError';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -163,25 +165,21 @@ export const prepareNewResourceForSave = (resource, isDoc) => (dispatch, ownProp
   resource[TEAM] = ownProps().userReducer.teamMember[WORKSPACE_ID];
   resource[PRIVATE] = true;
   resource[PUBLIC] = false;
+  resource[TMP_ENTITY_VALIDATOR].entity = resource;
   if (!isDoc && resource[WEB_LINK]) {
     resource[WEB_LINK] = URLUtils.normalizeUrl(resource[WEB_LINK], 'http');
   }
-  return validate(resource, isDoc)(dispatch, ownProps);
+  return validate(resource, isDoc);
 };
 
-export const validate = (resource, isDoc) => (dispatch, ownProps) => {
+export const validate = (resource, isDoc) => {
   logger.debug('validate');
-  const { resourceFieldsManager } = ownProps().resourceReducer;
   const errors = resource[TMP_ENTITY_VALIDATOR].areAllConstraintsMet(resource);
-  // workaround as a custom validation, since no dependency logic available yet
-  const extraFieldRequired = isDoc ? FILE_NAME : WEB_LINK;
-  const fieldDef = { ...resourceFieldsManager.getFieldDef(extraFieldRequired) };
-  fieldDef[FIELD_REQUIRED] = ALWAYS_REQUIRED;
-  const fieldError = resource[TMP_ENTITY_VALIDATOR].validateField(resource, false, fieldDef, extraFieldRequired);
-  if (isDoc && fieldError.length) {
-    fieldError[0].errorMessage = translate('FileNotAvailable');
+  const docError = isDoc && errors.length && errors.find((ve: ValidationError) => ve.path === FILE_NAME);
+  if (docError) {
+    docError.errorMessage = translate('FileNotAvailable');
   }
-  return errors.concat(fieldError);
+  return errors;
 };
 
 export const updatePendingWebResource = (resource) => (dispatch) => dispatch({
@@ -301,10 +299,11 @@ const _getActivityResources = (activity, asIds = true) => {
   return Array.from(resources);
 };
 
-export const buildNewResource = (resourceFieldsManager) => {
+export const buildNewResource = (resourceFieldsManager, resourceType) => {
   const resource = {};
   ResourceHelper.stampClientChange(resource);
   resource[TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  resource[RESOURCE_TYPE] = { id: resourceType, value: resourceType };
   return resource;
 };
 
