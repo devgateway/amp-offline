@@ -31,6 +31,7 @@ export default class AFFundingDonorSection extends Component {
     organization: PropTypes.object.isRequired,
     role: PropTypes.object.isRequired,
     removeFundingItem: PropTypes.func.isRequired,
+    addFundingItem: PropTypes.func.isRequired,
     hasErrors: PropTypes.func.isRequired
   };
 
@@ -89,6 +90,9 @@ export default class AFFundingDonorSection extends Component {
       this.context.activity[AC.FUNDINGS] = [];
     }
     this.context.activity[AC.FUNDINGS].push(fundingItem);
+
+    // Keep AFFunding state in sync.
+    this.props.addFundingItem();
   }
 
   _filterFundings(fundings) {
@@ -102,7 +106,7 @@ export default class AFFundingDonorSection extends Component {
     // TODO: AFFields objects are not being refreshed (use a bind function?).
     return (<div
       className={(this.props.hasErrors(funding) || this.props.hasErrors(funding[AC.FUNDING_DETAILS]))
-      ? fundingStyles.error : ''}>
+        ? fundingStyles.error : ''}>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
         <AFField
