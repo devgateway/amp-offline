@@ -50,8 +50,12 @@ export default class AFFundingContainer extends Component {
   _addMTEFProjectionItem() {
     logger.log('_addMTEFProjectionItem');
     const mtefItem = {};
-    const defaultYear = GlobalSettingsManager.getSettingByKey(GS.GS_CURRENT_FISCAL_YEAR);
-    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(Moment(`${defaultYear}-01-01`));
+    // Get default year from GS and auto-increment each new item.
+    let year = GlobalSettingsManager.getSettingByKey(GS.GS_CURRENT_FISCAL_YEAR);
+    if (this.state.funding[AC.MTEF_PROJECTIONS] && this.state.funding[AC.MTEF_PROJECTIONS].length > 0) {
+      year = Math.max(...this.state.funding[AC.MTEF_PROJECTIONS].map((i) => Moment(i[AC.PROJECTION_DATE]).year())) + 1;
+    }
+    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(Moment(`${year}-01-01`));
     mtefItem[AC.PROJECTION] = {};
     mtefItem[AC.CURRENCY] = {};
     mtefItem[AC.AMOUNT] = undefined;
