@@ -1,9 +1,11 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-alert */
 import React, { Component, PropTypes } from 'react';
-import { FormGroup, Col, Grid, Row } from 'react-bootstrap';
+import Moment from 'moment';
+import { Col, FormGroup, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
+import * as GS from '../../../../../utils/constants/GlobalSettingsConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
@@ -13,6 +15,7 @@ import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import translate from '../../../../../utils/translate';
 import DateUtils from '../../../../../utils/DateUtils';
+import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
 
 const logger = new Logger('AF funding container');
 
@@ -47,7 +50,8 @@ export default class AFFundingContainer extends Component {
   _addMTEFProjectionItem() {
     logger.log('_addMTEFProjectionItem');
     const mtefItem = {};
-    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(new Date());
+    const defaultYear = GlobalSettingsManager.getSettingByKey(GS.GS_CURRENT_FISCAL_YEAR);
+    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(Moment(`${defaultYear}-01-01`));
     mtefItem[AC.PROJECTION] = {};
     mtefItem[AC.CURRENCY] = {};
     mtefItem[AC.AMOUNT] = undefined;
