@@ -14,6 +14,7 @@ import FileManager from '../../../modules/util/FileManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
 import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
 import * as resStyles from './ResourceForm.css';
+import { validate } from '../../../actions/ResourceAction';
 
 const logger = new Logger('ResourceForm');
 // columns size
@@ -28,7 +29,6 @@ const getMaxSizeMB = () => GlobalSettingsManager.getSettingByKey(GS_MAXIMUM_FILE
 export default class ResourceForm extends Component {
   static contextTypes = {
     activity: PropTypes.object,
-    isSaveAndSubmit: PropTypes.bool.isRequired,
   };
 
   static propTypes = {
@@ -40,13 +40,11 @@ export default class ResourceForm extends Component {
     updatePendingWebResource: PropTypes.func.isRequired,
     updatePendingDocResource: PropTypes.func.isRequired,
     prepareNewResourceForSave: PropTypes.func.isRequired,
-    validate: PropTypes.func.isRequired,
     uploadFileToPendingResourceAsync: PropTypes.func.isRequired,
   };
 
   static childContextTypes = {
     activity: PropTypes.object,
-    isSaveAndSubmit: PropTypes.bool.isRequired,
     validationResult: PropTypes.array,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityValidator: PropTypes.instanceOf(EntityValidator),
@@ -66,7 +64,6 @@ export default class ResourceForm extends Component {
     const { resource, resourceReducer } = this.props;
     return {
       activity: this.context.activity,
-      isSaveAndSubmit: false,
       validationResult: resource.errors,
       activityFieldsManager: resourceReducer.resourceFieldsManager,
       activityValidator: resource && resource[TMP_ENTITY_VALIDATOR],
@@ -116,7 +113,7 @@ export default class ResourceForm extends Component {
   }
 
   onUploadComplete() {
-    const { resource, validate } = this.props;
+    const { resource } = this.props;
     validate(resource, this.isDoc);
     this.setState({ uploadingSize: null });
     this.updateFunc(resource);
@@ -145,7 +142,9 @@ export default class ResourceForm extends Component {
     const uploadStatusMsg = uploadingMessage || uploadFailed || uploadConfirm;
     return (
       <Col lg={2 * CS} md={2 * CS}>
-        <AFField fieldPath={RC.FILE_NAME} customLabel={'File'} parent={resource} type={Types.CUSTOM} >
+        <AFField
+          fieldPath={RC.FILE_NAME} customLabel={'File'} parent={resource} type={Types.CUSTOM}
+          showValidationError={!isFileUploading}>
           <Button onClick={this.onFileUpload.bind(this)} disabled={isFileUploading}>
             {translate('Choose file')}
           </Button>
