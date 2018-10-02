@@ -99,7 +99,8 @@ class AFOrganizations extends Component {
     const fmc = `ACTIVITY_ORGANIZATIONS_${orgTypeConstantName}_ADD_FUNDING_AUTO`;
     if (FeatureManager.isFMSettingEnabled(FMC[fmc])) {
       activity[orgType].forEach(org => {
-        // TODO: Once AMPOFFLINE-1248 is done we should filter by source_role too like in AFFundingDonorSection.
+        /* TODO: Once AMPOFFLINE-1248 is done we should filter by source_role too like in AFFundingDonorSection
+        and create the funding with that source_role. */
         if (!fundingList.find(f => (f[AC.FUNDING_DONOR_ORG_ID].id === org[AC.ORGANIZATION].id))) {
           const fundingItem = AFUtils.createFundingItem(activityFieldsManager, org[AC.ORGANIZATION]);
           fundingList.push(fundingItem);
