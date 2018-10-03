@@ -1,4 +1,5 @@
 import NumberUtils from '../../utils/NumberUtils';
+import * as AC from '../../utils/constants/ActivityConstants';
 
 /**
  * Activity funding totals helper
@@ -20,6 +21,20 @@ export default class ActivityFundingTotals {
 
   getTotals(adjType, trnType, filter) {
     return this._getTotals(filter, [adjType, trnType]);
+  }
+
+  getMTEFTotal() {
+    let total = 0;
+    if (this._activity.fundings) {
+      this._activity.fundings.forEach(f => {
+        f[AC.MTEF_PROJECTIONS].forEach(mtef => {
+          total += this._currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT], mtef[AC.CURRENCY].value,
+            mtef[AC.PROJECTION_DATE], 0, this._currentWorkspaceSettings.currency.code);
+        });
+      });
+    }
+    total = this._formatTotal(total);
+    return total;
   }
 
   _getTotals(filter, path) {
@@ -52,11 +67,7 @@ export default class ActivityFundingTotals {
     if (path.length === 2) {
       value = this._buildStandardMeasureTotal(filter, path[0], path[1]);
     }
-    value = NumberUtils.rawNumberToFormattedString(value);
-    value = value.toLocaleString('en-EN', {
-      currency: this._currentWorkspaceSettings.currency.code,
-      currencyDisplay: 'code'
-    });
+    value = this._formatTotal(value);
     cache[filter] = value;
     return value;
   }
@@ -90,5 +101,14 @@ export default class ActivityFundingTotals {
     }
 
     return total;
+  }
+
+  _formatTotal(total) {
+    let value = NumberUtils.rawNumberToFormattedString(total);
+    value = value.toLocaleString('en-EN', {
+      currency: this._currentWorkspaceSettings.currency.code,
+      currencyDisplay: 'code'
+    });
+    return value;
   }
 }
