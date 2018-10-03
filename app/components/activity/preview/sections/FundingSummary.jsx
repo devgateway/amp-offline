@@ -73,6 +73,10 @@ class FundingSummary extends Component {
       const ub = VC.UNALLOCATED_DISBURSEMENTS;
       measuresTotals[ub] = this.props.activityFundingTotals.getTotals(ub, {});
     }
+    // Other measures: "Total MTEF Projections".
+    if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
+      measuresTotals[VC.MTEF_PROJECTIONS] = this.props.activityFundingTotals.getMTEFTotal();
+    }
     // Other measures: "Delivery rate".
     if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DELIVERY_RATE)) {
       if (actualCommitmentsAreEnabled && actualDisbursementsAreEnabled
@@ -100,6 +104,7 @@ class FundingSummary extends Component {
       { trn: VC.ACTUAL_EXPENDITURES, total: true },
       { trn: VC.UNALLOCATED_DISBURSEMENTS, total: false },
       { trn: VC.PLANNED_EXPENDITURES, total: true },
+      { trn: VC.MTEF_PROJECTIONS, total: true },
       { trn: VC.DELIVERY_RATE, total: false }];
     const fundingInfoSummary = [];
     measuresOrder.forEach(measure => {
