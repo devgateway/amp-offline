@@ -15,6 +15,7 @@
         "Change workspace": {
           "public": false,
           "route": null,
+          "nodeClass": "ws-menu",
           "nodes": {
           }
         }
