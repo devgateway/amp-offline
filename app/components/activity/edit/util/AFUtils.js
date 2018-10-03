@@ -1,5 +1,4 @@
 import * as AC from '../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../utils/constants/ValueConstants';
 import Utils from '../../../../utils/Utils';
 
 const AFUtils = {
@@ -8,8 +7,9 @@ const AFUtils = {
    * Common function used in AFOrganizations and AFFunding.
    * @param activityFieldsManager
    * @param org
+   * @param orgName
    */
-  createFundingItem(activityFieldsManager, org) {
+  createFundingItem(activityFieldsManager, org, orgName) {
     const fundingItem = {};
     fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
       id: org.id,
@@ -23,7 +23,7 @@ const AFUtils = {
     // Find the 'Donor' org type if enabled.
     if (activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
       const donorList = activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
-      fundingItem[AC.SOURCE_ROLE] = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
+      fundingItem[AC.SOURCE_ROLE] = Object.values(donorList).find(item => item.value === orgName);
     }
     return fundingItem;
   }
