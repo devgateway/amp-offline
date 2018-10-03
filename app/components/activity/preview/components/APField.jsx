@@ -50,7 +50,12 @@ export default class APField extends Component {
     const value = (this.props.value || this.props.value === false) ? this.props.value : translate('No Data');
     let displayValue;
     if (Array.isArray(value)) {
-      displayValue = value.sort().join(', ');
+      if (value[0] instanceof Object) {
+        displayValue = [];
+        value.forEach(v => displayValue.push(v));
+      } else {
+        displayValue = value.sort().join(', ');
+      }
     } else if (typeof value === 'boolean') {
       displayValue = value === true ? translate('Yes') : translate('No');
     } else {
