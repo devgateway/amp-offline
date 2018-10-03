@@ -24,7 +24,7 @@ html, body {
   min-height: 680px;
 }
 
-.rc-menu-vertical .rc-menu-submenu-arrow{
+.rc-menu-vertical .rc-menu-submenu-arrow {
   position: static;
   padding-left: 5px;
 }
@@ -64,6 +64,11 @@ html, body {
   padding-right: 10px;
   min-width: 0px;
   text-align: left;
+}
+
+.ws-menu > ul {
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .rc-menu-root {
