@@ -10,6 +10,7 @@ import {
   FS_LOCALES_DIRECTORY,
   LANGUAGE_ENGLISH,
   LANGUAGE_MASTER_TRANSLATIONS_FILE,
+  LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC,
   LANGUAGE_TRANSLATIONS_FILE,
   SYNCUP_TYPE_TRANSLATIONS
 } from '../../../utils/Constants';
@@ -70,6 +71,13 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       if (diffKeys.length > 0) {
         diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
       }
+      if (FileManager.existsSync(FS_LOCALES_DIRECTORY, LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC)) {
+        const must = JSON
+          .parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC));
+        Object.keys(must).forEach(k => {
+          diffTexts.push(k);
+        });
+      }
     } else {
       diffTexts = Object.values(originalMasterTrnFile);
     }
@@ -80,6 +88,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     this.done = false;
     return this.syncUpLangList().then((result) => {
       this.done = true;
+      // After sucessfull sync remove must-sync translations file.
+      FileManager.deleteFileSync(FileManager.getFullPath(FS_LOCALES_DIRECTORY, LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC));
       return result;
     });
   }
