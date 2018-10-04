@@ -25,6 +25,9 @@ const AFUtils = {
       const donorList = activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
       fundingItem[AC.SOURCE_ROLE] = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
     }
+    if (activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}`)) {
+      fundingItem[AC.MTEF_PROJECTIONS] = [];
+    }
     return fundingItem;
   }
 
