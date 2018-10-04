@@ -62,7 +62,8 @@ class AFField extends Component {
     extraParams: PropTypes.object,
     defaultValueAsEmptyObject: PropTypes.bool,
     forceRequired: PropTypes.bool,
-    fmPath: PropTypes.string
+    fmPath: PropTypes.string,
+    onBeforeDelete: PropTypes.func
   };
 
   static defaultProps = {
@@ -231,7 +232,8 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams} />);
+      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams}
+      onBeforeDelete={this.props.onBeforeDelete} />);
   }
 
   _getOptions(fieldPath) {

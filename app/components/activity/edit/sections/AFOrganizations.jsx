@@ -15,6 +15,7 @@ import FeatureManager from '../../../../modules/util/FeatureManager';
 import AFUtils from './../util/AFUtils';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as VC from '../../../../utils/constants/ValueConstants';
+import translate from '../../../../utils/translate';
 
 const logger = new Logger('AF organizations');
 
@@ -51,6 +52,12 @@ class AFOrganizations extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired
   };
+
+  static checkIfAutoAddFundingEnabled(orgTypeCode) {
+    const orgTypeConstantName = orgTypes[orgTypeCode];
+    const fmc = `ACTIVITY_ORGANIZATIONS_${orgTypeConstantName}_ADD_FUNDING_AUTO`;
+    return FeatureManager.isFMSettingEnabled(FMC[fmc]);
+  }
 
   constructor(props) {
     super(props);
@@ -91,20 +98,23 @@ class AFOrganizations extends Component {
     this.setState({ validationError });
   }
 
-  addFundingAutomatically(orgCode, orgName) {
-    // If "Add Funding Item Automatically" is enabled we check if every organization has a funding.
+  checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization) {
     const { activity } = this.props;
-    const { activityFieldsManager } = this.context;
     const fundingList = activity[AC.FUNDINGS] || [];
-    const orgTypeConstantName = orgTypes[orgCode];
-    const fmc = `ACTIVITY_ORGANIZATIONS_${orgTypeConstantName}_ADD_FUNDING_AUTO`;
-    if (FeatureManager.isFMSettingEnabled(FMC[fmc])) {
-      activity[orgCode].forEach(org => {
-        const sourceRoleOn = this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`);
-        const fundingFound = fundingList.find(f => (f[AC.FUNDING_DONOR_ORG_ID].id === org[AC.ORGANIZATION].id
-          && (sourceRoleOn ? f[AC.SOURCE_ROLE].value === orgName : true)));
+    const sourceRoleOn = this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`);
+    return fundingList.find(f => (f[AC.FUNDING_DONOR_ORG_ID].id === organization[AC.ORGANIZATION].id
+      && (sourceRoleOn ? f[AC.SOURCE_ROLE].value === orgTypeName : true)));
+  }
+
+  addFundingAutomatically(orgTypeCode, orgTypeName) {
+    if (AFOrganizations.checkIfAutoAddFundingEnabled(orgTypeCode)) {
+      const { activity } = this.props;
+      const { activityFieldsManager } = this.context;
+      const fundingList = activity[AC.FUNDINGS] || [];
+      activity[orgTypeCode].forEach(org => {
+        const fundingFound = this.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, org);
         if (!fundingFound) {
-          const fundingItem = AFUtils.createFundingItem(activityFieldsManager, org[AC.ORGANIZATION], orgName);
+          const fundingItem = AFUtils.createFundingItem(activityFieldsManager, org[AC.ORGANIZATION], orgTypeName);
           fundingList.push(fundingItem);
           activity[AC.FUNDINGS] = fundingList;
         }
@@ -114,9 +124,19 @@ class AFOrganizations extends Component {
 
   // TODO: Implement removeItemAutomatically() once we always have the source_role field.
 
-  handleOrgListChange(orgType, orgName) {
-    this.addFundingAutomatically(orgType, orgName);
+  handleOrgListChange(orgTypeCode, orgCodeName) {
+    this.addFundingAutomatically(orgTypeCode, orgCodeName);
     this.checkValidationError();
+  }
+
+  checkIfCanDeleteOrg(orgTypeCode, orgTypeName, organization) {
+    let canDelete = true;
+    if (AFOrganizations.checkIfAutoAddFundingEnabled(orgTypeCode)
+      && this.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization)) {
+      alert(translate('fundingRelated'));
+      canDelete = false;
+    }
+    return canDelete;
   }
 
   render() {
@@ -159,7 +179,9 @@ class AFOrganizations extends Component {
         <Row>
           <Col md={12} lg={12}>
             <AFField
-              parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY} extraParams={extraParams}
+              parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY}
+              extraParams={extraParams}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.EXECUTING_AGENCY, VC.EXECUTING_AGENCY)}
               onAfterUpdate={this.handleOrgListChange.bind(null, AC.EXECUTING_AGENCY, VC.EXECUTING_AGENCY)} />
           </Col>
         </Row>
