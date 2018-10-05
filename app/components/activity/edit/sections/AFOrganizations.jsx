@@ -11,24 +11,12 @@ import afStyles from '../ActivityForm.css';
 import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import { RESPONSIBLE_ORGANIZATION_BUDGETS_PATH } from '../../../../utils/constants/FieldPathConstants';
 import AFOption from '../components/AFOption';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 import AFUtils from './../util/AFUtils';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as VC from '../../../../utils/constants/ValueConstants';
 import translate from '../../../../utils/translate';
 
 const logger = new Logger('AF organizations');
-
-const orgTypes = {
-  [AC.BENEFICIARY_AGENCY]: 'BENEFICIARY_AGENCY',
-  [AC.CONTRACTING_AGENCY]: 'CONTRACTING_AGENCY',
-  [AC.DONOR_ORGANIZATION]: 'DONOR_ORGANIZATION',
-  [AC.EXECUTING_AGENCY]: 'EXECUTING_AGENCY',
-  [AC.IMPLEMENTING_AGENCY]: 'IMPLEMENTING_AGENCY',
-  [AC.REGIONAL_GROUP]: 'REGIONAL_GROUP',
-  [AC.RESPONSIBLE_ORGANIZATION]: 'RESPONSIBLE_ORGANIZATION',
-  [AC.SECTOR_GROUP]: 'SECTOR_GROUP'
-};
 
 const orgFormatter = (org: AFOption) => {
   const acronym = org[AC.EXTRA_INFO][AC.ACRONYM] ? org[AC.EXTRA_INFO][AC.ACRONYM].trim() : '';
@@ -52,12 +40,6 @@ class AFOrganizations extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired
   };
-
-  static checkIfAutoAddFundingEnabled(orgTypeCode) {
-    const orgTypeConstantName = orgTypes[orgTypeCode];
-    const fmc = `ACTIVITY_ORGANIZATIONS_${orgTypeConstantName}_ADD_FUNDING_AUTO`;
-    return FeatureManager.isFMSettingEnabled(FMC[fmc]);
-  }
 
   constructor(props) {
     super(props);
@@ -98,21 +80,14 @@ class AFOrganizations extends Component {
     this.setState({ validationError });
   }
 
-  checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization) {
-    const { activity } = this.props;
-    const fundingList = activity[AC.FUNDINGS] || [];
-    const sourceRoleOn = this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`);
-    return fundingList.find(f => (f[AC.FUNDING_DONOR_ORG_ID].id === organization[AC.ORGANIZATION].id
-      && (sourceRoleOn ? f[AC.SOURCE_ROLE].value === orgTypeName : true)));
-  }
-
   addFundingAutomatically(orgTypeCode, orgTypeName) {
-    if (AFOrganizations.checkIfAutoAddFundingEnabled(orgTypeCode)) {
+    if (AFUtils.checkIfAutoAddFundingEnabled(orgTypeCode)) {
       const { activity } = this.props;
       const { activityFieldsManager } = this.context;
       const fundingList = activity[AC.FUNDINGS] || [];
       activity[orgTypeCode].forEach(org => {
-        const fundingFound = this.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, org);
+        const fundingFound = AFUtils.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, org[AC.ORGANIZATION],
+          this.context.activityFieldsManager, activity);
         if (!fundingFound) {
           const fundingItem = AFUtils.createFundingItem(activityFieldsManager, org[AC.ORGANIZATION], orgTypeName);
           fundingList.push(fundingItem);
@@ -131,8 +106,10 @@ class AFOrganizations extends Component {
 
   checkIfCanDeleteOrg(orgTypeCode, orgTypeName, organization) {
     let canDelete = true;
-    if (AFOrganizations.checkIfAutoAddFundingEnabled(orgTypeCode)
-      && this.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization)) {
+    const { activity } = this.props;
+    if (AFUtils.checkIfAutoAddFundingEnabled(orgTypeCode)
+      && AFUtils.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization[AC.ORGANIZATION],
+        this.context.activityFieldsManager, activity)) {
       alert(translate('fundingRelated'));
       canDelete = false;
     }
