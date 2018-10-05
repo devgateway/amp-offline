@@ -97,8 +97,6 @@ class AFOrganizations extends Component {
     }
   }
 
-  // TODO: Implement removeItemAutomatically() once we always have the source_role field.
-
   handleOrgListChange(orgTypeCode, orgCodeName) {
     this.addFundingAutomatically(orgTypeCode, orgCodeName);
     this.checkValidationError();
