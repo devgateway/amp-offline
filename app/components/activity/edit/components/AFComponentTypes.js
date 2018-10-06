@@ -14,3 +14,4 @@ export const RADIO_BOOLEAN = 'RADIO_BOOLEAN';
 export const INPUT_TYPE = 'INPUT_TYPE';
 export const MULTI_SELECT = 'MULTI_SELECT';
 export const CUSTOM = 'CUSTOM';
+export const DATE_YEAR = 'DATE_YEAR';
