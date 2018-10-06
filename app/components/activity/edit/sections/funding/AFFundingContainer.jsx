@@ -1,17 +1,21 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-alert */
 import React, { Component, PropTypes } from 'react';
-import { FormGroup, Col, Grid, Row } from 'react-bootstrap';
+import Moment from 'moment';
+import { Col, FormGroup, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
+import * as GS from '../../../../../utils/constants/GlobalSettingsConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
+import AFMTEFProjectionContainer from './AFMTEFProjectionContainer';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import translate from '../../../../../utils/translate';
 import DateUtils from '../../../../../utils/DateUtils';
+import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
 
 const logger = new Logger('AF funding container');
 
@@ -34,10 +38,43 @@ export default class AFFundingContainer extends Component {
     logger.debug('constructor');
     this.state = {
       funding: this.props.funding,
-      stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS]
+      stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS],
+      mtefProjections: this.props.funding[AC.MTEF_PROJECTIONS] || []
     };
     this._addTransactionItem = this._addTransactionItem.bind(this);
     this._removeFundingDetailItem = this._removeFundingDetailItem.bind(this);
+    this._addMTEFProjectionItem = this._addMTEFProjectionItem.bind(this);
+    this._removeMTEFProjectionItem = this._removeMTEFProjectionItem.bind(this);
+  }
+
+  _addMTEFProjectionItem() {
+    logger.log('_addMTEFProjectionItem');
+    const mtefItem = {};
+    // Get default year from GS and auto-increment each new item.
+    let year = GlobalSettingsManager.getSettingByKey(GS.GS_CURRENT_FISCAL_YEAR);
+    if (this.state.funding[AC.MTEF_PROJECTIONS] && this.state.funding[AC.MTEF_PROJECTIONS].length > 0) {
+      year = Math.max(...this.state.funding[AC.MTEF_PROJECTIONS].map((i) => Moment(i[AC.PROJECTION_DATE]).year())) + 1;
+    }
+    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(Moment(`${year}-01-01`));
+    mtefItem[AC.PROJECTION] = {};
+    mtefItem[AC.CURRENCY] = {};
+    mtefItem[AC.AMOUNT] = undefined;
+    const newFunding = this.state.funding;
+    if (newFunding[AC.MTEF_PROJECTIONS] === undefined) {
+      newFunding[AC.MTEF_PROJECTIONS] = [];
+    }
+    newFunding[AC.MTEF_PROJECTIONS].push(mtefItem);
+    this.setState({ funding: newFunding });
+  }
+
+  _removeMTEFProjectionItem(id) {
+    logger.debug('_removeMTEFProjectionItem');
+    if (confirm(translate('deleteMTEFProjectionItem'))) {
+      const mtefList = this.state.mtefProjections;
+      const index = this.state.mtefProjections.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
+      mtefList.splice(index, 1);
+      this.setState({ mtefProjections: mtefList });
+    }
   }
 
   _addTransactionItem(type) {
@@ -70,7 +107,6 @@ export default class AFFundingContainer extends Component {
   }
 
   render() {
-    // TODO: Implement 'MTEF Projections' table when available for sync.
     return (<div>
       <FormGroup>
         <Grid>
@@ -93,6 +129,9 @@ export default class AFFundingContainer extends Component {
       </FormGroup>
       <AFFundingClassificationPanel
         funding={this.state.funding} fundingDetails={this.state.stateFundingDetail} hasErrors={this.props.hasErrors} />
+      <AFMTEFProjectionContainer
+        mtefProjections={this.state.mtefProjections} hasErrors={this.props.hasErrors} funding={this.state.funding}
+        handleRemoveItem={this._removeMTEFProjectionItem} handleNewItem={this._addMTEFProjectionItem} />
       <AFFundingDetailContainer
         fundingDetail={this.state.stateFundingDetail}
         type={VC.COMMITMENTS}
