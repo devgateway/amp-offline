@@ -134,6 +134,7 @@ class AFOrganizations extends Component {
               parent={this.props.activity}
               fieldPath={AC.DONOR_ORGANIZATION} extraParams={extraParams}
               fmPath={FMC.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.DONOR_ORGANIZATION, VC.DONOR_AGENCY)}
               onAfterUpdate={this.handleOrgListChange.bind(null, AC.DONOR_ORGANIZATION, VC.DONOR_AGENCY)} />
           </Col>
         </Row>
@@ -147,6 +148,8 @@ class AFOrganizations extends Component {
                 },
                 ...extraParams
               }}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.RESPONSIBLE_ORGANIZATION,
+                VC.RESPONSIBLE_ORGANIZATION)}
               onAfterUpdate={this.handleOrgListChange.bind(null, AC.RESPONSIBLE_ORGANIZATION,
                 VC.RESPONSIBLE_ORGANIZATION)} />
           </Col>
@@ -164,6 +167,7 @@ class AFOrganizations extends Component {
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.IMPLEMENTING_AGENCY} extraParams={extraParams}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.IMPLEMENTING_AGENCY, VC.IMPLEMENTING_AGENCY)}
               onAfterUpdate={this.handleOrgListChange.bind(null, AC.IMPLEMENTING_AGENCY, VC.IMPLEMENTING_AGENCY)} />
           </Col>
         </Row>
@@ -171,6 +175,7 @@ class AFOrganizations extends Component {
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.BENEFICIARY_AGENCY} extraParams={extraParams}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.BENEFICIARY_AGENCY, VC.BENEFICIARY_AGENCY)}
               onAfterUpdate={this.handleOrgListChange.bind(null, AC.BENEFICIARY_AGENCY, VC.BENEFICIARY_AGENCY)} />
           </Col>
         </Row>
@@ -178,6 +183,7 @@ class AFOrganizations extends Component {
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.CONTRACTING_AGENCY} extraParams={extraParams}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.CONTRACTING_AGENCY, VC.CONTRACTING_AGENCY)}
               onAfterUpdate={this.handleOrgListChange.bind(null, AC.CONTRACTING_AGENCY, VC.CONTRACTING_AGENCY)} />
           </Col>
         </Row>
