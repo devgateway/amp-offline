@@ -27,10 +27,12 @@ export default class ActivityFundingTotals {
     let total = 0;
     if (this._activity.fundings) {
       this._activity.fundings.forEach(f => {
-        f[AC.MTEF_PROJECTIONS].forEach(mtef => {
-          total += this._currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT], mtef[AC.CURRENCY].value,
-            mtef[AC.PROJECTION_DATE], 0, this._currentWorkspaceSettings.currency.code);
-        });
+        if (f[AC.MTEF_PROJECTIONS]) {
+          f[AC.MTEF_PROJECTIONS].forEach(mtef => {
+            total += this._currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT], mtef[AC.CURRENCY].value,
+              mtef[AC.PROJECTION_DATE], 0, this._currentWorkspaceSettings.currency.code);
+          });
+        }
       });
     }
     total = this._formatTotal(total);
