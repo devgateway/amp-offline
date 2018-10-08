@@ -6,6 +6,7 @@ import Moment from 'moment';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
 import DateUtils from '../../../../utils/DateUtils';
+import { START_DAY_NUMBER, START_MONTH_NUMBER } from '../../../../utils/constants/CalendarConstants';
 
 const logger = new Logger('AF date year');
 
@@ -15,7 +16,8 @@ export default class AFDateYear extends Component {
     value: PropTypes.string,
     onChange: PropTypes.func,
     extraParams: PropTypes.object,
-    options: PropTypes.array.isRequired
+    options: PropTypes.array.isRequired,
+    calendar: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -25,9 +27,16 @@ export default class AFDateYear extends Component {
   }
 
   handleChange(control) {
-    const value = DateUtils.getISODateForAPI(Moment(`01/01/${control.target.value}`));
-    if (this.props.onChange) {
-      this.props.onChange(value);
+    let value = null;
+    const { calendar, onChange } = this.props;
+    if (control.target.value !== '-1') {
+      const day = calendar[START_DAY_NUMBER];
+      const month = calendar[START_MONTH_NUMBER];
+      // ISO8601 format for Moment library.
+      value = DateUtils.getISODateForAPI(Moment(`${control.target.value}-${month}-${day}`));
+    }
+    if (onChange) {
+      onChange(value);
     }
     this.setState({
       value
@@ -37,8 +46,6 @@ export default class AFDateYear extends Component {
   render() {
     const { extraParams, options } = this.props;
     const defaultOption = <option key={-1} value={-1}>{translate('Choose One')}</option>;
-    /* TODO: Once we sync calendars data AMPOFFLINE-1228) we can safely know the year for a given date
-    (because a fiscal calendar can start on any day/month. */
     const defaultValue = Moment(this.state.value).year();
     const years = options.map(option => {
       const label = extraParams.isFiscalCalendar ? `${option} / ${option + 1}` : option;
