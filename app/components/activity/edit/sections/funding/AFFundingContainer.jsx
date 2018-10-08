@@ -48,7 +48,7 @@ export default class AFFundingContainer extends Component {
   }
 
   _addMTEFProjectionItem() {
-    logger.log('_addMTEFProjectionItem');
+    logger.debug('_addMTEFProjectionItem');
     const mtefItem = {};
     // Get default year from GS and auto-increment each new item.
     let year = GlobalSettingsManager.getSettingByKey(GS.GS_CURRENT_FISCAL_YEAR);

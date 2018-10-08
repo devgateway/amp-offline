@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Moment from 'moment';
+import { connect } from 'react-redux';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -8,6 +9,7 @@ import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
 import stylesMTEF from './APFundingMTEF.css';
+import { IS_FISCAL } from '../../../../../utils/constants/CalendarConstants';
 
 const logger = new Logger('AP Funding MTEF item');
 
@@ -18,7 +20,8 @@ class APFundingMTEFItem extends Component {
 
   static propTypes = {
     item: PropTypes.object.isRequired,
-    wsCurrency: PropTypes.string.isRequired
+    wsCurrency: PropTypes.string.isRequired,
+    calendar: PropTypes.object.isRequired
   };
 
   static contextTypes = {
@@ -26,8 +29,8 @@ class APFundingMTEFItem extends Component {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
   };
 
-  static _formatDate(date) {
-    const isFiscalCalendar = true; // TODO: After we sync calendars data (AMPOFFLINE-1228) update this flag.
+  _formatDate(date) {
+    const isFiscalCalendar = this.props.calendar[IS_FISCAL];
     const year = Moment(date).year();
     return isFiscalCalendar ? `${year} / ${year + 1}` : year;
   }
@@ -42,7 +45,7 @@ class APFundingMTEFItem extends Component {
         <tr className={styles.row}>
           <td className={styles.left_text}>{translate(item[AC.PROJECTION].value)}</td>
           <td className={stylesMTEF.td_20} />
-          <td className={styles.right_text}>{APFundingMTEFItem._formatDate(item[AC.PROJECTION_DATE])}</td>
+          <td className={styles.right_text}>{this._formatDate(item[AC.PROJECTION_DATE])}</td>
           <td className={styles.right_text}>
             {`${rawNumberToFormattedString(convertedAmount)} ${wsCurrency}`}
           </td>
@@ -52,4 +55,8 @@ class APFundingMTEFItem extends Component {
   }
 }
 
-export default APFundingMTEFItem;
+export default connect(
+  state => ({
+    calendar: state.startUpReducer.calendar
+  })
+)(APFundingMTEFItem);

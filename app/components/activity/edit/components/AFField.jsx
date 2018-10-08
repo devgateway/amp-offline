@@ -63,7 +63,8 @@ class AFField extends Component {
     extraParams: PropTypes.object,
     defaultValueAsEmptyObject: PropTypes.bool,
     forceRequired: PropTypes.bool,
-    fmPath: PropTypes.string
+    fmPath: PropTypes.string,
+    calendar: PropTypes.object.isRequired
   };
 
   static defaultProps = {
@@ -294,7 +295,8 @@ class AFField extends Component {
     const extraParams = this.props.extraParams || {};
     const options = Array(extraParams.range).fill().map((_, i) => i + extraParams.startYear);
     return (<AFDateYear
-      value={this.state.value} onChange={this.onChange} extraParams={extraParams} options={options} />);
+      value={this.state.value} onChange={this.onChange} extraParams={extraParams} options={options}
+      calendar={this.props.calendar} />);
   }
 
   _getCheckbox() {
@@ -377,7 +379,8 @@ class AFField extends Component {
 export default connect(
   state => ({
     validationResult: state.activityReducer.validationResult,
-    lang: state.translationReducer.lang
+    lang: state.translationReducer.lang,
+    calendar: state.startUpReducer.calendar
   }),
   dispatch => ({
     onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))
