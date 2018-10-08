@@ -69,8 +69,8 @@ class AFIdentification extends Component {
       (<AFField
         key={AC.ACTIVITY_BUDGET}
         parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} onAfterUpdate={this.onActivityBudgetUpdate} />));
-    rightColumn.push(...[AC.BUDGET_CODE_PROJECT_ID, AC.A_C_CHAPTER, AC.GOVERNMENT_APPROVAL_PROCEDURES,
-      AC.JOINT_CRITERIA, AC.HUMANITARIAN_AID].map(this.mapSimpleFieldDef));
+    rightColumn.push(...[AC.GOVERNMENT_APPROVAL_PROCEDURES, AC.JOINT_CRITERIA, AC.HUMANITARIAN_AID]
+      .map(this.mapSimpleFieldDef));
     if (this.state.showBudgetExtras) {
       const budgetExtras = [
         <AFField key={AC.FY} parent={this.props.activity} fieldPath={AC.FY} type={Types.MULTI_SELECT} />,
