@@ -26,22 +26,22 @@ const loadSection = (sectionName) => {
       return <AFActivityInternalIds />;
     case SC.PLANNING:
       return <Planning />;
-    case SC.LOCATION:
-      return <AFLocation />;
-    case SC.PROGRAM:
-      return <AFPrograms />;
     case SC.SECTORS:
       return <AFSectors />;
+    case SC.PROGRAM:
+      return <AFPrograms />;
     case SC.ORGANIZATIONS:
       return <AFOrganizations />;
     case SC.FUNDING:
       return <AFFunding />;
-    case SC.CONTACTS:
-      return <AFContactsPage />;
+    case SC.LOCATION:
+      return <AFLocation />;
     case SC.STRUCTURES:
       return <AFStructures />;
     case SC.ISSUES_SECTION:
       return <AFIssues />;
+    case SC.CONTACTS:
+      return <AFContactsPage />;
     case SC.RELATED_DOCUMENTS:
       return <AFDocumentPage />;
     /*
