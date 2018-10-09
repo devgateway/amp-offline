@@ -36,7 +36,8 @@ class AFList extends Component {
     onEditRow: PropTypes.func,
     onConfirmationAlert: PropTypes.func.isRequired,
     extraParams: PropTypes.object,
-    language: PropTypes.string // Needed to update header translations.
+    language: PropTypes.string, // Needed to update header translations.
+    onBeforeDelete: PropTypes.func
   };
 
   constructor(props) {
@@ -80,17 +81,23 @@ class AFList extends Component {
   }
 
   onDeleteRow(uniqueId) {
-    const { listPath, onDeleteRow, onConfirmationAlert } = this.props;
+    const { listPath, onDeleteRow, onConfirmationAlert, onBeforeDelete } = this.props;
     const { activityValidator } = this.context;
     const itemToDelete = this.state.values.find(item => uniqueId === item.uniqueId);
-    const validationResult = activityValidator.validateItemRemovalFromList(listPath, itemToDelete);
-    if (validationResult && validationResult !== true) {
-      onConfirmationAlert(validationResult);
-    } else {
-      this.setState({
-        values: this.state.values.filter(item => uniqueId !== item.uniqueId)
-      });
-      onDeleteRow(uniqueId);
+    let canDelete = true;
+    if (onBeforeDelete) {
+      canDelete = onBeforeDelete(itemToDelete);
+    }
+    if (canDelete) {
+      const validationResult = activityValidator.validateItemRemovalFromList(listPath, itemToDelete);
+      if (validationResult && validationResult !== true) {
+        onConfirmationAlert(validationResult);
+      } else {
+        this.setState({
+          values: this.state.values.filter(item => uniqueId !== item.uniqueId)
+        });
+        onDeleteRow(uniqueId);
+      }
     }
   }
 
