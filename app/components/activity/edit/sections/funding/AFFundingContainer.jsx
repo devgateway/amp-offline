@@ -64,7 +64,9 @@ export default class AFFundingContainer extends Component {
       newFunding[AC.MTEF_PROJECTIONS] = [];
     }
     newFunding[AC.MTEF_PROJECTIONS].push(mtefItem);
-    this.setState({ funding: newFunding });
+    const newMTEFList = this.state.mtefProjections.slice();
+    newMTEFList.push(mtefItem);
+    this.setState({ funding: newFunding, mtefProjections: newMTEFList });
   }
 
   _removeMTEFProjectionItem(id) {
