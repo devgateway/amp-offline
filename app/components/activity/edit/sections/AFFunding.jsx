@@ -159,7 +159,7 @@ class AFFunding extends Component {
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
           return (<Tab
-            eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={Math.random()}
+            eventKey={Math.random()} key={Math.random()}
             title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
             tabClassName={funding.errors ? styles.error : ''}>
             <AFFundingDonorSection
