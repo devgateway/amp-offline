@@ -140,7 +140,7 @@ export default class AFFundingDonorSection extends Component {
       {this._filterFundings(this.state.fundingList).map((g, i) => (
         <Panel
           header={this._generateComplexHeader(i, g)}
-          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible
+          key={Math.random()} collapsible
           expanded={this.state.openFundingDonorSection[i] ? this.state.openFundingDonorSection[i].open : false}
           onSelect={() => {
             const newOpenState = this.state.openFundingDonorSection;
