@@ -176,19 +176,30 @@ class AFFunding extends Component {
     return null;
   }
 
-  removeFundingItem(id) {
+  removeFundingItem(id, orgTypeName) {
     logger.log('_removeFundingItem');
     if (confirm(translate('deleteFundingItem'))) {
       const { activity } = this.context;
       const newFundingList = this.state.fundingList.slice();
       const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      const organization = newFundingList[index][AC.FUNDING_DONOR_ORG_ID];
       newFundingList.splice(index, 1);
       this.setState({ fundingList: newFundingList });
       // Remove from the activity.
       const index2 = activity.fundings.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
       activity.fundings.splice(index2, 1);
-      /* TODO: Once we have the source_role even if disabled on FM we need to implement auto-remove funding orgs
-      when we have enabled the auto add funding. */
+
+      // Delete organization if add funding auto is enabled and it doesnt have more fundings.
+      const orgTypeCode = AFUtils.findOrgTypeCodeByName(orgTypeName);
+      if (AFUtils.checkIfAutoAddFundingEnabled(orgTypeCode)) {
+        if (!AFUtils.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization,
+          this.context.activityFieldsManager, activity)) {
+          const newOrganizationsList = activity[orgTypeCode] ? activity[orgTypeCode].slice() : [];
+          const orgIndex = newOrganizationsList.findIndex(o => o[AC.ORGANIZATION].id === organization.id);
+          newOrganizationsList.splice(orgIndex, 1);
+          activity[orgTypeCode] = newOrganizationsList;
+        }
+      }
     }
   }
 

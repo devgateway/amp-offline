@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
@@ -12,12 +13,13 @@ import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import translate from '../../../../../utils/translate';
 import * as Types from '../../components/AFComponentTypes';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
-import { GS_YEARS_IN_RANGE, GS_YEAR_RANGE_START } from '../../../../../utils/constants/GlobalSettingsConstants';
+import { GS_YEAR_RANGE_START, GS_YEARS_IN_RANGE } from '../../../../../utils/constants/GlobalSettingsConstants';
+import { IS_FISCAL } from '../../../../../utils/constants/CalendarConstants';
 
 /**
  * @author Gabriel Inchauspe
  */
-export default class AFMTEFProjectionItem extends Component {
+class AFMTEFProjectionItem extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
@@ -26,18 +28,19 @@ export default class AFMTEFProjectionItem extends Component {
 
   static propTypes = {
     mtefItem: PropTypes.object.isRequired,
-    removeMTEFItem: PropTypes.func.isRequired
+    removeMTEFItem: PropTypes.func.isRequired,
+    calendar: PropTypes.object.isRequired
   };
 
   render() {
-    const { mtefItem, removeMTEFItem } = this.props;
+    const { mtefItem, removeMTEFItem, calendar } = this.props;
     // When adding a new item we select the default currency like in AMP.
     if (!mtefItem[AC.CURRENCY].id) {
       const currency = Object.values(this.context.activityFieldsManager.possibleValuesMap[FPC.FUNDING_CURRENCY_PATH])
         .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
       mtefItem[AC.CURRENCY] = currency[0];
     }
-    const isFiscalCalendar = true; // TODO: After we sync calendars data (AMPOFFLINE-1228) update this flag.
+    const isFiscalCalendar = calendar[IS_FISCAL];
     const range = Number(GlobalSettingsManager.getSettingByKey(GS_YEARS_IN_RANGE));
     const startYear = Number(GlobalSettingsManager.getSettingByKey(GS_YEAR_RANGE_START));
     return (<div className={afStyles.full_width}>
@@ -76,3 +79,9 @@ export default class AFMTEFProjectionItem extends Component {
     </div>);
   }
 }
+
+export default connect(
+  state => ({
+    calendar: state.startUpReducer.calendar
+  })
+)(AFMTEFProjectionItem);

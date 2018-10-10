@@ -9,6 +9,8 @@ import afStyles from '../../ActivityForm.css';
 import fundingStyles from './AFFundingContainer.css';
 import AFMTEFProjectionItem from './AFMTEFProjectionItem';
 import * as Utils from '../../../../../utils/Utils';
+import FeatureManager from '../../../../../modules/util/FeatureManager';
+import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 
 const logger = new Logger('AF MTEF container');
 
@@ -45,23 +47,28 @@ export default class AFMTEFProjectionContainer extends Component {
   }
 
   render() {
-    const { mtefProjections, handleRemoveItem, funding, handleNewItem } = this.props;
-    const hasErrors = this.props.hasErrors(funding);
-    return (<div className={afStyles.full_width}>
-      <Panel
-        header={translate('MTEF Projections')} collapsible expanded={this.state.openMTEF}
-        onSelect={() => {
-          this.setState({ openMTEF: !this.state.openMTEF });
-        }} className={hasErrors ? fundingStyles.error : ''}>
-        {mtefProjections.map((mtef) => {
-          // Add a temporal_id field so we can delete items.
-          if (!mtef[AC.TEMPORAL_ID]) {
-            mtef[AC.TEMPORAL_ID] = Utils.numberRandom();
-          }
-          return <AFMTEFProjectionItem mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={mtef[AC.TEMPORAL_ID]} />;
-        })}
-        <Button bsStyle="primary" onClick={handleNewItem}>{translate('Add Projection')}</Button>
-      </Panel>
-    </div>);
+    if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
+      const { mtefProjections, handleRemoveItem, funding, handleNewItem } = this.props;
+      const hasErrors = this.props.hasErrors(funding);
+      return (<div className={afStyles.full_width}>
+        <Panel
+          header={translate('MTEF Projections')} collapsible expanded={this.state.openMTEF}
+          onSelect={() => {
+            this.setState({ openMTEF: !this.state.openMTEF });
+          }} className={hasErrors ? fundingStyles.error : ''}>
+          {mtefProjections.map((mtef) => {
+            // Add a temporal_id field so we can delete items.
+            if (!mtef[AC.TEMPORAL_ID]) {
+              mtef[AC.TEMPORAL_ID] = Utils.numberRandom();
+            }
+            return (<AFMTEFProjectionItem
+              mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={mtef[AC.TEMPORAL_ID]} />);
+          })}
+          <Button bsStyle="primary" onClick={handleNewItem}>{translate('Add Projection')}</Button>
+        </Panel>
+      </div>);
+    } else {
+      return null;
+    }
   }
 }

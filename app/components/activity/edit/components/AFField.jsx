@@ -63,7 +63,9 @@ class AFField extends Component {
     extraParams: PropTypes.object,
     defaultValueAsEmptyObject: PropTypes.bool,
     forceRequired: PropTypes.bool,
-    fmPath: PropTypes.string
+    fmPath: PropTypes.string,
+    onBeforeDelete: PropTypes.func,
+    calendar: PropTypes.object.isRequired
   };
 
   static defaultProps = {
@@ -234,7 +236,8 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams} />);
+      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams}
+      onBeforeDelete={this.props.onBeforeDelete} />);
   }
 
   _getOptions(fieldPath) {
@@ -294,7 +297,8 @@ class AFField extends Component {
     const extraParams = this.props.extraParams || {};
     const options = Array(extraParams.range).fill().map((_, i) => i + extraParams.startYear);
     return (<AFDateYear
-      value={this.state.value} onChange={this.onChange} extraParams={extraParams} options={options} />);
+      value={this.state.value} onChange={this.onChange} extraParams={extraParams} options={options}
+      calendar={this.props.calendar} />);
   }
 
   _getCheckbox() {
@@ -377,7 +381,8 @@ class AFField extends Component {
 export default connect(
   state => ({
     validationResult: state.activityReducer.validationResult,
-    lang: state.translationReducer.lang
+    lang: state.translationReducer.lang,
+    calendar: state.startUpReducer.calendar
   }),
   dispatch => ({
     onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))
