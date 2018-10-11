@@ -105,6 +105,7 @@ export default class AFFundingDonorSection extends Component {
   _generateComplexHeader(i, funding) {
     // TODO: AFFields objects are not being refreshed (use a bind function?).
     const orgTypeName = funding[AC.SOURCE_ROLE] ? funding[AC.SOURCE_ROLE].value : null;
+    const suffix = ' |';
     return (<div
       className={(this.props.hasErrors(funding) || this.props.hasErrors(funding[AC.FUNDING_DETAILS]))
         ? fundingStyles.error : ''}>
@@ -112,19 +113,21 @@ export default class AFFundingDonorSection extends Component {
       <div className={styles.header}>
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false}
+          extraParams={{ suffix }} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false}
+          extraParams={{ suffix }} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} extraParams={{ suffix }} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} extraParams={{ suffix }} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} extraParams={{ suffix }} />
         <div className={styles.header_small_item}>
           <a
             onClick={this.props.removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING], orgTypeName)}
