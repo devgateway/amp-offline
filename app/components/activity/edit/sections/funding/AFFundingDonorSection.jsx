@@ -13,6 +13,7 @@ import styles from './AFFundingDonorSection.css';
 import fundingStyles from './AFFunding.css';
 import * as Types from '../../components/AFComponentTypes';
 import * as Utils from '../../../../../utils/Utils';
+import AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF funding donor section');
 
@@ -95,6 +96,40 @@ export default class AFFundingDonorSection extends Component {
     this.props.addFundingItem();
   }
 
+  _removeFundingItem(id, orgTypeName) {
+    logger.log('_removeFundingItem');
+    if (confirm(translate('deleteFundingItem'))) {
+      const { activity } = this.context;
+      const newFundingList = this.state.fundingList.slice();
+      const index0 = newFundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      newFundingList.splice(index0, 1);
+      this.setState({ fundingList: newFundingList });
+
+      const index = activity[AC.FUNDINGS].findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      const organization = activity[AC.FUNDINGS][index][AC.FUNDING_DONOR_ORG_ID];
+      // Remove from the activity.
+      const index2 = activity[AC.FUNDINGS].findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      activity[AC.FUNDINGS].splice(index2, 1);
+
+      // Delete organization if add funding auto is enabled and it doesnt have more fundings.
+      const orgTypeCode = AFUtils.findOrgTypeCodeByName(orgTypeName);
+      let addAutoFundingEnabledAndEmpty = false;
+      if (AFUtils.checkIfAutoAddFundingEnabled(orgTypeCode)) {
+        if (!AFUtils.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization,
+          this.context.activityFieldsManager, activity)) {
+          addAutoFundingEnabledAndEmpty = true;
+          const newOrganizationsList = activity[orgTypeCode] ? activity[orgTypeCode].slice() : [];
+          const orgIndex = newOrganizationsList.findIndex(o => o[AC.ORGANIZATION].id === organization.id);
+          newOrganizationsList.splice(orgIndex, 1);
+          activity[orgTypeCode] = newOrganizationsList;
+        }
+      }
+
+      // Keep AFFunding state in sync.
+      this.props.removeFundingItem(addAutoFundingEnabledAndEmpty);
+    }
+  }
+
   _filterFundings(fundings) {
     // If source_role is disabled then we filter only by organization.
     const filterSourceRole = this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`);
@@ -127,7 +162,7 @@ export default class AFFundingDonorSection extends Component {
           className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
         <div className={styles.header_small_item}>
           <a
-            onClick={this.props.removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING], orgTypeName)}
+            onClick={this._removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING], orgTypeName)}
             className={styles.delete} href={null} />
         </div>
       </div>
