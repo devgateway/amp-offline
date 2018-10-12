@@ -171,7 +171,8 @@ export default class AFFundingDetailItem extends Component {
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject />
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject
+                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />

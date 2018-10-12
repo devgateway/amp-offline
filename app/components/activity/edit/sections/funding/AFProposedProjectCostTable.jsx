@@ -43,7 +43,7 @@ export default class AFProposedProjectCostTable extends Component {
     const field = (<AFField
       parent={this.context.activity[AC.PPC_AMOUNT][0]}
       fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
-      type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true }} />);
+      type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true, showOrigValue: true }} />);
     return field;
   }
 
