@@ -246,7 +246,7 @@ export default class SyncUpRunner {
           logger.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${errorStack}"`);
           // We are not rolling back any data saved until here. We collect the leftover and resume the next sync from
           // where we left up to the latest. Dependencies will manage other units.
-          return this._buildUnitResult(syncUpManager, error.message || error);
+          return this._buildUnitResult(syncUpManager, error);
         });
       this._syncUpDependency.setState(type, SS.IN_PROGRESS);
     }
@@ -268,11 +268,8 @@ export default class SyncUpRunner {
     const unitLeftOver = this._syncUpDiffLeftOver.getSyncUpDiff(type);
     const state = this._getStateOrSetBasedOnLeftOver(type, originalDiff, unitLeftOver, syncUpManager.done);
     const status = SS.STATE_TO_STATUS[state] || SYNCUP_STATUS_FAIL;
-    if (!error) {
-      error = this._getMessages(syncUpManager.errors);
-    }
-    const warning = this._getMessages(syncUpManager.warnings);
-    let unitResult = { type, status, state, error, warning };
+    const errors = error ? [error] : syncUpManager.errors;
+    let unitResult = { type, status, state, errors, warnings: syncUpManager.warnings };
     // if no changes in the second run, keep run 1 result
     if (this._syncRunNo === SyncUpRunner._SYNC_RUN_2 && state === SS.NO_CHANGES) {
       unitResult = this._unitsResult.get(type);
@@ -282,12 +279,6 @@ export default class SyncUpRunner {
     }
     this._remainingSyncUpTypes.delete(syncUpManager.type);
     return unitResult;
-  }
-
-  _getMessages(messages) {
-    if (messages && messages.length) {
-      return Utils.joinMessages(messages);
-    }
   }
 
   _addStats(syncUpManager: SyncUpManagerInterface, unitResult, prevUnitResult) {
@@ -430,26 +421,29 @@ export default class SyncUpRunner {
 
   _collectMessages(unitsResult, errors = []) {
     const existingErrors = new Set();
-    errors = errors.filter(err => {
-      const errMsg = err.toString();
-      if (existingErrors.has(errMsg)) {
+    const existingWarnings = new Set();
+    const warnings = [];
+    errors = this._deduplicateMessages(errors, existingErrors);
+    unitsResult.forEach(unitResult => {
+      if (unitResult.errors) {
+        errors.push(...this._deduplicateMessages(unitResult.errors, existingErrors));
+      }
+      if (unitResult.warnings) {
+        warnings.push(...this._deduplicateMessages(unitResult.warnings, existingWarnings));
+      }
+    });
+    return { errors, warnings };
+  }
+
+  _deduplicateMessages(messages, existingMsgs) {
+    return messages.filter(msg => {
+      const m = msg.toString();
+      if (existingMsgs.has(m)) {
         return false;
       }
-      existingErrors.add(errMsg);
+      existingMsgs.add(m);
       return true;
     });
-    errors = unitsResult.reduce((errorsList, unitResult) => {
-      if (unitResult.error) {
-        const errMsg = unitResult.error.toString();
-        if (!existingErrors.has(errMsg)) {
-          existingErrors.add(errMsg);
-          errorsList.push(unitResult.error);
-        }
-      }
-      return errorsList;
-    }, errors);
-    const warnings = unitsResult.map(ur => ur.warning).filter(w => w);
-    return { errors, warnings };
   }
 
   /**
