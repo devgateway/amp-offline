@@ -9,8 +9,11 @@ import { ORG_ROLE_NAMES } from './ValueConstants';
 
 export const FUNDING_ACTIVE_LIST = 'fundings~active_list';
 export const FUNDING_TYPE_OF_ASSISTANCE = `${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`;
-export const FUNDING_DETAILS_PATH = 'fundings~funding_details';
-export const FUNDING_CURRENCY_PATH = 'fundings~funding_details~currency';
+export const FUNDING_DETAILS_PATH = `${AC.FUNDINGS}~${AC.FUNDING_DETAILS}`;
+export const FUNDING_CURRENCY_PATH = `${FUNDING_DETAILS_PATH}~${AC.CURRENCY}`;
+export const MTEF_CURRENCY_PATH = `${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.CURRENCY}`;
+export const PPC_CURRENCY_PATH = `${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`;
+export const RPC_CURRENCY_PATH = `${AC.RPC_AMOUNT}~${AC.CURRENCY_CODE}`;
 export const ADJUSTMENT_TYPE_PATH = 'fundings~funding_details~adjustment_type';
 export const TRANSACTION_TYPE_PATH = 'fundings~funding_details~transaction_type';
 export const DISASTER_RESPONSE_PATH = `${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`;
@@ -43,6 +46,9 @@ export const PATHS_WITH_HIERARCHICAL_VALUES = new Set([NATIONAL_PLAN_OBJECTIVE_P
 export const ACTIVITY_CONTACT_PATHS = [AC.DONOR_CONTACT, AC.PROJECT_COORDINATOR_CONTACT,
   AC.SECTOR_MINISTRY_CONTACT, AC.MOFED_CONTACT, AC.IMPLEMENTING_EXECUTING_AGENCY_CONTACT];
 
+export const PATHS_FOR_CURRENCY = new Set([FUNDING_CURRENCY_PATH, MTEF_CURRENCY_PATH, AC.CURRENCY, PPC_CURRENCY_PATH,
+  RPC_CURRENCY_PATH]);
+
 export const DO_NOT_HYDRATE_FIELDS_LIST = [AC.APPROVAL_STATUS];
 
 /* Fields paths alternative values location */
@@ -63,6 +69,7 @@ export const PREFIX_COMMON = 'common';
 
 export const FIELD_PATH = 'field-path';
 export const FIELD_OPTIONS = 'possible-options';
+export const FIELD_OPTION_USABLE = 'option-usable';
 export const LIST_MAX_SIZE = 'size-limit';
 export const REGEX_PATTERN = 'regex-pattern';
 export const FIELD_NAME = 'field_name';

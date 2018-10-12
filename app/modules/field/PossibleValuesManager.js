@@ -1,9 +1,10 @@
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../utils/constants/ActivityConstants';
-import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
+import * as FPC from '../../utils/constants/FieldPathConstants';
 import Logger from '../util/LoggerManager';
 import FieldsManager from './FieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+import CurrencyRatesManager from '../util/CurrencyRatesManager';
 
 const logger = new Logger('Possible values manager');
 
@@ -100,12 +101,22 @@ export default class PossibleValuesManager {
     return resVal;
   }
 
-  static setVisibility(options, fieldPath, filters, isORFilter = false) {
+  static setVisibility(options, fieldPath, currencyRatesManager: CurrencyRatesManager, filters, isORFilter = false,
+    selectedId) {
+    const isLocations = FPC.LOCATION_PATH === fieldPath;
+    const isCurrency = FPC.PATHS_FOR_CURRENCY.has(fieldPath);
     options = { ...options };
     Object.values(options).forEach(option => {
       option.visible = !isORFilter;
-      if (LOCATION_PATH === fieldPath) {
+      if (isLocations) {
         option.displayHierarchicalValue = true;
+      } else if (isCurrency) {
+        const hasExchangeRates = currencyRatesManager.currenciesWithExchangeRates.has(option.value);
+        const isActive = option.extra_info && option.extra_info.active;
+        option[FPC.FIELD_OPTION_USABLE] = isActive && hasExchangeRates;
+        if (!option[FPC.FIELD_OPTION_USABLE]) {
+          option.visible = option.id === selectedId;
+        }
       }
     });
     if (filters) {
