@@ -6,7 +6,7 @@ import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 const orgTypes = {
   [AC.BENEFICIARY_AGENCY]: { constant: 'BENEFICIARY_AGENCY', name: 'Beneficiary Agency' },
   [AC.CONTRACTING_AGENCY]: { constant: 'CONTRACTING_AGENCY', name: 'Contracting Agency' },
-  [AC.DONOR_ORGANIZATION]: { constant: 'DONOR_ORGANIZATION', name: 'Donor Organization' },
+  [AC.DONOR_ORGANIZATION]: { constant: 'DONOR_ORGANIZATION', name: ['Donor Organization', 'Donor'] },
   [AC.EXECUTING_AGENCY]: { constant: 'EXECUTING_AGENCY', name: 'Executing Agency' },
   [AC.IMPLEMENTING_AGENCY]: { constant: 'IMPLEMENTING_AGENCY', name: 'Implementing Agency' },
   [AC.REGIONAL_GROUP]: { constant: 'REGIONAL_GROUP', name: 'Regional Group' },
@@ -62,7 +62,8 @@ const AFUtils = {
   },
 
   findOrgTypeCodeByName(name) {
-    const index = Object.values(orgTypes).findIndex(o => o.name === name);
+    const index = Object.values(orgTypes).findIndex(o => (o.name === name
+      || (o.name instanceof Array ? (o.name.find(o2 => o2 === name)) : false)));
     return Object.keys(orgTypes)[index];
   }
 
