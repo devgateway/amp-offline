@@ -132,7 +132,7 @@ class AFField extends Component {
   }
 
   getLabel() {
-    const { showRequired, parent, forceRequired } = this.props;
+    const { showRequired, parent, forceRequired, extraParams } = this.props;
     const { activityValidator } = this.context;
     const toShowRequired = showRequired === undefined ?
       activityValidator.isRequiredDependencyMet(parent, this.fieldDef) : showRequired;
@@ -145,7 +145,7 @@ class AFField extends Component {
     }
     const { customLabel, fieldPath } = this.props;
     const label = translate(customLabel) || this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath);
-    return <AFLabel value={label} required={required} className={styles.label_highlight} />;
+    return <AFLabel value={label} required={required} className={styles.label_highlight} extraParams={extraParams} />;
   }
 
   getComponentTypeByFieldType() {
@@ -336,7 +336,7 @@ class AFField extends Component {
     if (this.state.value) {
       val = this.state.value.displayFullValue || this.state.value.value || this.state.value;
     }
-    return <AFLabel value={val} />;
+    return <AFLabel value={val} extraParams={this.props.extraParams} />;
   }
 
   _isFullyInitialized() {
