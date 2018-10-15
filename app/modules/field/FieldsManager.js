@@ -67,6 +67,10 @@ export default class FieldsManager {
     return this._possibleValuesMap;
   }
 
+  getPossibleValuesOptions(fieldPath) {
+    return Object.values(this._possibleValuesMap[fieldPath]);
+  }
+
   /**
    * Checks if the specified field path is enabled in AMP FM
    * @param fieldPath

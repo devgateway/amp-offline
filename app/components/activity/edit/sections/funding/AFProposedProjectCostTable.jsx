@@ -9,6 +9,8 @@ import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
+import * as AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF proposed project cost table');
 
@@ -20,7 +22,8 @@ export default class AFProposedProjectCostTable extends Component {
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     currentWorkspaceSettings: PropTypes.object.isRequired,
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
   };
 
   constructor(props) {
@@ -32,13 +35,14 @@ export default class AFProposedProjectCostTable extends Component {
   }
 
   _createCurrencyField() {
-    if (!this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] ||
-      !this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE].id) {
-      const currency = Object.values(this.context.activityFieldsManager.possibleValuesMap[FPC.FUNDING_CURRENCY_PATH])
-        .find(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
+    const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
+    if (!activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] || !activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE].id) {
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
+      const wsCurrencyCode = currentWorkspaceSettings.currency.code;
+      const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
       // TODO: Check why the structure of this object is {id: currecy_code, value: currency_code}.
       const newCurrency = { id: currency.value, value: currency.value };
-      this.context.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] = newCurrency;
+      activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] = newCurrency;
     }
     const field = (<AFField
       parent={this.context.activity[AC.PPC_AMOUNT][0]}

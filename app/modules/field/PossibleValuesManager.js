@@ -111,9 +111,7 @@ export default class PossibleValuesManager {
       if (isLocations) {
         option.displayHierarchicalValue = true;
       } else if (isCurrency) {
-        const hasExchangeRates = currencyRatesManager.currenciesWithExchangeRates.has(option.value);
-        const isActive = option.extra_info && option.extra_info.active;
-        option[FPC.FIELD_OPTION_USABLE] = isActive && hasExchangeRates;
+        option[FPC.FIELD_OPTION_USABLE] = PossibleValuesManager.isCurrencyOptionUsable(option, currencyRatesManager);
         if (!option[FPC.FIELD_OPTION_USABLE]) {
           option.visible = option.id === selectedId;
         }
@@ -137,6 +135,12 @@ export default class PossibleValuesManager {
       });
     }
     return options;
+  }
+
+  static isCurrencyOptionUsable(option, currencyRatesManager: CurrencyRatesManager) {
+    const hasExchangeRates = currencyRatesManager.currenciesWithExchangeRates.has(option.value);
+    const isActive = option.extra_info && option.extra_info.active;
+    return isActive && hasExchangeRates;
   }
 
   static getTreeSortedOptionsList(optionsObj) {

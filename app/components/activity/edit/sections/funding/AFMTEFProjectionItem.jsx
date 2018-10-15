@@ -15,6 +15,8 @@ import * as Types from '../../components/AFComponentTypes';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
 import { GS_YEAR_RANGE_START, GS_YEARS_IN_RANGE } from '../../../../../utils/constants/GlobalSettingsConstants';
 import { IS_FISCAL } from '../../../../../utils/constants/CalendarConstants';
+import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
+import * as AFUtils from '../../util/AFUtils';
 
 /**
  * @author Gabriel Inchauspe
@@ -23,7 +25,8 @@ class AFMTEFProjectionItem extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    currentWorkspaceSettings: PropTypes.object.isRequired
+    currentWorkspaceSettings: PropTypes.object.isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
   };
 
   static propTypes = {
@@ -34,11 +37,13 @@ class AFMTEFProjectionItem extends Component {
 
   render() {
     const { mtefItem, removeMTEFItem, calendar } = this.props;
+    const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
     if (!mtefItem[AC.CURRENCY].id) {
-      const currency = Object.values(this.context.activityFieldsManager.possibleValuesMap[FPC.FUNDING_CURRENCY_PATH])
-        .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
-      mtefItem[AC.CURRENCY] = currency[0];
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
+      const wsCurrencyCode = currentWorkspaceSettings.currency.code;
+      const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
+      mtefItem[AC.CURRENCY] = currency;
     }
     const isFiscalCalendar = calendar[IS_FISCAL];
     const range = Number(GlobalSettingsManager.getSettingByKey(GS_YEARS_IN_RANGE));
