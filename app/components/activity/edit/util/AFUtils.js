@@ -2,6 +2,7 @@ import * as AC from '../../../../utils/constants/ActivityConstants';
 import Utils from '../../../../utils/Utils';
 import FeatureManager from '../../../../modules/util/FeatureManager';
 import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const orgTypes = {
   [AC.BENEFICIARY_AGENCY]: { constant: 'BENEFICIARY_AGENCY', name: 'Beneficiary Agency' },
@@ -65,6 +66,15 @@ const AFUtils = {
     const index = Object.values(orgTypes).findIndex(o => (o.name === name
       || (o.name instanceof Array ? (o.name.find(o2 => o2 === name)) : false)));
     return Object.keys(orgTypes)[index];
+  },
+
+  getDefaultOrFirstUsableCurrency(options, defaultCurrencyCode, currencyRatesManager) {
+    const currencyOption = options.find(o => o.value === defaultCurrencyCode);
+    if (PossibleValuesManager.isCurrencyOptionUsable(currencyOption, currencyRatesManager)) {
+      return currencyOption;
+    }
+    options = options.sort((a, b) => a.value.localeCompare(b.value));
+    return options.find(o => PossibleValuesManager.isCurrencyOptionUsable(o, currencyRatesManager));
   }
 
 };
