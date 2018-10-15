@@ -245,7 +245,7 @@ export const AP_SECTION_IDS =
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;
-export const ACTIVITY_PLANNING_COLS = 3;
+export const ACTIVITY_PLANNING_COLS = 2;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
 export const ACTIVITY_CONTACT_COLS = 2;
