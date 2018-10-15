@@ -14,6 +14,7 @@ import Utils from '../../utils/Utils';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
 import { translateSyncStatus } from './tools';
 import WarnMessage from '../common/WarnMessage';
+import NotificationHelper from '../../modules/helpers/NotificationHelper';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
@@ -36,9 +37,10 @@ class SyncUpSummary extends PureComponent {
 
   static deduplicateMessages(messages) {
     // messages should normally be deduplicated by SyncUpRunner._collectMessages,
-    // however attempting here as well for: 1) possible historical data load  2) possible different (new) sources
+    // however attempting here as well for possible: 1) historical data load  2) unexpected / new error sources
     const mSet = new Set();
     return messages.map(m => {
+      m = NotificationHelper.tryAsNotification(m);
       const msg = m.message || m._message || m.toString();
       if (!mSet.has(msg)) {
         mSet.add(msg);
