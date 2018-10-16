@@ -20,3 +20,4 @@ export const GS_YEARS_IN_RANGE = 'Number of Years in Range';
 export const GS_YEAR_RANGE_START = 'Year Range Start';
 export const GS_DEFAULT_CALENDAR = 'Default Calendar';
 export const GS_CURRENT_FISCAL_YEAR = 'Current Fiscal Year';
+export const GS_FUNDING_SECTION_TAB_VIEW = 'Activity Form - Funding Section - Tab View';
