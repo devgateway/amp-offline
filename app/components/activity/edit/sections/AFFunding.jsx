@@ -165,9 +165,10 @@ class AFFunding extends Component {
             </Tab>);
           } else {
             return (<Panel
-              panelClassName={funding.errors ? styles.error : ''}
               key={Math.random()} collapsible
-              header={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.VALUE]} (${funding[AC.SOURCE_ROLE].value})`}>
+              header={<div className={funding.errors ? styles.error : ''}>
+                {`${funding[AC.FUNDING_DONOR_ORG_ID][AC.VALUE]} (${funding[AC.SOURCE_ROLE].value})`}
+              </div>}>
               <AFFundingDonorSection
                 key={Math.random()}
                 fundings={this.context.activity[AC.FUNDINGS] || []}
@@ -246,7 +247,7 @@ class AFFunding extends Component {
     } else {
       return (
         <div>
-          <div>{this.generateOverviewTabContent()}</div>
+          <div className={styles.overview_section}>{this.generateOverviewTabContent()}</div>
           <div>{this.addFundings()}</div>
           <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
         </div>);
