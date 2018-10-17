@@ -28,7 +28,6 @@ export default class AFMTEFProjectionContainer extends Component {
     hasErrors: PropTypes.func.isRequired,
     handleNewItem: PropTypes.func.isRequired,
     handleRemoveItem: PropTypes.func.isRequired,
-    funding: PropTypes.object.isRequired
   };
 
   constructor(props) {
