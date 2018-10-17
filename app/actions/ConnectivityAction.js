@@ -174,7 +174,7 @@ function _processResult(data, lastConnectivityStatus: ConnectivityStatus, isChec
   } else {
     const isAmpClientEnabled = data[AMP_OFFLINE_ENABLED] === true;
     const isAmpCompatible = data[AMP_OFFLINE_COMPATIBLE] === true;
-    const latestAmpOffline = preProcessLatestAmpOffline(data[LATEST_AMP_OFFLINE]);
+    const latestAmpOffline = preProcessLatestAmpOffline(data[LATEST_AMP_OFFLINE], isAmpCompatible);
     const version = data[AMP_VERSION];
     status = new ConnectivityStatus(true, isAmpClientEnabled, isAmpCompatible, version, latestAmpOffline,
       data[AMP_SERVER_ID], data[AMP_SERVER_ID_MATCH]);
@@ -186,10 +186,10 @@ function _processResult(data, lastConnectivityStatus: ConnectivityStatus, isChec
   return status;
 }
 
-function preProcessLatestAmpOffline(latestAmpOffline) {
+function preProcessLatestAmpOffline(latestAmpOffline, isAmpCompatible) {
   if (latestAmpOffline) {
     if (VersionUtils.compareVersion(latestAmpOffline.version, VERSION) > 0) {
-      latestAmpOffline[MANDATORY_UPDATE] = latestAmpOffline.critical === true;
+      latestAmpOffline[MANDATORY_UPDATE] = latestAmpOffline.critical === true || !isAmpCompatible;
     } else {
       latestAmpOffline[MANDATORY_UPDATE] = null;
     }
