@@ -48,8 +48,8 @@ export default class AFMTEFProjectionContainer extends Component {
 
   render() {
     if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
-      const { mtefProjections, handleRemoveItem, funding, handleNewItem } = this.props;
-      const hasErrors = this.props.hasErrors(funding);
+      const { mtefProjections, handleRemoveItem, handleNewItem } = this.props;
+      const hasErrors = this.props.hasErrors(mtefProjections);
       return (<div className={afStyles.full_width}>
         <Panel
           header={translate('MTEF Projections')} collapsible expanded={this.state.openMTEF}
