@@ -40,7 +40,7 @@ export default class AFMTEFProjectionContainer extends Component {
 
   componentWillReceiveProps(nextProps) {
     // Expand the section that has errors.
-    if (this.props.hasErrors(nextProps.funding)) {
+    if (this.props.hasErrors(nextProps.mtefProjections)) {
       this.setState({ openMTEF: true });
     }
   }
