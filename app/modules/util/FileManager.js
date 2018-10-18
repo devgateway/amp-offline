@@ -354,7 +354,7 @@ const FileManager = {
       return this.getFullPath(...pathParts);
     } else {
       // Notice the '..' because __dirname points to /app subdir.
-      return this.getFullPath(global.__dirname, '..', ...pathParts);
+      return this.joinPath(global.__dirname, '..', ...pathParts);
     }
   }
 };
