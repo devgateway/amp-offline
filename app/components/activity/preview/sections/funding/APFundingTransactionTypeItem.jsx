@@ -60,11 +60,15 @@ class APFundingTransactionTypeItem extends Component {
       default:
         break;
     }
-    return (<div>
-      <APLabel label={label} labelClass={styles.header} key={key} />
-      {fixedExchangeRateFMPath && FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
-        <APLabel label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
-    </div>);
+    if (this.props.group.trnType.value) {
+      return (<div>
+        <APLabel label={label} labelClass={styles.header} key={key} />
+        {fixedExchangeRateFMPath && FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
+          <APLabel label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
+      </div>);
+    } else {
+      return null;
+    }
   }
 
   _drawDetail() {
@@ -75,8 +79,12 @@ class APFundingTransactionTypeItem extends Component {
         item={item} key={Utils.numberRandom()} wsCurrency={this._currency}
         buildSimpleField={this.props.buildSimpleField} />);
     });
-    // Not worth the effort to use BootstrapTable here.
-    return <table className={styles.funding_table}>{content}</table>;
+    if (content.length > 0) {
+      // Not worth the effort to use BootstrapTable here.
+      return <table className={styles.funding_table}>{content}</table>;
+    } else {
+      return null;
+    }
   }
 
   _drawSubTotalFooter() {
@@ -85,13 +93,17 @@ class APFundingTransactionTypeItem extends Component {
       this._currency);
     const measure = `${this.props.group.adjType.value} ${this.props.group.trnType.value}`;
     const labelTrn = translate(`Subtotal ${measure}`).toUpperCase();
-    return (<div>
-      <APFundingTotalItem
-        value={subtotal}
-        label={labelTrn}
-        currency={translate(this._currency)}
-        key={this.props.group.adjType.value + this.props.group.trnType.value} />
-    </div>);
+    if (this.props.group.trnType.value) {
+      return (<div>
+        <APFundingTotalItem
+          value={subtotal}
+          label={labelTrn}
+          currency={translate(this._currency)}
+          key={this.props.group.adjType.value + this.props.group.trnType.value} />
+      </div>);
+    } else {
+      return null;
+    }
   }
 
   render() {
