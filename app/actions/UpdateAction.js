@@ -63,8 +63,8 @@ function isClientFromAMPNewer() {
 export function isCheckForUpdates() {
   const { syncUpReducer, activityReducer, updateReducer, ampConnectionStatusReducer } = store.getState();
   const { proceedToUpdateDownload, confirmationPending, updatePending, updateInProgress } = updateReducer;
-  return didSetupComplete() && updateReducer.newUpdateToCheck && isClientFromAMPNewer()
-    && !(activityReducer.isActivityLoadedForAf || syncUpReducer.syncUpInProgress || didUrlChangesCheckComplete()
+  return didSetupComplete() && updateReducer.newUpdateToCheck && isClientFromAMPNewer() && didUrlChangesCheckComplete()
+    && !(activityReducer.isActivityLoadedForAf || syncUpReducer.syncUpInProgress
       || ampConnectionStatusReducer.updateInProgress
       || proceedToUpdateDownload || confirmationPending || updatePending || updateInProgress);
 }
