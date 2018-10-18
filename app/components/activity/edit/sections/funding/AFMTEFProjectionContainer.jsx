@@ -27,22 +27,15 @@ export default class AFMTEFProjectionContainer extends Component {
     mtefProjections: PropTypes.array.isRequired,
     hasErrors: PropTypes.func.isRequired,
     handleNewItem: PropTypes.func.isRequired,
-    handleRemoveItem: PropTypes.func.isRequired,
+    handleRemoveItem: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
     logger.debug('constructor');
     this.state = {
-      openMTEF: false
+      openMTEF: this.props.hasErrors(props.mtefProjections)
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Expand the section that has errors.
-    if (this.props.hasErrors(nextProps.mtefProjections)) {
-      this.setState({ openMTEF: true });
-    }
   }
 
   render() {
