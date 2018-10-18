@@ -37,8 +37,9 @@ class APFundingTransactionTypeItem extends Component {
   }
 
   _filterFundingDetails() {
-    return (this.props.fundingDetails.filter(o => o[AC.TRANSACTION_TYPE].id === this.props.group.trnType.id
-    && o[AC.ADJUSTMENT_TYPE].id === this.props.group.adjType.id));
+    return (this.props.fundingDetails.filter(o =>
+      (o[AC.TRANSACTION_TYPE] && o[AC.TRANSACTION_TYPE].id === this.props.group.trnType.id)
+      && o[AC.ADJUSTMENT_TYPE].id === this.props.group.adjType.id));
   }
 
   _drawHeader() {
@@ -61,7 +62,7 @@ class APFundingTransactionTypeItem extends Component {
     }
     return (<div>
       <APLabel label={label} labelClass={styles.header} key={key} />
-      {FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
+      {fixedExchangeRateFMPath && FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
         <APLabel label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
     </div>);
   }
@@ -75,7 +76,7 @@ class APFundingTransactionTypeItem extends Component {
         buildSimpleField={this.props.buildSimpleField} />);
     });
     // Not worth the effort to use BootstrapTable here.
-    return <table className={styles.funding_table} >{content}</table>;
+    return <table className={styles.funding_table}>{content}</table>;
   }
 
   _drawSubTotalFooter() {
@@ -95,7 +96,7 @@ class APFundingTransactionTypeItem extends Component {
 
   render() {
     logger.log('render');
-    return (<div className={styles.table_container} >
+    return (<div className={styles.table_container}>
       <div>{this._drawHeader()}</div>
       <div>{this._drawDetail()}</div>
       <div>{this._drawSubTotalFooter()}</div>
