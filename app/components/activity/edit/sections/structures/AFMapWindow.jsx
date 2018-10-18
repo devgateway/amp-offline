@@ -21,6 +21,7 @@ import {
 } from '../../../../../utils/Constants';
 import AFMapPopup from './AFMapPopup';
 import GazetteerHelper from '../../../../../modules/helpers/GazetteerHelper';
+import * as MapTilesUtils from '../../../../../utils/MapTilesUtils';
 
 const logger = new Logger('Map Modal');
 const myIconMarker = L.icon({
@@ -216,20 +217,19 @@ export default class AFMapWindow extends Component {
 
   generateMap() {
     // TODO: make these customizable or automatic from available tiles?
-    const minZoom = 8;
-    const maxZoom = 11;
+    const zoom = MapTilesUtils.getMaxMinZoom();
     const lat = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LATITUDE));
     const lng = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LONGITUDE));
     const cp = translate('mapCR')
       .replace('%basemap%', '<a href=\'http://openstreetmap.org/copyright\' target=\'_blank\'>OpenStreetMap</a>');
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
-    const map = L.map(node, { zoomControl: false }).setView([lat, lng], minZoom);
+    const map = L.map(node, { zoomControl: false }).setView([lat, lng], zoom.min);
     let tilesPath = '';
     const tilesFiles = 'assets/map-tiles/{z}/{x}/{y}.png';
     tilesPath = `file://${FileManager.getAbsolutePath(tilesFiles)}`;
     L.tileLayer(tilesPath, {
-      maxZoom,
-      minZoom,
+      maxZoom: zoom.max,
+      minZoom: zoom.min,
       attribution: cp
     }).addTo(map);
     map.addControl(new L.Control.Zoom({ zoomInTitle: translate('Zoom In'), zoomOutTitle: translate('Zoom Out') }));
