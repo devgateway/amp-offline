@@ -122,7 +122,8 @@ class AFFunding extends Component {
         const tab = groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
           && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)));
         // Look for errors on Commitments/Disbursements/Expenditures too.
-        const errorsOnInternalSections = this.hasErrors(f[AC.FUNDING_DETAILS]);
+        const errorsOnInternalSections = this.hasErrors(f[AC.FUNDING_DETAILS])
+          || this.hasErrors(f[AC.MTEF_PROJECTIONS]);
         if (!tab) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
           groups.push({

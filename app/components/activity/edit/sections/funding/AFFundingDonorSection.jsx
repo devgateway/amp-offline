@@ -57,7 +57,8 @@ export default class AFFundingDonorSection extends Component {
     // Expand the section that has errors.
     const openFundingDonorSectionState = this.state.openFundingDonorSection;
     nextProps.fundings.forEach(f => {
-      if (this.props.hasErrors(f) || this.props.hasErrors(f[AC.FUNDING_DETAILS])) {
+      if (this.props.hasErrors(f) || this.props.hasErrors(f[AC.FUNDING_DETAILS])
+        || this.props.hasErrors(f[AC.MTEF_PROJECTIONS])) {
         const section = openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]);
         if (section) {
           section.open = true;
@@ -142,7 +143,8 @@ export default class AFFundingDonorSection extends Component {
     const orgTypeName = funding[AC.SOURCE_ROLE] ? funding[AC.SOURCE_ROLE].value : null;
     const suffix = ' |';
     return (<div
-      className={(this.props.hasErrors(funding) || this.props.hasErrors(funding[AC.FUNDING_DETAILS]))
+      className={(this.props.hasErrors(funding) || this.props.hasErrors(funding[AC.FUNDING_DETAILS])
+        || this.props.hasErrors(funding[AC.MTEF_PROJECTIONS]))
         ? fundingStyles.error : ''}>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
