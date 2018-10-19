@@ -30,6 +30,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
     fieldNameClass: PropTypes.string,
     fieldValueClass: PropTypes.string,
     fmPath: PropTypes.string,
+    fieldClass: PropTypes.string
   };
 
   static contextTypes = {
@@ -101,6 +102,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         return (<APField
           key={Utils.stringToUniqueId(path)} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline}
           separator={false}
+          fieldClass={options_.fieldClass || this.props.fieldClass}
           fieldNameClass={this.props.fieldNameClass}
           fieldValueClass={options_.fieldValueClass || this.props.fieldValueClass} />);
       }
