@@ -37,8 +37,9 @@ class APFundingTransactionTypeItem extends Component {
   }
 
   _filterFundingDetails() {
-    return (this.props.fundingDetails.filter(o => o[AC.TRANSACTION_TYPE].id === this.props.group.trnType.id
-    && o[AC.ADJUSTMENT_TYPE].id === this.props.group.adjType.id));
+    return (this.props.fundingDetails.filter(o =>
+      (o[AC.TRANSACTION_TYPE] && o[AC.TRANSACTION_TYPE].id === this.props.group.trnType.id)
+      && o[AC.ADJUSTMENT_TYPE].id === this.props.group.adjType.id));
   }
 
   _drawHeader() {
@@ -59,11 +60,15 @@ class APFundingTransactionTypeItem extends Component {
       default:
         break;
     }
-    return (<div>
-      <APLabel label={label} labelClass={styles.header} key={key} />
-      {FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
-        <APLabel label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
-    </div>);
+    if (this.props.group.trnType.value) {
+      return (<div>
+        <APLabel label={label} labelClass={styles.header} key={key} />
+        {fixedExchangeRateFMPath && FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
+          <APLabel label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
+      </div>);
+    } else {
+      return null;
+    }
   }
 
   _drawDetail() {
@@ -74,8 +79,12 @@ class APFundingTransactionTypeItem extends Component {
         item={item} key={Utils.numberRandom()} wsCurrency={this._currency}
         buildSimpleField={this.props.buildSimpleField} />);
     });
-    // Not worth the effort to use BootstrapTable here.
-    return <table className={styles.funding_table} >{content}</table>;
+    if (content.length > 0) {
+      // Not worth the effort to use BootstrapTable here.
+      return <table className={styles.funding_table}>{content}</table>;
+    } else {
+      return null;
+    }
   }
 
   _drawSubTotalFooter() {
@@ -84,18 +93,22 @@ class APFundingTransactionTypeItem extends Component {
       this._currency);
     const measure = `${this.props.group.adjType.value} ${this.props.group.trnType.value}`;
     const labelTrn = translate(`Subtotal ${measure}`).toUpperCase();
-    return (<div>
-      <APFundingTotalItem
-        value={subtotal}
-        label={labelTrn}
-        currency={translate(this._currency)}
-        key={this.props.group.adjType.value + this.props.group.trnType.value} />
-    </div>);
+    if (this.props.group.trnType.value) {
+      return (<div>
+        <APFundingTotalItem
+          value={subtotal}
+          label={labelTrn}
+          currency={translate(this._currency)}
+          key={this.props.group.adjType.value + this.props.group.trnType.value} />
+      </div>);
+    } else {
+      return null;
+    }
   }
 
   render() {
     logger.log('render');
-    return (<div className={styles.table_container} >
+    return (<div className={styles.table_container}>
       <div>{this._drawHeader()}</div>
       <div>{this._drawDetail()}</div>
       <div>{this._drawSubTotalFooter()}</div>

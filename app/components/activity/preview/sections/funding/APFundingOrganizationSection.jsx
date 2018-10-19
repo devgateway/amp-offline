@@ -72,7 +72,7 @@ class APFundingOrganizationSection extends Component {
     fd.forEach((item) => {
       const auxFd = {
         adjType: item[AC.ADJUSTMENT_TYPE],
-        trnType: item[AC.TRANSACTION_TYPE],
+        trnType: item[AC.TRANSACTION_TYPE] || {},
         key: item.id,
         currency: item[AC.CURRENCY]
       };
@@ -97,12 +97,14 @@ class APFundingOrganizationSection extends Component {
       return null;
     }
     const fdActualCommitments = fd.filter((item) =>
-      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS
+      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL
+      && item[AC.TRANSACTION_TYPE] && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS
     );
     totalActualCommitments = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualCommitments,
       this._currency);
     const fdActualDisbursements = fd.filter((item) =>
-      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS
+      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL
+      && item[AC.TRANSACTION_TYPE] && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS
     );
     totalActualDisbursements = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualDisbursements,
       this._currency);
