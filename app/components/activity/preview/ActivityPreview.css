@@ -49,14 +49,16 @@
   background-color: #f5faff;
 }
 
+.inline_flex {
+  display: inline-flex;
+}
+
 .preview_status_title {
-  display: inline-block !important;
   margin-left: 10px;
   margin-right: 5px;
 }
 
 .preview_status_detail {
-  display: inline-block !important;
   font-family: 'open_sansextrabold', sans-serif;
   margin-right: 20px;
 }
