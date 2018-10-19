@@ -133,8 +133,9 @@ export default class ActivityPreview extends Component {
 
           <div className={styles.preview_status_container} >
             <APStatusBar
+              fieldClass={styles.inline_flex}
               fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail}
-              inline titleClass={styles.status_title_class} groupClass={styles.status_group_class} />
+              titleClass={styles.status_title_class} groupClass={styles.status_group_class} />
           </div>
           <div className={styles.preview_categories} >
             <Scrollspy items={categoryKeys} currentClassName={styles.preview_category_selected}>
