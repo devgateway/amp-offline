@@ -34,15 +34,8 @@ export default class AFFundingDetailContainer extends Component {
     super(props);
     logger.log('constructor');
     this.state = {
-      openFDC: false
+      openFDC: this.hasErrors(props.fundingDetail, props.type)
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Expand the section that has errors.
-    if (this.hasErrors(nextProps.fundingDetail, nextProps.type)) {
-      this.setState({ openFDC: true });
-    }
   }
 
   hasErrors(fundingDetail, type) {

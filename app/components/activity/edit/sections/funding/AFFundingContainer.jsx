@@ -106,57 +106,58 @@ export default class AFFundingContainer extends Component {
   }
 
   render() {
+    const { funding } = this.props;
     return (<div>
       <FormGroup>
         <Grid>
           <Row>
             <Col md={2} lg={2}>
-              <AFField parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.ACTIVE}`} type={Types.CHECKBOX} />
+              <AFField parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.ACTIVE}`} type={Types.CHECKBOX} />
             </Col>
             <Col md={2} lg={2}>
               <AFField
-                parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_COOPERATION}`}
+                parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_COOPERATION}`}
                 type={Types.CHECKBOX} />
             </Col>
             <Col md={2} lg={2}>
               <AFField
-                parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_PARTNER}`}
+                parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_PARTNER}`}
                 type={Types.CHECKBOX} />
             </Col>
           </Row>
         </Grid>
       </FormGroup>
       <AFFundingClassificationPanel
-        funding={this.props.funding} fundingDetails={this.props.funding[AC.FUNDING_DETAILS]}
+        funding={funding} fundingDetails={funding[AC.FUNDING_DETAILS]}
         hasErrors={this.props.hasErrors} />
       <AFMTEFProjectionContainer
-        mtefProjections={this.props.funding[AC.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors}
-        funding={this.props.funding}
+        mtefProjections={funding[AC.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors}
+        funding={funding}
         handleRemoveItem={this._removeMTEFProjectionItem} handleNewItem={this._addMTEFProjectionItem} />
       <AFFundingDetailContainer
-        fundingDetail={this.props.funding[AC.FUNDING_DETAILS]}
+        fundingDetail={funding[AC.FUNDING_DETAILS]}
         type={VC.COMMITMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={this.props.funding} />
+        funding={funding} />
       <AFFundingDetailContainer
-        fundingDetail={this.props.funding[AC.FUNDING_DETAILS]}
+        fundingDetail={funding[AC.FUNDING_DETAILS]}
         type={VC.DISBURSEMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={this.props.funding} />
+        funding={funding} />
       <AFFundingDetailContainer
-        fundingDetail={this.props.funding[AC.FUNDING_DETAILS]}
+        fundingDetail={funding[AC.FUNDING_DETAILS]}
         type={VC.EXPENDITURES}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={this.props.funding} />
-      <AFField parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.DONOR_OBJECTIVE}`} type={Types.TEXT_AREA} />
+        funding={funding} />
+      <AFField parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.DONOR_OBJECTIVE}`} type={Types.TEXT_AREA} />
       <AFField
-        key={Math.random()} parent={this.props.funding} fieldPath={`${AC.FUNDINGS}~${AC.CONDITIONS}`}
+        key={Math.random()} parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.CONDITIONS}`}
         type={Types.TEXT_AREA} />
     </div>);
   }
