@@ -34,7 +34,10 @@ class AFFunding extends Component {
     this.handleDonorSelect = this.handleDonorSelect.bind(this);
     this.removeFundingItem = this.removeFundingItem.bind(this);
     this.addFundingItem = this.addFundingItem.bind(this);
-    this.handlePanelSelect = this.handlePanelSelect.bind(this);
+    this.hasErrors = this.hasErrors.bind(this);
+    this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
+    this._tabSelect = this._tabSelect.bind(this);
+    this.state = { activeTab: 0, errors: false };
   }
 
   _getAcronym(sourceRole) {
@@ -56,6 +59,14 @@ class AFFunding extends Component {
     } else {
       return translate(VC.ACRONYM_DONOR_ORGANIZATION);
     }
+  }
+
+  _tabSelect(index) {
+    this.setState({ activeTab: index });
+  }
+
+  _refreshAfterChildChanges() {
+    this.forceUpdate();
   }
 
   handleDonorSelect(values) {
@@ -137,8 +148,10 @@ class AFFunding extends Component {
         }
         return groups;
       });
+      let tabIndex = 0;
       return groups.sort((i, j) => (i[AC.FUNDING_DONOR_ORG_ID].value > j[AC.FUNDING_DONOR_ORG_ID].value))
         .map((funding) => {
+          tabIndex += 1;
           // If source_role is disabled then the role is always "Donor".
           let sourceRole;
           if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
@@ -149,7 +162,7 @@ class AFFunding extends Component {
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
           return (<Tab
-            eventKey={Math.random()} key={Math.random()}
+            eventKey={tabIndex} key={Math.random()}
             title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
             tabClassName={funding.errors ? styles.error : ''}>
             <AFFundingDonorSection
@@ -159,6 +172,8 @@ class AFFunding extends Component {
               removeFundingItem={this.removeFundingItem}
               addFundingItem={this.addFundingItem}
               hasErrors={this.hasErrors}
+              refreshAfterChildChanges={this._refreshAfterChildChanges}
+              tabIndex={tabIndex}
             />
           </Tab>);
         });
@@ -175,9 +190,6 @@ class AFFunding extends Component {
   }
 
   addFundingItem() {
-  }
-
-  handlePanelSelect() {
   }
 
   generateOverviewTabContent() {
@@ -216,7 +228,9 @@ class AFFunding extends Component {
       && this.context.activity[AC.PPC_AMOUNT][0].errors
       && this.context.activity[AC.PPC_AMOUNT][0].errors.length > 0);
     return (<div>
-      <Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs">
+      <Tabs
+        defaultActiveKey={0} onSelect={this._tabSelect} id="funding-tabs-container-tabs"
+        activeKey={this.state.activeTab}>
         <Tab
           eventKey={0} title="Overview" key={0}
           tabClassName={overviewTabHasErrors ? styles.error : ''}>{this.generateOverviewTabContent()}</Tab>

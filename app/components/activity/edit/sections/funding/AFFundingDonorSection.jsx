@@ -33,7 +33,9 @@ export default class AFFundingDonorSection extends Component {
     role: PropTypes.object.isRequired,
     removeFundingItem: PropTypes.func.isRequired,
     addFundingItem: PropTypes.func.isRequired,
-    hasErrors: PropTypes.func.isRequired
+    hasErrors: PropTypes.func.isRequired,
+    refreshAfterChildChanges: PropTypes.func.isRequired,
+    tabIndex: PropTypes.number.isRequired
   };
 
   constructor(props, context) {
@@ -182,7 +184,7 @@ export default class AFFundingDonorSection extends Component {
   _refreshAfterChildChanges(errors) {
     if (errors !== this.state.showingErrors) {
       this.setState({ showingErrors: errors });
-      // todo: update affunding?
+      this.props.refreshAfterChildChanges(errors, this.props.tabIndex);
     }
   }
 
