@@ -30,7 +30,8 @@ export default class AFFundingContainer extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    hasErrors: PropTypes.func.isRequired
+    hasErrors: PropTypes.func.isRequired,
+    refreshAfterChildChanges: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -106,7 +107,7 @@ export default class AFFundingContainer extends Component {
   }
 
   render() {
-    const { funding } = this.props;
+    const { funding, refreshAfterChildChanges } = this.props;
     return (<div>
       <FormGroup>
         <Grid>
@@ -129,7 +130,7 @@ export default class AFFundingContainer extends Component {
       </FormGroup>
       <AFFundingClassificationPanel
         funding={funding} fundingDetails={funding[AC.FUNDING_DETAILS]}
-        hasErrors={this.props.hasErrors} />
+        hasErrors={this.props.hasErrors} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
       <AFMTEFProjectionContainer
         mtefProjections={funding[AC.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors}
         funding={funding}

@@ -48,17 +48,19 @@ export default class AFFundingDonorSection extends Component {
     })));
     this.state = {
       openFundingDonorSection: openFundingsState,
-      fundingList: filteredFundings
+      fundingList: filteredFundings,
+      showingErrors: props.fundings.some(f => this._checkChildrenForErrors(f))
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
+    this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
+    this._checkChildrenForErrors = this._checkChildrenForErrors.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     // Expand the section that has errors.
     const openFundingDonorSectionState = this.state.openFundingDonorSection;
     nextProps.fundings.forEach(f => {
-      if (this.props.hasErrors(f) || this.props.hasErrors(f[AC.FUNDING_DETAILS])
-        || this.props.hasErrors(f[AC.MTEF_PROJECTIONS])) {
+      if (this._checkChildrenForErrors(f)) {
         const section = openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]);
         if (section) {
           section.open = true;
@@ -69,6 +71,11 @@ export default class AFFundingDonorSection extends Component {
       openFundingDonorSection: openFundingDonorSectionState,
       fundingList: this._filterFundings(nextProps.fundings)
     });
+  }
+
+  _checkChildrenForErrors(f) {
+    const { hasErrors } = this.props;
+    return (hasErrors(f) || hasErrors(f[AC.FUNDING_DETAILS]) || hasErrors(f[AC.MTEF_PROJECTIONS]));
   }
 
   _addNewFundingItem() {
@@ -143,9 +150,7 @@ export default class AFFundingDonorSection extends Component {
     const orgTypeName = funding[AC.SOURCE_ROLE] ? funding[AC.SOURCE_ROLE].value : null;
     const suffix = ' |';
     return (<div
-      className={(this.props.hasErrors(funding) || this.props.hasErrors(funding[AC.FUNDING_DETAILS])
-        || this.props.hasErrors(funding[AC.MTEF_PROJECTIONS]))
-        ? fundingStyles.error : ''}>
+      className={this._checkChildrenForErrors(funding) ? fundingStyles.error : ''}>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
         <AFField
@@ -174,6 +179,13 @@ export default class AFFundingDonorSection extends Component {
     </div>);
   }
 
+  _refreshAfterChildChanges(errors) {
+    if (errors !== this.state.showingErrors) {
+      this.setState({ showingErrors: errors });
+      // todo: update affunding?
+    }
+  }
+
   render() {
     // Filter only the fundings for this organization and role.
     return (<div className={styles.container}>
@@ -187,7 +199,9 @@ export default class AFFundingDonorSection extends Component {
             newOpenState[i].open = !newOpenState[i].open;
             this.setState({ openFundingDonorSection: newOpenState });
           }}>
-          <AFFundingContainer funding={g} hasErrors={this.props.hasErrors} />
+          <AFFundingContainer
+            funding={g} hasErrors={this.props.hasErrors}
+            refreshAfterChildChanges={this._refreshAfterChildChanges} />
         </Panel>
       ))}
       <Button bsStyle="primary" onClick={this._addNewFundingItem}>{translate('New Funding Item')}</Button>
