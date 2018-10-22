@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable react/no-did-update-set-state */
 import React, { Component, PropTypes } from 'react';
 import { Col, FormGroup, Grid, Panel, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -31,8 +32,19 @@ export default class AFFundingClassificationPanel extends Component {
     super(props);
     logger.log('constructor');
     this.state = {
-      openFCP: this.props.hasErrors(props.funding)
+      openFCP: this.props.hasErrors(props.funding),
+      showingErrors: false
     };
+  }
+
+  componentDidUpdate() {
+    const { funding, hasErrors } = this.props;
+    const errors = hasErrors(funding);
+    /* We use componentDidUpdate because the validation of some AFFields (like Commitments)
+    occurs after componentWillReceiveProps/componentWillUpdate. */
+    if (errors !== this.state.showingErrors) {
+      this.setState({ showingErrors: errors, openFCP: this.state.openFCP || errors });
+    }
   }
 
   render() {
