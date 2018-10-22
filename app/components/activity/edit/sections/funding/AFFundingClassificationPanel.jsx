@@ -31,6 +31,7 @@ export default class AFFundingClassificationPanel extends Component {
   constructor(props) {
     super(props);
     logger.log('constructor');
+    this._refreshAfterChanges = this._refreshAfterChanges.bind(this);
     this.state = {
       openFCP: this.props.hasErrors(props.funding),
       showingErrors: false
@@ -38,10 +39,14 @@ export default class AFFundingClassificationPanel extends Component {
   }
 
   componentDidUpdate() {
-    const { funding, hasErrors } = this.props;
-    const errors = hasErrors(funding);
     /* We use componentDidUpdate because the validation of some AFFields (like Commitments)
     occurs after componentWillReceiveProps/componentWillUpdate. */
+    this._refreshAfterChanges();
+  }
+
+  _refreshAfterChanges() {
+    const { funding, hasErrors } = this.props;
+    const errors = hasErrors(funding);
     if (errors !== this.state.showingErrors) {
       this.setState({ showingErrors: errors, openFCP: this.state.openFCP || errors });
     }
@@ -65,30 +70,36 @@ export default class AFFundingClassificationPanel extends Component {
               <Col md={4} lg={4}>
                 <AFField
                   parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`}
-                  forceRequired={hasFundingDetails}
+                  forceRequired={hasFundingDetails} onAfterUpdate={this._refreshAfterChanges}
                 />
               </Col>
               <Col md={4} lg={4}>
                 <AFField
                   parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`}
-                  forceRequired={hasFundingDetails}
+                  forceRequired={hasFundingDetails} onAfterUpdate={this._refreshAfterChanges}
                 />
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} type={INPUT_TYPE} />
+                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} type={INPUT_TYPE}
+                  onAfterUpdate={this._refreshAfterChanges} />
               </Col>
             </Row>
             <Row>
               <Col md={4} lg={4}>
-                <AFField parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`} />
-              </Col>
-              <Col md={4} lg={4}>
-                <AFField parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} />
+                <AFField
+                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`}
+                  onAfterUpdate={this._refreshAfterChanges} />
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_CLASSIFICATION_DATE}`} />
+                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`}
+                  onAfterUpdate={this._refreshAfterChanges} />
+              </Col>
+              <Col md={4} lg={4}>
+                <AFField
+                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_CLASSIFICATION_DATE}`}
+                  onAfterUpdate={this._refreshAfterChanges} />
               </Col>
             </Row>
           </Grid>
