@@ -66,6 +66,22 @@ app.on('ready', async () => {
     height: 728
   });
 
+  // create a new `splash`-Window
+  const splash = new BrowserWindow({
+    width: 425,
+    height: 325,
+    transparent: false,
+    frame: false,
+    alwaysOnTop: true,
+    resizable: false,
+    show: false,
+    delay: 0
+  });
+  splash.loadURL(`file://${__dirname}/splash-screen.html`);
+  splash.once('ready-to-show', () => {
+    splash.show();
+  });
+
   await installExtensions();
 
   sanityCheckWindow.loadURL(`file://${__dirname}/app.html?sanity=true`);
@@ -94,6 +110,12 @@ app.on('ready', async () => {
 
   ipcMain.on(FORCE_CLOSE_APP, () => {
     closeApp();
+  });
+
+  // if main window is ready to show, then destroy the splash window and show up the main window
+  mainWindow.once('ready-to-show', () => {
+    splash.destroy();
+    mainWindow.show();
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
