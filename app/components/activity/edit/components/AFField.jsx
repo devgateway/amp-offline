@@ -25,6 +25,7 @@ import AFMultiSelect from './AFMultiSelect';
 import translate from '../../../../utils/translate';
 import AFRadioBoolean from './AFRadioBoolean';
 import AFDateYear from './AFDateYear';
+import CurrencyRatesManager from '../../../../modules/util/CurrencyRatesManager';
 
 const logger = new Logger('AF field');
 
@@ -38,6 +39,7 @@ class AFField extends Component {
   static contextTypes = {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
     validationResult: PropTypes.array,
   };
@@ -132,7 +134,7 @@ class AFField extends Component {
   }
 
   getLabel() {
-    const { showRequired, parent, forceRequired } = this.props;
+    const { showRequired, parent, forceRequired, extraParams } = this.props;
     const { activityValidator } = this.context;
     const toShowRequired = showRequired === undefined ?
       activityValidator.isRequiredDependencyMet(parent, this.fieldDef) : showRequired;
@@ -145,7 +147,7 @@ class AFField extends Component {
     }
     const { customLabel, fieldPath } = this.props;
     const label = translate(customLabel) || this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath);
-    return <AFLabel value={label} required={required} className={styles.label_highlight} />;
+    return <AFLabel value={label} required={required} className={styles.label_highlight} extraParams={extraParams} />;
   }
 
   getComponentTypeByFieldType() {
@@ -211,8 +213,8 @@ class AFField extends Component {
   }
 
   _getDropDown() {
-    const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath));
     const selectedId = this.state.value ? this.state.value.id : null;
+    const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath, selectedId));
     return (<AFDropDown
       options={afOptions} onChange={this.onChange} selectedId={selectedId}
       className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject}
@@ -240,7 +242,7 @@ class AFField extends Component {
       onBeforeDelete={this.props.onBeforeDelete} />);
   }
 
-  _getOptions(fieldPath) {
+  _getOptions(fieldPath, selectedId) {
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
     if (options === null) {
       // TODO throw error but continue to render (?)
@@ -248,7 +250,8 @@ class AFField extends Component {
       return [];
     }
     const isORFilter = (this.props.extraParams && this.props.extraParams.isORFilter) || false;
-    return PossibleValuesManager.setVisibility(options, fieldPath, this.props.filter, isORFilter);
+    return PossibleValuesManager.setVisibility(
+      options, fieldPath, this.context.currencyRatesManager, this.props.filter, isORFilter, selectedId);
   }
 
   _toAFOptions(options) {
@@ -336,7 +339,7 @@ class AFField extends Component {
     if (this.state.value) {
       val = this.state.value.displayFullValue || this.state.value.value || this.state.value;
     }
-    return <AFLabel value={val} />;
+    return <AFLabel value={val} extraParams={this.props.extraParams} />;
   }
 
   _isFullyInitialized() {

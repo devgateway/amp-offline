@@ -213,16 +213,19 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
         return savedActivity;
       })
     ));
-  }).catch(error => dispatch(unableToSave(error)));
+  }).catch(error => {
+    logger.error(error);
+    return unableToSave('activitySavedError')(dispatch);
+  });
 }
 
-function unableToSave(error) {
-  logger.error(error);
-  return addMessage(new Notification({
-    message: translate('activitySavedError'),
+export function unableToSave(error) {
+  logger.info('unableToSave');
+  return dispatch => dispatch(addMessage(new Notification({
+    message: error,
     origin: NOTIFICATION_ORIGIN_ACTIVITY,
     severity: NOTIFICATION_SEVERITY_ERROR
-  }));
+  })));
 }
 
 export function updateActivityGlobalState(setting, value) {

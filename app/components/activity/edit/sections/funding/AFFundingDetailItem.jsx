@@ -12,6 +12,8 @@ import styles from './AFFundingDetailItem.css';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import translate from '../../../../../utils/translate';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
+import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
+import * as AFUtils from '../../util/AFUtils';
 
 const ORG_TYPE_NAME_2_COLLECTION = {
   [VC.IMPLEMENTING_AGENCY]: AC.IMPLEMENTING_AGENCY,
@@ -32,7 +34,8 @@ export default class AFFundingDetailItem extends Component {
   static contextTypes = {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    currentWorkspaceSettings: PropTypes.object.isRequired
+    currentWorkspaceSettings: PropTypes.object.isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
   };
 
   static propTypes = {
@@ -124,11 +127,13 @@ export default class AFFundingDetailItem extends Component {
 
   render() {
     const { type, fundingDetail, funding, removeFundingDetailItem } = this.props;
+    const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
     if (!fundingDetail[AC.CURRENCY].id) {
-      const currency = Object.values(this.context.activityFieldsManager.possibleValuesMap[FPC.FUNDING_CURRENCY_PATH])
-        .filter(pv => pv.value === this.context.currentWorkspaceSettings.currency.code);
-      fundingDetail[AC.CURRENCY] = currency[0];
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
+      const wsCurrencyCode = currentWorkspaceSettings.currency.code;
+      const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
+      fundingDetail[AC.CURRENCY] = currency;
     }
     const orgGroupName = funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
     let fixedExchangeRateFMPath;
@@ -171,7 +176,8 @@ export default class AFFundingDetailItem extends Component {
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject />
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject
+                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />
