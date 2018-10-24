@@ -51,7 +51,29 @@ app.on('ready', async () => {
     height: 728
   });
 
+  // create a new `splash`-Window
+  const splash = new BrowserWindow({
+    width: 425,
+    height: 325,
+    transparent: false,
+    frame: false,
+    alwaysOnTop: true,
+    resizable: false,
+    show: false,
+    delay: 0
+  });
+  splash.loadURL(`file://${__dirname}/splash-screen.html`);
+  splash.once('ready-to-show', () => {
+    splash.show();
+  });
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+
+  // if main window is ready to show, then destroy the splash window and show up the main window
+  mainWindow.once('ready-to-show', () => {
+    splash.destroy();
+    mainWindow.show();
+  });
 
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.show();
@@ -99,7 +121,7 @@ app.on('ready', async () => {
             accelerator: 'Cmd+0',
             selector: 'unhideAllApplications:',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               mainWindow.show();
             }
           },
@@ -117,7 +139,7 @@ app.on('ready', async () => {
             label: 'Close',
             accelerator: 'Cmd+W',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               mainWindow.hide();
             }
           },
@@ -125,7 +147,7 @@ app.on('ready', async () => {
             label: 'Quit',
             accelerator: 'Cmd+Q',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               app.quit();
             }
           }
