@@ -48,6 +48,7 @@ export default class ActivityForm extends Component {
     loadActivityForActivityForm: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     saveActivity: PropTypes.func.isRequired,
+    unableToSave: PropTypes.func.isRequired,
     reportActivityValidation: PropTypes.func.isRequired,
     params: PropTypes.shape({
       activityId: PropTypes.string
@@ -207,6 +208,8 @@ export default class ActivityForm extends Component {
     const validationError = this._validateActivity(false);
     if (!validationError) {
       this._saveActivity(false, true);
+    } else {
+      this.props.unableToSave('validationErrorOnSave');
     }
   }
 
@@ -214,6 +217,8 @@ export default class ActivityForm extends Component {
     const validationError = this._validateActivity(true);
     if (!validationError) {
       this.setState({ showSaveDialog: true });
+    } else {
+      this.props.unableToSave('validationErrorOnSave');
     }
   }
 
