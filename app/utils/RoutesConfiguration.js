@@ -7,6 +7,7 @@ import {
   AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
   AMP_REGISTRY_STAGING_SETTINGS_URL,
   AVAILABLE_LANGUAGES_URL,
+  CALENDAR_PULL_URL,
   CHANGE_PASSWORD_URL,
   CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
   CONTACT_PULL_URL,
@@ -36,7 +37,8 @@ import {
   WORKSPACE_MEMBER_URL,
   WORKSPACE_SETTINGS_URL,
   MAP_TILES_URL,
-  GAZETTEER_URL
+  GAZETTEER_URL,
+  COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -183,6 +185,10 @@ const routesConfiguration = [{
   method: 'POST',
   requiredAuth: true
 }, {
+  url: COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
+  requiredAuth: true
+}, {
   url: CHANGE_PASSWORD_URL,
   method: 'GET',
   requiredAuth: false,
@@ -201,8 +207,11 @@ const routesConfiguration = [{
   url: GAZETTEER_URL,
   method: 'GET',
   requiredAuth: true
+}, {
+  url: CALENDAR_PULL_URL,
+  method: 'GET',
+  requiredAuth: true,
 }
-
 ];
 
 module.exports = routesConfiguration;

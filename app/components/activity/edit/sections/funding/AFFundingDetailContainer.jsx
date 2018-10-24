@@ -34,19 +34,13 @@ export default class AFFundingDetailContainer extends Component {
     super(props);
     logger.log('constructor');
     this.state = {
-      openFDC: false
+      openFDC: this.hasErrors(props.fundingDetail, props.type)
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    // Expand the section that has errors.
-    if (this.hasErrors(nextProps.fundingDetail, nextProps.type)) {
-      this.setState({ openFDC: true });
-    }
-  }
-
   hasErrors(fundingDetail, type) {
-    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === type));
+    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
+      && fd[AC.TRANSACTION_TYPE].value === type));
     return this.props.hasErrors(fundingDetails);
   }
 
@@ -58,7 +52,8 @@ export default class AFFundingDetailContainer extends Component {
     const transactionTypes = Object.values(this.context.activityFieldsManager
       .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`]);
     if (transactionTypes.find(item => (item.value === this.props.type))) {
-      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === this.props.type));
+      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
+        && fd[AC.TRANSACTION_TYPE].value === this.props.type));
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
@@ -96,7 +91,10 @@ export default class AFFundingDetailContainer extends Component {
               fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
               removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
           })}
-          <Button bsStyle="primary" onClick={this._addTransactionItem.bind(this)}>{button}</Button>
+          <Button
+            className={fundingStyles.add_button} bsStyle="primary"
+            onClick={this._addTransactionItem.bind(this)}>{button}
+          </Button>
         </Panel>
       </div>);
     } else {

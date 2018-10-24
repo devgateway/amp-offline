@@ -44,6 +44,7 @@ export const COLLECTION_CONTACTS = 'contacts';
 export const COLLECTION_RESOURCES = 'resources';
 export const COLLECTION_REPOSITORY = 'repository';
 export const COLLECTION_GAZETTEER = 'gazetteer';
+export const COLLECTION_CALENDARS = 'calendars';
 
 export const GAZETTEER_DISTANCE_DIVIDE = 3;
 
@@ -59,6 +60,7 @@ export const LANGUAGE_ENGLISH = 'en';
 export const FS_LOCALES_DIRECTORY = 'lang';
 export const LANGUAGE_MASTER_TRANSLATIONS_FILE = 'master-translations';
 export const LANGUAGE_TRANSLATIONS_FILE = 'translations';
+export const LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC = 'must_sync_translation.json';
 
 export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
@@ -96,9 +98,12 @@ export const SYNCUP_TYPE_RESOURCES_PULL = 'resources';
 export const SYNCUP_TYPE_RESOURCES_PUSH = 'resources-push';
 export const SYNCUP_TYPE_RESOURCE_FIELDS = 'resource-fields';
 export const SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES = 'resource-possible-values-fields';
+export const SYNCUP_TYPE_COMMON_POSSIBLE_VALUES = 'common-possible-values-fields';
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
 export const SYNCUP_TYPE_MAP_TILES = 'map-tiles';
 export const SYNCUP_TYPE_GAZETTEER = 'locators';
+export const SYNCUP_TYPE_CALENDARS = 'calendars';
+
 export const SYNCUP_STATUS_SUCCESS = 'SUCCESS';
 export const SYNCUP_STATUS_FAIL = 'FAIL';
 export const SYNCUP_STATUS_PARTIAL = 'PARTIAL';

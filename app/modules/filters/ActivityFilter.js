@@ -51,7 +51,7 @@ export default class ActivityFilter {
     ])
       .then(([workspaces, dateFilterHidesProjects, locationOptions]) => {
         this._wsIds = workspaces;
-        this._dateFilterHidesProjects = dateFilterHidesProjects.value === 'true';
+        this._dateFilterHidesProjects = (dateFilterHidesProjects && dateFilterHidesProjects.value === 'true');
         if (locationOptions && locationOptions[FIELD_OPTIONS]) {
           this._locationOptions = locationOptions[FIELD_OPTIONS];
         } else {

@@ -13,6 +13,7 @@ import styles from './AFFundingDonorSection.css';
 import fundingStyles from './AFFunding.css';
 import * as Types from '../../components/AFComponentTypes';
 import * as Utils from '../../../../../utils/Utils';
+import AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF funding donor section');
 
@@ -31,6 +32,7 @@ export default class AFFundingDonorSection extends Component {
     organization: PropTypes.object.isRequired,
     role: PropTypes.object.isRequired,
     removeFundingItem: PropTypes.func.isRequired,
+    addFundingItem: PropTypes.func.isRequired,
     hasErrors: PropTypes.func.isRequired
   };
 
@@ -55,7 +57,8 @@ export default class AFFundingDonorSection extends Component {
     // Expand the section that has errors.
     const openFundingDonorSectionState = this.state.openFundingDonorSection;
     nextProps.fundings.forEach(f => {
-      if (this.props.hasErrors(f) || this.props.hasErrors(f[AC.FUNDING_DETAILS])) {
+      if (this.props.hasErrors(f) || this.props.hasErrors(f[AC.FUNDING_DETAILS])
+        || this.props.hasErrors(f[AC.MTEF_PROJECTIONS])) {
         const section = openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]);
         if (section) {
           section.open = true;
@@ -89,6 +92,43 @@ export default class AFFundingDonorSection extends Component {
       this.context.activity[AC.FUNDINGS] = [];
     }
     this.context.activity[AC.FUNDINGS].push(fundingItem);
+
+    // Keep AFFunding state in sync.
+    this.props.addFundingItem();
+  }
+
+  _removeFundingItem(id, orgTypeName) {
+    logger.log('_removeFundingItem');
+    if (confirm(translate('deleteFundingItem'))) {
+      const { activity } = this.context;
+      const newFundingList = this.state.fundingList.slice();
+      const index0 = newFundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      newFundingList.splice(index0, 1);
+      this.setState({ fundingList: newFundingList });
+
+      const index = activity[AC.FUNDINGS].findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      const organization = activity[AC.FUNDINGS][index][AC.FUNDING_DONOR_ORG_ID];
+      // Remove from the activity.
+      const index2 = activity[AC.FUNDINGS].findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
+      activity[AC.FUNDINGS].splice(index2, 1);
+
+      // Delete organization if add funding auto is enabled and it doesnt have more fundings.
+      const orgTypeCode = AFUtils.findOrgTypeCodeByName(orgTypeName);
+      let addAutoFundingEnabledAndEmpty = false;
+      if (AFUtils.checkIfAutoAddFundingEnabled(orgTypeCode)) {
+        if (!AFUtils.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization,
+          this.context.activityFieldsManager, activity)) {
+          addAutoFundingEnabledAndEmpty = true;
+          const newOrganizationsList = activity[orgTypeCode] ? activity[orgTypeCode].slice() : [];
+          const orgIndex = newOrganizationsList.findIndex(o => o[AC.ORGANIZATION].id === organization.id);
+          newOrganizationsList.splice(orgIndex, 1);
+          activity[orgTypeCode] = newOrganizationsList;
+        }
+      }
+
+      // Keep AFFunding state in sync.
+      this.props.removeFundingItem(addAutoFundingEnabledAndEmpty);
+    }
   }
 
   _filterFundings(fundings) {
@@ -100,29 +140,34 @@ export default class AFFundingDonorSection extends Component {
 
   _generateComplexHeader(i, funding) {
     // TODO: AFFields objects are not being refreshed (use a bind function?).
+    const orgTypeName = funding[AC.SOURCE_ROLE] ? funding[AC.SOURCE_ROLE].value : null;
+    const suffix = ' |';
     return (<div
-      className={(this.props.hasErrors(funding) || this.props.hasErrors(funding[AC.FUNDING_DETAILS]))
-      ? fundingStyles.error : ''}>
+      className={(this.props.hasErrors(funding) || this.props.hasErrors(funding[AC.FUNDING_DETAILS])
+        || this.props.hasErrors(funding[AC.MTEF_PROJECTIONS]))
+        ? fundingStyles.error : ''}>
       <div>{`${translate('Funding Item')} ${i + 1}`}</div>
       <div className={styles.header}>
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false}
+          extraParams={{ suffix }} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} showRequired={false}
+          extraParams={{ suffix }} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} extraParams={{ suffix }} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} extraParams={{ suffix }} />
         <AFField
           fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`} parent={funding}
-          className={styles.header_small_item} showLabel={false} type={Types.LABEL} />
+          className={styles.header_small_item} showLabel={false} type={Types.LABEL} extraParams={{ suffix }} />
         <div className={styles.header_small_item}>
           <a
-            onClick={this.props.removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING])}
+            onClick={this._removeFundingItem.bind(this, funding[AC.GROUP_VERSIONED_FUNDING], orgTypeName)}
             className={styles.delete} href={null} />
         </div>
       </div>
@@ -135,7 +180,7 @@ export default class AFFundingDonorSection extends Component {
       {this._filterFundings(this.state.fundingList).map((g, i) => (
         <Panel
           header={this._generateComplexHeader(i, g)}
-          key={g[AC.GROUP_VERSIONED_FUNDING]} collapsible
+          key={Math.random()} collapsible
           expanded={this.state.openFundingDonorSection[i] ? this.state.openFundingDonorSection[i].open : false}
           onSelect={() => {
             const newOpenState = this.state.openFundingDonorSection;

@@ -11,9 +11,9 @@ import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
-import Utils from '../../../../utils/Utils';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import styles from './funding/AFFunding.css';
+import AFUtils from './../util/AFUtils';
 
 const logger = new Logger('AF funding');
 
@@ -31,17 +31,10 @@ class AFFunding extends Component {
   constructor(props) {
     super(props);
     logger.debug('constructor');
-    this.state = {
-      fundingList: []
-    };
     this.handleDonorSelect = this.handleDonorSelect.bind(this);
     this.removeFundingItem = this.removeFundingItem.bind(this);
-  }
-
-  componentWillMount() {
-    this.state = {
-      fundingList: this.context.activity.fundings || []
-    };
+    this.addFundingItem = this.addFundingItem.bind(this);
+    this.handlePanelSelect = this.handlePanelSelect.bind(this);
   }
 
   _getAcronym(sourceRole) {
@@ -69,24 +62,7 @@ class AFFunding extends Component {
     logger.debug('handleDonorSelect');
     if (values) {
       const value = (values instanceof Array) ? values[values.length - 1][AC.ORGANIZATION] : values;
-      const fundingItem = {};
-      fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
-        id: value.id,
-        value: value.value,
-        extra_info: value.extra_info,
-        'translated-value': value['translated-value']
-      };
-      // Find the 'Donor' org type if enabled.
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
-        const donorList = this.context.activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
-        fundingItem[AC.SOURCE_ROLE] = Object.values(donorList).find(item => item.value === VC.DONOR_AGENCY);
-      }
-      fundingItem[AC.FUNDING_DETAILS] = [];
-      fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
-      fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
-      const newFundingList = this.state.fundingList.slice();
-      newFundingList.push(fundingItem);
-      this.setState({ fundingList: newFundingList });
+      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value);
       // Needed for new activities or funding is not added.
       if (!this.context.activity[AC.FUNDINGS]) {
         this.context.activity[AC.FUNDINGS] = [];
@@ -136,15 +112,16 @@ class AFFunding extends Component {
   }
 
   addFundingTabs() {
-    if (this.state.fundingList) {
+    if (this.context.activity[AC.FUNDINGS]) {
       // Group fundings for the same funding organization and role (if enabled).
       const groups = [];
-      this.state.fundingList.forEach(f => {
+      this.context.activity[AC.FUNDINGS].forEach(f => {
         // If source_role is disabled i[AC.SOURCE_ROLE] will be undefined so we ignore it.
         const tab = groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
           && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)));
         // Look for errors on Commitments/Disbursements/Expenditures too.
-        const errorsOnInternalSections = this.hasErrors(f[AC.FUNDING_DETAILS]);
+        const errorsOnInternalSections = this.hasErrors(f[AC.FUNDING_DETAILS])
+          || this.hasErrors(f[AC.MTEF_PROJECTIONS]);
         if (!tab) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
           groups.push({
@@ -172,14 +149,15 @@ class AFFunding extends Component {
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
           return (<Tab
-            eventKey={funding[AC.FUNDING_DONOR_ORG_ID].id} key={funding[AC.FUNDING_DONOR_ORG_ID].id}
+            eventKey={Math.random()} key={Math.random()}
             title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
             tabClassName={funding.errors ? styles.error : ''}>
             <AFFundingDonorSection
-              fundings={this.state.fundingList}
+              fundings={this.context.activity[AC.FUNDINGS] || []}
               organization={funding[AC.FUNDING_DONOR_ORG_ID]}
               role={sourceRole}
               removeFundingItem={this.removeFundingItem}
+              addFundingItem={this.addFundingItem}
               hasErrors={this.hasErrors}
             />
           </Tab>);
@@ -188,17 +166,18 @@ class AFFunding extends Component {
     return null;
   }
 
-  removeFundingItem(id) {
-    logger.log('_removeFundingItem');
-    if (confirm(translate('deleteFundingItem'))) {
-      const newFundingList = this.state.fundingList.slice();
-      const index = this.state.fundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
-      newFundingList.splice(index, 1);
-      this.setState({ fundingList: newFundingList });
-      // Remove from the activity.
-      const index2 = this.context.activity.fundings.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
-      this.context.activity.fundings.splice(index2, 1);
+  removeFundingItem(addAutoFundingEnabledAndEmpty) {
+    /* When there are no more fundings inside a tab and 'add funding automatically' feature is enabled we have to
+      remove that tab. */
+    if (addAutoFundingEnabledAndEmpty) {
+      this.forceUpdate();
     }
+  }
+
+  addFundingItem() {
+  }
+
+  handlePanelSelect() {
   }
 
   generateOverviewTabContent() {

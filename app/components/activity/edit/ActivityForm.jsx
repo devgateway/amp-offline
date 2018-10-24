@@ -48,6 +48,7 @@ export default class ActivityForm extends Component {
     loadActivityForActivityForm: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     saveActivity: PropTypes.func.isRequired,
+    unableToSave: PropTypes.func.isRequired,
     reportActivityValidation: PropTypes.func.isRequired,
     params: PropTypes.shape({
       activityId: PropTypes.string
@@ -207,6 +208,8 @@ export default class ActivityForm extends Component {
     const validationError = this._validateActivity(false);
     if (!validationError) {
       this._saveActivity(false, true);
+    } else {
+      this.props.unableToSave('validationErrorOnSave');
     }
   }
 
@@ -214,6 +217,8 @@ export default class ActivityForm extends Component {
     const validationError = this._validateActivity(true);
     if (!validationError) {
       this.setState({ showSaveDialog: true });
+    } else {
+      this.props.unableToSave('validationErrorOnSave');
     }
   }
 
@@ -279,26 +284,24 @@ export default class ActivityForm extends Component {
     const previewUrl = `/activity/preview/${this.props.params.activityId}`;
     return (
       <div>
-        <div className={styles.general_header} >{translate('Actions')}</div>
+        <div className={styles.general_header}>{translate('Actions')}</div>
         <div>
           <Button
             bsClass={styles.action_button} key="submit"
-            onClick={this._validateAndSubmit.bind(this)} block >{translate('Save and Submit')}
+            onClick={this._validateAndSubmit.bind(this)} block>{translate('Save and Submit')}
           </Button>
           <Button
             bsClass={styles.action_button} key="saveAsDraft"
-            onClick={this._validateAndShowSaveAsDraftDialog.bind(this)} block >{translate('Save as draft')}
+            onClick={this._validateAndShowSaveAsDraftDialog.bind(this)} block>{translate('Save as draft')}
           </Button>
-          <Button
-            key="preview"
-            bsClass={styles.action_button}
-            disabled={disablePreview}
-            block
-          >
-            <Link to={previewUrl} title={translate('Preview')} >
-              {translate('Preview')}
-            </Link>
-          </Button>
+          <Link to={previewUrl} title={translate('Preview')}>
+            <Button
+              key="preview"
+              bsClass={styles.action_button}
+              disabled={disablePreview}
+              block
+            >{translate('Preview')}</Button>
+          </Link>
         </div>
       </div>
     );

@@ -31,6 +31,7 @@ export const SECTOR_PERCENTAGE = 'sector_percentage';
 export const FINANCING_INSTRUMENT = 'financing_instrument';
 export const MODALITIES = 'modalities';
 export const LINE_MINISTRY_RANK = 'line_ministry_rank';
+export const GOVERNMENT_AGREEMENT_NUMBER = 'government_agreement_number';
 export const FUNDING_STATUS = 'funding_status';
 export const LOCATIONS = 'locations';
 export const LOCATION = 'location';
@@ -47,6 +48,7 @@ export const MODE_OF_PAYMENT = 'mode_of_payment';
 export const FUNDING_CLASSIFICATION_DATE = 'funding_classification_date';
 export const AGREEMENT = 'agreement';
 export const DONOR_OBJECTIVE = 'donor_objective';
+export const CONDITIONS = 'conditions';
 export const AGREEMENT_CODE = 'code';
 export const AGREEMENT_TITLE = 'title';
 export const PROJECT_CATEGORY = 'project_category';
@@ -61,6 +63,8 @@ export const BENEFICIARY_AGENCY = 'beneficiary_agency';
 export const IMPLEMENTING_AGENCY = 'implementing_agency';
 export const RESPONSIBLE_ORGANIZATION = 'responsible_organization';
 export const DONOR_ORGANIZATION = 'donor_organization';
+export const REGIONAL_GROUP = 'regional_group';
+export const SECTOR_GROUP = 'sector_group';
 export const BUDGETS = 'budgets';
 export const BUDGET_CODE = 'budget_code';
 export const ARCHIVED = 'archived';
@@ -173,6 +177,7 @@ export const PLEDGE = 'pledge';
 export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
 export const REPORTING_DATE = 'reporting_date';
 export const RECIPIENT_ROLE = 'recipient_role';
+export const RECIPIENT_ORGANIZATION = 'recipient_organization';
 export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
 export const FY = 'fy';
@@ -190,6 +195,10 @@ export const PRIMARY_CONTACT = 'mark_as_primary';
 export const ACTIVITY_DOCUMENTS = 'activity_documents';
 export const DOCUMENT_TYPE = 'document_type';
 export const ISO2 = 'iso2';
+export const MTEF_PROJECTIONS = 'mtef_projections';
+export const PROJECTION = 'projection';
+export const PIPELINE = 'pipeline';
+export const PROJECTION_DATE = 'projection_date';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
@@ -213,7 +222,6 @@ export const AP_SECTION_IDS =
     { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs', sectionPath: ACTIVITY_INTERNAL_IDS },
     { key: 'APPlanning', hash: '#APPlanning', value: 'Planning', fmPath: FMC.ACTIVITY_PLANNING },
     { key: 'APLocation', hash: '#APLocation', value: 'Location', sectionPath: LOCATIONS },
-    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan', sectionPath: NATIONAL_PLAN_OBJECTIVE },
     { key: 'APProgram', hash: '#APProgram', value: 'Program', fmPath: FMC.ACTIVITY_PROGRAM },
     { key: 'APSector', hash: '#APSector', value: 'Sectors', fmPath: FMC.ACTIVITY_SECTORS },
     {
@@ -237,7 +245,7 @@ export const AP_SECTION_IDS =
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;
-export const ACTIVITY_PLANNING_COLS = 3;
+export const ACTIVITY_PLANNING_COLS = 2;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
 export const ACTIVITY_CONTACT_COLS = 2;

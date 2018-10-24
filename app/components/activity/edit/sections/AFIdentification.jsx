@@ -15,6 +15,10 @@ const logger = new Logger('AF identification');
 const CUSTOM_TYPE = {
   [AC.BUDGET_CODE_PROJECT_ID]: Types.INPUT_TYPE,
   [AC.CRIS_NUMBER]: Types.INPUT_TYPE,
+  [AC.GOVERNMENT_APPROVAL_PROCEDURES]: Types.RADIO_BOOLEAN,
+  [AC.GOVERNMENT_AGREEMENT_NUMBER]: Types.INPUT_TYPE,
+  [AC.JOINT_CRITERIA]: Types.RADIO_BOOLEAN,
+  [AC.HUMANITARIAN_AID]: Types.RADIO_BOOLEAN
 };
 
 /**
@@ -60,11 +64,13 @@ class AFIdentification extends Component {
     // TODO update the layout per Llanoc design. If not available, adjust to work. For now grouping fields as in AMP.
     const leftColumn = [AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.PROJECT_COMMENTS, AC.OBJECTIVE, AC.LESSONS_LEARNED,
       AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.DESCRIPTION, AC.RESULTS].map(this.mapSimpleFieldDef);
-    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID].map(this.mapSimpleFieldDef);
+    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID, AC.A_C_CHAPTER].map(this.mapSimpleFieldDef);
     rightColumn.push(
       (<AFField
         key={AC.ACTIVITY_BUDGET}
         parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} onAfterUpdate={this.onActivityBudgetUpdate} />));
+    rightColumn.push(...[AC.GOVERNMENT_APPROVAL_PROCEDURES, AC.JOINT_CRITERIA, AC.HUMANITARIAN_AID]
+      .map(this.mapSimpleFieldDef));
     if (this.state.showBudgetExtras) {
       const budgetExtras = [
         <AFField key={AC.FY} parent={this.props.activity} fieldPath={AC.FY} type={Types.MULTI_SELECT} />,
@@ -74,21 +80,22 @@ class AFIdentification extends Component {
         {budgetExtras}
       </div>);
     }
-    rightColumn.push(...[AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT].map(this.mapSimpleFieldDef));
+    rightColumn.push(...[AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT, AC.GOVERNMENT_AGREEMENT_NUMBER]
+      .map(this.mapSimpleFieldDef));
 
     return (
-      <div className={afStyles.full_width} >
-        <Grid className={afStyles.full_width} >
+      <div className={afStyles.full_width}>
+        <Grid className={afStyles.full_width}>
           <Row key="title-full-row">
-            <Col md={12} lg={12} >
+            <Col md={12} lg={12}>
               <AFField key={AC.PROJECT_TITLE} parent={this.props.activity} fieldPath={AC.PROJECT_TITLE} />
             </Col>
           </Row>
           <Row key="col-split-data">
-            <Col key="left-col" md={6} lg={6} >
+            <Col key="left-col" md={6} lg={6}>
               {leftColumn}
             </Col>
-            <Col key="right-col" md={6} lg={6} >
+            <Col key="right-col" md={6} lg={6}>
               {rightColumn}
             </Col>
           </Row>

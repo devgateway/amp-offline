@@ -1,5 +1,5 @@
 import React from 'react';
-import Menu, { SubMenu, MenuItem } from 'rc-menu';
+import Menu, { MenuItem, SubMenu } from 'rc-menu';
 import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
@@ -110,7 +110,8 @@ function generateTree(object, key, level, node, loggedIn, isSetupComplete, menuO
         }
       });
     }
-    return <SubMenu title={_getTitle(object, key)} key={key}>{newNode[level]}</SubMenu>;
+    const nodeClass = object.nodeClass || '';
+    return <SubMenu title={_getTitle(object, key)} key={key} className={nodeClass}>{newNode[level]}</SubMenu>;
   }
   return (
     <MenuItem

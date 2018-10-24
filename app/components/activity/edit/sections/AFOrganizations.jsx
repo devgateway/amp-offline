@@ -8,19 +8,34 @@ import { ORGANIZATIONS } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
-import { ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION } from '../../../../utils/constants/FeatureManagerConstants';
+import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import { RESPONSIBLE_ORGANIZATION_BUDGETS_PATH } from '../../../../utils/constants/FieldPathConstants';
 import AFOption from '../components/AFOption';
+import AFUtils from './../util/AFUtils';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import * as VC from '../../../../utils/constants/ValueConstants';
+import translate from '../../../../utils/translate';
 
 const logger = new Logger('AF organizations');
 
-const orgFormatter = (org: AFOption) => `(${org[AC.EXTRA_INFO][AC.ACRONYM].trim()}) - ${org.translatedValue.trim()}`;
+const orgFormatter = (org: AFOption) => {
+  const acronym = org[AC.EXTRA_INFO][AC.ACRONYM] ? org[AC.EXTRA_INFO][AC.ACRONYM].trim() : '';
+  const value = `${org.translatedValue.trim()}`;
+  if (acronym !== '') {
+    return `(${acronym}) - ${value}`;
+  }
+  return value;
+};
 
 /**
  * Organizations Section
  * @author Nadejda Mandrescu
  */
 class AFOrganizations extends Component {
+
+  static contextTypes = {
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
+  };
 
   static propTypes = {
     activity: PropTypes.object.isRequired
@@ -30,7 +45,9 @@ class AFOrganizations extends Component {
     super(props);
     logger.log('constructor');
     this.setState({ validationError: undefined });
+    this.handleOrgListChange = this.handleOrgListChange.bind(this);
     this.checkValidationError = this.checkValidationError.bind(this);
+    this.addFundingAutomatically = this.addFundingAutomatically.bind(this);
   }
 
   /**
@@ -63,6 +80,40 @@ class AFOrganizations extends Component {
     this.setState({ validationError });
   }
 
+  addFundingAutomatically(orgTypeCode, orgTypeName) {
+    if (AFUtils.checkIfAutoAddFundingEnabled(orgTypeCode)) {
+      const { activity } = this.props;
+      const { activityFieldsManager } = this.context;
+      const fundingList = activity[AC.FUNDINGS] || [];
+      activity[orgTypeCode].forEach(org => {
+        const fundingFound = AFUtils.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, org[AC.ORGANIZATION],
+          this.context.activityFieldsManager, activity);
+        if (!fundingFound) {
+          const fundingItem = AFUtils.createFundingItem(activityFieldsManager, org[AC.ORGANIZATION], orgTypeName);
+          fundingList.push(fundingItem);
+          activity[AC.FUNDINGS] = fundingList;
+        }
+      });
+    }
+  }
+
+  handleOrgListChange(orgTypeCode, orgCodeName) {
+    this.addFundingAutomatically(orgTypeCode, orgCodeName);
+    this.checkValidationError();
+  }
+
+  checkIfCanDeleteOrg(orgTypeCode, orgTypeName, organization) {
+    let canDelete = true;
+    const { activity } = this.props;
+    if (AFUtils.checkIfAutoAddFundingEnabled(orgTypeCode)
+      && AFUtils.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization[AC.ORGANIZATION],
+        this.context.activityFieldsManager, activity)) {
+      alert(translate('fundingRelated'));
+      canDelete = false;
+    }
+    return canDelete;
+  }
+
   render() {
     const validationError = this.getValidationError();
     const validationStyle = `${afStyles.activity_form_control} ${afStyles.help_block}`;
@@ -82,7 +133,9 @@ class AFOrganizations extends Component {
             <AFField
               parent={this.props.activity}
               fieldPath={AC.DONOR_ORGANIZATION} extraParams={extraParams}
-              fmPath={ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
+              fmPath={FMC.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.DONOR_ORGANIZATION, VC.DONOR_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.DONOR_ORGANIZATION, VC.DONOR_AGENCY)} />
           </Col>
         </Row>
         <Row>
@@ -93,36 +146,45 @@ class AFOrganizations extends Component {
                 custom: {
                   [RESPONSIBLE_ORGANIZATION_BUDGETS_PATH]: BudgetCode(RESPONSIBLE_ORGANIZATION_BUDGETS_PATH)
                 },
-                ...extraParams }}
-              onAfterUpdate={this.checkValidationError} />
+                ...extraParams
+              }}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.RESPONSIBLE_ORGANIZATION,
+                VC.RESPONSIBLE_ORGANIZATION)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.RESPONSIBLE_ORGANIZATION,
+                VC.RESPONSIBLE_ORGANIZATION)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
-              parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY} extraParams={extraParams}
-              onAfterUpdate={this.checkValidationError} />
+              parent={this.props.activity} fieldPath={AC.EXECUTING_AGENCY}
+              extraParams={extraParams}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.EXECUTING_AGENCY, VC.EXECUTING_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.EXECUTING_AGENCY, VC.EXECUTING_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.IMPLEMENTING_AGENCY} extraParams={extraParams}
-              onAfterUpdate={this.checkValidationError} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.IMPLEMENTING_AGENCY, VC.IMPLEMENTING_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.IMPLEMENTING_AGENCY, VC.IMPLEMENTING_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.BENEFICIARY_AGENCY} extraParams={extraParams}
-              onAfterUpdate={this.checkValidationError} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.BENEFICIARY_AGENCY, VC.BENEFICIARY_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.BENEFICIARY_AGENCY, VC.BENEFICIARY_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={AC.CONTRACTING_AGENCY} extraParams={extraParams}
-              onAfterUpdate={this.checkValidationError} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.CONTRACTING_AGENCY, VC.CONTRACTING_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.CONTRACTING_AGENCY, VC.CONTRACTING_AGENCY)} />
           </Col>
         </Row>
       </Grid>

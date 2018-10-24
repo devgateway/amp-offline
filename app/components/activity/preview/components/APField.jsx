@@ -27,6 +27,8 @@ export default class APField extends Component {
    * @param value the field value
    * @param inline show title and value in the same row.
    * @param separator add or not an <hr> tag.
+   * @param nameClass css class for the field label
+   * @param valueClass css class for the field value
    * @return {SimpleField}
    */
   static instance(trnLabel, value, inline = false, separator = false, nameClass, valueClass) {
@@ -44,11 +46,18 @@ export default class APField extends Component {
 
   _getValue() {
     const classNames = `${this.props.fieldValueClass} ${this.displayClass}`;
-    const value = this.props.value ? this.props.value : translate('No Data');
+    // To handle boolean fields we dont want to show 'false' as 'No Data'.
+    const value = (this.props.value || this.props.value === false) ? this.props.value : translate('No Data');
     let displayValue;
-    if (Array.isArray(value) && value.length > 1 && typeof value[0] === 'string') {
-      // Improve the display of simple array of strings.
-      displayValue = value.map((i) => (` ${i}`)).toString();
+    if (Array.isArray(value)) {
+      if (value[0] instanceof Object) {
+        displayValue = [];
+        value.forEach(v => displayValue.push(v));
+      } else {
+        displayValue = value.sort().join(', ');
+      }
+    } else if (typeof value === 'boolean') {
+      displayValue = value === true ? translate('Yes') : translate('No');
     } else {
       displayValue = (this.props.inline && this.props.value instanceof String) ? `${value} ` : value;
     }
@@ -62,7 +71,8 @@ export default class APField extends Component {
   render() {
     const classNames = `${this.props.fieldNameClass} ${this.displayClass}`;
     return (<div className={this.displayClass}>
-      <div className={classNames}>{this.props.title}</div> {this._getValue()}
+      <div className={classNames}>{this.props.title}</div>
+      {this._getValue()}
       {this.useSeparator ? <hr /> : ''}
     </div>);
   }

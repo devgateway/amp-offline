@@ -23,7 +23,7 @@ import {
   SYNCUP_SYNC_REQUESTED_BY
 } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
-import { loadCurrencyRatesOnStartup, loadFMTree, loadGlobalSettings } from '../../actions/StartUpAction';
+import { loadCalendar, loadCurrencyRatesOnStartup, loadFMTree, loadGlobalSettings } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
 import translate from '../../utils/translate';
 import DateUtils from '../../utils/DateUtils';
@@ -163,7 +163,7 @@ export default class SyncUpManager {
     return Promise.all([
       SyncUpManager.cleanupOldSyncUpLogs(),
       SyncUpManager.dispatchLoadAllLanguages(),
-      loadGlobalSettings(),
+      loadGlobalSettings().then(loadCalendar),
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
       checkIfShouldSyncBeforeLogout(),

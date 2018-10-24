@@ -70,3 +70,8 @@
 .delete_col {
   vertical-align: top;
 }
+
+.full_width {
+  width: 100%;
+  border-bottom: 1px solid lightgrey;
+}

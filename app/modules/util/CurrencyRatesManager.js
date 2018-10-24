@@ -10,6 +10,7 @@ export default class CurrencyRatesManager {
   constructor(currencyRates, baseCurrency) {
     this._currencyRates = currencyRates;
     this._baseCurrency = baseCurrency;
+    this._currnciesWithExchangeRates = this._getCurrenciesWithExchangeRates();
   }
 
   /**
@@ -65,13 +66,19 @@ export default class CurrencyRatesManager {
     return this.convertTransactionAmountToCurrency(fundingDetail, this._baseCurrency);
   }
 
+  convertAmountToCurrency(amount, currencyFrom, date, fixedExchangeRate, currencyTo) {
+    const currencyRate = this.convertCurrency(currencyFrom, currencyTo,
+      formatDateForCurrencyRates(date), fixedExchangeRate);
+    return amount * currencyRate;
+  }
+
   convertTransactionAmountToCurrency(fundingDetail, currencyTo) {
     const fixedExchangeRate = fundingDetail[AC.FIXED_EXCHANGE_RATE];
     const currencyFrom = fundingDetail[AC.CURRENCY].value;
-    const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
+    const transactionDate = fundingDetail[AC.TRANSACTION_DATE];
     const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
-    const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate, fixedExchangeRate);
-    return transactionAmount * currencyRate;
+    return this.convertAmountToCurrency(transactionAmount, currencyFrom, transactionDate, fixedExchangeRate,
+      currencyTo);
   }
 
   getExchangeRate(currenciesToSearch, timeDateToFind) {
@@ -136,5 +143,24 @@ export default class CurrencyRatesManager {
     } else {
       return RATE_CURRENCY_NOT_FOUND;
     }
+  }
+
+  /**
+   * Set of currencies that has at least one exchange rate
+   * @return {Set<any> | *}
+   */
+  get currenciesWithExchangeRates() {
+    return this._currnciesWithExchangeRates;
+  }
+
+  _getCurrenciesWithExchangeRates() {
+    const cs = new Set();
+    if (this._currencyRates) {
+      this._currencyRates.forEach(exchangeRates => {
+        cs.add(exchangeRates[CURRENCY_PAIR].from);
+        cs.add(exchangeRates[CURRENCY_PAIR].to);
+      });
+    }
+    return cs;
   }
 }
