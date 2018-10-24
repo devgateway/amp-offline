@@ -39,7 +39,8 @@ export default class AFFundingDetailContainer extends Component {
   }
 
   hasErrors(fundingDetail, type) {
-    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === type));
+    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
+      && fd[AC.TRANSACTION_TYPE].value === type));
     return this.props.hasErrors(fundingDetails);
   }
 
@@ -51,7 +52,8 @@ export default class AFFundingDetailContainer extends Component {
     const transactionTypes = Object.values(this.context.activityFieldsManager
       .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`]);
     if (transactionTypes.find(item => (item.value === this.props.type))) {
-      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === this.props.type));
+      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
+        && fd[AC.TRANSACTION_TYPE].value === this.props.type));
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';

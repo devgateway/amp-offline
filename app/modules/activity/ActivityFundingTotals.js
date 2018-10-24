@@ -89,7 +89,8 @@ export default class ActivityFundingTotals {
       this._activity.fundings.forEach(funding => {
         if (funding.funding_details) {
           funding.funding_details.forEach(fd => {
-            if (fd.adjustment_type.value === adjType && fd.transaction_type.value === trnType) {
+            if (fd[AC.ADJUSTMENT_TYPE].value === adjType
+              && fd[AC.TRANSACTION_TYPE] && fd[AC.TRANSACTION_TYPE].value === trnType) {
               fundingDetails.push(fd);
             }
           });
