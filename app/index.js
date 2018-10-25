@@ -24,6 +24,7 @@ import SetupPage from './containers/SetupPage';
 import NotificationHelper from './modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
 import translate from './utils/translate';
+import { FORCE_CLOSE_APP_MSG, INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
 
 const logger = new Logger('index');
 
@@ -52,12 +53,12 @@ function handleUnexpectedError(err) {
   alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
   // If this error occurs before we show the main window we need to close the app for the user.
   if (!global.MAIN_WINDOW_ACTIVE) {
-    ipcRenderer.send('forceCloseApp');
+    ipcRenderer.send(FORCE_CLOSE_APP_MSG);
   }
 }
 
 ampOfflineStartUp().then(() => {
-  ipcRenderer.send('initializationComplete');
+  ipcRenderer.send(INITIALIZATION_COMPLETE_MSG);
   return render(
     <Provider store={store}>
       <Router history={history} store={store}>
