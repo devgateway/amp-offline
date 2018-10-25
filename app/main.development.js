@@ -52,7 +52,7 @@ app.on('ready', async () => {
   // create a new `splash`-Window
   const splash = new BrowserWindow({
     width: 425,
-    height: 325,
+    height: 285,
     transparent: false,
     frame: false,
     titleBarStyle: 'hidden',
