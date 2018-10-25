@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
+import { ampOfflineStartUp } from './actions/StartUpAction';
 
 const PDFWindow = require('electron-pdf-window');
 
@@ -49,7 +50,7 @@ app.on('ready', async () => {
     height: 728
   });
 
-  // create a new `splash`-Window
+  // create a new splash Window.
   const splash = new BrowserWindow({
     width: 425,
     height: 285,
@@ -74,6 +75,7 @@ app.on('ready', async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
+    // Delay showing the main window (blank) until ampOfflineStartUp() is complete.
     ipcMain.on('initializationComplete', () => {
       splash.hide();
       splash.destroy();
