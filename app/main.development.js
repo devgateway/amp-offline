@@ -79,7 +79,7 @@ app.on('ready', async () => {
       splash.destroy();
       mainWindow.show();
       mainWindow.focus();
-      process.mainWindowActive = true;
+      global.MAIN_WINDOW_ACTIVE = true;
     });
   });
 

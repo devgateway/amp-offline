@@ -51,7 +51,7 @@ function handleUnexpectedError(err) {
   const json = JSON.stringify(err);
   alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
   // If this error occurs before we show the main window we need to close the app for the user.
-  if (!process.mainWindowActive) {
+  if (!global.MAIN_WINDOW_ACTIVE) {
     ipcRenderer.send('forceCloseApp');
   }
 }
@@ -81,7 +81,7 @@ ampOfflineStartUp().then(() => {
     </Provider>,
     document.getElementById('root')
   );
-}).catch(handleUnexpectedError, true);
+}).catch(handleUnexpectedError);
 
 window.addEventListener('error', ({ filename, message }) => {
   logger.error(message, filename);
