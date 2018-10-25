@@ -7,6 +7,12 @@ import {
   SHOW_SANITY_APP,
   START_MAIN_APP
 } from './utils/constants/ElectronAppMessages';
+import {
+  CLOSE_HELP_WINDOW_MSG,
+  CREATE_PDF_WINDOW_MSG,
+  FORCE_CLOSE_APP_MSG,
+  INITIALIZATION_COMPLETE_MSG
+} from './utils/constants/MainDevelopmentConstants';
 
 const PDFWindow = require('electron-pdf-window');
 
@@ -117,7 +123,7 @@ app.on('ready', async () => {
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
-    ipcMain.on('initializationComplete', () => {
+    ipcMain.on(INITIALIZATION_COMPLETE_MSG, () => {
       // Delay showing the main window (blank) until ampOfflineStartUp() is complete.
       splash.hide();
       splash.destroy();
@@ -135,7 +141,7 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.on('forceCloseApp', () => {
+  ipcMain.on(FORCE_CLOSE_APP_MSG, () => {
     app.quit();
     if (splash) {
       splash.hide();
@@ -172,7 +178,7 @@ app.on('ready', async () => {
 });
 
 // Listen to message from renderer process.
-ipcMain.on('createPDFWindow', (event, url) => {
+ipcMain.on(CREATE_PDF_WINDOW_MSG, (event, url) => {
   if (!global.HELP_PDF_WINDOW) {
     // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
     let pdfWindow = new PDFWindow({
@@ -188,7 +194,7 @@ ipcMain.on('createPDFWindow', (event, url) => {
       global.HELP_PDF_WINDOW = null;
       // Use IPC to communicate with renderer process.
       if (mainWindow) {
-        mainWindow.webContents.send('closeHelpWindow');
+        mainWindow.webContents.send(CLOSE_HELP_WINDOW_MSG);
       }
     });
 
