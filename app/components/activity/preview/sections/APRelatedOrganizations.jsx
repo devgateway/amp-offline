@@ -10,7 +10,8 @@ import {
   IMPLEMENTING_AGENCY,
   RESPONSIBLE_ORGANIZATION,
   ORGANIZATION,
-  PERCENTAGE, HIERARCHICAL_VALUE
+  PERCENTAGE, HIERARCHICAL_VALUE,
+  SECTOR_GROUP, REGIONAL_GROUP
 } from '../../../../utils/constants/ActivityConstants';
 import APPercentageList from '../components/APPercentageList';
 import FieldsManager from '../../../../modules/field/FieldsManager';
@@ -22,6 +23,8 @@ const CA = APPercentageList(CONTRACTING_AGENCY, ORGANIZATION, PERCENTAGE, 'Contr
 const BE = APPercentageList(BENEFICIARY_AGENCY, ORGANIZATION, PERCENTAGE, 'Beneficiary Agency');
 const IE = APPercentageList(IMPLEMENTING_AGENCY, ORGANIZATION, PERCENTAGE, 'Implementing Agency');
 const EA = APPercentageList(EXECUTING_AGENCY, ORGANIZATION, PERCENTAGE, 'Executing Agency');
+const RG = APPercentageList(REGIONAL_GROUP, ORGANIZATION, PERCENTAGE, 'Regional Group');
+const SG = APPercentageList(SECTOR_GROUP, ORGANIZATION, PERCENTAGE, 'Sector Group');
 
 /**
  * @author Gabriel Inchauspe
@@ -51,6 +54,8 @@ class APRelatedOrganizations extends Component {
       <BE key="be-org-list" {...porps} />
       <IE key="ie-org-list" {...porps} />
       <EA key="ea-org-list" {...porps} />
+      <SG key="sg-org-list" {...porps} />
+      <RG key="rg-org-list" {...porps} />
     </div>);
   }
 }
