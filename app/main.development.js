@@ -117,10 +117,13 @@ app.on('ready', async () => {
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
-    splash.hide();
-    splash.destroy();
-    mainWindow.show();
-    mainWindow.focus();
+    ipcMain.on('initializationComplete', () => {
+      splash.hide();
+      splash.destroy();
+      mainWindow.show();
+      mainWindow.focus();
+      process.mainWindowActive = true;
+    });
   });
 
   mainWindow.on('closed', () => {
@@ -128,6 +131,18 @@ app.on('ready', async () => {
     // Close help window if needed.
     if (global.HELP_PDF_WINDOW) {
       global.HELP_PDF_WINDOW.close();
+    }
+  });
+
+  ipcMain.on('forceCloseApp', () => {
+    app.quit();
+    if (splash) {
+      splash.hide();
+      splash.destroy();
+    }
+    if (mainWindow) {
+      mainWindow.hide();
+      mainWindow.destroy();
     }
   });
 
