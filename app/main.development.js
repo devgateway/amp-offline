@@ -43,8 +43,6 @@ const installExtensions = async () => {
 };
 
 app.on('ready', async () => {
-  await installExtensions();
-
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
@@ -57,25 +55,27 @@ app.on('ready', async () => {
     height: 325,
     transparent: false,
     frame: false,
-    alwaysOnTop: true,
+    titleBarStyle: 'hidden',
+    alwaysOnTop: false,
     resizable: false,
     show: false,
-    delay: 0
+    delay: 100,
+    backgroundColor: '#2b669a',
+    movable: false,
+    closable: false
   });
   splash.loadURL(`file://${__dirname}/splash-screen.html`);
   splash.once('ready-to-show', () => {
     splash.show();
   });
 
+  await installExtensions();
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
-  // if main window is ready to show, then destroy the splash window and show up the main window
-  mainWindow.once('ready-to-show', () => {
-    splash.destroy();
-    mainWindow.show();
-  });
-
   mainWindow.webContents.on('did-finish-load', () => {
+    splash.hide();
+    splash.destroy();
     mainWindow.show();
     mainWindow.focus();
   });
