@@ -122,6 +122,27 @@ export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZA
 export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Funding Flows OrgRole Selector/Add Sector Group`;
 
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Recipient Org Role`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Recipient Organization`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Implementing Agency`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Contracting Agency`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_BENEFICIARY_AGENCY =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Beneficiary Agency`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_DONOR_ORGANIZATION =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Donor Organization`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_EXECUTING_AGENCY =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Executing Agency`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_REGIONAL_GROUP =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Regional Group`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZATION =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Responsible Organization`;
+export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP =
+  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Sector Group`;
+
 export const MTEF_PROJECTIONS = `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections`;
 export const MTEF_PROJECTIONS_AMOUNT =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/MTEF Projections/MTEF Projections Table/Amount`;
