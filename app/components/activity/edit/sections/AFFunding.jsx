@@ -64,7 +64,7 @@ class AFFunding extends Component {
     logger.debug('handleDonorSelect');
     if (values) {
       const value = (values instanceof Array) ? values[values.length - 1][AC.ORGANIZATION] : values;
-      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value);
+      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value, VC.DONOR_AGENCY);
       // Needed for new activities or funding is not added.
       if (!this.context.activity[AC.FUNDINGS]) {
         this.context.activity[AC.FUNDINGS] = [];
