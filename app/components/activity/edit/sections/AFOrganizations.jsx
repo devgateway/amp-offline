@@ -187,6 +187,22 @@ class AFOrganizations extends Component {
               onAfterUpdate={this.handleOrgListChange.bind(null, AC.CONTRACTING_AGENCY, VC.CONTRACTING_AGENCY)} />
           </Col>
         </Row>
+        <Row>
+          <Col md={12} lg={12}>
+            <AFField
+              parent={this.props.activity} fieldPath={AC.REGIONAL_GROUP} extraParams={extraParams}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.REGIONAL_GROUP, VC.REGIONAL_GROUP)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.REGIONAL_GROUP, VC.REGIONAL_GROUP)} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12} lg={12}>
+            <AFField
+              parent={this.props.activity} fieldPath={AC.SECTOR_GROUP} extraParams={extraParams}
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, AC.SECTOR_GROUP, VC.SECTOR_GROUP)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, AC.SECTOR_GROUP, VC.SECTOR_GROUP)} />
+          </Col>
+        </Row>
       </Grid>
     </div>);
   }
