@@ -71,6 +71,7 @@ class AFFunding extends Component {
       }
       this.context.activity[AC.FUNDINGS].push(fundingItem);
       this._addDonorToOrgRoleList(value.id, fundingItem[AC.SOURCE_ROLE]);
+      this.forceUpdate();
     }
   }
 
