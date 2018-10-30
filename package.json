@@ -177,6 +177,7 @@
     "i18next": "^4.1.1",
     "i18next-sync-fs-backend": "^0.1.0",
     "i18next-xhr-backend": "^1.2.1",
+    "js-md5": "^0.7.3",
     "jsonschema": "^1.1.1",
     "mime-types": "^2.1.18",
     "moment": "^2.18.1",
