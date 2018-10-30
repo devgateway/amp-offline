@@ -67,6 +67,7 @@ export const REGIONAL_GROUP = 'regional_group';
 export const SECTOR_GROUP = 'sector_group';
 export const BUDGETS = 'budgets';
 export const BUDGET_CODE = 'budget_code';
+export const BUDGET_ORGANIZATION_CODE = 'budget_organization_code';
 export const ARCHIVED = 'archived';
 export const TRANSACTION_DATE = 'transaction_date';
 export const TRANSACTION_TYPE = 'transaction_type';
