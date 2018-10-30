@@ -75,7 +75,7 @@ class AFIdentification extends Component {
       const budgetExtras = [
         <AFField
           key={AC.INDIRECT_ON_BUDGET} parent={this.props.activity} fieldPath={AC.INDIRECT_ON_BUDGET}
-          type={Types.RADIO_BOOLEAN} />,
+          type={Types.CHECKBOX} />,
         <AFField key={AC.FY} parent={this.props.activity} fieldPath={AC.FY} type={Types.MULTI_SELECT} />,
         <AFField key={AC.MINISTRY_CODE} parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} forceRequired />
       ];
