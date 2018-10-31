@@ -55,6 +55,7 @@ class DBMigrationsManager {
   _checkPreConditions(preconditions) {
     // eslint-disable-next-line prefer-const
     let preconditionsPass = true;
+    Changeset.setDefaultsForPreconditions(preconditions);
     if (preconditions && preconditions.length) {
       logger.log('Running preconditions check...');
       // TODO actual preconditions check
