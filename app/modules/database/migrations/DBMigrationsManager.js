@@ -70,13 +70,12 @@ class DBMigrationsManager {
     let md5checked = false;
     // TODO full implementation
     return changesets.reduce((prevPromise, changeset) => prevPromise.then(() => {
-      const changesetDef = new Changeset(changeset, chdef);
-      changeset = changesetDef.migration;
+      changeset = new Changeset(changeset, chdef);
       logger.log(`Executing '${changeset.id}' changeset...`);
-      logger.debug(`Comment: ${changeset[MC.COMMENT]}`);
-      changeset.changes.func.toJSON = funcToJson;
+      logger.debug(`Comment: ${changeset.comment}`);
+      changeset.change.toJSON = funcToJson;
       changeset.rollback.toJSON = funcToJson;
-      const chJSON = JSON.stringify(changeset);
+      const chJSON = JSON.stringify(changeset.changesetObject);
       const chJSONMd5 = md5(chJSON);
       if (!md5checked && chJSONMd5 !== changeset.getMd5()) {
         logger.error('MD5 doesn\'t match!');
@@ -84,7 +83,7 @@ class DBMigrationsManager {
       md5checked = true;
       logger.debug(`chJSONMd5 = ${chJSONMd5}`);
       // TODO check if func or update, flag status based on result, etc
-      return Promise.resolve().then(changeset[MC.CHANGES][MC.FUNC])
+      return Promise.resolve().then(changeset.change)
         .then((result) => {
           logger.log('Execution successful');
           return result;
