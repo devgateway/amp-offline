@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-import md5 from 'js-md5';
 import Logger from '../../util/LoggerManager';
 import changelogs from '../../../static/db/changelog-master';
 import * as MC from '../../../utils/constants/MigrationsConstants';
@@ -62,19 +61,15 @@ class DBMigrationsManager {
   }
 
   _runChangesets(changesets, chdef) {
-    let md5checked = false;
     // TODO full implementation
     return changesets.reduce((prevPromise, changeset) => prevPromise.then(() => {
       changeset = new Changeset(changeset, chdef);
       logger.log(`Executing '${changeset.id}' changeset...`);
       logger.debug(`Comment: ${changeset.comment}`);
-      const chJSON = JSON.stringify(changeset);
-      const chJSONMd5 = md5(chJSON);
-      if (!md5checked && chJSONMd5 !== changeset.getMd5()) {
+      logger.debug(`md5 = ${changeset.md5}`);
+      if (changeset.md5 !== changeset.tmpGetDBMd5()) {
         logger.error('MD5 doesn\'t match!');
       }
-      md5checked = true;
-      logger.debug(`chJSONMd5 = ${chJSONMd5}`);
       // TODO check if func or update, flag status based on result, etc
       return Promise.resolve().then(changeset.change)
         .then((result) => {

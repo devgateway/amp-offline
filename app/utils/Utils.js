@@ -1,3 +1,4 @@
+import md5 from 'js-md5';
 import os from 'os';
 import {
   ARCH32,
@@ -258,6 +259,11 @@ const Utils = {
 
   cloneDeep(obj) {
     return JSON.parse(JSON.stringify(obj));
+  },
+
+  md5(obj) {
+    const json = JSON.stringify(obj);
+    return md5(json);
   },
 };
 

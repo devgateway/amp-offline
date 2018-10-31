@@ -19,6 +19,7 @@ function funcToJson() {
 export default class Changeset {
   constructor(origChangeset, changelogDef) {
     this._origChangeset = Changeset._prepareForToJson(origChangeset);
+    this._md5 = Utils.md5(this._origChangeset);
     this._changelogDef = changelogDef;
     this._changeset = Changeset._cloneWithDefaults(origChangeset, changelogDef);
   }
@@ -96,8 +97,27 @@ export default class Changeset {
     return this._changeset[MC.ROLLBACK];
   }
 
+  /**
+   * The MD5 hash for the exact changeset defined in the changelog (excluding any defaults)
+   * @return {*}
+   */
+  get md5() {
+    if (!this._md5) {
+      this._md5 = Utils.md5(this._origChangeset);
+    }
+    return this._md5;
+  }
+
+  tmpGetDBMd5() {
+    // TODO this method will be gone when we'll read MD5 previousely stored in DB instead
+    return this._origChangeset.getMd5();
+  }
+
   toJSON() {
-    return JSON.stringify(this._origChangeset);
+    if (!this._json) {
+      this._json = JSON.stringify(this._origChangeset);
+    }
+    return this._json;
   }
 
   static _prepareForToJson(origChangeset) {
