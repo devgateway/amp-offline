@@ -34,8 +34,8 @@ class APIdentification extends Component {
     if (this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
       && this.props.activity[AC.ACTIVITY_BUDGET]
       && this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET) {
-      fieldPaths.push(AC.MINISTRY_CODE);
       fieldPaths.push(`${AC.FY}~${AC.YEAR}`);
+      fieldPaths.push(AC.MINISTRY_CODE);
     }
     return (
       <div>
