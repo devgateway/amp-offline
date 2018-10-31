@@ -8,18 +8,20 @@ import * as Utils from '../../../utils/Utils';
  * @author Nadejda Mandrescu
  */
 export default class Changeset {
-  constructor(origMigration, changelog) {
+  constructor(origMigration, changelogDef) {
     this._origMigration = origMigration;
-    this._changelog = changelog;
-    this._migration = Changeset._cloneWithDefaults(origMigration);
+    this._changelogDef = changelogDef;
+    this._migration = Changeset._cloneWithDefaults(origMigration, changelogDef);
   }
 
   get migration() {
     return this._migration;
   }
 
-  static _cloneWithDefaults(origMigration) {
+  static _cloneWithDefaults(origMigration, changelogDef) {
     const m = Utils.cloneDeep(origMigration);
+    m.id = `${m[MC.CHANGEID]}-${m[MC.AUTHOR]}-${changelogDef[MC.FILE]}`;
+
     Changeset._setDefaultIfUndefined(m, MC.COMMENT, MC.DEFAULT_CONTEXT);
     Changeset._setDefaultIfUndefined(m, MC.RUN_ALWAYS, MC.DEFAULT_RUN_ALWAYS);
     Changeset._setDefaultIfUndefined(m, MC.RUN_ON_CHANGE, MC.DEFAULT_RUN_ON_CHANGE);

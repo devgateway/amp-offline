@@ -1,8 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import md5 from 'js-md5';
 import Logger from '../../util/LoggerManager';
-import migrations from '../../../static/db/changelog-master';
+import changelogs from '../../../static/db/changelog-master';
 import * as MC from '../../../utils/constants/MigrationsConstants';
+import Changeset from './Changeset';
 
 const logger = new Logger('DB Migrations Manager');
 
@@ -19,7 +20,7 @@ function funcToJson() {
 class DBMigrationsManager {
   detectAndValidateChangelogs() {
     // TODO full solution, for now quick POC implementation
-    return migrations.map(chdef => {
+    return changelogs.map(chdef => {
       logger.log(`Detected '${chdef[MC.FILE]}' changelog`);
       return chdef;
     });
@@ -43,7 +44,7 @@ class DBMigrationsManager {
           // TODO flag changesets
           return Promise.resolve();
         }
-        return this._runChangesets(changelog[MC.CHANGESETS]);
+        return this._runChangesets(changelog[MC.CHANGESETS], chdef);
       });
     }, Promise.resolve()).then(() => {
       logger.log('DB changelogs execution complete');
@@ -64,12 +65,13 @@ class DBMigrationsManager {
     return preconditionsPass;
   }
 
-  _runChangesets(changesets) {
+  _runChangesets(changesets, chdef) {
     let md5checked = false;
     // TODO full implementation
     return changesets.reduce((prevPromise, changeset) => prevPromise.then(() => {
-      const id = `${changeset[MC.CHANGEID]}-${changeset[MC.AUTHOR]}-TODO`;
-      logger.log(`Executing '${id}' changeset...`);
+      const changesetDef = new Changeset(changeset, chdef);
+      changeset = changesetDef.migration;
+      logger.log(`Executing '${changeset.id}' changeset...`);
       logger.debug(`Comment: ${changeset[MC.COMMENT]}`);
       changeset.changes.func.toJSON = funcToJson;
       changeset.rollback.toJSON = funcToJson;
