@@ -7,11 +7,6 @@ import Changeset from './Changeset';
 
 const logger = new Logger('DB Migrations Manager');
 
-function funcToJson() {
-  console.debug('test');
-  return this.toString();
-}
-
 /**
  * Database Migrations Manager for patching DB with pending changesets available under "static/db/changelog" folder
  *
@@ -73,9 +68,7 @@ class DBMigrationsManager {
       changeset = new Changeset(changeset, chdef);
       logger.log(`Executing '${changeset.id}' changeset...`);
       logger.debug(`Comment: ${changeset.comment}`);
-      changeset.change.toJSON = funcToJson;
-      changeset.rollback.toJSON = funcToJson;
-      const chJSON = JSON.stringify(changeset.changesetObject);
+      const chJSON = JSON.stringify(changeset);
       const chJSONMd5 = md5(chJSON);
       if (!md5checked && chJSONMd5 !== changeset.getMd5()) {
         logger.error('MD5 doesn\'t match!');

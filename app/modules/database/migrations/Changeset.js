@@ -2,6 +2,15 @@ import * as MC from '../../../utils/constants/MigrationsConstants';
 import * as Utils from '../../../utils/Utils';
 
 /**
+ * A simple a way to force function to deliver the source code instead of null
+ * @return {string}
+ */
+function funcToJson() {
+  return this.toString();
+}
+
+
+/**
  * Stores changeset definition and provides defaults when some fields are not explicitly configured.
  * It also offers other supporting methods like generating MD5 hash, validation against schema check.
  *
@@ -9,7 +18,7 @@ import * as Utils from '../../../utils/Utils';
  */
 export default class Changeset {
   constructor(origChangeset, changelogDef) {
-    this._origChangeset = origChangeset;
+    this._origChangeset = Changeset._prepareForToJson(origChangeset);
     this._changelogDef = changelogDef;
     this._changeset = Changeset._cloneWithDefaults(origChangeset, changelogDef);
   }
@@ -85,6 +94,22 @@ export default class Changeset {
    */
   get rollback() {
     return this._changeset[MC.ROLLBACK];
+  }
+
+  toJSON() {
+    return JSON.stringify(this._origChangeset);
+  }
+
+  static _prepareForToJson(origChangeset) {
+    if (origChangeset) {
+      [MC.CHANGES, MC.ROLLBACK].forEach(field => {
+        const funcRef = origChangeset[field] && origChangeset[field][MC.FUNC];
+        if (funcRef) {
+          funcRef.toJSON = funcToJson;
+        }
+      });
+    }
+    return origChangeset;
   }
 
   static _cloneWithDefaults(origChangeset, changelogDef) {
