@@ -9,7 +9,7 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
-import { RELEASE_BRANCHES, ENDS_WITH_PUNCTUATION_REGEX, VERSION } from './Constants';
+import { ENDS_WITH_PUNCTUATION_REGEX, RELEASE_BRANCHES, VERSION } from './Constants';
 
 const Utils = {
 
@@ -254,6 +254,10 @@ const Utils = {
 
   versionAsFieldName() {
     return VERSION.replace(/\./g, '_');
+  },
+
+  cloneDeep(obj) {
+    return JSON.parse(JSON.stringify(obj));
   },
 };
 
