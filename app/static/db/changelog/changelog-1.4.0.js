@@ -12,7 +12,7 @@ export default({
           func: () => { ChangelogLogger.log('This changeset must succeed'); },
         },
         rollback: () => { ChangelogLogger.error('This rollback must NOT be called'); },
-        getMd5: () => 'da1e84f0641988dfd686e23aeb54e4a9'
+        getMd5: () => 'e6c7af4edcef0f0b10d1a112b6a4c2ec'
       },
       {
         changeid: 'AMPOFFLINE-1301 unsuccessful',
@@ -22,7 +22,7 @@ export default({
           func: () => { ChangelogLogger.log('This changeset must fail'); return Promise.reject(); }
         },
         rollback: () => { ChangelogLogger.log('This rollback must be called'); },
-        getMd5: () => '44ccbd72bcfc483ab2df4060140a2c28'
+        getMd5: () => '5bf5cad2419523f2788f9c1bc73e5a52'
       }
     ]
   },
