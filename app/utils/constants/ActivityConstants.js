@@ -180,6 +180,7 @@ export const RECIPIENT_ROLE = 'recipient_role';
 export const RECIPIENT_ORGANIZATION = 'recipient_organization';
 export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
+export const PROJECT_CODE = 'project_code';
 export const FY = 'fy';
 export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
 export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
