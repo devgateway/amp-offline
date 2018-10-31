@@ -30,13 +30,14 @@ class APIdentification extends Component {
       AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.BUDGET_CODE_PROJECT_ID,
       AC.A_C_CHAPTER, AC.CRIS_NUMBER, AC.ACTIVITY_BUDGET, AC.GOVERNMENT_AGREEMENT_NUMBER,
       AC.GOVERNMENT_APPROVAL_PROCEDURES, AC.JOINT_CRITERIA, AC.HUMANITARIAN_AID];
-    // Show ministry_code and FY only when activity_budget is enabled and has value 'On Budget'.
+    // Show budget extras fields like ministry_code, etc only when activity_budget is enabled and has value 'On Budget'.
     if (this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
       && this.props.activity[AC.ACTIVITY_BUDGET]
       && this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET) {
       fieldPaths.push(AC.INDIRECT_ON_BUDGET);
-      fieldPaths.push(AC.MINISTRY_CODE);
       fieldPaths.push(`${AC.FY}~${AC.YEAR}`);
+      fieldPaths.push(AC.MINISTRY_CODE);
+      fieldPaths.push(AC.PROJECT_CODE);
     }
     return (
       <div>
