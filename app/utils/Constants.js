@@ -67,6 +67,8 @@ export const APP_DIRECTORY = 'app';
 export const STATIC_DIR = 'static';
 export const IMAGES_DIR = 'images';
 export const DOC_ICONS = 'doc-icons';
+export const DB_STATIC_DIR = 'db';
+export const MIGRATIONS_DIR = 'migrations';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -190,3 +192,5 @@ export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';
 export const RELEASE_BRANCH_REGEX = /release\//;
 export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];
+
+export const RUN_CHANGELOGS = 'RUN_CHANGELOGS';
