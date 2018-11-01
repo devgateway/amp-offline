@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-`import { Validator } from 'jsonschema';
+import { Validator } from 'jsonschema';
 import Logger from '../../util/LoggerManager';
 import changelogs from '../../../static/db/changelog-master';
 import * as MC from '../../../utils/constants/MigrationsConstants';
