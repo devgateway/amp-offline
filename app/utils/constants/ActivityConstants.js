@@ -182,6 +182,7 @@ export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
 export const PROJECT_CODE = 'project_code';
 export const FY = 'fy';
+export const INDIRECT_ON_BUDGET = 'indirect_on_budget';
 export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
 export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
 export const DONOR_CONTACT = 'donor_contact_information';
