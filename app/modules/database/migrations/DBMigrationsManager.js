@@ -1,10 +1,16 @@
 /* eslint-disable class-methods-use-this */
+`import { Validator } from 'jsonschema';
 import Logger from '../../util/LoggerManager';
 import changelogs from '../../../static/db/changelog-master';
 import * as MC from '../../../utils/constants/MigrationsConstants';
 import Changeset from './Changeset';
+import ChangelogSchema from './schema/ChangelogSchema';
 
 const logger = new Logger('DB Migrations Manager');
+
+const validator = new Validator();
+validator.addSchema(ChangelogSchema, '/ChangelogSchema');
+
 
 /**
  * Database Migrations Manager for patching DB with pending changesets available under "static/db/changelog" folder
@@ -12,11 +18,23 @@ const logger = new Logger('DB Migrations Manager');
  * @author Nadejda Mandrescu
  */
 class DBMigrationsManager {
+  static validateChangelog(changelog) {
+    return validator.validate(changelog, ChangelogSchema);
+  }
+
   detectAndValidateChangelogs() {
     // TODO full solution, for now quick POC implementation
-    return changelogs.map(chdef => {
-      logger.log(`Detected '${chdef[MC.FILE]}' changelog`);
-      return chdef;
+    return changelogs.filter(chdef => {
+      logger.debug(`Verifying '${chdef[MC.FILE]}' changelog`);
+      const changelog = chdef[MC.CONTENT];
+      const result = DBMigrationsManager.validateChangelog(changelog);
+      if (!result.valid) {
+        logger.error(`Skipping '${chdef[MC.FILE]}', since not in a valid format: ${JSON.stringify(result.errors)}`);
+        return false;
+      }
+      // TODO check if any changeset still needs to be executed and report those as detected
+      logger.log(`Detected '${chdef[MC.FILE]}' changelog to execute`);
+      return true;
     });
   }
 
