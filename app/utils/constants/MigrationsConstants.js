@@ -15,6 +15,10 @@ export const COMMENT = 'comment';
 export const CHANGES = 'changes';
 export const FUNC = 'func';
 export const UPDATE = 'update';
+export const TABLE = 'table';
+export const FIELD = 'field';
+export const VALUE = 'value';
+export const FILTER = 'filter';
 export const ON_FAIL = 'onFail';
 export const ON_ERROR = 'onError';
 export const ROLLBACK = 'rollback';
@@ -29,8 +33,9 @@ export const ON_FAIL_ERROR_HALT = 'HALT';
 export const ON_FAIL_ERROR_CONTINUE = 'CONTINUE';
 export const ON_FAIL_ERROR_MARK_RAN = 'MARK_RAN';
 export const ON_FAIL_ERROR_WARN = 'WARN';
-export const ON_FAIL_ERROR_OPTIONS = [ON_FAIL_ERROR_HALT, ON_FAIL_ERROR_CONTINUE, ON_FAIL_ERROR_MARK_RAN,
+export const ON_FAIL_ERROR_CHANGESET_OPTIONS = [ON_FAIL_ERROR_HALT, ON_FAIL_ERROR_CONTINUE, ON_FAIL_ERROR_MARK_RAN,
   ON_FAIL_ERROR_WARN];
+export const ON_FAIL_ERROR_CHANGELOG_OPTIONS = [ON_FAIL_ERROR_HALT, ON_FAIL_ERROR_WARN];
 
 export const DEFAULT_CONTEXT = CONTEXT_STARTUP;
 export const DEFAULT_RUN_ALWAYS = false;
