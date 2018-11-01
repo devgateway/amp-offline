@@ -54,6 +54,7 @@
           "lang/**/*",
           "static/**/*",
           "app.html",
+          "splash-screen.html",
           "main.js",
           "main.js.map",
           "master-translations.en.json",
