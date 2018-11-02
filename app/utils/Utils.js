@@ -255,6 +255,14 @@ const Utils = {
   versionAsFieldName() {
     return VERSION.replace(/\./g, '_');
   },
+
+  versionFromKey(key) {
+    return key.replace(/_/g, '.');
+  },
+
+  getCurrentVersion() {
+    return VERSION;
+  }
 };
 
 module.exports = Utils;
