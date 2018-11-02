@@ -150,7 +150,7 @@ export default class Changeset {
 
   static _cloneWithDefaults(origChangeset, changelogDef) {
     const m = Utils.cloneDeep(origChangeset);
-    m.id = `${m[MC.CHANGEID]}-${m[MC.AUTHOR]}-${changelogDef[MC.FILE]}`;
+    m.id = Changeset.buildId(origChangeset, changelogDef);
 
     Changeset._setDefaultIfUndefined(m, MC.COMMENT, MC.DEFAULT_CONTEXT);
     Changeset._setDefaultIfUndefined(m, MC.RUN_ALWAYS, MC.DEFAULT_RUN_ALWAYS);
@@ -160,6 +160,10 @@ export default class Changeset {
     Changeset.setDefaultsForPreconditions(m[MC.PRECONDITIONS]);
 
     return m;
+  }
+
+  static buildId(origChangeset, changelogDef) {
+    return `${origChangeset[MC.CHANGEID]}-${origChangeset[MC.AUTHOR]}-${changelogDef[MC.FILE]}`;
   }
 
   static setDefaultsForPreconditions(pcs) {
