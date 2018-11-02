@@ -1,15 +1,16 @@
 /* eslint-disable class-methods-use-this */
-import md5 from 'js-md5';
+import { Validator } from 'jsonschema';
 import Logger from '../../util/LoggerManager';
-import migrations from '../../../static/db/changelog-master';
+import changelogs from '../../../static/db/changelog-master';
 import * as MC from '../../../utils/constants/MigrationsConstants';
+import Changeset from './Changeset';
+import ChangelogSchema from './schema/ChangelogSchema';
 
 const logger = new Logger('DB Migrations Manager');
 
-function funcToJson() {
-  console.debug('test');
-  return this.toString();
-}
+const validator = new Validator();
+validator.addSchema(ChangelogSchema, '/ChangelogSchema');
+
 
 /**
  * Database Migrations Manager for patching DB with pending changesets available under "static/db/changelog" folder
@@ -17,11 +18,23 @@ function funcToJson() {
  * @author Nadejda Mandrescu
  */
 class DBMigrationsManager {
+  static validateChangelog(changelog) {
+    return validator.validate(changelog, ChangelogSchema);
+  }
+
   detectAndValidateChangelogs() {
     // TODO full solution, for now quick POC implementation
-    return migrations.map(chdef => {
-      logger.log(`Detected '${chdef[MC.FILE]}' changelog`);
-      return chdef;
+    return changelogs.filter(chdef => {
+      logger.debug(`Verifying '${chdef[MC.FILE]}' changelog`);
+      const changelog = chdef[MC.CONTENT];
+      const result = DBMigrationsManager.validateChangelog(changelog);
+      if (!result.valid) {
+        logger.error(`Skipping '${chdef[MC.FILE]}', since not in a valid format: ${JSON.stringify(result.errors)}`);
+        return false;
+      }
+      // TODO check if any changeset still needs to be executed and report those as detected
+      logger.log(`Detected '${chdef[MC.FILE]}' changelog to execute`);
+      return true;
     });
   }
 
@@ -43,7 +56,7 @@ class DBMigrationsManager {
           // TODO flag changesets
           return Promise.resolve();
         }
-        return this._runChangesets(changelog[MC.CHANGESETS]);
+        return this._runChangesets(changelog[MC.CHANGESETS], chdef);
       });
     }, Promise.resolve()).then(() => {
       logger.log('DB changelogs execution complete');
@@ -54,6 +67,7 @@ class DBMigrationsManager {
   _checkPreConditions(preconditions) {
     // eslint-disable-next-line prefer-const
     let preconditionsPass = true;
+    Changeset.setDefaultsForPreconditions(preconditions);
     if (preconditions && preconditions.length) {
       logger.log('Running preconditions check...');
       // TODO actual preconditions check
@@ -64,24 +78,18 @@ class DBMigrationsManager {
     return preconditionsPass;
   }
 
-  _runChangesets(changesets) {
-    let md5checked = false;
+  _runChangesets(changesets, chdef) {
     // TODO full implementation
     return changesets.reduce((prevPromise, changeset) => prevPromise.then(() => {
-      const id = `${changeset[MC.CHANGEID]}-${changeset[MC.AUTHOR]}-TODO`;
-      logger.log(`Executing '${id}' changeset...`);
-      logger.debug(`Comment: ${changeset[MC.COMMENT]}`);
-      changeset.changes.func.toJSON = funcToJson;
-      changeset.rollback.toJSON = funcToJson;
-      const chJSON = JSON.stringify(changeset);
-      const chJSONMd5 = md5(chJSON);
-      if (!md5checked && chJSONMd5 !== changeset.getMd5()) {
+      changeset = new Changeset(changeset, chdef);
+      logger.log(`Executing '${changeset.id}' changeset...`);
+      logger.debug(`Comment: ${changeset.comment}`);
+      logger.debug(`md5 = ${changeset.md5}`);
+      if (changeset.md5 !== changeset.tmpGetDBMd5()) {
         logger.error('MD5 doesn\'t match!');
       }
-      md5checked = true;
-      logger.debug(`chJSONMd5 = ${chJSONMd5}`);
       // TODO check if func or update, flag status based on result, etc
-      return Promise.resolve().then(changeset[MC.CHANGES][MC.FUNC])
+      return Promise.resolve().then(changeset.change)
         .then((result) => {
           logger.log('Execution successful');
           return result;
