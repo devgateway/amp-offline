@@ -123,7 +123,7 @@ const SetupManager = {
 
   auditStartup() {
     return ClientSettingsHelper.findSettingByName(CSC.STARTUP_AUDIT_LOGS).then(logs => {
-      const verAsFieldName = Utils.versionAsFieldName();
+      const verAsFieldName = Utils.versionToKey();
       const currentVersionLog = logs.value[verAsFieldName] || {};
       logs.value[verAsFieldName] = currentVersionLog;
 
@@ -138,7 +138,7 @@ const SetupManager = {
 
   getCurrentVersionAuditLog() {
     return ClientSettingsHelper.findSettingByName(CSC.STARTUP_AUDIT_LOGS)
-      .then(logs => logs.value[Utils.versionAsFieldName()] || {});
+      .then(logs => logs.value[Utils.versionToKey()] || {});
   },
 
 };

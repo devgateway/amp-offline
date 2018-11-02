@@ -252,7 +252,7 @@ const Utils = {
     return array.reduce((result, elem) => result.concat(elem), []);
   },
 
-  versionAsFieldName() {
+  versionToKey() {
     return VERSION.replace(/\./g, '_');
   },
 
