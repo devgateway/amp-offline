@@ -40,6 +40,22 @@ export default class Changeset {
     return this._changeset.id;
   }
 
+  get changeId() {
+    return this._changeset[MC.CHANGEID];
+  }
+
+  get author() {
+    return this._changeset[MC.AUTHOR];
+  }
+
+  get filename() {
+    return this._changelogDef[MC.FILE];
+  }
+
+  get context() {
+    return this._changeset[MC.CONTEXT];
+  }
+
   /**
    * Defines if to execute the change set on every run, even if it has been run before
    * @return {boolean}
