@@ -450,5 +450,6 @@
   "Subtotal MTEF Projections pipeline": "Subtotal MTEF Projections Pipeline",
   "Projection": "Projection",
   "Subtotal MTEF Projections projection": "Subtotal MTEF Projections Projection",
-  "fundingRelated": "This organization has a funding related."
+  "fundingRelated": "This organization has a funding related.",
+  "oldVersionWarning": "You are attempting to start an older AMP Offline %current-version% over AMP Offline %newest-used% data. This can cause application to crash or corrupt the data. It is highly recommended to cancel and switch to a newer version from AMP Offline %newest-used%. If you'd like to start in clean state, then please cancel and delete application data folder. Please continue only if you absolutely need and accept the risk."
 }
