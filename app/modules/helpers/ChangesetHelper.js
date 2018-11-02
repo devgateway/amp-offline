@@ -3,7 +3,6 @@ import { COLLECTION_CHANGESETS } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 import Changeset from '../database/migrations/Changeset';
 import * as MC from '../../utils/constants/MigrationsConstants';
-import DateUtils from '../../utils/DateUtils';
 
 const logger = new Logger('ChangesetHelper');
 
@@ -77,8 +76,7 @@ const ChangesetHelper = {
    * @param changeset the changeset to convert
    * @param template the set of known fields, that can come from existing DB data or newly configured
    */
-  changesetToDBFormat(changeset: Changeset, template) {
-    const now = DateUtils.getISODateForAPI();
+  changesetToDBFormat(changeset: Changeset, template = {}) {
     const dbc = {
       id: changeset.id,
       [MC.CHANGEID]: changeset.changeId,
@@ -86,8 +84,6 @@ const ChangesetHelper = {
       [MC.FILENAME]: changeset.filename,
       [MC.CONTEXT]: changeset.context,
       [MC.COMMENT]: changeset.comment,
-      [MC.DATE_FOUND]: now,
-      [MC.DATE_EXECUTED]: now,
       ...template
     };
     dbc[MC.MD5SUM] = changeset.md5;
