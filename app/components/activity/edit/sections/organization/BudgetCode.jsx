@@ -13,17 +13,24 @@ import * as styles from './BudgetCode.css';
  * @author Nadejda Mandrescu
  */
 
-const getEntryFunc = (parentPath, id, budget) => (
-  <Row key={id}>
-    <Col>
-      <AFField
-        parent={budget} fieldPath={`${parentPath}~${AC.BUDGET_CODE}`} showLabel={false} inline
-        type={Types.INPUT_TYPE} />
-    </Col>
-  </Row>
-);
+const getEntryFunc = (parentPath, id, budget, props) => {
+  if (budget[AC.BUDGET_CODE] === undefined) {
+    // eslint-disable-next-line react/prop-types
+    const org = props.parent && props.parent[AC.ORGANIZATION];
+    budget[AC.BUDGET_CODE] = org[AC.EXTRA_INFO] && org[AC.EXTRA_INFO][AC.BUDGET_ORGANIZATION_CODE];
+  }
+  return (
+    <Row key={id}>
+      <Col>
+        <AFField
+          parent={budget} fieldPath={`${parentPath}~${AC.BUDGET_CODE}`} showLabel={false} inline
+          type={Types.INPUT_TYPE} />
+      </Col>
+    </Row>);
+};
 
 const customPropsConverter = (props) => ({
+  parent: props.parent,
   items: props.parent[props.fieldPath.split('~').pop()] || [],
   onEntriesChange: props.onAfterUpdate,
   wrapperContainerStyle: styles.entryWrapperContainer,
