@@ -74,8 +74,10 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
           return this.done;
         });
     }
-    const errorMsgTrn = translate('SyncupDeniedMustRelogin');
-    return Promise.reject(new Notification({ message: errorMsgTrn, origin: NOTIFICATION_ORIGIN_API_SYNCUP }));
+    return Promise.reject(new Notification({
+      message: 'SyncupDeniedMustRelogin',
+      origin: NOTIFICATION_ORIGIN_API_SYNCUP
+    }));
   }
 
   /**
@@ -169,14 +171,16 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     return this._getUnsyncedContacts(activity).then(unsyncedContacts => {
       if (unsyncedContacts.length) {
         const cNames = unsyncedContacts.map(c => `"${c[CC.NAME] || ''} ${c[CC.LAST_NAME] || ''}"`).join(', ');
-        const error = translate('rejectActivityWhenContactUnsynced2').replace('%contacts%', cNames);
+        const replacePairs = [['%contacts%', cNames]];
+        const error = new Notification({ message: 'rejectActivityWhenContactUnsynced2', replacePairs });
         return Promise.reject(error);
       }
       return this._getUnsyncedResources(activity);
     }).then(unsyncedResources => {
       if (unsyncedResources.length) {
         const rNames = unsyncedResources.map(r => `"${r[RC.WEB_LINK] || r[RC.FILE_NAME]}"`).join(', ');
-        const error = translate('rejectActivityWhenResourceUnsynced2').replace('%resources%', rNames);
+        const replacePairs = [['%resources%', rNames]];
+        const error = new Notification({ message: 'rejectActivityWhenResourceUnsynced2', replacePairs });
         return Promise.reject(error);
       }
       return this._pushActivity(activity);
@@ -225,7 +229,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
       this.pushed.add(activity.id);
     }
     // save the rejection immediately to allow a quicker syncup cancellation
-    const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
+    const errorData = error || (pushResult && pushResult.error) || undefined;
     this._updateDetails({ activity, pushResult, errorData });
     if (errorData) {
       return new Promise((resolve, reject) => this._getRejectedId(activity)
@@ -287,7 +291,14 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const ampId = activity[AC.AMP_ID] ? `${activity[AC.AMP_ID]} ` : '';
     const idToLog = `${ampId}(${activity[AC.PROJECT_TITLE]})`;
     const fieldNameToLog = `${activity[AC.AMP_ID] ? AC.AMP_ID : ''}(${AC.PROJECT_TITLE})`;
-    error = `${idToLog}: ${error}`;
+    const prefix = `${idToLog}: `;
+    if (error instanceof Notification) {
+      error.replacePairs = error.replacePairs || [];
+      error.replacePairs.push(['', prefix]);
+    } else {
+      error = `${prefix}${error}`;
+    }
+    // error = ${error}`;
     logger.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;

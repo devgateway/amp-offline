@@ -97,7 +97,7 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
           label={translate(Title)} className={wrapperContainerStyle} titleAsAddButton={titleAsAddButton}
           entryListStyle={entryListStyle}
           onRemove={this.onRemove.bind(this)} onAdd={this.onAdd.bind(this)} childrenIds={ids}>
-          {uniqueIdItemPairs.map(([uid, item]) => getEntryFunc(uid, item))}
+          {uniqueIdItemPairs.map(([uid, item]) => getEntryFunc(uid, item, this.props, this.context))}
         </EntryList>
       </Grid>
     );
