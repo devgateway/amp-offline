@@ -4,6 +4,7 @@ import { FormGroup, Radio } from 'react-bootstrap';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFOption from './AFOption';
 import * as Utils from '../../../../utils/Utils';
+import * as styles from './AFRadioList.css';
 
 const logger = new Logger('AFRadioList');
 
@@ -29,7 +30,9 @@ export default class AFRadioList extends Component {
     const { value, options, onChange } = this.props;
     const selectedId = value && value.id;
     const radioList = (options || []).map((o: AFOption) =>
-      <Radio key={o.id} name={this.groupName} checked={selectedId === o.id} onChange={() => onChange(o)}>
+      <Radio
+        key={o.id} name={this.groupName} checked={selectedId === o.id} onChange={() => onChange(o)}
+        className={styles.radio}>
         {o.displayFullValue}
       </Radio>
     );
