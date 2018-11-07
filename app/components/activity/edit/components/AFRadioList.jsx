@@ -28,7 +28,7 @@ export default class AFRadioList extends Component {
   render() {
     const { value, options, onChange } = this.props;
     const selectedId = value && value.id;
-    const radioList = (options || []).forEach((o:AFOption) =>
+    const radioList = (options || []).forEach((o: AFOption) =>
       <Radio key={o.id} name={this.groupName} inline checked={selectedId === o.id} onChange={() => onChange(o)}>
         {o.displayFullValue}
       </Radio>
