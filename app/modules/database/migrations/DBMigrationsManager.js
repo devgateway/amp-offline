@@ -193,28 +193,43 @@ class DBMigrationsManager {
         // TODO remove, since detected earlier, it's for testing only
         logger.error('MD5 doesn\'t match!');
       }
-      // TODO check if func or update, flag status based on result, etc
-      return Promise.resolve().then(changeset.change)
-        .then(() => {
-          logger.log(`${changeset.id} executed successfully`);
-          changeset.execType = MC.EXECTYPE_EXECUTED;
-          changeset.orderExecuted = this.getAndIncOrderExecuted();
-          changeset.dateExecuted = DateUtils.getISODateForAPI();
-          this._pendingChangesetsById.delete(changeset.id);
-          return this._saveChangesets([changeset]);
-        })
-        .catch(error => {
-          logger.error(`Execution unsuccessful: ${error}`);
-          if (changeset[MC.ROLLBACK]) {
-            logger.log('Executing the rollback');
-            return Promise.resolve().then(changeset[MC.ROLLBACK]).catch(err => {
-              logger.error(`Rollback execution failed: ${err}`);
-              return Promise.resolve();
-            });
-          }
-          return Promise.resolve();
-        });
+      return this._runChangeset(changeset).then(() => {
+        // storing execution date for success and also for error to see the last attempt
+        changeset.dateExecuted = DateUtils.getISODateForAPI();
+        // TODO failOnError
+        return this._saveChangesets([changeset]);
+      });
     }), Promise.resolve());
+  }
+
+  _runChangeset(changeset: Changeset) {
+    // TODO check if func or update, flag status based on result, etc
+    return Promise.resolve().then(changeset.change)
+      .then(() => {
+        logger.log(`${changeset.id} executed successfully`);
+        changeset.execType = MC.EXECTYPE_EXECUTED;
+        changeset.orderExecuted = this.getAndIncOrderExecuted();
+        this._pendingChangesetsById.delete(changeset.id);
+        return changeset;
+      })
+      .catch(error => {
+        logger.error(`${changeset.id} execution error: ${error}`);
+        changeset.error = error;
+        if (changeset.rollback) {
+          logger.log('Executing the rollback...');
+          return Promise.resolve().then(changeset.rollback)
+            .then(() => {
+              logger.log('Rollback executed successfully');
+              changeset.rollbackExecType = MC.EXECTYPE_EXECUTED;
+              return changeset;
+            }).catch(err => {
+              logger.error(`Rollback execution failed: ${err}`);
+              changeset.rollbackError = err;
+              return changeset;
+            });
+        }
+        return changeset;
+      });
   }
 
 }
