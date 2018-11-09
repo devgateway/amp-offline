@@ -105,11 +105,9 @@ class DBMigrationsManager {
     if (!newChangesets.length) {
       return Promise.resolve();
     }
-    const now = DateUtils.getISODateForAPI();
     const template = {
       [MC.DEPLOYMENT_ID]: this._deployemntId,
-      [MC.DATE_FOUND]: now,
-      [MC.DATE_EXECUTED]: now,
+      [MC.DATE_FOUND]: DateUtils.getISODateForAPI(),
     };
     const dbcs = newChangesets.map(c => ChangesetHelper.changesetToDBFormat(c, template));
     return ChangesetHelper.saveOrUpdateChangesetCollection(dbcs);
