@@ -84,6 +84,12 @@ const ChangesetHelper = {
       [MC.FILENAME]: changeset.filename,
       [MC.CONTEXT]: changeset.context,
       [MC.COMMENT]: changeset.comment,
+      [MC.ORDER_EXECUTED]: changeset.orderExecuted,
+      [MC.EXECTYPE]: changeset.execType,
+      [MC.DATE_EXECUTED]: changeset.dateExecuted,
+      [MC.ERROR]: changeset.error,
+      [MC.ROLLBACKEXECTYPE]: changeset.rollbackExecType,
+      [MC.ROLLBACKERROR]: changeset.rollbackError,
       ...template
     };
     dbc[MC.MD5SUM] = changeset.md5;

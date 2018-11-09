@@ -146,6 +146,14 @@ export default class Changeset {
     return this._execType;
   }
 
+  set dateExecuted(dateExecuted) {
+    this._dateExecuted = dateExecuted;
+  }
+
+  get dateExecuted() {
+    return this._dateExecuted;
+  }
+
   set error(error) {
     this._error = error;
   }
