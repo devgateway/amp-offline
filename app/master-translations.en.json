@@ -450,5 +450,6 @@
   "Subtotal MTEF Projections pipeline": "Subtotal MTEF Projections Pipeline",
   "Projection": "Projection",
   "Subtotal MTEF Projections projection": "Subtotal MTEF Projections Projection",
-  "fundingRelated": "This organization has a funding related."
+  "fundingRelated": "This organization has a funding related.",
+  "failOnErrorMessage": "A critical error occurred during data update. Please collect logs, note your actions and contact the administrator."
 }

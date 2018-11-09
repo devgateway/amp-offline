@@ -8,6 +8,8 @@ import ChangelogSchema from './schema/ChangelogSchema';
 import ChangesetHelper from '../../helpers/ChangesetHelper';
 import * as Utils from '../../../utils/Utils';
 import DateUtils from '../../../utils/DateUtils';
+import NotificationHelper from '../../helpers/NotificationHelper';
+import * as ElectronApp from '../../util/ElectronApp';
 
 const logger = new Logger('DB Migrations Manager');
 
@@ -28,6 +30,7 @@ class DBMigrationsManager {
     this._pendingChangelgs = undefined;
     this._deployemntId = undefined;
     this._orderExecutedCounter = 1;
+    this._isFailOnError = false;
   }
 
   static validateChangelog(changelog) {
@@ -186,6 +189,9 @@ class DBMigrationsManager {
   _runChangesets(changesets: Array<Changeset>) {
     // TODO full implementation
     return changesets.reduce((prevPromise, changeset: Changeset) => prevPromise.then(() => {
+      if (this._isFailOnError) {
+        return Promise.resolve();
+      }
       logger.log(`Executing '${changeset.id}' changeset...`);
       logger.debug(`Comment: ${changeset.comment}`);
       logger.debug(`md5 = ${changeset.md5}`);
@@ -196,8 +202,15 @@ class DBMigrationsManager {
       return this._runChangeset(changeset).then(() => {
         // storing execution date for success and also for error to see the last attempt
         changeset.dateExecuted = DateUtils.getISODateForAPI();
-        // TODO failOnError
-        return this._saveChangesets([changeset]);
+        this._isFailOnError = !!(changeset.isFailOnError && changeset.error);
+        return this._saveChangesets([changeset]).then(() => {
+          if (this._isFailOnError) {
+            const notification = new NotificationHelper({ message: 'failOnErrorMessage' });
+            alert(notification);
+            ElectronApp.forceCloseApp();
+          }
+          return this._isFailOnError;
+        });
       });
     }), Promise.resolve());
   }
@@ -214,7 +227,7 @@ class DBMigrationsManager {
       })
       .catch(error => {
         logger.error(`${changeset.id} execution error: ${error}`);
-        changeset.error = error;
+        changeset.error = error || 'Unknown error';
         if (changeset.rollback) {
           logger.log('Executing the rollback...');
           return Promise.resolve().then(changeset.rollback)
@@ -224,7 +237,7 @@ class DBMigrationsManager {
               return changeset;
             }).catch(err => {
               logger.error(`Rollback execution failed: ${err}`);
-              changeset.rollbackError = err;
+              changeset.rollbackError = err || 'Unknown error';
               return changeset;
             });
         }
