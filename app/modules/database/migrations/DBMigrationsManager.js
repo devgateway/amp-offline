@@ -34,6 +34,11 @@ class DBMigrationsManager {
     return validator.validate(changelog, ChangelogSchema);
   }
 
+  getAndIncOrderExecuted() {
+    this._orderExecutedCounter = this._orderExecutedCounter + 1;
+    return this._orderExecutedCounter - 1;
+  }
+
   /**
    * Provides all currently pending changelogs
    * @return {Promise}
@@ -178,20 +183,25 @@ class DBMigrationsManager {
     return preconditionsPass;
   }
 
-  _runChangesets(changesets) {
+  _runChangesets(changesets: Array<Changeset>) {
     // TODO full implementation
-    return changesets.reduce((prevPromise, changeset) => prevPromise.then(() => {
+    return changesets.reduce((prevPromise, changeset: Changeset) => prevPromise.then(() => {
       logger.log(`Executing '${changeset.id}' changeset...`);
       logger.debug(`Comment: ${changeset.comment}`);
       logger.debug(`md5 = ${changeset.md5}`);
       if (changeset.md5 !== changeset.tmpGetDBMd5()) {
+        // TODO remove, since detected earlier, it's for testing only
         logger.error('MD5 doesn\'t match!');
       }
       // TODO check if func or update, flag status based on result, etc
       return Promise.resolve().then(changeset.change)
-        .then((result) => {
-          logger.log('Execution successful');
-          return result;
+        .then(() => {
+          logger.log(`${changeset.id} executed successfully`);
+          changeset.execType = MC.EXECTYPE_EXECUTED;
+          changeset.orderExecuted = this.getAndIncOrderExecuted();
+          changeset.dateExecuted = DateUtils.getISODateForAPI();
+          this._pendingChangesetsById.delete(changeset.id);
+          return this._saveChangesets([changeset]);
         })
         .catch(error => {
           logger.error(`Execution unsuccessful: ${error}`);
