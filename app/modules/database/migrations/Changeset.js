@@ -124,6 +124,61 @@ export default class Changeset {
     return this._md5;
   }
 
+  set orderExecuted(orderExecuted) {
+    this._orderExecuted = orderExecuted;
+  }
+
+  /**
+   * @return {Number} the execution order (starting from 1) per changeset deployment id
+   */
+  get orderExecuted() {
+    return this._orderExecuted;
+  }
+
+  set execType(execType) {
+    this._execType = execType;
+  }
+
+  /**
+   * @return {String} see EXECTYPE_XXX constants
+   */
+  get execType() {
+    return this._execType;
+  }
+
+  set error(error) {
+    this._error = error;
+  }
+
+  /**
+   * @return {String}
+   */
+  get error() {
+    return this._error;
+  }
+
+  set rollbackExecType(rollbackExecType) {
+    this._rollbackExecType = rollbackExecType;
+  }
+
+  /**
+   * @return {String} see EXECTYPE_XXX constants
+   */
+  get rollbackExecType() {
+    return this._rollbackExecType;
+  }
+
+  set rollbackError(rollbackError) {
+    this._rollbackError = rollbackError;
+  }
+
+  /**
+   * @return {String}
+   */
+  get rollbackError() {
+    return this._rollbackError;
+  }
+
   tmpGetDBMd5() {
     // TODO this method will be gone when we'll read MD5 previousely stored in DB instead
     return this._origChangeset.getMd5();
