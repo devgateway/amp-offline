@@ -124,8 +124,17 @@ class DBMigrationsManager {
       [MC.DEPLOYMENT_ID]: this._deployemntId,
       [MC.DATE_FOUND]: DateUtils.getISODateForAPI(),
     };
-    const dbcs = newChangesets.map(c => ChangesetHelper.changesetToDBFormat(c, template));
-    return ChangesetHelper.saveOrUpdateChangesetCollection(dbcs);
+    return this._saveChangesets(newChangesets, template);
+  }
+
+  _saveChangesets(changesets: Array, template = {}) {
+    template[MC.DEPLOYMENT_ID] = this._deployemntId;
+    const dbcs = changesets.map(c => ChangesetHelper.changesetToDBFormat(c, template));
+    return ChangesetHelper.saveOrUpdateChangesetCollection(dbcs)
+      .catch(error => {
+        logger.error(`Couldn't save changesets: ${error}`);
+        return Promise.resolve();
+      });
   }
 
   run(context: string) {
@@ -141,13 +150,13 @@ class DBMigrationsManager {
         // TODO the full solution
         logger.debug(`Checking '${fileName}' changelog...`);
         return this._checkPreConditions(changelog[MC.PRECONDITIONS]);
-      }).then(preconditionsPass => {
-        if (!preconditionsPass) {
-          logger.log(`Skipping '${chdef[MC.FILE]}' changelog, since preconditions not matched.`);
-          // TODO flag changesets
-          return Promise.resolve();
+      }).then(preconditionStatus => {
+        const chs = this._pendingChangesetsByFile.get(fileName);
+        if (preconditionStatus !== MC.EXECTYPE_PRECONDITION_SUCCESS) {
+          logger.warn(`Skipping '${fileName}' changelog with failed preconditions, having pending changesets: ${chs}.`);
+          return this._saveChangesets(chs, { [MC.EXECTYPE]: preconditionStatus });
         }
-        return this._runChangesets(changelog[MC.CHANGESETS], chdef);
+        return this._runChangesets(chs);
       });
     }, Promise.resolve()).then(() => {
       logger.log('DB changelogs execution complete');
@@ -157,7 +166,7 @@ class DBMigrationsManager {
 
   _checkPreConditions(preconditions) {
     // eslint-disable-next-line prefer-const
-    let preconditionsPass = true;
+    let preconditionsPass = MC.EXECTYPE_PRECONDITION_SUCCESS;
     Changeset.setDefaultsForPreconditions(preconditions);
     if (preconditions && preconditions.length) {
       logger.log('Running preconditions check...');
@@ -169,10 +178,9 @@ class DBMigrationsManager {
     return preconditionsPass;
   }
 
-  _runChangesets(changesets, chdef) {
+  _runChangesets(changesets) {
     // TODO full implementation
     return changesets.reduce((prevPromise, changeset) => prevPromise.then(() => {
-      changeset = new Changeset(changeset, chdef);
       logger.log(`Executing '${changeset.id}' changeset...`);
       logger.debug(`Comment: ${changeset.comment}`);
       logger.debug(`md5 = ${changeset.md5}`);

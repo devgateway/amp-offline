@@ -66,3 +66,6 @@ export const EXECTYPE_PRECONDITION_ERROR = 'PRECONDITION_ERROR';
 /** the changeset didn’t run (e.g. another changeset precondition failure requested to HALT the entire changelog
  * or another changeset failed with failOnError=true) */
 export const EXECTYPE_NOT_RUN = 'NOT_RUN';
+
+/** Other (workflow) constants */
+export const EXECTYPE_PRECONDITION_SUCCESS = 'EXECTYPE_PRECONDITION_SUCCESS';
