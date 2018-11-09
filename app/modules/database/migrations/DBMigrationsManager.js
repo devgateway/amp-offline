@@ -21,15 +21,17 @@ validator.addSchema(ChangelogSchema, '/ChangelogSchema');
  * @author Nadejda Mandrescu
  */
 class DBMigrationsManager {
-  static validateChangelog(changelog) {
-    return validator.validate(changelog, ChangelogSchema);
-  }
-
   constructor() {
     this._executedChangesetIds = new Set();
     this._pendingChangesetsById = new Map();
+    this._pendingChangesetsByFile = new Map();
     this._pendingChangelgs = undefined;
     this._deployemntId = undefined;
+    this._orderExecutedCounter = 1;
+  }
+
+  static validateChangelog(changelog) {
+    return validator.validate(changelog, ChangelogSchema);
   }
 
   /**
@@ -44,13 +46,20 @@ class DBMigrationsManager {
   }
 
   _refreshPendingChangelogs() {
-    const files = new Set(this._pendingChangesetsById.values().map((c:Changeset) => c.filename));
-    this._pendingChangelgs = this._pendingChangelgs.filter(cl => files.has(cl[MC.FILE]));
+    const refreshedChangesetsByFile = new Map();
+    this._pendingChangesetsByFile.forEach((chs, file) => {
+      chs = chs.filter((c: Changeset) => this._pendingChangesetsById.has(c.id));
+      if (chs.length) {
+        refreshedChangesetsByFile.set(file, chs);
+      }
+    });
+    this._pendingChangesetsByFile = refreshedChangesetsByFile;
+    this._pendingChangelgs = this._pendingChangelgs.filter(cl => this._pendingChangesetsByFile.has(cl[MC.FILE]));
     return Promise.resolve().then(() => this._pendingChangelgs);
   }
 
   _detectAllValidAndPendingChangelogs() {
-    return this._getChangesetsSummary().then((dbChangesetsMap:Map) => {
+    return this._getChangesetsSummary().then((dbChangesetsMap: Map) => {
       const newChangesets = [];
       this._pendingChangelgs = changelogs.filter(chdef => {
         const file = chdef[MC.FILE];
@@ -83,7 +92,8 @@ class DBMigrationsManager {
 
   _detectPending(chdef, dbChangesetsMap: Map, newChangesets: Array) {
     const chs = chdef[MC.CONTENT][MC.CHANGELOG][MC.CHANGESETS];
-    return chs.filter(c => {
+    const pendingChs = [];
+    const csCount = chs.filter(c => {
       const changeset = new Changeset(c, chdef);
       const dbC = dbChangesetsMap.get(changeset.id);
       let willRun = changeset.isRunAlways || !dbC;
@@ -95,10 +105,15 @@ class DBMigrationsManager {
       }
       if (willRun) {
         this._pendingChangesetsById.set(changeset.id, changeset);
+        pendingChs.push(changeset);
         return true;
       }
       return false;
     }).length;
+    if (csCount) {
+      this._pendingChangesetsByFile.set(chdef[MC.FILE], pendingChs);
+    }
+    return csCount;
   }
 
   _saveNewChangesets(newChangesets: Array) {
@@ -121,9 +136,10 @@ class DBMigrationsManager {
     }
     return this.detectAndValidateChangelogs().reduce((prevPromise, chdef) => {
       const changelog = chdef[MC.CONTENT][MC.CHANGELOG];
+      const fileName = chdef[MC.FILE];
       return prevPromise.then(() => {
         // TODO the full solution
-        logger.log(`Checking '${chdef[MC.FILE]}' changelog...`);
+        logger.debug(`Checking '${fileName}' changelog...`);
         return this._checkPreConditions(changelog[MC.PRECONDITIONS]);
       }).then(preconditionsPass => {
         if (!preconditionsPass) {
