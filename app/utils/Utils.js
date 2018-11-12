@@ -265,6 +265,13 @@ const Utils = {
     const json = JSON.stringify(obj);
     return md5(json);
   },
+
+  selfBindMethods(obj) {
+    Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).filter(prop => typeof obj[prop] === 'function')
+      .forEach(methodName => {
+        obj[methodName] = obj[methodName].bind(obj);
+      });
+  },
 };
 
 module.exports = Utils;

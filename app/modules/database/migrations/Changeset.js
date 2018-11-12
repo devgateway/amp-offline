@@ -40,6 +40,30 @@ export default class Changeset {
     return this._changeset.id;
   }
 
+  get changeId() {
+    return this._changeset[MC.CHANGEID];
+  }
+
+  get author() {
+    return this._changeset[MC.AUTHOR];
+  }
+
+  get filename() {
+    return this._changelogDef[MC.FILE];
+  }
+
+  get context() {
+    return this._changeset[MC.CONTEXT];
+  }
+
+  set execContext(context) {
+    this._execContext = context;
+  }
+
+  get execContext() {
+    return this._execContext;
+  }
+
   /**
    * Defines if to execute the change set on every run, even if it has been run before
    * @return {boolean}
@@ -79,13 +103,14 @@ export default class Changeset {
    */
   get change() {
     if (this._change === undefined) {
-      this._change = this._changeset[MC.CHANGES] || null;
-      if (this._change) {
-        this._change = this._change[MC.FUNC] || this._change[MC.UPDATE] || null;
-        // TODO update func generation
-      }
+      this._change = Changeset._getFuncOrUpdate(this._origChangeset[MC.CHANGES]);
     }
     return this._change;
+  }
+
+  static _getFuncOrUpdate(funcOrUpdateDef) {
+    // TODO update func generation
+    return (funcOrUpdateDef && (funcOrUpdateDef[MC.FUNC] || funcOrUpdateDef[MC.UPDATE])) || null;
   }
 
   /**
@@ -94,7 +119,10 @@ export default class Changeset {
    * @return {function|Promise} the 'func' or 'update' function reference
    */
   get rollback() {
-    return this._changeset[MC.ROLLBACK];
+    if (this._rollback === undefined) {
+      this._rollback = Changeset._getFuncOrUpdate(this._origChangeset[MC.ROLLBACK]);
+    }
+    return this._rollback;
   }
 
   /**
@@ -106,6 +134,77 @@ export default class Changeset {
       this._md5 = Utils.md5(this._origChangeset);
     }
     return this._md5;
+  }
+
+  set orderExecuted(orderExecuted) {
+    this._orderExecuted = orderExecuted;
+  }
+
+  /**
+   * @return {Number} the execution order (starting from 1) per changeset deployment id
+   */
+  get orderExecuted() {
+    return this._orderExecuted;
+  }
+
+  set execType(execType) {
+    this._execType = execType;
+  }
+
+  /**
+   * @return {String} see EXECTYPE_XXX constants
+   */
+  get execType() {
+    return this._execType;
+  }
+
+  set dateFound(dateFound) {
+    this._dateFound = dateFound;
+  }
+
+  get dateFound() {
+    return this._dateFound;
+  }
+
+  set dateExecuted(dateExecuted) {
+    this._dateExecuted = dateExecuted;
+  }
+
+  get dateExecuted() {
+    return this._dateExecuted;
+  }
+
+  set error(error) {
+    this._error = error;
+  }
+
+  /**
+   * @return {String}
+   */
+  get error() {
+    return this._error;
+  }
+
+  set rollbackExecType(rollbackExecType) {
+    this._rollbackExecType = rollbackExecType;
+  }
+
+  /**
+   * @return {String} see EXECTYPE_XXX constants
+   */
+  get rollbackExecType() {
+    return this._rollbackExecType;
+  }
+
+  set rollbackError(rollbackError) {
+    this._rollbackError = rollbackError;
+  }
+
+  /**
+   * @return {String}
+   */
+  get rollbackError() {
+    return this._rollbackError;
   }
 
   tmpGetDBMd5() {
@@ -134,7 +233,7 @@ export default class Changeset {
 
   static _cloneWithDefaults(origChangeset, changelogDef) {
     const m = Utils.cloneDeep(origChangeset);
-    m.id = `${m[MC.CHANGEID]}-${m[MC.AUTHOR]}-${changelogDef[MC.FILE]}`;
+    m.id = Changeset.buildId(origChangeset, changelogDef);
 
     Changeset._setDefaultIfUndefined(m, MC.COMMENT, MC.DEFAULT_CONTEXT);
     Changeset._setDefaultIfUndefined(m, MC.RUN_ALWAYS, MC.DEFAULT_RUN_ALWAYS);
@@ -144,6 +243,10 @@ export default class Changeset {
     Changeset.setDefaultsForPreconditions(m[MC.PRECONDITIONS]);
 
     return m;
+  }
+
+  static buildId(origChangeset, changelogDef) {
+    return `${origChangeset[MC.CHANGEID]}-${origChangeset[MC.AUTHOR]}-${changelogDef[MC.FILE]}`;
   }
 
   static setDefaultsForPreconditions(pcs) {

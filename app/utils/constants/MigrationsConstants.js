@@ -42,3 +42,30 @@ export const DEFAULT_RUN_ALWAYS = false;
 export const DEFAULT_RUN_ON_CHANGE = false;
 export const DEFAULT_FAIL_ON_ERROR = false;
 export const DEFAULT_ON_FAIL_ERROR = ON_FAIL_ERROR_HALT;
+
+/** Database extra constants */
+export const FILENAME = 'filename';
+export const MD5SUM = 'md5sum';
+export const DATE_FOUND = 'datefound';
+export const DATE_EXECUTED = 'dateexecuted';
+export const ORDER_EXECUTED = 'orderexecuted';
+export const DEPLOYMENT_ID = 'deploymentid';
+export const EXECTYPE = 'exectype';
+export const ERROR = 'error';
+export const ROLLBACKEXECTYPE = 'rollbackexectype';
+export const ROLLBACKERROR = 'rollbackerror';
+
+/** precondition matched and change ran successfully */
+export const EXECTYPE_EXECUTED = 'EXECUTED';
+/** reran successfully (would happen for runAlways=true); orderexecuted and deploymentid will store the latest one */
+export const EXECTYPE_RERUN = 'RERUN';
+/** either changeset or changelog level precondition ended with fail */
+export const EXECTYPE_PRECONDITION_FAIL = 'PRECONDITION_FAIL';
+/** either changeset or changelog level precondition ended with error */
+export const EXECTYPE_PRECONDITION_ERROR = 'PRECONDITION_ERROR';
+/** the changeset didn’t run (e.g. another changeset precondition failure requested to HALT the entire changelog
+ * or another changeset failed with failOnError=true) */
+export const EXECTYPE_NOT_RUN = 'NOT_RUN';
+
+/** Other (workflow) constants */
+export const EXECTYPE_PRECONDITION_SUCCESS = 'EXECTYPE_PRECONDITION_SUCCESS';
