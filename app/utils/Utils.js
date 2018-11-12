@@ -159,7 +159,7 @@ const Utils = {
 
   joinMessages(messages: Array, endPunctuationIfMissing = '.') {
     return messages && messages.map(m => {
-      const msg = `${m}`;
+      const msg = `${m.message || m}`;
       if (!msg.match(ENDS_WITH_PUNCTUATION_REGEX)) {
         return `${msg}${endPunctuationIfMissing}`;
       }

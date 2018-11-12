@@ -25,6 +25,9 @@ export const ACTIVITY_SECTORS = '/Activity Form/Sectors';
 export const ACTIVITY_PRIMARY_SECTORS = '/Activity Form/Sectors/Primary Sectors';
 export const ACTIVITY_SECONDARY_SECTORS = '/Activity Form/Sectors/Secondary Sectors';
 
+export const ACTIVITY_STRUCTURES = '/Activity Form/Structures';
+export const ACTIVITY_STRUCTURES_ADD_STRUCTURE = `${ACTIVITY_STRUCTURES}/Add Structure`;
+
 export const ACTIVITY_ORGANIZATIONS = '/Activity Form/Organizations';
 export const ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION = `${ACTIVITY_ORGANIZATIONS}/Donor Organization`;
 export const ACTIVITY_ORGANIZATIONS_BENEFICIARY_AGENCY = `${ACTIVITY_ORGANIZATIONS}/Beneficiary Agency`;
