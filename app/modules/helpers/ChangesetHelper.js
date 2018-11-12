@@ -82,7 +82,7 @@ const ChangesetHelper = {
       [MC.CHANGEID]: changeset.changeId,
       [MC.AUTHOR]: changeset.author,
       [MC.FILENAME]: changeset.filename,
-      [MC.CONTEXT]: changeset.context,
+      [MC.CONTEXT]: changeset.execContext || changeset.context,
       [MC.COMMENT]: changeset.comment,
       [MC.ORDER_EXECUTED]: changeset.orderExecuted,
       [MC.EXECTYPE]: changeset.execType,

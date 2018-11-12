@@ -56,6 +56,14 @@ export default class Changeset {
     return this._changeset[MC.CONTEXT];
   }
 
+  set execContext(context) {
+    this._execContext = context;
+  }
+
+  get execContext() {
+    return this._execContext;
+  }
+
   /**
    * Defines if to execute the change set on every run, even if it has been run before
    * @return {boolean}

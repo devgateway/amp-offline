@@ -153,23 +153,24 @@ class DBMigrationsManager {
       return Promise.resolve();
     }
     return this.detectAndValidateChangelogs()
-      .then(this._runChangelogs)
+      .then(pendingChangelogs => this._runChangelogs(pendingChangelogs, context))
       .then(() => {
         logger.log('DB changelogs execution complete');
         return Promise.resolve();
       });
   }
 
-  _runChangelogs(pendingChangelogs: Array) {
+  _runChangelogs(pendingChangelogs: Array, context: string) {
     return pendingChangelogs.reduce((prevPromise, chdef) => {
       const changelog = chdef[MC.CONTENT][MC.CHANGELOG];
       const fileName = chdef[MC.FILE];
+      // TODO find changesets for current context only
+      const chs = this._pendingChangesetsByFile.get(fileName);
+      chs.forEach((c: Changeset) => { c.execContext = context; });
       return prevPromise.then(() => {
-        // TODO check if any changeset for current context
         logger.debug(`Checking '${fileName}' changelog...`);
         return this._checkPreConditions(changelog[MC.PRECONDITIONS]);
       }).then(preconditionStatus => {
-        const chs = this._pendingChangesetsByFile.get(fileName);
         if (preconditionStatus !== MC.EXECTYPE_PRECONDITION_SUCCESS) {
           logger.warn(`Skipping '${fileName}' changelog with failed preconditions, having pending changesets: ${chs}.`);
           return this._saveChangesets(chs, { [MC.EXECTYPE]: preconditionStatus });
