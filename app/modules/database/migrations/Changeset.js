@@ -103,13 +103,14 @@ export default class Changeset {
    */
   get change() {
     if (this._change === undefined) {
-      this._change = this._changeset[MC.CHANGES] || null;
-      if (this._change) {
-        this._change = this._change[MC.FUNC] || this._change[MC.UPDATE] || null;
-        // TODO update func generation
-      }
+      this._change = Changeset._getFuncOrUpdate(this._origChangeset[MC.CHANGES]);
     }
     return this._change;
+  }
+
+  static _getFuncOrUpdate(funcOrUpdateDef) {
+    // TODO update func generation
+    return (funcOrUpdateDef && (funcOrUpdateDef[MC.FUNC] || funcOrUpdateDef[MC.UPDATE])) || null;
   }
 
   /**
@@ -118,7 +119,10 @@ export default class Changeset {
    * @return {function|Promise} the 'func' or 'update' function reference
    */
   get rollback() {
-    return this._changeset[MC.ROLLBACK];
+    if (this._rollback === undefined) {
+      this._rollback = Changeset._getFuncOrUpdate(this._origChangeset[MC.ROLLBACK]);
+    }
+    return this._rollback;
   }
 
   /**
