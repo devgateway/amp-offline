@@ -254,5 +254,6 @@ class DBMigrationsManager {
 }
 
 const dbMigrationsManager = new DBMigrationsManager();
+Utils.selfBindMethods(dbMigrationsManager);
 
 export default dbMigrationsManager;
