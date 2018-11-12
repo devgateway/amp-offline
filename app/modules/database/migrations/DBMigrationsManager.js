@@ -214,7 +214,7 @@ class DBMigrationsManager {
         return this._saveChangesets([changeset]).then(() => {
           if (this._isFailOnError) {
             const notification = new NotificationHelper({ message: 'failOnErrorMessage' });
-            alert(notification);
+            alert(notification.message);
             ElectronApp.forceCloseApp();
           }
           return this._isFailOnError;
