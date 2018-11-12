@@ -146,6 +146,14 @@ export default class Changeset {
     return this._execType;
   }
 
+  set dateFound(dateFound) {
+    this._dateFound = dateFound;
+  }
+
+  get dateFound() {
+    return this._dateFound;
+  }
+
   set dateExecuted(dateExecuted) {
     this._dateExecuted = dateExecuted;
   }

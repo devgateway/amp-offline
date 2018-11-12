@@ -88,7 +88,7 @@ class DBMigrationsManager {
   }
 
   _getChangesetsSummary() {
-    return ChangesetHelper.findAllChangesets({}, { id: 1, [MC.MD5SUM]: 1, [MC.DEPLOYMENT_ID]: 1 })
+    return ChangesetHelper.findAllChangesets({}, { id: 1, [MC.MD5SUM]: 1, [MC.DEPLOYMENT_ID]: 1, [MC.DATE_FOUND]: 1 })
       .then(chs => {
         if (this._deployemntId === undefined) {
           this._deployemntId = Math.max(0, ...chs.map(c => c[MC.DEPLOYMENT_ID])) + 1;
@@ -107,8 +107,10 @@ class DBMigrationsManager {
       let willRun = changeset.isRunAlways || !dbC;
       if (!dbC) {
         newChangesets.push(changeset);
+        changeset.dateFound = DateUtils.getISODateForAPI();
       } else if (changeset.md5 !== c[MC.MD5SUM]) {
         willRun = willRun || changeset.isRunOnChange;
+        changeset.dateFound = dbC[MC.DATE_FOUND];
         logger.error(`${changeset.id}: MD5 mismatch detected. ${willRun ? 'It is' : 'Not'} scheduled to rerun.`);
       }
       if (willRun) {
@@ -130,7 +132,6 @@ class DBMigrationsManager {
     }
     const template = {
       [MC.DEPLOYMENT_ID]: this._deployemntId,
-      [MC.DATE_FOUND]: DateUtils.getISODateForAPI(),
     };
     return this._saveChangesets(newChangesets, template);
   }

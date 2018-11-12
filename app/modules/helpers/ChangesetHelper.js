@@ -87,6 +87,7 @@ const ChangesetHelper = {
       [MC.ORDER_EXECUTED]: changeset.orderExecuted,
       [MC.EXECTYPE]: changeset.execType,
       [MC.DATE_EXECUTED]: changeset.dateExecuted,
+      [MC.DATE_FOUND]: changeset.dateFound,
       [MC.ERROR]: changeset.error,
       [MC.ROLLBACKEXECTYPE]: changeset.rollbackExecType,
       [MC.ROLLBACKERROR]: changeset.rollbackError,
