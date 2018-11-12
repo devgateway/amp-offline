@@ -151,11 +151,20 @@ class DBMigrationsManager {
       logger.error('Invalid context. Skipping.');
       return Promise.resolve();
     }
-    return this.detectAndValidateChangelogs().reduce((prevPromise, chdef) => {
+    return this.detectAndValidateChangelogs()
+      .then(this._runChangelogs)
+      .then(() => {
+        logger.log('DB changelogs execution complete');
+        return Promise.resolve();
+      });
+  }
+
+  _runChangelogs(pendingChangelogs: Array) {
+    return pendingChangelogs.reduce((prevPromise, chdef) => {
       const changelog = chdef[MC.CONTENT][MC.CHANGELOG];
       const fileName = chdef[MC.FILE];
       return prevPromise.then(() => {
-        // TODO the full solution
+        // TODO check if any changeset for current context
         logger.debug(`Checking '${fileName}' changelog...`);
         return this._checkPreConditions(changelog[MC.PRECONDITIONS]);
       }).then(preconditionStatus => {
@@ -166,10 +175,7 @@ class DBMigrationsManager {
         }
         return this._runChangesets(chs);
       });
-    }, Promise.resolve()).then(() => {
-      logger.log('DB changelogs execution complete');
-      return Promise.resolve();
-    });
+    }, Promise.resolve());
   }
 
   _checkPreConditions(preconditions) {
