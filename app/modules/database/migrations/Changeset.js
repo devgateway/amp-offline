@@ -1,5 +1,6 @@
 import * as MC from '../../../utils/constants/MigrationsConstants';
 import * as Utils from '../../../utils/Utils';
+import PreCondition from './PreCondition';
 
 /**
  * A simple a way to force function to deliver the source code instead of null
@@ -22,6 +23,9 @@ export default class Changeset {
     this._md5 = Utils.md5(this._origChangeset);
     this._changelogDef = changelogDef;
     this._changeset = Changeset._cloneWithDefaults(origChangeset, changelogDef);
+    if (this._changeset[MC.PRECONDITIONS]) {
+      this._changeset[MC.PRECONDITIONS] = this._changeset[MC.PRECONDITIONS].map(p => new PreCondition(p));
+    }
   }
 
   /**
@@ -123,6 +127,13 @@ export default class Changeset {
       this._rollback = Changeset._getFuncOrUpdate(this._origChangeset[MC.ROLLBACK]);
     }
     return this._rollback;
+  }
+
+  /**
+   * @return {Array<PreCondition>}
+   */
+  get preConditions() {
+    return this._changeset[MC.PRECONDITIONS];
   }
 
   /**
