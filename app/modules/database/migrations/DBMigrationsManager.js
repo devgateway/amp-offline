@@ -83,6 +83,7 @@ class DBMigrationsManager {
         logger.log(`Detected '${file}' changelog. Has ${pendingCount} pending changesets.`);
         if (pendingCount) {
           Changeset.setDefaultsForPreconditions(changelog[MC.PRECONDITIONS]);
+          changelog[MC.PRECONDITIONS] = changelog[MC.PRECONDITIONS].map(p => new PreCondition(p));
         }
         return pendingCount;
       });
@@ -187,7 +188,7 @@ class DBMigrationsManager {
   _checkPreConditions(preconditions) {
     if (preconditions && preconditions.length) {
       logger.log('Running preconditions check...');
-      return preconditions.map(p => new PreCondition(p)).reduce(
+      return preconditions.reduce(
         (prevPromise, precondition: PreCondition) => prevPromise.then((prevP: PreCondition) => {
           if (prevP === undefined || prevP.status === MC.EXECTYPE_PRECONDITION_SUCCESS) {
             return this._checkPreCondition(this._getPreconditionFunc(precondition)).then(status => {
