@@ -235,6 +235,14 @@ export default class Changeset {
           funcRef.toJSON = funcToJson;
         }
       });
+      const preCs = origChangeset[MC.PRECONDITIONS];
+      if (preCs && preCs.length) {
+        preCs.forEach(pc => {
+          if (pc[MC.FUNC]) {
+            pc[MC.FUNC].toJSON = funcToJson;
+          }
+        });
+      }
     }
     return origChangeset;
   }
