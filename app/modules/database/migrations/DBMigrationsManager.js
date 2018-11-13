@@ -196,6 +196,29 @@ class DBMigrationsManager {
     return preconditionsPass;
   }
 
+  _checkPreCondition(func: Function) {
+    try {
+      return Promise.resolve()
+        .then(func)
+        .then(result => {
+          if (result === true) {
+            return MC.EXECTYPE_PRECONDITION_SUCCESS;
+          }
+          if (result === false) {
+            return MC.EXECTYPE_PRECONDITION_FAIL;
+          }
+          return MC.EXECTYPE_PRECONDITION_ERROR;
+        })
+        .catch(error => {
+          logger.error(error);
+          return MC.EXECTYPE_PRECONDITION_ERROR;
+        });
+    } catch (e) {
+      logger.error(e);
+      return MC.EXECTYPE_PRECONDITION_ERROR;
+    }
+  }
+
   _runChangesets(changesets: Array<Changeset>) {
     // TODO full implementation
     return changesets.reduce((prevPromise, changeset: Changeset) => prevPromise.then(() => {
