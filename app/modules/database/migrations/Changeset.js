@@ -248,7 +248,7 @@ export default class Changeset {
     Changeset._setDefaultIfUndefined(m, MC.RUN_ON_CHANGE, MC.DEFAULT_RUN_ON_CHANGE);
     Changeset._setDefaultIfUndefined(m, MC.FAIL_ON_ERROR, MC.DEFAULT_FAIL_ON_ERROR);
 
-    m[MC.PRECONDITIONS] = Changeset.setDefaultsForPreconditions(m[MC.PRECONDITIONS]);
+    m[MC.PRECONDITIONS] = Changeset.setDefaultsForPreconditions(origChangeset[MC.PRECONDITIONS]);
 
     return m;
   }
