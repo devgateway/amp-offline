@@ -206,8 +206,11 @@ class DBMigrationsManager {
     if (precondition[MC.FUNC]) {
       return precondition[MC.FUNC];
     }
-    // TODO changeset precondition func
-    return () => true;
+    return () => ChangesetHelper.findChangeset({
+      [MC.CHANGEID]: precondition[MC.CHANGEID],
+      [MC.AUTHOR]: precondition[MC.AUTHOR],
+      [MC.FILE]: precondition[MC.FILE],
+    }).then(dbC => !!(dbC && MC.EXECTYPE_SUCCESS_OPTIONS.includes(dbC[MC.EXECTYPE])));
   }
 
   _checkPreCondition(func: Function) {
