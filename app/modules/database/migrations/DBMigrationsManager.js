@@ -288,24 +288,26 @@ class DBMigrationsManager {
         this._pendingChangesetsById.delete(changeset.id);
         return changeset;
       })
-      .catch(error => {
-        logger.error(`${changeset.id} execution error: ${error}`);
-        changeset.error = error || 'Unknown error';
-        if (changeset.rollback) {
-          logger.log('Executing the rollback...');
-          return Promise.resolve().then(changeset.rollback)
-            .then(() => {
-              logger.log('Rollback executed successfully');
-              changeset.rollbackExecType = MC.EXECTYPE_EXECUTED;
-              return changeset;
-            }).catch(err => {
-              logger.error(`Rollback execution failed: ${err}`);
-              changeset.rollbackError = err || 'Unknown error';
-              return changeset;
-            });
-        }
-        return changeset;
-      });
+      .catch(error => this._runRollback(changeset, error));
+  }
+
+  _runRollback(changeset, error) {
+    logger.error(`${changeset.id} execution error: ${error}`);
+    changeset.error = error || 'Unknown error';
+    if (changeset.rollback) {
+      logger.log('Executing the rollback...');
+      return Promise.resolve().then(changeset.rollback)
+        .then(() => {
+          logger.log('Rollback executed successfully');
+          changeset.rollbackExecType = MC.EXECTYPE_EXECUTED;
+          return changeset;
+        }).catch(err => {
+          logger.error(`Rollback execution failed: ${err}`);
+          changeset.rollbackError = err || 'Unknown error';
+          return changeset;
+        });
+    }
+    return changeset;
   }
 
 }
