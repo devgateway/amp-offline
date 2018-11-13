@@ -177,8 +177,13 @@ class DBMigrationsManager {
         return this._checkPreConditions(changelog[MC.PRECONDITIONS]);
       }).then((p: PreCondition) => {
         if (p.status !== MC.EXECTYPE_PRECONDITION_SUCCESS) {
-          logger.warn(`Skipping '${fileName}' changelog with failed preconditions, having pending changesets: ${chs}.`);
-          return this._saveChangesets(chs, { [MC.EXECTYPE]: p.status });
+          const action = p.status === MC.EXECTYPE_PRECONDITION_FAIL ? p.onFail : p.onError;
+          if (action === MC.ON_FAIL_ERROR_WARN) {
+            logger.warn(`'${fileName}' execution will continue. Configured to only warn on precondition problem.`);
+          } else {
+            logger.warn(`Skipping '${fileName}' with failed precondition, having pending changesets: ${chs}.`);
+            return this._saveChangesets(chs, { [MC.EXECTYPE]: p.status });
+          }
         }
         return this._runChangesets(chs);
       });
