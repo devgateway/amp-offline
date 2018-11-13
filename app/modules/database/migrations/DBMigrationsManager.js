@@ -184,16 +184,30 @@ class DBMigrationsManager {
   }
 
   _checkPreConditions(preconditions) {
-    // eslint-disable-next-line prefer-const
-    let preconditionsPass = MC.EXECTYPE_PRECONDITION_SUCCESS;
     if (preconditions && preconditions.length) {
       logger.log('Running preconditions check...');
-      // TODO actual preconditions check
-      logger.log(`Preconditions check pass = ${preconditionsPass.toString().toUpperCase()} `);
+      return preconditions.reduce((prevPromise, precondition) => prevPromise.then((result) => {
+        if (result === MC.EXECTYPE_PRECONDITION_SUCCESS) {
+          return this._checkPreCondition(this._getPreconditionFunc(precondition));
+        }
+        return result;
+      }, Promise.resolve()))
+        .then(finalResult => {
+          logger.log(`Preconditions check result = ${finalResult} `);
+          return finalResult;
+        });
     } else {
-      logger.log('No preconditions');
+      logger.log(`No preconditions. Default preconditions result = ${MC.EXECTYPE_PRECONDITION_SUCCESS}`);
     }
-    return preconditionsPass;
+    return MC.EXECTYPE_PRECONDITION_SUCCESS;
+  }
+
+  _getPreconditionFunc(precondition) {
+    if (precondition[MC.FUNC]) {
+      return precondition[MC.FUNC];
+    }
+    // TODO changeset precondition func
+    return () => true;
   }
 
   _checkPreCondition(func: Function) {
