@@ -175,10 +175,10 @@ class DBMigrationsManager {
       return prevPromise.then(() => {
         logger.debug(`Checking '${fileName}' changelog...`);
         return this._checkPreConditions(changelog[MC.PRECONDITIONS]);
-      }).then(preconditionStatus => {
-        if (preconditionStatus !== MC.EXECTYPE_PRECONDITION_SUCCESS) {
+      }).then((p: PreCondition) => {
+        if (p.status !== MC.EXECTYPE_PRECONDITION_SUCCESS) {
           logger.warn(`Skipping '${fileName}' changelog with failed preconditions, having pending changesets: ${chs}.`);
-          return this._saveChangesets(chs, { [MC.EXECTYPE]: preconditionStatus });
+          return this._saveChangesets(chs, { [MC.EXECTYPE]: p.status });
         }
         return this._runChangesets(chs);
       });
