@@ -198,7 +198,12 @@ class DBMigrationsManager {
       logger.log('Running preconditions check...');
       return preconditions.reduce(
         (prevPromise, precondition) => prevPromise.then((prevP: PreCondition) => {
-          if (prevP === undefined || prevP.status === MC.EXECTYPE_PRECONDITION_SUCCESS) {
+          let isCheckNext = prevP === undefined || prevP.status === MC.EXECTYPE_PRECONDITION_SUCCESS;
+          if (!isCheckNext) {
+            const action = prevP.status === MC.EXECTYPE_PRECONDITION_FAIL ? prevP.onFail : prevP.onError;
+            isCheckNext = action === MC.ON_FAIL_ERROR_WARN;
+          }
+          if (isCheckNext) {
             return this._checkPreCondition(this._getPreconditionFunc(precondition)).then(status => {
               precondition.status = status;
               return precondition;

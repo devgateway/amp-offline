@@ -46,7 +46,7 @@ export default({
             ChangelogLogger.error('This rollback must NOT be called');
           },
         },
-        getMd5: () => '10d165c73b96235685c1e1284031094b'
+        getMd5: () => 'f8deb88414c704749f17d188639e6f75'
       },
       {
         changeid: 'AMPOFFLINE-1301 unsuccessful',
