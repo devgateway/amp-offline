@@ -33,4 +33,12 @@ export default class PreCondition {
   get file() {
     return this._precondition[MC.FILE];
   }
+
+  get onFail() {
+    return this._precondition[MC.ON_FAIL];
+  }
+
+  get onError() {
+    return this._precondition[MC.ON_ERROR];
+  }
 }
