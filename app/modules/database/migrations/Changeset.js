@@ -23,9 +23,6 @@ export default class Changeset {
     this._md5 = Utils.md5(this._origChangeset);
     this._changelogDef = changelogDef;
     this._changeset = Changeset._cloneWithDefaults(origChangeset, changelogDef);
-    if (this._changeset[MC.PRECONDITIONS]) {
-      this._changeset[MC.PRECONDITIONS] = this._changeset[MC.PRECONDITIONS].map(p => new PreCondition(p));
-    }
   }
 
   /**
@@ -251,7 +248,7 @@ export default class Changeset {
     Changeset._setDefaultIfUndefined(m, MC.RUN_ON_CHANGE, MC.DEFAULT_RUN_ON_CHANGE);
     Changeset._setDefaultIfUndefined(m, MC.FAIL_ON_ERROR, MC.DEFAULT_FAIL_ON_ERROR);
 
-    Changeset.setDefaultsForPreconditions(m[MC.PRECONDITIONS]);
+    m[MC.PRECONDITIONS] = Changeset.setDefaultsForPreconditions(m[MC.PRECONDITIONS]);
 
     return m;
   }
@@ -266,7 +263,9 @@ export default class Changeset {
         Changeset._setDefaultIfUndefined(pc, MC.ON_FAIL, MC.DEFAULT_ON_FAIL_ERROR);
         Changeset._setDefaultIfUndefined(pc, MC.ON_ERROR, MC.DEFAULT_ON_FAIL_ERROR);
       });
+      pcs = pcs.map(p => new PreCondition(p));
     }
+    return pcs;
   }
 
   static _setDefaultIfUndefined(parent, field, defaultValue) {

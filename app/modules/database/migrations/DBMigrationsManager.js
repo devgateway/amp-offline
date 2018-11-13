@@ -73,8 +73,8 @@ class DBMigrationsManager {
       this._pendingChangelgs = changelogs.filter(chdef => {
         const file = chdef[MC.FILE];
         logger.debug(`Verifying '${file}' changelog`);
-        const changelog = chdef[MC.CONTENT];
-        const result = DBMigrationsManager.validateChangelog(changelog);
+        const changelogContent = chdef[MC.CONTENT];
+        const result = DBMigrationsManager.validateChangelog(changelogContent);
         if (!result.valid) {
           logger.error(`Skipping '${file}', since not in a valid format: ${JSON.stringify(result.errors)}`);
           return false;
@@ -82,8 +82,8 @@ class DBMigrationsManager {
         const pendingCount = this._detectPending(chdef, dbChangesetsMap, newChangesets);
         logger.log(`Detected '${file}' changelog. Has ${pendingCount} pending changesets.`);
         if (pendingCount) {
-          Changeset.setDefaultsForPreconditions(changelog[MC.PRECONDITIONS]);
-          changelog[MC.PRECONDITIONS] = changelog[MC.PRECONDITIONS].map(p => new PreCondition(p));
+          const changelog = changelogContent[MC.CHANGELOG];
+          changelog[MC.PRECONDITIONS] = Changeset.setDefaultsForPreconditions(changelog[MC.PRECONDITIONS]);
         }
         return pendingCount;
       });
