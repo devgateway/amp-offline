@@ -17,7 +17,6 @@ const logger = new Logger('DB Migrations Manager');
 const validator = new Validator();
 validator.addSchema(ChangelogSchema, '/ChangelogSchema');
 
-
 /**
  * Database Migrations Manager for patching DB with pending changesets available under "static/db/changelog" folder
  *
@@ -171,17 +170,21 @@ class DBMigrationsManager {
       const fileName = chdef[MC.FILE];
       // TODO find changesets for current context only
       const chs = this._pendingChangesetsByFile.get(fileName);
-      chs.forEach((c: Changeset) => { c.execContext = context; });
+      chs.forEach((c: Changeset) => {
+        c.execContext = context;
+      });
       return prevPromise.then(() => {
         logger.debug(`Checking '${fileName}' changelog...`);
         return this._checkPreConditions(changelog[MC.PRECONDITIONS]);
       }).then((p: PreCondition) => {
+        logger.log(`Preconditions check result = ${p.status} `);
         if (p.status !== MC.EXECTYPE_PRECONDITION_SUCCESS) {
           const action = p.status === MC.EXECTYPE_PRECONDITION_FAIL ? p.onFail : p.onError;
           if (action === MC.ON_FAIL_ERROR_WARN) {
             logger.warn(`'${fileName}' execution will continue. Configured to only warn on precondition problem.`);
           } else {
-            logger.warn(`Skipping '${fileName}' with failed precondition, having pending changesets: ${chs}.`);
+            const chIds = chs.map(c => `'${c.id}'`).join(', ');
+            logger.warn(`Skipping '${fileName}' with failed precondition, having pending changesets: ${chIds}.`);
             return this._saveChangesets(chs, { [MC.EXECTYPE]: p.status });
           }
         }
@@ -194,7 +197,7 @@ class DBMigrationsManager {
     if (preconditions && preconditions.length) {
       logger.log('Running preconditions check...');
       return preconditions.reduce(
-        (prevPromise, precondition: PreCondition) => prevPromise.then((prevP: PreCondition) => {
+        (prevPromise, precondition) => prevPromise.then((prevP: PreCondition) => {
           if (prevP === undefined || prevP.status === MC.EXECTYPE_PRECONDITION_SUCCESS) {
             return this._checkPreCondition(this._getPreconditionFunc(precondition)).then(status => {
               precondition.status = status;
@@ -202,11 +205,7 @@ class DBMigrationsManager {
             });
           }
           return prevP;
-        }, Promise.resolve()))
-        .then((lastCheckedP: PreCondition) => {
-          logger.log(`Preconditions check result = ${lastCheckedP.status} `);
-          return lastCheckedP;
-        });
+        }), Promise.resolve());
     } else {
       logger.log(`No preconditions. Default preconditions result = ${MC.EXECTYPE_PRECONDITION_SUCCESS}`);
     }
