@@ -250,9 +250,9 @@ class DBMigrationsManager {
   }
 
   _runChangesets(changesets: Array<Changeset>) {
-    // TODO full implementation
+    let isHaltChangelog = false;
     return changesets.reduce((prevPromise, changeset: Changeset) => prevPromise.then(() => {
-      if (this._isFailOnError) {
+      if (this._isFailOnError || isHaltChangelog) {
         return Promise.resolve();
       }
       logger.log(`Executing '${changeset.id}' changeset...`);
@@ -262,7 +262,15 @@ class DBMigrationsManager {
         // TODO remove, since detected earlier, it's for testing only
         logger.error('MD5 doesn\'t match!');
       }
-      return this._runChangeset(changeset).then(() => this._saveChangeset(changeset));
+      return this._processChangesetPreconditions(changeset).then(action => {
+        if (action === null) {
+          return this._runChangeset(changeset);
+        }
+        if (action === MC.ON_FAIL_ERROR_HALT) {
+          isHaltChangelog = true;
+        }
+        return changeset;
+      }).then(() => this._saveChangeset(changeset));
     }), Promise.resolve());
   }
 
