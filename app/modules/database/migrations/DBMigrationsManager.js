@@ -278,6 +278,46 @@ class DBMigrationsManager {
     }), Promise.resolve());
   }
 
+  /**
+   * @return {Promise<string|null>} action (if any) to perform
+   */
+  _processChangesetPreconditions(changeset: Changeset) {
+    return Promise.resolve()
+      .then(() => this._checkPreConditions(changeset.preConditions))
+      .then((p: PreCondition) => {
+        if (p.status !== MC.EXECTYPE_PRECONDITION_SUCCESS) {
+          changeset.execType = p.status;
+          let action = p.status === MC.EXECTYPE_PRECONDITION_FAIL ? p.onFail : p.onError;
+          if (!MC.ON_FAIL_ERROR_CHANGESET_OPTIONS.includes(action)) {
+            logger.error(`Unexpected action: ${action}. Wrong value must be detected during validation
+              and default one must have been configured. May be a bug. Fallback to ${MC.DEFAULT_ON_FAIL_ERROR}`);
+            action = MC.DEFAULT_ON_FAIL_ERROR;
+          }
+          switch (action) {
+            case MC.ON_FAIL_ERROR_MARK_RAN:
+              logger.warn(`Marking changeset '${changeset.id}' as executed on precondition failure.`);
+              changeset.execType = MC.EXECTYPE_EXECUTED;
+              break;
+            case MC.ON_FAIL_ERROR_CONTINUE:
+              logger.warn(`Skipping changeset '${changeset.id}' due to precondition failure. Will retry next time.`);
+              break;
+            case MC.ON_FAIL_ERROR_HALT:
+              logger.warn(`Skipping changeset '${changeset.id}' and the remaining of the changelog.`);
+              break;
+            case MC.ON_FAIL_ERROR_WARN:
+              logger.warn(`'${changeset.id}' execution will continue. Configured to only warn on precondition issue.`);
+              action = null;
+              break;
+            default:
+              // already tackled above
+              break;
+          }
+          return action;
+        }
+        return null;
+      });
+  }
+
   _runChangeset(changeset: Changeset) {
     // TODO check if func or update, flag status based on result, etc
     return Promise.resolve().then(changeset.change)
