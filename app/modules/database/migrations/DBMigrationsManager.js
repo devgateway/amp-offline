@@ -10,6 +10,7 @@ import * as Utils from '../../../utils/Utils';
 import DateUtils from '../../../utils/DateUtils';
 import NotificationHelper from '../../helpers/NotificationHelper';
 import * as ElectronApp from '../../util/ElectronApp';
+import PreCondition from './PreCondition';
 
 const logger = new Logger('DB Migrations Manager');
 
@@ -186,15 +187,19 @@ class DBMigrationsManager {
   _checkPreConditions(preconditions) {
     if (preconditions && preconditions.length) {
       logger.log('Running preconditions check...');
-      return preconditions.reduce((prevPromise, precondition) => prevPromise.then((result) => {
-        if (result === MC.EXECTYPE_PRECONDITION_SUCCESS) {
-          return this._checkPreCondition(this._getPreconditionFunc(precondition));
-        }
-        return result;
-      }, Promise.resolve()))
-        .then(finalResult => {
-          logger.log(`Preconditions check result = ${finalResult} `);
-          return finalResult;
+      return preconditions.map(p => new PreCondition(p)).reduce(
+        (prevPromise, precondition: PreCondition) => prevPromise.then((prevP: PreCondition) => {
+          if (prevP === undefined || prevP.status === MC.EXECTYPE_PRECONDITION_SUCCESS) {
+            return this._checkPreCondition(this._getPreconditionFunc(precondition)).then(status => {
+              precondition.status = status;
+              return precondition;
+            });
+          }
+          return prevP;
+        }, Promise.resolve()))
+        .then((lastCheckedP: PreCondition) => {
+          logger.log(`Preconditions check result = ${lastCheckedP.status} `);
+          return lastCheckedP;
         });
     } else {
       logger.log(`No preconditions. Default preconditions result = ${MC.EXECTYPE_PRECONDITION_SUCCESS}`);
@@ -202,14 +207,14 @@ class DBMigrationsManager {
     return MC.EXECTYPE_PRECONDITION_SUCCESS;
   }
 
-  _getPreconditionFunc(precondition) {
-    if (precondition[MC.FUNC]) {
-      return precondition[MC.FUNC];
+  _getPreconditionFunc(precondition: PreCondition) {
+    if (precondition.func) {
+      return precondition.func;
     }
     return () => ChangesetHelper.findChangeset({
-      [MC.CHANGEID]: precondition[MC.CHANGEID],
-      [MC.AUTHOR]: precondition[MC.AUTHOR],
-      [MC.FILE]: precondition[MC.FILE],
+      [MC.CHANGEID]: precondition.changeId,
+      [MC.AUTHOR]: precondition.author,
+      [MC.FILENAME]: precondition.file,
     }).then(dbC => !!(dbC && MC.EXECTYPE_SUCCESS_OPTIONS.includes(dbC[MC.EXECTYPE])));
   }
 
