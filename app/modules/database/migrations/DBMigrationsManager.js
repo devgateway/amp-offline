@@ -80,6 +80,9 @@ class DBMigrationsManager {
         }
         const pendingCount = this._detectPending(chdef, dbChangesetsMap, newChangesets);
         logger.log(`Detected '${file}' changelog. Has ${pendingCount} pending changesets.`);
+        if (pendingCount) {
+          Changeset.setDefaultsForPreconditions(changelog[MC.PRECONDITIONS]);
+        }
         return pendingCount;
       });
       logger.info(`Found ${this._pendingChangesetsById.size} total changesets to execute.`);
@@ -183,7 +186,6 @@ class DBMigrationsManager {
   _checkPreConditions(preconditions) {
     // eslint-disable-next-line prefer-const
     let preconditionsPass = MC.EXECTYPE_PRECONDITION_SUCCESS;
-    Changeset.setDefaultsForPreconditions(preconditions);
     if (preconditions && preconditions.length) {
       logger.log('Running preconditions check...');
       // TODO actual preconditions check
