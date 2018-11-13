@@ -205,7 +205,9 @@ class DBMigrationsManager {
     } else {
       logger.log(`No preconditions. Default preconditions result = ${MC.EXECTYPE_PRECONDITION_SUCCESS}`);
     }
-    return MC.EXECTYPE_PRECONDITION_SUCCESS;
+    const noPrecondition = new PreCondition();
+    noPrecondition.status = MC.EXECTYPE_PRECONDITION_SUCCESS;
+    return noPrecondition;
   }
 
   _getPreconditionFunc(precondition: PreCondition) {
