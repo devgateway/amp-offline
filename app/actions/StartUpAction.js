@@ -14,6 +14,7 @@ import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
 import {
   ampRegistryCheckComplete,
+  canCurrentVersionStartOrConfirmationNeeded,
   checkAmpRegistryForUpdates,
   checkIfSetupComplete,
   configureDefaults
@@ -48,7 +49,11 @@ const STATE_CALENDAR = 'STATE_CALENDAR';
 
 const logger = new Logger('Startup action');
 
-export function ampOfflineStartUp() {
+/**
+ * Prepares the minimum startup related data and provides the newest version used so far
+ * @return {true|NotificationHelper} continue or ask for user confirmation to continue
+ */
+export function ampOfflinePreStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(SetupManager.auditStartup)
     .then(checkIfSetupComplete)
@@ -56,7 +61,15 @@ export function ampOfflineStartUp() {
       TranslationManager.initializeTranslations(isSetupComplete)
         .then(() => configureDefaults(isSetupComplete))
     )
-    .then(ampOfflineInit)
+    .then(canCurrentVersionStartOrConfirmationNeeded);
+}
+
+/**
+ * Regular startup routines
+ * @return {Promise}
+ */
+export function ampOfflineStartUp() {
+  return ampOfflineInit()
     .then(initLanguage)
     .then(() => nonCriticalRoutinesStartup());
 }

@@ -121,7 +121,8 @@ export default class NotificationHelper {
     let msg = this._message && this.translateMsg ? translate(this._message) : this._message;
     if (this._replacePairs) {
       this._replacePairs.forEach(([src, dst]) => {
-        msg = msg.replace(src, dst);
+        // replace all pairs occurrences
+        msg = msg.split(src).join(dst);
       });
     }
     return msg;
