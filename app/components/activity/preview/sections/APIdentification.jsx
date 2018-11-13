@@ -39,6 +39,7 @@ class APIdentification extends Component {
       fieldPaths.push(AC.MINISTRY_CODE);
       fieldPaths.push(AC.PROJECT_CODE);
     }
+    fieldPaths.push(...[AC.FINANCIAL_INSTRUMENT]);
     return (
       <div>
         {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true))}
