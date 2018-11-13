@@ -262,19 +262,7 @@ class DBMigrationsManager {
         // TODO remove, since detected earlier, it's for testing only
         logger.error('MD5 doesn\'t match!');
       }
-      return this._runChangeset(changeset).then(() => {
-        // storing execution date for success and also for error to see the last attempt
-        changeset.dateExecuted = DateUtils.getISODateForAPI();
-        this._isFailOnError = !!(changeset.isFailOnError && changeset.error);
-        return this._saveChangesets([changeset]).then(() => {
-          if (this._isFailOnError) {
-            const notification = new NotificationHelper({ message: 'failOnErrorMessage' });
-            alert(notification.message);
-            ElectronApp.forceCloseApp();
-          }
-          return this._isFailOnError;
-        });
-      });
+      return this._runChangeset(changeset).then(() => this._saveChangeset(changeset));
     }), Promise.resolve());
   }
 
@@ -318,9 +306,24 @@ class DBMigrationsManager {
       });
   }
 
+  _saveChangeset(changeset: Changeset) {
+    // storing execution date for success and also for error to see the last attempt
+    changeset.dateExecuted = DateUtils.getISODateForAPI();
+    this._isFailOnError = !!(changeset.isFailOnError && changeset.error);
+    return this._saveChangesets([changeset]).then(() => {
+      if (this._isFailOnError) {
+        const notification = new NotificationHelper({ message: 'failOnErrorMessage' });
+        alert(notification.message);
+        ElectronApp.forceCloseApp();
+      }
+      return this._isFailOnError;
+    });
+  }
+
   _runChangeset(changeset: Changeset) {
     // TODO check if func or update, flag status based on result, etc
-    return Promise.resolve().then(changeset.change)
+    return Promise.resolve()
+      .then(changeset.change)
       .then(() => {
         logger.log(`${changeset.id} executed successfully`);
         changeset.execType = MC.EXECTYPE_EXECUTED;
