@@ -8,11 +8,11 @@ import Logger from '../modules/util/LoggerManager';
 import {
   configureConnectionInformation,
   connectivityCheck,
-  isValidConnectionByStatus,
-  isConnectivityCheckInProgress,
-  getStatusNotification,
+  getLeastCriticalStatus,
   getRegisteredServerId,
-  getLeastCriticalStatus
+  getStatusNotification,
+  isConnectivityCheckInProgress,
+  isValidConnectionByStatus
 } from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
@@ -23,6 +23,7 @@ import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import { newUrlsDetected } from './SettingAction';
 import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
+import * as constants from '../utils/constants/ErrorConstants';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -46,6 +47,26 @@ export const STATE_AMP_REGISTRY_CHECK_COMPLETED = 'STATE_AMP_REGISTRY_CHECK_COMP
 
 
 const logger = new Logger('Setup action');
+
+/**
+ * Verifies if current version can start or user confirmation is needed
+ * @return {true|NotificationHelper} continue or ask user to confirm with the given message
+ */
+export function canCurrentVersionStartOrConfirmationNeeded() {
+  return SetupManager.getNewestVersionAuditLog().then(newestUsed => {
+    const currentVersion = Utils.getCurrentVersion();
+    logger.log(`Starting ${currentVersion} version. The newest used before: ${newestUsed}`);
+    if (currentVersion === newestUsed) {
+      return true;
+    }
+    const replacePairs = [['%current-version%', currentVersion], ['%newest-used%', newestUsed]];
+    return new NotificationHelper({
+      message: 'oldVersionWarning',
+      origin: constants.NOTIFICATION_ORIGIN_SETUP,
+      replacePairs
+    });
+  });
+}
 
 export function checkIfSetupComplete() {
   logger.log('checkIfSetupComplete');
