@@ -120,10 +120,22 @@ export function setupComplete(setupConfig) {
 
 function configureAndSaveSetup(setupConfig) {
   logger.log('setupComplete');
-  return configureAndTestConnectivity(setupConfig)
-    .then(() => connectivityCheck())
+  return attemptToConfigure(setupConfig)
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
+    .then(() => connectivityCheck())
     .then(() => true);
+}
+
+function attemptToConfigure(setupConfig) {
+  return SetupManager.getConnectionInformation()
+    .then(savedConnInformation => configureAndTestConnectivity(setupConfig)
+      .then(() => {
+        const fixedUrl = setupConfig.urls[0];
+        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformationOnFullUrl(fixedUrl));
+      })
+      .catch((error) => waitConfigureConnectionInformation(savedConnInformation)
+        .then(() => Promise.reject(error))
+        .catch(() => Promise.reject(error))));
 }
 
 function notifySetupComplete(setupResult) {
@@ -214,7 +226,7 @@ function testAMPUrl(url) {
         if (isValidConnectionByStatus(result && result.connectivityStatus, true)) {
           return Promise.resolve(result);
         }
-        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl))
+        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformationForTest(fixedUrl))
           .then(connectivityStatus => ({ connectivityStatus, fixedUrl }));
       })
     , Promise.resolve())
