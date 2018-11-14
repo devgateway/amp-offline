@@ -128,11 +128,12 @@ export default class Settings extends Component {
   }
 
   saveSettings() {
-    const { hasNewUrls, settings } = this.state;
+    const { hasNewUrls, settings, urlAvailable } = this.state;
     this.props.saveSettings(settings, hasNewUrls);
     if (hasNewUrls) {
       this.setState({ hasNewUrls: false });
     }
+    this.initialUrls = new Set(urlAvailable.keys());
   }
 
   renderSettings() {
