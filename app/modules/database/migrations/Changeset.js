@@ -1,5 +1,6 @@
 import * as MC from '../../../utils/constants/MigrationsConstants';
 import * as Utils from '../../../utils/Utils';
+import PreCondition from './PreCondition';
 
 /**
  * A simple a way to force function to deliver the source code instead of null
@@ -126,6 +127,13 @@ export default class Changeset {
   }
 
   /**
+   * @return {Array<PreCondition>}
+   */
+  get preConditions() {
+    return this._changeset[MC.PRECONDITIONS];
+  }
+
+  /**
    * The MD5 hash for the exact changeset defined in the changelog (excluding any defaults)
    * @return {*}
    */
@@ -227,6 +235,14 @@ export default class Changeset {
           funcRef.toJSON = funcToJson;
         }
       });
+      const preCs = origChangeset[MC.PRECONDITIONS];
+      if (preCs && preCs.length) {
+        preCs.forEach(pc => {
+          if (pc[MC.FUNC]) {
+            pc[MC.FUNC].toJSON = funcToJson;
+          }
+        });
+      }
     }
     return origChangeset;
   }
@@ -240,7 +256,7 @@ export default class Changeset {
     Changeset._setDefaultIfUndefined(m, MC.RUN_ON_CHANGE, MC.DEFAULT_RUN_ON_CHANGE);
     Changeset._setDefaultIfUndefined(m, MC.FAIL_ON_ERROR, MC.DEFAULT_FAIL_ON_ERROR);
 
-    Changeset.setDefaultsForPreconditions(m[MC.PRECONDITIONS]);
+    m[MC.PRECONDITIONS] = Changeset.setDefaultsForPreconditions(origChangeset[MC.PRECONDITIONS]);
 
     return m;
   }
@@ -255,7 +271,9 @@ export default class Changeset {
         Changeset._setDefaultIfUndefined(pc, MC.ON_FAIL, MC.DEFAULT_ON_FAIL_ERROR);
         Changeset._setDefaultIfUndefined(pc, MC.ON_ERROR, MC.DEFAULT_ON_FAIL_ERROR);
       });
+      pcs = pcs.map(p => new PreCondition(p));
     }
+    return pcs;
   }
 
   static _setDefaultIfUndefined(parent, field, defaultValue) {

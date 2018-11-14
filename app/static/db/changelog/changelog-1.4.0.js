@@ -4,7 +4,10 @@ export default({
   changelog: {
     preConditions: [
       {
-        func: () => { ChangelogLogger.log('This is a valid precondition'); },
+        func: () => {
+          ChangelogLogger.log('This is a valid precondition');
+          return true;
+        },
         onError: 'HALT'
       },
     ],
@@ -15,21 +18,24 @@ export default({
         comment: 'POC test 1',
         preConditions: [
           {
-            func: () => { ChangelogLogger.log('This is a valid precondition'); },
+            func: () => {
+              ChangelogLogger.log('This is a valid precondition');
+              return true;
+            },
             onError: 'HALT'
           },
           {
             changeid: 'a valid changeset reference',
             author: 'anyone',
             file: 'some file',
-            onError: 'CONTINUE',
-            onFail: 'HALT'
+            onError: 'HALT',
+            onFail: 'CONTINUE'
           },
           {
             changeid: 'a valid changeset reference',
             author: 'anyone',
             file: 'some file',
-            onFail: 'HALT'
+            onFail: 'CONTINUE'
           }
         ],
         changes: {
@@ -40,7 +46,7 @@ export default({
             ChangelogLogger.error('This rollback must NOT be called');
           },
         },
-        getMd5: () => 'aab3998f6ae5f41a43992f98197a5e6c'
+        getMd5: () => 'f8deb88414c704749f17d188639e6f75'
       },
       {
         changeid: 'AMPOFFLINE-1301 unsuccessful',

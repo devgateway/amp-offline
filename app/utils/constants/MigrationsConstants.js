@@ -67,5 +67,7 @@ export const EXECTYPE_PRECONDITION_ERROR = 'PRECONDITION_ERROR';
  * or another changeset failed with failOnError=true) */
 export const EXECTYPE_NOT_RUN = 'NOT_RUN';
 
+export const EXECTYPE_SUCCESS_OPTIONS = [EXECTYPE_EXECUTED, EXECTYPE_RERUN];
+
 /** Other (workflow) constants */
 export const EXECTYPE_PRECONDITION_SUCCESS = 'EXECTYPE_PRECONDITION_SUCCESS';
