@@ -139,6 +139,11 @@ export function connectivityCheck(isCheckingAlternative: boolean = false) {
   return Promise.all([_getLastConnectivityStatus(), _getServerId()])
     .then(([status, serverId]) => {
       lastConnectivityStatus = status;
+      const ci = _getConnectionInformation();
+      if (ci.isTestUrl && !isCheckingAlternative) {
+        store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, action: lastConnectivityStatus });
+        return Promise.resolve();
+      }
       if (serverId) {
         paramsMap[AMP_SERVER_ID] = serverId;
       }
@@ -214,6 +219,13 @@ function reportCompatibilityError(lastConnectivityStatus: ConnectivityStatus, cu
       store.dispatch(addFullscreenAlert(incompatibilityNotification));
     }
   }
+}
+
+/**
+ * @return {ConnectionInformation}
+ */
+function _getConnectionInformation() {
+  return store.getState().startUpReducer.connectionInformation;
 }
 
 function _getLastConnectivityStatus() {
