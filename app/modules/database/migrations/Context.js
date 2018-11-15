@@ -8,12 +8,12 @@ import * as MC from '../../../utils/constants/MigrationsConstants';
  */
 export default class Context {
   constructor() {
-    this._pendingContext = new Set(MC.CONTEXT_BY_ORDER);
+    this._pendingContexts = new Set(MC.CONTEXT_BY_ORDER);
   }
 
   set context(context) {
     this._context = context;
-    this._pendingContext.delete(context);
+    this._pendingContexts.delete(context);
   }
 
   get context() {
@@ -27,6 +27,15 @@ export default class Context {
    */
   matches(c: Changeset) {
     return c.context.includes(this.context) || c.context.includes(MC.CONTEXT_ALL);
+  }
+
+  /**
+   * Checks if the changeset can still run now or later
+   * @param c the changeset
+   * @return {boolean|*}
+   */
+  canRunNowOrLater(c: Changeset) {
+    return this.matches(c) || this.context.some(ctx => this._pendingContexts.has(ctx));
   }
 
 }

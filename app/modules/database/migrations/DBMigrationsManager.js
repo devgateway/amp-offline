@@ -58,7 +58,15 @@ class DBMigrationsManager {
   _refreshPendingChangelogs() {
     const refreshedChangesetsByFile = new Map();
     this._pendingChangesetsByFile.forEach((chs, file) => {
-      chs = chs.filter((c: Changeset) => this._pendingChangesetsById.has(c.id));
+      chs = chs.filter((c: Changeset) => {
+        if (this._pendingChangesetsById.has(c.id)) {
+          if (this._contextWarpper.canRunNowOrLater(c)) {
+            return true;
+          }
+          this._pendingChangesetsById.delete(c.id);
+        }
+        return false;
+      });
       if (chs.length) {
         refreshedChangesetsByFile.set(file, chs);
       }
