@@ -251,7 +251,7 @@ export default class Changeset {
     const m = Utils.cloneDeep(origChangeset);
     m.id = Changeset.buildId(origChangeset, changelogDef);
 
-    Changeset._setDefaultIfUndefined(m, MC.COMMENT, MC.DEFAULT_CONTEXT);
+    Changeset._setDefaultIfUndefined(m, MC.CONTEXT, MC.DEFAULT_CONTEXT);
     Changeset._setDefaultIfUndefined(m, MC.RUN_ALWAYS, MC.DEFAULT_RUN_ALWAYS);
     Changeset._setDefaultIfUndefined(m, MC.RUN_ON_CHANGE, MC.DEFAULT_RUN_ON_CHANGE);
     Changeset._setDefaultIfUndefined(m, MC.FAIL_ON_ERROR, MC.DEFAULT_FAIL_ON_ERROR);
