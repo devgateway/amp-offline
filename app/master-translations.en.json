@@ -451,5 +451,6 @@
   "Projection": "Projection",
   "Subtotal MTEF Projections projection": "Subtotal MTEF Projections Projection",
   "fundingRelated": "This organization has a funding related.",
+  "oldVersionWarning": "You are attempting to start an older AMP Offline %current-version% after using AMP Offline %newest-used%. This can cause application to crash or corrupt the data. It is highly recommended to close the application and switch to AMP Offline %newest-used%.",
   "failOnErrorMessage": "A critical error occurred during data update. Please collect logs, note your actions and contact the administrator."
 }

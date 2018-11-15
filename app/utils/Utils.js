@@ -253,8 +253,16 @@ const Utils = {
     return array.reduce((result, elem) => result.concat(elem), []);
   },
 
-  versionAsFieldName() {
+  versionToKey() {
     return VERSION.replace(/\./g, '_');
+  },
+
+  versionFromKey(key) {
+    return key.replace(/_/g, '.');
+  },
+
+  getCurrentVersion() {
+    return VERSION;
   },
 
   cloneDeep(obj) {
