@@ -53,6 +53,9 @@ export default class Changeset {
     return this._changelogDef[MC.FILE];
   }
 
+  /**
+   * @return {Array<string>}
+   */
   get context() {
     return this._changeset[MC.CONTEXT];
   }
@@ -258,6 +261,8 @@ export default class Changeset {
 
     m[MC.PRECONDITIONS] = Changeset.setDefaultsForPreconditions(origChangeset[MC.PRECONDITIONS]);
 
+    Changeset._normalize(m);
+
     return m;
   }
 
@@ -280,6 +285,11 @@ export default class Changeset {
     if (parent[field] === undefined) {
       parent[field] = defaultValue;
     }
+  }
+
+  static _normalize(changeset) {
+    const context = changeset[MC.CONTEXT];
+    changeset[MC.CONTEXT] = (context instanceof Array ? context : [context]).map(c => c.toLowerCase());
   }
 
 }
