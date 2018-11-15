@@ -32,6 +32,7 @@ class DBMigrationsManager {
     this._deployemntId = undefined;
     this._orderExecutedCounter = 1;
     this._isFailOnError = false;
+    this._contextWarpper = new Context();
   }
 
   static validateChangelog(changelog) {
@@ -157,6 +158,7 @@ class DBMigrationsManager {
       logger.error('Invalid context. Skipping.');
       return Promise.resolve();
     }
+    this._contextWarpper.context = context;
     return this.detectAndValidateChangelogs()
       .then(pendingChangelogs => this._runChangelogs(pendingChangelogs, context))
       .then(() => {
@@ -169,7 +171,7 @@ class DBMigrationsManager {
     return pendingChangelogs.reduce((prevPromise, chdef) => {
       const changelog = chdef[MC.CONTENT][MC.CHANGELOG];
       const fileName = chdef[MC.FILE];
-      const chs = this._pendingChangesetsByFile.get(fileName).filter(c => Context.matches(context, c));
+      const chs = this._pendingChangesetsByFile.get(fileName).filter(this._contextWarpper.matches);
       chs.forEach((c: Changeset) => {
         c.execContext = context;
       });

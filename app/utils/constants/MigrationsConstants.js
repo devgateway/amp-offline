@@ -28,6 +28,8 @@ export const CONTEXT_INIT = 'init';
 export const CONTEXT_ALL = 'all';
 
 export const CONTEXT_OPTIONS = [CONTEXT_STARTUP, CONTEXT_INIT, CONTEXT_ALL];
+/** list of contexts ordered by execution priority */
+export const CONTEXT_BY_ORDER = [CONTEXT_STARTUP, CONTEXT_INIT];
 
 export const ON_FAIL_ERROR_HALT = 'HALT';
 export const ON_FAIL_ERROR_CONTINUE = 'CONTINUE';

@@ -6,10 +6,27 @@ import * as MC from '../../../utils/constants/MigrationsConstants';
  *
  * @author Nadejda Mandrescu
  */
-const Context = {
-  matches(context: string, c: Changeset) {
-    return c.context.includes(context) || c.context.includes(MC.CONTEXT_ALL);
-  },
-};
+export default class Context {
+  constructor() {
+    this._pendingContext = new Set(MC.CONTEXT_BY_ORDER);
+  }
 
-export default Context;
+  set context(context) {
+    this._context = context;
+    this._pendingContext.delete(context);
+  }
+
+  get context() {
+    return this._context;
+  }
+
+  /**
+   * Checks if the changeset matches for current context execution
+   * @param c the changeset
+   * @return {boolean}
+   */
+  matches(c: Changeset) {
+    return c.context.includes(this.context) || c.context.includes(MC.CONTEXT_ALL);
+  }
+
+}
