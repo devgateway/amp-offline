@@ -8,6 +8,7 @@ import { CONTACT } from '../../utils/constants/ActivityConstants';
 import ContactHelper from './ContactHelper';
 import translate from '../../utils/translate';
 import * as FPC from '../../utils/constants/FieldPathConstants';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Possible values helper');
 
@@ -118,6 +119,14 @@ const PossibleValuesHelper = {
       }
       return pvs;
     });
+  },
+
+  findActivityPossibleValuesPaths() {
+    const prefixToExclude = FPC.PREFIX_LIST.filter(p => p !== FPC.PREFIX_ACTIVITY).map(p => `${p}~.*`).join('|');
+    const regex = new RegExp(`^(?!(?:${prefixToExclude})).*$`);
+    const filter = { id: { $regex: regex } };
+    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, { id: 1 })
+      .then(r => Utils.flattenToListByKey(r, 'id'));
   },
 
   findAll(filter, projections) {
