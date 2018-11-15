@@ -11,6 +11,7 @@ import DateUtils from '../../../utils/DateUtils';
 import NotificationHelper from '../../helpers/NotificationHelper';
 import * as ElectronApp from '../../util/ElectronApp';
 import PreCondition from './PreCondition';
+import Context from './Context';
 
 const logger = new Logger('DB Migrations Manager');
 
@@ -168,8 +169,7 @@ class DBMigrationsManager {
     return pendingChangelogs.reduce((prevPromise, chdef) => {
       const changelog = chdef[MC.CONTENT][MC.CHANGELOG];
       const fileName = chdef[MC.FILE];
-      // TODO find changesets for current context only
-      const chs = this._pendingChangesetsByFile.get(fileName);
+      const chs = this._pendingChangesetsByFile.get(fileName).filter(c => Context.matches(context, c));
       chs.forEach((c: Changeset) => {
         c.execContext = context;
       });
