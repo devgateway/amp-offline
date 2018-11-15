@@ -4,10 +4,10 @@ import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
-import { ACTIVITY_CONTACT_PATHS, FIELD_OPTIONS, FIELD_PATH } from '../../utils/constants/FieldPathConstants';
 import { CONTACT } from '../../utils/constants/ActivityConstants';
 import ContactHelper from './ContactHelper';
 import translate from '../../utils/translate';
+import * as FPC from '../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('Possible values helper');
 
@@ -47,13 +47,13 @@ const possibleValuesSchema = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    [FIELD_PATH]: {
+    [FPC.FIELD_PATH]: {
       type: 'array',
       items: { type: 'string' }
     },
-    [FIELD_OPTIONS]: { $ref: '/OptionSchema' }
+    [FPC.FIELD_OPTIONS]: { $ref: '/OptionSchema' }
   },
-  required: ['id', FIELD_PATH, FIELD_OPTIONS]
+  required: ['id', FPC.FIELD_PATH, FPC.FIELD_OPTIONS]
 };
 
 const validator = new Validator();
@@ -113,7 +113,7 @@ const PossibleValuesHelper = {
       if (root && root.length) {
         pvs.forEach(pv => {
           pv.id = pv.id.substring(root.length + 1);
-          pv[FIELD_PATH] = pv[FIELD_PATH].slice(1);
+          pv[FPC.FIELD_PATH] = pv[FPC.FIELD_PATH].slice(1);
         });
       }
       return pvs;
@@ -134,7 +134,7 @@ const PossibleValuesHelper = {
     if (contactOptionsPVC && contactOptionsPVC.length) {
       return ContactHelper.findAllContactsAsPossibleOptions().then(contactOptions => {
         // extend / update contact options with local new/update contact info
-        contactOptionsPVC.forEach(pv => (pv[FIELD_OPTIONS] = { ...pv[FIELD_OPTIONS], ...contactOptions }));
+        contactOptionsPVC.forEach(pv => (pv[FPC.FIELD_OPTIONS] = { ...pv[FPC.FIELD_OPTIONS], ...contactOptions }));
         return pvc;
       });
     }
@@ -224,8 +224,8 @@ const PossibleValuesHelper = {
     const possibleOptions = this._transformOptions(possibleOptionsFromAMP);
     const possibleValuesForLocalUsage = {
       id: fieldPath,
-      [FIELD_PATH]: fieldPathParts,
-      [FIELD_OPTIONS]: possibleOptions
+      [FPC.FIELD_PATH]: fieldPathParts,
+      [FPC.FIELD_OPTIONS]: possibleOptions
     };
     return possibleValuesForLocalUsage;
   },
@@ -273,8 +273,8 @@ const PossibleValuesHelper = {
   },
 
   isActivityContactPV(pv) {
-    return pv[FIELD_PATH].length === 2
-      && ACTIVITY_CONTACT_PATHS.includes(pv[FIELD_PATH][0]) && pv[FIELD_PATH][1] === CONTACT;
+    return pv[FPC.FIELD_PATH].length === 2
+      && FPC.ACTIVITY_CONTACT_PATHS.includes(pv[FPC.FIELD_PATH][0]) && pv[FPC.FIELD_PATH][1] === CONTACT;
   }
 };
 
