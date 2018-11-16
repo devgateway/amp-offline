@@ -1,5 +1,6 @@
 import Changeset from './Changeset';
 import * as MC from '../../../utils/constants/MigrationsConstants';
+import * as Utils from '../../../utils/Utils';
 
 /**
  * Migrations context helper
@@ -9,6 +10,7 @@ import * as MC from '../../../utils/constants/MigrationsConstants';
 export default class Context {
   constructor() {
     this._pendingContexts = new Set(MC.CONTEXT_BY_ORDER);
+    Utils.selfBindMethods(this);
   }
 
   set context(context) {
