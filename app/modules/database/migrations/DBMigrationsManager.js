@@ -167,6 +167,10 @@ class DBMigrationsManager {
    * @return {number} the number of executed changesets, not necessarily successfully
    */
   run(context: string) {
+    if (!ElectronApp.IS_RUN_CHANGELOGS) {
+      logger.warn('Skiping changelog run. Remove RUN_CHANGELOGS env var or set it to 1 to enable migrations. ');
+      return Promise.resolve(0);
+    }
     logger.log(`Running DB changelogs for '${context}' context`);
     if (!MC.CONTEXT_OPTIONS.includes(context)) {
       logger.error('Invalid context. Skipping.');
