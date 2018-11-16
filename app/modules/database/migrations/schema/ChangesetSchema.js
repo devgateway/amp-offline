@@ -17,8 +17,10 @@ export default ({
       anyOf: [
         {
           type: 'array',
-          items: { type: 'string' },
-          enum: MC.CONTEXT_OPTIONS,
+          items: {
+            type: 'string',
+            enum: MC.CONTEXT_OPTIONS,
+          },
           uniqueItems: true
         },
         {

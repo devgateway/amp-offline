@@ -16,6 +16,7 @@ export default({
         changeid: 'AMPOFFLINE-1301 successful',
         author: 'nmandrescu',
         comment: 'POC test 1',
+        context: ['startup', 'init'],
         preConditions: [
           {
             func: () => {
