@@ -104,14 +104,14 @@ class DBMigrationsManager {
   }
 
   _getChangesetsSummary() {
-    return ChangesetHelper.findAllChangesets({}, { id: 1, [MC.MD5SUM]: 1, [MC.DEPLOYMENT_ID]: 1, [MC.DATE_FOUND]: 1 })
-      .then(chs => {
-        if (this._deployemntId === undefined) {
-          this._deployemntId = Math.max(0, ...chs.map(c => c[MC.DEPLOYMENT_ID])) + 1;
-        }
-        return chs;
-      })
-      .then(Utils.toMapByKey);
+    return ChangesetHelper.findAllChangesets({}, {
+      id: 1, [MC.MD5SUM]: 1, [MC.DEPLOYMENT_ID]: 1, [MC.DATE_FOUND]: 1, [MC.EXECTYPE]: 1
+    }).then(chs => {
+      if (this._deployemntId === undefined) {
+        this._deployemntId = Math.max(0, ...chs.map(c => c[MC.DEPLOYMENT_ID])) + 1;
+      }
+      return chs;
+    }).then(Utils.toMapByKey);
   }
 
   _detectPending(chdef, dbChangesetsMap: Map, newChangesets: Array) {
@@ -120,7 +120,7 @@ class DBMigrationsManager {
     const csCount = chs.filter(c => {
       const changeset = new Changeset(c, chdef);
       const dbC = dbChangesetsMap.get(changeset.id);
-      let willRun = changeset.isRunAlways || !dbC;
+      let willRun = changeset.isRunAlways || !dbC || !MC.EXECTYPE_SUCCESS_OPTIONS.includes(dbC[MC.EXECTYPE]);
       if (!dbC) {
         newChangesets.push(changeset);
         changeset.dateFound = DateUtils.getISODateForAPI();
