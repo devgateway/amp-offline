@@ -37,7 +37,7 @@ export default class Context {
    * @return {boolean|*}
    */
   canRunNowOrLater(c: Changeset) {
-    return this.matches(c) || this.context.some(ctx => this._pendingContexts.has(ctx));
+    return this.matches(c) || c.context.some(ctx => this._pendingContexts.has(ctx));
   }
 
 }

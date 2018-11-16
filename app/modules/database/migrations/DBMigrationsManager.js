@@ -57,6 +57,7 @@ class DBMigrationsManager {
 
   _refreshPendingChangelogs() {
     const refreshedChangesetsByFile = new Map();
+    this._executedChangesetIds.clear();
     this._pendingChangesetsByFile.forEach((chs, file) => {
       chs = chs.filter((c: Changeset) => {
         if (this._pendingChangesetsById.has(c.id)) {
@@ -73,6 +74,7 @@ class DBMigrationsManager {
     });
     this._pendingChangesetsByFile = refreshedChangesetsByFile;
     this._pendingChangelgs = this._pendingChangelgs.filter(cl => this._pendingChangesetsByFile.has(cl[MC.FILE]));
+    logger.log(`All pending changelogs count: ${this._pendingChangelgs.length}`);
     return Promise.resolve().then(() => this._pendingChangelgs);
   }
 
@@ -160,18 +162,22 @@ class DBMigrationsManager {
       });
   }
 
+  /**
+   * @param context
+   * @return {number} the number of executed changesets, not necessarily successfully
+   */
   run(context: string) {
     logger.log(`Running DB changelogs for '${context}' context`);
     if (!MC.CONTEXT_OPTIONS.includes(context)) {
       logger.error('Invalid context. Skipping.');
-      return Promise.resolve();
+      return Promise.resolve(0);
     }
     this._contextWarpper.context = context;
     return this.detectAndValidateChangelogs()
       .then(pendingChangelogs => this._runChangelogs(pendingChangelogs, context))
       .then(() => {
         logger.log('DB changelogs execution complete');
-        return Promise.resolve();
+        return this._executedChangesetIds.size;
       });
   }
 
@@ -273,6 +279,7 @@ class DBMigrationsManager {
       logger.debug(`Comment: ${changeset.comment}`);
       return this._processChangesetPreconditions(changeset).then(action => {
         if (action === null) {
+          this._executedChangesetIds.add(changeset.id);
           return this._runChangeset(changeset);
         }
         if (action === MC.ON_FAIL_ERROR_HALT) {
