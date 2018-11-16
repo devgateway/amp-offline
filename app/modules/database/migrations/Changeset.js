@@ -218,11 +218,6 @@ export default class Changeset {
     return this._rollbackError;
   }
 
-  tmpGetDBMd5() {
-    // TODO this method will be gone when we'll read MD5 previousely stored in DB instead
-    return this._origChangeset.getMd5();
-  }
-
   toJSON() {
     if (!this._json) {
       this._json = JSON.stringify(this._origChangeset);

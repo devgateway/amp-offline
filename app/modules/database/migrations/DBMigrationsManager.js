@@ -122,7 +122,7 @@ class DBMigrationsManager {
       if (!dbC) {
         newChangesets.push(changeset);
         changeset.dateFound = DateUtils.getISODateForAPI();
-      } else if (changeset.md5 !== c[MC.MD5SUM]) {
+      } else if (changeset.md5 !== dbC[MC.MD5SUM]) {
         willRun = willRun || changeset.isRunOnChange;
         changeset.dateFound = dbC[MC.DATE_FOUND];
         logger.error(`${changeset.id}: MD5 mismatch detected. ${willRun ? 'It is' : 'Not'} scheduled to rerun.`);
@@ -271,11 +271,6 @@ class DBMigrationsManager {
       }
       logger.log(`Executing '${changeset.id}' changeset...`);
       logger.debug(`Comment: ${changeset.comment}`);
-      logger.debug(`md5 = ${changeset.md5}`);
-      if (changeset.md5 !== changeset.tmpGetDBMd5()) {
-        // TODO remove, since detected earlier, it's for testing only
-        logger.error('MD5 doesn\'t match!');
-      }
       return this._processChangesetPreconditions(changeset).then(action => {
         if (action === null) {
           return this._runChangeset(changeset);
