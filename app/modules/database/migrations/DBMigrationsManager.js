@@ -28,7 +28,7 @@ class DBMigrationsManager {
     this._executedChangesetIds = new Set();
     this._pendingChangesetsById = new Map();
     this._pendingChangesetsByFile = new Map();
-    this._pendingChangelgs = undefined;
+    this._pendingChangelogs = undefined;
     this._deployemntId = undefined;
     this._orderExecutedCounter = 1;
     this._isFailOnError = false;
@@ -49,7 +49,7 @@ class DBMigrationsManager {
    * @return {Promise}
    */
   detectAndValidateChangelogs() {
-    if (this._pendingChangelgs) {
+    if (this._pendingChangelogs) {
       return this._refreshPendingChangelogs();
     }
     return this._detectAllValidAndPendingChangelogs();
@@ -73,15 +73,15 @@ class DBMigrationsManager {
       }
     });
     this._pendingChangesetsByFile = refreshedChangesetsByFile;
-    this._pendingChangelgs = this._pendingChangelgs.filter(cl => this._pendingChangesetsByFile.has(cl[MC.FILE]));
-    logger.log(`All pending changelogs count: ${this._pendingChangelgs.length}`);
-    return Promise.resolve().then(() => this._pendingChangelgs);
+    this._pendingChangelogs = this._pendingChangelogs.filter(cl => this._pendingChangesetsByFile.has(cl[MC.FILE]));
+    logger.log(`All pending changelogs count: ${this._pendingChangelogs.length}`);
+    return Promise.resolve().then(() => this._pendingChangelogs);
   }
 
   _detectAllValidAndPendingChangelogs() {
     return this._getChangesetsSummary().then((dbChangesetsMap: Map) => {
       const newChangesets = [];
-      this._pendingChangelgs = changelogs.filter(chdef => {
+      this._pendingChangelogs = changelogs.filter(chdef => {
         const file = chdef[MC.FILE];
         logger.debug(`Verifying '${file}' changelog`);
         const changelogContent = chdef[MC.CONTENT];
@@ -100,7 +100,7 @@ class DBMigrationsManager {
       });
       logger.info(`Found ${this._pendingChangesetsById.size} total changesets to execute.`);
       return this._saveNewChangesets(newChangesets);
-    }).then(() => this._pendingChangelgs);
+    }).then(() => this._pendingChangelogs);
   }
 
   _getChangesetsSummary() {
