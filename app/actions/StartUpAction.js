@@ -73,6 +73,7 @@ export function ampOfflinePreStartUp() {
  */
 export function ampOfflineStartUp() {
   return ampOfflineInit()
+    .then(runDbMigrationsPostInit)
     .then(initLanguage)
     .then(() => nonCriticalRoutinesStartup());
 }
@@ -87,6 +88,10 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
     .then(() => (isPostLogout ? postLogoutInit() : null));
+}
+
+function runDbMigrationsPostInit() {
+  return dbMigrationsManager.run(MC.CONTEXT_INIT).then(execNr => (execNr ? ampOfflineInit() : execNr));
 }
 
 function nonCriticalRoutinesStartup() {

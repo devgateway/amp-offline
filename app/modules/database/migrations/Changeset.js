@@ -53,6 +53,9 @@ export default class Changeset {
     return this._changelogDef[MC.FILE];
   }
 
+  /**
+   * @return {Array<string>}
+   */
   get context() {
     return this._changeset[MC.CONTEXT];
   }
@@ -215,11 +218,6 @@ export default class Changeset {
     return this._rollbackError;
   }
 
-  tmpGetDBMd5() {
-    // TODO this method will be gone when we'll read MD5 previousely stored in DB instead
-    return this._origChangeset.getMd5();
-  }
-
   toJSON() {
     if (!this._json) {
       this._json = JSON.stringify(this._origChangeset);
@@ -251,12 +249,14 @@ export default class Changeset {
     const m = Utils.cloneDeep(origChangeset);
     m.id = Changeset.buildId(origChangeset, changelogDef);
 
-    Changeset._setDefaultIfUndefined(m, MC.COMMENT, MC.DEFAULT_CONTEXT);
+    Changeset._setDefaultIfUndefined(m, MC.CONTEXT, MC.DEFAULT_CONTEXT);
     Changeset._setDefaultIfUndefined(m, MC.RUN_ALWAYS, MC.DEFAULT_RUN_ALWAYS);
     Changeset._setDefaultIfUndefined(m, MC.RUN_ON_CHANGE, MC.DEFAULT_RUN_ON_CHANGE);
     Changeset._setDefaultIfUndefined(m, MC.FAIL_ON_ERROR, MC.DEFAULT_FAIL_ON_ERROR);
 
     m[MC.PRECONDITIONS] = Changeset.setDefaultsForPreconditions(origChangeset[MC.PRECONDITIONS]);
+
+    Changeset._normalize(m);
 
     return m;
   }
@@ -280,6 +280,11 @@ export default class Changeset {
     if (parent[field] === undefined) {
       parent[field] = defaultValue;
     }
+  }
+
+  static _normalize(changeset) {
+    const context = changeset[MC.CONTEXT];
+    changeset[MC.CONTEXT] = (context instanceof Array ? context : [context]).map(c => c.toLowerCase());
   }
 
 }

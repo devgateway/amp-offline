@@ -11,6 +11,7 @@ import DateUtils from '../../../utils/DateUtils';
 import NotificationHelper from '../../helpers/NotificationHelper';
 import * as ElectronApp from '../../util/ElectronApp';
 import PreCondition from './PreCondition';
+import Context from './Context';
 
 const logger = new Logger('DB Migrations Manager');
 
@@ -27,10 +28,11 @@ class DBMigrationsManager {
     this._executedChangesetIds = new Set();
     this._pendingChangesetsById = new Map();
     this._pendingChangesetsByFile = new Map();
-    this._pendingChangelgs = undefined;
+    this._pendingChangelogs = undefined;
     this._deployemntId = undefined;
     this._orderExecutedCounter = 1;
     this._isFailOnError = false;
+    this._contextWarpper = new Context();
   }
 
   static validateChangelog(changelog) {
@@ -47,7 +49,7 @@ class DBMigrationsManager {
    * @return {Promise}
    */
   detectAndValidateChangelogs() {
-    if (this._pendingChangelgs) {
+    if (this._pendingChangelogs) {
       return this._refreshPendingChangelogs();
     }
     return this._detectAllValidAndPendingChangelogs();
@@ -55,21 +57,31 @@ class DBMigrationsManager {
 
   _refreshPendingChangelogs() {
     const refreshedChangesetsByFile = new Map();
+    this._executedChangesetIds.clear();
     this._pendingChangesetsByFile.forEach((chs, file) => {
-      chs = chs.filter((c: Changeset) => this._pendingChangesetsById.has(c.id));
+      chs = chs.filter((c: Changeset) => {
+        if (this._pendingChangesetsById.has(c.id)) {
+          if (this._contextWarpper.canRunNowOrLater(c)) {
+            return true;
+          }
+          this._pendingChangesetsById.delete(c.id);
+        }
+        return false;
+      });
       if (chs.length) {
         refreshedChangesetsByFile.set(file, chs);
       }
     });
     this._pendingChangesetsByFile = refreshedChangesetsByFile;
-    this._pendingChangelgs = this._pendingChangelgs.filter(cl => this._pendingChangesetsByFile.has(cl[MC.FILE]));
-    return Promise.resolve().then(() => this._pendingChangelgs);
+    this._pendingChangelogs = this._pendingChangelogs.filter(cl => this._pendingChangesetsByFile.has(cl[MC.FILE]));
+    logger.log(`All pending changelogs count: ${this._pendingChangelogs.length}`);
+    return Promise.resolve().then(() => this._pendingChangelogs);
   }
 
   _detectAllValidAndPendingChangelogs() {
     return this._getChangesetsSummary().then((dbChangesetsMap: Map) => {
       const newChangesets = [];
-      this._pendingChangelgs = changelogs.filter(chdef => {
+      this._pendingChangelogs = changelogs.filter(chdef => {
         const file = chdef[MC.FILE];
         logger.debug(`Verifying '${file}' changelog`);
         const changelogContent = chdef[MC.CONTENT];
@@ -88,18 +100,18 @@ class DBMigrationsManager {
       });
       logger.info(`Found ${this._pendingChangesetsById.size} total changesets to execute.`);
       return this._saveNewChangesets(newChangesets);
-    }).then(() => this._pendingChangelgs);
+    }).then(() => this._pendingChangelogs);
   }
 
   _getChangesetsSummary() {
-    return ChangesetHelper.findAllChangesets({}, { id: 1, [MC.MD5SUM]: 1, [MC.DEPLOYMENT_ID]: 1, [MC.DATE_FOUND]: 1 })
-      .then(chs => {
-        if (this._deployemntId === undefined) {
-          this._deployemntId = Math.max(0, ...chs.map(c => c[MC.DEPLOYMENT_ID])) + 1;
-        }
-        return chs;
-      })
-      .then(Utils.toMapByKey);
+    return ChangesetHelper.findAllChangesets({}, {
+      id: 1, [MC.MD5SUM]: 1, [MC.DEPLOYMENT_ID]: 1, [MC.DATE_FOUND]: 1, [MC.EXECTYPE]: 1
+    }).then(chs => {
+      if (this._deployemntId === undefined) {
+        this._deployemntId = Math.max(0, ...chs.map(c => c[MC.DEPLOYMENT_ID])) + 1;
+      }
+      return chs;
+    }).then(Utils.toMapByKey);
   }
 
   _detectPending(chdef, dbChangesetsMap: Map, newChangesets: Array) {
@@ -108,11 +120,11 @@ class DBMigrationsManager {
     const csCount = chs.filter(c => {
       const changeset = new Changeset(c, chdef);
       const dbC = dbChangesetsMap.get(changeset.id);
-      let willRun = changeset.isRunAlways || !dbC;
+      let willRun = changeset.isRunAlways || !dbC || !MC.EXECTYPE_SUCCESS_OPTIONS.includes(dbC[MC.EXECTYPE]);
       if (!dbC) {
         newChangesets.push(changeset);
         changeset.dateFound = DateUtils.getISODateForAPI();
-      } else if (changeset.md5 !== c[MC.MD5SUM]) {
+      } else if (changeset.md5 !== dbC[MC.MD5SUM]) {
         willRun = willRun || changeset.isRunOnChange;
         changeset.dateFound = dbC[MC.DATE_FOUND];
         logger.error(`${changeset.id}: MD5 mismatch detected. ${willRun ? 'It is' : 'Not'} scheduled to rerun.`);
@@ -150,17 +162,26 @@ class DBMigrationsManager {
       });
   }
 
+  /**
+   * @param context
+   * @return {number} the number of executed changesets, not necessarily successfully
+   */
   run(context: string) {
+    if (!ElectronApp.IS_RUN_CHANGELOGS) {
+      logger.warn('Skiping changelog run. Remove RUN_CHANGELOGS env var or set it to 1 to enable migrations. ');
+      return Promise.resolve(0);
+    }
     logger.log(`Running DB changelogs for '${context}' context`);
     if (!MC.CONTEXT_OPTIONS.includes(context)) {
       logger.error('Invalid context. Skipping.');
-      return Promise.resolve();
+      return Promise.resolve(0);
     }
+    this._contextWarpper.context = context;
     return this.detectAndValidateChangelogs()
       .then(pendingChangelogs => this._runChangelogs(pendingChangelogs, context))
       .then(() => {
         logger.log('DB changelogs execution complete');
-        return Promise.resolve();
+        return this._executedChangesetIds.size;
       });
   }
 
@@ -168,8 +189,7 @@ class DBMigrationsManager {
     return pendingChangelogs.reduce((prevPromise, chdef) => {
       const changelog = chdef[MC.CONTENT][MC.CHANGELOG];
       const fileName = chdef[MC.FILE];
-      // TODO find changesets for current context only
-      const chs = this._pendingChangesetsByFile.get(fileName);
+      const chs = this._pendingChangesetsByFile.get(fileName).filter(this._contextWarpper.matches);
       chs.forEach((c: Changeset) => {
         c.execContext = context;
       });
@@ -261,13 +281,9 @@ class DBMigrationsManager {
       }
       logger.log(`Executing '${changeset.id}' changeset...`);
       logger.debug(`Comment: ${changeset.comment}`);
-      logger.debug(`md5 = ${changeset.md5}`);
-      if (changeset.md5 !== changeset.tmpGetDBMd5()) {
-        // TODO remove, since detected earlier, it's for testing only
-        logger.error('MD5 doesn\'t match!');
-      }
       return this._processChangesetPreconditions(changeset).then(action => {
         if (action === null) {
+          this._executedChangesetIds.add(changeset.id);
           return this._runChangeset(changeset);
         }
         if (action === MC.ON_FAIL_ERROR_HALT) {

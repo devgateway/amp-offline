@@ -16,6 +16,7 @@ export default({
         changeid: 'AMPOFFLINE-1301 successful',
         author: 'nmandrescu',
         comment: 'POC test 1',
+        context: ['startup', 'init'],
         preConditions: [
           {
             func: () => {
@@ -45,8 +46,7 @@ export default({
           func: () => {
             ChangelogLogger.error('This rollback must NOT be called');
           },
-        },
-        getMd5: () => 'f8deb88414c704749f17d188639e6f75'
+        }
       },
       {
         changeid: 'AMPOFFLINE-1301 unsuccessful',
@@ -57,8 +57,7 @@ export default({
         },
         rollback: {
           func: () => { ChangelogLogger.log('This rollback must be called'); }
-        },
-        getMd5: () => '303e5724f56dd92f6ea85232bdc4bbf0'
+        }
       }
     ]
   },

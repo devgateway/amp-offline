@@ -4,13 +4,13 @@
 
 const changelogs = [
   {
-    file: './changelog-1.4.0.js',
+    file: 'changelog-1.4.0.js',
   }
 ];
 
 function importAll(r) {
   changelogs.forEach(changelog => {
-    changelog.content = r(changelog.file);
+    changelog.content = r(`./${changelog.file}`);
   });
 }
 
