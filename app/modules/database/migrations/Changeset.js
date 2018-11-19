@@ -1,6 +1,7 @@
 import * as MC from '../../../utils/constants/MigrationsConstants';
 import * as Utils from '../../../utils/Utils';
 import PreCondition from './PreCondition';
+import ChangesetHelper from '../../helpers/ChangesetHelper';
 
 /**
  * A simple a way to force function to deliver the source code instead of null
@@ -113,8 +114,15 @@ export default class Changeset {
   }
 
   static _getFuncOrUpdate(funcOrUpdateDef) {
-    // TODO update func generation
-    return (funcOrUpdateDef && (funcOrUpdateDef[MC.FUNC] || funcOrUpdateDef[MC.UPDATE])) || null;
+    if (funcOrUpdateDef) {
+      if (funcOrUpdateDef[MC.FUNC]) {
+        return funcOrUpdateDef[MC.FUNC];
+      }
+      if (funcOrUpdateDef[MC.UPDATE]) {
+        return ChangesetHelper.getUpdateFunc.bind(null, funcOrUpdateDef[MC.UPDATE]);
+      }
+    }
+    return null;
   }
 
   /**
