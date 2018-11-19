@@ -6,7 +6,7 @@ export default({
       {
         func: () => {
           ChangelogLogger.log('This is a valid precondition');
-          return true;
+          return false;
         },
         onError: 'HALT'
       },
