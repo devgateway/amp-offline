@@ -26,6 +26,7 @@ import translate from '../../../../utils/translate';
 import AFRadioBoolean from './AFRadioBoolean';
 import AFDateYear from './AFDateYear';
 import CurrencyRatesManager from '../../../../modules/util/CurrencyRatesManager';
+import AFRadioList from './AFRadioList';
 
 const logger = new Logger('AF field');
 
@@ -198,6 +199,8 @@ class AFField extends Component {
         return this._getCheckbox();
       case Types.RADIO_BOOLEAN:
         return this._getRadioBoolean();
+      case Types.RADIO_LIST:
+        return this._getRadioList();
       case Types.INPUT_TYPE:
         return this._getInput();
       case Types.MULTI_SELECT:
@@ -310,6 +313,12 @@ class AFField extends Component {
 
   _getRadioBoolean() {
     return <AFRadioBoolean value={this.state.value} onChange={this.onChange} />;
+  }
+
+  _getRadioList() {
+    const selectedId = this.state.value ? this.state.value.id : null;
+    const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath, selectedId));
+    return <AFRadioList value={this.state.value} onChange={this.onChange} options={afOptions} />;
   }
 
   _getMultiSelect() {

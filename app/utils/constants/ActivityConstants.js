@@ -12,6 +12,7 @@ export const ORG_ROLE_FIELDS = toFieldNames(ValueConstants.ORG_ROLE_NAMES);
 export const ACTIVITY_BUDGET = 'activity_budget';
 export const ACTIVITY_STATUS = 'activity_status';
 export const STATUS_REASON = 'status_reason';
+export const FINANCIAL_INSTRUMENT = 'financial_instrument';
 export const TYPE_OF_IMPLEMENTATION = 'type_of_implementation';
 export const OBJECTIVE = 'objective';
 export const RESULTS = 'results';
