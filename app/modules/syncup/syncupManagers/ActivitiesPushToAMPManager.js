@@ -295,7 +295,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     errors.forEach(error => {
       if (error instanceof Notification) {
         error.replacePairs = error.replacePairs || [];
-        error.replacePairs.push(['', prefix]);
+        error.prefix = prefix;
       } else {
         error = `${prefix}${error}`;
       }
