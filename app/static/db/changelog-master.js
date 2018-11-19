@@ -5,6 +5,9 @@
 const changelogs = [
   {
     file: 'changelog-1.4.0.js',
+  },
+  {
+    file: 'changelog-1.4.1.js'
   }
 ];
 
