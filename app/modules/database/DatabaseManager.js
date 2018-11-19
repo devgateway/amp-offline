@@ -270,7 +270,7 @@ const DatabaseManager = {
    * @param fieldsModifier the fields modifier rule
    * @param collectionName
    */
-  updateCollectionFields(filter, fieldsModifier, collectionName) {
+  updateCollectionFields(filter = {}, fieldsModifier, collectionName) {
     logger.log('updateCollectionFields');
     return new Promise((resolve, reject) => {
       const updateCollectionFieldsFunc = DatabaseManager._updateCollectionFields

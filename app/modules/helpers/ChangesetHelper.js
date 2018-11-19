@@ -3,6 +3,7 @@ import { COLLECTION_CHANGESETS } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 import Changeset from '../database/migrations/Changeset';
 import * as MC from '../../utils/constants/MigrationsConstants';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('ChangesetHelper');
 
@@ -69,6 +70,16 @@ const ChangesetHelper = {
     logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
     return DatabaseManager.removeAll(idsFilter, COLLECTION_CHANGESETS);
+  },
+
+  /**
+   * Runs the update according to update definition
+   * @param updateDef the update definition object from the changeset
+   * @return {Promise}
+   */
+  getUpdateFunc(updateDef) {
+    const fieldsModifier = { $set: Utils.toMap(updateDef[MC.FIELD], updateDef[MC.VALUE]) };
+    return DatabaseManager.updateCollectionFields(updateDef[MC.FILTER], fieldsModifier, updateDef[MC.TABLE]);
   },
 
   /**
