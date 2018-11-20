@@ -69,7 +69,7 @@ export const STATIC_DIR = 'static';
 export const IMAGES_DIR = 'images';
 export const DOC_ICONS = 'doc-icons';
 export const DB_STATIC_DIR = 'db';
-export const MIGRATIONS_DIR = 'migrations';
+export const MIGRATIONS_DIR = 'changelog';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
