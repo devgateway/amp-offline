@@ -1,10 +1,9 @@
-import { describe, it, before } from 'mocha';
-import changelogs from './migrations/RequireMigrations';
+import { before, describe, it } from 'mocha';
+import * as m from './migrations/RequireMigrations';
 import * as MC from '../../app/utils/constants/MigrationsConstants';
 import DBMigrationsManager from '../../app/modules/database/migrations/DBMigrationsManager';
 import ChangesetHelper from '../../app/modules/helpers/ChangesetHelper';
-
-const prodDBMigrations = new DBMigrationsManager(changelogs);
+import prodDef from '../../app/static/db/changelog-master';
 
 const chaiAsPromised = require('chai-as-promised');
 const chai = require('chai');
@@ -12,14 +11,15 @@ const chai = require('chai');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-const changeLogsWithFile = changelogs && changelogs.length && changelogs.filter(c => !!c[MC.FILE]).length;
+const prodDBMigrations = new DBMigrationsManager(m.prodChangelogs);
+const changeLogsWithFile = prodDef && prodDef.length && prodDef.filter(c => !!c[MC.FILE]).length;
 
 describe('@@ DBMigrationsManager @@', () => {
   before('clear changeset.db', () => ChangesetHelper.removeAll());
 
-  describe('master definition check', () =>
+  describe('production master definition check', () =>
     it('should have all entries with valid file entries', () =>
-      expect(changeLogsWithFile).to.equal(changelogs ? changelogs.length : -1)
+      expect(changeLogsWithFile).to.equal(prodDef ? prodDef.length : -1)
     )
   );
 
