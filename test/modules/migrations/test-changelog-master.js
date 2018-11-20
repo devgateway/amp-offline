@@ -5,4 +5,9 @@ export const invalidSchema = [
   },
 ];
 
-export default invalidSchema;
+/** Tests for preconditions */
+export const testPreConditions = [
+  {
+    file: 'changelog-precondition-pass.js',
+  }
+];

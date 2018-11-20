@@ -43,6 +43,20 @@ export default class DBMigrationsManager {
     return validator.validate(changelog, ChangelogSchema);
   }
 
+  /**
+   * @return {Array}
+   */
+  get pendingChangelogs() {
+    return this._pendingChangelogs;
+  }
+
+  /**
+   * @return {Set<any>}
+   */
+  get executedChangesetIds() {
+    return this._executedChangesetIds;
+  }
+
   getAndIncOrderExecuted() {
     this._orderExecutedCounter = this._orderExecutedCounter + 1;
     return this._orderExecutedCounter - 1;
@@ -54,12 +68,12 @@ export default class DBMigrationsManager {
    */
   detectAndValidateChangelogs() {
     if (this._pendingChangelogs) {
-      return this._refreshPendingChangelogs();
+      return Promise.resolve().then(this.refreshPendingChangelogs);
     }
     return this._detectAllValidAndPendingChangelogs();
   }
 
-  _refreshPendingChangelogs() {
+  refreshPendingChangelogs() {
     const refreshedChangesetsByFile = new Map();
     this._executedChangesetIds.clear();
     this._pendingChangesetsByFile.forEach((chs, file) => {
@@ -79,7 +93,7 @@ export default class DBMigrationsManager {
     this._pendingChangesetsByFile = refreshedChangesetsByFile;
     this._pendingChangelogs = this._pendingChangelogs.filter(cl => this._pendingChangesetsByFile.has(cl[MC.FILE]));
     logger.log(`All pending changelogs count: ${this._pendingChangelogs.length}`);
-    return Promise.resolve().then(() => this._pendingChangelogs);
+    return this._pendingChangelogs;
   }
 
   _detectAllValidAndPendingChangelogs() {

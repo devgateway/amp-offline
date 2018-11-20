@@ -7,15 +7,19 @@ const requireContext = require('require-context');
 
 function importAll(r, chs) {
   chs.forEach(changelog => {
-    changelog.content = r(`./${changelog.file}`);
+    const contentPossiblyWithExtra = r(`./${changelog.file}`);
+    changelog.content = contentPossiblyWithExtra.default || contentPossiblyWithExtra;
+    changelog.isValid = contentPossiblyWithExtra.isValid || (() => true);
   });
 }
 
 const mp = StaticAssetsUtils.getMigrationsPath();
 importAll(requireContext(mp, false, /\.js$/), prodChangelogs);
 importAll(requireContext(TestUtils.getTestMigrationsPath('invalid-schema'), false, /\.js$/), tm.invalidSchema);
+importAll(requireContext(TestUtils.getTestMigrationsPath('test-preConditions'), false, /\.js$/), tm.testPreConditions);
 
 module.exports = {
   prodChangelogs,
   invalidSchema: tm.invalidSchema,
+  testPreConditions: tm.testPreConditions,
 };

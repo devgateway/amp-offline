@@ -35,4 +35,16 @@ describe('@@ DBMigrationsManager @@', () => {
       expect(getValidChangelogsCount(invalidSchemaDBMigrations)).to.eventually.equal(0)
     )
   );
+
+  describe('run', () => {
+    m.testPreConditions.forEach(chdef =>
+      it('should pass correctly the preconditions check', () => {
+        const preConditionsDBMigrations = new DBMigrationsManager([chdef]);
+        return expect(preConditionsDBMigrations.run(MC.CONTEXT_STARTUP)
+          .then(() => chdef.isValid(preConditionsDBMigrations)))
+          .to.eventually.be.true;
+      })
+    );
+  }
+  );
 });
