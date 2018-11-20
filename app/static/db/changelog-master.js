@@ -1,5 +1,6 @@
 /**
  * This is a module to define all changelog files. Update 'changelogs' list in the right order when adding a new file.
+ * So far we assume the files are defined under ./changelog folder.
  */
 
 const changelogs = [
@@ -10,13 +11,5 @@ const changelogs = [
     file: 'changelog-1.4.1.js'
   }
 ];
-
-function importAll(r) {
-  changelogs.forEach(changelog => {
-    changelog.content = r(`./${changelog.file}`);
-  });
-}
-
-importAll(require.context('./changelog/', false, /\.js$/));
 
 export default changelogs;

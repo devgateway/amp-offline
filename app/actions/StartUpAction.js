@@ -24,7 +24,7 @@ import { deleteOrphanResources } from './ResourceAction';
 import SetupManager from '../modules/setup/SetupManager';
 import { GS_DEFAULT_CALENDAR } from '../utils/constants/GlobalSettingsConstants';
 import CalendarHelper from '../modules/helpers/CalendarHelper';
-import dbMigrationsManager from '../modules/database/migrations/DBMigrationsManager';
+import { dbMigrationsManager } from './DBMigrationsAction';
 import * as MC from '../utils/constants/MigrationsConstants';
 
 export const TIMER_START = 'TIMER_START';
