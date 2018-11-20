@@ -9,5 +9,11 @@ export const invalidSchema = [
 export const testPreConditions = [
   {
     file: 'changelog-precondition-pass.js',
-  }
+  },
+  {
+    file: 'changeset-precondition-pass.js',
+  },
+  {
+    file: 'no-precondition-pass.js',
+  },
 ];

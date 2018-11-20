@@ -12,3 +12,7 @@ export const changeset = () => ({
 });
 
 export const changesets = () => ([changeset()]);
+
+export const preconditionPassFunc = {
+  func: () => true
+};
