@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { Validator } from 'jsonschema';
 import Logger from '../../util/LoggerManager';
-import changelogs from '../../../static/db/changelog-master';
 import * as MC from '../../../utils/constants/MigrationsConstants';
 import Changeset from './Changeset';
 import ChangelogSchema from './schema/ChangelogSchema';
@@ -23,8 +22,12 @@ validator.addSchema(ChangelogSchema, '/ChangelogSchema');
  *
  * @author Nadejda Mandrescu
  */
-class DBMigrationsManager {
-  constructor() {
+export default class DBMigrationsManager {
+  /**
+   * @param changelogs a list of changelogs definitions [{ file: 'abc.js', content: {...}}, ...]
+   */
+  constructor(changelogs) {
+    this._changelogs = changelogs;
     this._executedChangesetIds = new Set();
     this._pendingChangesetsById = new Map();
     this._pendingChangesetsByFile = new Map();
@@ -33,6 +36,7 @@ class DBMigrationsManager {
     this._orderExecutedCounter = 1;
     this._isFailOnError = false;
     this._contextWarpper = new Context();
+    Utils.selfBindMethods(this);
   }
 
   static validateChangelog(changelog) {
@@ -81,7 +85,7 @@ class DBMigrationsManager {
   _detectAllValidAndPendingChangelogs() {
     return this._getChangesetsSummary().then((dbChangesetsMap: Map) => {
       const newChangesets = [];
-      this._pendingChangelogs = changelogs.filter(chdef => {
+      this._pendingChangelogs = this._changelogs.filter(chdef => {
         const file = chdef[MC.FILE];
         logger.debug(`Verifying '${file}' changelog`);
         const changelogContent = chdef[MC.CONTENT];
@@ -382,8 +386,3 @@ class DBMigrationsManager {
   }
 
 }
-
-const dbMigrationsManager = new DBMigrationsManager();
-Utils.selfBindMethods(dbMigrationsManager);
-
-export default dbMigrationsManager;
