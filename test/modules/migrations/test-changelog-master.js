@@ -8,6 +8,12 @@ export const invalidSchema = [
   'changelog-precondition-as-string.js',
   'changelog-precondition-extra-fields.js',
   'changelog-precondition-both-func-and-changeset-dependency.js',
+  'changeset-changeid-not-string.js',
+  'changeset-changeid-missing.js',
+  'changeset-author-missing.js',
+  'changeset-author-not-string.js',
+  'changeset-changes-missing.js',
+  'changeset-changes-not-object.js',
 ].map(file => ({ file }));
 
 /** Tests for preconditions */
