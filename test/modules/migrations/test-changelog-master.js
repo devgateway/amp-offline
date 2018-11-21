@@ -1,6 +1,10 @@
 /** Each file should test a single invalid schema definition */
 export const invalidSchema = [
   'test-changelog-missing-root.js',
+  'changelog-precondition-on-error-continue.js',
+  'changelog-precondition-on-error-mark-run.js',
+  'changelog-precondition-on-fail-continue.js',
+  'changelog-precondition-on-fail-mark-run.js',
 ].map(file => ({ file }));
 
 /** Tests for preconditions */
