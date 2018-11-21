@@ -40,3 +40,8 @@ export const preconditionFailAndWarn = {
 export const preconditionErrorAndDefault = {
   func: () => { throw new Error('Precondition Error'); }
 };
+
+export const preconditionErrorAndContinueFunc = {
+  func: () => { throw new Error('Precondition Error'); },
+  onError: MC.ON_FAIL_ERROR_CONTINUE
+};
