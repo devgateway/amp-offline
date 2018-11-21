@@ -4,6 +4,7 @@ import ChangesetHelper from '../../../app/modules/helpers/ChangesetHelper';
 import * as Utils from '../../../app/utils/Utils';
 import * as MC from '../../../app/utils/constants/MigrationsConstants';
 import Changeset from '../../../app/modules/database/migrations/Changeset';
+import * as LanguageHelper from '../../../app/modules/helpers/LanguageHelper';
 
 export const checkAllExecuted = (fileName) => (dbMM: DBMigrationsManager) => {
   let allExecuted = dbMM.executedChangesetIds.size;
@@ -32,3 +33,5 @@ export const execTypeMatchAll = (execTypeToMatch) => (dbMM: DBMigrationsManager)
 };
 
 export const getChangesetId = (rawChangeset, fileName) => Changeset.buildId(rawChangeset, { file: fileName });
+
+export const replaceLanguagesForTest = (languages) => LanguageHelper.replaceCollection(languages);

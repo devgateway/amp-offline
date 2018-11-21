@@ -1,9 +1,11 @@
-import { before, describe, it } from 'mocha';
+import { after, before, describe, it } from 'mocha';
 import * as m from './migrations/RequireMigrations';
 import * as MC from '../../app/utils/constants/MigrationsConstants';
 import DBMigrationsManager from '../../app/modules/database/migrations/DBMigrationsManager';
 import ChangesetHelper from '../../app/modules/helpers/ChangesetHelper';
 import prodDef from '../../app/static/db/changelog-master';
+import * as languages from './migrations/templates/test-migrations-languages.json';
+import { replaceLanguagesForTest } from './migrations/MigrationsTestUtils';
 
 const chaiAsPromised = require('chai-as-promised');
 const chai = require('chai');
@@ -17,7 +19,13 @@ const changeLogsWithFile = prodDef && prodDef.length && prodDef.filter(c => !!c[
 const getValidChangelogsCount = (dbMigMng) => dbMigMng.detectAndValidateChangelogs().then(pc => pc.length);
 
 describe('@@ DBMigrationsManager @@', () => {
-  before('clear changeset.db', () => ChangesetHelper.removeAll());
+  before('clear changeset.db and prepare data', () =>
+    Promise.all([
+      ChangesetHelper.removeAll(),
+      replaceLanguagesForTest(languages.default)
+    ]));
+
+  after('clear other data', () => replaceLanguagesForTest([]));
 
   describe('production master definition check', () =>
     it('should have all entries with valid file entries', () =>
