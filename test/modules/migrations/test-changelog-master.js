@@ -8,4 +8,5 @@ export const testPreConditions = [
   'changelog-precondition-pass.js',
   'changeset-precondition-pass.js',
   'no-precondition-pass.js',
+  'changeset-precondition-fail-and-continue.js',
 ].map(file => ({ file }));

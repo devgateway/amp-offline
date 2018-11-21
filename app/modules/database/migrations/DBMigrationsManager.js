@@ -51,6 +51,13 @@ export default class DBMigrationsManager {
   }
 
   /**
+   * @return {Map<any, any>}
+   */
+  get pendingChangesetsById() {
+    return this._pendingChangesetsById;
+  }
+
+  /**
    * @return {Set<any>}
    */
   get executedChangesetIds() {

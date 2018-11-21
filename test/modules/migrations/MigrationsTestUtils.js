@@ -1,5 +1,8 @@
 import DBMigrationsManager from '../../../app/modules/database/migrations/DBMigrationsManager';
 import ChangelogLogger from '../../../app/static/db/ChangelogLogger';
+import ChangesetHelper from '../../../app/modules/helpers/ChangesetHelper';
+import * as Utils from '../../../app/utils/Utils';
+import * as MC from '../../../app/utils/constants/MigrationsConstants';
 
 export const checkAllExecuted = (fileName) => (dbMM: DBMigrationsManager) => {
   let allExecuted = dbMM.executedChangesetIds.size;
@@ -13,4 +16,16 @@ export const checkAllExecuted = (fileName) => (dbMM: DBMigrationsManager) => {
   return allExecuted;
 };
 
-export const placeholder = '';
+export const checkExecutedCount = (count) => (dbMM: DBMigrationsManager) => count === dbMM.executedChangesetIds.size;
+
+export const execTypeMatch = (execTypeToMatch: string, matchIds: Array) => () =>
+  ChangesetHelper.findAllChangesets({ id: { $in: matchIds } }, { [MC.EXECTYPE]: 1 })
+    .then((cs) => {
+      const execTypesSet = new Set(Utils.flattenToListByKey(cs, MC.EXECTYPE));
+      return execTypesSet.size === 1 && execTypesSet.has(execTypeToMatch);
+    });
+
+export const execTypeMatchAll = (execTypeToMatch) => (dbMM: DBMigrationsManager) => {
+  const matchIds = Array.from(dbMM.pendingChangesetsById.keys()).concat(Array.from(dbMM.executedChangesetIds.keys()));
+  return execTypeMatch(execTypeToMatch, matchIds)();
+};
