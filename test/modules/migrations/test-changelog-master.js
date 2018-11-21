@@ -42,4 +42,5 @@ export const testPreConditions = [
 export const testChanges = [
   'changeset-func-update-pass.js',
   'changeset-fail-on-error.js',
+  'changeset-func-reject-or-throw.js',
 ].map(file => ({ file }));

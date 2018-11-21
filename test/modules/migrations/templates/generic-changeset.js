@@ -30,7 +30,11 @@ export const changesetUpdate = (changeid) => ({
 export const changesets = (changeid) => ([changeset(changeid)]);
 
 export const funcThatRejects = {
-  func: () => Promise.reject()
+  func: Promise.reject
+};
+
+export const funcThatThrows = {
+  func: () => { throw new Error('Func Error'); }
 };
 
 export const preconditionPassFunc = {
