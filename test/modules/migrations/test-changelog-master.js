@@ -15,6 +15,10 @@ export const invalidSchema = [
   'changeset-changes-missing.js',
   'changeset-changes-not-object.js',
   'changeset-changes-rule-missing.js',
+  'changeset-run-always-not-boolean.js',
+  'changeset-run-on-change-not-boolean.js',
+  'changeset-comment-not-string.js',
+  'changeset-context-not-string-or-array.js',
 ].map(file => ({ file }));
 
 /** Tests for preconditions */
