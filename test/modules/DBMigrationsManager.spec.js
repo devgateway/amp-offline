@@ -53,6 +53,15 @@ describe('@@ DBMigrationsManager @@', () => {
           .to.eventually.be.true;
       })
     );
+
+    m.testChanges.forEach(chdef =>
+      it(`should process changes correctly for ${chdef[MC.FILE]}`, () => {
+        const changesDBMigrations = new DBMigrationsManager([chdef]);
+        return expect(changesDBMigrations.run(MC.CONTEXT_STARTUP)
+          .then(() => chdef.isValid(changesDBMigrations)))
+          .to.eventually.be.true;
+      })
+    );
   }
   );
 });

@@ -12,6 +12,21 @@ export const changeset = (changeid) => ({
   }
 });
 
+export const changesetUpdate = (changeid) => ({
+  changeid: `${changeid}-${Utils.stringToUniqueId()}`,
+  author: 'nmandrescu',
+  comment: 'Generic changeset',
+  context: 'startup',
+  changes: {
+    update: {
+      table: 'languages',
+      field: 'name',
+      value: `English-${Math.random()}`,
+      filter: { id: 'en' }
+    }
+  }
+});
+
 export const changesets = (changeid) => ([changeset(changeid)]);
 
 export const preconditionPassFunc = {

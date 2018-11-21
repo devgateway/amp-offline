@@ -37,3 +37,8 @@ export const testPreConditions = [
   'changeset-precondition-error-and-markrun.js',
   'changeset-precondition-error-and-warn.js',
 ].map(file => ({ file }));
+
+/** Tests for changes */
+export const testChanges = [
+  'changeset-func-update-pass.js',
+].map(file => ({ file }));
