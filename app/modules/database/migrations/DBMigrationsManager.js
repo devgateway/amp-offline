@@ -43,6 +43,13 @@ export default class DBMigrationsManager {
     return validator.validate(changelog, ChangelogSchema);
   }
 
+  static _getSuccessExecType(changeset: Changeset) {
+    if (changeset.prevDBData && MC.EXECTYPE_SUCCESS_OPTIONS.includes(changeset.prevDBData[MC.EXECTYPE])) {
+      return MC.EXECTYPE_RERUN;
+    }
+    return MC.EXECTYPE_EXECUTED;
+  }
+
   /**
    * @return {Array}
    */
@@ -161,6 +168,7 @@ export default class DBMigrationsManager {
       if (willRun) {
         this._pendingChangesetsById.set(changeset.id, changeset);
         pendingChs.push(changeset);
+        changeset.prevDBData = dbC;
         return true;
       }
       return false;
@@ -385,7 +393,7 @@ export default class DBMigrationsManager {
       .then(changeset.change)
       .then(() => {
         logger.log(`${changeset.id} executed successfully`);
-        changeset.execType = MC.EXECTYPE_EXECUTED;
+        changeset.execType = DBMigrationsManager._getSuccessExecType(changeset);
         changeset.orderExecuted = this.getAndIncOrderExecuted();
         this._pendingChangesetsById.delete(changeset.id);
         return changeset;

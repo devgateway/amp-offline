@@ -226,6 +226,20 @@ export default class Changeset {
     return this._rollbackError;
   }
 
+  /**
+   * @param prevDBData the existing DB record
+   */
+  set prevDBData(prevDBData: Object) {
+    this._prevDBData = prevDBData;
+  }
+
+  /**
+   * @return {Object}
+   */
+  get prevDBData() {
+    return this._prevDBData;
+  }
+
   toJSON() {
     if (!this._json) {
       this._json = JSON.stringify(this._origChangeset);
