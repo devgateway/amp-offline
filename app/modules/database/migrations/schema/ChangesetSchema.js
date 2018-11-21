@@ -14,7 +14,7 @@ export default ({
       type: 'string'
     },
     context: {
-      anyOf: [
+      oneOf: [
         {
           type: 'array',
           items: {
@@ -46,6 +46,5 @@ export default ({
     rollback: ChangeRollbackSchema
   },
   required: [MC.CHANGEID, MC.AUTHOR, MC.CHANGES],
-  // TODO enable once no longer need getMd5 for testing
-  // additionalProperties: false
+  additionalProperties: false
 });

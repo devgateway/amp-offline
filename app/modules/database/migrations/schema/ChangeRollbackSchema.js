@@ -6,24 +6,34 @@ export default({
   type: 'object',
   oneOf: [
     {
-      func: {
-        type: 'function',
+      id: '/FuncSchema',
+      $schema: 'http://json-schema.org/draft-04/schema#',
+      properties: {
+        func: {
+          type: 'function',
+        },
       },
       additionalProperties: false,
       required: [MC.FUNC]
     },
     {
-      update: {
-        type: 'object',
-        properties: {
-          table: { type: 'string' },
-          field: { type: 'string' },
-          value: { type: ['string', 'boolean', 'array', 'object', 'number', 'integer', 'null'] },
-          filter: { type: ['object'] }
-        },
-        additionalProperties: false,
-        required: [MC.TABLE, MC.FIELD, MC.VALUE]
-      }
+      id: '/UpdateSchema',
+      $schema: 'http://json-schema.org/draft-04/schema#',
+      properties: {
+        update: {
+          type: 'object',
+          properties: {
+            table: { type: 'string' },
+            field: { type: 'string' },
+            value: { type: ['string', 'boolean', 'array', 'object', 'number', 'integer', 'null'] },
+            filter: { type: ['object'] }
+          },
+          additionalProperties: false,
+          required: [MC.TABLE, MC.FIELD, MC.VALUE]
+        }
+      },
+      additionalProperties: false,
+      required: [MC.UPDATE]
     }
   ]
 });

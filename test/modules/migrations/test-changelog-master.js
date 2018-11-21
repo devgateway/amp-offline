@@ -14,6 +14,7 @@ export const invalidSchema = [
   'changeset-author-not-string.js',
   'changeset-changes-missing.js',
   'changeset-changes-not-object.js',
+  'changeset-changes-rule-missing.js',
 ].map(file => ({ file }));
 
 /** Tests for preconditions */
