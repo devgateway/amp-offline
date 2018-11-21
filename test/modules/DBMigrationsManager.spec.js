@@ -14,8 +14,6 @@ chai.use(chaiAsPromised);
 const prodDBMigrations = new DBMigrationsManager(m.prodChangelogs);
 const changeLogsWithFile = prodDef && prodDef.length && prodDef.filter(c => !!c[MC.FILE]).length;
 
-const invalidSchemaDBMigrations = new DBMigrationsManager(m.invalidSchema);
-
 const getValidChangelogsCount = (dbMigMng) => dbMigMng.detectAndValidateChangelogs().then(pc => pc.length);
 
 describe('@@ DBMigrationsManager @@', () => {
@@ -27,14 +25,16 @@ describe('@@ DBMigrationsManager @@', () => {
     )
   );
 
-  describe('detectAndValidateChangelogs', () =>
+  describe('detectAndValidateChangelogs', () => {
     it('should validate all production changelogs', () =>
       expect(getValidChangelogsCount(prodDBMigrations)).to.eventually.equal(changeLogsWithFile)
-    ),
-    it('should fail all invalid schema changelogs', () =>
-      expect(getValidChangelogsCount(invalidSchemaDBMigrations)).to.eventually.equal(0)
-    )
-  );
+    );
+    m.invalidSchema.forEach(chdef =>
+      it(`should fail invalid schema changelog for ${chdef[MC.FILE]}`, () =>
+        expect(getValidChangelogsCount(new DBMigrationsManager([chdef]))).to.eventually.equal(0)
+      )
+    );
+  });
 
   describe('run', () => {
     m.testPreConditions.forEach(chdef =>
