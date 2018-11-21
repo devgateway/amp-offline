@@ -23,7 +23,12 @@ export const preconditionFailAndContinueFunc = {
   onFail: MC.ON_FAIL_ERROR_CONTINUE
 };
 
-
 export const preconditionFailAndDefault = {
   func: () => false,
 };
+
+export const preconditionFailAndMarkRunFunc = {
+  func: () => false,
+  onFail: MC.ON_FAIL_ERROR_MARK_RAN
+};
+
