@@ -29,6 +29,10 @@ export const changesetUpdate = (changeid) => ({
 
 export const changesets = (changeid) => ([changeset(changeid)]);
 
+export const funcThatRejects = {
+  func: () => Promise.reject()
+};
+
 export const preconditionPassFunc = {
   func: () => true
 };

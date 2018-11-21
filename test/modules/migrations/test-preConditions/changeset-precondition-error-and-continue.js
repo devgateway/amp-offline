@@ -1,6 +1,6 @@
 import * as generic from '../templates/generic-changeset';
 import FileManager from '../../../../app/modules/util/FileManager';
-import { checkExecutedCount, execTypeMatch, execTypeMatchAll, getChangesetId } from '../MigrationsTestUtils';
+import { checkExecutedCount, execTypeMatch, getChangesetId } from '../MigrationsTestUtils';
 import * as MC from '../../../../app/utils/constants/MigrationsConstants';
 import DBMigrationsManager from '../../../../app/modules/database/migrations/DBMigrationsManager';
 

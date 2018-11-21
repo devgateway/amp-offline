@@ -41,4 +41,5 @@ export const testPreConditions = [
 /** Tests for changes */
 export const testChanges = [
   'changeset-func-update-pass.js',
+  'changeset-fail-on-error.js',
 ].map(file => ({ file }));

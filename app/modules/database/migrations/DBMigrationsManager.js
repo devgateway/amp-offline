@@ -64,6 +64,10 @@ export default class DBMigrationsManager {
     return this._executedChangesetIds;
   }
 
+  get isFailOnError() {
+    return this._isFailOnError;
+  }
+
   getAndIncOrderExecuted() {
     this._orderExecutedCounter = this._orderExecutedCounter + 1;
     return this._orderExecutedCounter - 1;
@@ -366,8 +370,10 @@ export default class DBMigrationsManager {
     return this._saveChangesets([changeset]).then(() => {
       if (this._isFailOnError) {
         const notification = new NotificationHelper({ message: 'failOnErrorMessage' });
-        alert(notification.message);
-        ElectronApp.forceCloseApp();
+        if (!ElectronApp.IS_TEST_MODE) {
+          alert(notification.message);
+          ElectronApp.forceCloseApp();
+        }
       }
       return this._isFailOnError;
     });
