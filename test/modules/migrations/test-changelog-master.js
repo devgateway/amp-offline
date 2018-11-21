@@ -5,6 +5,9 @@ export const invalidSchema = [
   'changelog-precondition-on-error-mark-run.js',
   'changelog-precondition-on-fail-continue.js',
   'changelog-precondition-on-fail-mark-run.js',
+  'changelog-precondition-as-string.js',
+  'changelog-precondition-extra-fields.js',
+  'changelog-precondition-both-func-and-changeset-dependency.js',
 ].map(file => ({ file }));
 
 /** Tests for preconditions */
