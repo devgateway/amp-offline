@@ -50,3 +50,8 @@ export const preconditionErrorAndMarkRunFunc = {
   func: () => { throw new Error('Precondition Error'); },
   onError: MC.ON_FAIL_ERROR_MARK_RAN
 };
+
+export const preconditionErrorAndWarn = {
+  func: () => { throw new Error('Precondition Error'); },
+  onError: MC.ON_FAIL_ERROR_WARN
+};

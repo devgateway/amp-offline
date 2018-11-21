@@ -17,4 +17,5 @@ export const testPreConditions = [
   'changeset-precondition-error-and-continue.js',
   'changeset-precondition-error-and-default.js',
   'changeset-precondition-error-and-markrun.js',
+  'changeset-precondition-error-and-warn.js',
 ].map(file => ({ file }));
