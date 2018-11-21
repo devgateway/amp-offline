@@ -32,3 +32,7 @@ export const preconditionFailAndMarkRunFunc = {
   onFail: MC.ON_FAIL_ERROR_MARK_RAN
 };
 
+export const preconditionFailAndWarn = {
+  func: () => false,
+  onFail: MC.ON_FAIL_ERROR_WARN
+};
