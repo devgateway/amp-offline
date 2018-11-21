@@ -38,7 +38,7 @@ describe('@@ DBMigrationsManager @@', () => {
 
   describe('run', () => {
     m.testPreConditions.forEach(chdef =>
-      it('should pass correctly the preconditions check', () => {
+      it(`should pass correctly the preconditions check for ${chdef[MC.FILE]}`, () => {
         const preConditionsDBMigrations = new DBMigrationsManager([chdef]);
         return expect(preConditionsDBMigrations.run(MC.CONTEXT_STARTUP)
           .then(() => chdef.isValid(preConditionsDBMigrations)))

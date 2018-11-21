@@ -22,3 +22,8 @@ export const preconditionFailAndContinueFunc = {
   func: () => false,
   onFail: MC.ON_FAIL_ERROR_CONTINUE
 };
+
+
+export const preconditionFailAndDefault = {
+  func: () => false,
+};
