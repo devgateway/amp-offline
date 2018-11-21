@@ -47,4 +47,5 @@ export const testChanges = [
 
 export const runTwice = [
   'changeset-run-always.js',
+  'changeset-run-on-change.js',
 ].map(file => ({ file }));
