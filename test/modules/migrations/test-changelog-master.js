@@ -44,3 +44,7 @@ export const testChanges = [
   'changeset-fail-on-error.js',
   'changeset-func-reject-or-throw.js',
 ].map(file => ({ file }));
+
+export const runTwice = [
+  'changeset-run-always.js',
+].map(file => ({ file }));

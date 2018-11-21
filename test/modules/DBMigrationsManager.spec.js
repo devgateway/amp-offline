@@ -62,6 +62,20 @@ describe('@@ DBMigrationsManager @@', () => {
           .to.eventually.be.true;
       })
     );
+
+    m.runTwice.forEach(chdef =>
+      it(`should process changes correctly on consecutive app startups for ${chdef[MC.FILE]}`, () => {
+        let changesDBMigrations = new DBMigrationsManager([chdef]);
+        return expect(changesDBMigrations.run(MC.CONTEXT_STARTUP)
+          .then(() => chdef.isValid(changesDBMigrations, true))
+          .then(r1 => {
+            changesDBMigrations = new DBMigrationsManager([chdef]);
+            return changesDBMigrations.run(MC.CONTEXT_STARTUP)
+              .then(() => chdef.isValid(changesDBMigrations, false))
+              .then(r2 => [r1, r2]);
+          })).to.eventually.be.deep.equal([true, true]);
+      })
+    );
   }
   );
 });
