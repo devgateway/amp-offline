@@ -8,7 +8,7 @@ const changelog = {
       func: () => true
     },
   ],
-  changesets: generic.changesets()
+  changesets: generic.changesets('AMPOFFLINE-1307')
 };
 export default ({ changelog });
 

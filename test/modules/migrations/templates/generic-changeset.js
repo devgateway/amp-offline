@@ -1,7 +1,7 @@
 import * as Utils from '../../../../app/utils/Utils';
 
-export const changeset = () => ({
-  changeid: `AMPOFFLINE-1307-${Utils.stringToUniqueId()}`,
+export const changeset = (changeid) => ({
+  changeid: `${changeid}-${Utils.stringToUniqueId()}`,
   author: 'nmandrescu',
   comment: 'Generic changeset',
   context: 'startup',
@@ -11,7 +11,7 @@ export const changeset = () => ({
   }
 });
 
-export const changesets = () => ([changeset()]);
+export const changesets = (changeid) => ([changeset(changeid)]);
 
 export const preconditionPassFunc = {
   func: () => true

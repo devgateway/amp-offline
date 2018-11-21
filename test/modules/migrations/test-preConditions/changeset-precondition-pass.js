@@ -7,12 +7,12 @@ const fileName = FileManager.basename(__filename);
 const changelog = {
   changesets: [
     {
-      ...generic.changeset(),
+      ...generic.changeset('AMPOFFLINE-1307'),
       // only func
       preConditions: [generic.preconditionPassFunc]
     },
     {
-      ...generic.changeset(),
+      ...generic.changeset('AMPOFFLINE-1307'),
       // func and dependent above changeset (dependency configured below)
       preConditions: [generic.preconditionPassFunc]
     },

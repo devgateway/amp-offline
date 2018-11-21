@@ -7,7 +7,7 @@ const fileName = FileManager.basename(__filename);
 const changelog = {
   changesets: [
     {
-      ...generic.changeset()
+      ...generic.changeset('AMPOFFLINE-1307')
     }
   ]
 };
