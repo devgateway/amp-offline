@@ -36,3 +36,7 @@ export const preconditionFailAndWarn = {
   func: () => false,
   onFail: MC.ON_FAIL_ERROR_WARN
 };
+
+export const preconditionErrorAndDefault = {
+  func: () => { throw new Error('Precondition Error'); }
+};
