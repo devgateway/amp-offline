@@ -49,6 +49,11 @@ export const changesetThatRejectsWithFailedRollback = (changeid) => ({
   rollback: funcThatThrows
 });
 
+export const changesetWithFailedAndContinuePrecondition = (changeid) => ({
+  ...changeset(changeid),
+  [MC.PRECONDITIONS]: [preconditionFailAndContinueFunc]
+});
+
 export const funcThatRejects = {
   func: Promise.reject
 };
