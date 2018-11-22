@@ -49,3 +49,7 @@ export const runTwice = [
   'changeset-run-always.js',
   'changeset-run-on-change.js',
 ].map(file => ({ file }));
+
+export const testContext = [
+  'changeset-context-startup.js',
+].map(file => ({ file }));

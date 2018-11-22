@@ -75,6 +75,13 @@ export default class DBMigrationsManager {
     return this._isFailOnError;
   }
 
+  /**
+   * @return {Context}
+   */
+  get contextWrapper() {
+    return this._contextWarpper;
+  }
+
   getAndIncOrderExecuted() {
     this._orderExecutedCounter = this._orderExecutedCounter + 1;
     return this._orderExecutedCounter - 1;

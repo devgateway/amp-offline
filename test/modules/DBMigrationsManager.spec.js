@@ -76,6 +76,14 @@ describe('@@ DBMigrationsManager @@', () => {
           })).to.eventually.be.deep.equal([true, true]);
       })
     );
-  }
-  );
+
+    m.testContext.forEach(chdef => {
+      const contextDBMigrations = new DBMigrationsManager([chdef]);
+      MC.CONTEXT_BY_ORDER.forEach(context =>
+        it(`should match context rules correctly for ${chdef[MC.FILE]} at '${context}'`, () =>
+          expect(contextDBMigrations.run(context).then(() => chdef.isValid(contextDBMigrations))).to.eventually.be.true
+        )
+      );
+    });
+  });
 });

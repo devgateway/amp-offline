@@ -19,6 +19,7 @@ importAll(requireContext(TestUtils.getTestMigrationsPath('invalid-schema'), fals
 importAll(requireContext(TestUtils.getTestMigrationsPath('test-preConditions'), false, /\.js$/), tm.testPreConditions);
 importAll(requireContext(TestUtils.getTestMigrationsPath('test-changes'), false, /\.js$/), tm.testChanges);
 importAll(requireContext(TestUtils.getTestMigrationsPath('test-changes'), false, /\.js$/), tm.runTwice);
+importAll(requireContext(TestUtils.getTestMigrationsPath('test-context'), false, /\.js$/), tm.testContext);
 
 module.exports = {
   prodChangelogs,
@@ -26,4 +27,5 @@ module.exports = {
   testPreConditions: tm.testPreConditions,
   testChanges: tm.testChanges,
   runTwice: tm.runTwice,
+  testContext: tm.testContext,
 };
