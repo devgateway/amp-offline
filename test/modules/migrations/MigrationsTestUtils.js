@@ -28,8 +28,28 @@ export const execTypeMatch = (execTypeToMatch: string, matchIds: Array) =>
     });
 
 export const execTypeMatchAll = (execTypeToMatch) => (dbMM: DBMigrationsManager) => {
-  const matchIds = Array.from(dbMM.pendingChangesetsById.keys()).concat(Array.from(dbMM.executedChangesetIds.keys()));
+  const matchIds = getAllKnownInLastIteration(dbMM);
   return execTypeMatch(execTypeToMatch, matchIds);
+};
+
+const getAllKnownInLastIteration = (dbMM: DBMigrationsManager) =>
+  Array.from(dbMM.pendingChangesetsById.keys()).concat(Array.from(dbMM.executedChangesetIds.keys()));
+
+export const matchByTemplate = (ids: Array, template: Object) =>
+  ChangesetHelper.findAllChangesets({ id: { $in: ids} })
+    .then(cs => {
+      const keys = Object.keys(template);
+      return cs.every(c => keys.every(k => {
+        if (typeof template[k] === 'function') {
+          return template[k](c[k]);
+        }
+        return template[k] === c[k];
+      }));
+    });
+
+export const matchAllProcessedByTemplate = (template: Object, dbMM: DBMigrationsManager) => {
+  const ids = getAllKnownInLastIteration(dbMM);
+  return matchByTemplate(ids, template);
 };
 
 export const getChangesetId = (rawChangeset, fileName) => Changeset.buildId(rawChangeset, { file: fileName });

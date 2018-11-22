@@ -56,3 +56,7 @@ export const testContext = [
   'changeset-context-init.js',
   'changeset-context-all-or-list-of-startup-and-init.js',
 ].map(file => ({ file }));
+
+export const testRollback = [
+  'changeset-no-rollback-on-change-fail.js',
+].map(file => ({ file }));

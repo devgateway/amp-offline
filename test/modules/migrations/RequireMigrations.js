@@ -20,6 +20,7 @@ importAll(requireContext(TestUtils.getTestMigrationsPath('test-preConditions'), 
 importAll(requireContext(TestUtils.getTestMigrationsPath('test-changes'), false, /\.js$/), tm.testChanges);
 importAll(requireContext(TestUtils.getTestMigrationsPath('test-changes'), false, /\.js$/), tm.runTwice);
 importAll(requireContext(TestUtils.getTestMigrationsPath('test-context'), false, /\.js$/), tm.testContext);
+importAll(requireContext(TestUtils.getTestMigrationsPath('test-rollback'), false, /\.js$/), tm.testRollback);
 
 module.exports = {
   prodChangelogs,
@@ -28,4 +29,5 @@ module.exports = {
   testChanges: tm.testChanges,
   runTwice: tm.runTwice,
   testContext: tm.testContext,
+  testRollback: tm.testRollback,
 };

@@ -85,5 +85,14 @@ describe('@@ DBMigrationsManager @@', () => {
         )
       );
     });
+
+    m.testRollback.forEach(chdef =>
+      it(`should process rollback correctly for ${chdef[MC.FILE]}`, () => {
+        const changesDBMigrations = new DBMigrationsManager([chdef]);
+        return expect(changesDBMigrations.run(MC.CONTEXT_STARTUP)
+          .then(() => chdef.isValid(changesDBMigrations)))
+          .to.eventually.be.true;
+      })
+    );
   });
 });
