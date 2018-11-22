@@ -36,7 +36,7 @@ const getAllKnownInLastIteration = (dbMM: DBMigrationsManager) =>
   Array.from(dbMM.pendingChangesetsById.keys()).concat(Array.from(dbMM.executedChangesetIds.keys()));
 
 export const matchByTemplate = (ids: Array, template: Object) =>
-  ChangesetHelper.findAllChangesets({ id: { $in: ids} })
+  ChangesetHelper.findAllChangesets({ id: { $in: ids } })
     .then(cs => {
       const keys = Object.keys(template);
       return cs.every(c => keys.every(k => {

@@ -66,4 +66,5 @@ export const testRollback = [
 export const otherRules = [
   'changeset-id.js',
   'changeset-db-data.js',
+  'changeset-no-dateexecuted.js',
 ].map(file => ({ file }));
