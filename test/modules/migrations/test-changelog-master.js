@@ -59,4 +59,5 @@ export const testContext = [
 
 export const testRollback = [
   'changeset-no-rollback-on-change-fail.js',
+  'changeset-rollback-successful.js',
 ].map(file => ({ file }));

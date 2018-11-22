@@ -39,12 +39,21 @@ export const changesetThatThrows = (changeid) => ({
   changes: funcThatThrows
 });
 
+export const changesetThatRejectsWithSuccessfulRollback = (changeid) => ({
+  ...changesetThatRejects(changeid),
+  rollback: funcThatPass
+});
+
 export const funcThatRejects = {
   func: Promise.reject
 };
 
 export const funcThatThrows = {
   func: () => { throw new Error('Func Error'); }
+};
+
+export const funcThatPass = {
+  func: () => {}
 };
 
 export const preconditionPassFunc = {
