@@ -10,7 +10,11 @@ const changelog = {
     {
       ...generic.changeset('AMPOFFLINE-1307'),
       context: MC.CONTEXT_STARTUP,
-    }
+    },
+    {
+      ...generic.changeset('AMPOFFLINE-1307'),
+      context: [MC.CONTEXT_STARTUP],
+    },
   ]
 };
 
@@ -18,7 +22,7 @@ export default ({ changelog });
 
 export const isValid = (dbMM: DBMigrationsManager) => {
   if (dbMM.contextWrapper.context === MC.CONTEXT_STARTUP) {
-    if (checkExecutedCount(2)(dbMM)) {
+    if (checkExecutedCount(3)(dbMM)) {
       return execTypeMatchAll(MC.EXECTYPE_EXECUTED)(dbMM);
     }
   } else {
