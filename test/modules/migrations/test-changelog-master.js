@@ -52,4 +52,5 @@ export const runTwice = [
 
 export const testContext = [
   'changeset-context-startup.js',
+  'changeset-context-init.js',
 ].map(file => ({ file }));
