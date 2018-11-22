@@ -62,3 +62,7 @@ export const testRollback = [
   'changeset-rollback-successful.js',
   'changeset-rollback-fail.js',
 ].map(file => ({ file }));
+
+export const otherRules = [
+  'changeset-id.js',
+].map(file => ({ file }));

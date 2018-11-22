@@ -94,5 +94,14 @@ describe('@@ DBMigrationsManager @@', () => {
           .to.eventually.be.true;
       })
     );
+
+    m.otherRules.forEach(chdef =>
+      it(`should process rules correctly for ${chdef[MC.FILE]}`, () => {
+        const rulesDBMigrations = new DBMigrationsManager([chdef]);
+        return expect(rulesDBMigrations.run(MC.CONTEXT_STARTUP)
+          .then(() => chdef.isValid(rulesDBMigrations)))
+          .to.eventually.be.true;
+      })
+    );
   });
 });
