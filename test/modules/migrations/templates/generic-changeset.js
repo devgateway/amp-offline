@@ -34,6 +34,11 @@ export const changesetThatRejects = (changeid) => ({
   changes: funcThatRejects
 });
 
+export const changesetThatThrows = (changeid) => ({
+  ...changeset(changeid),
+  changes: funcThatThrows
+});
+
 export const funcThatRejects = {
   func: Promise.reject
 };
