@@ -386,6 +386,7 @@ export default class DBMigrationsManager {
       if (this._isFailOnError) {
         const notification = new NotificationHelper({ message: 'failOnErrorMessage' });
         if (!ElectronApp.IS_TEST_MODE) {
+          // eslint-disable-next-line no-alert
           alert(notification.message);
           ElectronApp.forceCloseApp();
         }

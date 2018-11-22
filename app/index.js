@@ -50,6 +50,7 @@ function handleUnexpectedError(err) {
   const msg = translate('unexpectedError');
   const toString = err.toString();
   const json = JSON.stringify(err);
+  // eslint-disable-next-line no-alert
   alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
   // If this error occurs before we show the main window we need to close the app for the user.
   if (!global.MAIN_WINDOW_ACTIVE) {
@@ -62,6 +63,7 @@ ampOfflinePreStartUp().then(result => {
     const msg = (result && (result.message || result)) || translate('unexpectedError');
     // at this point we cannot use our app specific notification system
     // Until AMPOFFLINE-253, it will be always in EN, like any other notifications shown before user can switch language
+    // eslint-disable-next-line no-alert
     if (!confirm(msg)) {
       ipcRenderer.send(FORCE_CLOSE_APP_MSG);
       return false;
