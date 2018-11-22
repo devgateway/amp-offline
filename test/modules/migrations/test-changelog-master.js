@@ -19,6 +19,7 @@ export const invalidSchema = [
   'changeset-run-on-change-not-boolean.js',
   'changeset-comment-not-string.js',
   'changeset-context-not-string-or-array.js',
+  'changeset-context-not-valid-option.js',
 ].map(file => ({ file }));
 
 /** Tests for preconditions */
