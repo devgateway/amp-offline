@@ -67,4 +67,5 @@ export const otherRules = [
   'changeset-id.js',
   'changeset-db-data.js',
   'changeset-no-dateexecuted.js',
+  'changeset-order-executed.js',
 ].map(file => ({ file }));
