@@ -25,6 +25,7 @@ import NotificationHelper from './modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
 import translate from './utils/translate';
 import { FORCE_CLOSE_APP_MSG, INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
+import * as ElectronApp from './modules/util/ElectronApp';
 
 const logger = new Logger('index');
 
@@ -53,7 +54,9 @@ function handleUnexpectedError(err) {
   // eslint-disable-next-line no-alert
   alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
   // If this error occurs before we show the main window we need to close the app for the user.
-  if (!global.MAIN_WINDOW_ACTIVE) {
+  // For some reason after window becomes active and an error occurs, it still closes the app, which prevents from
+  // getting the error from the console. => Do not close in dev mode (use CTRL^C if needed).
+  if (!global.MAIN_WINDOW_ACTIVE && !ElectronApp.IS_DEV_MODE) {
     ipcRenderer.send(FORCE_CLOSE_APP_MSG);
   }
 }
