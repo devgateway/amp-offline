@@ -72,6 +72,10 @@ const ChangesetHelper = {
     return DatabaseManager.removeAll(idsFilter, COLLECTION_CHANGESETS);
   },
 
+  removeAll() {
+    return DatabaseManager.removeAll({}, COLLECTION_CHANGESETS);
+  },
+
   /**
    * Runs the update according to update definition
    * @param updateDef the update definition object from the changeset

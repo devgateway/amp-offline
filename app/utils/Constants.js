@@ -65,11 +65,12 @@ export const LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC = 'must_sync_translation.json';
 
 export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
+export const TEST_DIRECTORY = 'test';
 export const STATIC_DIR = 'static';
 export const IMAGES_DIR = 'images';
 export const DOC_ICONS = 'doc-icons';
 export const DB_STATIC_DIR = 'db';
-export const MIGRATIONS_DIR = 'migrations';
+export const MIGRATIONS_DIR = 'changelog';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';

@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { Validator } from 'jsonschema';
 import Logger from '../../util/LoggerManager';
-import changelogs from '../../../static/db/changelog-master';
 import * as MC from '../../../utils/constants/MigrationsConstants';
 import Changeset from './Changeset';
 import ChangelogSchema from './schema/ChangelogSchema';
@@ -23,8 +22,12 @@ validator.addSchema(ChangelogSchema, '/ChangelogSchema');
  *
  * @author Nadejda Mandrescu
  */
-class DBMigrationsManager {
-  constructor() {
+export default class DBMigrationsManager {
+  /**
+   * @param changelogs a list of changelogs definitions [{ file: 'abc.js', content: {...}}, ...]
+   */
+  constructor(changelogs) {
+    this._changelogs = changelogs;
     this._executedChangesetIds = new Set();
     this._pendingChangesetsById = new Map();
     this._pendingChangesetsByFile = new Map();
@@ -33,10 +36,50 @@ class DBMigrationsManager {
     this._orderExecutedCounter = 1;
     this._isFailOnError = false;
     this._contextWarpper = new Context();
+    Utils.selfBindMethods(this);
   }
 
   static validateChangelog(changelog) {
     return validator.validate(changelog, ChangelogSchema);
+  }
+
+  static _getSuccessExecType(changeset: Changeset) {
+    if (changeset.prevDBData && MC.EXECTYPE_SUCCESS_OPTIONS.includes(changeset.prevDBData[MC.EXECTYPE])) {
+      return MC.EXECTYPE_RERUN;
+    }
+    return MC.EXECTYPE_EXECUTED;
+  }
+
+  /**
+   * @return {Array}
+   */
+  get pendingChangelogs() {
+    return this._pendingChangelogs;
+  }
+
+  /**
+   * @return {Map<any, any>}
+   */
+  get pendingChangesetsById() {
+    return this._pendingChangesetsById;
+  }
+
+  /**
+   * @return {Set<any>}
+   */
+  get executedChangesetIds() {
+    return this._executedChangesetIds;
+  }
+
+  get isFailOnError() {
+    return this._isFailOnError;
+  }
+
+  /**
+   * @return {Context}
+   */
+  get contextWrapper() {
+    return this._contextWarpper;
   }
 
   getAndIncOrderExecuted() {
@@ -50,12 +93,12 @@ class DBMigrationsManager {
    */
   detectAndValidateChangelogs() {
     if (this._pendingChangelogs) {
-      return this._refreshPendingChangelogs();
+      return Promise.resolve().then(this.refreshPendingChangelogs);
     }
     return this._detectAllValidAndPendingChangelogs();
   }
 
-  _refreshPendingChangelogs() {
+  refreshPendingChangelogs() {
     const refreshedChangesetsByFile = new Map();
     this._executedChangesetIds.clear();
     this._pendingChangesetsByFile.forEach((chs, file) => {
@@ -75,13 +118,13 @@ class DBMigrationsManager {
     this._pendingChangesetsByFile = refreshedChangesetsByFile;
     this._pendingChangelogs = this._pendingChangelogs.filter(cl => this._pendingChangesetsByFile.has(cl[MC.FILE]));
     logger.log(`All pending changelogs count: ${this._pendingChangelogs.length}`);
-    return Promise.resolve().then(() => this._pendingChangelogs);
+    return this._pendingChangelogs;
   }
 
   _detectAllValidAndPendingChangelogs() {
     return this._getChangesetsSummary().then((dbChangesetsMap: Map) => {
       const newChangesets = [];
-      this._pendingChangelogs = changelogs.filter(chdef => {
+      this._pendingChangelogs = this._changelogs.filter(chdef => {
         const file = chdef[MC.FILE];
         logger.debug(`Verifying '${file}' changelog`);
         const changelogContent = chdef[MC.CONTENT];
@@ -132,6 +175,7 @@ class DBMigrationsManager {
       if (willRun) {
         this._pendingChangesetsById.set(changeset.id, changeset);
         pendingChs.push(changeset);
+        changeset.prevDBData = dbC;
         return true;
       }
       return false;
@@ -341,20 +385,22 @@ class DBMigrationsManager {
     return this._saveChangesets([changeset]).then(() => {
       if (this._isFailOnError) {
         const notification = new NotificationHelper({ message: 'failOnErrorMessage' });
-        alert(notification.message);
-        ElectronApp.forceCloseApp();
+        if (!ElectronApp.IS_TEST_MODE) {
+          // eslint-disable-next-line no-alert
+          alert(notification.message);
+          ElectronApp.forceCloseApp();
+        }
       }
       return this._isFailOnError;
     });
   }
 
   _runChangeset(changeset: Changeset) {
-    // TODO check if func or update, flag status based on result, etc
     return Promise.resolve()
       .then(changeset.change)
       .then(() => {
         logger.log(`${changeset.id} executed successfully`);
-        changeset.execType = MC.EXECTYPE_EXECUTED;
+        changeset.execType = DBMigrationsManager._getSuccessExecType(changeset);
         changeset.orderExecuted = this.getAndIncOrderExecuted();
         this._pendingChangesetsById.delete(changeset.id);
         return changeset;
@@ -367,6 +413,7 @@ class DBMigrationsManager {
     changeset.error = error || 'Unknown error';
     if (changeset.rollback) {
       logger.log('Executing the rollback...');
+      changeset.rollbackExecType = MC.EXECTYPE_NOT_RUN;
       return Promise.resolve().then(changeset.rollback)
         .then(() => {
           logger.log('Rollback executed successfully');
@@ -382,8 +429,3 @@ class DBMigrationsManager {
   }
 
 }
-
-const dbMigrationsManager = new DBMigrationsManager();
-Utils.selfBindMethods(dbMigrationsManager);
-
-export default dbMigrationsManager;
