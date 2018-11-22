@@ -56,7 +56,7 @@ app.on('ready', async () => {
   });
 
   // create a new `splash`-Window
-  const splash = new BrowserWindow({
+  let splash = new BrowserWindow({
     width: 425,
     height: 285,
     transparent: false,
@@ -80,10 +80,13 @@ app.on('ready', async () => {
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
+    // Delay showing the main window (blank) until ampOfflineStartUp() is complete.
     ipcMain.on(INITIALIZATION_COMPLETE_MSG, () => {
-      // Delay showing the main window (blank) until ampOfflineStartUp() is complete.
-      splash.hide();
-      splash.destroy();
+      if (splash) {
+        splash.hide();
+        splash.destroy();
+        splash = null;
+      }
       mainWindow.show();
       mainWindow.focus();
       global.MAIN_WINDOW_ACTIVE = true;
