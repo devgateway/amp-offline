@@ -395,7 +395,6 @@ export default class DBMigrationsManager {
   }
 
   _runChangeset(changeset: Changeset) {
-    // TODO check if func or update, flag status based on result, etc
     return Promise.resolve()
       .then(changeset.change)
       .then(() => {
@@ -413,6 +412,7 @@ export default class DBMigrationsManager {
     changeset.error = error || 'Unknown error';
     if (changeset.rollback) {
       logger.log('Executing the rollback...');
+      changeset.rollbackExecType = MC.EXECTYPE_NOT_RUN;
       return Promise.resolve().then(changeset.rollback)
         .then(() => {
           logger.log('Rollback executed successfully');

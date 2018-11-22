@@ -44,6 +44,11 @@ export const changesetThatRejectsWithSuccessfulRollback = (changeid) => ({
   rollback: funcThatPass
 });
 
+export const changesetThatRejectsWithFailedRollback = (changeid) => ({
+  ...changesetThatRejects(changeid),
+  rollback: funcThatThrows
+});
+
 export const funcThatRejects = {
   func: Promise.reject
 };
