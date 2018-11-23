@@ -64,7 +64,7 @@ export default ({
         }, {
           func: () => GlobalSettingsHelper.findByKey(GSC.DEFAULT_COUNTRY).then(dc =>
             !dc || !dc.value || ['ht', 'td'].includes(dc.value.toLowerCase())),
-          onFail: MC.ON_FAIL_ERROR_CONTINUE,
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
         changes: {
