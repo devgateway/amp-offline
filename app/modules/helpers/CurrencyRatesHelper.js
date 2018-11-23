@@ -1,7 +1,6 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CURRENCY_RATES } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
-import CurrencyRatesManager from '../util/CurrencyRatesManager';
 
 const logger = new Logger('Currency rates helper');
 
@@ -38,7 +37,7 @@ const CurrencyRatesHelper = {
    * @return {boolean}
    */
   hasExchangeRates() {
-    return CurrencyRatesManager.findAll().then(er => !!er.length);
+    return this.findAll().then(er => !!er.length);
   },
 
   /**
