@@ -12,7 +12,8 @@ import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import ResourceManager from '../../resource/ResourceManager';
 import { TITLE, UUID } from '../../../utils/constants/ResourceConstants';
-import translate from '../../../utils/translate';
+import NotificationHelper from '../../helpers/NotificationHelper';
+import { NOTIFICATION_SEVERITY_WARNING } from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('ResourcesPullSyncUpManager');
 
@@ -83,10 +84,11 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
         const titles = removedResources.map(r => `"${r[TITLE] || r[UUID] || r}"`).join(', ');
         const formattedAmpId = activity[AMP_ID] ? `(${activity[AMP_ID]}) ` : '';
         const activityInfo = `"${formattedAmpId}${activity[PROJECT_TITLE]}"`;
-        const msg = translate('resourcesDeletedFromActivity')
-          .replace('%titles%', titles).replace('%activityInfo%', activityInfo);
-        this.addWarning(msg);
-        logger.warn(msg);
+        const replacePairs = [['%titles%', titles], ['%activityInfo%', activityInfo]];
+        const message = 'resourcesDeletedFromActivity';
+        const warn = new NotificationHelper({ message, replacePairs, severity: NOTIFICATION_SEVERITY_WARNING });
+        this.addWarning(warn);
+        logger.warn(warn.message);
       }
     }
   }

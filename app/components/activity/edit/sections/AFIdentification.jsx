@@ -18,7 +18,8 @@ const CUSTOM_TYPE = {
   [AC.GOVERNMENT_APPROVAL_PROCEDURES]: Types.RADIO_BOOLEAN,
   [AC.GOVERNMENT_AGREEMENT_NUMBER]: Types.INPUT_TYPE,
   [AC.JOINT_CRITERIA]: Types.RADIO_BOOLEAN,
-  [AC.HUMANITARIAN_AID]: Types.RADIO_BOOLEAN
+  [AC.HUMANITARIAN_AID]: Types.RADIO_BOOLEAN,
+  [AC.FINANCIAL_INSTRUMENT]: Types.RADIO_LIST,
 };
 
 /**
@@ -73,14 +74,20 @@ class AFIdentification extends Component {
       .map(this.mapSimpleFieldDef));
     if (this.state.showBudgetExtras) {
       const budgetExtras = [
+        <AFField
+          key={AC.INDIRECT_ON_BUDGET} parent={this.props.activity} fieldPath={AC.INDIRECT_ON_BUDGET}
+          type={Types.CHECKBOX} />,
         <AFField key={AC.FY} parent={this.props.activity} fieldPath={AC.FY} type={Types.MULTI_SELECT} />,
-        <AFField key={AC.MINISTRY_CODE} parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} forceRequired />
+        <AFField key={AC.MINISTRY_CODE} parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} showRequired />,
+        <AFField
+          key={AC.PROJECT_CODE} parent={this.props.activity} fieldPath={AC.PROJECT_CODE} type={Types.INPUT_TYPE}
+          showRequired />
       ];
       rightColumn.push(<div key="budgetExtras" className={afStyles.budget_extras}>
         {budgetExtras}
       </div>);
     }
-    rightColumn.push(...[AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT, AC.GOVERNMENT_AGREEMENT_NUMBER]
+    rightColumn.push(...[AC.FINANCIAL_INSTRUMENT, AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT, AC.GOVERNMENT_AGREEMENT_NUMBER]
       .map(this.mapSimpleFieldDef));
 
     return (

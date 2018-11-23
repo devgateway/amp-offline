@@ -19,10 +19,7 @@ import { configureOnLoad } from './SetupAction';
 import * as Utils from '../utils/Utils';
 import VersionUtils from '../utils/VersionUtils';
 import Notification from '../modules/helpers/NotificationHelper';
-import {
-  NOTIFICATION_ORIGIN_API_GENERAL,
-  NOTIFICATION_SEVERITY_ERROR,
-} from '../utils/constants/ErrorConstants';
+import { NOTIFICATION_ORIGIN_API_GENERAL, NOTIFICATION_SEVERITY_ERROR, } from '../utils/constants/ErrorConstants';
 import translate from '../utils/translate';
 import { addFullscreenAlert } from './NotificationAction';
 
@@ -142,6 +139,11 @@ export function connectivityCheck(isCheckingAlternative: boolean = false) {
   return Promise.all([_getLastConnectivityStatus(), _getServerId()])
     .then(([status, serverId]) => {
       lastConnectivityStatus = status;
+      const ci = _getConnectionInformation();
+      if (ci.isTestUrl && !isCheckingAlternative) {
+        store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, action: lastConnectivityStatus });
+        return Promise.resolve();
+      }
       if (serverId) {
         paramsMap[AMP_SERVER_ID] = serverId;
       }
@@ -179,7 +181,10 @@ function _processResult(data, lastConnectivityStatus: ConnectivityStatus, isChec
     status = new ConnectivityStatus(true, isAmpClientEnabled, isAmpCompatible, version, latestAmpOffline,
       data[AMP_SERVER_ID], data[AMP_SERVER_ID_MATCH]);
   }
-  store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: status });
+  store.dispatch({
+    type: STATE_AMP_CONNECTION_STATUS_UPDATE,
+    actionData: isCheckingAlternative ? lastConnectivityStatus : status
+  });
   if (!isCheckingAlternative) {
     reportCompatibilityError(lastConnectivityStatus, status);
   }
@@ -214,6 +219,13 @@ function reportCompatibilityError(lastConnectivityStatus: ConnectivityStatus, cu
       store.dispatch(addFullscreenAlert(incompatibilityNotification));
     }
   }
+}
+
+/**
+ * @return {ConnectionInformation}
+ */
+function _getConnectionInformation() {
+  return store.getState().startUpReducer.connectionInformation;
 }
 
 function _getLastConnectivityStatus() {

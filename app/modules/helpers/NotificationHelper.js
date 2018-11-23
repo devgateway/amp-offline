@@ -8,6 +8,32 @@ const logger = new Logger('Notification helper');
 export default class NotificationHelper {
 
   /**
+   * Deserialize a saved notification
+   * @param json
+   * @return {NotificationHelper}
+   */
+  static deserialize(json) {
+    const n = new NotificationHelper({});
+    Object.assign(n, json);
+    return n;
+  }
+
+  /**
+   * Tries to provide an object as a NotificationHelper or returns back the object
+   * @param o
+   * @return {*}
+   */
+  static tryAsNotification(o) {
+    if (o instanceof NotificationHelper) {
+      return o;
+    }
+    if (o instanceof Object && o._message) {
+      return NotificationHelper.deserialize(o);
+    }
+    return o;
+  }
+
+  /**
    * Constructor for Notifications.
    * The behavior of this object depends on the combination of parameters, if we receive a notificationHelperObject
    * it takes precedence and we construct a new helper with the same data. If not, we will usually receive a message
@@ -16,21 +42,25 @@ export default class NotificationHelper {
    * The severity defines if is information, a warning or an error (default).
    *
    * @param message
+   * @param prefix (optional) message prefix
    * @param details use this to add more details that need to be used separately from original message (e.g. as tooltip)
    * @param origin
    * @param errorCode
    * @param errorObject
    * @param translateMsg translate the message or not (default true for now, since was used this since AMPOFFLINE-122)
    * @param translateDetails if to translate the details or not
+   * @param replacePairs a list of [[src1, dst2], ...] pairs to replace within original message
    * @param severity
    */
   constructor({
-                message, details, origin, errorCode, errorObject, translateMsg = true, translateDetails = true,
-                severity = constants.NOTIFICATION_SEVERITY_ERROR
+                message, prefix, details, origin, errorCode, errorObject, translateMsg = true, translateDetails = true,
+                replacePairs, severity = constants.NOTIFICATION_SEVERITY_ERROR
               }) {
     logger.log('constructor');
+    this._prefix = prefix || '';
     this.translateMsg = translateMsg;
     this.translateDetails = translateDetails;
+    this._replacePairs = replacePairs;
     if (errorObject) {
       this.message = errorObject.message;
       this.details = errorObject.details;
@@ -90,7 +120,18 @@ export default class NotificationHelper {
   }
 
   get message() {
-    return this._message && this.translateMsg ? translate(this._message) : this._message;
+    let msg = this._message && this.translateMsg ? translate(this._message) : this._message;
+    if (this._replacePairs) {
+      this._replacePairs.forEach(([src, dst]) => {
+        // replace all pairs occurrences
+        msg = msg.split(src).join(dst);
+      });
+    }
+    return `${this._prefix}${msg}`;
+  }
+
+  get prefix() {
+    return this._prefix;
   }
 
   get details() {
@@ -111,6 +152,10 @@ export default class NotificationHelper {
 
   set message(message) {
     this._message = message;
+  }
+
+  set prefix(prefix) {
+    this._prefix = prefix;
   }
 
   set details(details) {
@@ -135,5 +180,13 @@ export default class NotificationHelper {
 
   get errorCode() {
     return this._errorCode;
+  }
+
+  set replacePairs(replacePairs) {
+    this._replacePairs = replacePairs;
+  }
+
+  get replacePairs() {
+    return this._replacePairs;
   }
 }

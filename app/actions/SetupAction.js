@@ -8,11 +8,11 @@ import Logger from '../modules/util/LoggerManager';
 import {
   configureConnectionInformation,
   connectivityCheck,
-  isValidConnectionByStatus,
-  isConnectivityCheckInProgress,
-  getStatusNotification,
+  getLeastCriticalStatus,
   getRegisteredServerId,
-  getLeastCriticalStatus
+  getStatusNotification,
+  isConnectivityCheckInProgress,
+  isValidConnectionByStatus
 } from './ConnectivityAction';
 import translate from '../utils/translate';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
@@ -23,6 +23,7 @@ import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import { newUrlsDetected } from './SettingAction';
 import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
+import * as constants from '../utils/constants/ErrorConstants';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -46,6 +47,26 @@ export const STATE_AMP_REGISTRY_CHECK_COMPLETED = 'STATE_AMP_REGISTRY_CHECK_COMP
 
 
 const logger = new Logger('Setup action');
+
+/**
+ * Verifies if current version can start or user confirmation is needed
+ * @return {true|NotificationHelper} continue or ask user to confirm with the given message
+ */
+export function canCurrentVersionStartOrConfirmationNeeded() {
+  return SetupManager.getNewestVersionAuditLog().then(newestUsed => {
+    const currentVersion = Utils.getCurrentVersion();
+    logger.log(`Starting ${currentVersion} version. The newest used before: ${newestUsed}`);
+    if (currentVersion === newestUsed) {
+      return true;
+    }
+    const replacePairs = [['%current-version%', currentVersion], ['%newest-used%', newestUsed]];
+    return new NotificationHelper({
+      message: 'oldVersionWarning',
+      origin: constants.NOTIFICATION_ORIGIN_SETUP,
+      replacePairs
+    });
+  });
+}
 
 export function checkIfSetupComplete() {
   logger.log('checkIfSetupComplete');
@@ -99,10 +120,22 @@ export function setupComplete(setupConfig) {
 
 function configureAndSaveSetup(setupConfig) {
   logger.log('setupComplete');
-  return configureAndTestConnectivity(setupConfig)
-    .then(() => connectivityCheck())
+  return attemptToConfigure(setupConfig)
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
+    .then(() => connectivityCheck())
     .then(() => true);
+}
+
+function attemptToConfigure(setupConfig) {
+  return SetupManager.getConnectionInformation()
+    .then(savedConnInformation => configureAndTestConnectivity(setupConfig)
+      .then(() => {
+        const fixedUrl = setupConfig.urls[0];
+        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformationOnFullUrl(fixedUrl));
+      })
+      .catch((error) => waitConfigureConnectionInformation(savedConnInformation)
+        .then(() => Promise.reject(error))
+        .catch(() => Promise.reject(error))));
 }
 
 function notifySetupComplete(setupResult) {
@@ -193,7 +226,7 @@ function testAMPUrl(url) {
         if (isValidConnectionByStatus(result && result.connectivityStatus, true)) {
           return Promise.resolve(result);
         }
-        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformation(fixedUrl))
+        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformationForTest(fixedUrl))
           .then(connectivityStatus => ({ connectivityStatus, fixedUrl }));
       })
     , Promise.resolve())

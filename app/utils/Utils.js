@@ -158,7 +158,7 @@ const Utils = {
 
   joinMessages(messages: Array, endPunctuationIfMissing = '.') {
     return messages && messages.map(m => {
-      const msg = `${m}`;
+      const msg = `${m.message || m}`;
       if (!msg.match(ENDS_WITH_PUNCTUATION_REGEX)) {
         return `${msg}${endPunctuationIfMissing}`;
       }
@@ -252,9 +252,17 @@ const Utils = {
     return array.reduce((result, elem) => result.concat(elem), []);
   },
 
-  versionAsFieldName() {
+  versionToKey() {
     return VERSION.replace(/\./g, '_');
   },
+
+  versionFromKey(key) {
+    return key.replace(/_/g, '.');
+  },
+
+  getCurrentVersion() {
+    return VERSION;
+  }
 };
 
 module.exports = Utils;

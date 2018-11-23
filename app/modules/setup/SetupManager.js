@@ -23,6 +23,7 @@ import AssetsUtils from '../../utils/AssetsUtils';
 import SetupSyncUpManager from '../syncup/SetupSyncUpManager';
 import * as Utils from '../../utils/Utils';
 import * as CSC from '../../utils/constants/ClientSettingsConstants';
+import VersionUtils from '../../utils/VersionUtils';
 
 /**
  * Setup Manager
@@ -51,7 +52,7 @@ const SetupManager = {
       const url = fullUrl || (isFallbackToDefault && SERVER_URL) || null;
       const protocol = (!fullUrl && isFallbackToDefault && PROTOCOL) || null;
       const port = (!fullUrl && isFallbackToDefault && BASE_PORT) || null;
-      return this.buildConnectionInformation(url, protocol, port);
+      return this.buildConnectionInformation(url, protocol, port, false);
     });
   },
 
@@ -60,12 +61,21 @@ const SetupManager = {
    * @param url partial or full url
    * @param protocol (optional) http or https
    * @param port (optional) e.g. 80800
+   * @param isTestUrl flags if URL is used to test a connection option
    * @return {ConnectionInformation}
    */
-  buildConnectionInformation(url, protocol, port) {
+  buildConnectionInformation(url, protocol, port, isTestUrl) {
     const isFullUrl = !(protocol || port);
     return new ConnectionInformation(
-      url, BASE_REST_URL, protocol, port, CONNECTION_TIMEOUT, CONNECTION_FORCED_TIMEOUT, isFullUrl);
+      url, BASE_REST_URL, protocol, port, CONNECTION_TIMEOUT, CONNECTION_FORCED_TIMEOUT, isFullUrl, isTestUrl);
+  },
+
+  buildConnectionInformationForTest(fullUrl) {
+    return this.buildConnectionInformation(fullUrl, null, null, true);
+  },
+
+  buildConnectionInformationOnFullUrl(fullUrl) {
+    return this.buildConnectionInformation(fullUrl, null, null, false);
   },
 
   testConnectivity() {
@@ -123,7 +133,7 @@ const SetupManager = {
 
   auditStartup() {
     return ClientSettingsHelper.findSettingByName(CSC.STARTUP_AUDIT_LOGS).then(logs => {
-      const verAsFieldName = Utils.versionAsFieldName();
+      const verAsFieldName = Utils.versionToKey();
       const currentVersionLog = logs.value[verAsFieldName] || {};
       logs.value[verAsFieldName] = currentVersionLog;
 
@@ -138,9 +148,22 @@ const SetupManager = {
 
   getCurrentVersionAuditLog() {
     return ClientSettingsHelper.findSettingByName(CSC.STARTUP_AUDIT_LOGS)
-      .then(logs => logs.value[Utils.versionAsFieldName()] || {});
+      .then(logs => logs.value[Utils.versionToKey()] || {});
   },
 
+  getNewestVersionAuditLog() {
+    let newestVerUsed = Utils.getCurrentVersion();
+    return ClientSettingsHelper.findSettingByName(CSC.STARTUP_AUDIT_LOGS)
+      .then(logs => {
+        Object.keys(logs.value).forEach(ver => {
+          const verFromAudit = Utils.versionFromKey(ver);
+          if (VersionUtils.compareVersion(verFromAudit, newestVerUsed) > 0) {
+            newestVerUsed = verFromAudit;
+          }
+        });
+        return newestVerUsed;
+      });
+  },
 };
 
 export default SetupManager;
