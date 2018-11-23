@@ -6,6 +6,8 @@ import * as MC from '../../../utils/constants/MigrationsConstants';
 import * as GSC from '../../../utils/constants/GlobalSettingsConstants';
 import * as GlobalSettingsHelper from '../../../modules/helpers/GlobalSettingsHelper';
 import * as CSC from '../../../utils/constants/ClientSettingsConstants';
+import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
+import * as FPC from '../../../utils/constants/FieldPathConstants';
 
 // AMPOFFLINE-1312-configure-web-link-resource_type
 const noResType = Utils.toMap(RC.RESOURCE_TYPE, { $exists: false });
@@ -19,6 +21,7 @@ docFilter = { $and: [noResType, docFilter] };
 
 // AMPOFFLINE-1281
 let currentExchangeRates = [];
+let currencyPVs = [];
 
 export default ({
   changelog: {
@@ -53,7 +56,8 @@ export default ({
       {
         changeid: 'AMPOFFLINE-1281-currency-rates',
         author: 'nmandrescu',
-        comment: 'Force full resync for exchange rates app versions smaller than 1.3.0 was used',
+        comment: 'Force full resync for exchange rates and currency possible values when app version smaller than ' +
+          '1.3.0 was used',
         preConditions: [{
           func: () => CurrencyRatesHelper.findAll().then(dbCurrencyRates => {
             currentExchangeRates = dbCurrencyRates;
@@ -68,10 +72,19 @@ export default ({
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
         changes: {
-          func: () => CurrencyRatesHelper.replaceAllCurrencyRates([])
+          func: () => PossibleValuesHelper.findAllByExactIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY).then(cpvs => {
+            currencyPVs = cpvs;
+            return Promise.all([
+              CurrencyRatesHelper.replaceAllCurrencyRates([]),
+              PossibleValuesHelper.deleteByIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY)
+            ]);
+          })
         },
         rollback: {
-          func: () => CurrencyRatesHelper.replaceAllCurrencyRates(currentExchangeRates)
+          func: () => Promise.all([
+            CurrencyRatesHelper.replaceAllCurrencyRates(currentExchangeRates),
+            PossibleValuesHelper.saveOrUpdateCollection(currencyPVs)
+          ])
         }
       },
       {
