@@ -1,62 +1,46 @@
-import ChangelogLogger from '../ChangelogLogger';
+import * as RC from '../../../utils/constants/ResourceConstants';
+import { COLLECTION_RESOURCES } from '../../../utils/Constants';
+import * as Utils from '../../../utils/Utils';
+
+// AMPOFFLINE-1312-configure-web-link-resource_type
+const noResType = Utils.toMap(RC.RESOURCE_TYPE, { $exists: false });
+const linkFilter = Utils.toDefinedNotNullRule(RC.WEB_LINK);
+linkFilter.$and.push(noResType);
+
+// AMPOFFLINE-1312-configure-doc-resource_type
+let docFilter = Utils.toUndefinedOrNullRule(RC.WEB_LINK);
+docFilter.$or.push(Utils.toDefinedNotNullRule(RC.CONTENT_ID));
+docFilter = { $and: [noResType, docFilter] };
 
 export default({
   changelog: {
     preConditions: [
-      {
-        func: () => {
-          ChangelogLogger.log('This is a valid precondition');
-          return false;
-        },
-        onError: 'HALT'
-      },
     ],
     changesets: [
       {
-        changeid: 'AMPOFFLINE-1301 successful',
+        changeid: 'AMPOFFLINE-1312-configure-web-link-resource_type',
         author: 'nmandrescu',
-        comment: 'POC test 1',
-        context: ['startup', 'init'],
-        preConditions: [
-          {
-            func: () => {
-              ChangelogLogger.log('This is a valid precondition');
-              return true;
-            },
-            onError: 'HALT'
-          },
-          {
-            changeid: 'a valid changeset reference',
-            author: 'anyone',
-            file: 'some file',
-            onError: 'HALT',
-            onFail: 'CONTINUE'
-          },
-          {
-            changeid: 'a valid changeset reference',
-            author: 'anyone',
-            file: 'some file',
-            onFail: 'CONTINUE'
-          }
-        ],
+        comment: 'Default value for the new "resource_type" field for web links',
         changes: {
-          func: () => { ChangelogLogger.log('This changeset must succeed'); },
-        },
-        rollback: {
-          func: () => {
-            ChangelogLogger.error('This rollback must NOT be called');
-          },
+          update: {
+            table: COLLECTION_RESOURCES,
+            field: RC.RESOURCE_TYPE,
+            value: RC.TYPE_WEB_RESOURCE,
+            filter: linkFilter
+          }
         }
       },
       {
-        changeid: 'AMPOFFLINE-1301 unsuccessful',
+        changeid: 'AMPOFFLINE-1312-configure-doc-resource_type',
         author: 'nmandrescu',
-        comment: 'POC test 2',
+        comment: 'Default value for the new "resource_type" field for documents',
         changes: {
-          func: () => { ChangelogLogger.log('This changeset must fail'); return Promise.reject(); }
-        },
-        rollback: {
-          func: () => { ChangelogLogger.log('This rollback must be called'); }
+          update: {
+            table: COLLECTION_RESOURCES,
+            field: RC.RESOURCE_TYPE,
+            value: RC.TYPE_DOC_RESOURCE,
+            filter: docFilter
+          }
         }
       }
     ]

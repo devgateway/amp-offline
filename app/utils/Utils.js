@@ -72,6 +72,10 @@ const Utils = {
     return { $and: [this.toMap(key, { $exists: true }), this.toMap(key, { $ne: null })] };
   },
 
+  toUndefinedOrNullRule(key) {
+    return { $or: [this.toMap(key, { $exists: false }), this.toMap(key, null)] };
+  },
+
   /**
    * Expects a list of map elements that contain ids and extracts those ids into a flatten list
    * @param listOfMap a list of map elements, each having id field e.g. [ { id: 1, ...}, { id: 2,... }, ...]
