@@ -1,6 +1,7 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_CURRENCY_RATES } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
+import CurrencyRatesManager from '../util/CurrencyRatesManager';
 
 const logger = new Logger('Currency rates helper');
 
@@ -21,6 +22,7 @@ const CurrencyRatesHelper = {
 
     return DatabaseManager.findOne(filter, COLLECTION_CURRENCY_RATES);
   },
+
   /**
    * Find Currency rates  by a set of filters
    * @param filter filters to apply
@@ -30,8 +32,17 @@ const CurrencyRatesHelper = {
     logger.log('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_CURRENCY_RATES);
   },
+
   /**
-   * Replaces all existing Currency rateswith a new collection of Currency Rates
+   * Determines whether there are currency rates in the DB or not
+   * @return {boolean}
+   */
+  hasExchangeRates() {
+    return CurrencyRatesManager.findAll().then(er => !!er.length);
+  },
+
+  /**
+   * Replaces all existing Currency rates with a new collection of Currency Rates
    * @param currencyRatesCollection
    * @returns {Promise}
    */
