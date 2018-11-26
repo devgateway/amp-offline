@@ -66,6 +66,7 @@ export const PREFIX_ACTIVITY = null;
 export const PREFIX_CONTACT = 'contact';
 export const PREFIX_RESOURCE = 'resource';
 export const PREFIX_COMMON = 'common';
+export const PREFIX_LIST = [PREFIX_ACTIVITY, PREFIX_CONTACT, PREFIX_RESOURCE, PREFIX_COMMON];
 
 export const FIELD_PATH = 'field-path';
 export const FIELD_OPTIONS = 'possible-options';
