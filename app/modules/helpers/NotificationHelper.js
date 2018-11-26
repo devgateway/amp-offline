@@ -42,6 +42,7 @@ export default class NotificationHelper {
    * The severity defines if is information, a warning or an error (default).
    *
    * @param message
+   * @param prefix (optional) message prefix
    * @param details use this to add more details that need to be used separately from original message (e.g. as tooltip)
    * @param origin
    * @param errorCode
@@ -52,10 +53,11 @@ export default class NotificationHelper {
    * @param severity
    */
   constructor({
-                message, details, origin, errorCode, errorObject, translateMsg = true, translateDetails = true,
+                message, prefix, details, origin, errorCode, errorObject, translateMsg = true, translateDetails = true,
                 replacePairs, severity = constants.NOTIFICATION_SEVERITY_ERROR
               }) {
     logger.log('constructor');
+    this._prefix = prefix || '';
     this.translateMsg = translateMsg;
     this.translateDetails = translateDetails;
     this._replacePairs = replacePairs;
@@ -125,7 +127,11 @@ export default class NotificationHelper {
         msg = msg.split(src).join(dst);
       });
     }
-    return msg;
+    return `${this._prefix}${msg}`;
+  }
+
+  get prefix() {
+    return this._prefix;
   }
 
   get details() {
@@ -146,6 +152,10 @@ export default class NotificationHelper {
 
   set message(message) {
     this._message = message;
+  }
+
+  set prefix(prefix) {
+    this._prefix = prefix;
   }
 
   set details(details) {

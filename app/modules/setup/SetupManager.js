@@ -52,7 +52,7 @@ const SetupManager = {
       const url = fullUrl || (isFallbackToDefault && SERVER_URL) || null;
       const protocol = (!fullUrl && isFallbackToDefault && PROTOCOL) || null;
       const port = (!fullUrl && isFallbackToDefault && BASE_PORT) || null;
-      return this.buildConnectionInformation(url, protocol, port);
+      return this.buildConnectionInformation(url, protocol, port, false);
     });
   },
 
@@ -61,12 +61,21 @@ const SetupManager = {
    * @param url partial or full url
    * @param protocol (optional) http or https
    * @param port (optional) e.g. 80800
+   * @param isTestUrl flags if URL is used to test a connection option
    * @return {ConnectionInformation}
    */
-  buildConnectionInformation(url, protocol, port) {
+  buildConnectionInformation(url, protocol, port, isTestUrl) {
     const isFullUrl = !(protocol || port);
     return new ConnectionInformation(
-      url, BASE_REST_URL, protocol, port, CONNECTION_TIMEOUT, CONNECTION_FORCED_TIMEOUT, isFullUrl);
+      url, BASE_REST_URL, protocol, port, CONNECTION_TIMEOUT, CONNECTION_FORCED_TIMEOUT, isFullUrl, isTestUrl);
+  },
+
+  buildConnectionInformationForTest(fullUrl) {
+    return this.buildConnectionInformation(fullUrl, null, null, true);
+  },
+
+  buildConnectionInformationOnFullUrl(fullUrl) {
+    return this.buildConnectionInformation(fullUrl, null, null, false);
   },
 
   testConnectivity() {

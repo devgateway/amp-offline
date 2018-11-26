@@ -43,7 +43,7 @@ export default class SyncUpManagerInterface {
   }
 
   addErrors(errors) {
-    this._errors.push(errors);
+    this._errors.push(...errors);
   }
 
   /**
