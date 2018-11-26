@@ -212,7 +212,7 @@ export default class DBMigrationsManager {
    */
   run(context: string) {
     if (!ElectronApp.IS_RUN_CHANGELOGS) {
-      logger.warn('Skiping changelog run. Remove RUN_CHANGELOGS env var or set it to 1 to enable migrations. ');
+      logger.warn('Skiping changelog run. Remove DISABLE_CHANGELOGS env var or set it to 0 to enable migrations. ');
       return Promise.resolve(0);
     }
     logger.log(`Running DB changelogs for '${context}' context`);
