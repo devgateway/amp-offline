@@ -22,6 +22,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ACTIVITY_FIELDS,
+  SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
@@ -37,6 +38,7 @@ import ContactHelper from '../helpers/ContactHelper';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
 import ResourceHelper from '../helpers/ResourceHelper';
+import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 const logger = new Logger('Syncup runner');
 
@@ -158,9 +160,14 @@ export default class SyncUpRunner {
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
       ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
       ResourceHelper.countAllResourcesModifiedOnClient(),
-      TranslationSyncupManager.getNewTranslationsDifference()])
-      .then(([ampIds, userIds, activitiesToPush, contactsToPush, resourcesToPushCount, newTranslations]) => {
+      TranslationSyncupManager.getNewTranslationsDifference(),
+      PossibleValuesHelper.findActivityPossibleValuesPaths()])
+      .then(([
+               ampIds, userIds, activitiesToPush, contactsToPush, resourcesToPushCount, newTranslations,
+               activitiesPVsPaths
+             ]) => {
         this._ampIds = ampIds;
+        this._activitiesPVsPaths = activitiesPVsPaths;
         this._registeredUserIds = userIds;
         this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
         this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
@@ -184,6 +191,7 @@ export default class SyncUpRunner {
     }
     // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
     body['amp-ids'] = this._ampIds;
+    body[SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] = this._activitiesPVsPaths;
     return ConnectionHelper.doPost({ url: SYNC_URL, body, shouldRetry: true }).then((changes) => {
       this._currentTimestamp = changes[SYNCUP_DATETIME_FIELD];
       return changes;

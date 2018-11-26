@@ -74,6 +74,7 @@ const Utils = {
   /**
    * Expects a list of map elements that contain ids and extracts those ids into a flatten list
    * @param listOfMap a list of map elements, each having id field e.g. [ { id: 1, ...}, { id: 2,... }, ...]
+   * @param key the key to use to convert each map to the value of this key
    * @return flatten list of ids, e.g. [1, 2, ...]
    */
   flattenToListByKey(listOfMap, key) {
