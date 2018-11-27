@@ -195,4 +195,4 @@ export const DEVELOP_BRANCH = 'develop';
 export const RELEASE_BRANCH_REGEX = /release\//;
 export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];
 
-export const RUN_CHANGELOGS = 'RUN_CHANGELOGS';
+export const DISABLE_CHANGELOGS = 'DISABLE_CHANGELOGS';
