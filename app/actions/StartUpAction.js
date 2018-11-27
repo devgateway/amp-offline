@@ -24,6 +24,8 @@ import { deleteOrphanResources } from './ResourceAction';
 import SetupManager from '../modules/setup/SetupManager';
 import { GS_DEFAULT_CALENDAR } from '../utils/constants/GlobalSettingsConstants';
 import CalendarHelper from '../modules/helpers/CalendarHelper';
+import { dbMigrationsManager } from './DBMigrationsAction';
+import * as MC from '../utils/constants/MigrationsConstants';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -56,6 +58,7 @@ const logger = new Logger('Startup action');
 export function ampOfflinePreStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(SetupManager.auditStartup)
+    .then(() => dbMigrationsManager.run(MC.CONTEXT_STARTUP))
     .then(checkIfSetupComplete)
     .then(isSetupComplete =>
       TranslationManager.initializeTranslations(isSetupComplete)
@@ -70,6 +73,7 @@ export function ampOfflinePreStartUp() {
  */
 export function ampOfflineStartUp() {
   return ampOfflineInit()
+    .then(runDbMigrationsPostInit)
     .then(initLanguage)
     .then(() => nonCriticalRoutinesStartup());
 }
@@ -84,6 +88,10 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
     .then(() => (isPostLogout ? postLogoutInit() : null));
+}
+
+function runDbMigrationsPostInit() {
+  return dbMigrationsManager.run(MC.CONTEXT_INIT).then(execNr => (execNr ? ampOfflineInit() : execNr));
 }
 
 function nonCriticalRoutinesStartup() {
