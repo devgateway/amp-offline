@@ -45,6 +45,7 @@ export const COLLECTION_RESOURCES = 'resources';
 export const COLLECTION_REPOSITORY = 'repository';
 export const COLLECTION_GAZETTEER = 'gazetteer';
 export const COLLECTION_CALENDARS = 'calendars';
+export const COLLECTION_CHANGESETS = 'changesets';
 
 export const GAZETTEER_DISTANCE_DIVIDE = 3;
 
@@ -64,9 +65,12 @@ export const LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC = 'must_sync_translation.json';
 
 export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
+export const TEST_DIRECTORY = 'test';
 export const STATIC_DIR = 'static';
 export const IMAGES_DIR = 'images';
 export const DOC_ICONS = 'doc-icons';
+export const DB_STATIC_DIR = 'db';
+export const MIGRATIONS_DIR = 'changelog';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -190,3 +194,5 @@ export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';
 export const RELEASE_BRANCH_REGEX = /release\//;
 export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];
+
+export const DISABLE_CHANGELOGS = 'DISABLE_CHANGELOGS';
