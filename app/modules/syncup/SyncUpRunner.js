@@ -39,6 +39,7 @@ import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMP
 import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
 import ResourceHelper from '../helpers/ResourceHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
+import * as EC from '../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Syncup runner');
 
@@ -446,7 +447,15 @@ export default class SyncUpRunner {
 
   _deduplicateMessages(messages, existingMsgs) {
     return messages.filter(msg => {
-      const m = msg.toString();
+      let m;
+      /* to avoid reporting connection related errors for each activity/contact/resource/etc,
+      we'll get the raw connection error that will be deduplicated */
+      if (msg._message && EC.GENERAL_CONNECTION_ERRORS.includes(msg._message)) {
+        m = msg.toString();
+      } else {
+        // verify full message to report other non-connection reasons for each activity/etc. individually
+        m = msg.message || msg.toString();
+      }
       if (existingMsgs.has(m)) {
         return false;
       }
