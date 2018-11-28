@@ -9,7 +9,6 @@ import * as RC from '../../../utils/constants/ResourceConstants';
 import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
-import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorConstants';
 import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
@@ -18,6 +17,7 @@ import ContactHelper from '../../helpers/ContactHelper';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { getActivityResourceUuids } from '../../../actions/ResourceAction';
 import ResourceHelper from '../../helpers/ResourceHelper';
+import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Activity push to AMP manager');
 
@@ -122,7 +122,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     }
     return Promise.reject(new Notification({
       message: 'SyncupDeniedMustRelogin',
-      origin: NOTIFICATION_ORIGIN_API_SYNCUP
+      origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
     }));
   }
 
@@ -291,21 +291,29 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const idToLog = `${ampId}(${activity[AC.PROJECT_TITLE]})`;
     const fieldNameToLog = `${activity[AC.AMP_ID] ? AC.AMP_ID : ''}(${AC.PROJECT_TITLE})`;
     const prefix = `${idToLog}: `;
-    const errors = errorData instanceof Array ? errorData : [errorData];
-    errors.forEach(error => {
+    let errors = errorData instanceof Array ? errorData : [errorData];
+    const unitErrors = [];
+    errors = errors.map(error => {
+      let genericError;
       if (error instanceof Notification) {
         error.replacePairs = error.replacePairs || [];
         error.prefix = prefix;
+        if (error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY) {
+          genericError = error.shallowClone();
+          genericError.prefix = '';
+        }
       } else {
         error = `${prefix}${error}`;
       }
+      unitErrors.push(genericError || error);
+      return error;
     });
     logger.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;
     rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
     rejectedActivity.errors = errors;
-    this.addErrors(errors);
+    this.addErrors(unitErrors);
     return ActivityHelper.saveOrUpdate(rejectedActivity);
   }
 }

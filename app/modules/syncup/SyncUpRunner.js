@@ -447,15 +447,8 @@ export default class SyncUpRunner {
 
   _deduplicateMessages(messages, existingMsgs) {
     return messages.filter(msg => {
-      let m;
-      /* to avoid reporting connection related errors for each activity/contact/resource/etc,
-      we'll get the raw connection error that will be deduplicated */
-      if (msg.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY) {
-        m = msg.toString();
-      } else {
-        // verify full message to report other non-connection reasons for each activity/etc. individually
-        m = msg.message || msg.toString();
-      }
+      // each unit must report a generic message if needs to be treated as a generic one
+      const m = msg.message || msg.toString();
       if (existingMsgs.has(m)) {
         return false;
       }
