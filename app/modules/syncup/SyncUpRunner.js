@@ -39,7 +39,6 @@ import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMP
 import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
 import ResourceHelper from '../helpers/ResourceHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
-import * as EC from '../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Syncup runner');
 
