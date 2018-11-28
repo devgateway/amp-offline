@@ -21,3 +21,5 @@ export const LAST_AMP_SETTINGS_STATUS_PENDING = 'PENDING';
 export const LAST_AMP_SETTINGS_STATUS_REVIEWED = 'REVIEWED';
 export const FIRST_STARTED_AT = 'first-started-at';
 export const LAST_STARTED_AT = 'last-started-at';
+
+export const FORCE_SYNC_UP = 'force-sync-up';

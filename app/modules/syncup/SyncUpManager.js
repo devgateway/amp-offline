@@ -33,6 +33,7 @@ import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorC
 import { addMessage } from '../../actions/NotificationAction';
 import * as CSC from '../../utils/constants/ClientSettingsConstants';
 import SetupManager from '../setup/SetupManager';
+import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
 
 const logger = new Logger('Syncup manager');
 
@@ -115,6 +116,7 @@ export default class SyncUpManager {
         syncResult.dateStarted = startDate.toISOString();
         return this._saveMainSyncUpLog(result);
       })
+      .then(() => this._updateForceSyncUpClientSetting(syncResult))
       .then(this._postSyncUp)
       .then(() => syncResult);
   }
@@ -204,15 +206,17 @@ export default class SyncUpManager {
   static checkIfToForceSyncUp() {
     logger.log('checkIfToForceSyncUp');
     return Promise.all([SyncUpManager.getLastSyncInDays(), SyncUpManager.getLastSuccessfulSyncUp(),
-      SyncUpManager.getLastSyncUpIdForCurrentUser(), SetupManager.getCurrentVersionAuditLog()])
-      .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser, currVerAudit]) => {
+      SyncUpManager.getLastSyncUpIdForCurrentUser(), SetupManager.getCurrentVersionAuditLog(),
+      ClientSettingsHelper.getSettingValueByName(CSC.FORCE_SYNC_UP)
+    ])
+      .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser, currVerAudit, isForce]) => {
         const didSyncUp = !!lastSyncUpIdForCurrentUser;
         const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
         const user = store.getState().userReducer.userData; // No need to to go the DB in this stage.
         const hasUserData = lastSuccessful && lastSuccessful[SYNCUP_SYNC_REQUESTED_AT] > user.registeredOnClient;
         const currVerFirstStartedAt = currVerAudit[CSC.FIRST_STARTED_AT];
         const syncedForCurrVer = lastSuccessful && lastSuccessful[SYNCUP_SYNC_REQUESTED_AT] > currVerFirstStartedAt;
-        const forceSyncUp = forceBecauseDays || !hasUserData || !syncedForCurrVer;
+        const forceSyncUp = forceBecauseDays || !hasUserData || !syncedForCurrVer || !!isForce;
         return {
           forceSyncUp,
           didUserSuccessfulSyncUp: hasUserData,
@@ -302,5 +306,15 @@ export default class SyncUpManager {
         }
         return Promise.resolve();
       });
+  }
+
+  static _updateForceSyncUpClientSetting(syncResult) {
+    if (syncResult.status === SYNCUP_STATUS_SUCCESS) {
+      return ClientSettingsHelper.findSettingByName(CSC.FORCE_SYNC_UP).then(forceSyncCS => {
+        forceSyncCS.value = false;
+        return ClientSettingsHelper.saveOrUpdateSetting(forceSyncCS);
+      });
+    }
+    return Promise.resolve();
   }
 }
