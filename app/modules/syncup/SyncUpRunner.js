@@ -450,7 +450,7 @@ export default class SyncUpRunner {
       let m;
       /* to avoid reporting connection related errors for each activity/contact/resource/etc,
       we'll get the raw connection error that will be deduplicated */
-      if (msg._message && EC.GENERAL_CONNECTION_ERRORS.includes(msg._message)) {
+      if (msg.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY) {
         m = msg.toString();
       } else {
         // verify full message to report other non-connection reasons for each activity/etc. individually

@@ -136,8 +136,7 @@ const ConnectionHelper = {
         // Being here means the server might not be accessible.
         const isAMPunreachable = error && ERRORS_NO_AMP_SERVER.includes(error.code);
         const isAccessDenied = response && response.statusCode === 403;
-        const errorCode = isAMPunreachable ? EC.ERROR_CODE_NO_CONNECTIVITY :
-          (isAccessDenied ? EC.ERROR_CODE_ACCESS_DENIED : undefined);
+        const errorCode = isAccessDenied ? EC.ERROR_CODE_ACCESS_DENIED : undefined;
         const message = isAMPunreachable ? EC.MSG_AMP_UNREACHABLE :
           error || (ApiErrorConverter.toLocalError(body && body.error)) || EC.MSG_UNKNOWN_NETWORK_ERROR;
         // We need to detect statusCode 403 to throw a security error.
@@ -152,6 +151,9 @@ const ConnectionHelper = {
   },
 
   _reportError(message, origin, errorCode, errorObject) {
+    if (!errorCode && EC.GENERAL_CONNECTION_ERRORS.includes(message)) {
+      errorCode = EC.ERROR_CODE_NO_CONNECTIVITY;
+    }
     return Promise.reject(ErrorNotificationHelper.createNotification({ message, origin, errorCode, errorObject }));
   }
 
