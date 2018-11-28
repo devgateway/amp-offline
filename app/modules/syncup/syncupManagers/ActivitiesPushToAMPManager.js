@@ -32,7 +32,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     logger.log('ActivitiesPushToAMPManager');
     this._cancel = false;
     this.diff = [];
-    this.pushed = new Set();
+    this._processed = new Set();
   }
 
   /**
@@ -105,7 +105,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   getDiffLeftover() {
     // this leftover won't be used next time, but we calculate it to flag a partial push
-    this.diff = this.diff.filter(id => !this.pushed.has(id));
+    this.diff = this.diff.filter(id => !this._processed.has(id));
     return this.diff;
   }
 
@@ -226,8 +226,9 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // If we got an EP result, no matter if the import was rejected, then the push was successful.
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
-    if (pushResult) {
-      this.pushed.add(activity.id);
+    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    if (pushResult || !isConnectivityError) {
+      this._processed.add(activity.id);
     }
     // save the rejection immediately to allow a quicker syncup cancellation
     const errorData = error || (pushResult && pushResult.error) || undefined;
