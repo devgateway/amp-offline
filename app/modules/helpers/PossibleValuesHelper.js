@@ -129,6 +129,10 @@ const PossibleValuesHelper = {
       .then(r => Utils.flattenToListByKey(r, 'id'));
   },
 
+  findAllByExactIds(ids) {
+    return DatabaseManager.findAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
+  },
+
   findAll(filter, projections) {
     logger.debug('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections).then(this._preProcess);
@@ -220,6 +224,16 @@ const PossibleValuesHelper = {
   deleteById(id) {
     logger.log('replaceAll');
     return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
+  },
+
+  /**
+   * Deletes possible values for matched fields paths
+   * @param ids the fields paths with possible values to delete
+   * @return {*}
+   */
+  deleteByIds(ids) {
+    logger.log('replaceAll');
+    return DatabaseManager.removeAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
   },
 
   /**
