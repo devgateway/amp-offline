@@ -10,7 +10,6 @@ import { ERRORS_NO_AMP_SERVER, ERRORS_TO_RETRY, MAX_RETRY_ATEMPTS } from '../../
 import * as EC from '../../utils/constants/ErrorConstants';
 import store from '../../index';
 import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
-import translate from '../../utils/translate';
 import Logger from '../../modules/util/LoggerManager';
 import * as URLUtils from '../../utils/URLUtils';
 import ApiErrorConverter from './ApiErrorConverter';
@@ -56,7 +55,7 @@ const ConnectionHelper = {
     const url = requestConfig.url;
     logger.log(url);
     if (!URLUtils.isValidUrl(url)) {
-      return this._reportError(translate('invalidUrl'), EC.NOTIFICATION_ORIGIN_API_NETWORK);
+      return this._reportError('invalidUrl', EC.NOTIFICATION_ORIGIN_API_NETWORK);
     }
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
     const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
@@ -79,7 +78,7 @@ const ConnectionHelper = {
           if (shouldRetry && maxRetryAttempts) {
             return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
           } else {
-            return this._reportError(translate('timeoutError'), EC.NOTIFICATION_ORIGIN_API_NETWORK);
+            return this._reportError('timeoutError', EC.NOTIFICATION_ORIGIN_API_NETWORK);
           }
         }
       });
@@ -118,7 +117,7 @@ const ConnectionHelper = {
         if (maxRetryAttempts > 0 && shouldRetry) {
           return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
         } else {
-          return this._reportError(translate('timeoutError'), EC.NOTIFICATION_ORIGIN_API_NETWORK);
+          return this._reportError('timeoutError', EC.NOTIFICATION_ORIGIN_API_NETWORK);
         }
       } else if (response && response.statusCode === 401) {
         // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
@@ -139,14 +138,14 @@ const ConnectionHelper = {
         const isAccessDenied = response && response.statusCode === 403;
         const errorCode = isAMPunreachable ? EC.ERROR_CODE_NO_CONNECTIVITY :
           (isAccessDenied ? EC.ERROR_CODE_ACCESS_DENIED : undefined);
-        const message = isAMPunreachable ? translate('AMPUnreachableError') :
-          error || (ApiErrorConverter.toLocalError(body && body.error)) || translate('unknownNetworkError');
+        const message = isAMPunreachable ? 'AMPUnreachableError' :
+          error || (ApiErrorConverter.toLocalError(body && body.error)) || 'unknownNetworkError';
         // We need to detect statusCode 403 to throw a security error.
         const origin = isAccessDenied ? EC.NOTIFICATION_ORIGIN_API_SECURITY : EC.NOTIFICATION_ORIGIN_API_NETWORK;
         return this._reportError(message, origin, errorCode);
       }
     } else if (response && !response.complete) {
-      return this._reportError(translate('corruptedResponse'), EC.NOTIFICATION_ORIGIN_API_NETWORK);
+      return this._reportError('corruptedResponse', EC.NOTIFICATION_ORIGIN_API_NETWORK);
     } else {
       return writeStream ? response : body;
     }
