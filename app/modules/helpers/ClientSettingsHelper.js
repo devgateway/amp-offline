@@ -65,6 +65,15 @@ const ClientSettingsHelper = {
   },
 
   /**
+   * Get setting value or null if no setting
+   * @param name
+   * @return {Promise<T | null>}
+   */
+  getSettingValueByName(name) {
+    return this.findSettingByName(name).then(cs => cs && cs.value);
+  },
+
+  /**
    * Find a setting by a set of filters
    * @param filter filters to apply
    * @returns {Promise}

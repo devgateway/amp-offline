@@ -21,6 +21,7 @@ const CurrencyRatesHelper = {
 
     return DatabaseManager.findOne(filter, COLLECTION_CURRENCY_RATES);
   },
+
   /**
    * Find Currency rates  by a set of filters
    * @param filter filters to apply
@@ -30,8 +31,17 @@ const CurrencyRatesHelper = {
     logger.log('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_CURRENCY_RATES);
   },
+
   /**
-   * Replaces all existing Currency rateswith a new collection of Currency Rates
+   * Determines whether there are currency rates in the DB or not
+   * @return {boolean}
+   */
+  hasExchangeRates() {
+    return this.findAll().then(er => !!er.length);
+  },
+
+  /**
+   * Replaces all existing Currency rates with a new collection of Currency Rates
    * @param currencyRatesCollection
    * @returns {Promise}
    */
