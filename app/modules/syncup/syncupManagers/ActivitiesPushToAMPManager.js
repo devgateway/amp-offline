@@ -9,7 +9,6 @@ import * as RC from '../../../utils/constants/ResourceConstants';
 import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
-import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorConstants';
 import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
@@ -18,6 +17,7 @@ import ContactHelper from '../../helpers/ContactHelper';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { getActivityResourceUuids } from '../../../actions/ResourceAction';
 import ResourceHelper from '../../helpers/ResourceHelper';
+import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Activity push to AMP manager');
 
@@ -32,7 +32,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     logger.log('ActivitiesPushToAMPManager');
     this._cancel = false;
     this.diff = [];
-    this.pushed = new Set();
+    this._processed = new Set();
   }
 
   /**
@@ -105,7 +105,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   getDiffLeftover() {
     // this leftover won't be used next time, but we calculate it to flag a partial push
-    this.diff = this.diff.filter(id => !this.pushed.has(id));
+    this.diff = this.diff.filter(id => !this._processed.has(id));
     return this.diff;
   }
 
@@ -122,7 +122,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     }
     return Promise.reject(new Notification({
       message: 'SyncupDeniedMustRelogin',
-      origin: NOTIFICATION_ORIGIN_API_SYNCUP
+      origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
     }));
   }
 
@@ -226,8 +226,9 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // If we got an EP result, no matter if the import was rejected, then the push was successful.
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
-    if (pushResult) {
-      this.pushed.add(activity.id);
+    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    if (pushResult || !isConnectivityError) {
+      this._processed.add(activity.id);
     }
     // save the rejection immediately to allow a quicker syncup cancellation
     const errorData = error || (pushResult && pushResult.error) || undefined;
@@ -291,21 +292,29 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const idToLog = `${ampId}(${activity[AC.PROJECT_TITLE]})`;
     const fieldNameToLog = `${activity[AC.AMP_ID] ? AC.AMP_ID : ''}(${AC.PROJECT_TITLE})`;
     const prefix = `${idToLog}: `;
-    const errors = errorData instanceof Array ? errorData : [errorData];
-    errors.forEach(error => {
+    let errors = errorData instanceof Array ? errorData : [errorData];
+    const unitErrors = [];
+    errors = errors.map(error => {
+      let genericError;
       if (error instanceof Notification) {
         error.replacePairs = error.replacePairs || [];
         error.prefix = prefix;
+        if (error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY) {
+          genericError = error.shallowClone();
+          genericError.prefix = '';
+        }
       } else {
         error = `${prefix}${error}`;
       }
+      unitErrors.push(genericError || error);
+      return error;
     });
     logger.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;
     rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
     rejectedActivity.errors = errors;
-    this.addErrors(errors);
+    this.addErrors(unitErrors);
     return ActivityHelper.saveOrUpdate(rejectedActivity);
   }
 }
