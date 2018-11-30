@@ -152,6 +152,7 @@ export default ({
           func: () => {
             const isForceSync = !!activitiesWithPPCasCode.length;
             activitiesWithPPCasCode = null;
+            codeToId = null;
             return isForceSync;
           },
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
@@ -217,7 +218,11 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_CONTINUE,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }, {
-          func: () => CurrencyRatesHelper.hasExchangeRates().then(has => !has),
+          func: () => CurrencyRatesHelper.hasExchangeRates().then(has => {
+            currentExchangeRates = null;
+            currencyPVs = null;
+            return !has;
+          }),
           onFail: MC.ON_FAIL_ERROR_CONTINUE,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
