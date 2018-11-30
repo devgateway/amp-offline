@@ -183,6 +183,12 @@ export default ({
             !dc || !dc.value || ['ht', 'td'].includes(dc.value.toLowerCase())),
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
+        }, {
+          changeid: 'AMPOFFLINE-1318-ppc-currency',
+          author: 'nmandrescu',
+          file: 'changelog-1.4.0.js',
+          onFail: MC.ON_FAIL_ERROR_CONTINUE,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
         changes: {
           func: () => PossibleValuesHelper.findAllByExactIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY).then(cpvs => {
