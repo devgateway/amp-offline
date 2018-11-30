@@ -207,6 +207,7 @@ export default class SyncUpRunner {
     changes[SYNCUP_TYPE_RESOURCE_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
+    // not sure if still needed, but once removed, make sure to double check with CurrencyRatesHelper.hasExchangeRates
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
     // TODO workaround until AMPOFFLINE-908 with a more accurate activities to push detection will come
     const hasWsMembersChanges = SyncUpDiff.hasChanges(changes[SYNCUP_TYPE_WORKSPACE_MEMBERS]);
@@ -445,7 +446,8 @@ export default class SyncUpRunner {
 
   _deduplicateMessages(messages, existingMsgs) {
     return messages.filter(msg => {
-      const m = msg.toString();
+      // each unit must report a generic message if needs to be treated as a generic one
+      const m = msg.message || msg.toString();
       if (existingMsgs.has(m)) {
         return false;
       }

@@ -52,6 +52,13 @@ const DEFAULT_SETTINGS = [
     type: CS.SETTING_TYPE_OBJECT,
     value: {},
   },
+  {
+    id: CS.FORCE_SYNC_UP,
+    name: CS.FORCE_SYNC_UP,
+    visible: false,
+    type: CS.SETTING_TYPE_BOOLEAN,
+    value: false,
+  },
 ];
 
 export default DEFAULT_SETTINGS;
