@@ -24,7 +24,8 @@ export default class AFFundingDonorSection extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    activityFundingSectionPanelStatus: PropTypes.array.isRequired
   };
 
   static propTypes = {
@@ -45,7 +46,7 @@ export default class AFFundingDonorSection extends Component {
     const openFundingsState = [];
     const filteredFundings = this._filterFundings(this.props.fundings);
     filteredFundings.map((f) => (openFundingsState.push({
-      open: false,
+      open: f.open,
       id: f[AC.GROUP_VERSIONED_FUNDING]
     })));
     this.state = {
@@ -67,6 +68,8 @@ export default class AFFundingDonorSection extends Component {
         if (section) {
           section.open = true;
         }
+        const funding = this._findFundingById(f[AC.GROUP_VERSIONED_FUNDING]);
+        funding.open = true;
       }
     });
     this.setState({
@@ -90,6 +93,7 @@ export default class AFFundingDonorSection extends Component {
     }
     fundingItem[AC.FUNDING_DETAILS] = [];
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
+    fundingItem.open = false;
     const newFundingList = this.state.fundingList.slice();
     newFundingList.push(fundingItem);
     const newOpenFundingDonorSection = this.state.openFundingDonorSection;
@@ -188,6 +192,11 @@ export default class AFFundingDonorSection extends Component {
     }
   }
 
+  _findFundingById(id) {
+    const { activity } = this.context;
+    return activity[AC.FUNDINGS].find(f => f[AC.GROUP_VERSIONED_FUNDING] === id);
+  }
+
   render() {
     // Filter only the fundings for this organization and role.
     return (<div className={styles.container}>
@@ -197,9 +206,15 @@ export default class AFFundingDonorSection extends Component {
           key={Math.random()} collapsible
           expanded={this.state.openFundingDonorSection[i] ? this.state.openFundingDonorSection[i].open : false}
           onSelect={() => {
-            const newOpenState = this.state.openFundingDonorSection;
-            newOpenState[i].open = !newOpenState[i].open;
-            this.setState({ openFundingDonorSection: newOpenState });
+            // Look for amp_funding and update "open".
+            const funding = this._findFundingById(g[AC.GROUP_VERSIONED_FUNDING]);
+            if (funding) {
+              funding.open = !funding.open;
+              // Change state to refresh UI.
+              const newOpenState = this.state.openFundingDonorSection;
+              newOpenState[i].open = funding.open;
+              this.setState({ openFundingDonorSection: newOpenState });
+            }
           }}>
           <AFFundingContainer
             funding={g} hasErrors={this.props.hasErrors}

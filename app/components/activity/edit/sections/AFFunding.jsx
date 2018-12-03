@@ -27,7 +27,8 @@ class AFFunding extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    activityFundingSectionPanelStatus: PropTypes.array.isRequired
   };
 
   constructor(props) {
@@ -125,7 +126,7 @@ class AFFunding extends Component {
     }
   }
 
-  addFundings() {
+  addDonorOrgs() {
     if (this.context.activity[AC.FUNDINGS]) {
       // Group fundings for the same funding organization and role (if enabled).
       const groups = [];
@@ -164,6 +165,17 @@ class AFFunding extends Component {
               .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
+
+          if (!this.context.activityFundingSectionPanelStatus.find(i =>
+            i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
+            && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id)) {
+            this.context.activityFundingSectionPanelStatus.push({
+              [AC.FUNDING_DONOR_ORG_ID]: funding[AC.FUNDING_DONOR_ORG_ID],
+              [AC.SOURCE_ROLE]: funding[AC.SOURCE_ROLE],
+              open: true
+            });
+          }
+
           if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
             return (<Tab
               eventKey={tabIndex} key={Math.random()}
@@ -258,7 +270,7 @@ class AFFunding extends Component {
           <Tab
             eventKey={0} title="Overview" key={0}
             tabClassName={overviewTabHasErrors ? styles.error : ''}>{this.generateOverviewTabContent()}</Tab>
-          {this.addFundings()}
+          {this.addDonorOrgs()}
         </Tabs>
         <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
       </div>);
@@ -266,7 +278,7 @@ class AFFunding extends Component {
       return (
         <div>
           <div className={styles.overview_section}>{this.generateOverviewTabContent()}</div>
-          <div>{this.addFundings()}</div>
+          <div>{this.addDonorOrgs()}</div>
           <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
         </div>);
     }
