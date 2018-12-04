@@ -80,7 +80,7 @@ export default class ActivityForm extends Component {
       activityValidator: this.activityValidator,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
       currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings,
-      activityFundingSectionPanelStatus: []
+      activityFundingSectionPanelStatus: this.activityFundingSectionPanelStatus
     };
   }
 
@@ -90,6 +90,7 @@ export default class ActivityForm extends Component {
 
   init(activityId) { // eslint-disable-line react/sort-comp
     this.activity = undefined;
+    this.activityFundingSectionPanelStatus = [];
     this.props.loadActivityForActivityForm(activityId);
     this.setState({
       activityId,

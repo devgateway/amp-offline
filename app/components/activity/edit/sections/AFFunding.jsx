@@ -31,6 +31,11 @@ class AFFunding extends Component {
     activityFundingSectionPanelStatus: PropTypes.array.isRequired
   };
 
+  static propTypes = {
+    activity: PropTypes.object.isRequired,
+    activityFundingSectionPanelStatus: PropTypes.array
+  };
+
   constructor(props) {
     super(props);
     logger.debug('constructor');
@@ -40,7 +45,20 @@ class AFFunding extends Component {
     this.hasErrors = this.hasErrors.bind(this);
     this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
     this._tabSelect = this._tabSelect.bind(this);
-    this.state = { activeTab: 0, errors: false };
+    const panels = [];
+    if (props.activity[AC.FUNDINGS]) {
+      props.activity[AC.FUNDINGS].forEach(f => {
+        const statusInContext = props.activityFundingSectionPanelStatus.find(i =>
+          i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
+          && i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id);
+        if (statusInContext) {
+          panels.push({ open: statusInContext.open });
+        } else {
+          panels.push({ open: false });
+        }
+      });
+    }
+    this.state = { activeTab: 0, errors: false, panelOpenStatus: panels };
   }
 
   _getAcronym(sourceRole) {
@@ -166,6 +184,7 @@ class AFFunding extends Component {
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
 
+          const newState = this.state.panelOpenStatus.slice();
           if (!this.context.activityFundingSectionPanelStatus.find(i =>
             i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
             && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id)) {
@@ -174,6 +193,8 @@ class AFFunding extends Component {
               [AC.SOURCE_ROLE]: funding[AC.SOURCE_ROLE],
               open: true
             });
+            newState.push({ open: true });
+            this.setState({ panelOpenStatus: newState });
           }
 
           if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
@@ -194,7 +215,15 @@ class AFFunding extends Component {
             </Tab>);
           } else {
             return (<Panel
-              key={Math.random()} collapsible
+              key={Math.random()} collapsible expanded={newState[tabIndex - 1].open}
+              onSelect={() => {
+                const changeState = this.state.panelOpenStatus;
+                changeState[tabIndex - 1].open = !changeState[tabIndex - 1].open;
+                this.setState({ panelOpenStatus: changeState });
+                this.context.activityFundingSectionPanelStatus.find(i =>
+                  i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
+                  && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id).open = changeState[tabIndex - 1].open;
+              }}
               header={<div className={funding.errors ? styles.error : ''}>
                 {`${funding[AC.FUNDING_DONOR_ORG_ID][AC.VALUE]} (${funding[AC.SOURCE_ROLE].value})`}
               </div>}>
