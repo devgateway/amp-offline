@@ -446,7 +446,8 @@ export default class SyncUpRunner {
 
   _deduplicateMessages(messages, existingMsgs) {
     return messages.filter(msg => {
-      const m = msg.toString();
+      // each unit must report a generic message if needs to be treated as a generic one
+      const m = msg.message || msg.toString();
       if (existingMsgs.has(m)) {
         return false;
       }

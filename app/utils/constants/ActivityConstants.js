@@ -127,7 +127,6 @@ export const PPC_AMOUNT = 'ppc_amount';
 export const RPC_AMOUNT = 'rpc_amount';
 export const PPC_ANNUAL_BUDGETS = 'ppc_annual_budgets';
 export const AMOUNT = 'amount';
-export const CURRENCY_CODE = 'currency_code';
 export const CURRENCY = 'currency';
 export const FUNDING_DATE = 'funding_date';
 export const COMPONENTS = 'components';

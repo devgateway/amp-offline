@@ -58,7 +58,6 @@ const logger = new Logger('Startup action');
 export function ampOfflinePreStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(SetupManager.auditStartup)
-    .then(() => dbMigrationsManager.run(MC.CONTEXT_STARTUP))
     .then(checkIfSetupComplete)
     .then(isSetupComplete =>
       TranslationManager.initializeTranslations(isSetupComplete)
@@ -72,7 +71,9 @@ export function ampOfflinePreStartUp() {
  * @return {Promise}
  */
 export function ampOfflineStartUp() {
-  return ampOfflineInit()
+  return Promise.resolve()
+    .then(() => dbMigrationsManager.run(MC.CONTEXT_STARTUP))
+    .then(ampOfflineInit)
     .then(runDbMigrationsPostInit)
     .then(initLanguage)
     .then(() => nonCriticalRoutinesStartup());
