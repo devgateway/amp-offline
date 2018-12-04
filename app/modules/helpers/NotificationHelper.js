@@ -34,6 +34,26 @@ export default class NotificationHelper {
   }
 
   /**
+   * Shallow clone
+   * @param n the source of the notification to clone
+   * @return {NotificationHelper}
+   */
+  static shallowClone(n: NotificationHelper) {
+    return new NotificationHelper({
+      // keep original message and delay the translation at display time
+      message: n._message,
+      prefix: n.prefix,
+      details: n.details,
+      origin: n.origin,
+      errorCode: n.errorCode,
+      translateMsg: n.translateMsg,
+      translateDetails: n.translateDetails,
+      replacePairs: n.replacePairs,
+      severity: n.severity,
+    });
+  }
+
+  /**
    * Constructor for Notifications.
    * The behavior of this object depends on the combination of parameters, if we receive a notificationHelperObject
    * it takes precedence and we construct a new helper with the same data. If not, we will usually receive a message
@@ -188,5 +208,13 @@ export default class NotificationHelper {
 
   get replacePairs() {
     return this._replacePairs;
+  }
+
+  /**
+   * Shallow clone
+   * @return {NotificationHelper}
+   */
+  shallowClone() {
+    return NotificationHelper.shallowClone(this);
   }
 }

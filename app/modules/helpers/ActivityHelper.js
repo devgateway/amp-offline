@@ -130,7 +130,7 @@ const ActivityHelper = {
   },
 
   _setOrUpdateIds(activity, isDiffChange = false) {
-    logger.log('_setOrUpdateIds');
+    logger.debug('_setOrUpdateIds');
     // if this activity version is not yet available offline
     if (activity.id === undefined) {
       // set id to internal_id (== activity comes from sync) or generate a new local id (== activity created offline)
@@ -197,6 +197,12 @@ const ActivityHelper = {
   removeRejected(id) {
     logger.log('removeRejected');
     return DatabaseManager.removeById(id, COLLECTION_ACTIVITIES, this._getRejectedRule());
+  },
+
+  removeAllNonRejectedByIds(ids) {
+    logger.log('removeAllNonRejectedByIds');
+    const filter = { $and: [this._getRejectedRule(), { id: { $in: ids } }] };
+    return this.removeAll(filter);
   },
 
   removeAll(filter) {
