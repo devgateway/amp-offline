@@ -233,7 +233,7 @@
       {
         "amp_funding_amount_id": 422,
         "amount": 370000000,
-        "currency_code": "XOF",
+        "currency": 55,
         "funding_date": "2013-01-01T00:00:00.000+0200",
         "funding_type": "PROPOSED"
       }
@@ -963,7 +963,7 @@
       {
         "amp_funding_amount_id": 705,
         "amount": 1050000,
-        "currency_code": "KWD",
+        "currency": 55,
         "funding_date": "2015-07-28T00:00:00.000+0300",
         "funding_type": "PROPOSED"
       }
@@ -1142,7 +1142,7 @@
     "ppc_amount": [
       {
         "amount": 12736588705,
-        "currency_code": "XAF",
+        "currency": 55,
         "funding_date": "2014-01-01T00:00:00.000+0200"
       }
     ],
@@ -1366,7 +1366,7 @@
     "ppc_amount": [
       {
         "amount": null,
-        "currency_code": null,
+        "currency": null,
         "funding_date": null
       }
     ],

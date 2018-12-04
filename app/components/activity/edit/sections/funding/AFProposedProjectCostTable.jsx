@@ -36,17 +36,15 @@ export default class AFProposedProjectCostTable extends Component {
 
   _createCurrencyField() {
     const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
-    if (!activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] || !activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE].id) {
+    if (!activity[AC.PPC_AMOUNT][0][AC.CURRENCY] || !activity[AC.PPC_AMOUNT][0][AC.CURRENCY].id) {
       const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
-      // TODO: Check why the structure of this object is {id: currecy_code, value: currency_code}.
-      const newCurrency = { id: currency.value, value: currency.value };
-      activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] = newCurrency;
+      activity[AC.PPC_AMOUNT][0][AC.CURRENCY] = currency;
     }
     const field = (<AFField
       parent={this.context.activity[AC.PPC_AMOUNT][0]}
-      fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
+      fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY}`}
       type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true, showOrigValue: true }} />);
     return field;
   }
@@ -63,13 +61,13 @@ export default class AFProposedProjectCostTable extends Component {
           dataFormat={() => (<AFField
             parent={this.context.activity[AC.PPC_AMOUNT][0]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.AMOUNT}`}
-            type={Types.NUMBER} showLabel={false} readonly />)} >{translate('Amount')}</TableHeaderColumn>);
+            type={Types.NUMBER} showLabel={false} readonly />)}>{translate('Amount')}</TableHeaderColumn>);
       }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
+      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
+          dataField={AC.CURRENCY} key={AC.CURRENCY}
           editable={false}
-          dataFormat={() => (this._createCurrencyField())} >{translate('Currency')}</TableHeaderColumn>);
+          dataFormat={() => (this._createCurrencyField())}>{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
         columns.push(<TableHeaderColumn
@@ -77,18 +75,20 @@ export default class AFProposedProjectCostTable extends Component {
           dataFormat={() => (<AFField
             parent={this.context.activity[AC.PPC_AMOUNT][0]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`}
-            type={Types.DATE} showLabel={false} />)} >{translate('Date')}</TableHeaderColumn>);
+            type={Types.DATE} showLabel={false} />)}>{translate('Date')}</TableHeaderColumn>);
       }
       // Create empty row for new activities.
       this.context.activity[AC.PPC_AMOUNT] = this.context.activity[AC.PPC_AMOUNT]
-        || [{ [AC.AMOUNT]: null,
-          [AC.CURRENCY_CODE]: this.context.currentWorkspaceSettings.currency.code,
-          [AC.FUNDING_DATE]: null }];
+        || [{
+          [AC.AMOUNT]: null,
+          [AC.CURRENCY]: this.context.currentWorkspaceSettings.currency.code,
+          [AC.FUNDING_DATE]: null
+        }];
       return (<div>
-        <span><label htmlFor="ppc_table" >{translate('Proposed Project Cost')}</label></span>
+        <span><label htmlFor="ppc_table">{translate('Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} hover data={this.context.activity[AC.PPC_AMOUNT]} >
+          thClassName={styles.thClassName} hover data={this.context.activity[AC.PPC_AMOUNT]}>
           {columns}
         </BootstrapTable>
       </div>);
