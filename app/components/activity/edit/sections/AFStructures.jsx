@@ -33,20 +33,15 @@ class AFStructures extends Component {
     activity: PropTypes.object.isRequired
   };
 
+  static hasCoordinates(structure) {
+    return structure[AC.STRUCTURES_COORDINATES] && structure[AC.STRUCTURES_COORDINATES].length;
+  }
+
   static detectShapePoint(structure) {
-    let isPoint = false;
-    if (!structure[AC.STRUCTURES_SHAPE]) {
-      if (!structure[AC.STRUCTURES_LATITUDE] || !structure[AC.STRUCTURES_LONGITUDE]) {
-        isPoint = false;
-      } else {
-        isPoint = true;
-      }
-    } else if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
-      isPoint = true;
-    } else {
-      isPoint = false;
+    if (!structure[AC.STRUCTURES_SHAPE] && !AFStructures.hasCoordinates(structure)) {
+      return true;
     }
-    return isPoint;
+    return structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT;
   }
 
   static generateDataRow(structure) {
