@@ -33,9 +33,13 @@ export default class AFFundingDetailContainer extends Component {
   constructor(props) {
     super(props);
     logger.log('constructor');
+    const errors = this.hasErrors(props.fundingDetail, props.type);
+    const openFDC = errors || props.funding.open;
     this.state = {
-      openFDC: this.hasErrors(props.fundingDetail, props.type)
+      openFDC,
+      errors
     };
+    this._onChildUpdate = this._onChildUpdate.bind(this);
   }
 
   hasErrors(fundingDetail, type) {
@@ -46,6 +50,10 @@ export default class AFFundingDetailContainer extends Component {
 
   _addTransactionItem() {
     this.props.handleNewTransaction(this.props.type);
+  }
+
+  _onChildUpdate() {
+    this.setState({ errors: this.hasErrors(this.props.fundingDetail, this.props.type) });
   }
 
   render() {
@@ -73,13 +81,14 @@ export default class AFFundingDetailContainer extends Component {
         default:
           break;
       }
-      const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
+      // const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
       return (<div>
         <Panel
           header={header} collapsible expanded={this.state.openFDC}
           onSelect={() => {
+            this.props.funding.open = !this.state.openFDC;
             this.setState({ openFDC: !this.state.openFDC });
-          }} className={hasErrors ? fundingStyles.error : ''}>
+          }} className={this.state.errors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
             if (!fd[AC.TEMPORAL_ID]) {
@@ -89,7 +98,8 @@ export default class AFFundingDetailContainer extends Component {
             that array because that will confuse React. */
             return (<AFFundingDetailItem
               fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
-              removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
+              removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding}
+              updateParentErrors={this._onChildUpdate} />);
           })}
           <Button
             className={fundingStyles.add_button} bsStyle="primary"

@@ -93,7 +93,7 @@ export default class AFFundingDonorSection extends Component {
     }
     fundingItem[AC.FUNDING_DETAILS] = [];
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
-    fundingItem.open = false;
+    fundingItem.open = true;
     const newFundingList = this.state.fundingList.slice();
     newFundingList.push(fundingItem);
     const newOpenFundingDonorSection = this.state.openFundingDonorSection;
@@ -204,7 +204,7 @@ export default class AFFundingDonorSection extends Component {
         <Panel
           header={this._generateComplexHeader(i, g)}
           key={Math.random()} collapsible
-          expanded={this.state.openFundingDonorSection[i] ? this.state.openFundingDonorSection[i].open : false}
+          expanded={this.state.openFundingDonorSection[i] ? this.state.openFundingDonorSection[i].open : true}
           onSelect={() => {
             // Look for amp_funding and update "open".
             const funding = this._findFundingById(g[AC.GROUP_VERSIONED_FUNDING]);

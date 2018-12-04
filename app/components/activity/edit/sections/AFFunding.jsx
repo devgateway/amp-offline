@@ -32,8 +32,7 @@ class AFFunding extends Component {
   };
 
   static propTypes = {
-    activity: PropTypes.object.isRequired,
-    activityFundingSectionPanelStatus: PropTypes.array
+    activity: PropTypes.object.isRequired
   };
 
   constructor(props) {

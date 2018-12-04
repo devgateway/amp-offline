@@ -34,7 +34,7 @@ export default class AFFundingClassificationPanel extends Component {
     logger.log('constructor');
     this._refreshAfterChanges = this._refreshAfterChanges.bind(this);
     this.state = {
-      openFCP: this.props.hasErrors(props.funding),
+      openFCP: this.props.hasErrors(props.funding) || props.funding.open,
       showingErrors: this.props.hasErrors(props.funding)
     };
   }
