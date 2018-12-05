@@ -200,8 +200,8 @@ export default class AFFundingDonorSection extends Component {
   render() {
     // Filter only the fundings for this organization and role.
     return (<div className={styles.container}>
-      {this._filterFundings(this.state.fundingList).map((g, i) => {
-        return (<Panel
+      {this._filterFundings(this.state.fundingList).map((g, i) => (
+        <Panel
           header={this._generateComplexHeader(i, g)}
           key={Math.random()} collapsible
           expanded={g.open !== undefined ? g.open : true}
@@ -216,8 +216,8 @@ export default class AFFundingDonorSection extends Component {
           <AFFundingContainer
             funding={g} hasErrors={this.props.hasErrors}
             refreshAfterChildChanges={this._refreshAfterChildChanges} />
-        </Panel>);
-      })}
+        </Panel>
+      ))}
       <Button bsStyle="primary" onClick={this._addNewFundingItem}>{translate('New Funding Item')}</Button>
     </div>);
   }
