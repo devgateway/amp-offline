@@ -25,8 +25,7 @@ export default class AFFundingDonorSection extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    activity: PropTypes.object.isRequired,
-    activityFundingSectionPanelStatus: PropTypes.array.isRequired
+    activity: PropTypes.object.isRequired
   };
 
   static propTypes = {
