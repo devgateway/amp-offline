@@ -86,7 +86,6 @@ export default class AFFundingContainer extends Component {
     fundingDetailItem[AC.CURRENCY] = {};
     fundingDetailItem[AC.TRANSACTION_AMOUNT] = undefined;
     fundingDetailItem[AC.ADJUSTMENT_TYPE] = undefined;
-    fundingDetailItem.open = false;
     const newFunding = this.props.funding;
     if (newFunding[AC.FUNDING_DETAILS] === undefined) {
       newFunding[AC.FUNDING_DETAILS] = [];

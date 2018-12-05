@@ -89,8 +89,14 @@ export default class AFFundingDonorSection extends Component {
     }
     fundingItem[AC.FUNDING_DETAILS] = [];
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
+
+    // Open/Closed state for Panels.
     fundingItem.open = true;
     fundingItem.fundingClassificationOpen = false;
+    fundingItem.commitmentsStatusOpen = false;
+    fundingItem.disbursementsStatusOpen = false;
+    fundingItem.expendituresStatusOpen = false;
+
     const newFundingList = this.state.fundingList.slice();
     newFundingList.push(fundingItem);
     this.setState({ fundingList: newFundingList });

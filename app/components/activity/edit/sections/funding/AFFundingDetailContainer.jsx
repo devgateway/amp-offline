@@ -34,10 +34,9 @@ export default class AFFundingDetailContainer extends Component {
     super(props);
     logger.log('constructor');
     const errors = this.hasErrors(props.fundingDetail, props.type);
-    const openFDC = errors || props.funding.open;
     this.state = {
-      openFDC,
-      errors
+      errors,
+      refresh: 0
     };
     this._onChildUpdate = this._onChildUpdate.bind(this);
   }
@@ -65,18 +64,22 @@ export default class AFFundingDetailContainer extends Component {
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
+      let open = false;
       switch (this.props.type) {
         case VC.COMMITMENTS:
           header = translate('Commitments');
           button = translate('Add Commitments');
+          open = this.props.funding.commitmentsStatusOpen;
           break;
         case VC.DISBURSEMENTS:
           header = translate('Disbursements');
           button = translate('Add Disbursements');
+          open = this.props.funding.disbursementsStatusOpen;
           break;
         case VC.EXPENDITURES:
           header = translate('Expenditures');
           button = translate('Add Expenditures');
+          open = this.props.funding.expendituresStatusOpen;
           break;
         default:
           break;
@@ -84,10 +87,22 @@ export default class AFFundingDetailContainer extends Component {
       // const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
       return (<div>
         <Panel
-          header={header} collapsible expanded={this.state.openFDC}
+          header={header} collapsible expanded={open}
           onSelect={() => {
-            this.props.funding.open = !this.state.openFDC;
-            this.setState({ openFDC: !this.state.openFDC });
+            switch (this.props.type) {
+              case VC.COMMITMENTS:
+                this.props.funding.commitmentsStatusOpen = !open;
+                break;
+              case VC.DISBURSEMENTS:
+                this.props.funding.disbursementsStatusOpen = !open;
+                break;
+              case VC.EXPENDITURES:
+                this.props.funding.expendituresStatusOpen = !open;
+                break;
+              default:
+                break;
+            }
+            this.setState({ refresh: Math.random() });
           }} className={this.state.errors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
