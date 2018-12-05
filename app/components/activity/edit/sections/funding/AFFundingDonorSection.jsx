@@ -16,6 +16,7 @@ import * as Utils from '../../../../../utils/Utils';
 import AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF funding donor section');
+const DEFAULT_OPEN = true;
 
 /**
  * @author Gabriel Inchauspe
@@ -42,36 +43,22 @@ export default class AFFundingDonorSection extends Component {
   constructor(props, context) {
     super(props, context);
     logger.log('constructor');
-    // We manage the open/close state of these panels or they will have problems when nested panels.
-    const openFundingsState = [];
-    const filteredFundings = this._filterFundings(this.props.fundings);
-    filteredFundings.map((f) => (openFundingsState.push({
-      open: (f.open !== undefined ? f.open : true),
-      id: f[AC.GROUP_VERSIONED_FUNDING],
-      fundingClassificationOpen: false
-    })));
+    props.fundings.forEach(f => {
+      const funding = this._findFundingById(f[AC.GROUP_VERSIONED_FUNDING]);
+      if (this._checkChildrenForErrors(f)) {
+        funding.open = true;
+      } else if (funding.open === undefined) {
+        funding.open = DEFAULT_OPEN;
+      }
+    });
+    const errors = props.fundings.some(f => this._checkChildrenForErrors(f));
     this.state = {
-      fundingList: filteredFundings,
-      showingErrors: props.fundings.some(f => this._checkChildrenForErrors(f)),
+      errors,
       refresh: 0
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
     this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
     this._checkChildrenForErrors = this._checkChildrenForErrors.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Expand the section that has errors.
-    nextProps.fundings.forEach(f => {
-      if (this._checkChildrenForErrors(f)) {
-        const funding = this._findFundingById(f[AC.GROUP_VERSIONED_FUNDING]);
-        funding.open = true; // TODO: esto realmente agrega el field open?
-      }
-    });
-    this.setState({
-      refresh: Math.random(),
-      fundingList: this._filterFundings(nextProps.fundings)
-    });
   }
 
   _checkChildrenForErrors(f) {
@@ -91,15 +78,15 @@ export default class AFFundingDonorSection extends Component {
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
 
     // Open/Closed state for Panels.
-    fundingItem.open = true;
+    fundingItem.open = DEFAULT_OPEN;
     fundingItem.fundingClassificationOpen = false;
     fundingItem.commitmentsStatusOpen = false;
     fundingItem.disbursementsStatusOpen = false;
     fundingItem.expendituresStatusOpen = false;
 
-    const newFundingList = this.state.fundingList.slice();
+    const newFundingList = this._filterFundings(this.props.fundings).slice();
     newFundingList.push(fundingItem);
-    this.setState({ fundingList: newFundingList });
+    this.setState({ refresh: Math.random() });
 
     // Add to activity object or it will disappear when changing section.
     if (!this.context.activity[AC.FUNDINGS]) {
@@ -115,10 +102,10 @@ export default class AFFundingDonorSection extends Component {
     logger.log('_removeFundingItem');
     if (confirm(translate('deleteFundingItem'))) {
       const { activity } = this.context;
-      const newFundingList = this.state.fundingList.slice();
+      const newFundingList = this._filterFundings(this.props.fundings).slice();
       const index0 = newFundingList.findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
       newFundingList.splice(index0, 1);
-      this.setState({ fundingList: newFundingList });
+      this.setState({ refresh: Math.random() });
 
       const index = activity[AC.FUNDINGS].findIndex((item) => (item[AC.GROUP_VERSIONED_FUNDING] === id));
       const organization = activity[AC.FUNDINGS][index][AC.FUNDING_DONOR_ORG_ID];
@@ -187,8 +174,8 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _refreshAfterChildChanges(errors) {
-    if (errors !== this.state.showingErrors) {
-      this.setState({ showingErrors: errors });
+    if (errors !== this.state.errors) {
+      this.setState({ errors });
       this.props.refreshAfterChildChanges(errors, this.props.tabIndex);
     }
   }
@@ -206,11 +193,11 @@ export default class AFFundingDonorSection extends Component {
   render() {
     // Filter only the fundings for this organization and role.
     return (<div className={styles.container}>
-      {this._filterFundings(this.state.fundingList).map((g, i) => (
+      {this._filterFundings(this.props.fundings).map((g, i) => (
         <Panel
           header={this._generateComplexHeader(i, g)}
           key={Math.random()} collapsible
-          expanded={g.open !== undefined ? g.open : true}
+          expanded={g.open !== undefined ? g.open : DEFAULT_OPEN}
           onSelect={() => {
             // Look for amp_funding and update "open".
             const funding = this._findFundingById(g[AC.GROUP_VERSIONED_FUNDING]);
