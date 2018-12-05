@@ -33,10 +33,14 @@ export default class AFFundingClassificationPanel extends Component {
     super(props);
     logger.log('constructor');
     this._refreshAfterChanges = this._refreshAfterChanges.bind(this);
+    const errors = props.hasErrors(props.funding);
     this.state = {
-      openFCP: this.props.hasErrors(props.funding) || props.funding.open,
-      showingErrors: this.props.hasErrors(props.funding)
+      errors,
+      refresh: 0
     };
+    if (errors) {
+      props.funding.fundingClassificationOpen = true;
+    }
   }
 
   componentDidUpdate() {
@@ -62,9 +66,11 @@ export default class AFFundingClassificationPanel extends Component {
     const hasErrors = this.props.hasErrors(funding);
     return (<div className={afStyles.full_width}>
       <Panel
-        header={translate('Funding Classification')} collapsible expanded={this.state.openFCP}
+        header={translate('Funding Classification')} collapsible
+        expanded={this.props.funding.fundingClassificationOpen}
         onSelect={() => {
-          this.setState({ openFCP: !this.state.openFCP });
+          this.props.funding.fundingClassificationOpen = !this.props.funding.fundingClassificationOpen;
+          this.setState({ refresh: Math.random() });
         }} className={hasErrors ? fundingStyles.error : ''}>
         <FormGroup>
           <Grid className={afStyles.full_width}>

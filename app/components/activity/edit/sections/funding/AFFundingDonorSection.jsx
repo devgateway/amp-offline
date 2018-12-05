@@ -47,12 +47,13 @@ export default class AFFundingDonorSection extends Component {
     const filteredFundings = this._filterFundings(this.props.fundings);
     filteredFundings.map((f) => (openFundingsState.push({
       open: (f.open !== undefined ? f.open : true),
-      id: f[AC.GROUP_VERSIONED_FUNDING]
+      id: f[AC.GROUP_VERSIONED_FUNDING],
+      fundingClassificationOpen: false
     })));
     this.state = {
-      openFundingItemSection: openFundingsState,
       fundingList: filteredFundings,
-      showingErrors: props.fundings.some(f => this._checkChildrenForErrors(f))
+      showingErrors: props.fundings.some(f => this._checkChildrenForErrors(f)),
+      refresh: 0
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
     this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
@@ -61,17 +62,14 @@ export default class AFFundingDonorSection extends Component {
 
   componentWillReceiveProps(nextProps) {
     // Expand the section that has errors.
-    const openFundingItemSectionState = this.state.openFundingItemSection;
     nextProps.fundings.forEach(f => {
       if (this._checkChildrenForErrors(f)) {
-        const section = openFundingItemSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]);
-        section.open = true;
         const funding = this._findFundingById(f[AC.GROUP_VERSIONED_FUNDING]);
-        funding.open = true;
+        funding.open = true; // TODO: esto realmente agrega el field open?
       }
     });
     this.setState({
-      openFundingItemSection: openFundingItemSectionState,
+      refresh: Math.random(),
       fundingList: this._filterFundings(nextProps.fundings)
     });
   }
@@ -92,11 +90,10 @@ export default class AFFundingDonorSection extends Component {
     fundingItem[AC.FUNDING_DETAILS] = [];
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
     fundingItem.open = true;
+    fundingItem.fundingClassificationOpen = false;
     const newFundingList = this.state.fundingList.slice();
     newFundingList.push(fundingItem);
-    const newOpenFundingDonorSection = this.state.openFundingItemSection;
-    newOpenFundingDonorSection.push({ open: true, id: fundingItem[AC.GROUP_VERSIONED_FUNDING] });
-    this.setState({ fundingList: newFundingList, openFundingItemSection: newOpenFundingDonorSection });
+    this.setState({ fundingList: newFundingList });
 
     // Add to activity object or it will disappear when changing section.
     if (!this.context.activity[AC.FUNDINGS]) {
@@ -203,27 +200,24 @@ export default class AFFundingDonorSection extends Component {
   render() {
     // Filter only the fundings for this organization and role.
     return (<div className={styles.container}>
-      {this._filterFundings(this.state.fundingList).map((g, i) => (
-        <Panel
+      {this._filterFundings(this.state.fundingList).map((g, i) => {
+        return (<Panel
           header={this._generateComplexHeader(i, g)}
           key={Math.random()} collapsible
-          expanded={this.state.openFundingItemSection[i].open}
+          expanded={g.open !== undefined ? g.open : true}
           onSelect={() => {
             // Look for amp_funding and update "open".
             const funding = this._findFundingById(g[AC.GROUP_VERSIONED_FUNDING]);
             if (funding) {
               funding.open = (funding.open !== undefined ? !funding.open : false);
-              // Change state to refresh UI.
-              const newOpenState = this.state.openFundingItemSection;
-              newOpenState[i].open = funding.open;
-              this.setState({ openFundingItemSection: newOpenState });
+              this.setState({ refresh: Math.random() });
             }
           }}>
           <AFFundingContainer
             funding={g} hasErrors={this.props.hasErrors}
             refreshAfterChildChanges={this._refreshAfterChildChanges} />
-        </Panel>
-      ))}
+        </Panel>);
+      })}
       <Button bsStyle="primary" onClick={this._addNewFundingItem}>{translate('New Funding Item')}</Button>
     </div>);
   }
