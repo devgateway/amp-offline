@@ -270,6 +270,10 @@ class AFFunding extends Component {
     return false;
   }
 
+  /**
+   * Here we render a container with amp_funding table info but grouped by donor and role with Tabs/Panels.
+   * @returns {*}
+   */
   render() {
     const overviewTabHasErrors = (this.context.activity[AC.PPC_AMOUNT]
       && this.context.activity[AC.PPC_AMOUNT][0]

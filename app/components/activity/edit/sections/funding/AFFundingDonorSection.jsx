@@ -46,11 +46,11 @@ export default class AFFundingDonorSection extends Component {
     const openFundingsState = [];
     const filteredFundings = this._filterFundings(this.props.fundings);
     filteredFundings.map((f) => (openFundingsState.push({
-      open: f.open,
+      open: (f.open !== undefined ? f.open : true),
       id: f[AC.GROUP_VERSIONED_FUNDING]
     })));
     this.state = {
-      openFundingDonorSection: openFundingsState,
+      openFundingItemSection: openFundingsState,
       fundingList: filteredFundings,
       showingErrors: props.fundings.some(f => this._checkChildrenForErrors(f))
     };
@@ -61,19 +61,17 @@ export default class AFFundingDonorSection extends Component {
 
   componentWillReceiveProps(nextProps) {
     // Expand the section that has errors.
-    const openFundingDonorSectionState = this.state.openFundingDonorSection;
+    const openFundingItemSectionState = this.state.openFundingItemSection;
     nextProps.fundings.forEach(f => {
       if (this._checkChildrenForErrors(f)) {
-        const section = openFundingDonorSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]);
-        if (section) {
-          section.open = true;
-        }
+        const section = openFundingItemSectionState.find(t => t.id === f[AC.GROUP_VERSIONED_FUNDING]);
+        section.open = true;
         const funding = this._findFundingById(f[AC.GROUP_VERSIONED_FUNDING]);
         funding.open = true;
       }
     });
     this.setState({
-      openFundingDonorSection: openFundingDonorSectionState,
+      openFundingItemSection: openFundingItemSectionState,
       fundingList: this._filterFundings(nextProps.fundings)
     });
   }
@@ -96,9 +94,9 @@ export default class AFFundingDonorSection extends Component {
     fundingItem.open = true;
     const newFundingList = this.state.fundingList.slice();
     newFundingList.push(fundingItem);
-    const newOpenFundingDonorSection = this.state.openFundingDonorSection;
-    newOpenFundingDonorSection.push({ open: false, id: fundingItem[AC.GROUP_VERSIONED_FUNDING] });
-    this.setState({ fundingList: newFundingList, openFundingDonorSection: newOpenFundingDonorSection });
+    const newOpenFundingDonorSection = this.state.openFundingItemSection;
+    newOpenFundingDonorSection.push({ open: true, id: fundingItem[AC.GROUP_VERSIONED_FUNDING] });
+    this.setState({ fundingList: newFundingList, openFundingItemSection: newOpenFundingDonorSection });
 
     // Add to activity object or it will disappear when changing section.
     if (!this.context.activity[AC.FUNDINGS]) {
@@ -197,6 +195,11 @@ export default class AFFundingDonorSection extends Component {
     return activity[AC.FUNDINGS].find(f => f[AC.GROUP_VERSIONED_FUNDING] === id);
   }
 
+  /**
+   * Here we render a container with amp_funding table info but filtered by some donor and role
+   * (2 params received from AFFunding).
+   * @returns {*}
+   */
   render() {
     // Filter only the fundings for this organization and role.
     return (<div className={styles.container}>
@@ -204,16 +207,16 @@ export default class AFFundingDonorSection extends Component {
         <Panel
           header={this._generateComplexHeader(i, g)}
           key={Math.random()} collapsible
-          expanded={this.state.openFundingDonorSection[i] ? this.state.openFundingDonorSection[i].open : true}
+          expanded={this.state.openFundingItemSection[i].open}
           onSelect={() => {
             // Look for amp_funding and update "open".
             const funding = this._findFundingById(g[AC.GROUP_VERSIONED_FUNDING]);
             if (funding) {
-              funding.open = !funding.open;
+              funding.open = (funding.open !== undefined ? !funding.open : false);
               // Change state to refresh UI.
-              const newOpenState = this.state.openFundingDonorSection;
+              const newOpenState = this.state.openFundingItemSection;
               newOpenState[i].open = funding.open;
-              this.setState({ openFundingDonorSection: newOpenState });
+              this.setState({ openFundingItemSection: newOpenState });
             }
           }}>
           <AFFundingContainer
