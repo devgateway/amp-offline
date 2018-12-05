@@ -38,13 +38,33 @@ export default class AFFundingDetailContainer extends Component {
       errors,
       refresh: 0
     };
+    if (errors) {
+      this._setOpenStatus(props.type, true);
+    }
     this._onChildUpdate = this._onChildUpdate.bind(this);
+    this._setOpenStatus = this._setOpenStatus.bind(this);
   }
 
   hasErrors(fundingDetail, type) {
     const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
       && fd[AC.TRANSACTION_TYPE].value === type));
     return this.props.hasErrors(fundingDetails);
+  }
+
+  _setOpenStatus(type, value) {
+    switch (type) {
+      case VC.COMMITMENTS:
+        this.props.funding.commitmentsStatusOpen = value;
+        break;
+      case VC.DISBURSEMENTS:
+        this.props.funding.disbursementsStatusOpen = value;
+        break;
+      case VC.EXPENDITURES:
+        this.props.funding.expendituresStatusOpen = value;
+        break;
+      default:
+        break;
+    }
   }
 
   _addTransactionItem() {
@@ -89,19 +109,7 @@ export default class AFFundingDetailContainer extends Component {
         <Panel
           header={header} collapsible expanded={open}
           onSelect={() => {
-            switch (this.props.type) {
-              case VC.COMMITMENTS:
-                this.props.funding.commitmentsStatusOpen = !open;
-                break;
-              case VC.DISBURSEMENTS:
-                this.props.funding.disbursementsStatusOpen = !open;
-                break;
-              case VC.EXPENDITURES:
-                this.props.funding.expendituresStatusOpen = !open;
-                break;
-              default:
-                break;
-            }
+            this._setOpenStatus(this.props.type, !open);
             this.setState({ refresh: Math.random() });
           }} className={this.state.errors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
