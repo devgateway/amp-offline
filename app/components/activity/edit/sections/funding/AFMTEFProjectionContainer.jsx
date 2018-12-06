@@ -42,6 +42,11 @@ export default class AFMTEFProjectionContainer extends Component {
     if (errors) {
       props.funding.mtefSectionOpen = true;
     }
+    this._onChildUpdate = this._onChildUpdate.bind(this);
+  }
+
+  _onChildUpdate() {
+    this.setState({ errors: this.props.hasErrors(this.props.mtefProjections) });
   }
 
   render() {
@@ -62,7 +67,8 @@ export default class AFMTEFProjectionContainer extends Component {
               mtef[AC.TEMPORAL_ID] = Utils.numberRandom();
             }
             return (<AFMTEFProjectionItem
-              mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={mtef[AC.TEMPORAL_ID]} />);
+              mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={mtef[AC.TEMPORAL_ID]}
+              updateParentErrors={this._onChildUpdate} />);
           })}
           <Button bsStyle="primary" onClick={handleNewItem}>{translate('Add Projection')}</Button>
         </Panel>
