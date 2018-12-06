@@ -27,26 +27,34 @@ export default class AFMTEFProjectionContainer extends Component {
     mtefProjections: PropTypes.array.isRequired,
     hasErrors: PropTypes.func.isRequired,
     handleNewItem: PropTypes.func.isRequired,
-    handleRemoveItem: PropTypes.func.isRequired
+    handleRemoveItem: PropTypes.func.isRequired,
+    funding: PropTypes.object.isRequired
   };
 
   constructor(props) {
     super(props);
     logger.debug('constructor');
+    const errors = this.props.hasErrors(props.mtefProjections);
     this.state = {
-      openMTEF: this.props.hasErrors(props.mtefProjections)
+      errors,
+      refresh: 0
     };
+    if (errors) {
+      props.funding.mtefSectionOpen = true;
+    }
   }
 
   render() {
     if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
       const { mtefProjections, handleRemoveItem, handleNewItem } = this.props;
       const hasErrors = this.props.hasErrors(mtefProjections);
+      const open = this.props.funding.mtefSectionOpen;
       return (<div className={afStyles.full_width}>
         <Panel
-          header={translate('MTEF Projections')} collapsible expanded={this.state.openMTEF}
+          header={translate('MTEF Projections')} collapsible expanded={open}
           onSelect={() => {
-            this.setState({ openMTEF: !this.state.openMTEF });
+            this.props.funding.mtefSectionOpen = !open;
+            this.setState({ refresh: Math.random() });
           }} className={hasErrors ? fundingStyles.error : ''}>
           {mtefProjections.map((mtef) => {
             // Add a temporal_id field so we can delete items.

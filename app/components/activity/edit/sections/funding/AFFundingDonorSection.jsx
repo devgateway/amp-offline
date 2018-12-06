@@ -82,6 +82,7 @@ export default class AFFundingDonorSection extends Component {
     fundingItem.commitmentsStatusOpen = false;
     fundingItem.disbursementsStatusOpen = false;
     fundingItem.expendituresStatusOpen = false;
+    fundingItem.mtefSectionOpen = false
 
     const newFundingList = this._filterFundings(this.props.fundings).slice();
     newFundingList.push(fundingItem);
