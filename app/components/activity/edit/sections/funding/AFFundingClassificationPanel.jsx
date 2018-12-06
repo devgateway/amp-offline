@@ -52,8 +52,8 @@ export default class AFFundingClassificationPanel extends Component {
   _refreshAfterChanges() {
     const { funding, hasErrors, refreshFundingDonorSectionErrors } = this.props;
     const errors = hasErrors(funding);
-    if (errors !== this.state.showingErrors) {
-      this.setState({ showingErrors: errors, openFCP: this.state.openFCP || errors });
+    if (errors !== this.state.errors) {
+      this.setState({ errors });
       refreshFundingDonorSectionErrors(errors);
     }
   }
