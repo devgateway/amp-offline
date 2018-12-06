@@ -44,7 +44,7 @@ class AFFunding extends Component {
     this.hasErrors = this.hasErrors.bind(this);
     this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
     this._tabSelect = this._tabSelect.bind(this);
-    this.state = { activeTab: 0, errors: false, updateExpandedPanels: false };
+    this.state = { activeTab: 0, refresh: 0 };
   }
 
   _getAcronym(sourceRole) {
@@ -176,7 +176,8 @@ class AFFunding extends Component {
             this.context.activityFundingSectionPanelStatus.push({
               [AC.FUNDING_DONOR_ORG_ID]: funding[AC.FUNDING_DONOR_ORG_ID],
               [AC.SOURCE_ROLE]: funding[AC.SOURCE_ROLE],
-              open: true
+              open: true,
+              forceClose: false
             });
           }
 
@@ -197,16 +198,20 @@ class AFFunding extends Component {
               />
             </Tab>);
           } else {
-            const currentOpenStatus = this.context.activityFundingSectionPanelStatus.find(i =>
+            const group = this.context.activityFundingSectionPanelStatus.find(i =>
               i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
-              && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id).open;
+              && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id);
+            let open = group.open;
+            if (funding.errors && !group.forceClose) {
+              open = true;
+            }
+            group.forceClose = false;
             return (<Panel
-              key={Math.random()} collapsible expanded={currentOpenStatus}
+              key={Math.random()} collapsible expanded={open}
               onSelect={() => {
-                this.setState({ updateExpandedPanels: !this.state.updateExpandedPanels });
-                this.context.activityFundingSectionPanelStatus.find(i =>
-                  i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
-                  && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id).open = !currentOpenStatus;
+                group.open = !open;
+                group.forceClose = open;
+                this.setState({ refresh: Math.random() });
               }}
               header={<div className={funding.errors ? styles.error : ''}>
                 {`${funding[AC.FUNDING_DONOR_ORG_ID][AC.VALUE]} (${funding[AC.SOURCE_ROLE].value})`}
