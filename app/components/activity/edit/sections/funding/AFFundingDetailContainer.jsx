@@ -27,7 +27,8 @@ export default class AFFundingDetailContainer extends Component {
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     hasErrors: PropTypes.func.isRequired,
-    funding: PropTypes.object.isRequired
+    funding: PropTypes.object.isRequired,
+    refreshFundingDonorSectionErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -72,7 +73,9 @@ export default class AFFundingDetailContainer extends Component {
   }
 
   _onChildUpdate() {
-    this.setState({ errors: this.hasErrors(this.props.fundingDetail, this.props.type) });
+    const errors = this.hasErrors(this.props.fundingDetail, this.props.type);
+    this.setState({ errors });
+    this.props.refreshFundingDonorSectionErrors(errors);
   }
 
   render() {

@@ -134,7 +134,7 @@ export default class AFFundingContainer extends Component {
         hasErrors={this.props.hasErrors} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
       <AFMTEFProjectionContainer
         mtefProjections={funding[AC.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors}
-        funding={funding}
+        funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges}
         handleRemoveItem={this._removeMTEFProjectionItem} handleNewItem={this._addMTEFProjectionItem} />
       <AFFundingDetailContainer
         fundingDetail={funding[AC.FUNDING_DETAILS]}
@@ -142,21 +142,21 @@ export default class AFFundingContainer extends Component {
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={funding} />
+        funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
       <AFFundingDetailContainer
         fundingDetail={funding[AC.FUNDING_DETAILS]}
         type={VC.DISBURSEMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={funding} />
+        funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
       <AFFundingDetailContainer
         fundingDetail={funding[AC.FUNDING_DETAILS]}
         type={VC.EXPENDITURES}
         removeFundingDetailItem={this._removeFundingDetailItem}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={funding} />
+        funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
       <AFField parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.DONOR_OBJECTIVE}`} type={Types.TEXT_AREA} />
       <AFField
         key={Math.random()} parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.CONDITIONS}`}
