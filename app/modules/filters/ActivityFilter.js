@@ -9,6 +9,7 @@ import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 // import PossibleValuesManager from '../activity/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
+import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 
 const logger = new Logger('Activity filter');
 
@@ -333,11 +334,11 @@ function getApprovalStatusFilter(id) {
     case 3:// existing draft. This is because when you filter by Existing
       // Unvalidated you get draft activites that were edited and
       // saved as draft
-      options = [VC.EDITED_STATUS, VC.APPROVED_STATUS];
+      options = [VC.EDITED_STATUS, ApprovalStatus.APPROVED.id];
       break;
 
     case 4:// Validated Activities
-      options = [VC.APPROVED_STATUS, VC.STARTED_APPROVED_STATUS];
+      options = [ApprovalStatus.APPROVED.id, VC.STARTED_APPROVED_STATUS];
       isDraft = false;
       break;
     default:

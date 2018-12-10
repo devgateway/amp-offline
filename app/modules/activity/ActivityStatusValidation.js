@@ -9,6 +9,7 @@ import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
 import WSSettingsHelpers from '../../modules/helpers/WSSettingsHelper';
 import WorkspaceHelper from '../../modules/helpers/WorkspaceHelper';
 import DateUtils from '../../utils/DateUtils';
+import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 
 const logger = new Logger('Activity status validation');
 
@@ -55,12 +56,12 @@ export default class ActivityStatusValidation {
             } else {
               // If activity belongs to the same workspace where TL/AP is logged set it validated.
               if (isSameWorkspace) {
-                dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
+                dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                 dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
                 dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
               } else {
                 if (isCrossTeamValidation) {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                   dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
                   dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
                 } else {
@@ -76,7 +77,7 @@ export default class ActivityStatusValidation {
                 if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
                   dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
                 } else {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                 }
               }
             } else {
@@ -98,7 +99,7 @@ export default class ActivityStatusValidation {
           if (isNew) {
             dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_APPROVED_STATUS;
           } else {
-            dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
+            dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
           }
           dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
           dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
