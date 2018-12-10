@@ -49,7 +49,7 @@ export default class ActivityStatusValidation {
                   if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
                     dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
                   } else {
-                    dehydratedActivity[AC.APPROVAL_STATUS] = VC.EDITED_STATUS;
+                    dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.EDITED.id;
                   }
                 }
               }
@@ -88,7 +88,7 @@ export default class ActivityStatusValidation {
                   if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
                     dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
                   } else {
-                    dehydratedActivity[AC.APPROVAL_STATUS] = VC.EDITED_STATUS;
+                    dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.EDITED.id;
                   }
                 }
               }

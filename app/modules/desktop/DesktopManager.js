@@ -24,7 +24,6 @@ import {
   ACTUAL,
   COMMITMENTS,
   DISBURSEMENTS,
-  EDITED_STATUS,
   STARTED_APPROVED_STATUS,
   STARTED_STATUS
 } from '../../utils/constants/ValueConstants';
@@ -103,7 +102,7 @@ const DesktopManager = {
 
   getActivityIsNew(item) {
     if (item[IS_DRAFT]) {
-      if (item[APPROVAL_STATUS] === ApprovalStatus.APPROVED.id || item[APPROVAL_STATUS] === EDITED_STATUS) {
+      if (item[APPROVAL_STATUS] === ApprovalStatus.APPROVED.id || item[APPROVAL_STATUS] === ApprovalStatus.EDITED.id) {
         return false;
       } else {
         return true;

@@ -316,7 +316,7 @@ function getApprovalStatusFilter(id) {
     case 0:// Existing Un-validated - This will show all the activities that
       // have been approved at least once and have since been edited
       // and not validated.
-      options = [VC.EDITED_STATUS, VC.NOT_APPROVED, VC.REJECTED_STATUS];
+      options = [ApprovalStatus.EDITED.id, VC.NOT_APPROVED, VC.REJECTED_STATUS];
       isDraft = false;
       break;
 
@@ -334,7 +334,7 @@ function getApprovalStatusFilter(id) {
     case 3:// existing draft. This is because when you filter by Existing
       // Unvalidated you get draft activites that were edited and
       // saved as draft
-      options = [VC.EDITED_STATUS, ApprovalStatus.APPROVED.id];
+      options = [ApprovalStatus.EDITED.id, ApprovalStatus.APPROVED.id];
       break;
 
     case 4:// Validated Activities
