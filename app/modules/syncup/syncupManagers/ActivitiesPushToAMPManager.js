@@ -242,6 +242,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // We could simply remove client-change-id once it is pushed successfully, but we want to use it in next iteration
     // for conflicts resolution. So for now we'll flag the activity as pushed to filter it out from next push attempt.
     activity[AC.IS_PUSHED] = true;
+    activity[AC.ACTIVITY_GROUP] = pushResult[AC.ACTIVITY_GROUP];
     if (!activity[AC.AMP_ID]) {
       // update the activity with AMP ID to be matched during pull
       activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
