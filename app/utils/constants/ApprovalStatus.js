@@ -3,14 +3,7 @@ import * as VC from './ValueConstants';
 /**
  * @author Nadejda Mandrescu
  */
-class ApprovalStatus {
-  static CREATED = new ApprovalStatus(0, VC.CREATED);
-  static APPROVED = new ApprovalStatus(1, VC.APPROVED);
-  static EDITED = new ApprovalStatus(2, VC.EDITED);
-  static STARTED_APPROVED = new ApprovalStatus(3, VC.STARTED_APPROVED);
-  static STARTED = new ApprovalStatus(4, VC.STARTED);
-  static NOT_APPROVED = new ApprovalStatus(5, VC.NOT_APPROVED);
-  static REJECTED = new ApprovalStatus(6, VC.REJECTED);
+class ApprovalStatusEntry {
 
   constructor(id, value) {
     this._id = id;
@@ -32,4 +25,14 @@ class ApprovalStatus {
   }
 }
 
-export default Object.freeze(ApprovalStatus);
+const ApprovalStatus = Object.freeze({
+  CREATED: new ApprovalStatusEntry(0, VC.CREATED),
+  APPROVED: new ApprovalStatusEntry(1, VC.APPROVED),
+  EDITED: new ApprovalStatusEntry(2, VC.EDITED),
+  STARTED_APPROVED: new ApprovalStatusEntry(3, VC.STARTED_APPROVED),
+  STARTED: new ApprovalStatusEntry(4, VC.STARTED),
+  NOT_APPROVED: new ApprovalStatusEntry(5, VC.NOT_APPROVED),
+  REJECTED: new ApprovalStatusEntry(6, VC.REJECTED)
+});
+
+export default ApprovalStatus;
