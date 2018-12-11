@@ -20,13 +20,7 @@ import {
   FUNDING_CURRENCY_PATH,
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
-import {
-  ACTUAL,
-  COMMITMENTS,
-  DISBURSEMENTS,
-  STARTED_APPROVED_STATUS,
-  STARTED_STATUS
-} from '../../utils/constants/ValueConstants';
+import { ACTUAL, COMMITMENTS, DISBURSEMENTS, STARTED_STATUS } from '../../utils/constants/ValueConstants';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import Logger from '../../modules/util/LoggerManager';
@@ -153,7 +147,8 @@ const DesktopManager = {
     const approvalStatusId = item[APPROVAL_STATUS];
     if (item[IS_DRAFT]) {
       status = ACTIVITY_STATUS_DRAFT;
-    } else if (approvalStatusId === ApprovalStatus.APPROVED.id || approvalStatusId === STARTED_APPROVED_STATUS) {
+    } else if (approvalStatusId === ApprovalStatus.APPROVED.id ||
+      approvalStatusId === ApprovalStatus.STARTED_APPROVED.id) {
       status = ACTIVITY_STATUS_VALIDATED;
     } else {
       status = ACTIVITY_STATUS_UNVALIDATED;

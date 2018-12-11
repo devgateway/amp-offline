@@ -322,7 +322,7 @@ function getApprovalStatusFilter(id) {
 
     case 1:// New Draft - This will show all the activities that have never
       // been approved and are saved as drafts.
-      options = [VC.STARTED_STATUS, VC.STARTED_APPROVED_STATUS];
+      options = [VC.STARTED_STATUS, ApprovalStatus.STARTED_APPROVED.id];
       break;
 
     case 2:// New Un-validated - This will show all activities that are new
@@ -338,7 +338,7 @@ function getApprovalStatusFilter(id) {
       break;
 
     case 4:// Validated Activities
-      options = [ApprovalStatus.APPROVED.id, VC.STARTED_APPROVED_STATUS];
+      options = [ApprovalStatus.APPROVED.id, ApprovalStatus.STARTED_APPROVED.id];
       isDraft = false;
       break;
     default:

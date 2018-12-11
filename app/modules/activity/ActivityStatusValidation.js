@@ -97,7 +97,7 @@ export default class ActivityStatusValidation {
         } else {
           // Validation is OFF in GS activity approved.
           if (isNew) {
-            dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_APPROVED_STATUS;
+            dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED_APPROVED.id;
           } else {
             dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
           }
