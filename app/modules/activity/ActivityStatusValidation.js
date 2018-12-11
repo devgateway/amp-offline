@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-lonely-if */
 import * as AC from '../../utils/constants/ActivityConstants';
-import * as VC from '../../utils/constants/ValueConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
 import * as GSC from '../../utils/constants/GlobalSettingsConstants';
 import Logger from '../../modules/util/LoggerManager';
@@ -41,7 +40,7 @@ export default class ActivityStatusValidation {
           if (teamLeadFlag) {
             if (dehydratedActivity[AC.IS_DRAFT]) {
               if (rejected) {
-                dehydratedActivity[AC.APPROVAL_STATUS] = VC.REJECTED_STATUS;
+                dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.REJECTED.id;
               } else {
                 if (isNew) {
                   dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;

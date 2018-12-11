@@ -1,5 +1,4 @@
 import * as AC from '../../utils/constants/ActivityConstants';
-import * as VC from '../../utils/constants/ValueConstants';
 import { FIELD_OPTIONS, LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
@@ -316,7 +315,7 @@ function getApprovalStatusFilter(id) {
     case 0:// Existing Un-validated - This will show all the activities that
       // have been approved at least once and have since been edited
       // and not validated.
-      options = [ApprovalStatus.EDITED.id, ApprovalStatus.NOT_APPROVED.id, VC.REJECTED_STATUS];
+      options = [ApprovalStatus.EDITED.id, ApprovalStatus.NOT_APPROVED.id, ApprovalStatus.REJECTED.id];
       isDraft = false;
       break;
 
