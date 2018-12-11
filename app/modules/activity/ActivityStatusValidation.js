@@ -44,10 +44,10 @@ export default class ActivityStatusValidation {
                 dehydratedActivity[AC.APPROVAL_STATUS] = VC.REJECTED_STATUS;
               } else {
                 if (isNew) {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 } else {
-                  if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
-                    dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  if (dehydratedActivity[AC.APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
+                    dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                   } else {
                     dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.EDITED.id;
                   }
@@ -65,17 +65,17 @@ export default class ActivityStatusValidation {
                   dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
                   dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
                 } else {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 }
               }
             }
           } else {
             if (wsValidationType === WC.WS_VALIDATION_NEW_ONLY) {
               if (isNew) {
-                dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
               } else {
-                if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                if (dehydratedActivity[AC.APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 } else {
                   dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                 }
@@ -83,10 +83,10 @@ export default class ActivityStatusValidation {
             } else {
               if (wsValidationType === WC.WS_VALIDATION_ALL_EDIT) {
                 if (isNew) {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 } else {
-                  if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
-                    dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  if (dehydratedActivity[AC.APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
+                    dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                   } else {
                     dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.EDITED.id;
                   }

@@ -322,12 +322,12 @@ function getApprovalStatusFilter(id) {
 
     case 1:// New Draft - This will show all the activities that have never
       // been approved and are saved as drafts.
-      options = [VC.STARTED_STATUS, ApprovalStatus.STARTED_APPROVED.id];
+      options = [ApprovalStatus.STARTED.id, ApprovalStatus.STARTED_APPROVED.id];
       break;
 
     case 2:// New Un-validated - This will show all activities that are new
       // and have never been approved by the workspace manager.
-      options = [VC.STARTED_STATUS];
+      options = [ApprovalStatus.STARTED.id];
       isDraft = false;
       break;
 

@@ -20,7 +20,7 @@ import {
   FUNDING_CURRENCY_PATH,
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
-import { ACTUAL, COMMITMENTS, DISBURSEMENTS, STARTED_STATUS } from '../../utils/constants/ValueConstants';
+import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import Logger from '../../modules/util/LoggerManager';
@@ -102,7 +102,7 @@ const DesktopManager = {
         return true;
       }
     } else {
-      if (item[APPROVAL_STATUS] === STARTED_STATUS) {
+      if (item[APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
         return true;
       }
       return false;
