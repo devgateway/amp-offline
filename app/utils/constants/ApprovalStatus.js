@@ -26,13 +26,13 @@ class ApprovalStatusEntry {
 }
 
 const ApprovalStatus = Object.freeze({
-  CREATED: new ApprovalStatusEntry(0, VC.CREATED),
-  APPROVED: new ApprovalStatusEntry(1, VC.APPROVED),
-  EDITED: new ApprovalStatusEntry(2, VC.EDITED),
-  STARTED_APPROVED: new ApprovalStatusEntry(3, VC.STARTED_APPROVED),
-  STARTED: new ApprovalStatusEntry(4, VC.STARTED),
-  NOT_APPROVED: new ApprovalStatusEntry(5, VC.NOT_APPROVED),
-  REJECTED: new ApprovalStatusEntry(6, VC.REJECTED)
+  CREATED: new ApprovalStatusEntry(0, VC.APPROVAL_STATUS_CREATED),
+  APPROVED: new ApprovalStatusEntry(1, VC.APPROVAL_STATUS_APPROVED),
+  EDITED: new ApprovalStatusEntry(2, VC.APPROVAL_STATUS_EDITED),
+  STARTED_APPROVED: new ApprovalStatusEntry(3, VC.APPROVAL_STATUS_STARTED_APPROVED),
+  STARTED: new ApprovalStatusEntry(4, VC.APPROVAL_STATUS_STARTED),
+  NOT_APPROVED: new ApprovalStatusEntry(5, VC.APPROVAL_STATUS_NOT_APPROVED),
+  REJECTED: new ApprovalStatusEntry(6, VC.APPROVAL_STATUS_REJECTED)
 });
 
 export default ApprovalStatus;
