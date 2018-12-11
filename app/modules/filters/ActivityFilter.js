@@ -316,7 +316,7 @@ function getApprovalStatusFilter(id) {
     case 0:// Existing Un-validated - This will show all the activities that
       // have been approved at least once and have since been edited
       // and not validated.
-      options = [ApprovalStatus.EDITED.id, VC.NOT_APPROVED, VC.REJECTED_STATUS];
+      options = [ApprovalStatus.EDITED.id, ApprovalStatus.NOT_APPROVED.id, VC.REJECTED_STATUS];
       isDraft = false;
       break;
 
