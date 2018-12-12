@@ -6,10 +6,10 @@ export const changeset = (changeid) => ({
   author: 'nmandrescu',
   comment: 'Generic changeset',
   context: 'startup',
-  changes: {
+  changes: [{
     func: () => {
     }
-  }
+  }]
 });
 
 export const changesetUpdate = (changeid) => ({
@@ -17,26 +17,26 @@ export const changesetUpdate = (changeid) => ({
   author: 'nmandrescu',
   comment: 'Generic changeset',
   context: 'startup',
-  changes: {
+  changes: [{
     update: {
       table: 'languages',
       field: 'name',
       value: `English-${Math.random()}`,
       filter: { id: 'en' }
     }
-  }
+  }]
 });
 
 export const changesets = (changeid) => ([changeset(changeid)]);
 
 export const changesetThatRejects = (changeid) => ({
   ...changeset(changeid),
-  changes: funcThatRejects
+  changes: [funcThatRejects]
 });
 
 export const changesetThatThrows = (changeid) => ({
   ...changeset(changeid),
-  changes: funcThatThrows
+  changes: [funcThatThrows]
 });
 
 export const changesetThatRejectsWithSuccessfulRollback = (changeid) => ({
