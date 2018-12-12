@@ -42,7 +42,10 @@ export default ({
       type: 'string'
     },
     preConditions: ChangeSetPreconditions,
-    changes: ChangeRollbackSchema,
+    changes: {
+      type: 'array',
+      items: ChangeRollbackSchema,
+    },
     rollback: ChangeRollbackSchema
   },
   required: [MC.CHANGEID, MC.AUTHOR, MC.CHANGES],
