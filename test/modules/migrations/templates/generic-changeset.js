@@ -27,6 +27,30 @@ export const changesetUpdate = (changeid) => ({
   }]
 });
 
+export const changesetWithMultipleChanges = (changeid) => ({
+  changeid: `${changeid}-${Utils.stringToUniqueId()}`,
+  author: 'nmandrescu',
+  comment: 'Generic changeset',
+  context: 'startup',
+  changes: [
+    {
+      update: {
+        table: 'languages',
+        field: 'name',
+        value: `English-${Math.random()}`,
+        filter: { id: 'en' }
+      }
+    }, {
+      update: {
+        table: 'languages',
+        field: 'name',
+        value: `English-${Math.random()}`,
+        filter: { id: 'en' }
+      }
+    }
+  ]
+});
+
 export const changesets = (changeid) => ([changeset(changeid)]);
 
 export const changesetThatRejects = (changeid) => ({
