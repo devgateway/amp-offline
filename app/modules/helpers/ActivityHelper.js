@@ -108,6 +108,11 @@ const ActivityHelper = {
     return DatabaseManager.findAll(filterRule, COLLECTION_ACTIVITIES, projections);
   },
 
+  count(filterRule) {
+    logger.debug('findAll');
+    return DatabaseManager.count(filterRule, COLLECTION_ACTIVITIES);
+  },
+
   /**
    * Get all unique existing amp-ids
    * @return {Promise.<Set>|*}

@@ -517,7 +517,7 @@ const DatabaseManager = {
     });
   },
 
-  _count(example, collectionName, resolve, reject) {
+  _count(example = {}, collectionName, resolve, reject) {
     logger.debug('_count');
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.count(example, (err, count) => {
