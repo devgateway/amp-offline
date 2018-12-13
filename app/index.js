@@ -111,8 +111,18 @@ window.addEventListener('error', ({ filename, message }) => {
   handleUnexpectedError(trn);
 });
 
-window.addEventListener('unhandledrejection', ({ reason }) => {
-  logger.warn('Unhandled promise rejection:', reason);
+window.addEventListener('unhandledrejection', (e) => {
+  let { reason } = e;
+  if (!reason) {
+    if (e instanceof CustomEvent) {
+      reason = e.detail && e.detail.reason;
+    } else if (e instanceof NotificationHelper) {
+      reason = e;
+    } else {
+      reason = e;
+    }
+  }
+  logger.warn(`Unhandled promise rejection: ${reason}`);
   if (reason instanceof NotificationHelper) {
     const notification = reason;
     const { severity, origin } = notification;
