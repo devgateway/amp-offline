@@ -127,8 +127,7 @@ window.addEventListener('unhandledrejection', (e) => {
     const notification = reason;
     const { severity, origin } = notification;
     if (severity === NOTIFICATION_SEVERITY_ERROR && origin === NOTIFICATION_ORIGIN_DATABASE) {
-      // Try to translate.
-      handleUnexpectedError(translate(notification.message));
+      handleUnexpectedError(notification.message);
     }
   }
 });
