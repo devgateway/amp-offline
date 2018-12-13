@@ -32,11 +32,12 @@ class AFMTEFProjectionItem extends Component {
   static propTypes = {
     mtefItem: PropTypes.object.isRequired,
     removeMTEFItem: PropTypes.func.isRequired,
-    calendar: PropTypes.object.isRequired
+    calendar: PropTypes.object.isRequired,
+    updateParentErrors: PropTypes.func.isRequired
   };
 
   render() {
-    const { mtefItem, removeMTEFItem, calendar } = this.props;
+    const { mtefItem, removeMTEFItem, calendar, updateParentErrors } = this.props;
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
     if (!mtefItem[AC.CURRENCY].id) {
@@ -56,18 +57,19 @@ class AFMTEFProjectionItem extends Component {
               <div className={styles.row}>
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_PROJECTION}
-                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION}`} />
+                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION}`}
+                  onAfterUpdate={updateParentErrors} />
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_AMOUNT}
-                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.AMOUNT}`} />
+                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.AMOUNT}`} onAfterUpdate={updateParentErrors} />
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_CURRENCY}
                   fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.CURRENCY}`} defaultValueAsEmptyObject
-                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
+                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} onAfterUpdate={updateParentErrors} />
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_DATE}
                   fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION_DATE}`} type={Types.DATE_YEAR}
-                  extraParams={{ range, startYear, isFiscalCalendar }} />
+                  extraParams={{ range, startYear, isFiscalCalendar }} onAfterUpdate={updateParentErrors} />
               </div>
             </td>
             <td className={styles.delete_col}>
