@@ -19,7 +19,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedById(id) {
-    logger.log('findNonRejectedById');
+    logger.debug('findNonRejectedById');
     const filter = { $and: [this._getNonRejectedRule(), { id }] };
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
@@ -30,7 +30,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByInternalId(internalId) {
-    logger.log('findNonRejectedByInternalId');
+    logger.debug('findNonRejectedByInternalId');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.INTERNAL_ID, internalId)] };
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
@@ -41,7 +41,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByAmpId(ampId) {
-    logger.log('findNonRejectedByAmpId');
+    logger.debug('findNonRejectedByAmpId');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.AMP_ID, ampId)] };
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
@@ -52,7 +52,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByProjectTitle(projectTitle) {
-    logger.log('findNonRejectedByProjectTitle');
+    logger.debug('findNonRejectedByProjectTitle');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.PROJECT_TITLE, projectTitle)] };
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
@@ -80,7 +80,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAllRejectedByAmpId(ampId, projections) {
-    logger.log('findAllRejectedByAmpId');
+    logger.debug('findAllRejectedByAmpId');
     const filter = { $and: [this._getRejectedRule(), Utils.toMap(AC.AMP_ID, ampId)] };
     return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
   },
@@ -92,7 +92,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAllRejected(filterRule, projections) {
-    logger.log('findAllRejected');
+    logger.debug('findAllRejected');
     const filter = { $and: [this._getRejectedRule(), filterRule] };
     return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
   },
@@ -104,7 +104,7 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAll(filterRule, projections) {
-    logger.log('findAll');
+    logger.debug('findAll');
     return DatabaseManager.findAll(filterRule, COLLECTION_ACTIVITIES, projections);
   },
 
