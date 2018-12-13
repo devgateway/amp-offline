@@ -39,27 +39,27 @@ export default ({
         changeid: 'AMPOFFLINE-1312-configure-web-link-resource_type',
         author: 'nmandrescu',
         comment: 'Default value for the new "resource_type" field for web links',
-        changes: {
+        changes: [{
           update: {
             table: COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_WEB_RESOURCE,
             filter: linkFilter
           }
-        }
+        }]
       },
       {
         changeid: 'AMPOFFLINE-1312-configure-doc-resource_type',
         author: 'nmandrescu',
         comment: 'Default value for the new "resource_type" field for documents',
-        changes: {
+        changes: [{
           update: {
             table: COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_DOC_RESOURCE,
             filter: docFilter
           }
-        }
+        }]
       },
       {
         changeid: 'AMPOFFLINE-1318-ppc-currency',
@@ -91,7 +91,7 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_CONTINUE,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: {
+        changes: [{
           func: () => {
             const couldNotRemapToDelete = [];
             const couldNotRemapToLeaveForReject = [];
@@ -133,7 +133,7 @@ export default ({
             }
             return Promise.all([deletePromise, ActivityHelper.saveOrUpdateCollection(activitiesWithPPCasCode)]);
           }
-        },
+        }],
         rollback: {
           func: () => ActivityHelper.saveOrUpdateCollection(activitiesWithPPCasCode, false)
         }
@@ -158,14 +158,14 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: {
+        changes: [{
           update: {
             table: COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
           }
-        }
+        }]
       },
       {
         changeid: 'AMPOFFLINE-1281-currency-rates',
@@ -191,7 +191,7 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_CONTINUE,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: {
+        changes: [{
           func: () => PossibleValuesHelper.findAllByExactIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY).then(cpvs => {
             currencyPVs = cpvs;
             return Promise.all([
@@ -199,7 +199,7 @@ export default ({
               PossibleValuesHelper.deleteByIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY)
             ]);
           })
-        },
+        }],
         rollback: {
           func: () => Promise.all([
             CurrencyRatesHelper.replaceAllCurrencyRates(currentExchangeRates),
@@ -226,14 +226,14 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_CONTINUE,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: {
+        changes: [{
           update: {
             table: COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
           }
-        }
+        }]
       },
     ]
   },

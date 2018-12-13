@@ -4,7 +4,7 @@ export default({
   changelog: {
     changesets: [{
       ...generic.changeset('AMPOFFLINE-1307'),
-      changes: []
+      changes: {}
     }]
   }
 });
