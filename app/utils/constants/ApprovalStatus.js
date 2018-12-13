@@ -36,3 +36,6 @@ const ApprovalStatus = Object.freeze({
 });
 
 export default ApprovalStatus;
+
+export const ALL_APPROVAL_STATUSES = [ApprovalStatus.CREATED, ApprovalStatus.APPROVED, ApprovalStatus.EDITED,
+  ApprovalStatus.STARTED_APPROVED, ApprovalStatus.STARTED, ApprovalStatus.NOT_APPROVED, ApprovalStatus.REJECTED];
