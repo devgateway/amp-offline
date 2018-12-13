@@ -39,7 +39,7 @@ export default function settingReducer(state = defaultState, action: Object) {
     case STATE_SAVE_SETTINGS_PENDING:
       return { ...state, isSettingsSaving: true, isSettingsSaved: false, errorMessage: undefined };
     case STATE_SAVE_SETTINGS_FULFILLED:
-      return { ...state, isSettingsSaving: false, isSettingsSaved: true };
+      return { ...state, isSettingsSaving: false, isSettingsSaved: true, newUrls: false };
     case STATE_SAVE_SETTINGS_REJECTED:
       return { ...state, isSettingsSaving: false, isSettingsSaved: false, errorMessage: action.payload };
     case STATE_URL_CHANGE_DETECTED:
@@ -49,7 +49,7 @@ export default function settingReducer(state = defaultState, action: Object) {
     case STATE_SETTINGS_PAGE_LOADED:
       return { ...state, isNavigateToSettings: false };
     case STATE_LEAVE_UNSAVED_SETTINGS:
-      return { ...state, allowNavigationTo: action.actionData };
+      return { ...state, newUrls: false, isSettingsSaved: false, allowNavigationTo: action.actionData };
     default:
       return state;
   }
