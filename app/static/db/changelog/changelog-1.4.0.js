@@ -1,5 +1,5 @@
 import * as RC from '../../../utils/constants/ResourceConstants';
-import { COLLECTION_CLIENT_SETTINGS, COLLECTION_RESOURCES } from '../../../utils/Constants';
+import { COLLECTION_ACTIVITIES, COLLECTION_CLIENT_SETTINGS, COLLECTION_RESOURCES } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import * as CurrencyRatesHelper from '../../../modules/helpers/CurrencyRatesHelper';
 import * as MC from '../../../utils/constants/MigrationsConstants';
@@ -11,6 +11,7 @@ import * as FPC from '../../../utils/constants/FieldPathConstants';
 import * as ActivityHelper from '../../../modules/helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import logger from '../ChangelogLogger';
+import { ALL_APPROVAL_STATUSES } from '../../../utils/constants/ApprovalStatus';
 
 // AMPOFFLINE-1312-configure-web-link-resource_type
 const noResType = Utils.toMap(RC.RESOURCE_TYPE, { $exists: false });
@@ -227,6 +228,31 @@ export default ({
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
         changes: [{
+          update: {
+            table: COLLECTION_CLIENT_SETTINGS,
+            field: 'value',
+            value: true,
+            filter: { name: CSC.FORCE_SYNC_UP }
+          }
+        }]
+      },
+      {
+        changeid: 'AMPOFFLINE-1342-approval-status-id',
+        author: 'nmandrescu',
+        comment: 'Switch approval status id from string to long and use corresponding values',
+        preConditions: [{
+          func: () => ActivityHelper.count().then(nr => nr > 0),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
+        changes: [...ALL_APPROVAL_STATUSES.map(as => ({
+          update: {
+            table: COLLECTION_ACTIVITIES,
+            field: AC.APPROVAL_STATUS,
+            value: as.id,
+            filter: Utils.toMap(AC.APPROVAL_STATUS, as.value)
+          }
+        })), {
           update: {
             table: COLLECTION_CLIENT_SETTINGS,
             field: 'value',
