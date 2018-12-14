@@ -27,6 +27,11 @@ class AFFunding extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    activity: PropTypes.object.isRequired,
+    activityFundingSectionPanelStatus: PropTypes.array.isRequired
+  };
+
+  static propTypes = {
     activity: PropTypes.object.isRequired
   };
 
@@ -36,7 +41,10 @@ class AFFunding extends Component {
     this.handleDonorSelect = this.handleDonorSelect.bind(this);
     this.removeFundingItem = this.removeFundingItem.bind(this);
     this.addFundingItem = this.addFundingItem.bind(this);
-    this.handlePanelSelect = this.handlePanelSelect.bind(this);
+    this.hasErrors = this.hasErrors.bind(this);
+    this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
+    this._tabSelect = this._tabSelect.bind(this);
+    this.state = { activeTab: 0, refresh: 0 };
   }
 
   _getAcronym(sourceRole) {
@@ -58,6 +66,14 @@ class AFFunding extends Component {
     } else {
       return translate(VC.ACRONYM_DONOR_ORGANIZATION);
     }
+  }
+
+  _tabSelect(index) {
+    this.setState({ activeTab: index });
+  }
+
+  _refreshAfterChildChanges() {
+    this.forceUpdate();
   }
 
   handleDonorSelect(values) {
@@ -114,7 +130,7 @@ class AFFunding extends Component {
     }
   }
 
-  addFundings() {
+  addDonorOrgs() {
     if (this.context.activity[AC.FUNDINGS]) {
       // Group fundings for the same funding organization and role (if enabled).
       const groups = [];
@@ -140,8 +156,10 @@ class AFFunding extends Component {
         }
         return groups;
       });
+      let tabIndex = 0;
       return groups.sort((i, j) => (i[AC.FUNDING_DONOR_ORG_ID].value > j[AC.FUNDING_DONOR_ORG_ID].value))
         .map((funding) => {
+          tabIndex += 1;
           // If source_role is disabled then the role is always "Donor".
           let sourceRole;
           if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
@@ -151,9 +169,21 @@ class AFFunding extends Component {
               .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
+
+          if (!this.context.activityFundingSectionPanelStatus.find(i =>
+            i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
+            && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id)) {
+            this.context.activityFundingSectionPanelStatus.push({
+              [AC.FUNDING_DONOR_ORG_ID]: funding[AC.FUNDING_DONOR_ORG_ID],
+              [AC.SOURCE_ROLE]: funding[AC.SOURCE_ROLE],
+              open: true,
+              forceClose: false
+            });
+          }
+
           if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
             return (<Tab
-              eventKey={Math.random()} key={Math.random()}
+              eventKey={tabIndex} key={Math.random()}
               title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
               tabClassName={funding.errors ? styles.error : ''}>
               <AFFundingDonorSection
@@ -163,11 +193,26 @@ class AFFunding extends Component {
                 removeFundingItem={this.removeFundingItem}
                 addFundingItem={this.addFundingItem}
                 hasErrors={this.hasErrors}
+                refreshAfterChildChanges={this._refreshAfterChildChanges}
+                tabIndex={tabIndex}
               />
             </Tab>);
           } else {
+            const group = this.context.activityFundingSectionPanelStatus.find(i =>
+              i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
+              && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id);
+            let open = group.open;
+            if (funding.errors && !group.forceClose) {
+              open = true;
+            }
+            group.forceClose = false;
             return (<Panel
-              key={Math.random()} collapsible
+              key={Math.random()} collapsible expanded={open}
+              onSelect={() => {
+                group.open = !open;
+                group.forceClose = open;
+                this.setState({ refresh: Math.random() });
+              }}
               header={<div className={funding.errors ? styles.error : ''}>
                 {`${funding[AC.FUNDING_DONOR_ORG_ID][AC.VALUE]} (${funding[AC.SOURCE_ROLE].value})`}
               </div>}>
@@ -179,6 +224,8 @@ class AFFunding extends Component {
                 removeFundingItem={this.removeFundingItem}
                 addFundingItem={this.addFundingItem}
                 hasErrors={this.hasErrors}
+                refreshAfterChildChanges={this._refreshAfterChildChanges}
+                tabIndex={tabIndex}
               />
             </Panel>);
           }
@@ -196,9 +243,6 @@ class AFFunding extends Component {
   }
 
   addFundingItem() {
-  }
-
-  handlePanelSelect() {
   }
 
   generateOverviewTabContent() {
@@ -231,6 +275,10 @@ class AFFunding extends Component {
     return false;
   }
 
+  /**
+   * Here we render a container with amp_funding table info but grouped by donor and role with Tabs/Panels.
+   * @returns {*}
+   */
   render() {
     const overviewTabHasErrors = (this.context.activity[AC.PPC_AMOUNT]
       && this.context.activity[AC.PPC_AMOUNT][0]
@@ -238,11 +286,13 @@ class AFFunding extends Component {
       && this.context.activity[AC.PPC_AMOUNT][0].errors.length > 0);
     if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
       return (<div>
-        <Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs">
+        <Tabs
+          defaultActiveKey={0} onSelect={this._tabSelect} id="funding-tabs-container-tabs"
+          activeKey={this.state.activeTab}>
           <Tab
             eventKey={0} title="Overview" key={0}
             tabClassName={overviewTabHasErrors ? styles.error : ''}>{this.generateOverviewTabContent()}</Tab>
-          {this.addFundings()}
+          {this.addDonorOrgs()}
         </Tabs>
         <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
       </div>);
@@ -250,7 +300,7 @@ class AFFunding extends Component {
       return (
         <div>
           <div className={styles.overview_section}>{this.generateOverviewTabContent()}</div>
-          <div>{this.addFundings()}</div>
+          <div>{this.addDonorOrgs()}</div>
           <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
         </div>);
     }

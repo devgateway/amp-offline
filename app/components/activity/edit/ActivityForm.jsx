@@ -62,7 +62,8 @@ export default class ActivityForm extends Component {
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
-    currentWorkspaceSettings: PropTypes.object
+    currentWorkspaceSettings: PropTypes.object,
+    activityFundingSectionPanelStatus: PropTypes.array
   };
 
   constructor(props) {
@@ -78,7 +79,8 @@ export default class ActivityForm extends Component {
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       activityValidator: this.activityValidator,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
-      currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings
+      currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings,
+      activityFundingSectionPanelStatus: this.activityFundingSectionPanelStatus
     };
   }
 
@@ -88,6 +90,7 @@ export default class ActivityForm extends Component {
 
   init(activityId) { // eslint-disable-line react/sort-comp
     this.activity = undefined;
+    this.activityFundingSectionPanelStatus = [];
     this.props.loadActivityForActivityForm(activityId);
     this.setState({
       activityId,
