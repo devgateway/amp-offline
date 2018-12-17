@@ -1,5 +1,4 @@
 import * as AC from '../../utils/constants/ActivityConstants';
-import * as VC from '../../utils/constants/ValueConstants';
 import { FIELD_OPTIONS, LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
@@ -9,6 +8,7 @@ import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 // import PossibleValuesManager from '../activity/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
+import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 
 const logger = new Logger('Activity filter');
 
@@ -315,29 +315,29 @@ function getApprovalStatusFilter(id) {
     case 0:// Existing Un-validated - This will show all the activities that
       // have been approved at least once and have since been edited
       // and not validated.
-      options = [VC.EDITED_STATUS, VC.NOT_APPROVED, VC.REJECTED_STATUS];
+      options = [ApprovalStatus.EDITED.id, ApprovalStatus.NOT_APPROVED.id, ApprovalStatus.REJECTED.id];
       isDraft = false;
       break;
 
     case 1:// New Draft - This will show all the activities that have never
       // been approved and are saved as drafts.
-      options = [VC.STARTED_STATUS, VC.STARTED_APPROVED_STATUS];
+      options = [ApprovalStatus.STARTED.id, ApprovalStatus.STARTED_APPROVED.id];
       break;
 
     case 2:// New Un-validated - This will show all activities that are new
       // and have never been approved by the workspace manager.
-      options = [VC.STARTED_STATUS];
+      options = [ApprovalStatus.STARTED.id];
       isDraft = false;
       break;
 
     case 3:// existing draft. This is because when you filter by Existing
       // Unvalidated you get draft activites that were edited and
       // saved as draft
-      options = [VC.EDITED_STATUS, VC.APPROVED_STATUS];
+      options = [ApprovalStatus.EDITED.id, ApprovalStatus.APPROVED.id];
       break;
 
     case 4:// Validated Activities
-      options = [VC.APPROVED_STATUS, VC.STARTED_APPROVED_STATUS];
+      options = [ApprovalStatus.APPROVED.id, ApprovalStatus.STARTED_APPROVED.id];
       isDraft = false;
       break;
     default:

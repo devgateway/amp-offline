@@ -58,7 +58,7 @@ export const isValid = (dbMM: DBMigrationsManager, isFirstRun) => {
 };
 
 const beforeRerun = () => {
-  c1.changes.func = () => 'Modified func that should affect MD5';
-  c2.changes.update.value = 'English-modified to trigger MD5';
-  c3.changes.func = () => 'Modified func that should affect MD5 but will not trigger update (runOnChange=false)';
+  c1.changes[0].func = () => 'Modified func that should affect MD5';
+  c2.changes[0].update.value = 'English-modified to trigger MD5';
+  c3.changes[0].func = () => 'Modified func that should affect MD5 but will not trigger update (runOnChange=false)';
 };
