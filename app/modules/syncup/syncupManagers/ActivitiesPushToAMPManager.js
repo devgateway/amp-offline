@@ -246,6 +246,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     if (!activity[AC.AMP_ID]) {
       // update the activity with AMP ID to be matched during pull
       activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
+      activity[AC.INTERNAL_ID] = pushResult[AC.INTERNAL_ID];
     }
     return ActivityHelper.saveOrUpdate(activity, false);
   }
