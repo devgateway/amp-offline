@@ -11,10 +11,10 @@ const changelog = {
     author: 'nmandrescu',
     comment: 'Generic changeset',
     context: 'startup',
-    changes: {
+    changes: [{
       func: () => {
       }
-    }
+    }]
   }]
 };
 

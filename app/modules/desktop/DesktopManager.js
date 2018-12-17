@@ -20,15 +20,8 @@ import {
   FUNDING_CURRENCY_PATH,
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
-import {
-  ACTUAL,
-  APPROVED_STATUS,
-  COMMITMENTS,
-  DISBURSEMENTS,
-  EDITED_STATUS,
-  STARTED_APPROVED_STATUS,
-  STARTED_STATUS
-} from '../../utils/constants/ValueConstants';
+import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
+import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -103,13 +96,13 @@ const DesktopManager = {
 
   getActivityIsNew(item) {
     if (item[IS_DRAFT]) {
-      if (item[APPROVAL_STATUS] === APPROVED_STATUS || item[APPROVAL_STATUS] === EDITED_STATUS) {
+      if (item[APPROVAL_STATUS] === ApprovalStatus.APPROVED.id || item[APPROVAL_STATUS] === ApprovalStatus.EDITED.id) {
         return false;
       } else {
         return true;
       }
     } else {
-      if (item[APPROVAL_STATUS] === STARTED_STATUS) {
+      if (item[APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
         return true;
       }
       return false;
@@ -151,9 +144,11 @@ const DesktopManager = {
 
   getActivityStatus(item) {
     let status = '';
+    const approvalStatusId = item[APPROVAL_STATUS];
     if (item[IS_DRAFT]) {
       status = ACTIVITY_STATUS_DRAFT;
-    } else if (item[APPROVAL_STATUS] === APPROVED_STATUS || item[APPROVAL_STATUS] === STARTED_APPROVED_STATUS) {
+    } else if (approvalStatusId === ApprovalStatus.APPROVED.id ||
+      approvalStatusId === ApprovalStatus.STARTED_APPROVED.id) {
       status = ACTIVITY_STATUS_VALIDATED;
     } else {
       status = ACTIVITY_STATUS_UNVALIDATED;
