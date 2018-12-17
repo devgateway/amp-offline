@@ -27,15 +27,23 @@ export default class AFFundingDetailContainer extends Component {
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     hasErrors: PropTypes.func.isRequired,
-    funding: PropTypes.object.isRequired
+    funding: PropTypes.object.isRequired,
+    refreshFundingDonorSectionErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
     logger.log('constructor');
+    const errors = this.hasErrors(props.fundingDetail, props.type);
     this.state = {
-      openFDC: this.hasErrors(props.fundingDetail, props.type)
+      errors,
+      refresh: 0
     };
+    if (errors) {
+      this._setOpenStatus(props.type, true);
+    }
+    this._onChildUpdate = this._onChildUpdate.bind(this);
+    this._setOpenStatus = this._setOpenStatus.bind(this);
   }
 
   hasErrors(fundingDetail, type) {
@@ -44,8 +52,30 @@ export default class AFFundingDetailContainer extends Component {
     return this.props.hasErrors(fundingDetails);
   }
 
+  _setOpenStatus(type, value) {
+    switch (type) {
+      case VC.COMMITMENTS:
+        this.props.funding.commitmentsStatusOpen = value;
+        break;
+      case VC.DISBURSEMENTS:
+        this.props.funding.disbursementsStatusOpen = value;
+        break;
+      case VC.EXPENDITURES:
+        this.props.funding.expendituresStatusOpen = value;
+        break;
+      default:
+        break;
+    }
+  }
+
   _addTransactionItem() {
     this.props.handleNewTransaction(this.props.type);
+  }
+
+  _onChildUpdate() {
+    const errors = this.hasErrors(this.props.fundingDetail, this.props.type);
+    this.setState({ errors });
+    this.props.refreshFundingDonorSectionErrors(errors);
   }
 
   render() {
@@ -57,29 +87,34 @@ export default class AFFundingDetailContainer extends Component {
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
+      let open = false;
       switch (this.props.type) {
         case VC.COMMITMENTS:
           header = translate('Commitments');
           button = translate('Add Commitments');
+          open = this.props.funding.commitmentsStatusOpen;
           break;
         case VC.DISBURSEMENTS:
           header = translate('Disbursements');
           button = translate('Add Disbursements');
+          open = this.props.funding.disbursementsStatusOpen;
           break;
         case VC.EXPENDITURES:
           header = translate('Expenditures');
           button = translate('Add Expenditures');
+          open = this.props.funding.expendituresStatusOpen;
           break;
         default:
           break;
       }
-      const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
+      // const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
       return (<div>
         <Panel
-          header={header} collapsible expanded={this.state.openFDC}
+          header={header} collapsible expanded={open}
           onSelect={() => {
-            this.setState({ openFDC: !this.state.openFDC });
-          }} className={hasErrors ? fundingStyles.error : ''}>
+            this._setOpenStatus(this.props.type, !open);
+            this.setState({ refresh: Math.random() });
+          }} className={this.state.errors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
             if (!fd[AC.TEMPORAL_ID]) {
@@ -89,7 +124,8 @@ export default class AFFundingDetailContainer extends Component {
             that array because that will confuse React. */
             return (<AFFundingDetailItem
               fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
-              removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
+              removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding}
+              updateParentErrors={this._onChildUpdate} />);
           })}
           <Button
             className={fundingStyles.add_button} bsStyle="primary"
