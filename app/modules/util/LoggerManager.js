@@ -50,6 +50,13 @@ export default class LoggerManager {
     } else {
       this.logger_ = this.constructor.getBunyanLog().child({ module });
       this._format = (message) => message;
+      if (!ElectronApp.IS_DEV_MODE || ElectronApp.IS_FORCE_LOGGER) {
+        console.error = this.error.bind(this);
+        console.warn = this.warn.bind(this);
+        console.log = this.log.bind(this);
+        console.info = this.log.bind(this);
+        console.debug = this.debug.bind(this);
+      }
     }
   }
 

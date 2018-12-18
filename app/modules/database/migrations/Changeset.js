@@ -108,7 +108,8 @@ export default class Changeset {
    */
   get change() {
     if (this._change === undefined) {
-      this._change = Changeset._getFuncOrUpdate(this._origChangeset[MC.CHANGES]);
+      const changes = this._origChangeset[MC.CHANGES].map(c => Changeset._getFuncOrUpdate(c));
+      this._change = () => changes.reduce((prevPromise, c) => prevPromise.then(c), Promise.resolve());
     }
     return this._change;
   }
@@ -249,20 +250,14 @@ export default class Changeset {
 
   static _prepareForToJson(origChangeset) {
     if (origChangeset) {
-      [MC.CHANGES, MC.ROLLBACK].forEach(field => {
-        const funcRef = origChangeset[field] && origChangeset[field][MC.FUNC];
+      const maybeFunctions = [...origChangeset[MC.CHANGES], origChangeset[MC.ROLLBACK],
+        ...(origChangeset[MC.PRECONDITIONS] || [])];
+      maybeFunctions.forEach(potentialFunc => {
+        const funcRef = potentialFunc && potentialFunc[MC.FUNC];
         if (funcRef) {
           funcRef.toJSON = funcToJson;
         }
       });
-      const preCs = origChangeset[MC.PRECONDITIONS];
-      if (preCs && preCs.length) {
-        preCs.forEach(pc => {
-          if (pc[MC.FUNC]) {
-            pc[MC.FUNC].toJSON = funcToJson;
-          }
-        });
-      }
     }
     return origChangeset;
   }
