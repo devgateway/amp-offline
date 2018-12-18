@@ -33,6 +33,8 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     this._cancel = false;
     this.diff = [];
     this._processed = new Set();
+    this._details[SYNCUP_DETAILS_SYNCED] = [];
+    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
   }
 
   /**
@@ -95,8 +97,6 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @return {Promise}
    */
   doSyncUp(diff) {
-    this._details[SYNCUP_DETAILS_SYNCED] = [];
-    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
     return this._pushActivitiesToAMP(diff);
   }
 
