@@ -108,6 +108,7 @@ export default class SyncUpConfig {
 
   constructor() {
     this._initDependencies();
+    this._initCollections();
   }
 
   _initDependencies() {
@@ -124,6 +125,11 @@ export default class SyncUpConfig {
         this._syncUpDependency.setState(syncUpManager.type, SS.PENDING);
       }
     });
+  }
+
+  _initCollections() {
+    const activitiesPushToAMPManager = this._syncUpCollection.get(SYNCUP_TYPE_ACTIVITIES_PUSH);
+    this._syncUpCollection.get(SYNCUP_TYPE_ACTIVITIES_PULL).activitiesPushToAMPManager = activitiesPushToAMPManager;
   }
 
   /**

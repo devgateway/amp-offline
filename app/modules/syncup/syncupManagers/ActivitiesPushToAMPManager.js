@@ -141,6 +141,16 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   /**
+   * Reject the activity client side
+   * @param activity the activity to reject
+   * @param error the reason to reject
+   * @return {Promise}
+   */
+  rejectActivityClientSide(activity, error) {
+    return this._processPushResult({ activity, error });
+  }
+
+  /**
    * Pushes activities to AMP and provides the activities that where rejected
    * @param activities
    * @private

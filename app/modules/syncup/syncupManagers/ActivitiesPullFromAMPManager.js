@@ -9,6 +9,9 @@ import * as Utils from '../../../utils/Utils';
 import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
+import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
+import Notification from '../../helpers/NotificationHelper';
+import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Activities pull from AMP manager');
 
@@ -25,6 +28,10 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
     this._saveNewActivity = this._saveNewActivity.bind(this);
     this._details[SYNCUP_DETAILS_SYNCED] = [];
     this._details[SYNCUP_DETAILS_UNSYNCED] = [];
+  }
+
+  set activitiesPushToAMPManager(activitiesPushToAMPManager: ActivitiesPushToAMPManager) {
+    this._activitiesPushToAMPManager = activitiesPushToAMPManager;
   }
 
   mergeDetails(previousDetails) {
@@ -94,6 +101,10 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
    */
   _removeExistingNonRejected(activity) {
     return ActivityHelper.findNonRejectedByAmpId(activity[AC.AMP_ID]).then(dbActivity => {
+      if (!dbActivity) {
+        return activity;
+      }
+      let rejectActivityPromise;
       if (ActivityHelper.isModifiedOnClient(dbActivity)) {
         if (ActivityHelper.getVersion(dbActivity) === ActivityHelper.getVersion(activity)) {
           // update the minimum info for reference in case next pull will fail (e.g. connection loss)
@@ -102,8 +113,14 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
           });
           return dbActivity;
         }
+        const error = new Notification({
+          message: 'rejectedStaleActivity',
+          origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
+        });
+        rejectActivityPromise = this._activitiesPushToAMPManager.rejectActivityClientSide(dbActivity, error);
       }
-      return ActivityHelper.removeNonRejectedById(dbActivity.id).then(() => activity);
+      return (rejectActivityPromise || Promise.resolve()).then(() =>
+        ActivityHelper.removeNonRejectedById(dbActivity.id).then(() => activity));
     });
   }
 
