@@ -1,5 +1,5 @@
 import * as RC from '../../../utils/constants/ResourceConstants';
-import { COLLECTION_CLIENT_SETTINGS, COLLECTION_RESOURCES } from '../../../utils/Constants';
+import { COLLECTION_ACTIVITIES, COLLECTION_CLIENT_SETTINGS, COLLECTION_RESOURCES } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import * as CurrencyRatesHelper from '../../../modules/helpers/CurrencyRatesHelper';
 import * as MC from '../../../utils/constants/MigrationsConstants';
@@ -11,6 +11,7 @@ import * as FPC from '../../../utils/constants/FieldPathConstants';
 import * as ActivityHelper from '../../../modules/helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import logger from '../ChangelogLogger';
+import { ALL_APPROVAL_STATUSES } from '../../../utils/constants/ApprovalStatus';
 
 // AMPOFFLINE-1312-configure-web-link-resource_type
 const noResType = Utils.toMap(RC.RESOURCE_TYPE, { $exists: false });
@@ -39,27 +40,27 @@ export default ({
         changeid: 'AMPOFFLINE-1312-configure-web-link-resource_type',
         author: 'nmandrescu',
         comment: 'Default value for the new "resource_type" field for web links',
-        changes: {
+        changes: [{
           update: {
             table: COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_WEB_RESOURCE,
             filter: linkFilter
           }
-        }
+        }]
       },
       {
         changeid: 'AMPOFFLINE-1312-configure-doc-resource_type',
         author: 'nmandrescu',
         comment: 'Default value for the new "resource_type" field for documents',
-        changes: {
+        changes: [{
           update: {
             table: COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_DOC_RESOURCE,
             filter: docFilter
           }
-        }
+        }]
       },
       {
         changeid: 'AMPOFFLINE-1318-ppc-currency',
@@ -91,7 +92,7 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_CONTINUE,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: {
+        changes: [{
           func: () => {
             const couldNotRemapToDelete = [];
             const couldNotRemapToLeaveForReject = [];
@@ -133,7 +134,7 @@ export default ({
             }
             return Promise.all([deletePromise, ActivityHelper.saveOrUpdateCollection(activitiesWithPPCasCode)]);
           }
-        },
+        }],
         rollback: {
           func: () => ActivityHelper.saveOrUpdateCollection(activitiesWithPPCasCode, false)
         }
@@ -158,14 +159,14 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: {
+        changes: [{
           update: {
             table: COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
           }
-        }
+        }]
       },
       {
         changeid: 'AMPOFFLINE-1281-currency-rates',
@@ -191,7 +192,7 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_CONTINUE,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: {
+        changes: [{
           func: () => PossibleValuesHelper.findAllByExactIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY).then(cpvs => {
             currencyPVs = cpvs;
             return Promise.all([
@@ -199,7 +200,7 @@ export default ({
               PossibleValuesHelper.deleteByIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY)
             ]);
           })
-        },
+        }],
         rollback: {
           func: () => Promise.all([
             CurrencyRatesHelper.replaceAllCurrencyRates(currentExchangeRates),
@@ -226,14 +227,39 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_CONTINUE,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: {
+        changes: [{
           update: {
             table: COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
           }
-        }
+        }]
+      },
+      {
+        changeid: 'AMPOFFLINE-1342-approval-status-id',
+        author: 'nmandrescu',
+        comment: 'Switch approval status id from string to long and use corresponding values',
+        preConditions: [{
+          func: () => ActivityHelper.count().then(nr => nr > 0),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
+        changes: [...ALL_APPROVAL_STATUSES.map(as => ({
+          update: {
+            table: COLLECTION_ACTIVITIES,
+            field: AC.APPROVAL_STATUS,
+            value: as.id,
+            filter: Utils.toMap(AC.APPROVAL_STATUS, as.value)
+          }
+        })), {
+          update: {
+            table: COLLECTION_CLIENT_SETTINGS,
+            field: 'value',
+            value: true,
+            filter: { name: CSC.FORCE_SYNC_UP }
+          }
+        }]
       },
     ]
   },
