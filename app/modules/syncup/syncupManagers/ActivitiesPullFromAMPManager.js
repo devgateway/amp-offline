@@ -86,8 +86,25 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
     return this.onPullError(error, activity);
   }
 
+  /**
+   * Removes existing activity, unless was modified and local version matches the one from AMP
+   * @param activity the pulled activity
+   * @return {Object} the activity to save
+   * @private
+   */
   _removeExistingNonRejected(activity) {
-    return ActivityHelper.removeNonRejectedByAmpId(activity[AC.AMP_ID]).then(() => activity);
+    return ActivityHelper.findNonRejectedByAmpId(activity[AC.AMP_ID]).then(dbActivity => {
+      if (ActivityHelper.isModifiedOnClient(dbActivity)) {
+        if (ActivityHelper.getVersion(dbActivity) === ActivityHelper.getVersion(activity)) {
+          // update the minimum info for reference in case next pull will fail (e.g. connection loss)
+          [AC.CREATED_BY, AC.CREATED_ON, AC.MODIFIED_BY, AC.MODIFIED_ON].forEach(field => {
+            dbActivity[field] = activity[field];
+          });
+          return dbActivity;
+        }
+      }
+      return ActivityHelper.removeNonRejectedById(dbActivity.id).then(() => activity);
+    });
   }
 
   _saveNewActivity(activity) {

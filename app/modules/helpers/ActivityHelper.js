@@ -214,6 +214,17 @@ const ActivityHelper = {
     return DatabaseManager.removeAll(filter, COLLECTION_ACTIVITIES);
   },
 
+  getVersion(activity) {
+    if (activity && activity[AC.ACTIVITY_GROUP]) {
+      return activity[AC.ACTIVITY_GROUP][AC.VERSION];
+    }
+    return null;
+  },
+
+  isModifiedOnClient(activity) {
+    return activity && activity[AC.CLIENT_CHANGE_ID] && !activity[AC.IS_PUSHED];
+  },
+
   _getModifiedOnClientSide() {
     return Utils.toMap(AC.CLIENT_CHANGE_ID, { $exists: true });
   },
