@@ -18,7 +18,8 @@ const AFSection = (ComposedSection, SectionTitle) => class extends Component {
   static contextTypes = {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
+    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
+    activityFundingSectionPanelStatus: PropTypes.array.isRequired
   };
 
   constructor(props) {

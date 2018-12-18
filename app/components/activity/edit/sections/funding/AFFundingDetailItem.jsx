@@ -42,12 +42,14 @@ export default class AFFundingDetailItem extends Component {
     fundingDetail: PropTypes.object.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     funding: PropTypes.object.isRequired,
-    type: PropTypes.string
+    type: PropTypes.string,
+    updateParentErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
     this.state = { selectedOrgRole: props.fundingDetail[AC.RECIPIENT_ROLE] || undefined };
+    this._onUpdateField = this._onUpdateField.bind(this);
   }
 
   _getRecipientRoleFilter(typeName) {
@@ -125,6 +127,10 @@ export default class AFFundingDetailItem extends Component {
     return content;
   }
 
+  _onUpdateField() {
+    this.props.updateParentErrors();
+  }
+
   render() {
     const { type, fundingDetail, funding, removeFundingDetailItem } = this.props;
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
@@ -170,35 +176,40 @@ export default class AFFundingDetailItem extends Component {
               <div className={styles.row}>
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.ADJUSTMENT_TYPE}`} />
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.ADJUSTMENT_TYPE}`}
+                  onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`} />
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`}
+                  onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject
-                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
+                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`} />
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`}
+                  onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   type={Types.RADIO_BOOLEAN} fmPath={disasterResponseFMPath}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`} />
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`}
+                  onAfterUpdate={this._onUpdateField} />
                 {(fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`} /> : null}
+                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`}
+                  onAfterUpdate={this._onUpdateField} /> : null}
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`}
                   filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
-                  fmPath={pledgeFMPath} />
+                  fmPath={pledgeFMPath} onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_4}
                   fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
                   fmPath={fixedExchangeRateFMPath}
-                  extraParams={{ bigger: 0 }} />
+                  extraParams={{ bigger: 0 }} onAfterUpdate={this._onUpdateField} />
                 {this.generateRecipients(typeName, fundingDetail)}
               </div>
             </td>

@@ -13,6 +13,8 @@ export const IS_DEV_MODE = process.env.NODE_ENV === 'development';
 export const IS_TEST_MODE = process.env.NODE_ENV === 'test';
 /** Tells if to print logs to the console (for test mode). */
 export const IS_LOG_TO_CONSOLE = +process.env.LOG_TO_CONSOLE;
+/** Tells if actually to force the logging to the file even if in dev mode */
+export const IS_FORCE_LOGGER = process.env.FORCE_LOGGER === 'true';
 /** Tells if to enable the URL checks trigger */
 export const IS_CHECK_URL_CHANGES = !IS_DEV_MODE || +process.env.CHECK_URL_CHANGES;
 /** Controls whether to run changelogs or not */
