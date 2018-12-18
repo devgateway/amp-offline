@@ -75,10 +75,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     logger.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
-    // search where IS_PUSHED is set to see why
-    const notStalePush = Utils.toMap(AC.IS_PUSHED, { $ne: true });
-    const filter = { $and: [modifiedBySpecificWSMembers, notStalePush] };
-    return ActivityHelper.findAllNonRejectedModifiedOnClient(filter);
+    return ActivityHelper.findAllNonRejectedModifiedOnClient(modifiedBySpecificWSMembers);
   }
 
   /**

@@ -69,7 +69,9 @@ const ActivityHelper = {
   },
 
   findAllNonRejectedModifiedOnClient(filterRule, projections) {
-    const filter = { $and: [this._getNonRejectedRule(), this._getModifiedOnClientSide(), filterRule] };
+    const filter = {
+      $and: [this._getNonRejectedRule(), this._getModifiedOnClientSide(), this._getNotPushed(), filterRule]
+    };
     return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
   },
 
@@ -217,6 +219,11 @@ const ActivityHelper = {
 
   _getModifiedOnClientSide() {
     return Utils.toMap(AC.CLIENT_CHANGE_ID, { $exists: true });
+  },
+
+  _getNotPushed() {
+    // search where IS_PUSHED is set to see why
+    return Utils.toMap(AC.IS_PUSHED, { $ne: true });
   },
 
   _getNonRejectedRule() {
