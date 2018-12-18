@@ -13,7 +13,7 @@ export const invalidSchema = [
   'changeset-author-missing.js',
   'changeset-author-not-string.js',
   'changeset-changes-missing.js',
-  'changeset-changes-not-object.js',
+  'changeset-changes-not-array.js',
   'changeset-changes-rule-missing.js',
   'changeset-run-always-not-boolean.js',
   'changeset-run-on-change-not-boolean.js',
