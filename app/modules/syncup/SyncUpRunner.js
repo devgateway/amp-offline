@@ -23,6 +23,7 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
+  SYNCUP_TYPE_ALL_FIELDS,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
@@ -201,10 +202,9 @@ export default class SyncUpRunner {
   _mergeToLeftOverAndUpdateNoChanges(changes) {
     logger.log('_mergeToLeftOverAndUpdateNoChanges');
     const isFirstRun = this._syncRunNo === SyncUpRunner._SYNC_RUN_1;
-    // TODO: remove this flag once AMP-25568 is done
-    changes[SYNCUP_TYPE_ACTIVITY_FIELDS] = true;
-    changes[SYNCUP_TYPE_CONTACT_FIELDS] = true;
-    changes[SYNCUP_TYPE_RESOURCE_FIELDS] = true;
+    changes[SYNCUP_TYPE_ACTIVITY_FIELDS] = changes[SYNCUP_TYPE_ALL_FIELDS];
+    changes[SYNCUP_TYPE_CONTACT_FIELDS] = changes[SYNCUP_TYPE_ALL_FIELDS];
+    changes[SYNCUP_TYPE_RESOURCE_FIELDS] = changes[SYNCUP_TYPE_ALL_FIELDS];
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
     // not sure if still needed, but once removed, make sure to double check with CurrencyRatesHelper.hasExchangeRates
