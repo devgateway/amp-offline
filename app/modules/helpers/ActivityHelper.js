@@ -69,7 +69,9 @@ const ActivityHelper = {
   },
 
   findAllNonRejectedModifiedOnClient(filterRule, projections) {
-    const filter = { $and: [this._getNonRejectedRule(), this._getModifiedOnClientSide(), filterRule] };
+    const filter = {
+      $and: [this._getNonRejectedRule(), this._getModifiedOnClientSide(), this._getNotPushed(), filterRule]
+    };
     return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
   },
 
@@ -188,15 +190,12 @@ const ActivityHelper = {
 
   removeNonRejectedByAmpId(ampId) {
     logger.log('removeNonRejectedByAmpId');
-    return new Promise((resolve, reject) =>
-      this.findNonRejectedByAmpId(ampId).then(result => {
-        if (result === null) {
-          return resolve(null);
-        }
-        return DatabaseManager.removeById(result.id, COLLECTION_ACTIVITIES, this._getNonRejectedRule())
-          .then(resolve).catch(reject);
-      }).catch(reject)
-    );
+    return this.findNonRejectedByAmpId(ampId).then(result => {
+      if (result === null) {
+        return null;
+      }
+      return DatabaseManager.removeById(result.id, COLLECTION_ACTIVITIES, this._getNonRejectedRule());
+    });
   },
 
   removeRejected(id) {
@@ -215,8 +214,24 @@ const ActivityHelper = {
     return DatabaseManager.removeAll(filter, COLLECTION_ACTIVITIES);
   },
 
+  getVersion(activity) {
+    if (activity && activity[AC.ACTIVITY_GROUP]) {
+      return activity[AC.ACTIVITY_GROUP][AC.VERSION];
+    }
+    return null;
+  },
+
+  isModifiedOnClient(activity) {
+    return activity && activity[AC.CLIENT_CHANGE_ID] && !activity[AC.IS_PUSHED];
+  },
+
   _getModifiedOnClientSide() {
     return Utils.toMap(AC.CLIENT_CHANGE_ID, { $exists: true });
+  },
+
+  _getNotPushed() {
+    // search where IS_PUSHED is set to see why
+    return Utils.toMap(AC.IS_PUSHED, { $ne: true });
   },
 
   _getNonRejectedRule() {
