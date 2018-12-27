@@ -1,9 +1,9 @@
 /* eslint-disable class-methods-use-this */
-import { CURRENCY_HOUR, CURRENCY_PAIR, RATE_SAME_CURRENCY } from '../../utils/Constants';
+import { CURRENCY_HOUR, CURRENCY_PAIR, RATE_CURRENCY_NOT_FOUND, RATE_SAME_CURRENCY } from '../../utils/Constants';
 import translate from '../../utils/translate';
-import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER, RATE_CURRENCY_NOT_FOUND } from '../../utils/constants/ErrorConstants';
+import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/ErrorConstants';
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
-import { formatDateForCurrencyRates } from '../../utils/DateUtils';
+import DateUtils from '../../utils/DateUtils';
 import * as AC from '../../utils/constants/ActivityConstants';
 
 export default class CurrencyRatesManager {
@@ -11,6 +11,14 @@ export default class CurrencyRatesManager {
     this._currencyRates = currencyRates;
     this._baseCurrency = baseCurrency;
     this._currnciesWithExchangeRates = this._getCurrenciesWithExchangeRates();
+  }
+
+  /**
+   * Set of currencies that has at least one exchange rate
+   * @return {Set<any> | *}
+   */
+  get currenciesWithExchangeRates() {
+    return this._currnciesWithExchangeRates;
   }
 
   /**
@@ -68,7 +76,7 @@ export default class CurrencyRatesManager {
 
   convertAmountToCurrency(amount, currencyFrom, date, fixedExchangeRate, currencyTo) {
     const currencyRate = this.convertCurrency(currencyFrom, currencyTo,
-      formatDateForCurrencyRates(date), fixedExchangeRate);
+      DateUtils.formatDateForCurrencyRates(date), fixedExchangeRate);
     return amount * currencyRate;
   }
 
@@ -143,14 +151,6 @@ export default class CurrencyRatesManager {
     } else {
       return RATE_CURRENCY_NOT_FOUND;
     }
-  }
-
-  /**
-   * Set of currencies that has at least one exchange rate
-   * @return {Set<any> | *}
-   */
-  get currenciesWithExchangeRates() {
-    return this._currnciesWithExchangeRates;
   }
 
   _getCurrenciesWithExchangeRates() {
