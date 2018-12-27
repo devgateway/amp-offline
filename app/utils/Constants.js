@@ -90,6 +90,7 @@ export const SYNCUP_TYPE_GS = 'global-settings';
 export const SYNCUP_TYPE_EXCHANGE_RATES = 'exchange-rates';
 export const SYNCUP_TYPE_FEATURE_MANAGER = 'feature-manager';
 export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
+export const SYNCUP_TYPE_ALL_FIELDS = 'fields';
 export const SYNCUP_TYPE_ACTIVITIES_PULL = 'activities';
 export const SYNCUP_TYPE_ACTIVITIES_PUSH = 'activities-push';
 export const SYNCUP_TYPE_ACTIVITY_FIELDS = 'activity-fields';
