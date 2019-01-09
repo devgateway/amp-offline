@@ -83,6 +83,7 @@ export const FIELD_UNIQUE_CONSTRAINT = 'unique_constraint';
 export const FIELD_TYPE = 'field_type';
 export const FIELD_LENGTH = 'field_length';
 export const FIELD_PERCENTAGE = 'percentage';
+export const FIELD_PERCENTAGE_CONSTRAINT = 'percentage_constraint';
 export const FIELD_ITEM_TYPE = 'item-type';
 export const FIELD_IMPORTABLE = 'importable';
 export const FIELD_ID_ONLY = 'id_only';

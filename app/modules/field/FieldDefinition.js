@@ -47,6 +47,10 @@ export default class FieldDefinition {
     return this._fieldDef[FPC.FIELD_UNIQUE_CONSTRAINT];
   }
 
+  get percentageConstraint() {
+    return this._fieldDef[FPC.FIELD_PERCENTAGE_CONSTRAINT];
+  }
+
   get regexPattern() {
     return this._fieldDef[FPC.REGEX_PATTERN];
   }
@@ -107,7 +111,7 @@ export default class FieldDefinition {
    */
   isList() {
     if (this._isList === undefined) {
-      this._isList = this._fieldDef[FPC.FIELD_ITEM_TYPE] === FPC.FIELD_TYPE_LIST;
+      this._isList = this._fieldDef[FPC.FIELD_TYPE] === FPC.FIELD_TYPE_LIST;
     }
     return this._isList;
   }

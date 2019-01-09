@@ -24,7 +24,7 @@ const AFSection = (ComposedSection, SectionTitle) => class extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   render() {

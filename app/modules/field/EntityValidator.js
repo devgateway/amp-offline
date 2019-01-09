@@ -134,6 +134,7 @@ export default class EntityValidator {
   }
 
   validateField(parent, asDraft, fieldDef: FieldDefinition, mainFieldPath) {
+    logger.debug('validateField');
     this._initGenericErrors();
     this.errorsCollector.clear();
     this._firstLevelOnly = true;
@@ -223,7 +224,7 @@ export default class EntityValidator {
     this.invalidDate = translate('invalidDate').replace('%gs-format%', gsDateFormat);
   }
 
-  _validateValue(objects, asDraft, fieldDef: FieldDefinition, fieldPath, isList) {
+  _validateValue(objects, asDraft, fieldDef: FieldDefinition, fieldPath) {
     logger.debug('_validateValue');
     const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath);
     const wasHydrated = this._wasHydrated(fieldPath);
@@ -240,7 +241,7 @@ export default class EntityValidator {
     // but realistically there won't be many objects in the list, that's why opting for clear code
     objects.forEach(obj => {
       const value = this._getValue(obj, fieldDef, wasHydrated);
-      if (isList) {
+      if (fieldDef.isList()) {
         if (!Array.isArray(value)) {
           // for complex objects it is also a list of properties
           if (!(value instanceof Object)) {
