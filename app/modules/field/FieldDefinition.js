@@ -8,8 +8,6 @@ import * as FPC from '../../utils/constants/FieldPathConstants';
 export default class FieldDefinition {
   constructor(fieldDef = {}) {
     this._fieldDef = fieldDef;
-    this._isList = fieldDef[FPC.FIELD_ITEM_TYPE] === FPC.FIELD_TYPE_LIST;
-    this._isSimpleTypeList = this._isList && fieldDef[FPC.FIELD_ITEM_TYPE] !== FPC.FIELD_TYPE_OBJECT;
   }
 
   /**
@@ -34,6 +32,10 @@ export default class FieldDefinition {
     return this._fieldDef[FPC.FIELD_LENGTH];
   }
 
+  get listMaxSize() {
+    return this._fieldDef[FPC.LIST_MAX_SIZE];
+  }
+
   /**
    * @return {String|null}
    */
@@ -41,11 +43,42 @@ export default class FieldDefinition {
     return this._fieldDef[FPC.FIELD_REQUIRED];
   }
 
+  get uniqueConstraint() {
+    return this._fieldDef[FPC.FIELD_UNIQUE_CONSTRAINT];
+  }
+
+  get regexPattern() {
+    return this._fieldDef[FPC.REGEX_PATTERN];
+  }
+
   /**
    * @return {Array|null}
    */
   get children() {
-    return this._fieldDef.children;
+    return this._fieldDef[FPC.FIELD_CHILDREN];
+  }
+
+  /**
+   * @return {Array|null}
+   */
+  get dependencies() {
+    return this._fieldDef[FPC.FIELD_DEPENDENCIES];
+  }
+
+  isPercentage() {
+    return this._fieldDef[FPC.FIELD_PERCENTAGE] === true;
+  }
+
+  isImportable() {
+    return this._fieldDef[FPC.FIELD_IMPORTABLE] === true;
+  }
+
+  allowsMultipleValues() {
+    return this._fieldDef[FPC.FIELD_MULTIPLE_VALUES_ALLOWED] === true;
+  }
+
+  isTreeCollection() {
+    return this._fieldDef[FPC.FIELD_TREE_COLLECTION];
   }
 
   /**
@@ -73,6 +106,9 @@ export default class FieldDefinition {
    * @return {boolean}
    */
   isList() {
+    if (this._isList === undefined) {
+      this._isList = this._fieldDef[FPC.FIELD_ITEM_TYPE] === FPC.FIELD_TYPE_LIST;
+    }
     return this._isList;
   }
 
@@ -80,6 +116,16 @@ export default class FieldDefinition {
    * @return {boolean}
    */
   isSimpleTypeList() {
+    if (this._isSimpleTypeList === undefined) {
+      this._isSimpleTypeList = this.isList() && this._fieldDef[FPC.FIELD_ITEM_TYPE] !== FPC.FIELD_TYPE_OBJECT;
+    }
     return this._isSimpleTypeList;
+  }
+
+  hasChildren() {
+    if (this._hasChildren === undefined) {
+      this._hasChildren = this.isList() && this._fieldDef.children;
+    }
+    return this._hasChildren;
   }
 }
