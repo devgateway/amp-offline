@@ -2,7 +2,7 @@
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 import PossibleValuesManager from './PossibleValuesManager';
 import Logger from '../util/LoggerManager';
-import { FIELD_OPTIONS } from '../../utils/constants/FieldPathConstants';
+import * as FPC from '../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('Fields manager');
 
@@ -29,7 +29,7 @@ export default class FieldsManager {
     this._fieldsDef = fieldsDef;
     this._possibleValuesMap = {};
     possibleValuesCollection.forEach(pv => {
-      this._possibleValuesMap[pv.id] = pv[FIELD_OPTIONS];
+      this._possibleValuesMap[pv.id] = pv[FPC.FIELD_OPTIONS];
     });
     this._fieldPathsEnabledStatusMap = {};
     this._lang = currentLanguage || LANGUAGE_ENGLISH;
@@ -88,13 +88,11 @@ export default class FieldsManager {
     let currentTree = this._fieldsDef;
     const isDisabled = pathParts.some(part => {
       currentTree = currentTree.find(field => field.field_name === part);
-      if (currentTree) {
-        if (currentTree.field_type === 'list') {
-          currentTree = currentTree.children;
-        }
-        return false;
+      if (currentTree && currentTree[FPC.FIELD_TYPE] === FPC.FIELD_TYPE_LIST
+        && currentTree[FPC.FIELD_ITEM_TYPE] === FPC.FIELD_TYPE_OBJECT) {
+        currentTree = currentTree.children;
       }
-      return true;
+      return !currentTree;
     });
     this._fieldPathsEnabledStatusMap[fieldPath] = !isDisabled;
   }
