@@ -77,9 +77,12 @@ export const FIELD_OPTION_USABLE = 'option-usable';
 export const LIST_MAX_SIZE = 'size-limit';
 export const REGEX_PATTERN = 'regex-pattern';
 export const FIELD_NAME = 'field_name';
+export const FIELD_LABEL = 'field_label';
 export const FIELD_REQUIRED = 'required';
 export const FIELD_TYPE = 'field_type';
+export const FIELD_LENGTH = 'field_length';
 export const FIELD_ITEM_TYPE = 'item-type';
+export const FIELD_ID_ONLY = 'id_only';
 
 export const FIELD_TYPE_LIST = 'list';
 export const FIELD_TYPE_OBJECT = 'object';
