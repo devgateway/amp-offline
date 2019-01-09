@@ -30,7 +30,11 @@ export default class AFMultiSelect extends Component {
 
   componentWillMount() {
     this.listDef = this.context.activityFieldsManager.getFieldDef(this.props.listPath);
-    this.selectFieldDef = this.listDef.children.find(f => f.field_name === this.props.selectField);
+    if (this.listDef.children) {
+      this.selectFieldDef = this.listDef.children.find(f => f.field_name === this.props.selectField);
+    } else {
+      this.selectFieldDef = this.listDef;
+    }
     this.isIdNumber = this.selectFieldDef && this.selectFieldDef.field_type === 'long';
   }
 

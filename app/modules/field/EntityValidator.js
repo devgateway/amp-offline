@@ -31,14 +31,7 @@ import {
   DISASTER_RESPONSE,
   DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED
 } from '../../utils/constants/ActivityConstants';
-import {
-  ACTIVITY_CONTACT_PATHS,
-  DO_NOT_HYDRATE_FIELDS_LIST,
-  RELATED_ORGS_PATHS,
-  LIST_MAX_SIZE,
-  REGEX_PATTERN,
-  FIELD_NAME,
-} from '../../utils/constants/FieldPathConstants';
+import * as FPC from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
 import translate from '../../utils/translate';
@@ -167,7 +160,7 @@ export default class EntityValidator {
     let dependencies = [];
     if (mainFieldPath === ACTIVITY_BUDGET) {
       dependencies = [DEPENDENCY_PROJECT_CODE_ON_BUDGET, DEPENDENCY_ON_BUDGET];
-    } else if (RELATED_ORGS_PATHS.includes(mainFieldPath)) {
+    } else if (FPC.RELATED_ORGS_PATHS.includes(mainFieldPath)) {
       dependencies = [DEPENDENCY_COMPONENT_FUNDING_ORG_VALID];
     }
     const fieldPaths = this._fieldsManager.getFieldPathsByDependencies(dependencies);
@@ -230,21 +223,21 @@ export default class EntityValidator {
   }
 
   _validateValue(objects, asDraft, fieldDef, fieldPath, isList) {
-    logger.log('_validateValue');
+    logger.debug('_validateValue');
     const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath);
     const wasHydrated = this._wasHydrated(fieldPath);
     const stringLengthError = translate('stringTooLong').replace('%fieldName%', fieldLabel);
-    const percentageChild = isList && fieldDef.importable === true &&
-      fieldDef.children.find(childDef => childDef.percentage === true);
-    const idOnlyField = isList && fieldDef.importable === true &&
-      fieldDef.children.find(childDef => childDef.id_only === true);
+    const isObjectsList = isList && fieldDef[FPC.FIELD_ITEM_TYPE] === FPC.FIELD_TYPE_OBJECT;
+    const isLookupChild = isObjectsList && fieldDef.importable === true;
+    const percentageChild = isLookupChild && fieldDef.children.find(childDef => childDef.percentage === true);
+    const idOnlyField = isLookupChild && fieldDef.children.find(childDef => childDef.id_only === true);
     const uniqueConstraint = isList && fieldDef.unique_constraint;
     const noMultipleValues = fieldDef.multiple_values !== true;
     const noParentChildMixing = fieldDef.tree_collection === true;
-    const maxListSize = fieldDef[LIST_MAX_SIZE];
+    const maxListSize = fieldDef[FPC.LIST_MAX_SIZE];
     const listLengthError = translate('listTooLong')
       .replace('%fieldName%', fieldLabel).replace('%sizeLimit%', maxListSize);
-    const regexPattern = fieldDef[REGEX_PATTERN] ? new RegExp(fieldDef[REGEX_PATTERN]) : null;
+    const regexPattern = fieldDef[FPC.REGEX_PATTERN] ? new RegExp(fieldDef[FPC.REGEX_PATTERN]) : null;
     const regexError = this._getRegexError(regexPattern, fieldPath);
     // it could be faster to do outer checks for the type and then go through the list for each type,
     // but realistically there won't be many objects in the list, that's why opting for clear code
@@ -323,7 +316,7 @@ export default class EntityValidator {
   }
 
   _wasHydrated(fieldPath) {
-    return !!this._possibleValuesMap[fieldPath] && !DO_NOT_HYDRATE_FIELDS_LIST.includes(fieldPath);
+    return !!this._possibleValuesMap[fieldPath] && !FPC.DO_NOT_HYDRATE_FIELDS_LIST.includes(fieldPath);
   }
 
   _getValue(obj, fieldDef, wasHydrated) {
@@ -347,7 +340,7 @@ export default class EntityValidator {
    */
   _isAllowInvalidNumber(value, fieldPath) {
     const parts = fieldPath.split('~');
-    const isContactId = (parts.length === 2 && ACTIVITY_CONTACT_PATHS.includes(parts[0]) && CONTACT === parts[1]) ||
+    const isContactId = (parts.length === 2 && FPC.ACTIVITY_CONTACT_PATHS.includes(parts[0]) && CONTACT === parts[1]) ||
       (parts.length === 1 && this.excludedFields.includes(parts[0]));
     if (isContactId && `${value}`.startsWith(CLIENT_CHANGE_ID_PREFIX)) {
       return true;
@@ -506,7 +499,7 @@ export default class EntityValidator {
   isRequiredDependencyMet(parent, fieldDef) {
     const dependencies = fieldDef.dependencies;
     // by default is met (unless an exception), hence the workflow can proceed to validate the "required" rule
-    let met = ![DISASTER_RESPONSE, RC.FILE_NAME, RC.WEB_LINK].includes(fieldDef[FIELD_NAME]);
+    let met = ![DISASTER_RESPONSE, RC.FILE_NAME, RC.WEB_LINK].includes(fieldDef[FPC.FIELD_NAME]);
     // eslint-disable-next-line default-case
     if (dependencies && dependencies.length) {
       dependencies.forEach(dep => {
@@ -566,7 +559,7 @@ export default class EntityValidator {
     objects.forEach(obj => {
       const fieldName = fieldDef.field_name;
       const hydratedValue = obj[fieldName];
-      if (hydratedValue && ACTIVITY_CONTACT_PATHS.includes(fieldName)) {
+      if (hydratedValue && FPC.ACTIVITY_CONTACT_PATHS.includes(fieldName)) {
         const validationResult = this._isUniquePrimaryContact(hydratedValue, fieldName);
         this.processValidationResult(this._entity, fieldName, validationResult);
       }
@@ -659,7 +652,7 @@ export default class EntityValidator {
    * @return {boolean}
    */
   validateItemRemovalFromList(listPath, item) {
-    if (RELATED_ORGS_PATHS.includes(listPath)) {
+    if (FPC.RELATED_ORGS_PATHS.includes(listPath)) {
       return this.validateOrgRemoval(listPath, item && item[ORGANIZATION]);
     }
     return true;
@@ -707,7 +700,7 @@ export default class EntityValidator {
 
   _getActivityOrgIds() {
     const activityOrgs = [];
-    RELATED_ORGS_PATHS.forEach(orgRolePath => {
+    FPC.RELATED_ORGS_PATHS.forEach(orgRolePath => {
       const orgRoles = this._entity[orgRolePath];
       if (orgRoles) {
         activityOrgs.push(...orgRoles.map(entry => entry[ORGANIZATION] && entry[ORGANIZATION].id).filter(el => !!el));

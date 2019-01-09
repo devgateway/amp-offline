@@ -322,13 +322,17 @@ class AFField extends Component {
   }
 
   _getMultiSelect() {
-    const selectFieldDef = this.fieldDef.children.length === 1 ?
-      this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
-    if (!selectFieldDef) {
-      logger.error('Could not automatically detect multi-select field.');
-      return null;
+    let selectFieldDef = this.fieldDef;
+    let optionsPath = this.props.fieldPath;
+    if (this.fieldDef.children) {
+      selectFieldDef = this.fieldDef.children.length === 1 ?
+        this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
+      if (!selectFieldDef) {
+        logger.error('Could not automatically detect multi-select field.');
+        return null;
+      }
+      optionsPath = `${this.props.fieldPath}~${selectFieldDef.field_name}`;
     }
-    const optionsPath = `${this.props.fieldPath}~${selectFieldDef.field_name}`;
     const afOptions = this._toAFOptions(this._getOptions(optionsPath));
     return (<AFMultiSelect
       options={afOptions} values={this.state.value} listPath={this.props.fieldPath}
