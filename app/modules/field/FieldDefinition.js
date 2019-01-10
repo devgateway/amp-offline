@@ -7,7 +7,11 @@ import * as FPC from '../../utils/constants/FieldPathConstants';
  */
 export default class FieldDefinition {
   constructor(fieldDef = {}) {
-    this._fieldDef = fieldDef;
+    this._fieldDef = fieldDef instanceof FieldDefinition ? fieldDef.rawFieldDef : fieldDef;
+  }
+
+  get rawFieldDef() {
+    return this._fieldDef;
   }
 
   /**
@@ -26,6 +30,13 @@ export default class FieldDefinition {
    */
   get type() {
     return this._fieldDef[FPC.FIELD_TYPE];
+  }
+
+  /**
+   * @return {String|null} the list entry type
+   */
+  get itemType() {
+    return this._fieldDef[FPC.FIELD_ITEM_TYPE];
   }
 
   get length() {
@@ -121,7 +132,7 @@ export default class FieldDefinition {
    */
   isSimpleTypeList() {
     if (this._isSimpleTypeList === undefined) {
-      this._isSimpleTypeList = this.isList() && this._fieldDef[FPC.FIELD_ITEM_TYPE] !== FPC.FIELD_TYPE_OBJECT;
+      this._isSimpleTypeList = this.isList() && this.itemType !== FPC.FIELD_TYPE_OBJECT;
     }
     return this._isSimpleTypeList;
   }

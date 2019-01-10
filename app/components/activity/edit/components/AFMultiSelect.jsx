@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
@@ -8,6 +9,7 @@ import {
   MULTI_SELECT_MIN_SIZE,
 } from '../../../../utils/constants/ActivityConstants';
 import * as styles from './AFMultiSelect.css';
+import FieldDefinition from '../../../../modules/field/FieldDefinition';
 
 /**
  * MultiSelect component
@@ -29,23 +31,39 @@ export default class AFMultiSelect extends Component {
   };
 
   componentWillMount() {
-    this.listDef = this.context.activityFieldsManager.getFieldDef(this.props.listPath);
-    if (this.listDef.children) {
-      this.selectFieldDef = this.listDef.children.find(f => f.field_name === this.props.selectField);
-    } else {
+    this.listDef = new FieldDefinition(this.context.activityFieldsManager.getFieldDef(this.props.listPath));
+    if (this.listDef.isSimpleTypeList()) {
       this.selectFieldDef = this.listDef;
+    } else {
+      this.selectFieldDef = this.listDef.children.find(f => f.field_name === this.props.selectField);
     }
-    this.isIdNumber = this.selectFieldDef && this.selectFieldDef.field_type === 'long';
+    this.selectFieldDef = new FieldDefinition(this.selectFieldDef);
+    this.isIdNumber = this.getIdAsNumber(this.selectFieldDef);
+  }
+
+  getIdAsNumber(fieldDef: FieldDefinition) {
+    if (fieldDef) {
+      const entryType = fieldDef.isSimpleTypeList() ? fieldDef.itemType : fieldDef.type;
+      return entryType === 'long';
+    }
+    return false;
   }
 
   getSelectedIds() {
-    return (this.props.values || []).map(v => v[this.props.selectField].id);
+    const values = (this.props.values || []);
+    if (this.selectFieldDef.isSimpleTypeList()) {
+      return values.map(v => v.id);
+    }
+    return values.map(v => v[this.props.selectField].id);
   }
 
   handleChange(e) {
     const selectedIds = new Set(
       Array.from(e.target.selectedOptions || []).map(so => (this.isIdNumber ? +so.value : so.value)));
-    const values = this.props.options.filter(o => selectedIds.has(o.id)).map(o => ({ [this.props.selectField]: o }));
+    let values = this.props.options.filter(o => selectedIds.has(o.id));
+    if (!this.selectFieldDef.isSimpleTypeList()) {
+      values = values.map(o => ({ [this.props.selectField]: o }));
+    }
     this.props.onChange(values);
   }
 

@@ -88,7 +88,7 @@ export default class EntityValidator {
   _areAllConstraintsMet(objects, fieldsDef, asDraft, currentPath, fieldPathsToSkipSet) {
     logger.debug('_areAllConstraintsMet');
     fieldsDef.forEach(fieldDef => {
-      const fd = fieldDef instanceof FieldDefinition ? fieldDef : new FieldDefinition(fieldDef);
+      const fd = new FieldDefinition(fieldDef);
       const fieldPath = `${currentPath ? `${currentPath}~` : ''}${fd.name}`;
       this._clearErrorState(objects, fieldPath);
       if (!fieldPathsToSkipSet || !fieldPathsToSkipSet.has(fieldPath)) {
@@ -106,7 +106,17 @@ export default class EntityValidator {
               return curr;
             }, []);
           }
-          this._areAllConstraintsMet(childrenObj, fd.children, asDraft, fieldPath, fieldPathsToSkipSet);
+          if (fd.isSimpleTypeList()) {
+            // simulate complex structure for value data type validation only
+            childrenObj = childrenObj.map(o => Utils.toMap(fd.name, o));
+            const elemFieldDef = new FieldDefinition({
+              [FPC.FIELD_NAME]: fd.name,
+              [FPC.FIELD_TYPE]: fd.itemType
+            });
+            this._validateValue(childrenObj, asDraft, elemFieldDef, fieldPath);
+          } else {
+            this._areAllConstraintsMet(childrenObj, fd.children, asDraft, fieldPath, fieldPathsToSkipSet);
+          }
         }
       }
     });
@@ -256,7 +266,8 @@ export default class EntityValidator {
             this.processValidationResult(obj, fieldPath, totError);
           }
           if (fieldDef.uniqueConstraint) {
-            this.processValidationResult(obj, fieldPath, this.uniqueValuesValidator(value, fieldDef.uniqueConstraint));
+            const uc = fieldDef.isSimpleTypeList() ? null : fieldDef.uniqueConstraint;
+            this.processValidationResult(obj, fieldPath, this.uniqueValuesValidator(value, uc));
           }
           if (!fieldDef.allowsMultipleValues()) {
             const noMultipleValuesError = this.noMultipleValuesValidator(value, fieldDef.name);
@@ -319,7 +330,7 @@ export default class EntityValidator {
 
   _getValue(obj, fieldDef: FieldDefinition, wasHydrated) {
     let value = obj[fieldDef.name];
-    value = wasHydrated && value ? value.id : value;
+    value = !fieldDef.isSimpleTypeList() && wasHydrated && value ? value.id : value;
     return value;
   }
 
@@ -439,8 +450,9 @@ export default class EntityValidator {
     const repeating = new Set();
     const unique = new Set();
     values.forEach(item => {
-      const id = item[fieldName].id;
-      const value = item[fieldName][HIERARCHICAL_VALUE] || item[fieldName].value;
+      const option = fieldName ? item[fieldName] : item;
+      const id = option.id;
+      const value = option[HIERARCHICAL_VALUE] || option.value;
       if (unique.has(id)) {
         repeating.add(value);
       } else {
