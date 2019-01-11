@@ -20,7 +20,7 @@ export default class AFNumber extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       value: undefined
     };
