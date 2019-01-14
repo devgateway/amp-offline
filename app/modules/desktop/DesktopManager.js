@@ -11,7 +11,6 @@ import {
   FUNDING_CURRENCY_PATH,
   TRANSACTION_TYPE_PATH
 } from '../../utils/constants/FieldPathConstants';
-import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import Logger from '../../modules/util/LoggerManager';
@@ -74,9 +73,10 @@ const DesktopManager = {
         status: this.getActivityStatus(item),
         donor: this.getActivityDonors(item),
         synced: this.getActivityIsSynced(item),
-        actualDisbursements: this.getActivityAmounts(item, DISBURSEMENTS, currentWorkspaceSettings,
+        actualDisbursements: this.getActivityAmounts(item, AC.DISBURSEMENTS, currentWorkspaceSettings,
           currencyRatesManager),
-        actualCommitments: this.getActivityAmounts(item, COMMITMENTS, currentWorkspaceSettings, currencyRatesManager),
+        actualCommitments: this.getActivityAmounts(item, AC.COMMITMENTS, currentWorkspaceSettings,
+          currencyRatesManager),
         view: true,
         edit: this.getActivityCanEdit(item) && !item[AC.REJECTED_ID],
         new: this.getActivityIsNew(item)
@@ -108,16 +108,15 @@ const DesktopManager = {
   getActivityAmounts(item, trnType, currentWorkspaceSettings, currencyRatesManager) {
     let amount = 0;
     if (item[AC.FUNDINGS]) {
-      item[AC.FUNDINGS].forEach((funding) => (
-        funding[AC.FUNDING_DETAILS].forEach((fd) => {
-          if (!fd[AC.TRANSACTION_TYPE] || !fd[AC.ADJUSTMENT_TYPE]) {
-            logger.error(`Data Error: transaction_type or adjustment_type is undefined. ID: ${item.id}`);
-          } else if (fd[AC.TRANSACTION_TYPE].value === trnType && fd[AC.ADJUSTMENT_TYPE].value === ACTUAL) {
+      item[AC.FUNDINGS].forEach((funding) => {
+        const fds = funding[trnType] && funding[trnType][AC.ACTUAL];
+        if (fds) {
+          fds.forEach((fd) => {
             amount += currencyRatesManager
               .convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
-          }
-        })
-      ));
+          });
+        }
+      });
     }
     return amount;
   },
