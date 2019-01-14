@@ -388,6 +388,7 @@
   "updateFailed": "AMP Offline upgrade failed.",
   "defaultSyncError": "There was an error while attempting to sync. Please try again.",
   "rejectActivityWhenContactUnsynced2": "The new contact(s) %contacts% used by the activity could not be synced to AMP. Activity cannot be synced. Please edit the activity to update or unlink the contact(s).",
+  "rejectedStaleActivity": "Activity is not the latest version.",
   "build": "build",
   "ampServerUrl": "AMP Server URL",
   "testingConnectivity": "Checking connection...",

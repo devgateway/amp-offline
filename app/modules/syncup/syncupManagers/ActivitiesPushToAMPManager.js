@@ -33,6 +33,8 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     this._cancel = false;
     this.diff = [];
     this._processed = new Set();
+    this._details[SYNCUP_DETAILS_SYNCED] = [];
+    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
   }
 
   /**
@@ -75,10 +77,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     logger.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
-    // search where IS_PUSHED is set to see why
-    const notStalePush = Utils.toMap(AC.IS_PUSHED, { $ne: true });
-    const filter = { $and: [modifiedBySpecificWSMembers, notStalePush] };
-    return ActivityHelper.findAllNonRejectedModifiedOnClient(filter);
+    return ActivityHelper.findAllNonRejectedModifiedOnClient(modifiedBySpecificWSMembers);
   }
 
   /**
@@ -98,8 +97,6 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    * @return {Promise}
    */
   doSyncUp(diff) {
-    this._details[SYNCUP_DETAILS_SYNCED] = [];
-    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
     return this._pushActivitiesToAMP(diff);
   }
 
@@ -141,6 +138,16 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
      2) activities with new changes on AMP (but not those that came from this client)
      */
     return Promise.resolve([]);
+  }
+
+  /**
+   * Reject the activity client side
+   * @param activity the activity to reject
+   * @param error the reason to reject
+   * @return {Promise}
+   */
+  rejectActivityClientSide(activity, error) {
+    return this._processPushResult({ activity, error });
   }
 
   /**
@@ -242,6 +249,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // We could simply remove client-change-id once it is pushed successfully, but we want to use it in next iteration
     // for conflicts resolution. So for now we'll flag the activity as pushed to filter it out from next push attempt.
     activity[AC.IS_PUSHED] = true;
+    activity[AC.ACTIVITY_GROUP] = pushResult[AC.ACTIVITY_GROUP];
     if (!activity[AC.AMP_ID]) {
       // update the activity with AMP ID to be matched during pull
       activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
