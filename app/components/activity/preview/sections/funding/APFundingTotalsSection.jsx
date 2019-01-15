@@ -1,7 +1,9 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
-import * as VC from '../../../../../utils/constants/ValueConstants';
+import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../../utils/translate';
 import APFundingTotalItem from './APFundingTotalItem';
 import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
@@ -28,19 +30,13 @@ class APFundingTotalsSection extends Component {
 
   render() {
     const content = [];
-    const activityFundingTotals = this.context.activityFundingTotals;
-    const actualCommitments = activityFundingTotals._buildStandardMeasureTotal(null, VC.ACTUAL, VC.COMMITMENTS);
-    const plannedCommitments = activityFundingTotals._buildStandardMeasureTotal(null, VC.PLANNED, VC.COMMITMENTS);
-    const actualDisbursements = activityFundingTotals._buildStandardMeasureTotal(null, VC.ACTUAL, VC.DISBURSEMENTS);
-    const plannedDisbursements = activityFundingTotals._buildStandardMeasureTotal(null, VC.PLANNED, VC.DISBURSEMENTS);
-    const actualExpenditures = activityFundingTotals._buildStandardMeasureTotal(null, VC.ACTUAL, VC.EXPENDITURES);
-    const plannedExpenditures = activityFundingTotals._buildStandardMeasureTotal(null, VC.PLANNED, VC.EXPENDITURES);
-    const options = [{ label: translate('Total Actual Commitments'), value: actualCommitments },
-      { label: translate('Total Planned Commitments'), value: plannedCommitments },
-      { label: translate('Total Actual Disbursements'), value: actualDisbursements },
-      { label: translate('Total Planned Disbursements'), value: plannedDisbursements },
-      { label: translate('Total Actual Expenditures'), value: actualExpenditures },
-      { label: translate('Total Planned Expenditures'), value: plannedExpenditures }];
+    const getTotals = this.context.activityFundingTotals.getTotals;
+    const actualCommitments = getTotals(AC.ACTUAL, AC.COMMITMENTS);
+    const actualDisbursements = getTotals(AC.ACTUAL, AC.DISBURSEMENTS);
+    const options = [];
+    FPC.TRANSACTION_TYPES.forEach(trnType => FPC.ADJUSTMENT_TYPES.forEach(adjType => {
+      options.push({ label: translate(`Total ${adjType} ${trnType}`), value: getTotals(adjType, trnType) });
+    }));
     options.forEach(g => {
       if (g.value > 0) {
         content.push(<APFundingTotalItem
@@ -50,12 +46,12 @@ class APFundingTotalsSection extends Component {
           label={g.label} />);
       }
     });
-    if (actualDisbursements !== 0 && plannedDisbursements !== 0) {
+    if (actualDisbursements && actualCommitments) {
       content.push(<APFundingTotalItem
         label={translate('Undisbursed Balance')} value={actualCommitments - actualDisbursements}
         currency={translate(this._wsCurrency)} key={Utils.numberRandom()} />);
     }
-    if (actualDisbursements !== 0 && plannedDisbursements !== 0) {
+    if (actualDisbursements && actualCommitments) {
       content.push(<APFundingTotalItem
         currency={translate(this._wsCurrency)} key={Utils.numberRandom()}
         value={Math.round((actualDisbursements / actualCommitments) * 100)}
