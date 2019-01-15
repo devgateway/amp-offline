@@ -35,7 +35,7 @@ export default class ActivityFundingTotals {
         }
       });
     }
-    total = this._formatTotal(total);
+    total = this.formatAmount(total);
     return total;
   }
 
@@ -69,7 +69,6 @@ export default class ActivityFundingTotals {
     if (path.length === 2) {
       value = this._buildStandardMeasureTotal(filter, path[0], path[1]);
     }
-    value = this._formatTotal(value);
     cache[filter] = value;
     return value;
   }
@@ -87,13 +86,9 @@ export default class ActivityFundingTotals {
     const fundingDetails = [];
     if (this._activity.fundings) {
       this._activity.fundings.forEach(funding => {
-        if (funding.funding_details) {
-          funding.funding_details.forEach(fd => {
-            if (fd[AC.ADJUSTMENT_TYPE].value === adjType
-              && fd[AC.TRANSACTION_TYPE] && fd[AC.TRANSACTION_TYPE].value === trnType) {
-              fundingDetails.push(fd);
-            }
-          });
+        const fds = funding[trnType] && funding[adjType];
+        if (fds) {
+          fundingDetails.push(...fds);
         }
       });
     }
@@ -106,8 +101,11 @@ export default class ActivityFundingTotals {
     return total;
   }
 
-  _formatTotal(total) {
-    let value = NumberUtils.rawNumberToFormattedString(total);
+  formatAmount(amount, isPercentage = false) {
+    let value = NumberUtils.rawNumberToFormattedString(amount);
+    if (isPercentage) {
+      return `${value}%`;
+    }
     value = value.toLocaleString('en-EN', {
       currency: this._currentWorkspaceSettings.currency.code,
       currencyDisplay: 'code'

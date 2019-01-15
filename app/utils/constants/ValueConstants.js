@@ -2,6 +2,8 @@
  * @author Nadejda Mandrescu
  */
 
+import * as AC from './ActivityConstants';
+
 export const DONOR_ORGANIZATION = 'Donor Organization';
 export const RESPONSIBLE_ORGANIZATION = 'Responsible Organization';
 export const EXECUTING_AGENCY = 'Executing Agency';
@@ -20,18 +22,17 @@ export const PLANNED = 'Planned';
 export const COMMITMENTS = 'Commitments';
 export const DISBURSEMENTS = 'Disbursements';
 export const EXPENDITURES = 'Expenditures';
-export const ACTUAL_COMMITMENTS = 'Actual Commitments';
-export const ACTUAL_DISBURSEMENTS = 'Actual Disbursements';
-export const ACTUAL_EXPENDITURES = 'Actual Expenditures';
-export const PLANNED_COMMITMENTS = 'Planned Commitments';
-export const PLANNED_DISBURSEMENTS = 'Planned Disbursements';
-export const PLANNED_EXPENDITURES = 'Planned Expenditures';
+export const ACTUAL_COMMITMENTS = `${AC.ACTUAL} ${AC.COMMITMENTS}`;
+export const ACTUAL_DISBURSEMENTS = `${AC.ACTUAL} ${AC.DISBURSEMENTS}`;
+export const ACTUAL_EXPENDITURES = `${AC.ACTUAL} ${AC.EXPENDITURES}`;
+export const PLANNED_COMMITMENTS = `${AC.PLANNED} ${AC.COMMITMENTS}`;
+export const PLANNED_DISBURSEMENTS = `${AC.PLANNED} ${AC.DISBURSEMENTS}`;
+export const PLANNED_EXPENDITURES = `${AC.PLANNED} ${AC.EXPENDITURES}`;
 export const UNALLOCATED_DISBURSEMENTS = 'Unallocated Disbursements';
 export const DELIVERY_RATE = 'Delivery rate';
 export const MTEF_PROJECTIONS = 'MTEF Projections';
 
 export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
-export const TRANSACTION_TYPES = [COMMITMENTS, DISBURSEMENTS, EXPENDITURES];
 
 export const NEW_ACTIVITY_ID = '0';
 

@@ -1,15 +1,16 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Section from './Section';
 import APField from '../components/APField';
 import * as VC from '../../../../utils/constants/ValueConstants';
-import * as PC from '../../../../utils/constants/FieldPathConstants';
+import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import FeatureManager from '../../../../modules/util/FeatureManager';
-import NumberUtils from '../../../../utils/NumberUtils';
+import * as AC from '../../../../utils/constants/ActivityConstants';
 
 const logger = new Logger('Funding summary');
 
@@ -29,7 +30,7 @@ class FundingSummary extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   /**
@@ -39,36 +40,20 @@ class FundingSummary extends Component {
    */
   _buildFundingInformation() {
     const measuresTotals = {};
-    let expendituresAreEnabled = false;
-    let actualCommitmentsAreEnabled = false;
-    let actualDisbursementsAreEnabled = false;
+    const { isFieldPathByPartsEnabled } = this.props.activityFieldsManager;
     // Commitments, Disbursements, Expenditures
-    VC.TRANSACTION_TYPES.forEach(trnType => {
-      const pv = this.props.activityFieldsManager.possibleValuesMap[PC.TRANSACTION_TYPE_PATH];
-      const enabledTrnList = Object.keys(pv).map((i) => (pv[i].value));
-      if (enabledTrnList.filter((t) => (t === trnType)).length > 0) {
-        // checking if this transaction type is provided as an option, through a trick by detecting the translation
-        VC.ADJUSTMENT_TYPES.forEach(adjType => {
-          if (adjType && trnType) {
-            const value = this.props.activityFundingTotals.getTotals(adjType, trnType, {});
-            measuresTotals[`${adjType} ${trnType}`] = value;
-          }
-          // Save these 2 flags for "Delivery rate".
-          if (trnType === VC.COMMITMENTS && adjType === VC.ACTUAL) {
-            actualCommitmentsAreEnabled = true;
-          }
-          if (trnType === VC.DISBURSEMENTS && adjType === VC.ACTUAL) {
-            actualDisbursementsAreEnabled = true;
-          }
-        });
-        // Save this flag for "Unallocated Disbursements".
-        if (trnType === VC.EXPENDITURES) {
-          expendituresAreEnabled = true;
+    FPC.TRANSACTION_TYPES.forEach(trnType => {
+      // actual, planned
+      FPC.ADJUSTMENT_TYPES.forEach(adjType => {
+        if (this.props.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType, adjType)) {
+          const value = this.props.activityFundingTotals.getTotals(adjType, trnType, {});
+          measuresTotals[`${adjType} ${trnType}`] = value;
         }
-      }
+      });
     });
     // Other measures: "Unallocated Disbursements".
-    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(PC.ADJUSTMENT_TYPE_PATH, VC.ACTUAL);
+    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FPC.DISBURSEMENTS_PATH, AC.ACTUAL);
+    const expendituresAreEnabled = isFieldPathByPartsEnabled(AC.FUNDINGS, AC.EXPENDITURES);
     if (adjTypeActualTrn && expendituresAreEnabled) {
       const ub = VC.UNALLOCATED_DISBURSEMENTS;
       measuresTotals[ub] = this.props.activityFundingTotals.getTotals(ub, {});
@@ -79,17 +64,14 @@ class FundingSummary extends Component {
     }
     // Other measures: "Delivery rate".
     if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DELIVERY_RATE)) {
-      if (actualCommitmentsAreEnabled && actualDisbursementsAreEnabled
-        && measuresTotals[`${VC.ACTUAL} ${VC.DISBURSEMENTS}`] !== '0'
-        && measuresTotals[`${VC.ACTUAL} ${VC.COMMITMENTS}`] !== '0') {
-        let value = NumberUtils.formattedStringToRawNumber(measuresTotals[`${VC.ACTUAL} ${VC.DISBURSEMENTS}`])
-          / NumberUtils.formattedStringToRawNumber(measuresTotals[`${VC.ACTUAL} ${VC.COMMITMENTS}`]);
-        value *= 100;
-        value = `${NumberUtils.rawNumberToFormattedString(value)}%`;
-        measuresTotals[VC.DELIVERY_RATE] = value;
-      } else {
-        measuresTotals[VC.DELIVERY_RATE] = '0%';
+      const actualCommitments = measuresTotals[`${AC.ACTUAL} ${AC.COMMITMENTS}`];
+      const actualDisbursements = measuresTotals[`${AC.ACTUAL} ${AC.DISBURSEMENTS}`];
+      let value = 0;
+      if (actualCommitments && actualDisbursements && isFieldPathByPartsEnabled(AC.FUNDINGS, AC.COMMITMENTS, AC.ACTUAL)
+        && isFieldPathByPartsEnabled(AC.FUNDINGS, AC.DISBURSEMENTS, AC.ACTUAL)) {
+        value = (actualDisbursements / actualCommitments) * 100;
       }
+      measuresTotals[VC.DELIVERY_RATE] = value;
     }
 
     return this._buildTotalFields(measuresTotals);
@@ -105,11 +87,12 @@ class FundingSummary extends Component {
       { trn: VC.UNALLOCATED_DISBURSEMENTS, total: false },
       { trn: VC.PLANNED_EXPENDITURES, total: true },
       { trn: VC.MTEF_PROJECTIONS, total: true },
-      { trn: VC.DELIVERY_RATE, total: false }];
+      { trn: VC.DELIVERY_RATE, total: false, isPercentage: true }];
     const fundingInfoSummary = [];
     measuresOrder.forEach(measure => {
-      const value = measuresTotals[measure.trn];
+      let value = measuresTotals[measure.trn];
       if (value !== undefined) {
+        value = this.props.activityFundingTotals.formatAmount(value, measure.isPercentage);
         let title = measure.trn;
         if (measure.total) {
           title = `Total ${title}`;
