@@ -30,7 +30,7 @@ class APFundingSection extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   _compareFundings(f1, f2) {
