@@ -22,7 +22,7 @@ const DesktopManager = {
   generateDesktopData(workspace, teamMemberId, currentWorkspaceSettings, currencyRatesManager) {
     logger.log('generateDesktopData');
     return new Promise((resolve, reject) =>
-      WorkspaceFilter.getDBFilter(workspace).then(wsFilter =>
+      WorkspaceFilter.getDBFilter(workspace, teamMemberId).then(wsFilter =>
         this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
           currencyRatesManager)
           .then((tab1Data) =>

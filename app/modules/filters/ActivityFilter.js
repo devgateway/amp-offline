@@ -8,6 +8,7 @@ import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
+import FieldsManager from '../field/FieldsManager';
 
 const logger = new Logger('Activity filter');
 
@@ -18,8 +19,9 @@ const logger = new Logger('Activity filter');
  */
 export default class ActivityFilter {
 
-  constructor(filters) {
+  constructor(filters, fieldsManager: FieldsManager) {
     this._filters = filters;
+    this._fieldsManager = fieldsManager;
     this._dbFilter = undefined;
     this._dateFilterHidesProjects = undefined;
     this._locationOptions = undefined;
@@ -215,10 +217,17 @@ export default class ActivityFilter {
     this._addValueFilter(AC.EXPENDITURE_CLASS, '$in', 'expenditureClass', details);
 
     if (Object.keys(details).length > 0) {
-      const trnAdjRules = [];
-      FPC.TRANSACTION_TYPES.forEach(trnType => FPC.ADJUSTMENT_TYPES.forEach(adjType => {
-        trnAdjRules.push(Utils.toMap(`${trnType}.${adjType}`, { $elemMatch: details }));
-      }));
+      const trnAdjRules = FPC.TRANSACTION_TYPES.map(trnType => {
+        // TODO TBC how hidden adj type data is handled on AMP and should be handled in AMP Offline
+        let ato = this._fieldsManager.getPossibleValuesOptions(`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`);
+        ato = ato.map(o => o.id);
+        return Utils.toMap(trnType, {
+          $elemMatch: {
+            ...details,
+            [AC.ADJUSTMENT_TYPE]: { $in: ato }
+          }
+        });
+      });
       result = { $or: trnAdjRules };
     }
     return result;
