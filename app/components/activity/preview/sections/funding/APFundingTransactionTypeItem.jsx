@@ -32,7 +32,7 @@ class APFundingTransactionTypeItem extends Component {
 
   constructor(props, context) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this._currency = context.currentWorkspaceSettings.currency.code;
   }
 
@@ -107,7 +107,7 @@ class APFundingTransactionTypeItem extends Component {
   }
 
   render() {
-    logger.log('render');
+    logger.debug('render');
     return (<div className={styles.table_container}>
       <div>{this._drawHeader()}</div>
       <div>{this._drawDetail()}</div>

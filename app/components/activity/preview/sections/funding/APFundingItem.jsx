@@ -32,7 +32,7 @@ class APFundingItem extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   getDisasterResponse() {
@@ -115,7 +115,7 @@ class APFundingItem extends Component {
   }
 
   render() {
-    logger.log('render');
+    logger.debug('render');
     const convertedAmount = this.context.currencyRatesManager.convertTransactionAmountToCurrency(this.props.item,
       this.props.wsCurrency);
     return (

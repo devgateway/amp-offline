@@ -29,7 +29,7 @@ class APFundingOrganizationSection extends Component {
 
   constructor(props, context) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this._currency = context.currentWorkspaceSettings.currency.code;
   }
 
