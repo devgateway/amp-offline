@@ -19,7 +19,7 @@ export default class ActivityFundingTotals {
     return this._getTotals(filter, [measureName]);
   }
 
-  getTotals(adjType, trnType, filter) {
+  getTotals(adjType, trnType, filter = {}) {
     return this._getTotals(filter, [adjType, trnType]);
   }
 
@@ -86,8 +86,8 @@ export default class ActivityFundingTotals {
     const fundingDetails = [];
     if (this._activity.fundings) {
       this._activity.fundings.forEach(funding => {
-        const fds = funding[trnType] && funding[adjType];
-        if (fds) {
+        const fds = funding[trnType] && funding[trnType].filter(fd => fd[AC.ADJUSTMENT_TYPE].id === adjType);
+        if (fds && fds.length) {
           fundingDetails.push(...fds);
         }
       });

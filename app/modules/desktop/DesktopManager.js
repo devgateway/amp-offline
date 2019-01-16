@@ -5,6 +5,7 @@ import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
 import * as AC from '../../utils/constants/ActivityConstants';
+import * as VC from '../../utils/constants/ValueConstants';
 import {
   ADJUSTMENT_TYPE_PATH,
   DONOR_ORGANIZATIONS_PATH,
@@ -109,7 +110,7 @@ const DesktopManager = {
     let amount = 0;
     if (item[AC.FUNDINGS]) {
       item[AC.FUNDINGS].forEach((funding) => {
-        const fds = funding[trnType] && funding[trnType][AC.ACTUAL];
+        const fds = funding[trnType] && funding[trnType].filter(fd => fd[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL);
         if (fds) {
           fds.forEach((fd) => {
             amount += currencyRatesManager

@@ -40,19 +40,24 @@ class FundingSummary extends Component {
    */
   _buildFundingInformation() {
     const measuresTotals = {};
-    const { isFieldPathByPartsEnabled } = this.props.activityFieldsManager;
+    const { isFieldPathByPartsEnabled, getPossibleValuesOptions } = this.props.activityFieldsManager;
+    let acEnabled = false;
+    let adEnabled = false;
     // Commitments, Disbursements, Expenditures
     FPC.TRANSACTION_TYPES.forEach(trnType => {
-      // actual, planned
-      FPC.ADJUSTMENT_TYPES.forEach(adjType => {
-        if (this.props.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType, adjType)) {
-          const value = this.props.activityFundingTotals.getTotals(adjType, trnType, {});
-          measuresTotals[`${adjType} ${trnType}`] = value;
-        }
-      });
+      if (this.props.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
+        const atOptions = getPossibleValuesOptions(`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`);
+        acEnabled = acEnabled || (trnType === AC.COMMITMENTS && !!atOptions.find(o => o.value === VC.ACTUAL));
+        adEnabled = adEnabled || (trnType === AC.DISBURSEMENTS && !!atOptions.find(o => o.value === VC.ACTUAL));
+        // Actual, Planned
+        atOptions.forEach(adjType => {
+          const value = this.props.activityFundingTotals.getTotals(adjType.id, trnType, {});
+          measuresTotals[`${adjType.value} ${trnType}`] = value;
+        });
+      }
     });
     // Other measures: "Unallocated Disbursements".
-    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FPC.DISBURSEMENTS_PATH, AC.ACTUAL);
+    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FPC.DISBURSEMENTS_PATH, VC.ACTUAL);
     const expendituresAreEnabled = isFieldPathByPartsEnabled(AC.FUNDINGS, AC.EXPENDITURES);
     if (adjTypeActualTrn && expendituresAreEnabled) {
       const ub = VC.UNALLOCATED_DISBURSEMENTS;
@@ -64,11 +69,10 @@ class FundingSummary extends Component {
     }
     // Other measures: "Delivery rate".
     if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DELIVERY_RATE)) {
-      const actualCommitments = measuresTotals[`${AC.ACTUAL} ${AC.COMMITMENTS}`];
-      const actualDisbursements = measuresTotals[`${AC.ACTUAL} ${AC.DISBURSEMENTS}`];
+      const actualCommitments = measuresTotals[`${VC.ACTUAL} ${AC.COMMITMENTS}`];
+      const actualDisbursements = measuresTotals[`${VC.ACTUAL} ${AC.DISBURSEMENTS}`];
       let value = 0;
-      if (actualCommitments && actualDisbursements && isFieldPathByPartsEnabled(AC.FUNDINGS, AC.COMMITMENTS, AC.ACTUAL)
-        && isFieldPathByPartsEnabled(AC.FUNDINGS, AC.DISBURSEMENTS, AC.ACTUAL)) {
+      if (actualCommitments && actualDisbursements && acEnabled && adEnabled) {
         value = (actualDisbursements / actualCommitments) * 100;
       }
       measuresTotals[VC.DELIVERY_RATE] = value;
