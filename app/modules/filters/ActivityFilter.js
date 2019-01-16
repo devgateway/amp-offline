@@ -1,11 +1,10 @@
 import * as AC from '../../utils/constants/ActivityConstants';
-import { FIELD_OPTIONS, LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
+import * as FPC from '../../utils/constants/FieldPathConstants';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
 import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
-// import PossibleValuesManager from '../activity/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
@@ -47,13 +46,13 @@ export default class ActivityFilter {
     return Promise.all([
       this._getWorkspaces(),
       GlobalSettingsHelper.findByKey(FILTER_BY_DATE_HIDE_PROJECTS),
-      PossibleValuesHelper.findById(LOCATION_PATH)
+      PossibleValuesHelper.findById(FPC.LOCATION_PATH)
     ])
       .then(([workspaces, dateFilterHidesProjects, locationOptions]) => {
         this._wsIds = workspaces;
         this._dateFilterHidesProjects = (dateFilterHidesProjects && dateFilterHidesProjects.value === 'true');
-        if (locationOptions && locationOptions[FIELD_OPTIONS]) {
-          this._locationOptions = locationOptions[FIELD_OPTIONS];
+        if (locationOptions && locationOptions[FPC.FIELD_OPTIONS]) {
+          this._locationOptions = locationOptions[FPC.FIELD_OPTIONS];
         } else {
           this._locationOptions = [];
         }
@@ -196,8 +195,8 @@ export default class ActivityFilter {
       fundings.$elemMatch = fundingDetails;
     }
 
-    if (fundings.size > 0) {
-      this._tmpFilter[AC.FUNDINGS] = { $and: fundings };
+    if (Object.keys(fundings).length > 0) {
+      this._tmpFilter[AC.FUNDINGS] = fundings;
     }
   }
 
@@ -215,8 +214,12 @@ export default class ActivityFilter {
 
     this._addValueFilter(AC.EXPENDITURE_CLASS, '$in', 'expenditureClass', details);
 
-    if (details.size > 0) {
-      result = Utils.toMap(AC.FUNDING_DETAILS, { $elemMatch: details });
+    if (Object.keys(details).length > 0) {
+      const trnAdjRules = [];
+      FPC.TRANSACTION_TYPES.forEach(trnType => FPC.ADJUSTMENT_TYPES.forEach(adjType => {
+        trnAdjRules.push(Utils.toMap(`${trnType}.${adjType}`, { $elemMatch: details }));
+      }));
+      result = { $or: trnAdjRules };
     }
     return result;
   }
