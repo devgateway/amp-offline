@@ -27,7 +27,7 @@ export default class APFundingTransactionTypeItem extends Component {
   static propTypes = {
     trnType: PropTypes.string.isRequired,
     fundingDetails: PropTypes.array.isRequired,
-    buildSimpleField: PropTypes.object.isRequired
+    buildSimpleField: PropTypes.func.isRequired
   };
 
   constructor(props, context) {
