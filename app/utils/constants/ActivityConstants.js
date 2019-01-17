@@ -1,12 +1,9 @@
-import * as ValueConstants from './ValueConstants';
 import * as FMC from './FeatureManagerConstants';
 import { capitalize } from '../Utils';
 
 /**
  * @author Nadejda Mandrescu
  */
-
-export const ORG_ROLE_FIELDS = toFieldNames(ValueConstants.ORG_ROLE_NAMES);
 
 // Activity fields
 export const ACTIVITY_BUDGET = 'activity_budget';
