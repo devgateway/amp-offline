@@ -1,15 +1,12 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../../utils/translate';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APFundingItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
-import FeatureManager from '../../../../../modules/util/FeatureManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP Funding item');
@@ -17,12 +14,16 @@ const logger = new Logger('AP Funding item');
 /**
  * @author Gabriel Inchauspe
  */
-class APFundingItem extends Component {
+export default class APFundingItem extends Component {
 
   static propTypes = {
     item: PropTypes.object.isRequired,
+    trnType: PropTypes.string.isRequired,
     wsCurrency: PropTypes.string.isRequired,
-    buildSimpleField: PropTypes.func.isRequired
+    buildSimpleField: PropTypes.func.isRequired,
+    showDisasterResponse: PropTypes.bool.isRequired,
+    showPledge: PropTypes.bool.isRequired,
+    showFixedExchangeRate: PropTypes.bool.isRequired,
   };
 
   static contextTypes = {
@@ -36,28 +37,15 @@ class APFundingItem extends Component {
   }
 
   getDisasterResponse() {
-    if (this.props.item[AC.DISASTER_RESPONSE] === true) {
-      return this.context.activityFieldsManager.getFieldLabelTranslation(FPC.DISASTER_RESPONSE_PATH);
+    if (this.props.showDisasterResponse && this.props.item[AC.DISASTER_RESPONSE] === true) {
+      const { activityFieldsManager } = this.context;
+      return activityFieldsManager.getFieldLabelTranslation(AC.FUNDINGS, this.props.trnType, AC.DISASTER_RESPONSE);
     }
     return '';
   }
 
   insertPledgeRow() {
-    let pledgeFMPath;
-    switch (this.props.item[AC.TRANSACTION_TYPE].value) {
-      case VC.COMMITMENTS:
-        pledgeFMPath = FMC.ACTIVITY_COMMITMENTS_PLEDGES;
-        break;
-      case VC.DISBURSEMENTS:
-        pledgeFMPath = FMC.ACTIVITY_DISBURSEMENTS_PLEDGES;
-        break;
-      case VC.EXPENDITURES:
-        pledgeFMPath = FMC.ACTIVITY_EXPENDITURES_PLEDGES;
-        break;
-      default:
-        break;
-    }
-    if (this.props.item.pledge && FeatureManager.isFMSettingEnabled(pledgeFMPath)) {
+    if (this.props.item.pledge && this.props.showPledge) {
       return (<tr className={styles.row}>
         <td colSpan={AC.AP_FUNDINGS_TABLE_COLS} className={styles.left_text}>
           <span className={styles.pledge_row}>
@@ -72,17 +60,17 @@ class APFundingItem extends Component {
   }
 
   insertRecipientOrgRow() {
-    const { item, buildSimpleField } = this.props;
+    const { item, buildSimpleField, trnType } = this.props;
     if (item[AC.RECIPIENT_ORGANIZATION] && item[AC.RECIPIENT_ROLE]) {
       const options = { noTitle: true };
       return (<tr>
         <td colSpan={AC.AP_FUNDINGS_TABLE_COLS} className={styles.left_text}>
           <span className={styles.recipient_row}>
             <span className={styles.normal}>{`${translate('Recipient')}: `}</span>
-            {buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.RECIPIENT_ORGANIZATION]}`,
+            {buildSimpleField(`${AC.FUNDINGS}~${trnType}~${AC.RECIPIENT_ORGANIZATION}`,
               true, null, true, item, null, options)}
             <span className={styles.normal}>{` ${translate('as the')} `}</span>
-            {buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DETAILS]}~${[AC.RECIPIENT_ROLE]}`,
+            {buildSimpleField(`${AC.FUNDINGS}~${trnType}~${AC.RECIPIENT_ROLE}`,
               true, null, true, item, null, options)}
           </span>
         </td>
@@ -93,25 +81,7 @@ class APFundingItem extends Component {
   }
 
   insertFixedExchangeRateCell() {
-    let exchangeRateFMPath;
-    switch (this.props.item[AC.TRANSACTION_TYPE].value) {
-      case VC.COMMITMENTS:
-        exchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
-        break;
-      case VC.DISBURSEMENTS:
-        exchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
-        break;
-      case VC.EXPENDITURES:
-        exchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
-        break;
-      default:
-        break;
-    }
-    if (FeatureManager.isFMSettingEnabled(exchangeRateFMPath)) {
-      return this.props.item[AC.FIXED_EXCHANGE_RATE];
-    } else {
-      return null;
-    }
+    return this.props.showFixedExchangeRate ? this.props.item[AC.FIXED_EXCHANGE_RATE] : null;
   }
 
   render() {
@@ -134,5 +104,3 @@ class APFundingItem extends Component {
       </tbody>);
   }
 }
-
-export default APFundingItem;

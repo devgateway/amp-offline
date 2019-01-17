@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Section from '../Section';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { APProposedProjectCost } from '../APProjectCost';
@@ -7,9 +8,7 @@ import APFundingOrganizationSection from './APFundingOrganizationSection';
 import APFundingTotalsSection from './APFundingTotalsSection';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import fundingStyles from './APFundingSection.css';
-import * as VC from '../../../../../utils/constants/ValueConstants';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
-import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
 
 const logger = new Logger('AP funding section');
 
@@ -24,63 +23,9 @@ class APFundingSection extends Component {
     buildSimpleField: PropTypes.func.isRequired
   };
 
-  static contextTypes = {
-    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
-  };
-
   constructor(props) {
     super(props);
     logger.debug('constructor');
-  }
-
-  _compareFundings(f1, f2) {
-    let f1String = '';
-    let f2String = '';
-    switch (f1.trnType.value) {
-      case VC.COMMITMENTS:
-        f1String += 'a';
-        break;
-      case VC.DISBURSEMENTS:
-        f1String += 'b';
-        break;
-      default:
-        f1String += 'c';
-        break;
-    }
-    switch (f1.adjType.value) {
-      case VC.PLANNED:
-        f1String += 'a';
-        break;
-      case VC.ACTUAL:
-        f1String += 'b';
-        break;
-      default:
-        f1String += 'c';
-        break;
-    }
-    switch (f2.trnType.value) {
-      case VC.COMMITMENTS:
-        f2String += 'a';
-        break;
-      case VC.DISBURSEMENTS:
-        f2String += 'b';
-        break;
-      default:
-        f2String += 'c';
-        break;
-    }
-    switch (f2.adjType.value) {
-      case VC.PLANNED:
-        f2String += 'a';
-        break;
-      case VC.ACTUAL:
-        f2String += 'b';
-        break;
-      default:
-        f2String += 'c';
-        break;
-    }
-    return f1String > f2String ? 1 : -1;
   }
 
   render() {
@@ -90,7 +35,6 @@ class APFundingSection extends Component {
       this.props.activity.fundings.forEach((funding) => {
         const item = (<APFundingOrganizationSection
           funding={funding} key={funding[AC.AMP_FUNDING_ID]}
-          comparator={this._compareFundings}
           buildSimpleField={this.props.buildSimpleField} />);
         fundingList.push(item);
       });

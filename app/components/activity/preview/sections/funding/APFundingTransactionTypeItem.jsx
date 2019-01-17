@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Logger from '../../../../../modules/util/LoggerManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import translate from '../../../../../utils/translate';
@@ -8,25 +9,24 @@ import APFundingTotalItem from './APFundingTotalItem';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import APLabel from '../../components/APLabel';
 import Utils from '../../../../../utils/Utils';
-import FeatureManager from '../../../../../modules/util/FeatureManager';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP Funding transaction type item');
 
 /**
  * @author Gabriel Inchauspe
  */
-class APFundingTransactionTypeItem extends Component {
+export default class APFundingTransactionTypeItem extends Component {
 
   static contextTypes = {
     currentWorkspaceSettings: PropTypes.object.isRequired,
-    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager)
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
   };
 
   static propTypes = {
+    trnType: PropTypes.string.isRequired,
     fundingDetails: PropTypes.array.isRequired,
-    group: PropTypes.object.isRequired,
     buildSimpleField: PropTypes.object.isRequired
   };
 
@@ -34,76 +34,47 @@ class APFundingTransactionTypeItem extends Component {
     super(props);
     logger.debug('constructor');
     this._currency = context.currentWorkspaceSettings.currency.code;
-  }
-
-  _filterFundingDetails() {
-    return (this.props.fundingDetails.filter(o =>
-      (o[AC.TRANSACTION_TYPE] && o[AC.TRANSACTION_TYPE].id === this.props.group.trnType.id)
-      && o[AC.ADJUSTMENT_TYPE].id === this.props.group.adjType.id));
+    this._adjType = props[0][AC.ADJUSTMENT_TYPE];
+    this._measure = `${this._adjType.value} ${props.trnType}`;
+    this._key = this._adjType.value + props.trnType;
+    const { isFieldPathByPartsEnabled } = context.activityFieldsManager;
+    this._showFixedExRate = isFieldPathByPartsEnabled(AC.FUNDINGS, props.trnType, AC.FIXED_EXCHANGE_RATE);
+    this._showDisasterResponse = isFieldPathByPartsEnabled(AC.FUNDINGS, props.trnType, AC.DISASTER_RESPONSE);
+    this._showPledge = isFieldPathByPartsEnabled(AC.FUNDINGS, props.trnType, AC.PLEDGE);
   }
 
   _drawHeader() {
-    const measure = `${this.props.group.adjType.value} ${this.props.group.trnType.value}`;
-    const label = translate(measure);
-    const key = this.props.group.adjType.value + this.props.group.trnType.value;
-    let fixedExchangeRateFMPath;
-    switch (this.props.group.trnType.value) {
-      case VC.COMMITMENTS:
-        fixedExchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
-        break;
-      case VC.DISBURSEMENTS:
-        fixedExchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
-        break;
-      case VC.EXPENDITURES:
-        fixedExchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
-        break;
-      default:
-        break;
-    }
-    if (this.props.group.trnType.value) {
-      return (<div>
-        <APLabel label={label} labelClass={styles.header} key={key} />
-        {fixedExchangeRateFMPath && FeatureManager.isFMSettingEnabled(fixedExchangeRateFMPath) ?
+    return (
+      <div>
+        <APLabel label={translate(this._measure)} labelClass={styles.header} key={this._key} />
+        {this._showFixedExRate ?
           <APLabel label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
       </div>);
-    } else {
-      return null;
-    }
   }
 
   _drawDetail() {
-    const filteredFD = this._filterFundingDetails();
-    const content = [];
-    filteredFD.forEach((item) => {
-      content.push(<APFundingItem
-        item={item} key={Utils.numberRandom()} wsCurrency={this._currency}
-        buildSimpleField={this.props.buildSimpleField} />);
-    });
-    if (content.length > 0) {
-      // Not worth the effort to use BootstrapTable here.
-      return <table className={styles.funding_table}>{content}</table>;
-    } else {
-      return null;
-    }
+    const { fundingDetails } = this.props;
+    return (<table className={styles.funding_table}>
+      {fundingDetails.map(item =>
+        <APFundingItem
+          item={item} key={Utils.numberRandom()} wsCurrency={this._currency}
+          buildSimpleField={this.props.buildSimpleField} />)
+      }
+    </table>);
   }
 
   _drawSubTotalFooter() {
-    let subtotal = 0;
-    subtotal = this.context.currencyRatesManager.convertFundingDetailsToCurrency(this._filterFundingDetails(),
-      this._currency);
-    const measure = `${this.props.group.adjType.value} ${this.props.group.trnType.value}`;
-    const labelTrn = translate(`Subtotal ${measure}`).toUpperCase();
-    if (this.props.group.trnType.value) {
-      return (<div>
+    const { fundingDetails } = this.props;
+    const subtotal = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fundingDetails, this._currency);
+    const labelTrn = translate(`Subtotal ${this._measure}`).toUpperCase();
+    return (
+      <div>
         <APFundingTotalItem
-          value={subtotal}
-          label={labelTrn}
-          currency={translate(this._currency)}
-          key={this.props.group.adjType.value + this.props.group.trnType.value} />
+          value={subtotal} label={labelTrn} currency={translate(this._currency)} key={this._key}
+          showDisasterResponse={this._showDisasterResponse} showPledge={this._showPledge}
+          showFixedExchangeRate={this._showFixedExRate}
+        />
       </div>);
-    } else {
-      return null;
-    }
   }
 
   render() {
@@ -115,5 +86,3 @@ class APFundingTransactionTypeItem extends Component {
     </div>);
   }
 }
-
-export default APFundingTransactionTypeItem;

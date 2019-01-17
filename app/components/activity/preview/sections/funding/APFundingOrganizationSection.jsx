@@ -3,6 +3,7 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import Tablify from '../../components/Tablify';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
@@ -19,7 +20,6 @@ class APFundingOrganizationSection extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    comparator: PropTypes.func.isRequired,
     buildSimpleField: PropTypes.func.isRequired
   };
   static contextTypes = {
@@ -65,46 +65,37 @@ class APFundingOrganizationSection extends Component {
   }
 
   _buildFundingDetailSection() {
-    const content = [];
     // Group the list of funding details by adjustment_type and transaction_type.
-    const fd = this.props.funding[AC.FUNDING_DETAILS];
     const groups = [];
-    fd.forEach((item) => {
-      const auxFd = {
-        adjType: item[AC.ADJUSTMENT_TYPE],
-        trnType: item[AC.TRANSACTION_TYPE] || {},
-        key: item.id,
-        currency: item[AC.CURRENCY]
-      };
-      if (!groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id)) {
-        groups.push(auxFd);
+    FPC.TRANSACTION_TYPES_ORDERED.forEach(trnType => {
+      const fds = this.props.funding[trnType] || [];
+      if (fds && fds.length) {
+        const fdByAT = VC.ADJUSTMENT_TYPES_AP_ORDER.reduce((adjType, prev) =>
+          prev.push(...fds.filter(it => it[AC.ADJUSTMENT_TYPE] && it[AC.ADJUSTMENT_TYPE].value === adjType)), []);
+        groups.push([trnType, fdByAT]);
       }
     });
-    const sortedGroups = groups.sort(this.props.comparator);
-    sortedGroups.forEach((group) => {
-      content.push(<APFundingTransactionTypeItem
-        fundingDetails={fd} group={group} key={group.key} buildSimpleField={this.props.buildSimpleField} />);
-    });
-    return content;
+    return groups.map(([trnType, group], idx) =>
+      <APFundingTransactionTypeItem
+        trnType={trnType} fundingDetails={group} key={idx} buildSimpleField={this.props.buildSimpleField} />
+    );
   }
 
   _buildUndisbursedBalanceSection() {
     let totalActualDisbursements = 0;
     let totalActualCommitments = 0;
-    const fd = this.props.funding[AC.FUNDING_DETAILS];
+    const fd = this.props.funding;
     if (!fd || fd.length === 0) {
       // Dont show this section if there are no funding details.
       return null;
     }
-    const fdActualCommitments = fd.filter((item) =>
+    const fdActualCommitments = (fd[AC.COMMITMENTS] || []).filter(item =>
       item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL
-      && item[AC.TRANSACTION_TYPE] && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS
     );
     totalActualCommitments = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualCommitments,
       this._currency);
-    const fdActualDisbursements = fd.filter((item) =>
+    const fdActualDisbursements = (fd[AC.DISBURSEMENTS] || []).filter(item =>
       item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL
-      && item[AC.TRANSACTION_TYPE] && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS
     );
     totalActualDisbursements = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualDisbursements,
       this._currency);

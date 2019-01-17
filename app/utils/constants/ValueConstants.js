@@ -33,6 +33,7 @@ export const DELIVERY_RATE = 'Delivery rate';
 export const MTEF_PROJECTIONS = 'MTEF Projections';
 
 export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
+export const ADJUSTMENT_TYPES_AP_ORDER = [PLANNED, ACTUAL];
 
 export const NEW_ACTIVITY_ID = '0';
 

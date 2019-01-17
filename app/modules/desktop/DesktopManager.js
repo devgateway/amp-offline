@@ -7,10 +7,9 @@ import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as VC from '../../utils/constants/ValueConstants';
 import {
-  ADJUSTMENT_TYPE_PATH,
+  ADJUSTMENT_TYPE_PATHS,
   DONOR_ORGANIZATIONS_PATH,
-  FUNDING_CURRENCY_PATH,
-  TRANSACTION_TYPE_PATH
+  FUNDING_CURRENCY_PATH
 } from '../../utils/constants/FieldPathConstants';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
@@ -61,7 +60,7 @@ const DesktopManager = {
     logger.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
-      fieldPaths: [DONOR_ORGANIZATIONS_PATH, ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, FUNDING_CURRENCY_PATH],
+      fieldPaths: [DONOR_ORGANIZATIONS_PATH, ...ADJUSTMENT_TYPE_PATHS, FUNDING_CURRENCY_PATH],
       teamMemberId
     });
   },
