@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
+import * as Utils from '../../../../utils/Utils';
 
 const logger = new Logger('tablify');
 
@@ -35,9 +36,9 @@ export default class Tablify extends Component {
     for (let i = 0; i < rows; i++) {
       const rowContent = [];
       for (let j = 0; j < cols; j++) {
-        rowContent.push(<td>{content.pop()}</td>);
+        rowContent.push(<td key={Utils.stringToUniqueId()}>{content.pop()}</td>);
       }
-      tableContent.push(<tr>{rowContent}</tr>);
+      tableContent.push(<tr key={Utils.stringToUniqueId()}>{rowContent}</tr>);
     }
     return tableContent;
   }
@@ -57,13 +58,14 @@ export default class Tablify extends Component {
     const tableContent = [];
     for (let i = 0; i < rows; i++) {
       const rowContent = [];
-      rowContent.push(<div style={cellwidthStyle} className={styles.tablify_outer_cell}>
+      rowContent.push(<div key={Utils.stringToUniqueId()} style={cellwidthStyle} className={styles.tablify_outer_cell}>
         {this.props.content.pop()}</div>);
       for (let j = 1; j < this.props.columns && this.props.content.length > 0; j++) {
-        rowContent.push(<div style={cellwidthStyle} className={styles.tablify_inner_cell}>
+        const key = Utils.stringToUniqueId();
+        rowContent.push(<div key={key} style={cellwidthStyle} className={styles.tablify_inner_cell}>
           {this.props.content.pop()}</div>);
       }
-      tableContent.push(<div className={styles.flex}>{rowContent}</div>);
+      tableContent.push(<div key={Utils.stringToUniqueId()} className={styles.flex}>{rowContent}</div>);
     }
     return (<div>
       {tableContent}
