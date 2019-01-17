@@ -70,8 +70,13 @@ class APFundingOrganizationSection extends Component {
     FPC.TRANSACTION_TYPES_ORDERED.forEach(trnType => {
       const fds = this.props.funding[trnType] || [];
       if (fds && fds.length) {
-        const fdByAT = VC.ADJUSTMENT_TYPES_AP_ORDER.reduce((adjType, prev) =>
-          prev.push(...fds.filter(it => it[AC.ADJUSTMENT_TYPE] && it[AC.ADJUSTMENT_TYPE].value === adjType)), []);
+        const fdByAT = VC.ADJUSTMENT_TYPES_AP_ORDER.reduce((prev, adjType) => {
+          const items = fds.filter(it => it[AC.ADJUSTMENT_TYPE] && it[AC.ADJUSTMENT_TYPE].value === adjType);
+          if (items.length) {
+            prev.push(...items);
+          }
+          return prev;
+        }, []);
         groups.push([trnType, fdByAT]);
       }
     });

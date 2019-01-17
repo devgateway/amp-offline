@@ -33,16 +33,16 @@ class APFundingTotalsSection extends Component {
 
   render() {
     const content = [];
-    const getTotals = this.context.activityFundingTotals.getTotals;
-    const { isFieldPathByPartsEnabled, getPossibleValuesOptions } = this.context.activityFieldsManager;
+    const { activityFieldsManager, activityFundingTotals } = this.context;
     let actualCommitments;
     let actualDisbursements;
     const options = [];
     FPC.TRANSACTION_TYPES.forEach(trnType => {
-      if (isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
-        const atOptions = getPossibleValuesOptions(`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`);
+      if (activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
+        const fieldPath = `${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`;
+        const atOptions = activityFieldsManager.getPossibleValuesOptions(fieldPath);
         atOptions.forEach(at => {
-          const value = getTotals(at.id, trnType);
+          const value = activityFundingTotals.getTotals(at.id, trnType);
           options.push({ label: translate(`Total ${at.value} ${trnType}`), value });
           actualCommitments = (trnType === AC.COMMITMENTS && at.value === VC.ACTUAL) ? value : actualCommitments;
           actualDisbursements = (trnType === AC.DISBURSEMENTS && at.value === VC.ACTUAL) ? value : actualDisbursements;

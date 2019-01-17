@@ -40,13 +40,14 @@ class FundingSummary extends Component {
    */
   _buildFundingInformation() {
     const measuresTotals = {};
-    const { isFieldPathByPartsEnabled, getPossibleValuesOptions } = this.props.activityFieldsManager;
+    const { activityFieldsManager } = this.props;
     let acEnabled = false;
     let adEnabled = false;
     // Commitments, Disbursements, Expenditures
     FPC.TRANSACTION_TYPES.forEach(trnType => {
-      if (this.props.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
-        const atOptions = getPossibleValuesOptions(`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`);
+      if (activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
+        const trnAdjOptPath = `${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`;
+        const atOptions = activityFieldsManager.getPossibleValuesOptions(trnAdjOptPath);
         acEnabled = acEnabled || (trnType === AC.COMMITMENTS && !!atOptions.find(o => o.value === VC.ACTUAL));
         adEnabled = adEnabled || (trnType === AC.DISBURSEMENTS && !!atOptions.find(o => o.value === VC.ACTUAL));
         // Actual, Planned
@@ -58,7 +59,7 @@ class FundingSummary extends Component {
     });
     // Other measures: "Unallocated Disbursements".
     const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FPC.DISBURSEMENTS_PATH, VC.ACTUAL);
-    const expendituresAreEnabled = isFieldPathByPartsEnabled(AC.FUNDINGS, AC.EXPENDITURES);
+    const expendituresAreEnabled = activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, AC.EXPENDITURES);
     if (adjTypeActualTrn && expendituresAreEnabled) {
       const ub = VC.UNALLOCATED_DISBURSEMENTS;
       measuresTotals[ub] = this.props.activityFundingTotals.getTotals(ub, {});

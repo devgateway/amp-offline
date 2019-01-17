@@ -23,7 +23,7 @@ import {
   NOTIFICATION_SEVERITY_ERROR,
   NOTIFICATION_SEVERITY_INFO
 } from '../utils/constants/ErrorConstants';
-import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
+import { ADJUSTMENT_TYPE_PATHS } from '../utils/constants/FieldPathConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
@@ -53,7 +53,7 @@ const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 const logger = new LoggerManager('ActivityAction.js');
 
 export function loadActivityForActivityPreview(activityId) {
-  const paths = [ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, CREATED_BY, TEAM, MODIFIED_BY];
+  const paths = [...ADJUSTMENT_TYPE_PATHS, CREATED_BY, TEAM, MODIFIED_BY];
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,

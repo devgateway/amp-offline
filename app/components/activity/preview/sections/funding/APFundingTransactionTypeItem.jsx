@@ -34,13 +34,13 @@ export default class APFundingTransactionTypeItem extends Component {
     super(props);
     logger.debug('constructor');
     this._currency = context.currentWorkspaceSettings.currency.code;
-    this._adjType = props[0][AC.ADJUSTMENT_TYPE];
+    this._adjType = props.fundingDetails[0][AC.ADJUSTMENT_TYPE];
     this._measure = `${this._adjType.value} ${props.trnType}`;
     this._key = this._adjType.value + props.trnType;
-    const { isFieldPathByPartsEnabled } = context.activityFieldsManager;
-    this._showFixedExRate = isFieldPathByPartsEnabled(AC.FUNDINGS, props.trnType, AC.FIXED_EXCHANGE_RATE);
-    this._showDisasterResponse = isFieldPathByPartsEnabled(AC.FUNDINGS, props.trnType, AC.DISASTER_RESPONSE);
-    this._showPledge = isFieldPathByPartsEnabled(AC.FUNDINGS, props.trnType, AC.PLEDGE);
+    const trnPath = `${AC.FUNDINGS}~${props.trnType}`;
+    this._showFixedExRate = context.activityFieldsManager.isFieldPathEnabled(`${trnPath}~${AC.FIXED_EXCHANGE_RATE}`);
+    this._showDisasterResponse = context.activityFieldsManager.isFieldPathEnabled(`${trnPath}~${AC.DISASTER_RESPONSE}`);
+    this._showPledge = context.activityFieldsManager.isFieldPathEnabled(`${trnPath}~${AC.PLEDGE}`);
   }
 
   _drawHeader() {
@@ -53,11 +53,13 @@ export default class APFundingTransactionTypeItem extends Component {
   }
 
   _drawDetail() {
-    const { fundingDetails } = this.props;
+    const { fundingDetails, trnType } = this.props;
     return (<table className={styles.funding_table}>
       {fundingDetails.map(item =>
         <APFundingItem
-          item={item} key={Utils.numberRandom()} wsCurrency={this._currency}
+          item={item} trnType={trnType} key={Utils.numberRandom()} wsCurrency={this._currency}
+          showDisasterResponse={this._showDisasterResponse} showPledge={this._showPledge}
+          showFixedExchangeRate={this._showFixedExRate}
           buildSimpleField={this.props.buildSimpleField} />)
       }
     </table>);
@@ -69,11 +71,7 @@ export default class APFundingTransactionTypeItem extends Component {
     const labelTrn = translate(`Subtotal ${this._measure}`).toUpperCase();
     return (
       <div>
-        <APFundingTotalItem
-          value={subtotal} label={labelTrn} currency={translate(this._currency)} key={this._key}
-          showDisasterResponse={this._showDisasterResponse} showPledge={this._showPledge}
-          showFixedExchangeRate={this._showFixedExRate}
-        />
+        <APFundingTotalItem value={subtotal} label={labelTrn} currency={translate(this._currency)} key={this._key} />
       </div>);
   }
 
