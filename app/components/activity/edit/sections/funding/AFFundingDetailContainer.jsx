@@ -2,7 +2,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
@@ -78,7 +77,7 @@ export default class AFFundingDetailContainer extends Component {
   render() {
     const { trnType } = this.props;
     if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
-      const fundingDetails = this.props.funding[trnType];
+      const fundingDetails = this.props.funding[trnType] || [];
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';

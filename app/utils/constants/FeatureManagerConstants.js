@@ -19,8 +19,6 @@ export const ACTIVITY_LAST_UPDATED_BY = '/Activity Form/Identification/Activity 
 export const ACTIVITY_LAST_UPDATED_ON = '/Activity Form/Identification/Activity Updated On';
 const ACTIVITY_FUNDING = '/Activity Form/Funding';
 const AF_FUNDING_FUNDINGGROUP_FUNDINGITEM = `${ACTIVITY_FUNDING}/Funding Group/Funding Item`;
-export const ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Disbursement Order Id`;
 export const ACTIVITY_SECTORS = '/Activity Form/Sectors';
 export const ACTIVITY_PRIMARY_SECTORS = '/Activity Form/Sectors/Primary Sectors';
 export const ACTIVITY_SECONDARY_SECTORS = '/Activity Form/Sectors/Secondary Sectors';

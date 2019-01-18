@@ -100,7 +100,8 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _removeFundingItem(id, orgTypeName) {
-    logger.log('_removeFundingItem');
+    logger.debug('_removeFundingItem');
+    // eslint-disable-next-line no-alert
     if (confirm(translate('deleteFundingItem'))) {
       const { activity } = this.context;
       const newFundingList = this._filterFundings(this.props.fundings).slice();

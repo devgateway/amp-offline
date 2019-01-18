@@ -149,29 +149,28 @@ export default class AFFundingDetailItem extends Component {
               <div className={styles.row}>
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.ADJUSTMENT_TYPE}`}
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`}
                   onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_AMOUNT}`}
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.TRANSACTION_AMOUNT}`}
                   onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.CURRENCY}`} defaultValueAsEmptyObject
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.CURRENCY}`} defaultValueAsEmptyObject
                   extraParams={{ noChooseOneOption: true, showOrigValue: true }} onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_DATE}`}
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.TRANSACTION_DATE}`}
                   onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   type={Types.RADIO_BOOLEAN}
                   fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISASTER_RESPONSE}`}
                   onAfterUpdate={this._onUpdateField} />
-                {(fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
+                {(trnType === AC.DISBURSEMENTS) ? <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fmPath={FMC.ACTIVITY_DISBURSEMENTS_DISBURSEMENT_ORDER_ID}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISBURSEMENT_ORDER_ID}`}
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISBURSEMENT_ORDER_ID}`}
                   onAfterUpdate={this._onUpdateField} /> : null}
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
