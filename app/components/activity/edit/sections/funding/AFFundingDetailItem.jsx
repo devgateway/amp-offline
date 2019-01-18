@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
@@ -42,7 +41,7 @@ export default class AFFundingDetailItem extends Component {
     fundingDetail: PropTypes.object.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     funding: PropTypes.object.isRequired,
-    type: PropTypes.string,
+    trnType: PropTypes.string,
     updateParentErrors: PropTypes.func.isRequired
   };
 
@@ -52,9 +51,10 @@ export default class AFFundingDetailItem extends Component {
     this._onUpdateField = this._onUpdateField.bind(this);
   }
 
-  _getRecipientRoleFilter(typeName) {
+  _getRecipientRoleFilter() {
     const activity = this.context.activity;
     const filter = [];
+    const typeName = this.props.trnType.toUpperCase();
     const options = [{
       value: VC.CONTRACTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY`
@@ -111,19 +111,17 @@ export default class AFFundingDetailItem extends Component {
     }
   }
 
-  generateRecipients(typeName, fundingDetail) {
+  generateRecipients(fundingDetail) {
     const content = [];
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2} key={Math.random()}
-      fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`}
-      fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE`]}
-      filter={this._getRecipientRoleFilter(typeName)} extraParams={{ isORFilter: true }}
+      fieldPath={`${AC.FUNDINGS}~${this.props.trnType}~${AC.RECIPIENT_ROLE}`}
+      filter={this._getRecipientRoleFilter()} extraParams={{ isORFilter: true }}
       onAfterUpdate={this.handleSelectRecipientRole.bind(this)} />);
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2} key={Math.random()}
-      fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ORGANIZATION}`}
-      fmPath={FMC[`ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION`]}
-      filter={this._getRecipientOrgFilter(typeName)} extraParams={{ isORFilter: true }} />);
+      fieldPath={`${AC.FUNDINGS}~${this.props.trnType}~${AC.RECIPIENT_ORGANIZATION}`}
+      filter={this._getRecipientOrgFilter()} extraParams={{ isORFilter: true }} />);
     return content;
   }
 
@@ -132,42 +130,17 @@ export default class AFFundingDetailItem extends Component {
   }
 
   render() {
-    const { type, fundingDetail, funding, removeFundingDetailItem } = this.props;
+    const { trnType, fundingDetail, funding, removeFundingDetailItem } = this.props;
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
     if (!fundingDetail[AC.CURRENCY].id) {
-      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
+      const currencyPath = `${AC.FUNDINGS}~${trnType}~${AC.CURRENCY}`;
+      const currencies = activityFieldsManager.getPossibleValuesOptions(currencyPath);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
       fundingDetail[AC.CURRENCY] = currency;
     }
     const orgGroupName = funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
-    let fixedExchangeRateFMPath;
-    let pledgeFMPath;
-    let disasterResponseFMPath;
-    let typeName = '';
-    switch (type) {
-      case VC.COMMITMENTS:
-        fixedExchangeRateFMPath = FMC.ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE;
-        pledgeFMPath = FMC.ACTIVITY_COMMITMENTS_PLEDGES;
-        disasterResponseFMPath = FMC.ACTIVITY_COMMITMENTS_DISASTER_RESPONSE;
-        typeName = 'COMMITMENTS';
-        break;
-      case VC.DISBURSEMENTS:
-        fixedExchangeRateFMPath = FMC.ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE;
-        pledgeFMPath = FMC.ACTIVITY_DISBURSEMENTS_PLEDGES;
-        disasterResponseFMPath = FMC.ACTIVITY_DISBURSEMENTS_DISASTER_RESPONSE;
-        typeName = 'DISBURSEMENTS';
-        break;
-      case VC.EXPENDITURES:
-        fixedExchangeRateFMPath = FMC.ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE;
-        pledgeFMPath = FMC.ACTIVITY_EXPENDITURES_PLEDGES;
-        disasterResponseFMPath = FMC.ACTIVITY_EXPENDITURES_DISASTER_RESPONSE;
-        typeName = 'EXPENDITURES';
-        break;
-      default:
-        break;
-    }
     return (<div className={styles.full_width}>
       <table>
         <tbody>
@@ -192,8 +165,8 @@ export default class AFFundingDetailItem extends Component {
                   onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  type={Types.RADIO_BOOLEAN} fmPath={disasterResponseFMPath}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.DISASTER_RESPONSE}`}
+                  type={Types.RADIO_BOOLEAN}
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISASTER_RESPONSE}`}
                   onAfterUpdate={this._onUpdateField} />
                 {(fundingDetail[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS) ? <AFField
                   parent={fundingDetail} className={styles.cell_3}
@@ -202,15 +175,14 @@ export default class AFFundingDetailItem extends Component {
                   onAfterUpdate={this._onUpdateField} /> : null}
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.PLEDGE}`}
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.PLEDGE}`}
                   filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
-                  fmPath={pledgeFMPath} onAfterUpdate={this._onUpdateField} />
+                  onAfterUpdate={this._onUpdateField} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_4}
-                  fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.FIXED_EXCHANGE_RATE}`}
-                  fmPath={fixedExchangeRateFMPath}
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.FIXED_EXCHANGE_RATE}`}
                   extraParams={{ bigger: 0 }} onAfterUpdate={this._onUpdateField} />
-                {this.generateRecipients(typeName, fundingDetail)}
+                {this.generateRecipients(fundingDetail)}
               </div>
             </td>
             <td className={styles.delete_col}>
