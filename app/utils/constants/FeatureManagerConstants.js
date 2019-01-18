@@ -54,24 +54,7 @@ export const ACTIVITY_FUNDING_SELECT_ORG_TYPE = `${ACTIVITY_FUNDING_SEARCH}/Sele
 
 export const ACTIVITY_PROGRAM = '/Activity Form/Program';
 export const ACTIVITY_PLANNING = '/Activity Form/Planning';
-export const ACTIVITY_COMMITMENTS_PLEDGES =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Pledges`;
-export const ACTIVITY_DISBURSEMENTS_PLEDGES =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Pledges`;
-export const ACTIVITY_EXPENDITURES_PLEDGES =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Pledges`;
-export const ACTIVITY_COMMITMENTS_FIXED_EXCHANGE_RATE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Fixed exchange rate`;
-export const ACTIVITY_DISBURSEMENTS_FIXED_EXCHANGE_RATE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Fixed exchange rate`;
-export const ACTIVITY_EXPENDITURES_FIXED_EXCHANGE_RATE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Fixed exchange rate`;
-export const ACTIVITY_COMMITMENTS_DISASTER_RESPONSE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Disaster Response`;
-export const ACTIVITY_DISBURSEMENTS_DISASTER_RESPONSE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Disaster Response`;
-export const ACTIVITY_EXPENDITURES_DISASTER_RESPONSE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Disaster Response`;
+
 export const ACTIVITY_CONTACT = '/Activity Form/Contacts';
 export const ACTIVITY_DOCUMENTS_ADD_DOCUMENT = '/Activity Form/Related Documents/Add New Document';
 export const ACTIVITY_DOCUMENTS_ADD_WEBLINK = '/Activity Form/Related Documents/Add New Web Link';
@@ -83,10 +66,6 @@ export const ACTIVITY_ISSUES_DELETE_MEASURE = '/Activity Form/Issues Section/Iss
 export const ACTIVITY_ISSUES_ADD_ACTOR = '/Activity Form/Issues Section/Issue/Measure/Add Item';
 export const ACTIVITY_ISSUES_DELETE_ACTOR = '/Activity Form/Issues Section/Issue/Measure/Actor/Delete Item';
 
-export const ACTIVITY_DISBURSEMENTS_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Funding Flows OrgRole Selector/Recipient Org Role`;
-export const ACTIVITY_DISBURSEMENTS_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Funding Flows OrgRole Selector/Recipient Organization`;
 export const ACTIVITY_DISBURSEMENTS_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Funding Flows OrgRole Selector/Add Implementing Agency`;
 export const ACTIVITY_DISBURSEMENTS_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY =
@@ -104,10 +83,6 @@ export const ACTIVITY_DISBURSEMENTS_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANI
 export const ACTIVITY_DISBURSEMENTS_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Disbursements/Disbursements Table/Funding Flows OrgRole Selector/Add Sector Group`;
 
-export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Funding Flows OrgRole Selector/Recipient Org Role`;
-export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Funding Flows OrgRole Selector/Recipient Organization`;
 export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Funding Flows OrgRole Selector/Add Implementing Agency`;
 export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY =
@@ -125,10 +100,6 @@ export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZA
 export const ACTIVITY_COMMITMENTS_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Commitments/Commitments Table/Funding Flows OrgRole Selector/Add Sector Group`;
 
-export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGROLE =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Recipient Org Role`;
-export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_RECIPIENT_ORGANIZATION =
-  `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Recipient Organization`;
 export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY =
   `${AF_FUNDING_FUNDINGGROUP_FUNDINGITEM}/Expenditures/Expenditures Table/Funding Flows OrgRole Selector/Add Implementing Agency`;
 export const ACTIVITY_EXPENDITURES_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY =
