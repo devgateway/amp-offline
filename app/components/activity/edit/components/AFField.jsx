@@ -27,6 +27,7 @@ import AFRadioBoolean from './AFRadioBoolean';
 import AFDateYear from './AFDateYear';
 import CurrencyRatesManager from '../../../../modules/util/CurrencyRatesManager';
 import AFRadioList from './AFRadioList';
+import FieldDefinition from '../../../../modules/field/FieldDefinition';
 
 const logger = new Logger('AF field');
 
@@ -87,15 +88,14 @@ class AFField extends Component {
     const fieldPathParts = this.props.fieldPath.split('~');
     this.fieldName = fieldPathParts[fieldPathParts.length - 1];
     this.fieldDef = this.context.activityFieldsManager.getFieldDef(this.props.fieldPath);
-
-    // Check for fields that have to be enabled on FM too.
-    if (this.fieldDef && this.props.fmPath) {
-      this.fieldDef = FeatureManager.isFMSettingEnabled(this.props.fmPath) ? this.fieldDef : undefined;
-    }
-
     this.fieldExists = !!this.fieldDef;
-    this.requiredND = this.fieldExists ? this.fieldDef.required === 'ND' : undefined;
-    this.alwaysRequired = this.fieldExists ? this.fieldDef.required === 'Y' : undefined;
+    // Some fields may need a special FM path to check if enabled
+    if (this.fieldExists && this.props.fmPath) {
+      this.fieldExists = FeatureManager.isFMSettingEnabled(this.props.fmPath);
+    }
+    this.fieldDef = new FieldDefinition(this.fieldDef);
+    this.requiredND = this.fieldExists ? this.fieldDef.isRequiredND() : undefined;
+    this.alwaysRequired = this.fieldExists ? this.fieldDef.isAlwaysRequired() : undefined;
     this.onChange = this.onChange.bind(this);
     this.componentType = this.props.type || this.getComponentTypeByFieldType();
     this.setState({
@@ -155,13 +155,13 @@ class AFField extends Component {
     if (!this.fieldDef) {
       return null;
     }
-    if (this.fieldDef.id_only === true) {
+    if (this.fieldDef.isIdOnly()) {
       return Types.DROPDOWN;
     }
-    switch (this.fieldDef.field_type) {
+    switch (this.fieldDef.type) {
       case 'string':
         // TODO known limitation AMP-25950, until then limiting to text area to allow imports, unless type is explicit
-        if (this.fieldDef.field_length) {
+        if (this.fieldDef.length) {
           return Types.TEXT_AREA;
         }
         return Types.RICH_TEXT_AREA;
@@ -281,11 +281,11 @@ class AFField extends Component {
 
   _getTextArea() {
     return (<AFTextArea
-      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />);
+      value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange} />);
   }
 
   _getInput() {
-    return <AFInput value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />;
+    return <AFInput value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange} />;
   }
 
   _getNumber() {
@@ -322,17 +322,22 @@ class AFField extends Component {
   }
 
   _getMultiSelect() {
-    const selectFieldDef = this.fieldDef.children.length === 1 ?
-      this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
-    if (!selectFieldDef) {
-      logger.error('Could not automatically detect multi-select field.');
-      return null;
+    let selectFieldDef = this.fieldDef;
+    let optionsPath = this.props.fieldPath;
+    if (this.fieldDef.children) {
+      selectFieldDef = this.fieldDef.children.length === 1 ?
+        this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
+      selectFieldDef = selectFieldDef && new FieldDefinition(selectFieldDef);
+      if (!selectFieldDef) {
+        logger.error('Could not automatically detect multi-select field.');
+        return null;
+      }
+      optionsPath = `${this.props.fieldPath}~${selectFieldDef.name}`;
     }
-    const optionsPath = `${this.props.fieldPath}~${selectFieldDef.field_name}`;
     const afOptions = this._toAFOptions(this._getOptions(optionsPath));
     return (<AFMultiSelect
       options={afOptions} values={this.state.value} listPath={this.props.fieldPath}
-      selectField={selectFieldDef.field_name} onChange={this.onChange} />);
+      selectField={selectFieldDef.name} onChange={this.onChange} />);
   }
 
   _getCustom() {

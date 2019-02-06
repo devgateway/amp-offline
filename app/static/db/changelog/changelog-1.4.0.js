@@ -32,6 +32,9 @@ const CURRENCY_CODE = 'currency_code';
 let activitiesWithPPCasCode = [];
 let codeToId = null;
 
+// AMPOFFLINE-1366
+let activitiesWithFY = [];
+
 export default ({
   changelog: {
     preConditions: [],
@@ -260,6 +263,45 @@ export default ({
             filter: { name: CSC.FORCE_SYNC_UP }
           }
         }]
+      },
+      {
+        changeid: 'AMPOFFLINE-1366-fy',
+        author: 'nmandrescu',
+        comment: 'Switch FY from a list of year-value pairs to simple list of years',
+        preConditions: [{
+          func: () => ActivityHelper.findAll(
+            Utils.toMap(AC.FY, { $elemMatch: Utils.toDefinedOrNullRule(AC.YEAR) }))
+            .then(activities => {
+              activitiesWithFY = activities;
+              return activitiesWithFY.length > 0;
+            }),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
+        changes: [{
+          func: () => {
+            activitiesWithFY.forEach(a => {
+              a[AC.FY] = a[AC.FY].map(entry => entry[AC.YEAR]);
+            });
+            return Promise.all([
+              PossibleValuesHelper.deleteById(`${AC.FY}~${AC.YEAR}`),
+              ActivityHelper.saveOrUpdateCollection(activitiesWithFY)
+            ]).then(result => {
+              activitiesWithFY = null;
+              return result;
+            });
+          }
+        }, {
+          update: {
+            table: COLLECTION_CLIENT_SETTINGS,
+            field: 'value',
+            value: true,
+            filter: { name: CSC.FORCE_SYNC_UP }
+          }
+        }],
+        rollback: {
+          func: () => ActivityHelper.saveOrUpdateCollection(activitiesWithFY, false)
+        }
       },
       {
         changeid: 'AMPOFFLINE-1374-resource_type-as-long',
