@@ -162,7 +162,7 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
       });
   }
 
-  onPullError(error, ampIds) {
+  onPullError(error, ...ampIds) {
     logger.error(`Activity amp-ids=${ampIds} pull error: ${error}`);
     const notFoundInDBAmpIds = new Set(ampIds);
     return ActivityHelper.findAllNonRejectedByAmpIds(ampIds).then(activitiesWithPullError => {
