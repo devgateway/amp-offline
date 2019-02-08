@@ -57,6 +57,10 @@ const ActivityHelper = {
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
 
+  findAllNonRejectedByAmpIds(ampIds) {
+    return this.findAllNonRejected(Utils.toMap(AC.AMP_ID, { $in: ampIds }));
+  },
+
   /**
    * Find all non rejected activities that meet the search criteria
    * @param filterRule
