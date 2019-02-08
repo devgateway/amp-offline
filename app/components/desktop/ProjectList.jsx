@@ -1,7 +1,8 @@
 /* eslint react/jsx-space-before-closing: 0 */
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/no-string-refs: 0 */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn, SizePerPageDropDown } from 'react-bootstrap-table';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import classNames from 'classnames';
@@ -77,7 +78,7 @@ export default class ProjectList extends Component {
       default:
         break;
     }
-    if (row['client-change-id'] && !row.rejectedId) {
+    if (row[AC.CLIENT_CHANGE_ID] && !row[AC.IS_PUSHED] && !row.rejectedId) {
       nameStyles.push(style.unsynced);
     } else if (row.rejectedId) {
       nameStyles.push(style.rejected);
