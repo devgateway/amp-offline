@@ -209,7 +209,7 @@ const ActivityHelper = {
 
   removeAllNonRejectedByIds(ids) {
     logger.log('removeAllNonRejectedByIds');
-    const filter = { $and: [this._getRejectedRule(), { id: { $in: ids } }] };
+    const filter = { $and: [this._getNonRejectedRule(), { id: { $in: ids } }] };
     return this.removeAll(filter);
   },
 
