@@ -172,7 +172,7 @@ const ActivityHelper = {
    */
   saveOrUpdateCollection(activities, isDiffChange) {
     logger.log('saveOrUpdateCollection');
-    activities.forEach(this._setOrUpdateIds, isDiffChange);
+    activities.forEach(a => this._setOrUpdateIds(a, isDiffChange));
     return DatabaseManager.saveOrUpdateCollection(activities, COLLECTION_ACTIVITIES);
   },
 

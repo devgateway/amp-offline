@@ -102,12 +102,12 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
         .then(this._saveNewActivities)
         .then(result => {
           if (activitiesPullErrors.length) {
-            return this.onActivitiesPullErrorAndLog(activitiesPullErrors);
+            return this.onActivitiesWithErrors(activitiesPullErrors);
           }
           return result;
         });
     }
-    return this.onPullError(error, activities);
+    return this.onActivitiesPullError(error, activities);
   }
 
   /**
@@ -123,17 +123,25 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
       if (!dbActivities || !dbActivities.length) {
         return activities;
       }
-      const ids = dbActivities.map(a => a.id);
       const rejectActivityPromises = [];
-      dbActivities.forEach(dbActivity => {
+      dbActivities = dbActivities.filter(dbActivity => {
         if (ActivityHelper.isModifiedOnClient(dbActivity)) {
           const activity = activitiesByAmpId.get(dbActivity[AC.AMP_ID]);
+          /*
+          Use case to get here (see AMPOFFLINE-1363):
+          1) Add/Edit activity in AMP Offline.
+          2) Put break point in activities pull and during sync, allow only the push to go (do conn loss in pull)
+          3) Edit activity in AMP Offline. Do not change activity in AMP.
+          4) Sync normally (without conn loss). Offline activity changes must be visible in online.
+          Here we'll get previously unpulled activity, but it is the same as local and can be ignored.
+           */
           if (ActivityHelper.getVersion(dbActivity) === ActivityHelper.getVersion(activity)) {
             // update the minimum info for reference in case next pull will fail (e.g. connection loss)
             [AC.CREATED_BY, AC.CREATED_ON, AC.MODIFIED_BY, AC.MODIFIED_ON].forEach(field => {
               dbActivity[field] = activity[field];
             });
-            return dbActivity;
+            activities[activities.findIndex(a => a === activity)] = dbActivity;
+            return false;
           }
           const error = new Notification({
             message: 'rejectedStaleActivity',
@@ -145,7 +153,9 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
               return Promise.resolve();
             }));
         }
+        return true;
       });
+      const ids = dbActivities.map(a => a.id);
       return Promise.all(rejectActivityPromises).then(() =>
         ActivityHelper.removeAllNonRejectedByIds(ids).then(() => activities));
     });
@@ -180,7 +190,14 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
     });
   }
 
-  onActivitiesPullErrorAndLog(activitiesWithPullError) {
+  onActivitiesPullError(error, activities) {
+    const ampIds = activities.map(a => a[AC.AMP_ID]);
+    logger.error(`Activity amp-ids=${ampIds} pull error: ${error}`);
+    activities.forEach(a => { a.error = error; });
+    return this._updateDetails(activities);
+  }
+
+  onActivitiesWithErrors(activitiesWithPullError) {
     activitiesWithPullError.forEach(a => logger.error(`Activity amp-id=${a[AC.AMP_ID]} pull error: ${a.error}`));
     return this._updateDetails(activitiesWithPullError);
   }
