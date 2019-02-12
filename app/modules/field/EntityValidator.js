@@ -602,8 +602,7 @@ export default class EntityValidator {
   }
 
   _hasTransactions(fundingItem) {
-    const fundingDetails = fundingItem && fundingItem[AC.FUNDING_DETAILS];
-    return fundingDetails && fundingDetails.length;
+    return fundingItem && FPC.TRANSACTION_TYPES.some(tt => fundingItem[tt] && fundingItem[tt].length);
   }
 
   _matchesTransactionType(fundingDetail, trnType) {
