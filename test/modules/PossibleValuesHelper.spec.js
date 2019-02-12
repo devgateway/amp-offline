@@ -79,15 +79,6 @@ let ampFormatContact = {
   ]
 };
 
-let idAsStringNumnber = {
-  'fundings~funding_details~transaction_type': [
-    {
-      id: '0',
-      value: 'Commitments'
-    }
-  ]
-};
-
 let treeOptions = {
   'national_plan_objective~program': [
     {
@@ -150,10 +141,8 @@ describe('@@ PossibleValuesHelper @@', () => {
         ampFormatPV2 = actions.transformToClientUsage(Object.entries(ampFormatPV2)[0]);
         ampFormatPVwithTranslations = actions.transformToClientUsage(Object.entries(ampFormatPVwithTranslations)[0]);
         ampFormatContact = actions.transformToClientUsage(Object.entries(ampFormatContact)[0]);
-        idAsStringNumnber = actions.transformToClientUsage((Object.entries(idAsStringNumnber)[0]));
         treeOptions = actions.transformToClientUsage((Object.entries(treeOptions)[0]));
-        validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations, ampFormatContact,
-          idAsStringNumnber];
+        validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations, ampFormatContact];
 
         invalidPV = actions.transformToClientUsage(Object.entries(invalidPV)[0]);
         missingId = actions.transformToClientUsage(Object.entries(missingId)[0]);
