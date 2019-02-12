@@ -478,7 +478,7 @@ export default class EntityValidator {
   isRequiredDependencyMet(parent, fieldDef: FieldDefinition) {
     const dependencies = fieldDef.dependencies;
     // by default is met (unless an exception), hence the workflow can proceed to validate the "required" rule
-    let met = ![AC.DISASTER_RESPONSE, RC.FILE_NAME, RC.WEB_LINK].includes(fieldDef.name);
+    let met = ![RC.FILE_NAME, RC.WEB_LINK].includes(fieldDef.name);
     // eslint-disable-next-line default-case
     if (dependencies && dependencies.length) {
       dependencies.forEach(dep => {
@@ -490,12 +490,6 @@ export default class EntityValidator {
             break;
           case AC.DEPENDENCY_TRANSACTION_PRESENT:
             met = met && this._hasTransactions(parent);
-            break;
-          case AC.DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED:
-            met = met || this._matchesTransactionType(parent, DISBURSEMENTS);
-            break;
-          case AC.DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED:
-            met = met || this._matchesTransactionType(parent, COMMITMENTS);
             break;
           case RC.DEPENDENCY_RESOURCE_TYPE_LINK:
             met = met || this._matchesResourceType(parent, RC.TYPE_WEB_RESOURCE);
@@ -603,11 +597,6 @@ export default class EntityValidator {
 
   _hasTransactions(fundingItem) {
     return fundingItem && FPC.TRANSACTION_TYPES.some(tt => fundingItem[tt] && fundingItem[tt].length);
-  }
-
-  _matchesTransactionType(fundingDetail, trnType) {
-    const fundingType = fundingDetail && fundingDetail[AC.TRANSACTION_TYPE];
-    return fundingType && fundingType.value === trnType;
   }
 
   _matchesResourceType(resource, resourceType) {

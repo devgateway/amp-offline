@@ -218,8 +218,6 @@ export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
 export const DEPENDENCY_ON_BUDGET = 'on_budget';
 export const DEPENDENCY_TRANSACTION_PRESENT = 'transaction_present';
 export const DEPENDENCY_COMPONENT_FUNDING_ORG_VALID = 'organization_present';
-export const DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED = 'disbursements_disaster_response_required';
-export const DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED = 'commitments_disaster_response_required';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
