@@ -9,8 +9,6 @@ import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
 import FieldsManager from './FieldsManager';
 import {
-  COMMITMENTS,
-  DISBURSEMENTS,
   ON_BUDGET,
   TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR
 } from '../../utils/constants/ValueConstants';
@@ -652,8 +650,9 @@ export default class EntityValidator {
     const compFundingOrgs = [];
     if (components && components.length) {
       components.forEach(component => {
-        const componentFundings = component[AC.COMPONENT_FUNDING];
-        if (componentFundings && componentFundings.length) {
+        if (component) {
+          const componentFundings = [];
+          FPC.TRANSACTION_TYPES.forEach(tt => componentFundings.push(...(component[tt] || [])));
           componentFundings.forEach(funding => {
             const compOrg = funding[AC.COMPONENT_ORGANIZATION];
             if (compOrg && compOrg.id) {
