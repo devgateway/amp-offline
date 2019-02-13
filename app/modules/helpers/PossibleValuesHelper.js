@@ -220,7 +220,7 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   deleteById(id) {
-    logger.log('replaceAll');
+    logger.log('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
   },
 
@@ -230,7 +230,7 @@ const PossibleValuesHelper = {
    * @return {*}
    */
   deleteByIds(ids) {
-    logger.log('replaceAll');
+    logger.log('deleteByIds');
     return DatabaseManager.removeAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
   },
 

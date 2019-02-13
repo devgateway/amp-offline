@@ -35,6 +35,9 @@ let codeToId = null;
 // AMPOFFLINE-1366
 let activitiesWithFY = [];
 
+// AMPOFFLINE-1371
+let activitiesWithFundingDetails = [];
+
 export default ({
   changelog: {
     preConditions: [],
@@ -329,6 +332,92 @@ export default ({
             filter: { name: CSC.FORCE_SYNC_UP }
           }
         }]
+      },
+      {
+        changeid: 'AMPOFFLINE-1371-new-fundings-transactions-structure',
+        author: 'nmandrescu',
+        comment: 'Migrate generic "funding_details" to corresponding transaction type groups',
+        // this data migration is critical for AMP Offline to function correctly
+        failOnError: true,
+        preConditions: [{
+          func: () => ActivityHelper.findAll(
+            Utils.toMap(AC.FUNDINGS, {
+              $elemMatch: Utils.toMap(AC.FUNDING_DETAILS, {
+                $elemMatch: Utils.toDefinedOrNullRule(AC.TRANSACTION_TYPE)
+              })
+            })).then(activities => {
+              activitiesWithFundingDetails = activities;
+              return activitiesWithFundingDetails.length > 0;
+            }),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }, {
+          changeid: 'AMPOFFLINE-1318-ppc-currency',
+          author: 'nmandrescu',
+          file: 'changelog-1.4.0.js',
+          onFail: MC.ON_FAIL_ERROR_CONTINUE,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }, {
+          changeid: 'AMPOFFLINE-1281-currency-rates',
+          author: 'nmandrescu',
+          file: 'changelog-1.4.0.js',
+          onFail: MC.ON_FAIL_ERROR_CONTINUE,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
+        changes: [{
+          func: () => {
+            const legacyTrnTypeCodeToTrnGroupName = new Map([
+              [0, AC.COMMITMENTS],
+              [1, AC.DISBURSEMENTS],
+              [2, AC.EXPENDITURES]
+            ]);
+            const trnTypeEntriesCount = new Map([[0, 0], [1, 0], [2, 0]]);
+            activitiesWithFundingDetails.forEach(a => {
+              a[AC.FUNDINGS].forEach(funding => {
+                funding[AC.FUNDING_DETAILS].forEach(fd => {
+                  const trnTypeCode = fd[AC.TRANSACTION_TYPE];
+                  const trnTypeName = legacyTrnTypeCodeToTrnGroupName.get(trnTypeCode);
+                  if (!trnTypeName) {
+                    logger.warn(`Unsupported trnTypeId=${trnTypeCode}. Skipping funding item: 
+                    ${AC.AMP_FUNDING_ID}=${fd[AC.AMP_FUNDING_ID]} for ${AC.AMP_ID}=${a[AC.AMP_ID]}`);
+                  } else {
+                    trnTypeEntriesCount.set(trnTypeCode, trnTypeEntriesCount.get(trnTypeCode) + 1);
+                    let fundingItems = funding[trnTypeName];
+                    if (!fundingItems) {
+                      fundingItems = [];
+                      funding[trnTypeName] = fundingItems;
+                    }
+                    delete fd[AC.TRANSACTION_TYPE];
+                    fundingItems.push(fd);
+                  }
+                });
+                delete funding[AC.FUNDING_DETAILS];
+              });
+            });
+            const obsoletePVsIds = [AC.TRANSACTION_TYPE, AC.ADJUSTMENT_TYPE, AC.PLEDGE, AC.CURRENCY,
+              AC.EXPENDITURE_CLASS].map(fdField => `${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${fdField}`);
+            legacyTrnTypeCodeToTrnGroupName.forEach((value, key) => {
+              logger.info(`Migrating ${trnTypeEntriesCount.get(key)} ${value} to the new fundings data format`);
+            });
+            return Promise.all([
+              PossibleValuesHelper.deleteByIds(obsoletePVsIds),
+              ActivityHelper.saveOrUpdateCollection(activitiesWithFundingDetails, false)
+            ]).then(result => {
+              activitiesWithFundingDetails = null;
+              return result;
+            });
+          }
+        }, {
+          update: {
+            table: COLLECTION_CLIENT_SETTINGS,
+            field: 'value',
+            value: true,
+            filter: { name: CSC.FORCE_SYNC_UP }
+          }
+        }],
+        rollback: {
+          func: () => ActivityHelper.saveOrUpdateCollection(activitiesWithFundingDetails, false)
+        }
       },
     ]
   },
