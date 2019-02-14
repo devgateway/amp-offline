@@ -71,6 +71,10 @@ export default class FieldsManager {
     return Object.values(this._possibleValuesMap[fieldPath]);
   }
 
+  isFieldPathByPartsEnabled(...pathParts) {
+    return this.isFieldPathEnabled(pathParts.join('~'));
+  }
+
   /**
    * Checks if the specified field path is enabled in AMP FM
    * @param fieldPath

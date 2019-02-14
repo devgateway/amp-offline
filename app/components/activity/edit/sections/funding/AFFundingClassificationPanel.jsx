@@ -1,8 +1,10 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable react/no-did-update-set-state */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, Panel, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
@@ -24,14 +26,13 @@ export default class AFFundingClassificationPanel extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    fundingDetails: PropTypes.array.isRequired,
     hasErrors: PropTypes.func.isRequired,
     refreshFundingDonorSectionErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this._refreshAfterChanges = this._refreshAfterChanges.bind(this);
     const errors = props.hasErrors(props.funding);
     this.state = {
@@ -61,8 +62,8 @@ export default class AFFundingClassificationPanel extends Component {
   render() {
     // TODO: Add 'agreement' with the same component than locations + a restriction to have only 1 value at the time,
     // this field is not yet implemented on possible-values (and is not used in Chad).
-    const { fundingDetails, funding } = this.props;
-    const hasFundingDetails = fundingDetails && fundingDetails.length > 0;
+    const { funding } = this.props;
+    const hasFundingDetails = FPC.TRANSACTION_TYPES.some(tt => funding[tt] && funding[tt].length);
     const hasErrors = this.props.hasErrors(funding);
     return (<div className={afStyles.full_width}>
       <Panel
