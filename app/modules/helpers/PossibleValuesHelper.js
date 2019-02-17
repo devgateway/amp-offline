@@ -17,13 +17,11 @@ const optionSchema = {
   $schema: 'http://json-schema.org/draft-04/schema#',
   type: 'object',
   patternProperties: {
-    // since we need an artificial "resource_type" options, then we may not be able to limit to numbers (AMP-25785)
-    '^(0|[1-9]+[0-9]*)|[A-Za-z]{2,4}$': {
+    '^(0|[1-9]+[0-9]*)$': {
       type: 'object',
       properties: {
-        // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
         id: {
-          anyOf: [{ type: 'integer' }, { type: 'string' }]
+          type: 'integer'
         },
         value: {
           anyOf: [{ type: 'string' }]
