@@ -303,6 +303,33 @@ export default ({
           func: () => ActivityHelper.saveOrUpdateCollection(activitiesWithFY, false)
         }
       },
+      {
+        changeid: 'AMPOFFLINE-1374-resource_type-as-long',
+        author: 'nmandrescu',
+        comment: 'Migrate "resource_type" from string to long',
+        changes: [{
+          update: {
+            table: COLLECTION_RESOURCES,
+            field: RC.RESOURCE_TYPE,
+            value: RC.TYPE_WEB_RESOURCE,
+            filter: Utils.toMap(RC.RESOURCE_TYPE, 'link')
+          }
+        }, {
+          update: {
+            table: COLLECTION_RESOURCES,
+            field: RC.RESOURCE_TYPE,
+            value: RC.TYPE_DOC_RESOURCE,
+            filter: Utils.toMap(RC.RESOURCE_TYPE, 'file')
+          }
+        }, {
+          update: {
+            table: COLLECTION_CLIENT_SETTINGS,
+            field: 'value',
+            value: true,
+            filter: { name: CSC.FORCE_SYNC_UP }
+          }
+        }]
+      },
     ]
   },
 });
