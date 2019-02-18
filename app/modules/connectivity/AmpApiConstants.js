@@ -16,6 +16,7 @@ export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
 export const ACTIVITY_IMPORT_URL = '/activity';
 export const ACTIVITY_EXPORT_URL = '/activity/project';
+export const ACTIVITY_EXPORT_BATCHES_URL = '/activity/projects';
 export const GAZETTEER_URL = '/gis/locators';
 // TODO remove as part of AMPOFFLINE-270
 export const ACTIVITY_SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
