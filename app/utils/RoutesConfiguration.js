@@ -1,5 +1,6 @@
 import {
   ACTIVITY_EXPORT_URL,
+  ACTIVITY_EXPORT_BATCHES_URL,
   ACTIVITY_IMPORT_URL,
   ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
   ACTIVITY_SINGLE_FIELDS_TREE_URL,
@@ -94,6 +95,10 @@ const routesConfiguration = [{
 }, {
   url: ACTIVITY_EXPORT_URL,
   method: 'GET',
+  requiresAuth: true
+}, {
+  url: ACTIVITY_EXPORT_BATCHES_URL,
+  method: 'POST',
   requiresAuth: true
 }, {
   url: ACTIVITY_SINGLE_FIELDS_TREE_URL,

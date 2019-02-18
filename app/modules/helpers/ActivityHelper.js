@@ -57,6 +57,10 @@ const ActivityHelper = {
     return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
   },
 
+  findAllNonRejectedByAmpIds(ampIds) {
+    return this.findAllNonRejected(Utils.toMap(AC.AMP_ID, { $in: ampIds }));
+  },
+
   /**
    * Find all non rejected activities that meet the search criteria
    * @param filterRule
@@ -205,7 +209,7 @@ const ActivityHelper = {
 
   removeAllNonRejectedByIds(ids) {
     logger.log('removeAllNonRejectedByIds');
-    const filter = { $and: [this._getRejectedRule(), { id: { $in: ids } }] };
+    const filter = { $and: [this._getNonRejectedRule(), { id: { $in: ids } }] };
     return this.removeAll(filter);
   },
 

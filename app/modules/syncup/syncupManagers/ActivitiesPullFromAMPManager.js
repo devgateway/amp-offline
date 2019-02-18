@@ -1,12 +1,13 @@
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import {
+  SYNCUP_ACTIVITIES_PULL_BATCH_SIZE,
   SYNCUP_DETAILS_SYNCED,
   SYNCUP_DETAILS_UNSYNCED,
   SYNCUP_TYPE_ACTIVITIES_PULL
 } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
-import { ACTIVITY_EXPORT_URL } from '../../connectivity/AmpApiConstants';
+import { ACTIVITY_EXPORT_BATCHES_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
 import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
@@ -25,7 +26,7 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
 
   constructor() {
     super(SYNCUP_TYPE_ACTIVITIES_PULL);
-    this._saveNewActivity = this._saveNewActivity.bind(this);
+    this._saveNewActivities = this._saveNewActivities.bind(this);
     this._details[SYNCUP_DETAILS_SYNCED] = [];
     this._details[SYNCUP_DETAILS_UNSYNCED] = [];
   }
@@ -71,90 +72,146 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
   }
 
   pullNewEntries() {
-    const requestConfigurations = this.diff.saved.map(ampId => {
-      const pullConfig = {
-        getConfig: {
+    const requestConfigurations = [];
+    const { saved } = this.diff;
+    for (let idx = 0; idx < saved.length; idx += SYNCUP_ACTIVITIES_PULL_BATCH_SIZE) {
+      const batchAmpIds = saved.slice(idx, idx + SYNCUP_ACTIVITIES_PULL_BATCH_SIZE);
+      requestConfigurations.push({
+        postConfig: {
           shouldRetry: true,
-          url: ACTIVITY_EXPORT_URL,
-          paramsMap: { 'amp-id': ampId }
+          url: ACTIVITY_EXPORT_BATCHES_URL,
+          body: batchAmpIds
         },
-        onPullError: [ampId]
-      };
-      return pullConfig;
-    });
+        onPullError: batchAmpIds
+      });
+    }
     return this.pullNewEntriesInBatches(requestConfigurations);
   }
 
-  processEntryPullResult(activity, error) {
-    if (!error && activity) {
-      return this._removeExistingNonRejected(activity)
-        .then(this._saveNewActivity);
+  processEntryPullResult(activities, error) {
+    if (!error && activities) {
+      const activitiesPullErrors = [];
+      activities = activities.filter(a => {
+        if (a.error) {
+          activitiesPullErrors.push(a);
+          return false;
+        }
+        return true;
+      });
+      return this._removeExistingNonRejected(activities)
+        .then(this._saveNewActivities)
+        .then(result => {
+          if (activitiesPullErrors.length) {
+            return this.onActivitiesWithErrors(activitiesPullErrors);
+          }
+          return result;
+        });
     }
-    return this.onPullError(error, activity);
+    return this.onActivitiesPullError(error, activities);
   }
 
   /**
-   * Removes existing activity, unless was modified and local version matches the one from AMP
-   * @param activity the pulled activity
+   * Removes existing activities, unless were modified and local version matches the one from AMP
+   * @param activities the pulled activities
    * @return {Object} the activity to save
    * @private
    */
-  _removeExistingNonRejected(activity) {
-    return ActivityHelper.findNonRejectedByAmpId(activity[AC.AMP_ID]).then(dbActivity => {
-      if (!dbActivity) {
-        return activity;
+  _removeExistingNonRejected(activities) {
+    const activitiesByAmpId = new Map();
+    activities.forEach(a => activitiesByAmpId.set(a[AC.AMP_ID], a));
+    return ActivityHelper.findAllNonRejectedByAmpIds(Array.from(activitiesByAmpId.keys())).then(dbActivities => {
+      if (!dbActivities || !dbActivities.length) {
+        return activities;
       }
-      let rejectActivityPromise;
-      if (ActivityHelper.isModifiedOnClient(dbActivity)) {
-        if (ActivityHelper.getVersion(dbActivity) === ActivityHelper.getVersion(activity)) {
-          // update the minimum info for reference in case next pull will fail (e.g. connection loss)
-          [AC.CREATED_BY, AC.CREATED_ON, AC.MODIFIED_BY, AC.MODIFIED_ON].forEach(field => {
-            dbActivity[field] = activity[field];
+      const rejectActivityPromises = [];
+      dbActivities = dbActivities.filter(dbActivity => {
+        if (ActivityHelper.isModifiedOnClient(dbActivity)) {
+          const activity = activitiesByAmpId.get(dbActivity[AC.AMP_ID]);
+          /*
+          Use case to get here (see AMPOFFLINE-1363):
+          1) Add/Edit activity in AMP Offline.
+          2) Put break point in activities pull and during sync, allow only the push to go (do conn loss in pull)
+          3) Edit activity in AMP Offline. Do not change activity in AMP.
+          4) Sync normally (without conn loss). Offline activity changes must be visible in online.
+          Here we'll get previously unpulled activity, but it is the same as local and can be ignored.
+           */
+          if (ActivityHelper.getVersion(dbActivity) === ActivityHelper.getVersion(activity)) {
+            // update the minimum info for reference in case next pull will fail (e.g. connection loss)
+            [AC.CREATED_BY, AC.CREATED_ON, AC.MODIFIED_BY, AC.MODIFIED_ON].forEach(field => {
+              dbActivity[field] = activity[field];
+            });
+            activities[activities.findIndex(a => a === activity)] = dbActivity;
+            return false;
+          }
+          const error = new Notification({
+            message: 'rejectedStaleActivity',
+            origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
           });
-          return dbActivity;
+          rejectActivityPromises.push(this._activitiesPushToAMPManager.rejectActivityClientSide(dbActivity, error)
+            .catch(err => {
+              logger.error(err);
+              return Promise.resolve();
+            }));
         }
-        const error = new Notification({
-          message: 'rejectedStaleActivity',
-          origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
-        });
-        rejectActivityPromise = this._activitiesPushToAMPManager.rejectActivityClientSide(dbActivity, error);
-      }
-      return (rejectActivityPromise || Promise.resolve()).then(() =>
-        ActivityHelper.removeNonRejectedById(dbActivity.id).then(() => activity));
+        return true;
+      });
+      const ids = dbActivities.map(a => a.id);
+      return Promise.all(rejectActivityPromises).then(() =>
+        ActivityHelper.removeAllNonRejectedByIds(ids).then(() => activities));
     });
   }
 
-  _saveNewActivity(activity) {
-    const ampId = activity[AC.AMP_ID];
-    return ActivityHelper.saveOrUpdate(activity)
+  _saveNewActivities(activities) {
+    return ActivityHelper.saveOrUpdateCollection(activities, false)
       .then(() => {
-        this.pulled.add(ampId);
-        return this._updateDetails(ampId, activity);
-      }).catch((err) => this.onPullError(err, ampId));
+        activities.forEach(a => this.pulled.add(a[AC.AMP_ID]));
+        return this._updateDetails(activities);
+      }).catch((err) => {
+        activities.forEach(a => { a.error = err; });
+        return this.onActivitiesPullErrorAndLog(activities);
+      });
   }
 
-  onPullError(error, ampId) {
-    logger.error(`Activity amp-id=${ampId} pull error: ${error}`);
-    return this._updateDetails(ampId, null, error);
+  onPullError(error, ...ampIds) {
+    logger.error(`Activity amp-ids=${ampIds} pull error: ${error}`);
+    const notFoundInDBAmpIds = new Set(ampIds);
+    return ActivityHelper.findAllNonRejectedByAmpIds(ampIds).then(activitiesWithPullError => {
+      activitiesWithPullError.forEach(dbA => {
+        dbA.error = error;
+        notFoundInDBAmpIds.delete(dbA[AC.AMP_ID]);
+      });
+      notFoundInDBAmpIds.forEach(ampId => {
+        activitiesWithPullError.push({
+          [AC.AMP_ID]: ampId,
+          error
+        });
+      });
+      return this._updateDetails(activitiesWithPullError);
+    });
   }
 
-  _updateDetails(ampId, activity, error) {
-    const detailType = error ? SYNCUP_DETAILS_UNSYNCED : SYNCUP_DETAILS_SYNCED;
-    const detail = Utils.toMap(AC.AMP_ID, ampId);
-    return this._maybeLookupActivityInDB(ampId, activity).then(currentOrDbActivity => {
-      if (currentOrDbActivity) {
-        detail[AC.PROJECT_TITLE] = currentOrDbActivity[AC.PROJECT_TITLE];
-        detail.id = currentOrDbActivity.id;
+  onActivitiesPullError(error, activities) {
+    const ampIds = activities.map(a => a[AC.AMP_ID]);
+    logger.error(`Activity amp-ids=${ampIds} pull error: ${error}`);
+    activities.forEach(a => { a.error = error; });
+    return this._updateDetails(activities);
+  }
+
+  onActivitiesWithErrors(activitiesWithPullError) {
+    activitiesWithPullError.forEach(a => logger.error(`Activity amp-id=${a[AC.AMP_ID]} pull error: ${a.error}`));
+    return this._updateDetails(activitiesWithPullError);
+  }
+
+  _updateDetails(activities) {
+    activities.forEach(activity => {
+      const detailType = activity.error ? SYNCUP_DETAILS_UNSYNCED : SYNCUP_DETAILS_SYNCED;
+      const detail = Utils.toMap(AC.AMP_ID, activity[AC.AMP_ID]);
+      if (activity[AC.INTERNAL_ID]) {
+        detail[AC.PROJECT_TITLE] = activity[AC.PROJECT_TITLE];
+        detail.id = activity[AC.INTERNAL_ID];
       }
       this._details[detailType].push(detail);
-      return detail;
     });
   }
 
-  _maybeLookupActivityInDB(ampId, activity) {
-    if (activity) {
-      return Promise.resolve(activity);
-    }
-    return ActivityHelper.findNonRejectedByAmpId(ampId);
-  }
 }
