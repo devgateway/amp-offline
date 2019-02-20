@@ -8,9 +8,9 @@ const WorkspaceManager = {
   /**
    * @returns {Promise}
    */
-  getWorkspaceFilter(workspace) {
+  getWorkspaceFilter(workspace, teamMemberId = 0) {
     logger.log('getWorkspaceFilter');
-    const wsFilterBuilder = new WorkspaceFilterBuilder(workspace);
+    const wsFilterBuilder = new WorkspaceFilterBuilder(workspace, teamMemberId);
     return wsFilterBuilder.getDBFilter();
   },
 

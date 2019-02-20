@@ -1,14 +1,14 @@
 import * as AC from '../../utils/constants/ActivityConstants';
-import { FIELD_OPTIONS, LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
+import * as FPC from '../../utils/constants/FieldPathConstants';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
 import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
-// import PossibleValuesManager from '../activity/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
+import FieldsManager from '../field/FieldsManager';
 
 const logger = new Logger('Activity filter');
 
@@ -19,8 +19,9 @@ const logger = new Logger('Activity filter');
  */
 export default class ActivityFilter {
 
-  constructor(filters) {
+  constructor(filters, fieldsManager: FieldsManager) {
     this._filters = filters;
+    this._fieldsManager = fieldsManager;
     this._dbFilter = undefined;
     this._dateFilterHidesProjects = undefined;
     this._locationOptions = undefined;
@@ -47,13 +48,13 @@ export default class ActivityFilter {
     return Promise.all([
       this._getWorkspaces(),
       GlobalSettingsHelper.findByKey(FILTER_BY_DATE_HIDE_PROJECTS),
-      PossibleValuesHelper.findById(LOCATION_PATH)
+      PossibleValuesHelper.findById(FPC.LOCATION_PATH)
     ])
       .then(([workspaces, dateFilterHidesProjects, locationOptions]) => {
         this._wsIds = workspaces;
         this._dateFilterHidesProjects = (dateFilterHidesProjects && dateFilterHidesProjects.value === 'true');
-        if (locationOptions && locationOptions[FIELD_OPTIONS]) {
-          this._locationOptions = locationOptions[FIELD_OPTIONS];
+        if (locationOptions && locationOptions[FPC.FIELD_OPTIONS]) {
+          this._locationOptions = locationOptions[FPC.FIELD_OPTIONS];
         } else {
           this._locationOptions = [];
         }
@@ -196,8 +197,8 @@ export default class ActivityFilter {
       fundings.$elemMatch = fundingDetails;
     }
 
-    if (fundings.size > 0) {
-      this._tmpFilter[AC.FUNDINGS] = { $and: fundings };
+    if (Object.keys(fundings).length > 0) {
+      this._tmpFilter[AC.FUNDINGS] = fundings;
     }
   }
 
@@ -215,8 +216,19 @@ export default class ActivityFilter {
 
     this._addValueFilter(AC.EXPENDITURE_CLASS, '$in', 'expenditureClass', details);
 
-    if (details.size > 0) {
-      result = Utils.toMap(AC.FUNDING_DETAILS, { $elemMatch: details });
+    if (Object.keys(details).length > 0) {
+      const trnAdjRules = FPC.TRANSACTION_TYPES.map(trnType => {
+        // TODO TBC how hidden adj type data is handled on AMP and should be handled in AMP Offline
+        let ato = this._fieldsManager.getPossibleValuesOptions(`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`);
+        ato = ato.map(o => o.id);
+        return Utils.toMap(trnType, {
+          $elemMatch: {
+            ...details,
+            [AC.ADJUSTMENT_TYPE]: { $in: ato }
+          }
+        });
+      });
+      result = { $or: trnAdjRules };
     }
     return result;
   }

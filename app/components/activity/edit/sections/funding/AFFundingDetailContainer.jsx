@@ -2,7 +2,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
@@ -22,8 +21,7 @@ export default class AFFundingDetailContainer extends Component {
   };
 
   static propTypes = {
-    fundingDetail: PropTypes.array.isRequired,
-    type: PropTypes.string.isRequired,
+    trnType: PropTypes.string.isRequired,
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     hasErrors: PropTypes.func.isRequired,
@@ -33,34 +31,32 @@ export default class AFFundingDetailContainer extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
-    const errors = this.hasErrors(props.fundingDetail, props.type);
+    logger.debug('constructor');
+    const errors = this.hasErrors(props.funding, props.trnType);
     this.state = {
       errors,
       refresh: 0
     };
     if (errors) {
-      this._setOpenStatus(props.type, true);
+      this._setOpenStatus(props.trnType, true);
     }
     this._onChildUpdate = this._onChildUpdate.bind(this);
     this._setOpenStatus = this._setOpenStatus.bind(this);
   }
 
-  hasErrors(fundingDetail, type) {
-    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
-      && fd[AC.TRANSACTION_TYPE].value === type));
-    return this.props.hasErrors(fundingDetails);
+  hasErrors(funding, trnType) {
+    return this.props.hasErrors(funding[trnType]);
   }
 
-  _setOpenStatus(type, value) {
-    switch (type) {
-      case VC.COMMITMENTS:
+  _setOpenStatus(trnType, value) {
+    switch (trnType) {
+      case AC.COMMITMENTS:
         this.props.funding.commitmentsStatusOpen = value;
         break;
-      case VC.DISBURSEMENTS:
+      case AC.DISBURSEMENTS:
         this.props.funding.disbursementsStatusOpen = value;
         break;
-      case VC.EXPENDITURES:
+      case AC.EXPENDITURES:
         this.props.funding.expendituresStatusOpen = value;
         break;
       default:
@@ -69,37 +65,35 @@ export default class AFFundingDetailContainer extends Component {
   }
 
   _addTransactionItem() {
-    this.props.handleNewTransaction(this.props.type);
+    this.props.handleNewTransaction(this.props.trnType);
   }
 
   _onChildUpdate() {
-    const errors = this.hasErrors(this.props.fundingDetail, this.props.type);
+    const errors = this.hasErrors(this.props.funding, this.props.trnType);
     this.setState({ errors });
     this.props.refreshFundingDonorSectionErrors(errors);
   }
 
   render() {
-    const transactionTypes = Object.values(this.context.activityFieldsManager
-      .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`]);
-    if (transactionTypes.find(item => (item.value === this.props.type))) {
-      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
-        && fd[AC.TRANSACTION_TYPE].value === this.props.type));
+    const { trnType } = this.props;
+    if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
+      const fundingDetails = this.props.funding[trnType] || [];
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
       let open = false;
-      switch (this.props.type) {
-        case VC.COMMITMENTS:
+      switch (this.props.trnType) {
+        case AC.COMMITMENTS:
           header = translate('Commitments');
           button = translate('Add Commitments');
           open = this.props.funding.commitmentsStatusOpen;
           break;
-        case VC.DISBURSEMENTS:
+        case AC.DISBURSEMENTS:
           header = translate('Disbursements');
           button = translate('Add Disbursements');
           open = this.props.funding.disbursementsStatusOpen;
           break;
-        case VC.EXPENDITURES:
+        case AC.EXPENDITURES:
           header = translate('Expenditures');
           button = translate('Add Expenditures');
           open = this.props.funding.expendituresStatusOpen;
@@ -112,7 +106,7 @@ export default class AFFundingDetailContainer extends Component {
         <Panel
           header={header} collapsible expanded={open}
           onSelect={() => {
-            this._setOpenStatus(this.props.type, !open);
+            this._setOpenStatus(this.props.trnType, !open);
             this.setState({ refresh: Math.random() });
           }} className={this.state.errors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
@@ -123,7 +117,7 @@ export default class AFFundingDetailContainer extends Component {
             /* Lesson learned: DO NOT use an array index as component key if later we will remove elements from
             that array because that will confuse React. */
             return (<AFFundingDetailItem
-              fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
+              fundingDetail={fd} trnType={trnType} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
               removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding}
               updateParentErrors={this._onChildUpdate} />);
           })}

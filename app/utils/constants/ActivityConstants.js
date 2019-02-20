@@ -1,12 +1,9 @@
-import * as ValueConstants from './ValueConstants';
 import * as FMC from './FeatureManagerConstants';
 import { capitalize } from '../Utils';
 
 /**
  * @author Nadejda Mandrescu
  */
-
-export const ORG_ROLE_FIELDS = toFieldNames(ValueConstants.ORG_ROLE_NAMES);
 
 // Activity fields
 export const ACTIVITY_BUDGET = 'activity_budget';
@@ -72,6 +69,9 @@ export const BUDGET_ORGANIZATION_CODE = 'budget_organization_code';
 export const ARCHIVED = 'archived';
 export const TRANSACTION_DATE = 'transaction_date';
 export const TRANSACTION_TYPE = 'transaction_type';
+export const COMMITMENTS = 'commitments';
+export const DISBURSEMENTS = 'disbursements';
+export const EXPENDITURES = 'expenditures';
 export const TRANSACTION_AMOUNT = 'transaction_amount';
 export const ADJUSTMENT_TYPE = 'adjustment_type';
 export const ACTUAL_START_DATE = 'actual_start_date';
@@ -218,8 +218,6 @@ export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
 export const DEPENDENCY_ON_BUDGET = 'on_budget';
 export const DEPENDENCY_TRANSACTION_PRESENT = 'transaction_present';
 export const DEPENDENCY_COMPONENT_FUNDING_ORG_VALID = 'organization_present';
-export const DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED = 'disbursements_disaster_response_required';
-export const DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED = 'commitments_disaster_response_required';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =

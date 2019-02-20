@@ -102,7 +102,7 @@ export default class ActivityPreview extends Component {
       if (category.fmPath && !FeatureManager.isFMSettingEnabled(category.fmPath)) {
         return null;
       }
-      return <li><a href={category.hash}> {translate(category.value)} </a></li>;
+      return <li key={category.value}><a href={category.hash}> {translate(category.value)} </a></li>;
     });
 
     const categoryKeys = AC.AP_SECTION_IDS.map(category => category.key);
