@@ -1,10 +1,10 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-alert */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Moment from 'moment';
 import { Col, FormGroup, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
 import * as GS from '../../../../../utils/constants/GlobalSettingsConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
@@ -75,34 +75,30 @@ export default class AFFundingContainer extends Component {
     }
   }
 
-  _addTransactionItem(type) {
+  _addTransactionItem(trnType) {
     logger.debug('_addTransactionItem');
     const fundingDetailItem = {};
     fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getISODateForAPI(new Date());
-    const trnTypeList = this.context.activityFieldsManager
-      .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`];
-    const trnType = Object.values(trnTypeList).find(item => item.value === type);
-    fundingDetailItem[AC.TRANSACTION_TYPE] = trnType;
     fundingDetailItem[AC.CURRENCY] = {};
     fundingDetailItem[AC.TRANSACTION_AMOUNT] = undefined;
     fundingDetailItem[AC.ADJUSTMENT_TYPE] = undefined;
     const newFunding = this.props.funding;
     newFunding.fundingClassificationOpen = true;
-    if (newFunding[AC.FUNDING_DETAILS] === undefined) {
-      newFunding[AC.FUNDING_DETAILS] = [];
+    if (newFunding[trnType] === undefined) {
+      newFunding[trnType] = [];
     }
-    newFunding[AC.FUNDING_DETAILS].push(fundingDetailItem);
+    newFunding[trnType].push(fundingDetailItem);
     this.setState({ funding: newFunding });
   }
 
-  _removeFundingDetailItem(id) {
+  _removeFundingDetailItem(trnType, id) {
     logger.debug('_removeFundingDetailItem');
     if (confirm(translate('deleteFundingTransactionItem'))) {
-      const newFundingDetails = this.props.funding[AC.FUNDING_DETAILS].slice();
+      const newFundingDetails = this.props.funding[trnType].slice();
       const index = newFundingDetails.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
       newFundingDetails.splice(index, 1);
       const newFunding = this.props.funding;
-      newFunding[AC.FUNDING_DETAILS] = newFundingDetails;
+      newFunding[trnType] = newFundingDetails;
       this.setState({ funding: newFunding });
     }
   }
@@ -130,30 +126,27 @@ export default class AFFundingContainer extends Component {
         </Grid>
       </FormGroup>
       <AFFundingClassificationPanel
-        funding={funding} fundingDetails={funding[AC.FUNDING_DETAILS]}
+        funding={funding}
         hasErrors={this.props.hasErrors} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
       <AFMTEFProjectionContainer
         mtefProjections={funding[AC.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors}
         funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges}
         handleRemoveItem={this._removeMTEFProjectionItem} handleNewItem={this._addMTEFProjectionItem} />
       <AFFundingDetailContainer
-        fundingDetail={funding[AC.FUNDING_DETAILS]}
-        type={VC.COMMITMENTS}
-        removeFundingDetailItem={this._removeFundingDetailItem}
+        trnType={AC.COMMITMENTS}
+        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.COMMITMENTS)}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
         funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
       <AFFundingDetailContainer
-        fundingDetail={funding[AC.FUNDING_DETAILS]}
-        type={VC.DISBURSEMENTS}
-        removeFundingDetailItem={this._removeFundingDetailItem}
+        trnType={AC.DISBURSEMENTS}
+        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.DISBURSEMENTS)}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
         funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
       <AFFundingDetailContainer
-        fundingDetail={funding[AC.FUNDING_DETAILS]}
-        type={VC.EXPENDITURES}
-        removeFundingDetailItem={this._removeFundingDetailItem}
+        trnType={AC.EXPENDITURES}
+        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.EXPENDITURES)}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
         funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />

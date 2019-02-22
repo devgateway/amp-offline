@@ -31,7 +31,6 @@ const AFUtils = {
       extra_info: org.extra_info,
       'translated-value': org['translated-value']
     };
-    fundingItem[AC.FUNDING_DETAILS] = [];
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
     fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
     // Find the 'Donor' org type if enabled.

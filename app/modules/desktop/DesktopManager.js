@@ -4,23 +4,13 @@ import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VAL
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
+import * as AC from '../../utils/constants/ActivityConstants';
+import * as VC from '../../utils/constants/ValueConstants';
 import {
-  ADJUSTMENT_TYPE,
-  APPROVAL_STATUS,
-  DONOR_ORGANIZATION,
-  FUNDING_DETAILS,
-  FUNDINGS,
-  IS_DRAFT,
-  REJECTED_ID,
-  TRANSACTION_TYPE
-} from '../../utils/constants/ActivityConstants';
-import {
-  ADJUSTMENT_TYPE_PATH,
+  ADJUSTMENT_TYPE_PATHS,
   DONOR_ORGANIZATIONS_PATH,
-  FUNDING_CURRENCY_PATH,
-  TRANSACTION_TYPE_PATH
+  FUNDING_CURRENCY_PATHS
 } from '../../utils/constants/FieldPathConstants';
-import { ACTUAL, COMMITMENTS, DISBURSEMENTS } from '../../utils/constants/ValueConstants';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import Logger from '../../modules/util/LoggerManager';
@@ -32,7 +22,7 @@ const DesktopManager = {
   generateDesktopData(workspace, teamMemberId, currentWorkspaceSettings, currencyRatesManager) {
     logger.log('generateDesktopData');
     return new Promise((resolve, reject) =>
-      WorkspaceFilter.getDBFilter(workspace).then(wsFilter =>
+      WorkspaceFilter.getDBFilter(workspace, teamMemberId).then(wsFilter =>
         this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
           currencyRatesManager)
           .then((tab1Data) =>
@@ -70,7 +60,7 @@ const DesktopManager = {
     logger.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
-      fieldPaths: [DONOR_ORGANIZATIONS_PATH, ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, FUNDING_CURRENCY_PATH],
+      fieldPaths: [DONOR_ORGANIZATIONS_PATH, ...ADJUSTMENT_TYPE_PATHS, ...FUNDING_CURRENCY_PATHS],
       teamMemberId
     });
   },
@@ -83,11 +73,12 @@ const DesktopManager = {
         status: this.getActivityStatus(item),
         donor: this.getActivityDonors(item),
         synced: this.getActivityIsSynced(item),
-        actualDisbursements: this.getActivityAmounts(item, DISBURSEMENTS, currentWorkspaceSettings,
+        actualDisbursements: this.getActivityAmounts(item, AC.DISBURSEMENTS, currentWorkspaceSettings,
           currencyRatesManager),
-        actualCommitments: this.getActivityAmounts(item, COMMITMENTS, currentWorkspaceSettings, currencyRatesManager),
+        actualCommitments: this.getActivityAmounts(item, AC.COMMITMENTS, currentWorkspaceSettings,
+          currencyRatesManager),
         view: true,
-        edit: this.getActivityCanEdit(item) && !item[REJECTED_ID],
+        edit: this.getActivityCanEdit(item) && !item[AC.REJECTED_ID],
         new: this.getActivityIsNew(item)
       })
     ));
@@ -95,14 +86,15 @@ const DesktopManager = {
   },
 
   getActivityIsNew(item) {
-    if (item[IS_DRAFT]) {
-      if (item[APPROVAL_STATUS] === ApprovalStatus.APPROVED.id || item[APPROVAL_STATUS] === ApprovalStatus.EDITED.id) {
+    if (item[AC.IS_DRAFT]) {
+      if (item[AC.APPROVAL_STATUS] === ApprovalStatus.APPROVED.id
+        || item[AC.APPROVAL_STATUS] === ApprovalStatus.EDITED.id) {
         return false;
       } else {
         return true;
       }
     } else {
-      if (item[APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
+      if (item[AC.APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
         return true;
       }
       return false;
@@ -110,29 +102,28 @@ const DesktopManager = {
   },
 
   getActivityCanEdit(item) {
-    return !item[REJECTED_ID];
+    return !item[AC.REJECTED_ID];
   },
 
   getActivityAmounts(item, trnType, currentWorkspaceSettings, currencyRatesManager) {
     let amount = 0;
-    if (item[FUNDINGS]) {
-      item[FUNDINGS].forEach((funding) => (
-        funding[FUNDING_DETAILS].forEach((fd) => {
-          if (!fd[TRANSACTION_TYPE] || !fd[ADJUSTMENT_TYPE]) {
-            logger.error(`Data Error: transaction_type or adjustment_type is undefined. ID: ${item.id}`);
-          } else if (fd[TRANSACTION_TYPE].value === trnType && fd[ADJUSTMENT_TYPE].value === ACTUAL) {
+    if (item[AC.FUNDINGS]) {
+      item[AC.FUNDINGS].forEach((funding) => {
+        const fds = funding[trnType] && funding[trnType].filter(fd => fd[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL);
+        if (fds) {
+          fds.forEach((fd) => {
             amount += currencyRatesManager
               .convertTransactionAmountToCurrency(fd, currentWorkspaceSettings.currency.code);
-          }
-        })
-      ));
+          });
+        }
+      });
     }
     return amount;
   },
 
   getActivityDonors(item) {
-    if (item[DONOR_ORGANIZATION]) {
-      return item[DONOR_ORGANIZATION].map((donor) => (donor.organization.value));
+    if (item[AC.DONOR_ORGANIZATION]) {
+      return item[AC.DONOR_ORGANIZATION].map((donor) => (donor.organization.value));
     }
     return [];
   },
@@ -144,8 +135,8 @@ const DesktopManager = {
 
   getActivityStatus(item) {
     let status = '';
-    const approvalStatusId = item[APPROVAL_STATUS];
-    if (item[IS_DRAFT]) {
+    const approvalStatusId = item[AC.APPROVAL_STATUS];
+    if (item[AC.IS_DRAFT]) {
       status = ACTIVITY_STATUS_DRAFT;
     } else if (approvalStatusId === ApprovalStatus.APPROVED.id ||
       approvalStatusId === ApprovalStatus.STARTED_APPROVED.id) {

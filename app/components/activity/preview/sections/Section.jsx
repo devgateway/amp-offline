@@ -36,7 +36,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
   static contextTypes = {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    contactFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    contactFieldsManager: PropTypes.instanceOf(FieldsManager),
     contactsByIds: PropTypes.object.isRequired,
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
     activityWorkspace: PropTypes.object.isRequired,

@@ -1,9 +1,11 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable react/no-unused-prop-types */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
@@ -41,7 +43,7 @@ export default class AFFundingDonorSection extends Component {
 
   constructor(props, context) {
     super(props, context);
-    logger.log('constructor');
+    logger.debug('constructor');
     props.fundings.forEach(f => {
       const funding = this._findFundingById(f[AC.GROUP_VERSIONED_FUNDING]);
       if (this._checkChildrenForErrors(f)) {
@@ -62,7 +64,7 @@ export default class AFFundingDonorSection extends Component {
 
   _checkChildrenForErrors(f) {
     const { hasErrors } = this.props;
-    return (hasErrors(f) || hasErrors(f[AC.FUNDING_DETAILS]) || hasErrors(f[AC.MTEF_PROJECTIONS]));
+    return (hasErrors(f) || FPC.TRANSACTION_TYPES.some(tt => hasErrors(f[tt])) || hasErrors(f[AC.MTEF_PROJECTIONS]));
   }
 
   _addNewFundingItem() {
@@ -73,7 +75,6 @@ export default class AFFundingDonorSection extends Component {
     if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
       fundingItem[AC.SOURCE_ROLE] = this.props.role;
     }
-    fundingItem[AC.FUNDING_DETAILS] = [];
     fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
 
     // Open/Closed state for Panels.
@@ -99,7 +100,8 @@ export default class AFFundingDonorSection extends Component {
   }
 
   _removeFundingItem(id, orgTypeName) {
-    logger.log('_removeFundingItem');
+    logger.debug('_removeFundingItem');
+    // eslint-disable-next-line no-alert
     if (confirm(translate('deleteFundingItem'))) {
       const { activity } = this.context;
       const newFundingList = this._filterFundings(this.props.fundings).slice();
