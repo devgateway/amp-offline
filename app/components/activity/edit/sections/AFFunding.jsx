@@ -1,11 +1,13 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-alert */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Panel, Tab, Tabs } from 'react-bootstrap';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../utils/constants/ValueConstants';
+import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
@@ -139,7 +141,7 @@ class AFFunding extends Component {
         const tab = groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
           && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)));
         // Look for errors on Commitments/Disbursements/Expenditures too.
-        const errorsOnInternalSections = this.hasErrors(f[AC.FUNDING_DETAILS])
+        const errorsOnInternalSections = FPC.TRANSACTION_TYPES.some(tt => this.hasErrors(f[tt]))
           || this.hasErrors(f[AC.MTEF_PROJECTIONS]);
         if (!tab) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
@@ -165,8 +167,10 @@ class AFFunding extends Component {
           if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
             sourceRole = funding[AC.SOURCE_ROLE];
           } else {
+            const enabledTrnType = FPC.TRANSACTION_TYPES
+              .find(tt => this.context.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, tt));
             const options = this.context.activityFieldsManager
-              .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
+              .possibleValuesMap[`${AC.FUNDINGS}~${enabledTrnType}~${AC.RECIPIENT_ROLE}`];
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
 

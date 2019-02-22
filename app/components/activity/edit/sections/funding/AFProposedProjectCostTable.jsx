@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
@@ -28,7 +29,7 @@ export default class AFProposedProjectCostTable extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.options = {
       withoutNoDataText: true
     };
@@ -37,7 +38,7 @@ export default class AFProposedProjectCostTable extends Component {
   _createCurrencyField() {
     const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     if (!activity[AC.PPC_AMOUNT][0][AC.CURRENCY] || !activity[AC.PPC_AMOUNT][0][AC.CURRENCY].id) {
-      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.PPC_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
       activity[AC.PPC_AMOUNT][0][AC.CURRENCY] = currency;

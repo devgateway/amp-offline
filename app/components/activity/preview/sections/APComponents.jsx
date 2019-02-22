@@ -1,6 +1,8 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Section from './Section';
 import * as AC from '../../../../utils/constants/ActivityConstants';
+import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import styles from './APComponents.css';
 import translate from '../../../../utils/translate';
@@ -24,18 +26,18 @@ class APComponents extends Component {
     return new Date(Date.parse(dateString)).getFullYear();
   }
 
-  static _extractGroups(funding) {
+  static _extractGroups(funding, trnType) {
     const groups = [];
     const auxFd = {
       adjType: funding[AC.ADJUSTMENT_TYPE],
-      trnType: funding[AC.TRANSACTION_TYPE],
+      trnType,
       key: funding.id,
       currency: funding[AC.CURRENCY],
       amount: funding[AC.AMOUNT],
       year: APComponents._extractYear(funding[AC.TRANSACTION_DATE])
     };
     const group = groups.find(o => o.adjType.id === auxFd.adjType.id
-    && o.trnType.id === auxFd.trnType.id
+    && o.trnType === auxFd.trnType
     && o.year === auxFd.year);
     if (!group) {
       groups.push(auxFd);
@@ -49,17 +51,20 @@ class APComponents extends Component {
   static _buildDetail(component) {
     const content = [];
     // TODO: Apply currency conversion to show all fundings in the same currency
-    component[AC.COMPONENT_FUNDING].forEach((funding) => {
-      const groups = APComponents._extractGroups(funding);
-      groups.forEach(group => {
-        // TODO: Add the current currency.
-        // TODO: Translate a single phrase instead of a combination of words (AMPOFFLINE-477).
-        content.push(<tr>
-          <td>{group.year}</td>
-          <td>{translate(`${group.adjType.value} ${group.trnType.value}`)}</td>
-          <td>{rawNumberToFormattedString(group.amount)}</td>
-        </tr>);
-      });
+    FPC.TRANSACTION_TYPES.forEach(trnType => {
+      const fundings = component[trnType];
+      if (fundings && fundings.length) {
+        const groups = APComponents._extractGroups(fundings, trnType);
+        groups.forEach(group => {
+          // TODO: Add the current currency.
+          // TODO: Translate a single phrase instead of a combination of words (AMPOFFLINE-477).
+          content.push(<tr>
+            <td>{group.year}</td>
+            <td>{translate(`${group.adjType.value} ${group.trnType}`)}</td>
+            <td>{rawNumberToFormattedString(group.amount)}</td>
+          </tr>);
+        });
+      }
     });
     const table = (<div>
       <table className={styles.table}>
@@ -71,7 +76,7 @@ class APComponents extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   _buildComponents() {
