@@ -18,7 +18,7 @@ const PULL_END = 'PULL_END';
  taking more than requests and sometime pull wait was aborted over the current 5sec timeout.
  */
 const CHECK_INTERVAL = 100;
-const QUEUE_LIMIT = 4;
+const QUEUE_LIMIT = 5;
 const ABORT_INTERVAL = (CONNECTION_FORCED_TIMEOUT + CHECK_INTERVAL) * (QUEUE_LIMIT + 1); // milliseconds
 
 /**
@@ -124,7 +124,7 @@ export default class BatchPullSyncUpManagerInterface extends SyncUpManagerInterf
   }
 
   _isPullDenied() {
-    return this.requestsToProcess > QUEUE_LIMIT;
+    return this.requestsToProcess >= QUEUE_LIMIT;
   }
 
   _incRequestsToProcess() {
