@@ -101,3 +101,5 @@ export const FIELD_DEPENDENCIES = 'dependencies';
 
 export const FIELD_TYPE_LIST = 'list';
 export const FIELD_TYPE_OBJECT = 'object';
+export const FIELD_TYPE_DATE = 'date';
+export const FIELD_TYPE_TIMESTAMP = 'timestamp';

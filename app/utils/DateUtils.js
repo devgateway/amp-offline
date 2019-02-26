@@ -53,7 +53,7 @@ export default class DateUtils {
   }
 
   static createFormattedDate(date) {
-    logger.log('createFormattedDate');
+    logger.debug('createFormattedDate');
     return DateUtils.formatDate(date, DateUtils.getGSDateFormat());
   }
 
