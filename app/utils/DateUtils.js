@@ -21,7 +21,7 @@ export default class DateUtils {
     Moment.locale(lang);
   }
 
-  static formatDateForCurrencyRates(date) {
+  static formatDateForAPI(date) {
     return DateUtils.formatDate(date, API_SHORT_DATE_FORMAT);
   }
 

@@ -71,7 +71,7 @@ class AFDateAntDesign extends Component {
   }
 
   onDateChange(date: Moment) {
-    this.handleChange(date, date ? DateUtils.getISODateForAPI(date) : null);
+    this.handleChange(date, date ? DateUtils.formatDateForAPI(date) : null);
   }
 
   handleChange(date, value) {

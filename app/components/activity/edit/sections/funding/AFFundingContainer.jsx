@@ -51,7 +51,7 @@ export default class AFFundingContainer extends Component {
     if (this.props.funding[AC.MTEF_PROJECTIONS] && this.props.funding[AC.MTEF_PROJECTIONS].length > 0) {
       year = Math.max(...this.props.funding[AC.MTEF_PROJECTIONS].map((i) => Moment(i[AC.PROJECTION_DATE]).year())) + 1;
     }
-    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(Moment(`${year}-01-01`));
+    mtefItem[AC.PROJECTION_DATE] = DateUtils.formatDateForAPI(Moment(`${year}-01-01`));
     mtefItem[AC.PROJECTION] = {};
     mtefItem[AC.CURRENCY] = {};
     mtefItem[AC.AMOUNT] = undefined;
