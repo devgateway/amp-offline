@@ -166,7 +166,7 @@ export default class DBMigrationsManager {
       let willRun = changeset.isRunAlways || !dbC || !MC.EXECTYPE_SUCCESS_OPTIONS.includes(dbC[MC.EXECTYPE]);
       if (!dbC) {
         newChangesets.push(changeset);
-        changeset.dateFound = DateUtils.getISODateForAPI();
+        changeset.dateFound = DateUtils.getTimestampForAPI();
       } else if (changeset.md5 !== dbC[MC.MD5SUM]) {
         willRun = willRun || changeset.isRunOnChange;
         changeset.dateFound = dbC[MC.DATE_FOUND];
@@ -380,7 +380,7 @@ export default class DBMigrationsManager {
 
   _saveChangeset(changeset: Changeset) {
     // storing execution date for success and also for error to see the last attempt
-    changeset.dateExecuted = DateUtils.getISODateForAPI();
+    changeset.dateExecuted = DateUtils.getTimestampForAPI();
     this._isFailOnError = !!(changeset.isFailOnError && changeset.error);
     return this._saveChangesets([changeset]).then(() => {
       if (this._isFailOnError) {

@@ -78,7 +78,7 @@ export default class AFFundingContainer extends Component {
   _addTransactionItem(trnType) {
     logger.debug('_addTransactionItem');
     const fundingDetailItem = {};
-    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getISODateForAPI(new Date());
+    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getTimestampForAPI(new Date());
     fundingDetailItem[AC.CURRENCY] = {};
     fundingDetailItem[AC.TRANSACTION_AMOUNT] = undefined;
     fundingDetailItem[AC.ADJUSTMENT_TYPE] = undefined;

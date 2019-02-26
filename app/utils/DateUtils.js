@@ -89,11 +89,11 @@ export default class DateUtils {
   }
 
   /**
-   * Formats the date according to AMP API format
+   * Formats the date according to AMP API timestamp format
    * @param date (optional, defaults to current moment)
-   * @returns {string} date formatted according to API format
+   * @returns {string} datetime formatted according to API format
    */
-  static getISODateForAPI(date = new Date()) {
+  static getTimestampForAPI(date = new Date()) {
     // DO NOT remove the timezone, since AMP also stores it.
     // We'll revise, if needed, once we implement the timing synchronization between AMP and AMP Offline client.
     return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);
