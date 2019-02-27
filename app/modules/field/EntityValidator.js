@@ -2,7 +2,6 @@
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as FPC from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
-import { INTERNAL_DATE_FORMAT } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
@@ -20,6 +19,7 @@ import * as Utils from '../../utils/Utils';
 import { CLIENT_CHANGE_ID, VALIDATE_ON_CHANGE_ONLY } from '../../utils/constants/EntityConstants';
 import * as RC from '../../utils/constants/ResourceConstants';
 import FieldDefinition from './FieldDefinition';
+import { API_SHORT_DATE_FORMAT } from '../connectivity/AmpApiConstants';
 
 const logger = new Logger('EntityValidator');
 
@@ -279,9 +279,9 @@ export default class EntityValidator {
         if (!(typeof value === 'boolean' || value instanceof Boolean)) {
           this.processValidationResult(obj, fieldPath, this.invalidBoolean.replace('%value%', value));
         }
-      } else if (fieldDef.type === 'date') {
+      } else if (fieldDef.type === FPC.FIELD_TYPE_DATE) {
         if (!(typeof value === 'string' || value instanceof String)
-          || !(value !== '' && DateUtils.isValidDateFormat(value, INTERNAL_DATE_FORMAT))) {
+          || !(value !== '' && DateUtils.isValidDateFormat(value, API_SHORT_DATE_FORMAT))) {
           this.processValidationResult(obj, fieldPath, this.invalidDate.replace('%value%', value));
         }
       }
