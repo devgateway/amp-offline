@@ -27,7 +27,7 @@ export default class DateUtils {
 
   static isValidDateFormat(date, format) {
     const moment = Moment(date, format);
-    return moment.isValid();
+    return moment.isValid() && !moment.parsingFlags().unusedInput.length && !moment.parsingFlags().unusedTokens.length;
   }
 
   static formatDate(date, format) {
