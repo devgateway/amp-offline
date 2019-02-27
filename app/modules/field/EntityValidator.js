@@ -19,7 +19,7 @@ import * as Utils from '../../utils/Utils';
 import { CLIENT_CHANGE_ID, VALIDATE_ON_CHANGE_ONLY } from '../../utils/constants/EntityConstants';
 import * as RC from '../../utils/constants/ResourceConstants';
 import FieldDefinition from './FieldDefinition';
-import { API_SHORT_DATE_FORMAT } from '../connectivity/AmpApiConstants';
+import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../connectivity/AmpApiConstants';
 
 const logger = new Logger('EntityValidator');
 
@@ -197,8 +197,8 @@ export default class EntityValidator {
     this.invalidNumber = translate('invalidNumber2');
     this.invalidBoolean = translate('invalidBoolean');
     this.invalidTitle = translate('duplicateTitle');
-    // though we'll validate internal format, we have to report user friendly format
     this.invalidDate = translate('invalidDate').replace('%gs-format%', gsDateFormat);
+    this.invalidTimestamp = translate('invalidDate').replace('%gs-format%', API_LONG_DATE_FORMAT);
   }
 
   _validateValue(objects, asDraft, fieldDef: FieldDefinition, fieldPath) {
@@ -283,6 +283,11 @@ export default class EntityValidator {
         if (!(typeof value === 'string' || value instanceof String)
           || !(value !== '' && DateUtils.isValidDateFormat(value, API_SHORT_DATE_FORMAT))) {
           this.processValidationResult(obj, fieldPath, this.invalidDate.replace('%value%', value));
+        }
+      } else if (fieldDef.type === FPC.FIELD_TYPE_TIMESTAMP) {
+        if (!(typeof value === 'string' || value instanceof String)
+          || !(value !== '' && DateUtils.isValidDateFormat(value, API_LONG_DATE_FORMAT))) {
+          this.processValidationResult(obj, fieldPath, this.invalidTimestamp.replace('%value%', value));
         }
       }
       if (fieldDef.isPercentage()) {
