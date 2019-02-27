@@ -249,7 +249,7 @@ export default class EntityValidator {
             this.processValidationResult(obj, fieldPath, listLengthError);
           }
         }
-      } else if (fieldDef.type === 'string') {
+      } else if (fieldDef.type === FPC.FIELD_TYPE_STRING) {
         if (this._wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft)) {
           // TODO multilingual support Iteration 2+
         } else if (!(typeof value === 'string' || value instanceof String)) {
@@ -265,17 +265,17 @@ export default class EntityValidator {
             this.processValidationResult(obj, fieldPath, regexError);
           }
         }
-      } else if (fieldDef.type === 'long') {
+      } else if (fieldDef.type === FPC.FIELD_TYPE_LONG) {
         if (!Number.isInteger(value) && !this._isAllowInvalidNumber(value, fieldPath)) {
           this.processValidationResult(obj, fieldPath, this.invalidNumber);
         } else {
           this._wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft);
         }
-      } else if (fieldDef.type === 'float') {
+      } else if (fieldDef.type === FPC.FIELD_TYPE_FLOAT) {
         if (value !== +value || value.toString().indexOf('e') > -1) {
           this.processValidationResult(obj, fieldPath, this.invalidNumber);
         }
-      } else if (fieldDef.type === 'boolean') {
+      } else if (fieldDef.type === FPC.FIELD_TYPE_BOOLEAN) {
         if (!(typeof value === 'boolean' || value instanceof Boolean)) {
           this.processValidationResult(obj, fieldPath, this.invalidBoolean.replace('%value%', value));
         }
