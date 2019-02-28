@@ -55,7 +55,7 @@ class AFDateAntDesign extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.gsDateFormat = DateUtils.getGSDateFormat();
     const params = this.props.extraParams || {};
     let date = null;

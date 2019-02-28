@@ -21,6 +21,18 @@ export default class DateUtils {
     Moment.locale(lang);
   }
 
+  /**
+   * This method simply extracts the short date part of a timestamp, assuming timestamp format includes date format
+   * @param timestamp
+   * @returns date in the short API format
+   */
+  static substractShortDateForAPI(timestamp: String) {
+    if (timestamp && timestamp.length >= API_SHORT_DATE_FORMAT.length) {
+      return timestamp.substr(0, API_SHORT_DATE_FORMAT.length);
+    }
+    return null;
+  }
+
   static formatDateForAPI(date) {
     return DateUtils.formatDate(date, API_SHORT_DATE_FORMAT);
   }

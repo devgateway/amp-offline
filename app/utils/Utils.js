@@ -62,6 +62,18 @@ const Utils = {
     return result;
   },
 
+  /**
+   * Push a value to an array stored in an object by specified key. If no array exists, it will be initialized.
+   * @param obj
+   * @param key
+   * @param value
+   */
+  pushByKey(obj, key, value) {
+    const list = obj[key] || [];
+    list.push(value);
+    obj[key] = list;
+  },
+
   toDefinedOrNullRule(key) {
     const result = {};
     result[key] = { $exists: true };
