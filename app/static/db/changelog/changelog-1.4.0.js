@@ -42,6 +42,9 @@ let activitiesWithFundingDetails = [];
 // AMPOFFLINE-1392
 let allActivities = [];
 
+// AMPOFFLINE-1368
+let activitiesWithPPC = [];
+
 export default ({
   changelog: {
     preConditions: [],
@@ -496,6 +499,51 @@ export default ({
         }],
         rollback: {
           func: () => ActivityHelper.saveOrUpdateCollection(allActivities, false)
+        }
+      },
+      {
+        changeid: 'AMPOFFLINE-1368-ppc-as-object',
+        author: 'nmandrescu',
+        comment: 'Migrate PPC from list to object type',
+        preConditions: [{
+          func: () => ActivityHelper.findAll(Utils.toDefinedOrNullArrayRule(AC.PPC_AMOUNT))
+            .then(activities => {
+              activitiesWithPPC = activities;
+              return activitiesWithPPC.length > 0;
+            }),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }, {
+          changeid: 'AMPOFFLINE-1318-ppc-currency',
+          author: 'nmandrescu',
+          file: 'changelog-1.4.0.js',
+          onFail: MC.ON_FAIL_ERROR_CONTINUE,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }, {
+          changeid: 'AMPOFFLINE-1392-separate-date-timestamp',
+          author: 'nmandrescu',
+          file: 'changelog-1.4.0.js',
+          onFail: MC.ON_FAIL_ERROR_CONTINUE,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
+        changes: [{
+          func: () => {
+            activitiesWithPPC.forEach(a => {
+              const ppc = a[AC.PPC_AMOUNT];
+              if (ppc && ppc.length) {
+                a[AC.PPC_AMOUNT] = ppc[0];
+              } else {
+                delete a[AC.PPC_AMOUNT];
+              }
+            });
+            return ActivityHelper.saveOrUpdateCollection(activitiesWithPPC).then(r => {
+              activitiesWithPPC = null;
+              return r;
+            });
+          }
+        }],
+        rollback: {
+          func: () => ActivityHelper.saveOrUpdateCollection(activitiesWithPPC, false)
         }
       },
     ]

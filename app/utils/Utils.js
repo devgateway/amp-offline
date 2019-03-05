@@ -80,6 +80,10 @@ const Utils = {
     return result;
   },
 
+  toDefinedOrNullArrayRule(key) {
+    return { $or: [this.toMap(key, { $exists: true }), this.toMap(key, { $size: 0 })] };
+  },
+
   toDefinedNotNullRule(key) {
     return { $and: [this.toMap(key, { $exists: true }), this.toMap(key, { $ne: null })] };
   },
