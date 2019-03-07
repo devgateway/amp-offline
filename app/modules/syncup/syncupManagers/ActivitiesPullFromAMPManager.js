@@ -13,6 +13,7 @@ import Logger from '../../util/LoggerManager';
 import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import Notification from '../../helpers/NotificationHelper';
 import * as EC from '../../../utils/constants/ErrorConstants';
+import ApiErrorConverter from '../../connectivity/ApiErrorConverter';
 
 const logger = new Logger('Activities pull from AMP manager');
 
@@ -192,13 +193,17 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
 
   onActivitiesPullError(error, activities) {
     const ampIds = activities.map(a => a[AC.AMP_ID]);
+    error = ApiErrorConverter.toLocalError(error);
     logger.error(`Activity amp-ids=${ampIds} pull error: ${error}`);
     activities.forEach(a => { a.error = error; });
     return this._updateDetails(activities);
   }
 
   onActivitiesWithErrors(activitiesWithPullError) {
-    activitiesWithPullError.forEach(a => logger.error(`Activity amp-id=${a[AC.AMP_ID]} pull error: ${a.error}`));
+    activitiesWithPullError.forEach(a => {
+      a.error = ApiErrorConverter.toLocalError(a.error);
+      logger.error(`Activity amp-id=${a[AC.AMP_ID]} pull error: ${a.error}`);
+    });
     return this._updateDetails(activitiesWithPullError);
   }
 
