@@ -24,6 +24,7 @@ import {
   SYNCUP_TYPE_ACTIVITY_FIELDS,
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_ALL_FIELDS,
+  SYNCUP_TYPE_ALL_FIELDS_STRUCTURAL_CHANGES,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
@@ -41,6 +42,8 @@ import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager'
 import ResourceHelper from '../helpers/ResourceHelper';
 import * as FieldsHelper from '../helpers/FieldsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
+import * as CSC from '../../utils/constants/ClientSettingsConstants';
+import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
 
 const logger = new Logger('Syncup runner');
 
@@ -186,7 +189,9 @@ export default class SyncUpRunner {
 
   _getCumulativeSyncUpChanges() {
     logger.log('_getCumulativeSyncUpChanges');
-    return this._getWhatChangedInAMP().then(this._mergeToLeftOverAndUpdateNoChanges);
+    return this._getWhatChangedInAMP()
+      .then(this._forceSyncUpIfNeeded)
+      .then(this._mergeToLeftOverAndUpdateNoChanges);
   }
 
   _getWhatChangedInAMP() {
@@ -206,6 +211,14 @@ export default class SyncUpRunner {
       this._currentTimestamp = changes[SYNCUP_DATETIME_FIELD];
       return changes;
     });
+  }
+
+  _forceSyncUpIfNeeded(changes) {
+    if (changes[SYNCUP_TYPE_ALL_FIELDS_STRUCTURAL_CHANGES]) {
+      logger.log(`Forcing syncup: ${SYNCUP_TYPE_ALL_FIELDS_STRUCTURAL_CHANGES}=true`);
+      return ClientSettingsHelper.updateSettingValue(CSC.FORCE_SYNC_UP, true).then(() => changes);
+    }
+    return changes;
   }
 
   _mergeToLeftOverAndUpdateNoChanges(changes) {
