@@ -55,7 +55,7 @@ class AFDateAntDesign extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.gsDateFormat = DateUtils.getGSDateFormat();
     const params = this.props.extraParams || {};
     let date = null;
@@ -71,7 +71,7 @@ class AFDateAntDesign extends Component {
   }
 
   onDateChange(date: Moment) {
-    this.handleChange(date, date ? DateUtils.getISODateForAPI(date) : null);
+    this.handleChange(date, date ? DateUtils.formatDateForAPI(date) : null);
   }
 
   handleChange(date, value) {

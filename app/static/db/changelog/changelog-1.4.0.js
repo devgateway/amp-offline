@@ -12,6 +12,7 @@ import * as ActivityHelper from '../../../modules/helpers/ActivityHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import logger from '../ChangelogLogger';
 import { ALL_APPROVAL_STATUSES } from '../../../utils/constants/ApprovalStatus';
+import DateUtils from '../../../utils/DateUtils';
 
 // AMPOFFLINE-1312-configure-web-link-resource_type
 const noResType = Utils.toMap(RC.RESOURCE_TYPE, { $exists: false });
@@ -37,6 +38,9 @@ let activitiesWithFY = [];
 
 // AMPOFFLINE-1371
 let activitiesWithFundingDetails = [];
+
+// AMPOFFLINE-1392
+let allActivities = [];
 
 export default ({
   changelog: {
@@ -417,6 +421,81 @@ export default ({
         }],
         rollback: {
           func: () => ActivityHelper.saveOrUpdateCollection(activitiesWithFundingDetails, false)
+        }
+      },
+      {
+        changeid: 'AMPOFFLINE-1392-separate-date-timestamp',
+        author: 'nmandrescu',
+        comment: 'Migrate some date fields to short API date format',
+        preConditions: [{
+          func: () => ActivityHelper.findAll({}).then(activities => {
+            allActivities = activities;
+            return allActivities.length > 0;
+          }),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }, {
+          changeid: 'AMPOFFLINE-1371-new-fundings-transactions-structure',
+          author: 'nmandrescu',
+          file: 'changelog-1.4.0.js',
+          onFail: MC.ON_FAIL_ERROR_CONTINUE,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
+        changes: [{
+          func: () => {
+            allActivities.forEach(a => {
+              const dateFieldsObj = {};
+              [AC.ORIGINAL_COMPLETION_DATE, AC.CONTRACTING_DATE, AC.DISBURSEMENT_DATE, AC.PROPOSED_START_DATE,
+                AC.ACTUAL_START_DATE, AC.PROPOSED_APPROVAL_DATE, AC.ACTUAL_APPROVAL_DATE, AC.ACTUAL_COMPLETION_DATE,
+                AC.PROPOSED_COMPLETION_DATE].forEach(datePath => Utils.pushByKey(dateFieldsObj, datePath, a));
+              const ppc = a[AC.PPC_AMOUNT] && a[AC.PPC_AMOUNT].length ? a[AC.PPC_AMOUNT][0] : null;
+              Utils.pushByKey(dateFieldsObj, AC.FUNDING_DATE, ppc);
+              (a[AC.FUNDINGS] || []).forEach(funding => {
+                [AC.ACTUAL_START_DATE, AC.ACTUAL_COMPLETION_DATE, AC.ORIGINAL_COMPLETION_DATE, AC.REPORTING_DATE,
+                  AC.FUNDING_CLASSIFICATION_DATE, AC.EFFECTIVE_FUNDING_DATE, AC.FUNDING_CLOSING_DATE,
+                  AC.RATIFICATION_DATE, AC.MATURITY]
+                  .forEach(datePath => Utils.pushByKey(dateFieldsObj, datePath, funding));
+                FPC.TRANSACTION_TYPES.forEach(trnType => {
+                  (funding[trnType] || []).forEach(fd => Utils.pushByKey(dateFieldsObj, AC.TRANSACTION_DATE, fd));
+                });
+                Utils.pushByKey(dateFieldsObj, AC.TRANSACTION_DATE, funding[AC.MTEF_PROJECTIONS]);
+              });
+              (a[AC.COMPONENTS] || []).forEach(component => {
+                FPC.TRANSACTION_TYPES.forEach(trnType => {
+                  (component[trnType] || []).forEach(fd => Utils.pushByKey(dateFieldsObj, AC.TRANSACTION_DATE, fd));
+                });
+              });
+              (a[AC.ISSUES] || []).forEach(issue => {
+                Utils.pushByKey(dateFieldsObj, AC.ISSUE_DATE, issue);
+                (issue[AC.MEASURES] || []).forEach(measure => Utils.pushByKey(dateFieldsObj, AC.MEASURE_DATE, measure));
+              });
+              Object.keys(dateFieldsObj)
+                .forEach(datePath => dateFieldsObj[datePath].forEach(obj => {
+                  const timestamp = obj && obj[datePath];
+                  if (timestamp) {
+                    // No matter in which timezone the date is picked, the date part reflects the date user selected
+                    obj[datePath] = DateUtils.substractShortDateForAPI(timestamp);
+                    if (!obj[datePath]) {
+                      logger.error(`Could not convert ${datePath}=${datePath} to date for amp_id=${a[AC.AMP_ID]}`);
+                    }
+                  }
+                }));
+            });
+            return ActivityHelper.saveOrUpdateCollection(allActivities, false).then(result => {
+              allActivities = null;
+              return result;
+            });
+          }
+        }, {
+          update: {
+            table: COLLECTION_CLIENT_SETTINGS,
+            field: 'value',
+            value: true,
+            filter: { name: CSC.FORCE_SYNC_UP }
+          }
+        }],
+        rollback: {
+          func: () => ActivityHelper.saveOrUpdateCollection(allActivities, false)
         }
       },
     ]

@@ -51,7 +51,7 @@ export default class AFFundingContainer extends Component {
     if (this.props.funding[AC.MTEF_PROJECTIONS] && this.props.funding[AC.MTEF_PROJECTIONS].length > 0) {
       year = Math.max(...this.props.funding[AC.MTEF_PROJECTIONS].map((i) => Moment(i[AC.PROJECTION_DATE]).year())) + 1;
     }
-    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(Moment(`${year}-01-01`));
+    mtefItem[AC.PROJECTION_DATE] = DateUtils.formatDateForAPI(Moment(`${year}-01-01`));
     mtefItem[AC.PROJECTION] = {};
     mtefItem[AC.CURRENCY] = {};
     mtefItem[AC.AMOUNT] = undefined;
@@ -78,7 +78,7 @@ export default class AFFundingContainer extends Component {
   _addTransactionItem(trnType) {
     logger.debug('_addTransactionItem');
     const fundingDetailItem = {};
-    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getISODateForAPI(new Date());
+    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getTimestampForAPI(new Date());
     fundingDetailItem[AC.CURRENCY] = {};
     fundingDetailItem[AC.TRANSACTION_AMOUNT] = undefined;
     fundingDetailItem[AC.ADJUSTMENT_TYPE] = undefined;
