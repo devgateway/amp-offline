@@ -23,6 +23,7 @@ const logger = new Logger('Activity push to AMP manager');
 
 const paramsMap = {
   'process-approval-fields': true,
+  'track-editors': true,
 };
 
 /* eslint-disable class-methods-use-this */
