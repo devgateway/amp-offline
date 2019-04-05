@@ -21,6 +21,10 @@ import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Activity push to AMP manager');
 
+const paramsMap = {
+  'process-approval-fields': true,
+};
+
 /* eslint-disable class-methods-use-this */
 /**
  * Activities push to AMP Manager
@@ -203,8 +207,13 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
        => we need a reasonable timeout for now to minimize such risk
        Final solution will be handled with 'client-change-id' - proposed for iteration 2
        */
-      ConnectionHelper.doPost(
-        { url: ACTIVITY_IMPORT_URL, body: activity, shouldRetry: false, extraUrlParam: activity[AC.INTERNAL_ID] })
+      ConnectionHelper.doPost({
+        url: ACTIVITY_IMPORT_URL,
+        body: activity,
+        shouldRetry: false,
+        extraUrlParam: activity[AC.INTERNAL_ID],
+        paramsMap
+      })
         .then((pushResult) => this._processPushResult({ activity, pushResult })).then(resolve)
         .catch((error) => this._processPushResult({ activity, error }).then(resolve))
     );
