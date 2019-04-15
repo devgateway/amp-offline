@@ -76,7 +76,7 @@ export default class CurrencyRatesManager {
 
   convertAmountToCurrency(amount, currencyFrom, date, fixedExchangeRate, currencyTo) {
     const currencyRate = this.convertCurrency(currencyFrom, currencyTo,
-      DateUtils.formatDateForCurrencyRates(date), fixedExchangeRate);
+      DateUtils.formatDateForAPI(date), fixedExchangeRate);
     return amount * currencyRate;
   }
 

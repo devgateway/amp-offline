@@ -57,12 +57,12 @@ export default class ActivityStatusValidation {
               if (isSameWorkspace) {
                 dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                 dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-                dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
+                dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getTimestampForAPI();
               } else {
                 if (isCrossTeamValidation) {
                   dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                   dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-                  dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
+                  dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getTimestampForAPI();
                 } else {
                   dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 }
@@ -101,7 +101,7 @@ export default class ActivityStatusValidation {
             dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
           }
           dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-          dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
+          dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getTimestampForAPI();
         }
         return dehydratedActivity[AC.APPROVAL_STATUS];
       })

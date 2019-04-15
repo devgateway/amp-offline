@@ -92,8 +92,9 @@ export default class FieldsManager {
     let currentTree = this._fieldsDef;
     const isDisabled = pathParts.some(part => {
       currentTree = currentTree.find(field => field.field_name === part);
-      if (currentTree && currentTree[FPC.FIELD_TYPE] === FPC.FIELD_TYPE_LIST
-        && currentTree[FPC.FIELD_ITEM_TYPE] === FPC.FIELD_TYPE_OBJECT) {
+      if (currentTree && ((currentTree[FPC.FIELD_TYPE] === FPC.FIELD_TYPE_LIST
+        && currentTree[FPC.FIELD_ITEM_TYPE] === FPC.FIELD_TYPE_OBJECT)
+        || currentTree[FPC.FIELD_TYPE] === FPC.FIELD_TYPE_OBJECT)) {
         currentTree = currentTree.children;
       }
       return !currentTree;

@@ -284,10 +284,8 @@ class AFFunding extends Component {
    * @returns {*}
    */
   render() {
-    const overviewTabHasErrors = (this.context.activity[AC.PPC_AMOUNT]
-      && this.context.activity[AC.PPC_AMOUNT][0]
-      && this.context.activity[AC.PPC_AMOUNT][0].errors
-      && this.context.activity[AC.PPC_AMOUNT][0].errors.length > 0);
+    const ppc = this.context.activity[AC.PPC_AMOUNT];
+    const overviewTabHasErrors = ppc && ppc.errors && ppc.errors.length;
     if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
       return (<div>
         <Tabs

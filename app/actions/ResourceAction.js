@@ -157,9 +157,9 @@ const _tryToAutoAddPendingResourcesToActivity = (activity, resource, isDoc) => (
  * @return {[{ errorMessage, path }]} the list of errors
  */
 export const prepareNewResourceForSave = (resource, isDoc) => (dispatch, ownProps) => {
-  logger.info('prepareNewResourceForSave');
+  logger.log('prepareNewResourceForSave');
   const createdAt = new Date();
-  resource[CLIENT_ADDING_DATE] = DateUtils.getISODateForAPI(createdAt);
+  resource[CLIENT_ADDING_DATE] = DateUtils.getTimestampForAPI(createdAt);
   resource[CLIENT_YEAR_OF_PUBLICATION] = `${createdAt.getFullYear()}`;
   resource[CREATOR_EMAIL] = ownProps().userReducer.userData.email;
   resource[TEAM] = ownProps().userReducer.teamMember[WORKSPACE_ID];

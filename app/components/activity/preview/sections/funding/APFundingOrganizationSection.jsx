@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -45,9 +46,9 @@ class APFundingOrganizationSection extends Component {
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
-      true, null, false, funding));
+      true, null, false, funding && funding[AC.AGREEMENT]));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
-      true, null, false, funding));
+      true, null, false, funding && funding[AC.AGREEMENT]));
 
     const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
     return tableContent;

@@ -37,14 +37,15 @@ export default class AFProposedProjectCostTable extends Component {
 
   _createCurrencyField() {
     const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
-    if (!activity[AC.PPC_AMOUNT][0][AC.CURRENCY] || !activity[AC.PPC_AMOUNT][0][AC.CURRENCY].id) {
+    const ppc = activity[AC.PPC_AMOUNT];
+    if (!ppc[AC.CURRENCY] || !ppc[AC.CURRENCY].id) {
       const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.PPC_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
-      activity[AC.PPC_AMOUNT][0][AC.CURRENCY] = currency;
+      ppc[AC.CURRENCY] = currency;
     }
     const field = (<AFField
-      parent={this.context.activity[AC.PPC_AMOUNT][0]}
+      parent={ppc}
       fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY}`}
       type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true, showOrigValue: true }} />);
     return field;
@@ -60,7 +61,7 @@ export default class AFProposedProjectCostTable extends Component {
         columns.push(<TableHeaderColumn
           dataField={AC.AMOUNT} editable={false} key={AC.AMOUNT}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
+            parent={this.context.activity[AC.PPC_AMOUNT]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.AMOUNT}`}
             type={Types.NUMBER} showLabel={false} readonly />)}>{translate('Amount')}</TableHeaderColumn>);
       }
@@ -74,22 +75,22 @@ export default class AFProposedProjectCostTable extends Component {
         columns.push(<TableHeaderColumn
           dataField={AC.FUNDING_DATE} editable={false} key={AC.FUNDING_DATE}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
+            parent={this.context.activity[AC.PPC_AMOUNT]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`}
             type={Types.DATE} showLabel={false} />)}>{translate('Date')}</TableHeaderColumn>);
       }
       // Create empty row for new activities.
       this.context.activity[AC.PPC_AMOUNT] = this.context.activity[AC.PPC_AMOUNT]
-        || [{
+        || {
           [AC.AMOUNT]: null,
           [AC.CURRENCY]: this.context.currentWorkspaceSettings.currency.code,
           [AC.FUNDING_DATE]: null
-        }];
+        };
       return (<div>
         <span><label htmlFor="ppc_table">{translate('Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} hover data={this.context.activity[AC.PPC_AMOUNT]}>
+          thClassName={styles.thClassName} hover data={[this.context.activity[AC.PPC_AMOUNT]]}>
           {columns}
         </BootstrapTable>
       </div>);
