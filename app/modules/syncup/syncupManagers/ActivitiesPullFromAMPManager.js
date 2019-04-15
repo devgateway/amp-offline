@@ -169,7 +169,7 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
         return this._updateDetails(activities);
       }).catch((err) => {
         activities.forEach(a => { a.error = err; });
-        return this.onActivitiesPullErrorAndLog(activities);
+        return this.onActivitiesWithErrors(activities);
       });
   }
 

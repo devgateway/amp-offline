@@ -135,6 +135,18 @@ const ClientSettingsHelper = {
   },
 
   /**
+   * Updates an existing setting to the specified value
+   * @param name
+   * @param value
+   */
+  updateSettingValue(name, value) {
+    return this.findSettingByName(name).then(setting => {
+      setting.value = value;
+      return this.saveOrUpdateSetting(setting);
+    });
+  },
+
+  /**
    * Delete a setting by id
    * @param id the setting id
    * @returns {Promise}

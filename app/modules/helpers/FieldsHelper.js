@@ -2,6 +2,8 @@ import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_FIELDS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
+import Notification from './NotificationHelper';
+import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Fields helper');
 
@@ -46,6 +48,28 @@ const FieldsHelper = {
     filter = filter || {};
     filter[fieldsType] = { $exists: true };
     return FieldsHelper.findAll(filter, projections);
+  },
+
+  /**
+   * Find the only available (if any) fields definition for the fields type or reports an error if multiple are found
+   * @param fieldsType
+   * @param filter
+   * @param projections
+   * @returns {Promise<T | never>}
+   */
+  getSingleFieldsDef(fieldsType, filter, projections) {
+    return FieldsHelper.findAllPerFieldType(fieldsType, filter, projections).then(fieldDefs => {
+      if (fieldDefs.length === 1) {
+        return fieldDefs[0][fieldsType];
+      } else if (!fieldDefs.length) {
+        return null;
+      }
+      // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
+      return Promise.reject(new Notification({
+        message: 'noUniqueFieldsTree',
+        origin: NOTIFICATION_ORIGIN_DATABASE
+      }));
+    });
   },
 
   /**

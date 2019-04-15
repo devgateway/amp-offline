@@ -22,13 +22,16 @@ import {
   SYNCUP_TYPE_ACTIVITIES_PULL,
   SYNCUP_TYPE_ACTIVITIES_PUSH,
   SYNCUP_TYPE_ACTIVITY_FIELDS,
+  SYNCUP_TYPE_ACTIVITY_FIELDS_STRUCTURAL_CHANGES,
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_ALL_FIELDS,
   SYNCUP_TYPE_ASSETS,
   SYNCUP_TYPE_CONTACT_FIELDS,
+  SYNCUP_TYPE_CONTACT_FIELDS_STRUCTURAL_CHANGES,
   SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_RESOURCE_FIELDS,
+  SYNCUP_TYPE_RESOURCE_FIELDS_STRUCTURAL_CHANGES,
   SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_TRANSLATIONS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS
@@ -39,7 +42,10 @@ import ContactHelper from '../helpers/ContactHelper';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
 import ResourceHelper from '../helpers/ResourceHelper';
+import * as FieldsHelper from '../helpers/FieldsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
+import * as CSC from '../../utils/constants/ClientSettingsConstants';
+import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
 
 const logger = new Logger('Syncup runner');
 
@@ -160,15 +166,20 @@ export default class SyncUpRunner {
 
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
       ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
-      ResourceHelper.countAllResourcesModifiedOnClient(),
-      TranslationSyncupManager.getNewTranslationsDifference(),
+      ResourceHelper.countAllResourcesModifiedOnClient(), TranslationSyncupManager.getNewTranslationsDifference(),
+      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_ACTIVITY_FIELDS),
+      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_CONTACT_FIELDS),
+      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_RESOURCE_FIELDS),
       PossibleValuesHelper.findActivityPossibleValuesPaths()])
       .then(([
                ampIds, userIds, activitiesToPush, contactsToPush, resourcesToPushCount, newTranslations,
-               activitiesPVsPaths
+               activityFields, contactFields, resourceFields, activitiesPVsPaths
              ]) => {
         this._ampIds = ampIds;
         this._activitiesPVsPaths = activitiesPVsPaths;
+        this._activityFields = activityFields;
+        this._contactFields = contactFields;
+        this._resourceFields = resourceFields;
         this._registeredUserIds = userIds;
         this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
         this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
@@ -180,7 +191,9 @@ export default class SyncUpRunner {
 
   _getCumulativeSyncUpChanges() {
     logger.log('_getCumulativeSyncUpChanges');
-    return this._getWhatChangedInAMP().then(this._mergeToLeftOverAndUpdateNoChanges);
+    return this._getWhatChangedInAMP()
+      .then(this._forceSyncUpIfNeeded)
+      .then(this._mergeToLeftOverAndUpdateNoChanges);
   }
 
   _getWhatChangedInAMP() {
@@ -193,10 +206,23 @@ export default class SyncUpRunner {
     // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
     body['amp-ids'] = this._ampIds;
     body[SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] = this._activitiesPVsPaths;
+    body[SYNCUP_TYPE_ACTIVITY_FIELDS] = this._activityFields;
+    body[SYNCUP_TYPE_CONTACT_FIELDS] = this._contactFields;
+    body[SYNCUP_TYPE_RESOURCE_FIELDS] = this._resourceFields;
     return ConnectionHelper.doPost({ url: SYNC_URL, body, shouldRetry: true }).then((changes) => {
       this._currentTimestamp = changes[SYNCUP_DATETIME_FIELD];
       return changes;
     });
+  }
+
+  _forceSyncUpIfNeeded(changes) {
+    const sc = [SYNCUP_TYPE_ACTIVITY_FIELDS_STRUCTURAL_CHANGES, SYNCUP_TYPE_CONTACT_FIELDS_STRUCTURAL_CHANGES,
+      SYNCUP_TYPE_RESOURCE_FIELDS_STRUCTURAL_CHANGES].filter(type => changes[type]);
+    if (sc.length) {
+      logger.log(`Forcing syncup: detected ${sc}`);
+      return ClientSettingsHelper.updateSettingValue(CSC.FORCE_SYNC_UP, true).then(() => changes);
+    }
+    return changes;
   }
 
   _mergeToLeftOverAndUpdateNoChanges(changes) {

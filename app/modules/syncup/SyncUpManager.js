@@ -310,11 +310,8 @@ export default class SyncUpManager {
 
   static _updateForceSyncUpClientSetting(syncResult) {
     if (syncResult.status === SYNCUP_STATUS_SUCCESS) {
-      return ClientSettingsHelper.findSettingByName(CSC.FORCE_SYNC_UP).then(forceSyncCS => {
-        forceSyncCS.value = false;
-        return ClientSettingsHelper.saveOrUpdateSetting(forceSyncCS);
-      });
+      return ClientSettingsHelper.updateSettingValue(CSC.FORCE_SYNC_UP, false);
     }
-    return Promise.resolve();
+    return syncResult;
   }
 }
