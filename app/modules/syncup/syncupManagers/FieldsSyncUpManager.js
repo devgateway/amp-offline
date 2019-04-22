@@ -2,9 +2,7 @@ import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import * as FieldsHelper from '../../helpers/FieldsHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
-import Notification from '../../helpers/NotificationHelper';
 import * as Utils from '../../../utils/Utils';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../../utils/constants/ErrorConstants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -36,7 +34,7 @@ export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
       return this._syncUpFieldsTreePerWorkspaceMembers();
     } else if (this._useSingleTreeEP) {
       // if still using single fields tree, update the one from DB with the latest list of ws-member-ids
-      return this._getSingleFieldsDef().then(this._linkAllWSMembersToSingleFieldsTree);
+      return FieldsHelper.getSingleFieldsDef(this._fieldsType).then(this._linkAllWSMembersToSingleFieldsTree);
     }
     return Promise.resolve();
   }
@@ -48,19 +46,6 @@ export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
   _syncUpSingleFieldsTree() {
     return ConnectionHelper.doGet({ url: this._singleFieldsTreeUrl, shouldRetry: true })
         .then((fieldsDefTree) => this._linkAllWSMembersToSingleFieldsTree(fieldsDefTree));
-  }
-
-  _getSingleFieldsDef() {
-    return FieldsHelper.findAllPerFieldType(this._fieldsType).then(fieldDefs => {
-      if (fieldDefs.length === 1) {
-        return Promise.resolve(fieldDefs[0][this._fieldsType]);
-      }
-      // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
-      return Promise.reject(new Notification({
-        message: 'noUniqueFieldsTree',
-        origin: NOTIFICATION_ORIGIN_DATABASE
-      }));
-    });
   }
 
   _linkAllWSMembersToSingleFieldsTree(fieldsDefTree) {
