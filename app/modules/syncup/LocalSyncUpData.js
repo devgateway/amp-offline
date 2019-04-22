@@ -11,6 +11,7 @@ import {
   SYNCUP_TYPE_RESOURCE_FIELDS
 } from '../../utils/Constants';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
+import * as FPC from '../../utils/constants/FieldPathConstants';
 
 /**
  * This class is to store local information needed during sync up diff or decisions while running the sync up
@@ -30,10 +31,14 @@ export default class LocalSyncUpData {
       FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_ACTIVITY_FIELDS),
       FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_CONTACT_FIELDS),
       FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_RESOURCE_FIELDS),
-      PossibleValuesHelper.findActivityPossibleValuesPaths()])
+      PossibleValuesHelper.findActivityPossibleValuesPaths(),
+      PossibleValuesHelper.findPossibleValuesPathsFor(FPC.PREFIX_CONTACT),
+      PossibleValuesHelper.findPossibleValuesPathsFor(FPC.PREFIX_RESOURCE),
+      PossibleValuesHelper.findPossibleValuesPathsFor(FPC.PREFIX_COMMON)])
       .then(([
                ampIds, userIds, activitiesToPush, contactsToPush, resourcesToPushCount, newTranslations,
-               activityFields, contactFields, resourceFields, activitiesPVsPaths
+               activityFields, contactFields, resourceFields, activitiesPVsPaths, contactPVsPaths, resourcePVsPaths,
+               commonPVsPaths
              ]) => {
         this._ampIds = ampIds;
         this._activitiesPVsPaths = activitiesPVsPaths;
@@ -45,6 +50,9 @@ export default class LocalSyncUpData {
         this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
         this._hasResourcesToPush = resourcesToPushCount > 0;
         this._hasTranslationsToPush = newTranslations && newTranslations.length > 0;
+        this._contactPVsPaths = contactPVsPaths;
+        this._resourcePVsPaths = resourcePVsPaths;
+        this._commonPVsPaths = commonPVsPaths;
         return null;
       });
   }
@@ -55,6 +63,18 @@ export default class LocalSyncUpData {
 
   get activitiesPVsPaths() {
     return this._activitiesPVsPaths;
+  }
+
+  get contactPVsPaths() {
+    return this._contactPVsPaths;
+  }
+
+  get resourcePVsPaths() {
+    return this._resourcePVsPaths;
+  }
+
+  get commonPVsPaths() {
+    return this._commonPVsPaths;
   }
 
   get activityFields() {

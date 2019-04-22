@@ -23,12 +23,15 @@ import {
   SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
   SYNCUP_TYPE_ALL_FIELDS,
   SYNCUP_TYPE_ASSETS,
+  SYNCUP_TYPE_COMMON_POSSIBLE_VALUES,
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACT_FIELDS_STRUCTURAL_CHANGES,
+  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
   SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES,
   SYNCUP_TYPE_RESOURCE_FIELDS,
   SYNCUP_TYPE_RESOURCE_FIELDS_STRUCTURAL_CHANGES,
+  SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES,
   SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_TRANSLATIONS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS
@@ -159,7 +162,7 @@ export default class SyncUpRunner {
     this._syncRunNo = syncRunNo;
     this._localData = new LocalSyncUpData();
 
-    return this._localData.build().then(this._getCumulativeSyncUpChanges());
+    return this._localData.build().then(this._getCumulativeSyncUpChanges);
   }
 
   _getCumulativeSyncUpChanges() {
@@ -179,6 +182,9 @@ export default class SyncUpRunner {
     // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
     body['amp-ids'] = this._localData.ampIds;
     body[SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] = this._localData.activitiesPVsPaths;
+    body[SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES] = this._localData.contactPVsPaths;
+    body[SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES] = this._localData.resourcePVsPaths;
+    body[SYNCUP_TYPE_COMMON_POSSIBLE_VALUES] = this._localData.commonPVsPaths;
     body[SYNCUP_TYPE_ACTIVITY_FIELDS] = this._localData.activityFields;
     body[SYNCUP_TYPE_CONTACT_FIELDS] = this._localData.contactFields;
     body[SYNCUP_TYPE_RESOURCE_FIELDS] = this._localData.resourceFields;
