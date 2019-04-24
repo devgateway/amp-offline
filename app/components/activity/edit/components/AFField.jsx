@@ -324,7 +324,7 @@ class AFField extends Component {
   _getMultiSelect() {
     let selectFieldDef = this.fieldDef;
     let optionsPath = this.props.fieldPath;
-    if (this.fieldDef.children) {
+    if (this.fieldDef.hasChildren()) {
       selectFieldDef = this.fieldDef.children.length === 1 ?
         this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
       selectFieldDef = selectFieldDef && new FieldDefinition(selectFieldDef);

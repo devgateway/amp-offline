@@ -83,7 +83,7 @@ export default class AFMapWindow extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.openStructureDataPopup = this.openStructureDataPopup.bind(this);
     this.onStructureDataPopupCancel = this.onStructureDataPopupCancel.bind(this);
     this.onStructureDataPopupSubmit = this.onStructureDataPopupSubmit.bind(this);
@@ -113,19 +113,29 @@ export default class AFMapWindow extends Component {
     }
   }
 
-  onStructureDataPopupSubmit(layer, id, title, structure_color, description, shape, isGazetteer) {
+  onStructureDataPopupSubmit(layer, id, temporalId, title, structure_color, description, shape, isGazetteer) {
     this.setState({ showStructureDataPopup: false, currentLayer: null, structureData: null });
     const newLayersList = this.state.layersList.slice();
-    const index = newLayersList.findIndex((item) => (item.structureData.id === id));
+    const index = newLayersList.findIndex((item) => (item.structureData[AC.TEMPORAL_ID] === temporalId));
     if (index > -1) {
       newLayersList.splice(index, 1);
     } else {
-      id = Math.random();
+      temporalId = Math.random();
     }
     if (shape !== AC.STRUCTURES_POINT && structure_color && structure_color.value) {
       layer.options.color = structure_color.value.substring(0, 7);
     }
-    const newStructure = { layer, structureData: { title, structure_color, id, description, shape } };
+    const newStructure = {
+      layer,
+      structureData: {
+        id,
+        [AC.TEMPORAL_ID]: temporalId,
+        title,
+        structure_color,
+        description,
+        shape
+      }
+    };
 
     // Add extra data we need for a gazetteer point.
     if (isGazetteer) {
@@ -159,7 +169,7 @@ export default class AFMapWindow extends Component {
   onStructureDataPopupDelete(layer, structureData) {
     this.onStructureDataPopupCancel(layer, true);
     const newDeletedList = this.state.deletedLayersList.slice();
-    newDeletedList.push({ id: structureData.id });
+    newDeletedList.push({ [AC.TEMPORAL_ID]: structureData[AC.TEMPORAL_ID] });
     this.setState({ deletedLayersList: newDeletedList });
   }
 
@@ -178,7 +188,7 @@ export default class AFMapWindow extends Component {
     creating an extra structure). */
     const auxLayersList = this.state.layersList.slice();
     if (this.state.invalidPoint && auxLayersList.length > 0) {
-      auxLayersList[0].structureData.id = this.state.invalidPoint.id;
+      auxLayersList[0].structureData[AC.TEMPORAL_ID] = this.state.invalidPoint[AC.TEMPORAL_ID];
     }
     onSave(auxLayersList, this.state.deletedLayersList);
     this.setState({
@@ -293,6 +303,7 @@ export default class AFMapWindow extends Component {
         this.setState({
           invalidPoint: {
             id: point.id,
+            [AC.TEMPORAL_ID]: point[AC.TEMPORAL_ID],
             [AC.STRUCTURES_TITLE]: point[AC.STRUCTURES_TITLE],
             [AC.STRUCTURES_DESCRIPTION]: point[AC.STRUCTURES_DESCRIPTION]
           },
@@ -310,6 +321,7 @@ export default class AFMapWindow extends Component {
             [AC.STRUCTURES_TITLE]: point[AC.STRUCTURES_TITLE],
             [AC.STRUCTURES_COLOR]: null,
             id: point.id,
+            [AC.TEMPORAL_ID]: point[AC.TEMPORAL_ID],
             [AC.STRUCTURES_DESCRIPTION]: point[AC.STRUCTURES_DESCRIPTION],
             [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
             edit: true
@@ -334,6 +346,7 @@ export default class AFMapWindow extends Component {
           [AC.STRUCTURES_TITLE]: polygon[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_COLOR]: polygon[AC.STRUCTURES_COLOR],
           id: polygon.id,
+          [AC.TEMPORAL_ID]: polygon[AC.TEMPORAL_ID],
           [AC.STRUCTURES_DESCRIPTION]: polygon[AC.STRUCTURES_DESCRIPTION],
           [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
           edit: true
