@@ -12,6 +12,7 @@ const logger = new Logger('AF text area');
 export default class AFTextArea extends Component {
   static propTypes = {
     value: PropTypes.string,
+    readonly: PropTypes.bool,
     maxLength: PropTypes.number,
     onChange: PropTypes.func
   };
@@ -49,6 +50,9 @@ export default class AFTextArea extends Component {
   }
 
   render() {
+    if (this.props.readonly) {
+      return <FormControl componentClass={this.componentClass} type={this.type} value={this.state.value} disabled />;
+    }
     return (
       <FormControl
         componentClass={this.componentClass} type={this.type} value={this.state.value}

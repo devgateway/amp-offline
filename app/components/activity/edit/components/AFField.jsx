@@ -280,12 +280,19 @@ class AFField extends Component {
   }
 
   _getTextArea() {
-    return (<AFTextArea
-      value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange} />);
+    return (
+      <AFTextArea
+        value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange}
+        readonly={!this.fieldDef.isImportable()} />
+    );
   }
 
   _getInput() {
-    return <AFInput value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange} />;
+    return (
+      <AFInput
+        value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange}
+        readonly={!this.fieldDef.isImportable()} />
+    );
   }
 
   _getNumber() {
