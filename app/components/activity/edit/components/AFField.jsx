@@ -124,10 +124,14 @@ class AFField extends Component {
   }
 
   onChange(value, asDraft, innerComponentValidationError) {
-    this.props.parent[this.fieldName] = value;
+    if (!this.fieldDef.isImportable()) {
+      innerComponentValidationError = innerComponentValidationError || translate('editNotAllowed');
+      value = this.props.parent[this.fieldName];
+    } else {
+      this.props.parent[this.fieldName] = value;
+    }
     const errors = this.context.activityValidator.validateField(
       this.props.parent, asDraft, this.fieldDef, this.props.fieldPath);
-    // TODO check if its still needed to have innerComponentValidationError, additionally to API rules
     this.context.activityValidator.processValidationResult(
       this.props.parent, this.props.fieldPath, innerComponentValidationError);
     this.setState({ value });
@@ -280,12 +284,19 @@ class AFField extends Component {
   }
 
   _getTextArea() {
-    return (<AFTextArea
-      value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange} />);
+    return (
+      <AFTextArea
+        value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange}
+        readonly={!this.fieldDef.isImportable()} />
+    );
   }
 
   _getInput() {
-    return <AFInput value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange} />;
+    return (
+      <AFInput
+        value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange}
+        readonly={!this.fieldDef.isImportable()} />
+    );
   }
 
   _getNumber() {
