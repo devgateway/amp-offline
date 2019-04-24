@@ -251,6 +251,9 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const errorData = error || (pushResult && pushResult.error) || undefined;
     this._updateDetails({ activity, pushResult, errorData });
     if (errorData) {
+      if (!pushResult) {
+        return Promise.resolve(activity);
+      }
       return this._getRejectedId(activity)
         .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData));
     }
