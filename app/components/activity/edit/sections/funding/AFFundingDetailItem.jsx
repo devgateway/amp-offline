@@ -42,13 +42,11 @@ export default class AFFundingDetailItem extends Component {
     removeFundingDetailItem: PropTypes.func.isRequired,
     funding: PropTypes.object.isRequired,
     trnType: PropTypes.string,
-    updateParentErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
     this.state = { selectedOrgRole: props.fundingDetail[AC.RECIPIENT_ROLE] || undefined };
-    this._onUpdateField = this._onUpdateField.bind(this);
   }
 
   _getRecipientRoleFilter() {
@@ -125,10 +123,6 @@ export default class AFFundingDetailItem extends Component {
     return content;
   }
 
-  _onUpdateField() {
-    this.props.updateParentErrors();
-  }
-
   render() {
     const { trnType, fundingDetail, funding, removeFundingDetailItem } = this.props;
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
@@ -149,38 +143,34 @@ export default class AFFundingDetailItem extends Component {
               <div className={styles.row}>
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`}
-                  onAfterUpdate={this._onUpdateField} />
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.TRANSACTION_AMOUNT}`}
-                  onAfterUpdate={this._onUpdateField} />
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.TRANSACTION_AMOUNT}`} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.CURRENCY}`} defaultValueAsEmptyObject
-                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} onAfterUpdate={this._onUpdateField} />
+                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.TRANSACTION_DATE}`}
-                  onAfterUpdate={this._onUpdateField} />
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.TRANSACTION_DATE}`} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   type={Types.RADIO_BOOLEAN}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISASTER_RESPONSE}`}
-                  onAfterUpdate={this._onUpdateField} />
-                {(trnType === AC.DISBURSEMENTS) ? <AFField
-                  parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISBURSEMENT_ORDER_ID}`}
-                  onAfterUpdate={this._onUpdateField} /> : null}
+                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISASTER_RESPONSE}`} />
+                {(trnType === AC.DISBURSEMENTS) ?
+                  <AFField
+                    parent={fundingDetail} className={styles.cell_3}
+                    fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISBURSEMENT_ORDER_ID}`} />
+                    : null}
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.PLEDGE}`}
-                  filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]}
-                  onAfterUpdate={this._onUpdateField} />
+                  filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]} />
                 <AFField
                   parent={fundingDetail} className={styles.cell_4}
                   fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.FIXED_EXCHANGE_RATE}`}
-                  extraParams={{ bigger: 0 }} onAfterUpdate={this._onUpdateField} />
+                  extraParams={{ bigger: 0 }} />
                 {this.generateRecipients(fundingDetail)}
               </div>
             </td>
