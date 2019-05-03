@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
@@ -35,7 +36,7 @@ class AFIdentification extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     // Show "Budget Extras" fields like ministry_code only when activity_budget is enabled and has value 'On Budget'.
     const showBudgetExtras = this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
       && this.isActivityOnBudget();

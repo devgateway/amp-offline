@@ -139,7 +139,7 @@ export default class FieldDefinition {
 
   hasChildren() {
     if (this._hasChildren === undefined) {
-      this._hasChildren = this.isList() && this._fieldDef.children;
+      this._hasChildren = this.isList() && !!this._fieldDef.children && this._fieldDef.children.length > 0;
     }
     return this._hasChildren;
   }

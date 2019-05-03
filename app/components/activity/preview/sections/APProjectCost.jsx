@@ -52,7 +52,7 @@ const APProjectCost = (fieldName) => class extends Component {
           amount = NumberUtils.rawNumberToFormattedString(amount);
         }
       }
-      if (this.props.activity.fundings && this.props.activity.fundings.length > 0 && showPPC) {
+      if (showPPC) {
         let date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
         date = date ? DateUtils.createFormattedDate(date) : translate('No Data');
         content = (<div>

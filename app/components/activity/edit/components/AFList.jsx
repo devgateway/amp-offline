@@ -56,7 +56,7 @@ class AFList extends Component {
 
   componentWillMount() {
     this.listDef = this.context.activityFieldsManager.getFieldDef(this.props.listPath);
-    this.fields = this.listDef.children.sort(
+    this.fields = this.listDef.children.filter(f => f.importable).sort(
       (fieldA, fieldB) => {
         let res = fieldA.id_only === true ? -1 : undefined;
         res = res || (fieldB.id_only === true ? 1 : undefined);
