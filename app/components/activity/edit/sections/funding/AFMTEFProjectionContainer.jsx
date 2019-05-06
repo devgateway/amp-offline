@@ -28,8 +28,7 @@ export default class AFMTEFProjectionContainer extends Component {
     hasErrors: PropTypes.func.isRequired,
     handleNewItem: PropTypes.func.isRequired,
     handleRemoveItem: PropTypes.func.isRequired,
-    funding: PropTypes.object.isRequired,
-    refreshFundingDonorSectionErrors: PropTypes.func.isRequired
+    funding: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -49,7 +48,6 @@ export default class AFMTEFProjectionContainer extends Component {
   _onChildUpdate() {
     const errors = this.props.hasErrors(this.props.mtefProjections);
     this.setState({ errors });
-    this.props.refreshFundingDonorSectionErrors(errors);
   }
 
   render() {
