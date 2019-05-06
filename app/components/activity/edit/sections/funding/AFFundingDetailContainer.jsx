@@ -25,8 +25,7 @@ export default class AFFundingDetailContainer extends Component {
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     hasErrors: PropTypes.func.isRequired,
-    funding: PropTypes.object.isRequired,
-    refreshFundingDonorSectionErrors: PropTypes.func.isRequired
+    funding: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -40,8 +39,12 @@ export default class AFFundingDetailContainer extends Component {
     if (errors) {
       this._setOpenStatus(props.trnType, true);
     }
-    this._onChildUpdate = this._onChildUpdate.bind(this);
     this._setOpenStatus = this._setOpenStatus.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const errors = this.hasErrors(nextProps.funding, nextProps.trnType);
+    this.setState({ errors });
   }
 
   hasErrors(funding, trnType) {
@@ -66,12 +69,6 @@ export default class AFFundingDetailContainer extends Component {
 
   _addTransactionItem() {
     this.props.handleNewTransaction(this.props.trnType);
-  }
-
-  _onChildUpdate() {
-    const errors = this.hasErrors(this.props.funding, this.props.trnType);
-    this.setState({ errors });
-    this.props.refreshFundingDonorSectionErrors(errors);
   }
 
   render() {
@@ -118,8 +115,7 @@ export default class AFFundingDetailContainer extends Component {
             that array because that will confuse React. */
             return (<AFFundingDetailItem
               fundingDetail={fd} trnType={trnType} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
-              removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding}
-              updateParentErrors={this._onChildUpdate} />);
+              removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
           })}
           <Button
             className={fundingStyles.add_button} bsStyle="primary"

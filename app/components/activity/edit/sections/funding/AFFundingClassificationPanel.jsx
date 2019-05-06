@@ -26,8 +26,7 @@ export default class AFFundingClassificationPanel extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    hasErrors: PropTypes.func.isRequired,
-    refreshFundingDonorSectionErrors: PropTypes.func.isRequired
+    hasErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -51,11 +50,10 @@ export default class AFFundingClassificationPanel extends Component {
   }
 
   _refreshAfterChanges() {
-    const { funding, hasErrors, refreshFundingDonorSectionErrors } = this.props;
+    const { funding, hasErrors } = this.props;
     const errors = hasErrors(funding);
     if (errors !== this.state.errors) {
       this.setState({ errors });
-      refreshFundingDonorSectionErrors(errors);
     }
   }
 
