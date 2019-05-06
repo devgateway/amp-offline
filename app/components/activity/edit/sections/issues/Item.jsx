@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -36,7 +37,7 @@ export default class Item extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   _generateIssueRow() {

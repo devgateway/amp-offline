@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import AFSection from './AFSection';
 import { ISSUES_SECTION } from './AFSectionConstants';
@@ -27,7 +28,7 @@ class AFIssues extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       issues: this.props.activity[AC.ISSUES] || []
     };
@@ -42,7 +43,7 @@ class AFIssues extends Component {
   addIssueHandler() {
     const newIssuesList = this.state.issues.slice();
     const newIssue = {
-      [AC.ISSUE_DATE]: null,
+      [AC.ISSUE_DATE]: undefined,
       [AC.MEASURES]: [],
       [AC.ISSUE_NAME]: ''
     };
@@ -57,7 +58,7 @@ class AFIssues extends Component {
   addMeasureHandler(issueIndex) {
     const measure = {
       [AC.MEASURE_NAME]: '',
-      [AC.MEASURE_DATE]: null,
+      [AC.MEASURE_DATE]: undefined,
       [AC.ACTORS]: []
     };
     const issues = this.state.issues.slice();
