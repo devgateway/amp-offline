@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { Clearfix, Col, Grid, Row } from 'react-bootstrap';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
@@ -95,15 +95,16 @@ class AFIdentification extends Component {
       <div className={afStyles.full_width}>
         <Grid className={afStyles.full_width}>
           <Row key="title-full-row">
-            <Col md={12} lg={12}>
+            <Col xs={12} >
               <AFField key={AC.PROJECT_TITLE} parent={this.props.activity} fieldPath={AC.PROJECT_TITLE} />
             </Col>
           </Row>
           <Row key="col-split-data">
-            <Col key="left-col" md={6} lg={6}>
+            <Col key="left-col" md={6} sm={12}>
               {leftColumn}
             </Col>
-            <Col key="right-col" md={6} lg={6}>
+            <Clearfix visibleSmBlock />
+            <Col key="right-col" md={6} sm={12}>
               {rightColumn}
             </Col>
           </Row>
