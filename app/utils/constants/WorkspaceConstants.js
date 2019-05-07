@@ -15,6 +15,7 @@ export const ROLE_TEAM_MEMBER_WS_APPROVER = 3;
 /** Other fields **/
 export const WORKSPACE_ID = 'workspace-id';
 export const ROLE_ID = 'role-id';
+export const WORKSPACE_LEAD_ID = 'workspace-lead-id';
 export const ACCESS_TYPE = 'access-type';
 export const IS_COMPUTED = 'is-computed';
 export const IS_PRIVATE = 'is-private';
