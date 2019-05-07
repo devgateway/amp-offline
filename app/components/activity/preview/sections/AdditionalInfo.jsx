@@ -36,7 +36,7 @@ class AdditionalInfo extends Component {
     if (!activityWSManager) {
       return null;
     }
-    return `${activityWSManager[UC.FIRST_NAME]} ${activityWSManager[UC.LAST_NAME]} - ${activityWSManager[UC.EMAIL]}`;
+    return `${activityWSManager[UC.FIRST_NAME]} ${activityWSManager[UC.LAST_NAME]} ${activityWSManager[UC.EMAIL]}`;
   }
 
   _buildAdditionalInfo() {
