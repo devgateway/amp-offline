@@ -72,6 +72,7 @@ export const TRANSACTION_TYPE = 'transaction_type';
 export const COMMITMENTS = 'commitments';
 export const DISBURSEMENTS = 'disbursements';
 export const EXPENDITURES = 'expenditures';
+export const ESTIMATED_DISBURSEMENTS = 'estimated_disbursements';
 export const TRANSACTION_AMOUNT = 'transaction_amount';
 export const ADJUSTMENT_TYPE = 'adjustment_type';
 export const ACTUAL_START_DATE = 'actual_start_date';
