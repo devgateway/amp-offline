@@ -57,17 +57,17 @@ class AFDateAntDesign extends Component {
     super(props);
     logger.debug('constructor');
     this.gsDateFormat = DateUtils.getGSDateFormat();
-    const params = this.props.extraParams || {};
-    let date = null;
-    if (props.value) {
-      date = Moment(props.value);
-    } else if (params.todayAsDefaultDate) {
-      date = Moment();
-    }
     this.state = {
       value: props.value,
-      date
+      date: props.value ? Moment(props.value) : props.value
     };
+  }
+
+  componentWillMount() {
+    const { todayAsDefaultDate } = this.props.extraParams || {};
+    if (todayAsDefaultDate && this.state.date === undefined) {
+      this.onDateChange(Moment());
+    }
   }
 
   onDateChange(date: Moment) {

@@ -1,6 +1,6 @@
 .searchContainer {
     margin-right: 10px;
-    min-width: 370px;
+    /* min-width: 370px; */
     width: 100%;
 }
 
@@ -12,7 +12,7 @@
     border-color: #cccccc;
     border-style: solid;
     width: 100%;
-    min-width: 370px;
+    /* min-width: 370px; */
     max-height: 300px;
     overflow: auto;
 }
@@ -26,7 +26,7 @@
     padding: 5px;
     width: 100%;
     background-color: inherit;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 .item:hover {
