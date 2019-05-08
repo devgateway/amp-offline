@@ -132,7 +132,7 @@ export default class AFListSelector extends Component {
   }
 
   handleEditValue(rowData, colHeader, cellValue) {
-    const values = this.state.values;
+    const values = this.state.values.slice();
     const item = values.find(val => val.uniqueId === rowData.uniqueId);
     item[colHeader] = cellValue;
     this.handleChange(values);

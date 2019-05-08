@@ -80,6 +80,11 @@ class AFList extends Component {
     });
   }
 
+  shouldComponentUpdate(nextProps) {
+    const { values, language } = this.state;
+    return values !== nextProps.values || values.length !== nextProps.values.length || language !== nextProps.language;
+  }
+
   onDeleteRow(uniqueId) {
     const { listPath, onDeleteRow, onConfirmationAlert, onBeforeDelete } = this.props;
     const { activityValidator } = this.context;
