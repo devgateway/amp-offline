@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Section from './Section';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -20,7 +21,7 @@ class APIdentification extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   render() {
@@ -39,7 +40,7 @@ class APIdentification extends Component {
       fieldPaths.push(AC.MINISTRY_CODE);
       fieldPaths.push(AC.PROJECT_CODE);
     }
-    fieldPaths.push(...[AC.FINANCIAL_INSTRUMENT]);
+    fieldPaths.push(...[AC.FINANCIAL_INSTRUMENT, AC.IATI_IDENTIFIER]);
     return (
       <div>
         {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true))}
