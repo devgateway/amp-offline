@@ -135,7 +135,7 @@ class AFField extends Component {
     this.context.activityValidator.processValidationResult(
       this.props.parent, this.props.fieldPath, innerComponentValidationError);
     this.setState({ value });
-    this._processValidation(errors);
+    this._processValidation(errors, true);
   }
 
   getLabel() {
@@ -335,7 +335,7 @@ class AFField extends Component {
   _getMultiSelect() {
     let selectFieldDef = this.fieldDef;
     let optionsPath = this.props.fieldPath;
-    if (this.fieldDef.children) {
+    if (this.fieldDef.hasChildren()) {
       selectFieldDef = this.fieldDef.children.length === 1 ?
         this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
       selectFieldDef = selectFieldDef && new FieldDefinition(selectFieldDef);
@@ -378,10 +378,12 @@ class AFField extends Component {
     return null;
   }
 
-  _processValidation(errors) {
+  _processValidation(errors, isNotifyFieldValidation) {
     const fieldErrors = errors && errors.filter(e => e.path === this.props.fieldPath);
     const validationError = fieldErrors ? fieldErrors.map(e => e.errorMessage).join(' ') : null;
-    // this.props.onFieldValidation(this.props.fieldPath, errors);
+    if (isNotifyFieldValidation) {
+      this.props.onFieldValidation(this.props.fieldPath, errors);
+    }
     this.setState({ validationError });
   }
 
