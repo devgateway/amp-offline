@@ -127,6 +127,7 @@ export const CONDITIONALITIES = 'conditionalities';
 export const PROJECT_MANAGEMENT = 'project_management';
 export const A_C_CHAPTER = 'a_c_chapter';
 export const CRIS_NUMBER = 'cris_number';
+export const IATI_IDENTIFIER = 'iati_identifier';
 export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
 export const HIERARCHICAL_VALUE = 'hierarchical_value';
 export const HIERARCHICAL_VALUE_PARTS = 'hierarchical_value_parts';

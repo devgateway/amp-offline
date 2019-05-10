@@ -288,6 +288,7 @@
   "invalidImplLoc": "Invalid implementation location.",
   "missingCompFundOrgs": "Component funding organizations in use: %orgNames%",
   "duplicateTitle": "Warning! Potential duplicates! The database already contains project(s) with similar title(s):",
+  "editNotAllowed": "Changes not allowed",
   "Add Commitments": "Add Commitments",
   "Add Disbursements": "Add Disbursements",
   "Add Expenditures": "Add Expenditures",
