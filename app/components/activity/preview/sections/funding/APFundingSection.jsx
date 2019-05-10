@@ -9,6 +9,7 @@ import APFundingTotalsSection from './APFundingTotalsSection';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import fundingStyles from './APFundingSection.css';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
+import * as Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP funding section');
 
@@ -34,7 +35,7 @@ class APFundingSection extends Component {
     if (this.props.activity.fundings) {
       this.props.activity.fundings.forEach((funding) => {
         const item = (<APFundingOrganizationSection
-          funding={funding} key={funding[AC.AMP_FUNDING_ID]}
+          funding={funding} key={funding[AC.AMP_FUNDING_ID] || Utils.stringToUniqueId()}
           buildSimpleField={this.props.buildSimpleField} />);
         fundingList.push(item);
       });
