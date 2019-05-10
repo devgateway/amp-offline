@@ -55,7 +55,7 @@ export default class AFTextArea extends Component {
     }
     return (
       <FormControl
-        componentClass={this.componentClass} type={this.type} value={this.state.value}
+        componentClass={this.componentClass} type={this.type} value={this.state.value || ''}
         onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
     );
   }
