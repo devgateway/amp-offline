@@ -8,7 +8,7 @@ const logger = new Logger('error message component');
 export default class ErrorMessage extends Component {
 
   static propTypes = {
-    message: PropTypes.object
+    message: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
   };
 
   render() {
