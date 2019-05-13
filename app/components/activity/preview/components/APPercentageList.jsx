@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import APField from '../components/APField';
 import APPercentageField from '../components/APPercentageField';
 import Tablify from '../components/Tablify';
@@ -9,6 +10,7 @@ import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';
 import Logger from '../../../../modules/util/LoggerManager';
 import FeatureManager from '../../../../modules/util/FeatureManager';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP percentage list');
 
@@ -32,14 +34,15 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   getItemTitle(item) {
     if (this.props.getItemTitle) {
       return this.props.getItemTitle(item);
     }
-    return item[valueField][HIERARCHICAL_VALUE] ? item[valueField][HIERARCHICAL_VALUE] : item[valueField].value;
+    const obj = item[valueField];
+    return obj[HIERARCHICAL_VALUE] ? obj[HIERARCHICAL_VALUE] : PossibleValuesManager.getOptionTranslation(obj);
   }
 
   render() {
