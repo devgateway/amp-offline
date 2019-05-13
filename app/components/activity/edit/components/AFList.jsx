@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
 import afStyles from '../ActivityForm.css';
 import { LABEL } from './AFComponentTypes';
@@ -65,8 +63,6 @@ class AFList extends Component {
         return res;
       });
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
-    this.percentageFieldPath = this.percentageFieldDef ? `${this.props.listPath}~${this.percentageFieldDef.field_name}`
-      : null;
     this.setState({
       values: this.props.values,
       language: this.props.language
@@ -78,6 +74,11 @@ class AFList extends Component {
       values: nextProps.values,
       language: nextProps.language
     });
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const { values, language } = this.state;
+    return values !== nextProps.values || values.length !== nextProps.values.length || language !== nextProps.language;
   }
 
   onDeleteRow(uniqueId) {
@@ -123,18 +124,6 @@ class AFList extends Component {
     return cell;
   }
 
-  _beforeSaveCell(row, cellName, cellValue) {
-    // TODO required field validation
-    if (this.percentageFieldDef && this.percentageFieldDef.field_name === cellName) {
-      return this._percentageValidator(cellValue, row) === true;
-    }
-    return true;
-  }
-
-  _percentageValidator(cellValue) {
-    return this.context.activityValidator.percentValueValidator(cellValue, this.percentageFieldPath);
-  }
-
   _afterSaveCell(row, cellName, cellValue) {
     if (this.props.onEditRow) {
       this.props.onEditRow(row, cellName, cellValue);
@@ -146,69 +135,6 @@ class AFList extends Component {
       return 'error';
     }
     return null;
-  }
-
-  columnFormatter(editable, cell) {
-    if (editable) {
-      return (<span className={styles.editable}>{cell}</span>);
-    }
-    return cell.toString();
-  }
-
-  /**
-   * Displays AF List as a bootstrap table
-   * @return {XML}
-   *
-   * Notes: Bootstrap table has a couple of things that are not plug and play matching AMP:
-   * 1) one click row removal
-   *  -> can be simulated as select click if needed
-   * 2) Always visible that some fields are editable without explicitly clicking
-   *  -> applied css workaround to simulate an input box for user clarity
-   */
-  renderAsBootstrapTable() {
-    const listFieldName = this.props.listPath;
-    /* in case we'll want to integrate field name as part of the table:
-     <TableHeaderColumn row="0" colSpan={this.fields.length} key={listFieldName} >
-     {this.props.activityFieldsManager.getFieldLabelTranslation(listFieldName)}
-     </TableHeaderColumn>
-     */
-    let columns = [<TableHeaderColumn key="id" dataField="uniqueId" isKey hidden />];
-    columns = columns.concat(this.fields.map(childDef => {
-      const childFieldName = childDef.field_name;
-      const fieldPath = `${listFieldName}~${childFieldName}`;
-      const editable = childDef.id_only !== true;
-      const required = childDef.required !== 'N';
-      const validator = childDef.percentage === true ? this._percentageValidator.bind(this) : null;
-      return (
-        <TableHeaderColumn
-          key={childFieldName} dataField={childFieldName} columnTitle editable={{ readOnly: !editable, validator }}
-          dataFormat={this.getDataFormat.bind(this, editable, fieldPath)}
-          customEditor={{ getElement: this.getCustomEditor.bind(this, fieldPath) }}
-          columnClassName={this.getCellClass.bind(this, editable, required)}>
-          {this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath)}
-        </TableHeaderColumn>);
-    }));
-    const cellEdit = {
-      mode: 'click',
-      blurToSave: true,
-      beforeSaveCell: this._beforeSaveCell.bind(this),
-      afterSaveCell: this._afterSaveCell.bind(this)
-    };
-    const selectRow = {
-      mode: 'checkbox',
-    };
-    // there is no one click row removal, we'll simulate with select
-    return (<div>
-      <FormGroup controlId={`${this.props.listPath}-list`} validationState={this.validate()}>
-        <BootstrapTable
-          data={this.state.values} hover selectRow={selectRow} deleteRow options={this.options} cellEdit={cellEdit}
-          containerClass={styles.containerTable} tableHeaderClass={styles.header} thClassName={styles.thClassName}>
-          {columns}
-        </BootstrapTable>
-        <FormControl.Feedback />
-        <HelpBlock>{this.state.validationError}</HelpBlock>
-      </FormGroup>
-    </div>);
   }
 
   renderAsSimpleTable() {

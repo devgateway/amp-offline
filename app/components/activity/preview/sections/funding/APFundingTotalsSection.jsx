@@ -37,7 +37,7 @@ class APFundingTotalsSection extends Component {
     let actualCommitments;
     let actualDisbursements;
     const options = [];
-    FPC.TRANSACTION_TYPES.forEach(trnType => {
+    FPC.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
       if (activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
         const fieldPath = `${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`;
         const atOptions = activityFieldsManager.getPossibleValuesOptions(fieldPath);
