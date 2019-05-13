@@ -62,7 +62,6 @@ class AFList extends Component {
         res = res || (fieldB.percentage === true ? 1 : 0);
         return res;
       });
-    this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.setState({
       values: this.props.values,
       language: this.props.language
