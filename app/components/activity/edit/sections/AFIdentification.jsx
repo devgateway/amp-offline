@@ -21,6 +21,7 @@ const CUSTOM_TYPE = {
   [AC.JOINT_CRITERIA]: Types.RADIO_BOOLEAN,
   [AC.HUMANITARIAN_AID]: Types.RADIO_BOOLEAN,
   [AC.FINANCIAL_INSTRUMENT]: Types.RADIO_LIST,
+  [AC.IATI_IDENTIFIER]: Types.INPUT_TYPE,
 };
 
 /**
@@ -88,7 +89,8 @@ class AFIdentification extends Component {
         {budgetExtras}
       </div>);
     }
-    rightColumn.push(...[AC.FINANCIAL_INSTRUMENT, AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT, AC.GOVERNMENT_AGREEMENT_NUMBER]
+    rightColumn.push(...[AC.FINANCIAL_INSTRUMENT, AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT, AC.GOVERNMENT_AGREEMENT_NUMBER,
+      AC.IATI_IDENTIFIER]
       .map(this.mapSimpleFieldDef));
 
     return (
