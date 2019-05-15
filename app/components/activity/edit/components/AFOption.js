@@ -9,12 +9,12 @@ import PossibleValuesManager from '../../../../modules/field/PossibleValuesManag
  */
 export default class AFOption {
   constructor({ id, value, displayHierarchicalValue, ...extraInfo }) {
-    this._id = id;
-    this._value = value;
-    this._displayHierarchicalValue = displayHierarchicalValue;
     if (extraInfo) {
       Object.assign(this, extraInfo);
     }
+    this._id = id;
+    this._value = value;
+    this._displayHierarchicalValue = displayHierarchicalValue;
   }
 
   get isAFOption() {
@@ -72,9 +72,13 @@ export default class AFOption {
     this._valueFormatter = valueFormatter;
   }
 
+  compareByDisplayValue(other: AFOption) {
+    return this.displayValue.localeCompare(other.displayValue);
+  }
+
   static sortByDisplayValue(afOptions) {
     if (afOptions && afOptions.length) {
-      afOptions.sort((o1, o2) => o1.displayValue.localeCompare(o2.displayValue));
+      afOptions.sort((o1, o2) => o1.compareByDisplayValue(o2));
     }
     return afOptions;
   }
