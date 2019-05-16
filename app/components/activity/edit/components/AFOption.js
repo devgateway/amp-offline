@@ -12,9 +12,15 @@ export default class AFOption {
     if (extraInfo) {
       Object.assign(this, extraInfo);
     }
-    this._id = id;
-    this._value = value;
-    this._displayHierarchicalValue = displayHierarchicalValue;
+    if (id !== undefined) {
+      this._id = id;
+    }
+    if (value !== undefined) {
+      this._value = value;
+    }
+    if (displayHierarchicalValue !== undefined) {
+      this._displayHierarchicalValue = displayHierarchicalValue;
+    }
   }
 
   get isAFOption() {
