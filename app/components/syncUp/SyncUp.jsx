@@ -53,7 +53,7 @@ class SyncUp extends Component {
     onSyncConfirmationAlert: PropTypes.func.isRequired,
     logoutConfirmed: PropTypes.bool.isRequired,
     logoutDismissedToSync: PropTypes.bool.isRequired,
-    currentUserHistory: PropTypes.object,
+    currentUserHistory: PropTypes.array,
     loadSyncUpHistory: PropTypes.func.isRequired
   };
 
