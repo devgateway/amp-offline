@@ -21,7 +21,7 @@ const defaultState = {
   logoutConfirmed: false,
   logoutDismissedToSync: false,
   isInactivityTimeout: false,
-  errorMessage: ''
+  errorMessage: undefined
 };
 
 /**

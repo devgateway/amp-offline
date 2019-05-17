@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Section from './Section';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -20,12 +21,12 @@ class APIdentification extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   render() {
     const { buildSimpleField } = this.props;
-    const fieldPaths = [AC.STATUS_REASON, AC.TYPE_OF_IMPLEMENTATION,
+    const fieldPaths = [AC.STATUS_REASON, AC.TYPE_OF_COOPERATION, AC.TYPE_OF_IMPLEMENTATION,
       AC.MODALITIES, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS, AC.RESULTS, AC.LESSONS_LEARNED,
       AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.BUDGET_CODE_PROJECT_ID,
       AC.A_C_CHAPTER, AC.CRIS_NUMBER, AC.ACTIVITY_BUDGET, AC.GOVERNMENT_AGREEMENT_NUMBER,
@@ -39,7 +40,7 @@ class APIdentification extends Component {
       fieldPaths.push(AC.MINISTRY_CODE);
       fieldPaths.push(AC.PROJECT_CODE);
     }
-    fieldPaths.push(...[AC.FINANCIAL_INSTRUMENT]);
+    fieldPaths.push(...[AC.FINANCIAL_INSTRUMENT, AC.IATI_IDENTIFIER]);
     return (
       <div>
         {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true))}

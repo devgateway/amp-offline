@@ -97,6 +97,9 @@ const PossibleValuesHelper = {
       } else {
         idsFilter = { $regex: new RegExp(`^${root}~.*`) };
       }
+    } else if (!idsFilter) {
+      const excludePrefixes = FPC.PREFIX_LIST.filter(p => p).map(p => `${p}~.*`).join('|');
+      idsFilter = { $regex: new RegExp(`^(?!${excludePrefixes})`) };
     }
     if (idsFilter) {
       if (filter.id) {

@@ -24,7 +24,7 @@ export default class AFMultiSelect extends Component {
 
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
-    values: PropTypes.array.isRequired,
+    values: PropTypes.array,
     listPath: PropTypes.string.isRequired,
     selectField: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,

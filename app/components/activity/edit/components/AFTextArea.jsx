@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
 import Logger from '../../../../modules/util/LoggerManager';
 
@@ -11,12 +12,14 @@ const logger = new Logger('AF text area');
 export default class AFTextArea extends Component {
   static propTypes = {
     value: PropTypes.string,
+    readonly: PropTypes.bool,
     maxLength: PropTypes.number,
     onChange: PropTypes.func
   };
 
   constructor(props) {
     super(props);
+    this.componentClass = 'textarea';
     logger.debug('constructor');
     this.state = {
       value: null
@@ -47,10 +50,13 @@ export default class AFTextArea extends Component {
   }
 
   render() {
+    if (this.props.readonly) {
+      return <FormControl componentClass={this.componentClass} type={this.type} value={this.state.value} disabled />;
+    }
     return (
       <FormControl
-        componentClass="textarea" value={this.state.value} onChange={this.handleChange.bind(this)}
-        onBlur={this.onBlur.bind(this)} />
+        componentClass={this.componentClass} type={this.type} value={this.state.value || ''}
+        onChange={this.handleChange.bind(this)} onBlur={this.onBlur.bind(this)} />
     );
   }
 }
