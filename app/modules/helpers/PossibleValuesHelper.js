@@ -122,6 +122,10 @@ const PossibleValuesHelper = {
     });
   },
 
+  findPossibleValuesPathsFor(prefix: String) {
+    return this.findAllByIdsWithoutPrefixAndCleanupPrefix(prefix).then(r => Utils.flattenToListByKey(r, 'id'));
+  },
+
   findActivityPossibleValuesPaths() {
     const prefixToExclude = FPC.PREFIX_LIST.filter(p => p !== FPC.PREFIX_ACTIVITY).map(p => `${p}~.*`).join('|');
     const regex = new RegExp(`^(?!(?:${prefixToExclude})).*$`);
