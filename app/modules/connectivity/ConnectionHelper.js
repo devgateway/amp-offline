@@ -134,7 +134,7 @@ const ConnectionHelper = {
           });
       } else {
         // Being here means the server might not be accessible.
-        const isAMPunreachable = error && ERRORS_NO_AMP_SERVER.includes(error.code);
+        const isAMPunreachable = (error && ERRORS_NO_AMP_SERVER.includes(error.code)) || !response;
         const isAccessDenied = response && response.statusCode === 403;
         const errorCode = isAccessDenied ? EC.ERROR_CODE_ACCESS_DENIED : undefined;
         const message = isAMPunreachable ? EC.MSG_AMP_UNREACHABLE :
