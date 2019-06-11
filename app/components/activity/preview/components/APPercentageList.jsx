@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import APField from '../components/APField';
 import APPercentageField from '../components/APPercentageField';
 import Tablify from '../components/Tablify';
@@ -9,6 +10,7 @@ import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';
 import Logger from '../../../../modules/util/LoggerManager';
 import FeatureManager from '../../../../modules/util/FeatureManager';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP percentage list');
 
@@ -32,19 +34,20 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   getItemTitle(item) {
     if (this.props.getItemTitle) {
       return this.props.getItemTitle(item);
     }
-    return item[valueField][HIERARCHICAL_VALUE] ? item[valueField][HIERARCHICAL_VALUE] : item[valueField].value;
+    const obj = item[valueField];
+    return obj[HIERARCHICAL_VALUE] ? obj[HIERARCHICAL_VALUE] : PossibleValuesManager.getOptionTranslation(obj);
   }
 
   render() {
     const title = listTitle ? translate(listTitle) : null;
-    const items = this.props.activity[listField];
+    let items = this.props.activity[listField];
     let content = null;
     let isListEnabled = this.props.activityFieldsManager.isFieldPathEnabled(listField) === true;
     if (this.props.fmPath) {
@@ -52,12 +55,15 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
     }
     if (isListEnabled) {
       if (items && items.length) {
-        content = items.map(item => {
-          const itemTitle = this.getItemTitle(item);
-          return (<APPercentageField
-            key={Utils.stringToUniqueId(itemTitle)} title={itemTitle} value={item[percentageField]}
-            titleClass={this.props.percentTitleClass} valueClass={this.props.percentValueClass} />);
-        });
+        items = items.map(item => ({
+          itemTitle: this.getItemTitle(item),
+          percentage: item[percentageField]
+        })).sort((a, b) => a.itemTitle.localeCompare(b.itemTitle));
+        content = items.map(({ itemTitle, percentage }) =>
+          <APPercentageField
+            key={Utils.stringToUniqueId(itemTitle)} title={itemTitle} value={percentage}
+            titleClass={this.props.percentTitleClass} valueClass={this.props.percentValueClass} />
+        );
         if (this.props.tablify) {
           content = <Tablify content={content} columns={this.props.columns} />;
         }

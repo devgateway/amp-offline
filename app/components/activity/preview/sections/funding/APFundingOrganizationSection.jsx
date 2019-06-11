@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
@@ -45,9 +46,9 @@ class APFundingOrganizationSection extends Component {
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`, true, null, false, funding));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
-      true, null, false, funding));
+      true, null, false, funding && funding[AC.AGREEMENT]));
     content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
-      true, null, false, funding));
+      true, null, false, funding && funding[AC.AGREEMENT]));
 
     const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
     return tableContent;
@@ -67,17 +68,23 @@ class APFundingOrganizationSection extends Component {
   _buildFundingDetailSection() {
     // Group the list of funding details by adjustment_type and transaction_type.
     const groups = [];
-    FPC.TRANSACTION_TYPES_ORDERED.forEach(trnType => {
-      const fds = this.props.funding[trnType] || [];
+    FPC.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
+      const fds = this.props.funding[trnType];
       if (fds && fds.length) {
-        const fdByAT = VC.ADJUSTMENT_TYPES_AP_ORDER.reduce((prev, adjType) => {
-          const items = fds.filter(it => it[AC.ADJUSTMENT_TYPE] && it[AC.ADJUSTMENT_TYPE].value === adjType);
-          if (items.length) {
-            prev.push(...items);
+        const fdByAT = new Map();
+        VC.ADJUSTMENT_TYPES_AP_ORDER.forEach(adjType => fdByAT.set(adjType, []));
+        fds.forEach(it => {
+          const items = fdByAT.get(it[AC.ADJUSTMENT_TYPE] && it[AC.ADJUSTMENT_TYPE].value);
+          if (items) {
+            items.push(it);
           }
-          return prev;
-        }, []);
-        groups.push([trnType, fdByAT]);
+        });
+        VC.ADJUSTMENT_TYPES_AP_ORDER.forEach(adjType => {
+          const items = fdByAT.get(adjType);
+          if (items.length) {
+            groups.push([trnType, items]);
+          }
+        });
       }
     });
     return groups.map(([trnType, group], idx) =>

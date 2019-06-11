@@ -44,9 +44,12 @@ class AFFunding extends Component {
     this.removeFundingItem = this.removeFundingItem.bind(this);
     this.addFundingItem = this.addFundingItem.bind(this);
     this.hasErrors = this.hasErrors.bind(this);
-    this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
     this._tabSelect = this._tabSelect.bind(this);
     this.state = { activeTab: 0, refresh: 0 };
+  }
+
+  componentWillReceiveProps() {
+    this.setState({ refresh: Math.random() });
   }
 
   _getAcronym(sourceRole) {
@@ -72,10 +75,6 @@ class AFFunding extends Component {
 
   _tabSelect(index) {
     this.setState({ activeTab: index });
-  }
-
-  _refreshAfterChildChanges() {
-    this.forceUpdate();
   }
 
   handleDonorSelect(values) {
@@ -197,7 +196,6 @@ class AFFunding extends Component {
                 removeFundingItem={this.removeFundingItem}
                 addFundingItem={this.addFundingItem}
                 hasErrors={this.hasErrors}
-                refreshAfterChildChanges={this._refreshAfterChildChanges}
                 tabIndex={tabIndex}
               />
             </Tab>);
@@ -228,7 +226,6 @@ class AFFunding extends Component {
                 removeFundingItem={this.removeFundingItem}
                 addFundingItem={this.addFundingItem}
                 hasErrors={this.hasErrors}
-                refreshAfterChildChanges={this._refreshAfterChildChanges}
                 tabIndex={tabIndex}
               />
             </Panel>);
@@ -284,10 +281,8 @@ class AFFunding extends Component {
    * @returns {*}
    */
   render() {
-    const overviewTabHasErrors = (this.context.activity[AC.PPC_AMOUNT]
-      && this.context.activity[AC.PPC_AMOUNT][0]
-      && this.context.activity[AC.PPC_AMOUNT][0].errors
-      && this.context.activity[AC.PPC_AMOUNT][0].errors.length > 0);
+    const ppc = this.context.activity[AC.PPC_AMOUNT];
+    const overviewTabHasErrors = ppc && ppc.errors && ppc.errors.length;
     if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
       return (<div>
         <Tabs

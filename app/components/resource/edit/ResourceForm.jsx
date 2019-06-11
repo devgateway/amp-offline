@@ -34,7 +34,7 @@ export default class ResourceForm extends Component {
   static propTypes = {
     resourceReducer: PropTypes.object.isRequired,
     resource: PropTypes.object.isRequired,
-    type: PropTypes.string.isRequired,
+    type: PropTypes.number.isRequired,
     onAdd: PropTypes.func,
     onCancel: PropTypes.func,
     updatePendingWebResource: PropTypes.func.isRequired,

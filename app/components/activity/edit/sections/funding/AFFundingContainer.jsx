@@ -30,8 +30,7 @@ export default class AFFundingContainer extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    hasErrors: PropTypes.func.isRequired,
-    refreshAfterChildChanges: PropTypes.func.isRequired
+    hasErrors: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -51,7 +50,7 @@ export default class AFFundingContainer extends Component {
     if (this.props.funding[AC.MTEF_PROJECTIONS] && this.props.funding[AC.MTEF_PROJECTIONS].length > 0) {
       year = Math.max(...this.props.funding[AC.MTEF_PROJECTIONS].map((i) => Moment(i[AC.PROJECTION_DATE]).year())) + 1;
     }
-    mtefItem[AC.PROJECTION_DATE] = DateUtils.getISODateForAPI(Moment(`${year}-01-01`));
+    mtefItem[AC.PROJECTION_DATE] = DateUtils.formatDateForAPI(Moment(`${year}-01-01`));
     mtefItem[AC.PROJECTION] = {};
     mtefItem[AC.CURRENCY] = {};
     mtefItem[AC.AMOUNT] = undefined;
@@ -78,7 +77,7 @@ export default class AFFundingContainer extends Component {
   _addTransactionItem(trnType) {
     logger.debug('_addTransactionItem');
     const fundingDetailItem = {};
-    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getISODateForAPI(new Date());
+    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getTimestampForAPI(new Date());
     fundingDetailItem[AC.CURRENCY] = {};
     fundingDetailItem[AC.TRANSACTION_AMOUNT] = undefined;
     fundingDetailItem[AC.ADJUSTMENT_TYPE] = undefined;
@@ -104,7 +103,7 @@ export default class AFFundingContainer extends Component {
   }
 
   render() {
-    const { funding, refreshAfterChildChanges } = this.props;
+    const { funding } = this.props;
     return (<div>
       <FormGroup>
         <Grid>
@@ -125,31 +124,28 @@ export default class AFFundingContainer extends Component {
           </Row>
         </Grid>
       </FormGroup>
-      <AFFundingClassificationPanel
-        funding={funding}
-        hasErrors={this.props.hasErrors} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
+      <AFFundingClassificationPanel funding={funding} hasErrors={this.props.hasErrors} />
       <AFMTEFProjectionContainer
-        mtefProjections={funding[AC.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors}
-        funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges}
+        mtefProjections={funding[AC.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors} funding={funding}
         handleRemoveItem={this._removeMTEFProjectionItem} handleNewItem={this._addMTEFProjectionItem} />
       <AFFundingDetailContainer
         trnType={AC.COMMITMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.COMMITMENTS)}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
+        funding={funding} />
       <AFFundingDetailContainer
         trnType={AC.DISBURSEMENTS}
         removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.DISBURSEMENTS)}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
+        funding={funding} />
       <AFFundingDetailContainer
         trnType={AC.EXPENDITURES}
         removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.EXPENDITURES)}
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
-        funding={funding} refreshFundingDonorSectionErrors={refreshAfterChildChanges} />
+        funding={funding} />
       <AFField parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.DONOR_OBJECTIVE}`} type={Types.TEXT_AREA} />
       <AFField
         key={Math.random()} parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.CONDITIONS}`}

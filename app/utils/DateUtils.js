@@ -21,13 +21,25 @@ export default class DateUtils {
     Moment.locale(lang);
   }
 
-  static formatDateForCurrencyRates(date) {
+  /**
+   * This method simply extracts the short date part of a timestamp, assuming timestamp format includes date format
+   * @param timestamp
+   * @returns date in the short API format
+   */
+  static substractShortDateForAPI(timestamp: String) {
+    if (timestamp && timestamp.length >= API_SHORT_DATE_FORMAT.length) {
+      return timestamp.substr(0, API_SHORT_DATE_FORMAT.length);
+    }
+    return null;
+  }
+
+  static formatDateForAPI(date) {
     return DateUtils.formatDate(date, API_SHORT_DATE_FORMAT);
   }
 
   static isValidDateFormat(date, format) {
     const moment = Moment(date, format);
-    return moment.isValid();
+    return moment.isValid() && !moment.parsingFlags().unusedInput.length && !moment.parsingFlags().unusedTokens.length;
   }
 
   static formatDate(date, format) {
@@ -53,7 +65,7 @@ export default class DateUtils {
   }
 
   static createFormattedDate(date) {
-    logger.log('createFormattedDate');
+    logger.debug('createFormattedDate');
     return DateUtils.formatDate(date, DateUtils.getGSDateFormat());
   }
 
@@ -89,11 +101,11 @@ export default class DateUtils {
   }
 
   /**
-   * Formats the date according to AMP API format
+   * Formats the date according to AMP API timestamp format
    * @param date (optional, defaults to current moment)
-   * @returns {string} date formatted according to API format
+   * @returns {string} datetime formatted according to API format
    */
-  static getISODateForAPI(date = new Date()) {
+  static getTimestampForAPI(date = new Date()) {
     // DO NOT remove the timezone, since AMP also stores it.
     // We'll revise, if needed, once we implement the timing synchronization between AMP and AMP Offline client.
     return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);

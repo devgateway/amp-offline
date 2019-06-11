@@ -27,10 +27,10 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
     const body = this._getRequestBody();
     return ConnectionHelper.doPost({ url: FEATURE_MANAGER_URL, body, shouldRetry: true })
       .then((fmTree) => {
-        const newFMTree = this._prepareData(fmTree);
-        return FMHelper.replaceAll([newFMTree]).then((res) => {
+        this._setUndetectedFMSettingsAsDisabled(fmTree);
+        return FMHelper.replaceAll([{ fmTree }]).then((res) => {
           // update FeatureManager with the new tree immediately to no longer report new local settings to pull
-          FeatureManager.setFMTree(newFMTree.fmTree);
+          FeatureManager.setFMTree(fmTree);
           return res;
         });
       });
@@ -58,35 +58,6 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
 
   _getModules(fmPaths) {
     return Array.from(new Set(fmPaths.map((path: String) => path.substring(1, path.indexOf('/', 1)).toUpperCase())));
-  }
-
-  /**
-   * Transforms FM tree to Offline format
-   * @param fmTree
-   * @return {{}}
-   * @private
-   */
-  _prepareData(fmTree) {
-    // until AMP-26523 is done, workaround to remove the duplicate top level
-    const dataToStore = {};
-    Object.entries(fmTree).forEach(([key, value]) => {
-      const excludeItems = new Set([key.toUpperCase(), '__ENABLED']);
-      let actualSubKey = key;
-      const firstLevelEntries = Object.keys(value).filter(subKey => {
-        const subKeyUpper = subKey.toUpperCase();
-        if (subKeyUpper === key) {
-          actualSubKey = subKey;
-        }
-        return !excludeItems.has(subKeyUpper);
-      });
-      if (firstLevelEntries.length === 0) {
-        dataToStore[actualSubKey] = value[actualSubKey];
-      } else {
-        dataToStore[key] = value;
-      }
-    });
-    this._setUndetectedFMSettingsAsDisabled(dataToStore);
-    return { fmTree: dataToStore };
   }
 
   _setUndetectedFMSettingsAsDisabled(newFmTree) {

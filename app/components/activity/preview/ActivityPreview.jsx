@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
 import styles from './ActivityPreview.css';
@@ -30,6 +31,7 @@ export default class ActivityPreview extends Component {
       isActivityLoaded: PropTypes.bool,
       activity: PropTypes.object,
       activityWorkspace: PropTypes.object,
+      activityWSManager: PropTypes.object,
       activityFieldsManager: PropTypes.instanceOf(FieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
@@ -53,6 +55,7 @@ export default class ActivityPreview extends Component {
   static childContextTypes = {
     activity: PropTypes.object,
     activityWorkspace: PropTypes.object,
+    activityWSManager: PropTypes.object,
     currentWorkspaceSettings: PropTypes.object,
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
@@ -73,6 +76,7 @@ export default class ActivityPreview extends Component {
     return {
       activity: this.props.activityReducer.activity,
       activityWorkspace: this.props.activityReducer.activityWorkspace,
+      activityWSManager: this.props.activityReducer.activityWSManager,
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
       contactFieldsManager: this.props.contactReducer.contactFieldsManager,
       contactsByIds: this.props.contactReducer.contactsByIds,
