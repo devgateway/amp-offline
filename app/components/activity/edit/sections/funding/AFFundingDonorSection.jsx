@@ -37,7 +37,6 @@ export default class AFFundingDonorSection extends Component {
     removeFundingItem: PropTypes.func.isRequired,
     addFundingItem: PropTypes.func.isRequired,
     hasErrors: PropTypes.func.isRequired,
-    refreshAfterChildChanges: PropTypes.func.isRequired,
     tabIndex: PropTypes.number.isRequired
   };
 
@@ -58,8 +57,12 @@ export default class AFFundingDonorSection extends Component {
       refresh: 0
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
-    this._refreshAfterChildChanges = this._refreshAfterChildChanges.bind(this);
     this._checkChildrenForErrors = this._checkChildrenForErrors.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const errors = nextProps.fundings.some(f => this._checkChildrenForErrors(f));
+    this.setState({ errors });
   }
 
   _checkChildrenForErrors(f) {
@@ -175,13 +178,6 @@ export default class AFFundingDonorSection extends Component {
     </div>);
   }
 
-  _refreshAfterChildChanges(errors) {
-    if (errors !== this.state.errors) {
-      this.setState({ errors });
-      this.props.refreshAfterChildChanges(errors, this.props.tabIndex);
-    }
-  }
-
   _findFundingById(id) {
     const { activity } = this.context;
     return activity[AC.FUNDINGS].find(f => f[AC.GROUP_VERSIONED_FUNDING] === id);
@@ -208,9 +204,7 @@ export default class AFFundingDonorSection extends Component {
               this.setState({ refresh: Math.random() });
             }
           }}>
-          <AFFundingContainer
-            funding={g} hasErrors={this.props.hasErrors}
-            refreshAfterChildChanges={this._refreshAfterChildChanges} />
+          <AFFundingContainer funding={g} hasErrors={this.props.hasErrors} />
         </Panel>
       ))}
       <Button bsStyle="primary" onClick={this._addNewFundingItem}>{translate('New Funding Item')}</Button>

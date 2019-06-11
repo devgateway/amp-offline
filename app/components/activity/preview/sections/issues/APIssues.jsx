@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Section from '../Section';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
@@ -7,6 +8,7 @@ import FieldsManager from '../../../../../modules/field/FieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APMeasure from './APMeasure';
 import translate from '../../../../../utils/translate';
+import * as Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP issues');
 
@@ -23,7 +25,7 @@ class APIssues extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   _buildIssues() {
@@ -34,9 +36,13 @@ class APIssues extends Component {
         if (this.props.activityFieldsManager.isFieldPathEnabled(`${AC.ISSUES}~${AC.ISSUE_DATE}`)) {
           date = ` ${createFormattedDate(issue[AC.ISSUE_DATE])}`;
         }
-        content.push(<div className={styles.issues}>{`${issue.name || ''}${date}`}</div>);
+        content.push(
+          <div className={styles.issues} key={Utils.stringToUniqueId()}>{`${issue.name || ''}${date}`}</div>);
         issue[AC.MEASURES].forEach((measure) => {
-          content.push(<APMeasure activityFieldsManager={this.props.activityFieldsManager} measure={measure} />);
+          content.push(
+            <APMeasure
+              key={Utils.stringToUniqueId()} activityFieldsManager={this.props.activityFieldsManager}
+              measure={measure} />);
         });
       });
       if (content.length === 0) {

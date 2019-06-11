@@ -321,7 +321,7 @@ export default class ActivityForm extends Component {
             <Col>{this._renderSaveDialog()}</Col>
           </Row>
           <Row>
-            <Col md={10} >
+            <Col xs={8} sm={8} >
               <div className={styles.form_main_content} >
                 <div className={styles.general_header} >
                   {translate('Edit Activity Form')}
@@ -332,7 +332,7 @@ export default class ActivityForm extends Component {
                 </div>
               </div>
             </Col>
-            <Col mdOffset={10} >
+            <Col xs={2} sm={2}>
               <div className={styles.actions} >
                 {this._renderQuickLinks()}
                 {this._renderActions()}
