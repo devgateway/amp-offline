@@ -27,20 +27,20 @@ export function isConnectivityCheckInProgress() {
   return store.getState().ampConnectionStatusReducer.updateInProgress;
 }
 
-export function isAmpAccessible(isSetup) {
-  const connectivityStatus = store.getState().ampConnectionStatusReducer.status;
-  return isValidConnectionByStatus(connectivityStatus, isSetup) && connectivityStatus.isAmpClientEnabled;
+export function isAmpSuitableForSetupOrUpdate(connectivityStatus: ConnectivityStatus) {
+  return isAmpAccessible(connectivityStatus, true);
 }
 
-export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus, isSetup: boolean) {
-  const serverId = getRegisteredServerId();
-  if (!connectivityStatus || !connectivityStatus.isAmpAvailable) {
-    return false;
-  }
-  if (connectivityStatus.serverIdMatch) {
-    return isSetup ? true : connectivityStatus.isAmpCompatible;
-  }
-  return (!serverId && connectivityStatus.serverId) && connectivityStatus.isAmpCompatible;
+export function isAmpUsableByCurrentClient(connectivityStatus: ConnectivityStatus) {
+  return isAmpAccessible(connectivityStatus, false);
+}
+
+function isAmpAccessible(connectivityStatus: ConnectivityStatus, isForSetupOrUpdate: boolean) {
+  return isValidConnectionByStatus(connectivityStatus, isForSetupOrUpdate) && connectivityStatus.isAmpClientEnabled;
+}
+
+export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus, isForSetupOrUpdate: boolean) {
+  return connectivityStatus ? connectivityStatus.isConnectionValid(isForSetupOrUpdate, getRegisteredServerId()) : false;
 }
 
 /**

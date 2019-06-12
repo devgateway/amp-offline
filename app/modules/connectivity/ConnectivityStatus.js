@@ -96,6 +96,16 @@ export default class ConnectivityStatus {
     return ApiC.AMP_ERROR_NO_ERROR;
   }
 
+  isConnectionValid(isForSetupOrUpdate: boolean, serverId: String) {
+    if (!this.isAmpAvailable) {
+      return false;
+    }
+    if (this.serverIdMatch) {
+      return isForSetupOrUpdate ? true : this.isAmpCompatible;
+    }
+    return (!serverId && this.serverId) && this.isAmpCompatible;
+  }
+
   /**
    * @see ConnectivityStatus.compare
    * @param s2 the other connectivity status
