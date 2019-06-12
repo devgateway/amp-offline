@@ -1,7 +1,6 @@
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
 import {
-  AMP_ERRORS_BY_PRIORITY_ASC,
   AMP_OFFLINE_COMPATIBLE,
   AMP_OFFLINE_ENABLED,
   AMP_SERVER_ID,
@@ -61,27 +60,6 @@ export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus
  */
 export function getRegisteredServerId() {
   return store.getState().ampConnectionStatusReducer.serverId;
-}
-
-export function compareConnectivityStatus(s1: ConnectivityStatus, s2: ConnectivityStatus) {
-  const error1 = AMP_ERRORS_BY_PRIORITY_ASC.indexOf(s1.ampErrorCode);
-  const error2 = AMP_ERRORS_BY_PRIORITY_ASC.indexOf(s2.ampErrorCode);
-  return error1 - error2;
-}
-
-export function getLeastCriticalStatus(s1: ConnectivityStatus, s2: ConnectivityStatus) {
-  const compareResult = compareConnectivityStatus(s1, s2);
-  if (compareResult > 0) {
-    return s2;
-  }
-  return s1;
-}
-
-export function getLeastCriticalStatusFromList(statuses: Array) {
-  if (statuses && statuses.length) {
-    return statuses.sort(compareConnectivityStatus)[0];
-  }
-  return null;
 }
 
 /**

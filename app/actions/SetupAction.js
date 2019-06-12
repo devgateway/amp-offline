@@ -8,7 +8,6 @@ import Logger from '../modules/util/LoggerManager';
 import {
   configureConnectionInformation,
   connectivityCheck,
-  getLeastCriticalStatus,
   getRegisteredServerId,
   getStatusNotification,
   isConnectivityCheckInProgress,
@@ -24,6 +23,7 @@ import { newUrlsDetected } from './SettingAction';
 import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
 import * as constants from '../utils/constants/ErrorConstants';
+import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -243,7 +243,7 @@ function getRelevantResult(r1, r2) {
   if (r1 && r2) {
     const s1 = r1.connectivityStatus;
     const s2 = r2.connectivityStatus;
-    return getLeastCriticalStatus(s1, s2) === s1 ? r1 : r2;
+    return ConnectivityStatus.getLeastCriticalStatus(s1, s2) === s1 ? r1 : r2;
   }
   return r1 || r2;
 }
