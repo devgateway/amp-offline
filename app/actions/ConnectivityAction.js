@@ -1,26 +1,17 @@
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
-import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
-import {
-  AMP_OFFLINE_COMPATIBLE,
-  AMP_OFFLINE_ENABLED,
-  AMP_SERVER_ID,
-  AMP_SERVER_ID_MATCH,
-  AMP_VERSION,
-  LATEST_AMP_OFFLINE,
-  URL_CONNECTIVITY_CHECK_EP
-} from '../modules/connectivity/AmpApiConstants';
-import { VERSION } from '../utils/Constants';
+import { RESPONSE_CHECK_INTERVAL_MS } from '../modules/connectivity/AmpApiConstants';
 import store from '../index';
 import Logger from '../modules/util/LoggerManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import * as CSC from '../utils/constants/ClientSettingsConstants';
 import { configureOnLoad } from './SetupAction';
 import * as Utils from '../utils/Utils';
-import VersionUtils from '../utils/VersionUtils';
 import Notification from '../modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_GENERAL, NOTIFICATION_SEVERITY_ERROR, } from '../utils/constants/ErrorConstants';
 import translate from '../utils/translate';
 import { addFullscreenAlert } from './NotificationAction';
+import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
+import ConnectivityCheckRunner from '../modules/connectivity/ConnectivityCheckRunner';
 
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
@@ -30,9 +21,6 @@ export const MANDATORY_UPDATE = 'mandatory_update';
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
 
-/* Expected connectivity response fields. */
-const CONNECTIVITY_RESPONSE_FIELDS = [AMP_OFFLINE_ENABLED, AMP_OFFLINE_COMPATIBLE, LATEST_AMP_OFFLINE, AMP_VERSION,
-  AMP_SERVER_ID, AMP_SERVER_ID_MATCH];
 const logger = new Logger('Connectivity action');
 
 export function isConnectivityCheckInProgress() {
@@ -65,7 +53,7 @@ export function getRegisteredServerId() {
 /**
  * Converts connectivity status to NotificationHelper message
  * @param connectivityStatus
- * @param isSetup in setup mode some status is handled with a different message
+ * @param isSetup if true, then during setup some statuses are handled with different messages
  * @return {NotificationHelper}
  */
 export function getStatusNotification(connectivityStatus: ConnectivityStatus, isSetup = false) {
@@ -104,86 +92,42 @@ export function loadConnectionInformation() {
 
 /**
  * Checks and updates the connectivity status
- * @param isCheckingAlternative if the connectivity check is for testing a different URL
+ * @param ci (optional) the connectivity information to use; if missing, the gloabl one will be used
  * @returns ConnectivityStatus
  */
-export function connectivityCheck(isCheckingAlternative: boolean = false) {
+export function connectivityCheck(ci: ConnectionInformation) {
   logger.log('connectivityCheck');
-  store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
-  // we should introduce a manager here to keep the actions simple
-  const url = URL_CONNECTIVITY_CHECK_EP;
-  const paramsMap = { 'amp-offline-version': VERSION };
-  let lastConnectivityStatus;
-  return Promise.all([_getLastConnectivityStatus(), _getServerId()])
-    .then(([status, serverId]) => {
-      lastConnectivityStatus = status;
-      const ci = _getConnectionInformation();
-      if (ci.isTestUrl && !isCheckingAlternative) {
-        store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, action: lastConnectivityStatus });
-        return Promise.resolve();
+  let pastConnectivityStatus;
+  const globalCI = _getConnectionInformation();
+  return Utils.waitWhile(isConnectivityCheckInProgress, RESPONSE_CHECK_INTERVAL_MS)
+    .then(() => {
+      store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
+      return Promise.all([_getLastConnectivityStatus(), _getServerId()]);
+    }).then(([pastStatus, serverId]) => {
+      pastConnectivityStatus = pastStatus;
+      if (ci == null) {
+        ci = globalCI;
+      } else {
+        configureConnectionInformation(ci);
       }
-      if (serverId) {
-        paramsMap[AMP_SERVER_ID] = serverId;
+      return ConnectivityCheckRunner.run(ci, pastConnectivityStatus, serverId);
+    }).then(status => {
+      if (ci !== globalCI) {
+        configureConnectionInformation(globalCI);
       }
-      return ConnectionHelper.doGet({ url, paramsMap });
-    })
-    .then(data => _processResult(data, lastConnectivityStatus, isCheckingAlternative))
-    .catch(error => {
-      logger.error(`Couldn't check the connection status. Error: ${error}`);
-      return _processResult(null, lastConnectivityStatus, isCheckingAlternative);
-    })
-    .then(result => (isCheckingAlternative ? result : _saveConnectivityStatus(result)));
+      store.dispatch({
+        type: STATE_AMP_CONNECTION_STATUS_UPDATE,
+        actionData: ci.isTestUrl ? pastConnectivityStatus : status
+      });
+      if (ci.isTestUrl) {
+        return status;
+      } else {
+        reportCompatibilityError(pastConnectivityStatus, status);
+        return _saveConnectivityStatus(status);
+      }
+    });
 }
 
-function _processResult(data, lastConnectivityStatus: ConnectivityStatus, isCheckingAlternative: boolean) {
-  let status;
-  if (!isValidAmpResponse(data)) {
-    if (lastConnectivityStatus === undefined) {
-      status = new ConnectivityStatus(false, true, true, null, null, null, false);
-    } else {
-      status = new ConnectivityStatus(
-        false,
-        lastConnectivityStatus.isAmpClientEnabled,
-        lastConnectivityStatus.isAmpCompatible,
-        lastConnectivityStatus.ampVersion,
-        preProcessLatestAmpOffline(lastConnectivityStatus.latestAmpOffline),
-        lastConnectivityStatus.serverId,
-        lastConnectivityStatus.serverIdMatch
-      );
-    }
-  } else {
-    const isAmpClientEnabled = data[AMP_OFFLINE_ENABLED] === true;
-    const isAmpCompatible = data[AMP_OFFLINE_COMPATIBLE] === true;
-    const latestAmpOffline = preProcessLatestAmpOffline(data[LATEST_AMP_OFFLINE], isAmpCompatible);
-    const version = data[AMP_VERSION];
-    status = new ConnectivityStatus(true, isAmpClientEnabled, isAmpCompatible, version, latestAmpOffline,
-      data[AMP_SERVER_ID], data[AMP_SERVER_ID_MATCH]);
-  }
-  store.dispatch({
-    type: STATE_AMP_CONNECTION_STATUS_UPDATE,
-    actionData: isCheckingAlternative ? lastConnectivityStatus : status
-  });
-  if (!isCheckingAlternative) {
-    reportCompatibilityError(lastConnectivityStatus, status);
-  }
-  return status;
-}
-
-function preProcessLatestAmpOffline(latestAmpOffline, isAmpCompatible) {
-  if (latestAmpOffline) {
-    if (VersionUtils.compareVersion(latestAmpOffline.version, VERSION) > 0) {
-      latestAmpOffline[MANDATORY_UPDATE] = latestAmpOffline.critical === true || !isAmpCompatible;
-    } else {
-      latestAmpOffline[MANDATORY_UPDATE] = null;
-    }
-  }
-  return latestAmpOffline;
-}
-
-function isValidAmpResponse(response) {
-  const keys = (response && response instanceof Object && Object.keys(response)) || null;
-  return keys && CONNECTIVITY_RESPONSE_FIELDS.some(field => keys.includes(field));
-}
 
 function reportCompatibilityError(lastConnectivityStatus: ConnectivityStatus, currentStatus: ConnectivityStatus) {
   if ((!lastConnectivityStatus || lastConnectivityStatus.isAmpCompatible) && !currentStatus.isAmpCompatible) {

@@ -131,9 +131,9 @@ function attemptToConfigure(setupConfig) {
     .then(savedConnInformation => configureAndTestConnectivity(setupConfig)
       .then(() => {
         const fixedUrl = setupConfig.urls[0];
-        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformationOnFullUrl(fixedUrl));
+        return connectivityCheck(SetupManager.buildConnectionInformationOnFullUrl(fixedUrl));
       })
-      .catch((error) => waitConfigureConnectionInformation(savedConnInformation)
+      .catch((error) => connectivityCheck(savedConnInformation)
         .then(() => Promise.reject(error))
         .catch(() => Promise.reject(error))));
 }
@@ -162,7 +162,7 @@ export function testUrlByKeepingCurrentSetup(url) {
           .catch(error => ({ url, errorMessage: error }));
       })
       .then(result => {
-        waitConfigureConnectionInformation(currentConnectionInformation);
+        connectivityCheck(currentConnectionInformation);
         return result;
       });
   }
@@ -178,12 +178,6 @@ export function testUrlResultProcessed(url) {
     type: STATE_URL_TEST_RESULT_PROCESSED,
     actionData: { url }
   });
-}
-
-function waitConfigureConnectionInformation(connectionInformation) {
-  return Utils.waitWhile(isConnectivityCheckInProgress, RESPONSE_CHECK_INTERVAL_MS)
-    .then(() => configureConnectionInformation(connectionInformation))
-    .then(() => connectivityCheck(true));
 }
 
 export function configureAndTestConnectivity(setupConfig) {
@@ -226,7 +220,7 @@ function testAMPUrl(url) {
         if (isValidConnectionByStatus(result && result.connectivityStatus, true)) {
           return Promise.resolve(result);
         }
-        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformationForTest(fixedUrl))
+        return connectivityCheck(SetupManager.buildConnectionInformationForTest(fixedUrl))
           .then(connectivityStatus => ({ connectivityStatus, fixedUrl }));
       })
     , Promise.resolve())
