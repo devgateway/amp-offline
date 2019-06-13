@@ -148,14 +148,15 @@ export default class Setup extends Component {
   render() {
     const { errorMessage, isSetupOptionsLoading, isSetupOptionsLoadFailed, isSetupComplete, loadSetupOptions } =
       this.props;
-    const { isCustom, isValid, isTestingConnectivity } = this.state;
+    const { isCustom, isValid, isTestingConnectivity, selectedOptionId } = this.state;
     const inProgress = isSetupOptionsLoading || isSetupComplete || isTestingConnectivity;
     const hideProgress = !(isSetupOptionsLoading || isTestingConnectivity);
     const displayError = isSetupOptionsLoadFailed && !isCustom ? translate('noConnectionToRegistry') : errorMessage;
     return (<div className={styles.centered}>
       <div>
         <AFLabel value={translate('setupFor')} required className={styles.label} />
-        <AFDropDown options={this.state.countryOptions} onChange={this.onOptionChange.bind(this)} />
+        <AFDropDown
+          selectedId={selectedOptionId} options={this.state.countryOptions} onChange={this.onOptionChange.bind(this)} />
       </div>
       {isCustom && this.renderCustomOption()}
       <div className={styles.row}>
