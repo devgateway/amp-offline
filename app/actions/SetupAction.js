@@ -106,7 +106,7 @@ export function configureOnLoad() {
     if (isTestingEnv && !didSetupComplete()) {
       const customOption = SetupManager.getCustomOption([LANGUAGE_ENGLISH]);
       customOption.urls = [connectionInformation.getFullUrl()];
-      const setupCompletePromise = configureAndSaveSetup(customOption);
+      const setupCompletePromise = attemptToConfigureAndSaveSetup(customOption);
       store.dispatch(notifySetupComplete(setupCompletePromise));
       return setupCompletePromise;
     }
@@ -115,14 +115,18 @@ export function configureOnLoad() {
 }
 
 export function setupComplete(setupConfig) {
-  return (dispatch) => dispatch(notifySetupComplete(configureAndSaveSetup(setupConfig)));
+  return (dispatch) => dispatch(notifySetupComplete(attemptToConfigureAndSaveSetup(setupConfig)));
 }
 
-function configureAndSaveSetup(setupConfig) {
-  logger.log('setupComplete');
+/**
+ * Will attempt to configure the url settings
+ * @param setupConfig
+ * @returns {true|string} will return true on successful attempt or the error message in case of a failure
+ */
+function attemptToConfigureAndSaveSetup(setupConfig) {
+  logger.log('attemptToConfigureAndSaveSetup');
   return attemptToConfigure(setupConfig)
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
-    .then(() => connectivityCheck())
     .then(() => true);
 }
 
@@ -131,11 +135,13 @@ function attemptToConfigure(setupConfig) {
     .then(savedConnInformation => configureAndTestConnectivity(setupConfig)
       .then(() => {
         const fixedUrl = setupConfig.urls[0];
-        return connectivityCheck(SetupManager.buildConnectionInformationOnFullUrl(fixedUrl));
+        configureConnectionInformation(SetupManager.buildConnectionInformationOnFullUrl(fixedUrl));
+        return connectivityCheck();
       })
-      .catch((error) => connectivityCheck(savedConnInformation)
-        .then(() => Promise.reject(error))
-        .catch(() => Promise.reject(error))));
+      .catch((error) => {
+        configureConnectionInformation(savedConnInformation);
+        return Promise.reject(error);
+      }));
 }
 
 function notifySetupComplete(setupResult) {
