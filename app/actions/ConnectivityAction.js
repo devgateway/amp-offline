@@ -92,7 +92,7 @@ export function loadConnectionInformation() {
 
 /**
  * Checks and updates the connectivity status
- * @param ci (optional) the connectivity information to use; if missing, the gloabl one will be used
+ * @param ci (optional) the connectivity information to use; if missing, the global one will be used
  * @returns ConnectivityStatus
  */
 export function connectivityCheck(ci: ConnectionInformation) {
@@ -119,7 +119,7 @@ export function connectivityCheck(ci: ConnectionInformation) {
         type: STATE_AMP_CONNECTION_STATUS_UPDATE,
         actionData: ci.isTestUrl ? pastConnectivityStatus : status
       });
-      if (ci.isTestUrl) {
+      if (ci.isTestUrl || !status) {
         return status;
       } else {
         reportCompatibilityError(pastConnectivityStatus, status);

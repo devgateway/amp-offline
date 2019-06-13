@@ -8,7 +8,7 @@ import {
   URL_CONNECTIVITY_CHECK_EP
 } from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
-import ConnectionHelper from './ConnectionHelper';
+import * as ConnectionHelper from './ConnectionHelper';
 import VersionUtils from '../../utils/VersionUtils';
 import { MANDATORY_UPDATE } from '../../actions/ConnectivityAction';
 import Logger from '../util/LoggerManager';
@@ -55,8 +55,9 @@ export default class ConnectivityCheckRunner {
    * @returns {ConnectivityStatus}
    */
   run() {
-    if (!this._ci) {
-      logger.error('Cannot run connectivity check: no connection information available. ');
+    logger.log('connectivity check run');
+    if (!this._ci || !this._ci.getFullUrl()) {
+      (this._ci ? logger.warn : logger.error)('Cannot run connectivity check: no connection information available. ');
       return this._pastConnectivityStatus;
     }
     const url = URL_CONNECTIVITY_CHECK_EP;
