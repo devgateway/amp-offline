@@ -24,6 +24,7 @@ import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
 import * as constants from '../utils/constants/ErrorConstants';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
+import AmpServer from '../modules/setup/AmpServer';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -130,7 +131,7 @@ function attemptToConfigureAndSaveSetup(setupConfig) {
     .then(() => true);
 }
 
-function attemptToConfigure(setupConfig) {
+function attemptToConfigure(setupConfig: AmpServer) {
   return SetupManager.getConnectionInformation()
     .then(savedConnInformation => configureAndTestConnectivity(setupConfig)
       .then(() => {
@@ -180,13 +181,13 @@ export function testUrlByKeepingCurrentSetup(url) {
 }
 
 export function testUrlResultProcessed(url) {
-  return (disaptch) => disaptch({
+  return (dispatch) => dispatch({
     type: STATE_URL_TEST_RESULT_PROCESSED,
     actionData: { url }
   });
 }
 
-export function configureAndTestConnectivity(setupConfig) {
+export function configureAndTestConnectivity(setupConfig: AmpServer) {
   const hasUrls = setupConfig && setupConfig.urls && setupConfig.urls.length;
   if (!hasUrls) {
     return Promise.reject(new NotificationHelper({ message: 'wrongSetup' }));
