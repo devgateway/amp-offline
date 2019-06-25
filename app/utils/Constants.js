@@ -156,4 +156,5 @@ export const NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM = NR_SYNC_HISTORY_ENTRIES;
 export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';
 export const RELEASE_BRANCH_REGEX = /release\//;
-export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];
+// TODO temporary, restore before final merge
+export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX, 'task/AMPOFFLINE-1442/using-external-lib'];

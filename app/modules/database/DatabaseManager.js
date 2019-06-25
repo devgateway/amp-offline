@@ -1,13 +1,13 @@
 import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
+import AmpClientSecurity from 'amp-client-security';
 import {
   DB_AUTOCOMPACT_INTERVAL_MILISECONDS,
   DB_COMMON_DATASTORE_OPTIONS,
   DB_DEFAULT_QUERY_LIMIT,
   DB_FILE_EXTENSION,
-  DB_FILE_PREFIX,
-  AKEY
+  DB_FILE_PREFIX
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
@@ -15,6 +15,8 @@ import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstan
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
 import * as Utils from '../../utils/Utils';
+
+let secureKey;
 
 const logger = new Logger('Database manager');
 
@@ -29,6 +31,11 @@ const logger = new Logger('Database manager');
  * ((object, callback, options)), find: ((object, callback, options))}}
  */
 const DatabaseManager = {
+  _initSecureKey() {
+    if (!secureKey) {
+      secureKey = AmpClientSecurity.getSecurityKey();
+    }
+  },
 
   // VERY IMPORTANT: NeDB can execute 1 operation at the same time and the rest is queued, so we always work async.
   // VERY IMPORTANT 2: Loading the same datastore more than once didnt throw an error but drastically increased the MEM
@@ -46,6 +53,7 @@ const DatabaseManager = {
       });
       // Encrypt the DB only when built from a release branch
       if (Utils.isReleaseBranch()) {
+        this._initSecureKey();
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
       }
@@ -538,12 +546,12 @@ const DatabaseManager = {
 
   encryptData(dataString) {
     // logger.log('encryptData');
-    return Crypto.AES.encrypt(dataString, AKEY);
+    return Crypto.AES.encrypt(dataString, secureKey);
   },
 
   decryptData(dataString) {
     // logger.log('decryptData');
-    const bytes = Crypto.AES.decrypt(dataString, AKEY);
+    const bytes = Crypto.AES.decrypt(dataString, secureKey);
     return bytes.toString(Crypto.enc.Utf8);
   },
 

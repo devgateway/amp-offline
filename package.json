@@ -208,6 +208,7 @@
     "ampServerProtocol": "https"
   },
   "dependencies": {
+    "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#feature/AMPOFFLINE-1437/key-generation",
     "electron-pdf-window": "^1.0.12"
   }
 }
