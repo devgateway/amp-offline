@@ -11,6 +11,7 @@ import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import * as Utils from '../../../../utils/Utils';
+import Messages from '../../../common/Messages';
 
 const logger = new Logger('AF list selector');
 
@@ -38,7 +39,7 @@ export default class AFListSelector extends Component {
     listPath: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     // we need to report validation error before search box, thus passing to the component to display
-    validationError: PropTypes.string,
+    validationErrors: PropTypes.array,
     extraParams: PropTypes.object,
     onBeforeDelete: PropTypes.func
   };
@@ -140,7 +141,7 @@ export default class AFListSelector extends Component {
   }
 
   _getValidationState() {
-    if (this.props.validationError) {
+    if (this.props.validationErrors) {
       return 'error';
     }
     return null;
@@ -156,7 +157,7 @@ export default class AFListSelector extends Component {
           onEditRow={this.handleEditValue.bind(this)} language={this.context.activityFieldsManager._lang} />
         <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()}>
           <FormControl.Feedback />
-          <HelpBlock>{this.props.validationError}</HelpBlock>
+          <HelpBlock><Messages messages={this.props.validationErrors} /></HelpBlock>
         </FormGroup>
       </div>);
     }
