@@ -113,11 +113,21 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
 
   _saveResources(resources) {
     // in the current iteration we expect to pull only metadata
-    return ResourceHelper.saveOrUpdateResourceCollection(resources)
+    const resourcesByUuids = new Map(resources.map(r => [r[UUID], r]));
+    const uuids = Array.from(resourcesByUuids.keys());
+    return ResourceHelper.findResourcesByUuidsWithLocalContent(uuids)
+      .then(dbResources => {
+        dbResources.forEach(dbR => {
+          ResourceHelper.copyLocalData(dbR, resourcesByUuids.get(dbR[UUID]));
+        });
+        return dbResources;
+      })
+      .then(() => ResourceHelper.saveOrUpdateResourceCollection(resources))
       .then(() => {
         resources.forEach(r => this.pulled.add(r[UUID]));
         return resources;
-      }).catch((err) => this.onPullError(err, resources.map(r => r[UUID])));
+      })
+      .catch((err) => this.onPullError(err, uuids));
   }
 
   onPullError(error, uuids) {
