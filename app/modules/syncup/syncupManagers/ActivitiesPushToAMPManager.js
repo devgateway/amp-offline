@@ -251,7 +251,8 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     const errorData = error || (pushResult && pushResult.error) || undefined;
     this._updateDetails({ activity, pushResult, errorData });
     if (errorData) {
-      if (!pushResult) {
+      if (isConnectivityError) {
+        this._processErrors(activity, null, errorData);
         return Promise.resolve(activity);
       }
       return this._getRejectedId(activity)
@@ -309,7 +310,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     return Promise.resolve(1);
   }
 
-  _saveRejectedActivity(activity, rejectedId, errorData) {
+  _processErrors(activity, rejectedId, errorData) {
     const ampId = activity[AC.AMP_ID] ? `${activity[AC.AMP_ID]} ` : '';
     const idToLog = `${ampId}(${activity[AC.PROJECT_TITLE]})`;
     const fieldNameToLog = `${activity[AC.AMP_ID] ? AC.AMP_ID : ''}(${AC.PROJECT_TITLE})`;
@@ -331,12 +332,17 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
       unitErrors.push(genericError || error);
       return error;
     });
-    logger.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
+    const clarification = rejectedId ? `with rejectedId=${rejectedId}` : 'without rejection';
+    logger.error(`_processErrors for ${fieldNameToLog} = ${idToLog} ${clarification}`);
+    this.addErrors(unitErrors);
+    return errors;
+  }
+
+  _saveRejectedActivity(activity, rejectedId, errorData) {
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;
     rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
-    rejectedActivity.errors = errors;
-    this.addErrors(unitErrors);
+    rejectedActivity.errors = this._processErrors(activity, rejectedId, errorData);
     return ActivityHelper.saveOrUpdate(rejectedActivity);
   }
 }

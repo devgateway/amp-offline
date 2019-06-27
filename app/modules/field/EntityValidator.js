@@ -451,12 +451,12 @@ export default class EntityValidator {
     logger.log('noParentChildMixing');
     const options = this._possibleValuesMap[fieldPath];
     const uniqueRoots = new Set(values.map(v => v[noParentChildMixingFieldName].id));
-    const childrenMixedWithParents = [];
+    const childrenMixedWithParents = new Set();
     values.forEach(value => {
       let parentId = value[noParentChildMixingFieldName].parentId;
       while (parentId) {
         if (uniqueRoots.has(parentId)) {
-          childrenMixedWithParents.push(value[noParentChildMixingFieldName][AC.HIERARCHICAL_VALUE]);
+          childrenMixedWithParents.add(value[noParentChildMixingFieldName][AC.HIERARCHICAL_VALUE]);
           uniqueRoots.delete(value[noParentChildMixingFieldName].id);
           parentId = null;
         } else {
@@ -465,8 +465,8 @@ export default class EntityValidator {
       }
     });
 
-    if (childrenMixedWithParents.length > 0) {
-      const childrenNames = childrenMixedWithParents.join(', ');
+    if (childrenMixedWithParents.size > 0) {
+      const childrenNames = [...childrenMixedWithParents].join(', ');
       return translate('noParentChildMixing').replace('%children%', childrenNames);
     }
     return true;
