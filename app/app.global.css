@@ -143,6 +143,8 @@ html, body {
 }
 */
 
+/* ANTD OVERRIDE */
+
 /* this is antd css that breaks bootstrap error reporting styles */
 .has-success.has-feedback:after, .has-warning.has-feedback:after, .has-error.has-feedback:after,
 .is-validating.has-feedback:after {
@@ -151,4 +153,14 @@ html, body {
 
 .form-control-feedback.glyphicon.glyphicon-remove {
   visibility: hidden;
+}
+
+ul {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+ol {
+  list-style-type: decimal;
+  list-style-position: inside;
 }
