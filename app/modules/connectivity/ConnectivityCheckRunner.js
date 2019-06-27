@@ -57,7 +57,12 @@ export default class ConnectivityCheckRunner {
   run() {
     logger.log('connectivity check run');
     if (!this._ci || !this._ci.getFullUrl()) {
-      (this._ci ? logger.warn : logger.error)('Cannot run connectivity check: no connection information available. ');
+      const msg = 'Cannot run connectivity check: no connection information available.';
+      if (this._ci) {
+        logger.warn(msg);
+      } else {
+        logger.error(msg);
+      }
       return this._pastConnectivityStatus;
     }
     const url = URL_CONNECTIVITY_CHECK_EP;
