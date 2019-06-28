@@ -1,4 +1,3 @@
-// TODO: this action is not going to be called from a component, its an initialization action
 import store from '../index';
 import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
@@ -33,6 +32,10 @@ export const TIMER_STOP = 'TIMER_STOP';
 // we keep the timer as a variable in case we want to be able to stop it
 let timer;
 
+const STATE_INITIALIZATION = 'STATE_INITIALIZATION';
+export const STATE_INITIALIZATION_PENDING = 'STATE_INITIALIZATION_PENDING';
+export const STATE_INITIALIZATION_FULFILLED = 'STATE_INITIALIZATION_FULFILLED';
+export const STATE_INITIALIZATION_REJECTED = 'STATE_INITIALIZATION_REJECTED';
 export const STATE_PARAMETERS_FAILED = 'STATE_PARAMETERS_FAILED';
 export const STATE_GS_NUMBERS_LOADED = 'STATE_GS_NUMBERS_LOADED';
 export const STATE_GS_DATE_LOADED = 'STATE_GS_DATE_LOADED';
@@ -81,7 +84,7 @@ export function ampOfflineStartUp() {
 
 export function ampOfflineInit(isPostLogout = false) {
   store.dispatch(loadAllLanguages());
-  return checkIfSetupComplete()
+  const initPromise = checkIfSetupComplete()
     .then(loadConnectionInformation)
     .then(scheduleConnectivityCheck)
     .then(loadGlobalSettings)
@@ -89,6 +92,11 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
     .then(() => (isPostLogout ? postLogoutInit() : null));
+  store.dispatch({
+    type: STATE_INITIALIZATION,
+    payload: initPromise
+  });
+  return initPromise;
 }
 
 function runDbMigrationsPostInit() {
