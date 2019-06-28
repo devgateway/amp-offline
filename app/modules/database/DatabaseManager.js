@@ -1,6 +1,7 @@
 import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
+import os from 'os';
 import AmpClientSecurity from 'amp-client-security';
 import {
   DB_AUTOCOMPACT_INTERVAL_MILISECONDS,
@@ -32,9 +33,11 @@ const logger = new Logger('Database manager');
  */
 const DatabaseManager = {
   _initSecureKey() {
-    if (!secureKey) {
-      secureKey = AmpClientSecurity.getSecurityKey();
-    }
+    logger.debug('_initSecureKey');
+    const { username } = os.userInfo();
+    return AmpClientSecurity.getSecurityKey(`${username}@amp-client`).then(key => {
+      secureKey = key;
+    });
   },
 
   // VERY IMPORTANT: NeDB can execute 1 operation at the same time and the rest is queued, so we always work async.
@@ -47,18 +50,19 @@ const DatabaseManager = {
 
   _getCollection(name) {
     logger.debug('_getCollection');
-    return new Promise((resolve, reject) => {
+    const useEncryption = Utils.isReleaseBranch();
+    const keyInitPromise = (useEncryption && !secureKey) ? this._initSecureKey() : Promise.resolve();
+    return keyInitPromise.then(() => new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
       // Encrypt the DB only when built from a release branch
-      if (Utils.isReleaseBranch()) {
-        this._initSecureKey();
+      if (useEncryption) {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
       }
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
-    });
+    }));
   },
 
   getCollection(name, options) {
