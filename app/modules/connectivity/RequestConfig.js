@@ -37,6 +37,7 @@ const RequestConfig = {
       headers,
       method,
       simple: false,
+      strictSSL: true,
       resolveWithFullResponse: true,
       gzip: true,
       jar: cookiesStore // enables cookies to be saved
