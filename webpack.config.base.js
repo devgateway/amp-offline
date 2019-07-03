@@ -19,6 +19,9 @@ export default validate({
       test: /\.json$/,
       loader: 'json-loader'
     }, {
+      test: /\.node$/,
+      loader: 'node-loader'
+    }, {
       test: /Constants.js$/,
       loader: StringReplacePlugin.replace({
         replacements: [

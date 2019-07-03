@@ -20,6 +20,7 @@
     "start": "cross-env NODE_ENV=production ELECTRON_ENABLE_LOGGING=1 electron ./app/",
     "start-hot-update-main-debug": "env-cmd --no-override development electron --inspect-brk=5858 -r babel-register -r babel-polyfill ./app/main.development",
     "start-hot": "env-cmd --no-override development electron -r babel-register -r babel-polyfill ./app/main.development",
+    "prepublish": "npm install amp-client-security",
     "postinstall": "concurrently \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "dev": "npm run hot-server -- --start-hot",
     "package": "npm run build && build --publish never",
@@ -177,6 +178,7 @@
     "jsonschema": "^1.1.1",
     "moment": "^2.18.1",
     "nedb": "^1.8.0",
+    "node-loader": "^0.6.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.5.10",
     "rc-menu": "^5.0.7",
@@ -208,6 +210,7 @@
     "ampServerProtocol": "https"
   },
   "dependencies": {
+    "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#feature/AMPOFFLINE-1437/key-generation",
     "electron-pdf-window": "^1.0.12"
   }
 }
