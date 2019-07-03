@@ -56,7 +56,6 @@
           "static/**/*",
           "app.html",
           "main.js",
-          "main.js.map",
           "master-translations.en.json",
           "amp-help.pdf"
         ]
