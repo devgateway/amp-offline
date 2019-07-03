@@ -178,7 +178,6 @@
     "jsonschema": "^1.1.1",
     "moment": "^2.18.1",
     "nedb": "^1.8.0",
-    "node-loader": "^0.6.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.5.10",
     "rc-menu": "^5.0.7",
