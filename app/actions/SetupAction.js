@@ -8,7 +8,6 @@ import Logger from '../modules/util/LoggerManager';
 import {
   configureConnectionInformation,
   connectivityCheck,
-  getLeastCriticalStatus,
   getRegisteredServerId,
   getStatusNotification,
   isConnectivityCheckInProgress,
@@ -24,6 +23,8 @@ import { newUrlsDetected } from './SettingAction';
 import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
 import * as constants from '../utils/constants/ErrorConstants';
+import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
+import AmpServer from '../modules/setup/AmpServer';
 
 const STATE_SETUP_STATUS = 'STATE_SETUP_STATUS';
 export const STATE_SETUP_STATUS_PENDING = 'STATE_SETUP_STATUS_PENDING';
@@ -106,7 +107,7 @@ export function configureOnLoad() {
     if (isTestingEnv && !didSetupComplete()) {
       const customOption = SetupManager.getCustomOption([LANGUAGE_ENGLISH]);
       customOption.urls = [connectionInformation.getFullUrl()];
-      const setupCompletePromise = configureAndSaveSetup(customOption);
+      const setupCompletePromise = attemptToConfigureAndSaveSetup(customOption);
       store.dispatch(notifySetupComplete(setupCompletePromise));
       return setupCompletePromise;
     }
@@ -115,27 +116,33 @@ export function configureOnLoad() {
 }
 
 export function setupComplete(setupConfig) {
-  return (dispatch) => dispatch(notifySetupComplete(configureAndSaveSetup(setupConfig)));
+  return (dispatch) => dispatch(notifySetupComplete(attemptToConfigureAndSaveSetup(setupConfig)));
 }
 
-function configureAndSaveSetup(setupConfig) {
-  logger.log('setupComplete');
+/**
+ * Will attempt to configure the url settings
+ * @param setupConfig
+ * @returns {true|string} will return true on successful attempt or the error message in case of a failure
+ */
+function attemptToConfigureAndSaveSetup(setupConfig) {
+  logger.log('attemptToConfigureAndSaveSetup');
   return attemptToConfigure(setupConfig)
     .then(() => SetupManager.saveSetupAndCleanup(setupConfig))
-    .then(() => connectivityCheck())
     .then(() => true);
 }
 
-function attemptToConfigure(setupConfig) {
+function attemptToConfigure(setupConfig: AmpServer) {
   return SetupManager.getConnectionInformation()
     .then(savedConnInformation => configureAndTestConnectivity(setupConfig)
       .then(() => {
         const fixedUrl = setupConfig.urls[0];
-        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformationOnFullUrl(fixedUrl));
+        configureConnectionInformation(SetupManager.buildConnectionInformationOnFullUrl(fixedUrl));
+        return connectivityCheck();
       })
-      .catch((error) => waitConfigureConnectionInformation(savedConnInformation)
-        .then(() => Promise.reject(error))
-        .catch(() => Promise.reject(error))));
+      .catch((error) => {
+        configureConnectionInformation(savedConnInformation);
+        return Promise.reject(error);
+      }));
 }
 
 function notifySetupComplete(setupResult) {
@@ -162,7 +169,7 @@ export function testUrlByKeepingCurrentSetup(url) {
           .catch(error => ({ url, errorMessage: error }));
       })
       .then(result => {
-        waitConfigureConnectionInformation(currentConnectionInformation);
+        connectivityCheck(currentConnectionInformation);
         return result;
       });
   }
@@ -174,19 +181,13 @@ export function testUrlByKeepingCurrentSetup(url) {
 }
 
 export function testUrlResultProcessed(url) {
-  return (disaptch) => disaptch({
+  return (dispatch) => dispatch({
     type: STATE_URL_TEST_RESULT_PROCESSED,
     actionData: { url }
   });
 }
 
-function waitConfigureConnectionInformation(connectionInformation) {
-  return Utils.waitWhile(isConnectivityCheckInProgress, RESPONSE_CHECK_INTERVAL_MS)
-    .then(() => configureConnectionInformation(connectionInformation))
-    .then(() => connectivityCheck(true));
-}
-
-export function configureAndTestConnectivity(setupConfig) {
+export function configureAndTestConnectivity(setupConfig: AmpServer) {
   const hasUrls = setupConfig && setupConfig.urls && setupConfig.urls.length;
   if (!hasUrls) {
     return Promise.reject(new NotificationHelper({ message: 'wrongSetup' }));
@@ -226,7 +227,7 @@ function testAMPUrl(url) {
         if (isValidConnectionByStatus(result && result.connectivityStatus, true)) {
           return Promise.resolve(result);
         }
-        return waitConfigureConnectionInformation(SetupManager.buildConnectionInformationForTest(fixedUrl))
+        return connectivityCheck(SetupManager.buildConnectionInformationForTest(fixedUrl))
           .then(connectivityStatus => ({ connectivityStatus, fixedUrl }));
       })
     , Promise.resolve())
@@ -243,7 +244,7 @@ function getRelevantResult(r1, r2) {
   if (r1 && r2) {
     const s1 = r1.connectivityStatus;
     const s2 = r2.connectivityStatus;
-    return getLeastCriticalStatus(s1, s2) === s1 ? r1 : r2;
+    return ConnectivityStatus.getLeastCriticalStatus(s1, s2) === s1 ? r1 : r2;
   }
   return r1 || r2;
 }

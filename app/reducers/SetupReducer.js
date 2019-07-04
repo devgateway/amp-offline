@@ -40,7 +40,7 @@ const defaultState = {
 export default function setupReducer(state = defaultState, action: Object) {
   switch (action.type) {
     case STATE_SETUP_STATUS_PENDING:
-      return { ...state, isSetupComplete: undefined, errorMessage: undefined };
+      return { ...state, isSetupComplete: false, errorMessage: undefined };
     case STATE_SETUP_STATUS_REJECTED:
       return { ...state, isSetupComplete: false, errorMessage: action.payload };
     case STATE_SETUP_STATUS_FULFILLED:

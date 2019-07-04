@@ -24,6 +24,7 @@ import SetupSyncUpManager from '../syncup/SetupSyncUpManager';
 import * as Utils from '../../utils/Utils';
 import * as CSC from '../../utils/constants/ClientSettingsConstants';
 import VersionUtils from '../../utils/VersionUtils';
+import AmpServer from './AmpServer';
 
 /**
  * Setup Manager
@@ -91,18 +92,22 @@ const SetupManager = {
     return ConnectionHelper.doGet({ url: registryURL, shouldRetry: true });
   },
 
-  getCustomOption(languageList) {
-    return {
+  /**
+   * @param languageList
+   * @returns {AmpServer} a custom AMP Server setup option placeholder
+   */
+  getCustomOption(languageList: Array<string>) {
+    return new AmpServer({
       id: OTHER_ID,
       name: languageList.reduce((resultMap, code) => {
         resultMap[code] = translate('Other', code);
         return resultMap;
       }, {}),
       urls: []
-    };
+    });
   },
 
-  saveSetupAndCleanup(setupConfig) {
+  saveSetupAndCleanup(setupConfig: AmpServer) {
     const currentUrlToUse = setupConfig.urls && setupConfig.urls.length && setupConfig.urls[0];
     if (!currentUrlToUse) {
       return Promise.reject(new Notification({

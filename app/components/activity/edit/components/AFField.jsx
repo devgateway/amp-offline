@@ -28,6 +28,7 @@ import AFDateYear from './AFDateYear';
 import CurrencyRatesManager from '../../../../modules/util/CurrencyRatesManager';
 import AFRadioList from './AFRadioList';
 import FieldDefinition from '../../../../modules/field/FieldDefinition';
+import Messages from '../../../common/Messages';
 
 const logger = new Logger('AF field');
 
@@ -245,7 +246,7 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams}
+      onChange={this.onChange} validationErrors={this.state.validationErrors} extraParams={this.props.extraParams}
       onBeforeDelete={this.props.onBeforeDelete} />);
   }
 
@@ -372,19 +373,19 @@ class AFField extends Component {
   }
 
   _getValidationState() {
-    if (this.state.validationError) {
+    if (this.state.validationErrors) {
       return 'error';
     }
     return null;
   }
 
   _processValidation(errors, isNotifyFieldValidation) {
-    const fieldErrors = errors && errors.filter(e => e.path === this.props.fieldPath);
-    const validationError = fieldErrors ? fieldErrors.map(e => e.errorMessage).join(' ') : null;
+    const errorMessages = errors && errors.filter(e => e.path === this.props.fieldPath).map(e => e.errorMessage);
+    const validationErrors = errorMessages && errorMessages.length ? errorMessages : null;
     if (isNotifyFieldValidation) {
       this.props.onFieldValidation(this.props.fieldPath, errors);
     }
-    this.setState({ validationError });
+    this.setState({ validationErrors });
   }
 
   render() {
@@ -402,7 +403,9 @@ class AFField extends Component {
           {this.getFieldContent()}
         </span>
         <FormControl.Feedback />
-        <HelpBlock className={styles.help_block}>{showValidationError && this.state.validationError}</HelpBlock>
+        <HelpBlock className={styles.help_block}>
+          {showValidationError && <Messages messages={this.state.validationErrors} />}
+        </HelpBlock>
       </FormGroup>
     );
   }
