@@ -27,6 +27,7 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
     const body = this._getRequestBody();
     return ConnectionHelper.doPost({ url: FEATURE_MANAGER_URL, body, shouldRetry: true })
       .then((fmTree) => {
+        fmTree = fmTree && fmTree['fm-settings'];
         this._setUndetectedFMSettingsAsDisabled(fmTree);
         return FMHelper.replaceAll([{ fmTree }]).then((res) => {
           // update FeatureManager with the new tree immediately to no longer report new local settings to pull
@@ -49,7 +50,6 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
     return {
       'reporting-fields': false,
       'enabled-modules': false,
-      'detail-flat': false,
       'full-enabled-paths': false,
       'detail-modules': fmModules,
       'fm-paths': this.fmPaths
