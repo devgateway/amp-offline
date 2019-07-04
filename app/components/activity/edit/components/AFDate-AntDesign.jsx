@@ -49,21 +49,29 @@ class AFDateAntDesign extends Component {
   static propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
-    lang: PropTypes.string
+    lang: PropTypes.string,
+    extraParams: PropTypes.object
   };
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.gsDateFormat = DateUtils.getGSDateFormat();
     this.state = {
       value: props.value,
-      date: props.value ? Moment(props.value) : null
+      date: props.value ? Moment(props.value) : props.value
     };
   }
 
+  componentWillMount() {
+    const { todayAsDefaultDate } = this.props.extraParams || {};
+    if (todayAsDefaultDate && this.state.date === undefined) {
+      this.onDateChange(Moment());
+    }
+  }
+
   onDateChange(date: Moment) {
-    this.handleChange(date, date ? DateUtils.getISODateForAPI(date) : null);
+    this.handleChange(date, date ? DateUtils.formatDateForAPI(date) : null);
   }
 
   handleChange(date, value) {
@@ -81,7 +89,7 @@ class AFDateAntDesign extends Component {
   render() {
     return (
       <div>
-        <LocaleProvider locale={ADLocales[this.props.lang]} >
+        <LocaleProvider locale={ADLocales[this.props.lang]}>
           <DatePicker
             value={this.state.date} onChange={this.onDateChange.bind(this)} format={this.gsDateFormat}
             placeholder={this.gsDateFormat} allowClear showToday size={'large'}

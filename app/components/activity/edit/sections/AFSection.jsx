@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import * as styles from '../ActivityForm.css';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -17,13 +17,14 @@ const AFSection = (ComposedSection, SectionTitle) => class extends Component {
   // TODO based on design if we can reuse section from preview
   static contextTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
-    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
+    activityFundingSectionPanelStatus: PropTypes.array.isRequired
   };
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   render() {

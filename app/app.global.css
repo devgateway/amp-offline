@@ -7,6 +7,8 @@
 @import '../node_modules/react-bootstrap-table/css/toastr.css';
 @import './assets/fonts/opensans_regular_macroman/stylesheet.css';
 @import './assets/fonts/opensans_extrabold_macroman/stylesheet.css';
+@import '../node_modules/leaflet/dist/leaflet.css';
+@import '../node_modules/leaflet-draw/dist/leaflet.draw.css';
 
 * {
   margin: 0;
@@ -20,6 +22,11 @@ html, body {
 .outerContainer {
   height: 100%;
   min-height: 680px;
+}
+
+.rc-menu-vertical .rc-menu-submenu-arrow {
+  position: static;
+  padding-left: 5px;
 }
 
 .rc-menu-submenu-title {
@@ -57,6 +64,11 @@ html, body {
   padding-right: 10px;
   min-width: 0px;
   text-align: left;
+}
+
+.ws-menu > ul {
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .rc-menu-root {
@@ -107,6 +119,11 @@ html, body {
 
 .panel-title {
   cursor: pointer;
+  font-size: 12px;
+}
+
+.form-control {
+  padding-right: 12px !important;
 }
 
 /* BOOTSTRAP TABLE OVERRIDE */
@@ -126,6 +143,8 @@ html, body {
 }
 */
 
+/* ANTD OVERRIDE */
+
 /* this is antd css that breaks bootstrap error reporting styles */
 .has-success.has-feedback:after, .has-warning.has-feedback:after, .has-error.has-feedback:after,
 .is-validating.has-feedback:after {
@@ -134,4 +153,14 @@ html, body {
 
 .form-control-feedback.glyphicon.glyphicon-remove {
   visibility: hidden;
+}
+
+ul {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+ol {
+  list-style-type: decimal;
+  list-style-position: inside;
 }

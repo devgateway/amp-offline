@@ -1,9 +1,17 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
+import {
+  CLOSE_HELP_WINDOW_MSG,
+  CREATE_PDF_WINDOW_MSG,
+  FORCE_CLOSE_APP_MSG,
+  INITIALIZATION_COMPLETE_MSG
+} from './utils/constants/MainDevelopmentConstants';
 
 const PDFWindow = require('electron-pdf-window');
 
 let mainWindow = null;
+const isMacOS = process.platform === 'darwin';
+let willQuitApp = !isMacOS;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -41,19 +49,57 @@ const installExtensions = async () => {
 };
 
 app.on('ready', async () => {
-  await installExtensions();
-
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 728
+    height: 728,
+    alwaysOnTop: true
   });
+
+  // create a new `splash`-Window
+  let splash = new BrowserWindow({
+    width: 425,
+    height: 285,
+    transparent: false,
+    frame: false,
+    titleBarStyle: 'hidden',
+    alwaysOnTop: false,
+    resizable: false,
+    show: false,
+    delay: 100,
+    backgroundColor: '#2b669a',
+    movable: false,
+    closable: false
+  });
+  splash.loadURL(`file://${__dirname}/splash-screen.html`);
+  splash.once('ready-to-show', () => {
+    splash.show();
+  });
+
+  await installExtensions();
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.show();
-    mainWindow.focus();
+    // Delay showing the main window (blank) until ampOfflineStartUp() is complete.
+    ipcMain.on(INITIALIZATION_COMPLETE_MSG, () => {
+      if (splash) {
+        splash.hide();
+        splash.destroy();
+        splash = null;
+      }
+      mainWindow.setAlwaysOnTop(false);
+      mainWindow.show();
+      mainWindow.focus();
+      global.MAIN_WINDOW_ACTIVE = true;
+    });
+  });
+
+  mainWindow.on('close', (event) => {
+    if (!willQuitApp) {
+      mainWindow.hide();
+      event.preventDefault();
+    }
   });
 
   mainWindow.on('closed', () => {
@@ -63,6 +109,79 @@ app.on('ready', async () => {
       global.HELP_PDF_WINDOW.close();
     }
   });
+
+  ipcMain.on(FORCE_CLOSE_APP_MSG, () => {
+    app.quit();
+    if (splash) {
+      splash.hide();
+      splash.destroy();
+    }
+    if (mainWindow) {
+      mainWindow.hide();
+      mainWindow.destroy();
+    }
+  });
+
+  // we need to explicitly set application menu in MacOS to enable there Copy & Paste shortcuts
+  // there are libs that can configure entire menu, but since we want to rather stick to AmpOffline menu, limiting to:
+  if (process.platform === 'darwin') {
+    Menu.setApplicationMenu(Menu.buildFromTemplate([
+      {
+        label: 'Edit',
+        submenu: [
+          { role: 'undo' },
+          { role: 'redo' },
+          { type: 'separator' },
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+          { role: 'pasteandmatchstyle' },
+          { role: 'delete' },
+          { role: 'selectall' }
+        ]
+      },
+      {
+        label: 'Window',
+        submenu: [
+          {
+            label: 'Open',
+            accelerator: 'Cmd+0',
+            selector: 'unhideAllApplications:',
+            // eslint-disable-next-line
+            click: function() {
+              mainWindow.show();
+            }
+          },
+          {
+            label: 'Hide',
+            accelerator: 'Cmd+H',
+            selector: 'hide:'
+          },
+          {
+            label: 'Minimize',
+            accelerator: 'Cmd+M',
+            selector: 'performMiniaturize:'
+          },
+          {
+            label: 'Close',
+            accelerator: 'Cmd+W',
+            // eslint-disable-next-line
+            click: function() {
+              mainWindow.hide();
+            }
+          },
+          {
+            label: 'Quit',
+            accelerator: 'Cmd+Q',
+            // eslint-disable-next-line
+            click: function() {
+              app.quit();
+            }
+          }
+        ]
+      }
+    ]));
+  }
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools();
@@ -83,8 +202,18 @@ app.on('ready', async () => {
   mainWindow.setMenu(null);
 });
 
+app.on('activate', () => {
+  if (mainWindow) {
+    mainWindow.show();
+  }
+});
+
+app.on('before-quit', () => {
+  willQuitApp = true;
+});
+
 // Listen to message from renderer process.
-ipcMain.on('createPDFWindow', (event, url) => {
+ipcMain.on(CREATE_PDF_WINDOW_MSG, (event, url) => {
   if (!global.HELP_PDF_WINDOW) {
     // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
     let pdfWindow = new PDFWindow({
@@ -100,7 +229,7 @@ ipcMain.on('createPDFWindow', (event, url) => {
       global.HELP_PDF_WINDOW = null;
       // Use IPC to communicate with renderer process.
       if (mainWindow) {
-        mainWindow.webContents.send('closeHelpWindow');
+        mainWindow.webContents.send(CLOSE_HELP_WINDOW_MSG);
       }
     });
 

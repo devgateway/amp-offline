@@ -1,15 +1,24 @@
 /* eslint-disable class-methods-use-this */
-import { CURRENCY_HOUR, CURRENCY_PAIR, RATE_SAME_CURRENCY } from '../../utils/Constants';
+import { CURRENCY_HOUR, CURRENCY_PAIR, RATE_CURRENCY_NOT_FOUND, RATE_SAME_CURRENCY } from '../../utils/Constants';
 import translate from '../../utils/translate';
-import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER, RATE_CURRENCY_NOT_FOUND } from '../../utils/constants/ErrorConstants';
+import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/ErrorConstants';
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
-import { formatDateForCurrencyRates } from '../../utils/DateUtils';
+import DateUtils from '../../utils/DateUtils';
 import * as AC from '../../utils/constants/ActivityConstants';
 
 export default class CurrencyRatesManager {
   constructor(currencyRates, baseCurrency) {
     this._currencyRates = currencyRates;
     this._baseCurrency = baseCurrency;
+    this._currnciesWithExchangeRates = this._getCurrenciesWithExchangeRates();
+  }
+
+  /**
+   * Set of currencies that has at least one exchange rate
+   * @return {Set<any> | *}
+   */
+  get currenciesWithExchangeRates() {
+    return this._currnciesWithExchangeRates;
   }
 
   /**
@@ -21,9 +30,12 @@ export default class CurrencyRatesManager {
    * @param dateToFind date for which we are doing the conversion. It is expected in yyyy-mm-dd
    * @returns {*|Promise.<TResult>}
    */
-  convertCurrency(currencyFrom, currencyTo, dateToFind) {
+  convertCurrency(currencyFrom, currencyTo, dateToFind, fixedExchangeRate) {
     if (currencyFrom === currencyTo) {
       return RATE_SAME_CURRENCY;
+    }
+    if (fixedExchangeRate && fixedExchangeRate > 0) {
+      return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
     }
     const timeDateToFind = (new Date(`${dateToFind} ${CURRENCY_HOUR}`)).getTime();
     if (this._currencyRates) {
@@ -62,12 +74,19 @@ export default class CurrencyRatesManager {
     return this.convertTransactionAmountToCurrency(fundingDetail, this._baseCurrency);
   }
 
+  convertAmountToCurrency(amount, currencyFrom, date, fixedExchangeRate, currencyTo) {
+    const currencyRate = this.convertCurrency(currencyFrom, currencyTo,
+      DateUtils.formatDateForAPI(date), fixedExchangeRate);
+    return amount * currencyRate;
+  }
+
   convertTransactionAmountToCurrency(fundingDetail, currencyTo) {
+    const fixedExchangeRate = fundingDetail[AC.FIXED_EXCHANGE_RATE];
     const currencyFrom = fundingDetail[AC.CURRENCY].value;
-    const transactionDate = formatDateForCurrencyRates(fundingDetail[AC.TRANSACTION_DATE]);
+    const transactionDate = fundingDetail[AC.TRANSACTION_DATE];
     const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
-    const currencyRate = this.convertCurrency(currencyFrom, currencyTo, transactionDate);
-    return transactionAmount * currencyRate;
+    return this.convertAmountToCurrency(transactionAmount, currencyFrom, transactionDate, fixedExchangeRate,
+      currencyTo);
   }
 
   getExchangeRate(currenciesToSearch, timeDateToFind) {
@@ -105,11 +124,10 @@ export default class CurrencyRatesManager {
     );
     if (rateFromToBase && rateBaseToTo) {
       // if we have both currencies we just return the product of ech rate
-      return this.getExchangeRate(rateFromToBase, timeDateToFind)
-              * this.getExchangeRate(rateBaseToTo, timeDateToFind);
+      return this.getExchangeRate(rateFromToBase, timeDateToFind) * this.getExchangeRate(rateBaseToTo, timeDateToFind);
     } else if (rateFromToBase) {
-            // if either of them is not found we try to find the inverse
-            // we get the inverse of rateBaseToTo
+      // if either of them is not found we try to find the inverse
+      // we get the inverse of rateBaseToTo
       const rateToToBase = this._currencyRates.find((item) =>
         item[CURRENCY_PAIR].from === currencyTo && item[CURRENCY_PAIR].to === this._baseCurrency
       );
@@ -133,5 +151,16 @@ export default class CurrencyRatesManager {
     } else {
       return RATE_CURRENCY_NOT_FOUND;
     }
+  }
+
+  _getCurrenciesWithExchangeRates() {
+    const cs = new Set();
+    if (this._currencyRates) {
+      this._currencyRates.forEach(exchangeRates => {
+        cs.add(exchangeRates[CURRENCY_PAIR].from);
+        cs.add(exchangeRates[CURRENCY_PAIR].to);
+      });
+    }
+    return cs;
   }
 }

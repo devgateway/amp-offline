@@ -18,7 +18,7 @@ const PULL_END = 'PULL_END';
  taking more than requests and sometime pull wait was aborted over the current 5sec timeout.
  */
 const CHECK_INTERVAL = 100;
-const QUEUE_LIMIT = 4;
+const QUEUE_LIMIT = 5;
 const ABORT_INTERVAL = (CONNECTION_FORCED_TIMEOUT + CHECK_INTERVAL) * (QUEUE_LIMIT + 1); // milliseconds
 
 /**
@@ -57,11 +57,17 @@ export default class BatchPullSyncUpManagerInterface extends SyncUpManagerInterf
 
   /**
    * Initiates the actual pull in batches for each request configuration
-   * @param requestConfigurations stores a list of [ { getConfig, onPullError: [param1, param2, ...] }, ...]
+   * @param requestConfigurations stores a list of [
+   *   { getConfig, onPullError: [param1, param2, ...] },
+   *   { postConfig, onPullError: [param1, param2, ...] },
+   * ...]
    */
   pullNewEntriesInBatches(requestConfigurations) {
-    const pFactories = requestConfigurations.map(pullConfig =>
-      this._doGet.bind(this, pullConfig.getConfig, ...(pullConfig.onPullError || [])));
+    const pFactories = requestConfigurations.map(pullConfig => {
+      const requestFunc = pullConfig.getConfig ? ConnectionHelper.doGet : ConnectionHelper.doPost;
+      const config = pullConfig.getConfig || pullConfig.postConfig;
+      return this._doRequest.bind(this, requestFunc, config, pullConfig.onPullError || []);
+    });
     // this is a sequential execution of promises through reduce (e.g. https://goo.gl/g44HvG)
     const pullPromise = pFactories.reduce((currentPromise, pFactory) => currentPromise
       .then(pFactory), Promise.resolve())
@@ -72,9 +78,9 @@ export default class BatchPullSyncUpManagerInterface extends SyncUpManagerInterf
     return Promise.all([pullPromise, this._processResult()]);
   }
 
-  _doGet(config, ...onPullErrorData) {
+  _doRequest(requestFunc, config, onPullErrorData) {
     return this._waitWhile(this._isPullDenied).then(() => {
-      ConnectionHelper.doGet(config).then((data, error) => {
+      requestFunc(config).then((data, error) => {
         this.resultStack.push([data, error]);
         return this._decRequestsToProcess();
       }).catch((error) => {
@@ -118,7 +124,7 @@ export default class BatchPullSyncUpManagerInterface extends SyncUpManagerInterf
   }
 
   _isPullDenied() {
-    return this.requestsToProcess > QUEUE_LIMIT;
+    return this.requestsToProcess >= QUEUE_LIMIT;
   }
 
   _incRequestsToProcess() {

@@ -13,6 +13,7 @@ export default class SyncUpManagerInterface {
     this._type = type;
     this.done = false;
     this._errors = [];
+    this._warnings = [];
     this._details = {};
     if (this.doSyncUp === undefined) {
       throwSyncUpError('SyncUpManagerInterface.doSyncUp not implemented');
@@ -29,12 +30,20 @@ export default class SyncUpManagerInterface {
     return this._type;
   }
 
+  set totalSyncUpDiff(totalSyncUpDiff) {
+    this._totalSyncUpDiff = totalSyncUpDiff;
+  }
+
+  get totalSyncUpDiff() {
+    return this._totalSyncUpDiff;
+  }
+
   addError(error) {
     this._errors.push(error);
   }
 
   addErrors(errors) {
-    this._errors.push(errors);
+    this._errors.push(...errors);
   }
 
   /**
@@ -42,6 +51,14 @@ export default class SyncUpManagerInterface {
    */
   get errors() {
     return this._errors;
+  }
+
+  addWarning(warning) {
+    this._warnings.push(warning);
+  }
+
+  get warnings() {
+    return this._warnings;
   }
 
   set lastSyncUpDate(lastSyncTimestamp) {

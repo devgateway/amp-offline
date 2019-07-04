@@ -1,7 +1,8 @@
 /* eslint react/jsx-space-before-closing: 0 */
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/no-string-refs: 0 */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn, SizePerPageDropDown } from 'react-bootstrap-table';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import classNames from 'classnames';
@@ -77,7 +78,7 @@ export default class ProjectList extends Component {
       default:
         break;
     }
-    if (row['client-change-id'] && !row.rejectedId) {
+    if (row[AC.CLIENT_CHANGE_ID] && !row[AC.IS_PUSHED] && !row.rejectedId) {
       nameStyles.push(style.unsynced);
     } else if (row.rejectedId) {
       nameStyles.push(style.rejected);
@@ -125,6 +126,15 @@ export default class ProjectList extends Component {
     );
   }
 
+  static renderPaginationShowsTotal(start, to, total) {
+    return (
+      <span>
+        {translate('tablesRowsCount').replace('%from%', start).replace('%to%', to).replace('%total%', total)}
+      </span>
+    );
+  }
+
+
   handlerClickCleanFiltered() {
     this.refs[AC.AMP_ID].cleanFiltered();
     this.refs[AC.PROJECT_TITLE].cleanFiltered();
@@ -137,6 +147,7 @@ export default class ProjectList extends Component {
     const paginationOptions = getGeneralPaginationOptions(this.props.projects.length);
     paginationOptions.sizePerPageDropDown = this.constructor.renderSizePerPageDropdown;
     paginationOptions.noDataText = translate('noDataText');
+    paginationOptions.paginationShowsTotal = ProjectList.renderPaginationShowsTotal;
     const pagination = paginationOptions.usePagination;
     return (
       <div className={style.container}>

@@ -1,8 +1,10 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
 import AFOption from './AFOption';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
+import * as FPC from '../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AF Dropdown');
 
@@ -17,12 +19,13 @@ export default class AFDropDown extends Component {
     // TODO change it to be only number once we fix possible values to provide ids only as numbers
     selectedId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func.isRequired,
-    defaultValueAsEmptyObject: PropTypes.bool
+    defaultValueAsEmptyObject: PropTypes.bool,
+    extraParams: PropTypes.object
   };
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       value: undefined,
       propsReceived: false
@@ -31,6 +34,10 @@ export default class AFDropDown extends Component {
 
   componentWillMount() {
     this.setState({ value: this.props.selectedId, propsReceived: true });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ value: nextProps.selectedId });
   }
 
   componentDidUpdate(prevProps) {
@@ -64,18 +71,24 @@ export default class AFDropDown extends Component {
   }
 
   render() {
+    const extraParams = this.props.extraParams || {};
     if (!this.state.propsReceived) {
       return null;
     }
     const defaultOption = <option key={-1} value={-1}>{translate('Choose One')}</option>;
-    const options = this.props.options.map(option =>
-      <option key={option.id} value={option.id}>{option.translatedValue}</option>);
+    const options = this.props.options.map(option => {
+      const isDisabled = option[FPC.FIELD_OPTION_USABLE] !== undefined && !option[FPC.FIELD_OPTION_USABLE];
+      const displayValue = extraParams.showOrigValue ? option.value : option.translatedValue;
+      return <option key={option.id} value={option.id} disabled={isDisabled}>{displayValue}</option>;
+    });
+
+    const value = this.state.value || '';
 
     return (
       <FormControl
-        componentClass="select" defaultValue={this.state.value} onChange={this.handleChange.bind(this)}
+        componentClass="select" value={value} onChange={this.handleChange.bind(this)}
         placeholder={-1}>
-        {[defaultOption].concat(options)}
+        {extraParams.noChooseOneOption ? options : [defaultOption].concat(options)}
       </FormControl>
     );
   }

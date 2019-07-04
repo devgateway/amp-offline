@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
 import styles from './ActivityPreview.css';
@@ -7,7 +8,7 @@ import * as AC from '../../../utils/constants/ActivityConstants';
 import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
 import APStatusBar from './sections/APStatusBar';
-import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 import Logger from '../../../modules/util/LoggerManager';
@@ -30,12 +31,18 @@ export default class ActivityPreview extends Component {
       isActivityLoaded: PropTypes.bool,
       activity: PropTypes.object,
       activityWorkspace: PropTypes.object,
-      activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+      activityWSManager: PropTypes.object,
+      activityFieldsManager: PropTypes.instanceOf(FieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
       currentWorkspaceSettings: PropTypes.object,
       errorMessage: PropTypes.object
     }).isRequired,
+    contactReducer: PropTypes.shape({
+      contactFieldsManager: PropTypes.instanceOf(FieldsManager),
+      contactsByIds: PropTypes.object,
+    }).isRequired,
+    resourceReducer: PropTypes.object.isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     params: PropTypes.shape({
@@ -48,12 +55,16 @@ export default class ActivityPreview extends Component {
   static childContextTypes = {
     activity: PropTypes.object,
     activityWorkspace: PropTypes.object,
+    activityWSManager: PropTypes.object,
     currentWorkspaceSettings: PropTypes.object,
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     workspaceReducer: PropTypes.object,
-    userReducer: PropTypes.object
+    userReducer: PropTypes.object,
+    contactFieldsManager: PropTypes.instanceOf(FieldsManager),
+    contactsByIds: PropTypes.object,
+    resourceReducer: PropTypes.object,
   };
 
   constructor(props) {
@@ -65,10 +76,14 @@ export default class ActivityPreview extends Component {
     return {
       activity: this.props.activityReducer.activity,
       activityWorkspace: this.props.activityReducer.activityWorkspace,
+      activityWSManager: this.props.activityReducer.activityWSManager,
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
+      contactFieldsManager: this.props.contactReducer.contactFieldsManager,
+      contactsByIds: this.props.contactReducer.contactsByIds,
       currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
-      currencyRatesManager: this.props.activityReducer.currencyRatesManager
+      currencyRatesManager: this.props.activityReducer.currencyRatesManager,
+      resourceReducer: this.props.resourceReducer,
     };
   }
 
@@ -91,7 +106,7 @@ export default class ActivityPreview extends Component {
       if (category.fmPath && !FeatureManager.isFMSettingEnabled(category.fmPath)) {
         return null;
       }
-      return <li><a href={category.hash}> {translate(category.value)} </a></li>;
+      return <li key={category.value}><a href={category.hash}> {translate(category.value)} </a></li>;
     });
 
     const categoryKeys = AC.AP_SECTION_IDS.map(category => category.key);
@@ -122,8 +137,9 @@ export default class ActivityPreview extends Component {
 
           <div className={styles.preview_status_container} >
             <APStatusBar
+              fieldClass={styles.inline_flex}
               fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail}
-              inline titleClass={styles.status_title_class} groupClass={styles.status_group_class} />
+              titleClass={styles.status_title_class} groupClass={styles.status_group_class} />
           </div>
           <div className={styles.preview_categories} >
             <Scrollspy items={categoryKeys} currentClassName={styles.preview_category_selected}>

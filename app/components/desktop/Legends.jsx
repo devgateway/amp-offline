@@ -31,7 +31,7 @@ export default class Legends extends Component {
         <span> - {translate('existingUnvalidatedLegend')}</span>
         <hr />
         <span className={style.unsynced}>{translate('unsynced text')}</span>
-        <span> - {translate('unsyncedLegend')}</span>
+        <span> - {translate('unsyncedLegend2')}</span>
       </div>
     </Popover>);
 

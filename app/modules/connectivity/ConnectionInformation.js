@@ -8,8 +8,9 @@ export default class ConnectionInformation {
    * @param timeout request timeout
    * @param forcedTimeout
    * @param isFullUrl specifies if serverUrl is already a full url that doesn't need to be reconstructed
+   * @param isTestUrl flags if this URL is used for testing as a valid connection (e.g. within Setup or Settings page)
    */
-  constructor(serverUrl, baseRestUrl, protocol, basePort, timeout, forcedTimeout, isFullUrl) {
+  constructor(serverUrl, baseRestUrl, protocol, basePort, timeout, forcedTimeout, isFullUrl, isTestUrl) {
     this._serverUrl = serverUrl;
     this._baseRestUrl = baseRestUrl;
     this._protocol = protocol;
@@ -17,25 +18,7 @@ export default class ConnectionInformation {
     this._timeout = timeout;
     this._forcedTimeout = forcedTimeout;
     this._isFullUrl = isFullUrl;
-  }
-
-  /**
-   * Returns the full REST url to call amp api enpdoints
-   * @returns {string}
-   */
-  getFullRestUrl() {
-    return `${this.getFullUrl()}${this.baseRestUrl}`;
-  }
-
-  /**
-   * Returns full AMP ROOT url
-   * @returns {string}
-   */
-  getFullUrl() {
-    if (this.isFullUrl) {
-      return this.serverUrl;
-    }
-    return `${this.protocol}://${this.serverUrl}${this.getPort()}`;
+    this._isTestUrl = isTestUrl;
   }
 
   get baseRestUrl() {
@@ -64,6 +47,29 @@ export default class ConnectionInformation {
 
   get isFullUrl() {
     return this._isFullUrl;
+  }
+
+  get isTestUrl() {
+    return this._isTestUrl;
+  }
+
+  /**
+   * Returns the full REST url to call amp api enpdoints
+   * @returns {string}
+   */
+  getFullRestUrl() {
+    return `${this.getFullUrl()}${this.baseRestUrl}`;
+  }
+
+  /**
+   * Returns full AMP ROOT url
+   * @returns {string}
+   */
+  getFullUrl() {
+    if (this.isFullUrl) {
+      return this.serverUrl;
+    }
+    return `${this.protocol}://${this.serverUrl}${this.getPort()}`;
   }
 
   getPort() {

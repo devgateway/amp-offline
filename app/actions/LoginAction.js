@@ -10,6 +10,7 @@ import * as RequestConfig from '../modules/connectivity/RequestConfig';
 import Logger from '../modules/util/LoggerManager';
 import { isMandatoryUpdate, STATE_CHECK_FOR_UPDATES } from './UpdateAction';
 import * as AAC from '../modules/connectivity/AmpApiConstants';
+import { loadWorkspaces } from './WorkspaceAction';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -38,6 +39,7 @@ export function loginAction(email: string, password: string) {
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
+        dispatch(loadWorkspaces());
         return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(SYNCUP_REDIRECT_URL));
       }).catch((err) => {
         dispatch(loginFailed(err));
@@ -113,7 +115,7 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
     actionData: { isInactivityTimeout }
   });
   UrlUtils.forwardTo(LOGIN_URL);
-  return ampOfflineInit();
+  return ampOfflineInit(true);
 }
 
 export function changePasswordOnline() {

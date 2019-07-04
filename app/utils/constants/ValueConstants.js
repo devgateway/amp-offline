@@ -2,6 +2,8 @@
  * @author Nadejda Mandrescu
  */
 
+import * as AC from './ActivityConstants';
+
 export const DONOR_ORGANIZATION = 'Donor Organization';
 export const RESPONSIBLE_ORGANIZATION = 'Responsible Organization';
 export const EXECUTING_AGENCY = 'Executing Agency';
@@ -20,17 +22,18 @@ export const PLANNED = 'Planned';
 export const COMMITMENTS = 'Commitments';
 export const DISBURSEMENTS = 'Disbursements';
 export const EXPENDITURES = 'Expenditures';
-export const ACTUAL_COMMITMENTS = 'Actual Commitments';
-export const ACTUAL_DISBURSEMENTS = 'Actual Disbursements';
-export const ACTUAL_EXPENDITURES = 'Actual Expenditures';
-export const PLANNED_COMMITMENTS = 'Planned Commitments';
-export const PLANNED_DISBURSEMENTS = 'Planned Disbursements';
-export const PLANNED_EXPENDITURES = 'Planned Expenditures';
+export const ACTUAL_COMMITMENTS = `${ACTUAL} ${AC.COMMITMENTS}`;
+export const ACTUAL_DISBURSEMENTS = `${ACTUAL} ${AC.DISBURSEMENTS}`;
+export const ACTUAL_EXPENDITURES = `${ACTUAL} ${AC.EXPENDITURES}`;
+export const PLANNED_COMMITMENTS = `${PLANNED} ${AC.COMMITMENTS}`;
+export const PLANNED_DISBURSEMENTS = `${PLANNED} ${AC.DISBURSEMENTS}`;
+export const PLANNED_EXPENDITURES = `${PLANNED} ${AC.EXPENDITURES}`;
 export const UNALLOCATED_DISBURSEMENTS = 'Unallocated Disbursements';
 export const DELIVERY_RATE = 'Delivery rate';
+export const MTEF_PROJECTIONS = 'MTEF Projections';
 
 export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
-export const TRANSACTION_TYPES = [COMMITMENTS, DISBURSEMENTS, EXPENDITURES];
+export const ADJUSTMENT_TYPES_AP_ORDER = [PLANNED, ACTUAL];
 
 export const NEW_ACTIVITY_ID = '0';
 
@@ -43,15 +46,23 @@ export const ACRONYM_IMPLEMENTING_AGENCY = 'IA';
 export const ACRONYM_BENEFICIARY_AGENCY = 'BA';
 export const ACRONYM_RESPONSIBLE_ORGANIZATION = 'RO';
 
-/** Validation status **/
-export const STARTED_APPROVED_STATUS = 'startedapproved';
-export const APPROVED_STATUS = 'approved';
-export const STARTED_STATUS = 'started';
-export const EDITED_STATUS = 'edited';
-export const NOT_APPROVED = 'not_approved';
-export const REJECTED_STATUS = 'rejected';
+/** Approval status untranslated values **/
+export const APPROVAL_STATUS_CREATED = 'created';
+export const APPROVAL_STATUS_APPROVED = 'approved';
+export const APPROVAL_STATUS_EDITED = 'edited';
+export const APPROVAL_STATUS_STARTED_APPROVED = 'startedapproved';
+export const APPROVAL_STATUS_STARTED = 'started';
+export const APPROVAL_STATUS_NOT_APPROVED = 'not_approved';
+export const APPROVAL_STATUS_REJECTED = 'rejected';
 
 export const ON_BUDGET = 'On Budget';
 
 export const INTERNATIONAL = 'International';
 export const COUNTRY = 'Country';
+
+export const RELATED_DOCUMENTS = 'Related Documents';
+
+export const TMP_ENTITY_VALIDATOR = 'entity-validator';
+
+/** Required status */
+export const ALWAYS_REQUIRED = 'Y';

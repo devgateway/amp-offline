@@ -1,5 +1,5 @@
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../../../utils/constants/ActivityConstants';
-import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 /* eslint-disable class-methods-use-this */
 
@@ -9,11 +9,17 @@ import PossibleValuesManager from '../../../../modules/activity/PossibleValuesMa
  */
 export default class AFOption {
   constructor({ id, value, displayHierarchicalValue, ...extraInfo }) {
-    this._id = id;
-    this._value = value;
-    this._displayHierarchicalValue = displayHierarchicalValue;
     if (extraInfo) {
       Object.assign(this, extraInfo);
+    }
+    if (id !== undefined) {
+      this._id = id;
+    }
+    if (value !== undefined) {
+      this._value = value;
+    }
+    if (displayHierarchicalValue !== undefined) {
+      this._displayHierarchicalValue = displayHierarchicalValue;
     }
   }
 
@@ -46,18 +52,41 @@ export default class AFOption {
   }
 
   get displayValue() {
-    if (this._displayHierarchicalValue) {
-      return this.hierarchicalValue;
+    let valueToDisplay = this.formattedValue;
+    if (!valueToDisplay && this._displayHierarchicalValue) {
+      valueToDisplay = this.hierarchicalValue;
     }
-    return this.translatedValue;
+    return valueToDisplay || this.translatedValue;
   }
 
   get displayFullValue() {
-    return this.hierarchicalValue || this.translatedValue;
+    return this.formattedValue || this.hierarchicalValue || this.translatedValue;
   }
 
   get hierarchicalDepth() {
     return this[HIERARCHICAL_VALUE_DEPTH];
+  }
+
+  get formattedValue() {
+    if (this._valueFormatter) {
+      return this._valueFormatter(this);
+    }
+    return null;
+  }
+
+  set valueFormatter(valueFormatter) {
+    this._valueFormatter = valueFormatter;
+  }
+
+  compareByDisplayValue(other: AFOption) {
+    return this.displayValue.localeCompare(other.displayValue);
+  }
+
+  static sortByDisplayValue(afOptions) {
+    if (afOptions && afOptions.length) {
+      afOptions.sort((o1, o2) => o1.compareByDisplayValue(o2));
+    }
+    return afOptions;
   }
 
 }

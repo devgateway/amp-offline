@@ -1,32 +1,79 @@
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
-import ConnectionHelper from '../modules/connectivity/ConnectionHelper';
-import {
-  AMP_OFFLINE_COMPATIBLE,
-  AMP_OFFLINE_ENABLED,
-  AMP_VERSION,
-  LATEST_AMP_OFFLINE,
-  URL_CONNECTIVITY_CHECK_EP
-} from '../modules/connectivity/AmpApiConstants';
-import { VERSION } from '../utils/Constants';
+import { RESPONSE_CHECK_INTERVAL_MS } from '../modules/connectivity/AmpApiConstants';
 import store from '../index';
 import Logger from '../modules/util/LoggerManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
-import { LAST_CONNECTIVITY_STATUS } from '../utils/constants/ClientSettingsConstants';
+import * as CSC from '../utils/constants/ClientSettingsConstants';
 import { configureOnLoad } from './SetupAction';
+import * as Utils from '../utils/Utils';
+import Notification from '../modules/helpers/NotificationHelper';
+import { NOTIFICATION_ORIGIN_API_GENERAL, NOTIFICATION_SEVERITY_ERROR, } from '../utils/constants/ErrorConstants';
+import translate from '../utils/translate';
+import { addFullscreenAlert } from './NotificationAction';
+import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
+import ConnectivityCheckRunner from '../modules/connectivity/ConnectivityCheckRunner';
 
 export const STATE_AMP_CONNECTION_STATUS_UPDATE = 'STATE_AMP_CONNECTION_STATUS_UPDATE';
 export const STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING = 'STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING';
+export const STATE_AMP_SERVER_ID_UPDATED = 'STATE_AMP_SERVER_ID_UPDATED';
 export const MANDATORY_UPDATE = 'mandatory_update';
 
 export const STATE_PARAMETERS_LOADED = 'STATE_PARAMETERS_LOADED';
 export const STATE_PARAMETERS_LOADING = 'STATE_PARAMETERS_LOADING';
 
-/* Expected connectivity response fields. */
-const CONNECTIVITY_RESPONSE_FIELDS = [AMP_OFFLINE_ENABLED, AMP_OFFLINE_COMPATIBLE, LATEST_AMP_OFFLINE, AMP_VERSION];
 const logger = new Logger('Connectivity action');
 
 export function isConnectivityCheckInProgress() {
   return store.getState().ampConnectionStatusReducer.updateInProgress;
+}
+
+export function isAmpSuitableForSetupOrUpdate(connectivityStatus: ConnectivityStatus) {
+  return isAmpAccessible(connectivityStatus, true);
+}
+
+export function isAmpUsableByCurrentClient(connectivityStatus: ConnectivityStatus) {
+  return isAmpAccessible(connectivityStatus, false);
+}
+
+function isAmpAccessible(connectivityStatus: ConnectivityStatus, isForSetupOrUpdate: boolean) {
+  return isValidConnectionByStatus(connectivityStatus, isForSetupOrUpdate) && connectivityStatus.isAmpClientEnabled;
+}
+
+export function isValidConnectionByStatus(connectivityStatus: ConnectivityStatus, isForSetupOrUpdate: boolean) {
+  return connectivityStatus ? connectivityStatus.isConnectionValid(isForSetupOrUpdate, getRegisteredServerId()) : false;
+}
+
+/**
+ * @return {String} the server id registered on the client
+ */
+export function getRegisteredServerId() {
+  return store.getState().ampConnectionStatusReducer.serverId;
+}
+
+/**
+ * Converts connectivity status to NotificationHelper message
+ * @param connectivityStatus
+ * @param isSetup if true, then during setup some statuses are handled with different messages
+ * @return {NotificationHelper}
+ */
+export function getStatusNotification(connectivityStatus: ConnectivityStatus, isSetup = false) {
+  const unavailableLabel = isSetup ? 'urlNotWorking' : 'AMPUnreachableError';
+  const registeredServerId = getRegisteredServerId();
+  let message = unavailableLabel;
+  let details;
+  if (!connectivityStatus.isAmpAvailable) {
+    message = unavailableLabel;
+  } else if (registeredServerId && !connectivityStatus.serverIdMatch) {
+    message = 'serverIdentityMismatch';
+    details = 'aboutIdentity';
+  } else if (!connectivityStatus.serverId) {
+    message = 'serverIdentityMissing';
+    details = 'aboutIdentity';
+  } else if (!connectivityStatus.isAmpCompatible) {
+    message = isSetup ? 'ampServerIncompatible' : 'ampServerIncompatibleContinueToUse';
+  }
+  // TODO custom messages for other use cases (e.g. AMPOFFLINE-100, AMPOFFLINE-1140)
+  return new Notification({ message, details });
 }
 
 export function configureConnectionInformation(connectionInformation) {
@@ -45,75 +92,85 @@ export function loadConnectionInformation() {
 
 /**
  * Checks and updates the connectivity status
+ * @param ci (optional) the connectivity information to use; if missing, the global one will be used
  * @returns ConnectivityStatus
  */
-export function connectivityCheck() {
+export function connectivityCheck(ci: ConnectionInformation) {
   logger.log('connectivityCheck');
-  store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
-  // we should introduce a manager here to keep the actions simple
-  const url = URL_CONNECTIVITY_CHECK_EP;
-  const paramsMap = { 'amp-offline-version': VERSION };
-  let lastConnectivityStatus;
-  return _getLastConnectivityStatus()
-    .then(status => {
-      lastConnectivityStatus = status;
-      return ConnectionHelper.doGet({ url, paramsMap });
-    })
-    .then(data => _processResult(data, lastConnectivityStatus))
-    .then(_saveConnectivityStatus)
-    .catch(error => {
-      logger.error(`Couldn't check the connection status. Error: ${error}`);
-      return _processResult(null, lastConnectivityStatus);
+  let pastConnectivityStatus;
+  const globalCI = _getConnectionInformation();
+  return Utils.waitWhile(isConnectivityCheckInProgress, RESPONSE_CHECK_INTERVAL_MS)
+    .then(() => {
+      store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE_PENDING });
+      return Promise.all([_getLastConnectivityStatus(), _getServerId()]);
+    }).then(([pastStatus, serverId]) => {
+      pastConnectivityStatus = pastStatus;
+      if (ci == null) {
+        ci = globalCI;
+      } else {
+        configureConnectionInformation(ci);
+      }
+      return ConnectivityCheckRunner.run(ci, pastConnectivityStatus, serverId);
+    }).then(status => {
+      if (ci !== globalCI) {
+        configureConnectionInformation(globalCI);
+      }
+      store.dispatch({
+        type: STATE_AMP_CONNECTION_STATUS_UPDATE,
+        actionData: ci.isTestUrl ? pastConnectivityStatus : status
+      });
+      if (ci.isTestUrl || !status) {
+        return status;
+      } else {
+        reportCompatibilityError(pastConnectivityStatus, status);
+        return _saveConnectivityStatus(status);
+      }
     });
 }
 
-function _processResult(data, lastConnectivityStatus) {
-  let status;
-  if (!isValidAmpResponse(data)) {
-    if (lastConnectivityStatus === undefined) {
-      status = new ConnectivityStatus(false, true, true);
-    } else {
-      status = new ConnectivityStatus(
-        false,
-        lastConnectivityStatus.isAmpClientEnabled,
-        lastConnectivityStatus.isAmpCompatible,
-        lastConnectivityStatus.ampVersion,
-        lastConnectivityStatus.latestAmpOffline
-      );
+
+function reportCompatibilityError(lastConnectivityStatus: ConnectivityStatus, currentStatus: ConnectivityStatus) {
+  if ((!lastConnectivityStatus || lastConnectivityStatus.isAmpCompatible) && !currentStatus.isAmpCompatible) {
+    const notUpgradable = !currentStatus.latestAmpOffline || currentStatus.latestAmpOffline[MANDATORY_UPDATE] === null;
+    if (notUpgradable) {
+      const incompatibilityNotification = new Notification({
+        message: translate('ampServerIncompatibleContinueToUse'),
+        origin: NOTIFICATION_ORIGIN_API_GENERAL,
+        severity: NOTIFICATION_SEVERITY_ERROR
+      });
+      store.dispatch(addFullscreenAlert(incompatibilityNotification));
     }
-  } else {
-    const isAmpClientEnabled = data[AMP_OFFLINE_ENABLED] === true;
-    const isAmpCompatible = data[AMP_OFFLINE_COMPATIBLE] === true;
-    const latestAmpOffline = data[LATEST_AMP_OFFLINE];
-    const version = data[AMP_VERSION];
-    // Process data related to version upgrades.
-    if (latestAmpOffline) {
-      if (isAmpCompatible === false || latestAmpOffline.critical === true) {
-        latestAmpOffline[MANDATORY_UPDATE] = true;
-      } else if (latestAmpOffline.version !== version) {
-        latestAmpOffline[MANDATORY_UPDATE] = false;
-      }
-    }
-    status = new ConnectivityStatus(true, isAmpClientEnabled, isAmpCompatible, version, latestAmpOffline);
   }
-  store.dispatch({ type: STATE_AMP_CONNECTION_STATUS_UPDATE, actionData: status });
-  return status;
 }
 
-function isValidAmpResponse(response) {
-  const keys = (response && response instanceof Object && Object.keys(response)) || null;
-  return keys && CONNECTIVITY_RESPONSE_FIELDS.some(field => keys.includes(field));
+/**
+ * @return {ConnectionInformation}
+ */
+function _getConnectionInformation() {
+  return store.getState().startUpReducer.connectionInformation;
 }
 
 function _getLastConnectivityStatus() {
   const lastConnectivityStatus = store.getState().ampConnectionStatusReducer.status;
   if (!lastConnectivityStatus) {
-    return ClientSettingsHelper.findSettingByName(LAST_CONNECTIVITY_STATUS).then(statusSetting => {
+    return ClientSettingsHelper.findSettingByName(CSC.LAST_CONNECTIVITY_STATUS).then(statusSetting => {
       const statusJson = statusSetting && statusSetting.value;
       return statusJson && ConnectivityStatus.deserialize(statusJson);
     });
   }
   return Promise.resolve(lastConnectivityStatus);
+}
+
+function _getServerId() {
+  let serverId = getRegisteredServerId();
+  if (serverId === undefined) {
+    return ClientSettingsHelper.findSettingByName(CSC.AMP_SERVER_ID).then(serverIdSetting => {
+      serverId = serverIdSetting.value || null;
+      store.dispatch({ type: STATE_AMP_SERVER_ID_UPDATED, actionData: serverId });
+      return serverId;
+    });
+  }
+  return Promise.resolve(serverId);
 }
 
 /**
@@ -122,8 +179,23 @@ function _getLastConnectivityStatus() {
  * @private
  */
 function _saveConnectivityStatus(status) {
-  return ClientSettingsHelper.findSettingByName(LAST_CONNECTIVITY_STATUS).then(statusSetting => {
-    statusSetting.value = status;
-    return ClientSettingsHelper.saveOrUpdateSetting(statusSetting).then(() => status);
-  });
+  return ClientSettingsHelper.findAllSettingsByNames([CSC.LAST_CONNECTIVITY_STATUS, CSC.AMP_SERVER_ID])
+    .then(Utils.toMapByKey)
+    .then(settingsMap => {
+      const statusSetting = settingsMap.get(CSC.LAST_CONNECTIVITY_STATUS);
+      statusSetting.value = status;
+      return Promise.all([
+        _saveServerIdSetting(settingsMap.get(CSC.AMP_SERVER_ID), status),
+        ClientSettingsHelper.saveOrUpdateSetting(statusSetting)
+      ]).then(() => status);
+    });
+}
+
+function _saveServerIdSetting(serverIdSetting, status: ConnectivityStatus) {
+  if (serverIdSetting.value || !status.serverId) {
+    return Promise.resolve();
+  }
+  serverIdSetting.value = status.serverId;
+  store.dispatch({ type: STATE_AMP_SERVER_ID_UPDATED, actionData: status.serverId });
+  return ClientSettingsHelper.saveOrUpdateSetting(serverIdSetting);
 }

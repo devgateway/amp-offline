@@ -4,16 +4,27 @@ import * as ActivityHelper from '../../helpers/ActivityHelper';
 import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
+import * as CC from '../../../utils/constants/ContactConstants';
+import * as RC from '../../../utils/constants/ResourceConstants';
 import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
-import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorConstants';
 import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import Logger from '../../util/LoggerManager';
+import ContactHelper from '../../helpers/ContactHelper';
+import { getActivityContactIds } from '../../../actions/ContactAction';
+import { getActivityResourceUuids } from '../../../actions/ResourceAction';
+import ResourceHelper from '../../helpers/ResourceHelper';
+import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Activity push to AMP manager');
+
+const paramsMap = {
+  'process-approval-fields': true,
+  'track-editors': true,
+};
 
 /* eslint-disable class-methods-use-this */
 /**
@@ -26,67 +37,9 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     logger.log('ActivitiesPushToAMPManager');
     this._cancel = false;
     this.diff = [];
-    this.pushed = new Set();
-  }
-
-  /**
-   * Interrupt activities sync up gracefully
-   */
-  cancel() {
-    /*
-     TODO cancel handling is planned for later AMPOFFLINE-208
-     This 'cancel' flag may not be used or if used, then it will have to be checked between smallest steps.
-     */
-    this._cancel = true;
-  }
-
-  /**
-   * Pushes activities to AMP
-   * @param diff the activities difference from AMP, with saved and removed activities (if any)
-   * @return {Promise}
-   */
-  doSyncUp(diff) {
+    this._processed = new Set();
     this._details[SYNCUP_DETAILS_SYNCED] = [];
     this._details[SYNCUP_DETAILS_UNSYNCED] = [];
-    return this._pushActivitiesToAMP(diff);
-  }
-
-  getDiffLeftover() {
-    // this leftover won't be used next time, but we calculate it to flag a partial push
-    this.diff = this.diff.filter(id => !this.pushed.has(id));
-    return this.diff;
-  }
-
-  _pushActivitiesToAMP(diff) {
-    logger.log('_pushActivitiesToAMP');
-    // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
-    if (store.getState().userReducer.userData.ampOfflinePassword) {
-      return this._rejectActivitiesClientSide(diff)
-        .then(() => ActivitiesPushToAMPManager.getActivitiesToPush().then(this._pushActivities.bind(this)))
-        .then(() => {
-          this.done = true;
-          return this.done;
-        });
-    }
-    const errorMsgTrn = translate('SyncupDeniedMustRelogin');
-    return Promise.reject(new Notification({ message: errorMsgTrn, origin: NOTIFICATION_ORIGIN_API_SYNCUP }));
-  }
-
-  /**
-   * Rejects activities on the client side using activities diff
-   * @param diff the activities difference with saved and removed activities (if any)
-   * @return {Promise.<Array>}
-   * @private
-   */
-  /* eslint-disable no-unused-vars */
-  _rejectActivitiesClientSide(diff) {
-    /* eslint-enable no-unused-vars */
-    /*
-     TODO client side reject of some activities (iteration 2+):
-     1) no longer rights to edit
-     2) activities with new changes on AMP (but not those that came from this client)
-     */
-    return Promise.resolve([]);
   }
 
   /**
@@ -106,7 +59,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    */
   static _getValidUsers() {
     logger.log('_getValidUsers');
-    const filter = { $and: [{ 'is-banned': { $ne: true } }, { 'is-active': { $ne: true } }] };
+    const filter = { 'is-banned': { $ne: true } };
     const projections = { id: 1 };
     return UserHelper.findAllClientRegisteredUsersByExample(filter, projections);
   }
@@ -129,10 +82,77 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     logger.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
     const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
-    // search where IS_PUSHED is set to see why
-    const notStalePush = Utils.toMap(AC.IS_PUSHED, { $ne: true });
-    const filter = { $and: [modifiedBySpecificWSMembers, notStalePush] };
-    return ActivityHelper.findAllNonRejectedModifiedOnClient(filter);
+    return ActivityHelper.findAllNonRejectedModifiedOnClient(modifiedBySpecificWSMembers);
+  }
+
+  /**
+   * Interrupt activities sync up gracefully
+   */
+  cancel() {
+    /*
+     TODO cancel handling is planned for later AMPOFFLINE-208
+     This 'cancel' flag may not be used or if used, then it will have to be checked between smallest steps.
+     */
+    this._cancel = true;
+  }
+
+  /**
+   * Pushes activities to AMP
+   * @param diff the activities difference from AMP, with saved and removed activities (if any)
+   * @return {Promise}
+   */
+  doSyncUp(diff) {
+    return this._pushActivitiesToAMP(diff);
+  }
+
+  getDiffLeftover() {
+    // this leftover won't be used next time, but we calculate it to flag a partial push
+    this.diff = this.diff.filter(id => !this._processed.has(id));
+    return this.diff;
+  }
+
+  _pushActivitiesToAMP(diff) {
+    logger.log('_pushActivitiesToAMP');
+    // check current user can continue to sync; it shouldn't reach this point (user must be automatically logged out)
+    if (store.getState().userReducer.userData.ampOfflinePassword) {
+      return this._rejectActivitiesClientSide(diff)
+        .then(() => ActivitiesPushToAMPManager.getActivitiesToPush().then(this._pushActivities.bind(this)))
+        .then(() => {
+          this.done = true;
+          return this.done;
+        });
+    }
+    return Promise.reject(new Notification({
+      message: 'SyncupDeniedMustRelogin',
+      origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
+    }));
+  }
+
+  /**
+   * Rejects activities on the client side using activities diff
+   * @param diff the activities difference with saved and removed activities (if any)
+   * @return {Promise.<Array>}
+   * @private
+   */
+  /* eslint-disable no-unused-vars */
+  _rejectActivitiesClientSide(diff) {
+    /* eslint-enable no-unused-vars */
+    /*
+     TODO client side reject of some activities (iteration 2+):
+     1) no longer rights to edit
+     2) activities with new changes on AMP (but not those that came from this client)
+     */
+    return Promise.resolve([]);
+  }
+
+  /**
+   * Reject the activity client side
+   * @param activity the activity to reject
+   * @param error the reason to reject
+   * @return {Promise}
+   */
+  rejectActivityClientSide(activity, error) {
+    return this._processPushResult({ activity, error });
   }
 
   /**
@@ -154,8 +174,30 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
           return Promise.resolve();
         }
         // uninterruptible call
-        return this._pushActivity(nextActivity);
+        return this._pushOrRejectActivityClientSide(nextActivity);
       }), Promise.resolve());
+  }
+
+  _pushOrRejectActivityClientSide(activity) {
+    logger.log('_pushOrRejectActivityClientSide');
+    return Promise.all([this._getUnsyncedContacts(activity), this._getUnsyncedResources(activity)])
+      .then(([unsyncedContacts, unsyncedResources]) => {
+        const errors = [];
+        if (unsyncedContacts.length) {
+          const cNames = unsyncedContacts.map(c => `"${c[CC.NAME] || ''} ${c[CC.LAST_NAME] || ''}"`).join(', ');
+          const replacePairs = [['%contacts%', cNames]];
+          errors.push(new Notification({ message: 'rejectActivityWhenContactUnsynced2', replacePairs }));
+        }
+        if (unsyncedResources.length) {
+          const rNames = unsyncedResources.map(r => `"${r[RC.WEB_LINK] || r[RC.FILE_NAME]}"`).join(', ');
+          const replacePairs = [['%resources%', rNames]];
+          errors.push(new Notification({ message: 'rejectActivityWhenResourceUnsynced2', replacePairs }));
+        }
+        if (errors.length) {
+          return Promise.reject(errors);
+        }
+        return this._pushActivity(activity);
+      }).catch(error => this._processPushResult({ activity, error }));
   }
 
   _pushActivity(activity) {
@@ -166,11 +208,27 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
        => we need a reasonable timeout for now to minimize such risk
        Final solution will be handled with 'client-change-id' - proposed for iteration 2
        */
-      ConnectionHelper.doPost(
-        { url: ACTIVITY_IMPORT_URL, body: activity, shouldRetry: false, extraUrlParam: activity[AC.INTERNAL_ID] })
+      ConnectionHelper.doPost({
+        url: ACTIVITY_IMPORT_URL,
+        body: activity,
+        shouldRetry: false,
+        extraUrlParam: activity[AC.INTERNAL_ID],
+        paramsMap
+      })
         .then((pushResult) => this._processPushResult({ activity, pushResult })).then(resolve)
         .catch((error) => this._processPushResult({ activity, error }).then(resolve))
     );
+  }
+
+  _getUnsyncedContacts(activity) {
+    const contactIds = getActivityContactIds(activity);
+    return ContactHelper.findContactsByIds(contactIds)
+      .then(contacts => contacts.filter(c => ContactHelper.isModifiedOnClient(c)));
+  }
+
+  _getUnsyncedResources(activity) {
+    const resourceUuids = getActivityResourceUuids(activity);
+    return ResourceHelper.findAllResourcesModifiedOnClientByUuids(resourceUuids);
   }
 
   /**
@@ -185,26 +243,31 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // If we got an EP result, no matter if the import was rejected, then the push was successful.
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
-    if (pushResult) {
-      this.pushed.add(activity.id);
+    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    if (pushResult || !isConnectivityError) {
+      this._processed.add(activity.id);
     }
     // save the rejection immediately to allow a quicker syncup cancellation
-    const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
+    const errorData = error || (pushResult && pushResult.error) || undefined;
     this._updateDetails({ activity, pushResult, errorData });
     if (errorData) {
-      return new Promise((resolve, reject) => this._getRejectedId(activity)
-        .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData))
-        .then(resolve)
-        .catch(reject));
+      if (isConnectivityError) {
+        this._processErrors(activity, null, errorData);
+        return Promise.resolve(activity);
+      }
+      return this._getRejectedId(activity)
+        .then(rejectedId => this._saveRejectedActivity(activity, rejectedId, errorData));
     }
 
     // The activity may be pushed, but the connection may be lost until we pull its latest change from AMP.
     // We could simply remove client-change-id once it is pushed successfully, but we want to use it in next iteration
     // for conflicts resolution. So for now we'll flag the activity as pushed to filter it out from next push attempt.
     activity[AC.IS_PUSHED] = true;
+    activity[AC.ACTIVITY_GROUP] = pushResult[AC.ACTIVITY_GROUP];
     if (!activity[AC.AMP_ID]) {
       // update the activity with AMP ID to be matched during pull
       activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
+      activity[AC.INTERNAL_ID] = pushResult[AC.INTERNAL_ID];
     }
     return ActivityHelper.saveOrUpdate(activity, false);
   }
@@ -247,16 +310,39 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     return Promise.resolve(1);
   }
 
-  _saveRejectedActivity(activity, rejectedId, error) {
-    const idToLog = activity[AC.AMP_ID] || activity.id;
-    const fieldNameToLog = activity[AC.AMP_ID] ? AC.AMP_ID : AC.INTERNAL_ID;
-    error = `(${fieldNameToLog} = ${idToLog}): ${error}`;
-    logger.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
+  _processErrors(activity, rejectedId, errorData) {
+    const ampId = activity[AC.AMP_ID] ? `${activity[AC.AMP_ID]} ` : '';
+    const idToLog = `${ampId}(${activity[AC.PROJECT_TITLE]})`;
+    const fieldNameToLog = `${activity[AC.AMP_ID] ? AC.AMP_ID : ''}(${AC.PROJECT_TITLE})`;
+    const prefix = `${idToLog}: `;
+    let errors = errorData instanceof Array ? errorData : [errorData];
+    const unitErrors = [];
+    errors = errors.map(error => {
+      let genericError;
+      if (error instanceof Notification) {
+        error.replacePairs = error.replacePairs || [];
+        error.prefix = prefix;
+        if (error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY) {
+          genericError = error.shallowClone();
+          genericError.prefix = '';
+        }
+      } else {
+        error = `${prefix}${error}`;
+      }
+      unitErrors.push(genericError || error);
+      return error;
+    });
+    const clarification = rejectedId ? `with rejectedId=${rejectedId}` : 'without rejection';
+    logger.error(`_processErrors for ${fieldNameToLog} = ${idToLog} ${clarification}`);
+    this.addErrors(unitErrors);
+    return errors;
+  }
+
+  _saveRejectedActivity(activity, rejectedId, errorData) {
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;
     rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
-    rejectedActivity.error = error;
-    this.addError(error);
+    rejectedActivity.errors = this._processErrors(activity, rejectedId, errorData);
     return ActivityHelper.saveOrUpdate(rejectedActivity);
   }
 }

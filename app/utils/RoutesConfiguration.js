@@ -1,13 +1,17 @@
 import {
   ACTIVITY_EXPORT_URL,
+  ACTIVITY_EXPORT_BATCHES_URL,
   ACTIVITY_IMPORT_URL,
   ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
   ACTIVITY_SINGLE_FIELDS_TREE_URL,
   AMP_COUNTRY_FLAG,
-  AMP_REGISTRY_SETTINGS_URL,
+  AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
+  AMP_REGISTRY_STAGING_SETTINGS_URL,
   AVAILABLE_LANGUAGES_URL,
+  CALENDAR_PULL_URL,
   CHANGE_PASSWORD_URL,
   CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  CONTACT_BATCHES_PULL_URL,
   CONTACT_PULL_URL,
   CONTACT_PUSH_URL,
   CONTACT_SINGLE_FIELDS_TREE_URL,
@@ -24,16 +28,28 @@ import {
   POSSIBLE_VALUES_V2_MEDIA_TYPE,
   POST_TRANSLATIONS_URL,
   RESET_PASSWORD_URL,
+  RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  RESOURCE_PULL_URL,
+  RESOURCE_PUSH_URL,
+  RESOURCE_SINGLE_FIELDS_TREE_URL,
   SYNC_URL,
   TEST_URL,
   URL_CONNECTIVITY_CHECK_EP,
   USER_PROFILE_URL,
   WORKSPACE_MEMBER_URL,
-  WORKSPACE_SETTINGS_URL
+  WORKSPACE_SETTINGS_URL,
+  MAP_TILES_URL,
+  GAZETTEER_URL,
+  COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
-  url: AMP_REGISTRY_SETTINGS_URL,
+  url: AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
+  isFull: true,
+  method: 'GET',
+  requiresAuth: false
+}, {
+  url: AMP_REGISTRY_STAGING_SETTINGS_URL,
   isFull: true,
   method: 'GET',
   requiresAuth: false
@@ -80,6 +96,10 @@ const routesConfiguration = [{
 }, {
   url: ACTIVITY_EXPORT_URL,
   method: 'GET',
+  requiresAuth: true
+}, {
+  url: ACTIVITY_EXPORT_BATCHES_URL,
+  method: 'POST',
   requiresAuth: true
 }, {
   url: ACTIVITY_SINGLE_FIELDS_TREE_URL,
@@ -134,6 +154,10 @@ const routesConfiguration = [{
   requiredAuth: false,
   translations: false,
 }, {
+  url: CONTACT_BATCHES_PULL_URL,
+  method: 'POST',
+  requiredAuth: true
+}, {
   url: CONTACT_PULL_URL,
   method: 'GET',
   requiredAuth: true
@@ -154,6 +178,27 @@ const routesConfiguration = [{
   method: 'POST',
   requiredAuth: true
 }, {
+  url: RESOURCE_PULL_URL,
+  method: 'POST',
+  requiredAuth: true
+}, {
+  url: RESOURCE_PUSH_URL,
+  method: 'PUT',
+  isForm: true,
+  requiredAuth: true
+}, {
+  url: RESOURCE_SINGLE_FIELDS_TREE_URL,
+  method: 'GET',
+  requiredAuth: true
+}, {
+  url: RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
+  requiredAuth: true
+}, {
+  url: COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  method: 'POST',
+  requiredAuth: true
+}, {
   url: CHANGE_PASSWORD_URL,
   method: 'GET',
   requiredAuth: false,
@@ -163,6 +208,19 @@ const routesConfiguration = [{
   method: 'GET',
   requiredAuth: false,
   regularAmpUrl: true,
+}, {
+  url: MAP_TILES_URL,
+  method: 'GET',
+  requiredAuth: true,
+  isBinary: true
+}, {
+  url: GAZETTEER_URL,
+  method: 'GET',
+  requiredAuth: true
+}, {
+  url: CALENDAR_PULL_URL,
+  method: 'GET',
+  requiredAuth: true,
 }
 ];
 

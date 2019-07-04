@@ -1,5 +1,5 @@
 import React from 'react';
-import Menu, { SubMenu, MenuItem } from 'rc-menu';
+import Menu, { MenuItem, SubMenu } from 'rc-menu';
 import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
@@ -9,10 +9,9 @@ import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
 import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
 import Logger from '../modules/util/LoggerManager';
 import { didSetupComplete } from '../actions/SetupAction';
+import * as Utils from './Utils';
 
 const logger = new Logger('Menu utils');
-
-const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
 
 class MenuUtils {
 
@@ -25,7 +24,7 @@ class MenuUtils {
     const { workspaceList } = workspaceReducer;
     const firstLevelEntries = [];
     const isSetupComplete = didSetupComplete();
-    const newMenu = cloneDeep(menu);
+    const newMenu = Utils.cloneDeep(menu);
 
     // Dynamic list of workspaces.
     if (newMenu.menu.DESKTOP) {
@@ -110,7 +109,8 @@ function generateTree(object, key, level, node, loggedIn, isSetupComplete, menuO
         }
       });
     }
-    return <SubMenu title={_getTitle(object, key)} key={key}>{newNode[level]}</SubMenu>;
+    const nodeClass = object.nodeClass || '';
+    return <SubMenu title={_getTitle(object, key)} key={key} className={nodeClass}>{newNode[level]}</SubMenu>;
   }
   return (
     <MenuItem

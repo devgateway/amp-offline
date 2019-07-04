@@ -13,6 +13,8 @@ import { AMP_ID } from '../../utils/constants/ActivityConstants';
 import Utils from '../../utils/Utils';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
 import { translateSyncStatus } from './tools';
+import WarnMessage from '../common/WarnMessage';
+import NotificationHelper from '../../modules/helpers/NotificationHelper';
 
 class SyncUpSummary extends PureComponent {
   static propTypes = {
@@ -33,9 +35,25 @@ class SyncUpSummary extends PureComponent {
     });
   }
 
+  static deduplicateMessages(messages) {
+    // messages should normally be deduplicated by SyncUpRunner._collectMessages,
+    // however attempting here as well for possible: 1) historical data load  2) unexpected / new error sources
+    const mSet = new Set();
+    return messages.map(m => {
+      m = NotificationHelper.tryAsNotification(m);
+      const msg = m.message || m._message || m.toString();
+      if (!mSet.has(msg)) {
+        mSet.add(msg);
+        return msg;
+      }
+      return null;
+    }).filter(m => m);
+  }
+
   static report({
     status,
     errors,
+    warnings,
     dateStarted,
     dateFinished,
     syncedActivities,
@@ -43,17 +61,10 @@ class SyncUpSummary extends PureComponent {
   }) {
     return (
       <div>
-        {errors.map(error => {
-          let msg;
-          if (error._message) {
-            // can't check `error instanceof NotificationHelper` because
-            // `error` is typeless since it's read from sync log json
-            msg = error._message;
-          } else {
-            msg = error.toString();
-          }
-          return <ErrorMessage message={msg.toString()} />;
-        })}
+        {errors && SyncUpSummary.deduplicateMessages(errors)
+          .map(msg => <ErrorMessage key={Utils.stringToUniqueId(msg)} message={msg} />)}
+        {warnings && SyncUpSummary.deduplicateMessages(warnings)
+          .map(msg => <WarnMessage key={Utils.stringToUniqueId(msg)} message={msg} />)}
         <div className="container">
           <div className="row">
             <div className={`col-md-4 text-right ${styles.section_title}`}>
@@ -115,7 +126,7 @@ class SyncUpSummary extends PureComponent {
     const { data, errorMessage, forceSyncUp } = this.props;
     const forceSyncUpError = forceSyncUp ? SyncUpManager.getSyncUpStatusMessage() : null;
     if (data) {
-      const { status, errors, dateStarted } = data;
+      const { status, errors, warnings, dateStarted } = data;
       const { listActivities } = this.constructor;
       const fallbackToNone = arr => (arr.length ? arr : translate('None'));
       const pulled = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PULL);
@@ -126,6 +137,7 @@ class SyncUpSummary extends PureComponent {
       return this.constructor.report({
         status,
         errors,
+        warnings,
         dateStarted: createFormattedDateTime(dateStarted),
         dateFinished: createFormattedDateTime(data['sync-date']),
         syncedActivities: fallbackToNone(

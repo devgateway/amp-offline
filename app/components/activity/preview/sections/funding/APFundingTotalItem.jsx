@@ -20,11 +20,11 @@ class APFundingTotalItem extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   render() {
-    logger.log('render');
+    logger.debug('render');
     // Note: dont translate the label because it might be a phrase composed by individually translated words.
     let val = (this.props.dontFormatNumber
       ? this.props.value

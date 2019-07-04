@@ -74,7 +74,7 @@ const logoutConfirmationAlert = () => {
     type: STATE_LOGOUT_REQUESTED,
     actionData: { logoutConfirmed: true }
   }, translate('logout'));
-  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Sync'));
+  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Synchronize'));
   const actions = [proceedWithLogout, proceedWithSync];
   return new ConfirmationAlert(logoutNotification, actions, true);
 };

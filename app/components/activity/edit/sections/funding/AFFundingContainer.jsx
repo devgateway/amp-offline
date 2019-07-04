@@ -1,17 +1,21 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-alert */
-import React, { Component, PropTypes } from 'react';
-import { FormGroup, Col, Grid, Row } from 'react-bootstrap';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Moment from 'moment';
+import { Col, FormGroup, Grid, Row } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
+import * as GS from '../../../../../utils/constants/GlobalSettingsConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
+import AFMTEFProjectionContainer from './AFMTEFProjectionContainer';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import translate from '../../../../../utils/translate';
 import DateUtils from '../../../../../utils/DateUtils';
+import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
 
 const logger = new Logger('AF funding container');
 
@@ -21,7 +25,7 @@ const logger = new Logger('AF funding container');
 export default class AFFundingContainer extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   static propTypes = {
@@ -32,85 +36,120 @@ export default class AFFundingContainer extends Component {
   constructor(props) {
     super(props);
     logger.debug('constructor');
-    this.state = {
-      funding: this.props.funding,
-      stateFundingDetail: this.props.funding[AC.FUNDING_DETAILS]
-    };
     this._addTransactionItem = this._addTransactionItem.bind(this);
     this._removeFundingDetailItem = this._removeFundingDetailItem.bind(this);
+    this._addMTEFProjectionItem = this._addMTEFProjectionItem.bind(this);
+    this._removeMTEFProjectionItem = this._removeMTEFProjectionItem.bind(this);
   }
 
-  _addTransactionItem(type) {
-    logger.debug('_addTransactionItem');
-    const fundingDetailItem = {};
-    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getISODateForAPI(new Date());
-    const trnTypeList = this.context.activityFieldsManager
-      .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`];
-    const trnType = Object.values(trnTypeList).find(item => item.value === type);
-    fundingDetailItem[AC.TRANSACTION_TYPE] = trnType;
-    fundingDetailItem[AC.CURRENCY] = {};
-    fundingDetailItem[AC.TRANSACTION_AMOUNT] = undefined;
-    fundingDetailItem[AC.ADJUSTMENT_TYPE] = undefined;
-    const newFunding = this.state.funding;
-    if (newFunding[AC.FUNDING_DETAILS] === undefined) {
-      newFunding[AC.FUNDING_DETAILS] = [];
+  _addMTEFProjectionItem() {
+    logger.debug('_addMTEFProjectionItem');
+    const mtefItem = {};
+    // Get default year from GS and auto-increment each new item.
+    let year = GlobalSettingsManager.getSettingByKey(GS.GS_CURRENT_FISCAL_YEAR);
+    if (this.props.funding[AC.MTEF_PROJECTIONS] && this.props.funding[AC.MTEF_PROJECTIONS].length > 0) {
+      year = Math.max(...this.props.funding[AC.MTEF_PROJECTIONS].map((i) => Moment(i[AC.PROJECTION_DATE]).year())) + 1;
     }
-    newFunding[AC.FUNDING_DETAILS].push(fundingDetailItem);
+    mtefItem[AC.PROJECTION_DATE] = DateUtils.formatDateForAPI(Moment(`${year}-01-01`));
+    mtefItem[AC.PROJECTION] = {};
+    mtefItem[AC.CURRENCY] = {};
+    mtefItem[AC.AMOUNT] = undefined;
+    const newFunding = this.props.funding;
+    if (newFunding[AC.MTEF_PROJECTIONS] === undefined) {
+      newFunding[AC.MTEF_PROJECTIONS] = [];
+    }
+    newFunding[AC.MTEF_PROJECTIONS].push(mtefItem);
     this.setState({ funding: newFunding });
   }
 
-  _removeFundingDetailItem(id) {
+  _removeMTEFProjectionItem(id) {
+    logger.debug('_removeMTEFProjectionItem');
+    if (confirm(translate('deleteMTEFProjectionItem'))) {
+      const newMTEFList = this.props.funding[AC.MTEF_PROJECTIONS].slice();
+      const index = newMTEFList.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
+      newMTEFList.splice(index, 1);
+      const newFunding = this.props.funding;
+      newFunding[AC.MTEF_PROJECTIONS] = newMTEFList;
+      this.setState({ funding: newFunding });
+    }
+  }
+
+  _addTransactionItem(trnType) {
+    logger.debug('_addTransactionItem');
+    const fundingDetailItem = {};
+    fundingDetailItem[AC.REPORTING_DATE] = DateUtils.getTimestampForAPI(new Date());
+    fundingDetailItem[AC.CURRENCY] = {};
+    fundingDetailItem[AC.TRANSACTION_AMOUNT] = undefined;
+    fundingDetailItem[AC.ADJUSTMENT_TYPE] = undefined;
+    const newFunding = this.props.funding;
+    newFunding.fundingClassificationOpen = true;
+    if (newFunding[trnType] === undefined) {
+      newFunding[trnType] = [];
+    }
+    newFunding[trnType].push(fundingDetailItem);
+    this.setState({ funding: newFunding });
+  }
+
+  _removeFundingDetailItem(trnType, id) {
     logger.debug('_removeFundingDetailItem');
     if (confirm(translate('deleteFundingTransactionItem'))) {
-      const newFunding = this.state.stateFundingDetail;
-      const index = this.state.stateFundingDetail.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
-      newFunding.splice(index, 1);
-      this.setState({ stateFundingDetail: newFunding });
+      const newFundingDetails = this.props.funding[trnType].slice();
+      const index = newFundingDetails.findIndex((item) => (item[AC.TEMPORAL_ID] === id));
+      newFundingDetails.splice(index, 1);
+      const newFunding = this.props.funding;
+      newFunding[trnType] = newFundingDetails;
+      this.setState({ funding: newFunding });
     }
   }
 
   render() {
-    // TODO: Implement 'MTEF Projections' table when available for sync.
+    const { funding } = this.props;
     return (<div>
       <FormGroup>
         <Grid>
           <Row>
             <Col md={2} lg={2}>
-              <AFField parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.ACTIVE}`} type={Types.CHECKBOX} />
+              <AFField parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.ACTIVE}`} type={Types.CHECKBOX} />
             </Col>
             <Col md={2} lg={2}>
               <AFField
-                parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_COOPERATION}`}
+                parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_COOPERATION}`}
                 type={Types.CHECKBOX} />
             </Col>
             <Col md={2} lg={2}>
               <AFField
-                parent={this.state.funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_PARTNER}`}
+                parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.DELEGATED_PARTNER}`}
                 type={Types.CHECKBOX} />
             </Col>
           </Row>
         </Grid>
       </FormGroup>
-      <AFFundingClassificationPanel
-        funding={this.state.funding} fundingDetails={this.state.stateFundingDetail} hasErrors={this.props.hasErrors} />
+      <AFFundingClassificationPanel funding={funding} hasErrors={this.props.hasErrors} />
+      <AFMTEFProjectionContainer
+        mtefProjections={funding[AC.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors} funding={funding}
+        handleRemoveItem={this._removeMTEFProjectionItem} handleNewItem={this._addMTEFProjectionItem} />
       <AFFundingDetailContainer
-        fundingDetail={this.state.stateFundingDetail}
-        type={VC.COMMITMENTS}
-        removeFundingDetailItem={this._removeFundingDetailItem}
+        trnType={AC.COMMITMENTS}
+        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.COMMITMENTS)}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={funding} />
       <AFFundingDetailContainer
-        fundingDetail={this.state.stateFundingDetail}
-        type={VC.DISBURSEMENTS}
-        removeFundingDetailItem={this._removeFundingDetailItem}
+        trnType={AC.DISBURSEMENTS}
+        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.DISBURSEMENTS)}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={funding} />
       <AFFundingDetailContainer
-        fundingDetail={this.state.stateFundingDetail}
-        type={VC.EXPENDITURES}
-        removeFundingDetailItem={this._removeFundingDetailItem}
+        trnType={AC.EXPENDITURES}
+        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, AC.EXPENDITURES)}
         hasErrors={this.props.hasErrors}
-        handleNewTransaction={this._addTransactionItem} />
+        handleNewTransaction={this._addTransactionItem}
+        funding={funding} />
+      <AFField parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.DONOR_OBJECTIVE}`} type={Types.TEXT_AREA} />
+      <AFField
+        key={Math.random()} parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.CONDITIONS}`}
+        type={Types.TEXT_AREA} />
     </div>);
   }
 }

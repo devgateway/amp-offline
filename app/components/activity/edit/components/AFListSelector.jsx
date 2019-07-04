@@ -1,15 +1,17 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import styles from './AFListSelector.css';
 import AFList from './AFList';
 import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import ActivityValidator from '../../../../modules/field/EntityValidator';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import * as Utils from '../../../../utils/Utils';
+import Messages from '../../../common/Messages';
 
 const logger = new Logger('AF list selector');
 
@@ -27,7 +29,7 @@ fieldNameToSearchFieldLabel[AC.PROGRAM] = 'Add Program';
  */
 export default class AFListSelector extends Component {
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired
   };
 
@@ -37,13 +39,15 @@ export default class AFListSelector extends Component {
     listPath: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     // we need to report validation error before search box, thus passing to the component to display
-    validationError: PropTypes.string,
-    extraParams: PropTypes.object
+    validationErrors: PropTypes.array,
+    extraParams: PropTypes.object,
+    onBeforeDelete: PropTypes.func
   };
 
   constructor(props) {
     super(props);
     logger.debug('constructor');
+    this.listType = (this.props.extraParams || {}).listType || AFList;
     this.handleAddValue = this.handleAddValue.bind(this);
     this.handleRemoveValue = this.handleRemoveValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -61,34 +65,33 @@ export default class AFListSelector extends Component {
       || `Search ${AC.toOriginalLabel(this.idOnlyField)}`;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
-    this.setUniqueIdsAndUpdateState(this.props.selectedOptions);
+    this.setNewValues(this.props.selectedOptions);
     this.noMultipleValues = this.listDef.multiple_values !== true;
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selectedOptions !== this.props.selectedOptions) {
-      this.setUniqueIdsAndUpdateState(nextProps.selectedOptions);
+      this.setNewValues(nextProps.selectedOptions);
     }
   }
 
-  setUniqueIdsAndUpdateState(values = []) {
+  setNewValues(values = []) {
+    const { afOptionFormatter } = this.props.extraParams || {};
     // set unique ids even if no unique items validation is request, to have unique id for deletion
-    values.forEach(value => {
-      if (!value.uniqueId) {
-        value.uniqueId = Utils.stringToUniqueId(value[this.uniqueIdCol].id);
+    values.forEach(entry => {
+      const idOnlyFieldValue = entry[this.idOnlyField];
+      if (!idOnlyFieldValue.isAFOption || !entry.uniqueId) {
+        entry[this.idOnlyField] = new AFOption({ ...idOnlyFieldValue, displayHierarchicalValue: true });
+        if (afOptionFormatter) {
+          entry[this.idOnlyField].valueFormatter = afOptionFormatter;
+        }
+      }
+      if (!entry.uniqueId) {
+        entry.uniqueId = Utils.stringToUniqueId(entry[this.uniqueIdCol].id);
       }
     });
+    values.sort((a, b) => a[this.idOnlyField].compareByDisplayValue(b[this.idOnlyField]));
     this.setState({ values });
-  }
-
-  getListValues() {
-    this.state.values.forEach(value => {
-      const idOnlyFieldValue = value[this.idOnlyField];
-      if (!idOnlyFieldValue.isAFOption) {
-        value[this.idOnlyField] = new AFOption({ ...idOnlyFieldValue, displayHierarchicalValue: true });
-      }
-    });
-    return this.state.values;
   }
 
   dividePercentage() {
@@ -126,19 +129,19 @@ export default class AFListSelector extends Component {
   }
 
   handleEditValue(rowData, colHeader, cellValue) {
-    const values = this.state.values;
+    const values = this.state.values.slice();
     const item = values.find(val => val.uniqueId === rowData.uniqueId);
     item[colHeader] = cellValue;
     this.handleChange(values);
   }
 
   handleChange(values) {
-    this.setUniqueIdsAndUpdateState(values);
+    this.setNewValues(values);
     this.props.onChange(values);
   }
 
   _getValidationState() {
-    if (this.props.validationError) {
+    if (this.props.validationErrors) {
       return 'error';
     }
     return null;
@@ -148,12 +151,13 @@ export default class AFListSelector extends Component {
     const params = this.props.extraParams || {};
     if (params['no-table'] !== true) {
       return (<div>
-        <AFList
-          onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
+        <this.listType
+          onDeleteRow={this.handleRemoveValue} values={this.state.values} listPath={this.props.listPath}
+          extraParams={this.props.extraParams} onBeforeDelete={this.props.onBeforeDelete}
           onEditRow={this.handleEditValue.bind(this)} language={this.context.activityFieldsManager._lang} />
         <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()}>
           <FormControl.Feedback />
-          <HelpBlock>{this.props.validationError}</HelpBlock>
+          <HelpBlock><Messages messages={this.props.validationErrors} /></HelpBlock>
         </FormGroup>
       </div>);
     }

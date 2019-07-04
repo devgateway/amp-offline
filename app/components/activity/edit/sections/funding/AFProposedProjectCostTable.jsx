@@ -1,13 +1,17 @@
 /* eslint-disable class-methods-use-this */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
+import * as AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF proposed project cost table');
 
@@ -17,17 +21,34 @@ const logger = new Logger('AF proposed project cost table');
 export default class AFProposedProjectCostTable extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     currentWorkspaceSettings: PropTypes.object.isRequired,
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
   };
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.options = {
       withoutNoDataText: true
     };
+  }
+
+  _createCurrencyField() {
+    const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
+    const ppc = activity[AC.PPC_AMOUNT];
+    if (!ppc[AC.CURRENCY] || !ppc[AC.CURRENCY].id) {
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.PPC_CURRENCY_PATH);
+      const wsCurrencyCode = currentWorkspaceSettings.currency.code;
+      const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
+      ppc[AC.CURRENCY] = currency;
+    }
+    const field = (<AFField
+      parent={ppc}
+      fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY}`}
+      type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true, showOrigValue: true }} />);
+    return field;
   }
 
   render() {
@@ -40,37 +61,36 @@ export default class AFProposedProjectCostTable extends Component {
         columns.push(<TableHeaderColumn
           dataField={AC.AMOUNT} editable={false} key={AC.AMOUNT}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
+            parent={this.context.activity[AC.PPC_AMOUNT]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.AMOUNT}`}
-            type={Types.NUMBER} showLabel={false} readonly />)} >{translate('Amount')}</TableHeaderColumn>);
+            type={Types.NUMBER} showLabel={false} readonly />)}>{translate('Amount')}</TableHeaderColumn>);
       }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)) {
+      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
+          dataField={AC.CURRENCY} key={AC.CURRENCY}
           editable={false}
-          dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
-            fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
-            type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
+          dataFormat={() => (this._createCurrencyField())}>{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
         columns.push(<TableHeaderColumn
           dataField={AC.FUNDING_DATE} editable={false} key={AC.FUNDING_DATE}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
+            parent={this.context.activity[AC.PPC_AMOUNT]}
             fieldPath={`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`}
-            type={Types.DATE} showLabel={false} />)} >{translate('Date')}</TableHeaderColumn>);
+            type={Types.DATE} showLabel={false} />)}>{translate('Date')}</TableHeaderColumn>);
       }
       // Create empty row for new activities.
       this.context.activity[AC.PPC_AMOUNT] = this.context.activity[AC.PPC_AMOUNT]
-        || [{ [AC.AMOUNT]: null,
-          [AC.CURRENCY_CODE]: this.context.currentWorkspaceSettings.currency.code,
-          [AC.FUNDING_DATE]: null }];
+        || {
+          [AC.AMOUNT]: null,
+          [AC.CURRENCY]: this.context.currentWorkspaceSettings.currency.code,
+          [AC.FUNDING_DATE]: null
+        };
       return (<div>
-        <span><label htmlFor="ppc_table" >{translate('Proposed Project Cost')}</label></span>
+        <span><label htmlFor="ppc_table">{translate('Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} hover data={this.context.activity[AC.PPC_AMOUNT]} >
+          thClassName={styles.thClassName} hover data={[this.context.activity[AC.PPC_AMOUNT]]}>
           {columns}
         </BootstrapTable>
       </div>);

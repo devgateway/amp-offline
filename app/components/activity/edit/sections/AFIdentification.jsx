@@ -1,16 +1,28 @@
-import React, { Component, PropTypes } from 'react';
-import { Col, Grid, Row } from 'react-bootstrap';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Clearfix, Col, Grid, Row } from 'react-bootstrap';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
-import { RICH_TEXT_AREA } from '../components/AFComponentTypes';
+import * as Types from '../components/AFComponentTypes';
 import { IDENTIFICATION } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../utils/constants/ValueConstants';
 import Logger from '../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AF identification');
+
+const CUSTOM_TYPE = {
+  [AC.BUDGET_CODE_PROJECT_ID]: Types.INPUT_TYPE,
+  [AC.CRIS_NUMBER]: Types.INPUT_TYPE,
+  [AC.GOVERNMENT_APPROVAL_PROCEDURES]: Types.RADIO_BOOLEAN,
+  [AC.GOVERNMENT_AGREEMENT_NUMBER]: Types.INPUT_TYPE,
+  [AC.JOINT_CRITERIA]: Types.RADIO_BOOLEAN,
+  [AC.HUMANITARIAN_AID]: Types.RADIO_BOOLEAN,
+  [AC.FINANCIAL_INSTRUMENT]: Types.RADIO_LIST,
+  [AC.IATI_IDENTIFIER]: Types.INPUT_TYPE,
+};
 
 /**
  * Identification Section
@@ -20,83 +32,82 @@ class AFIdentification extends Component {
 
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
-    // Show ministry_code only when activity_budget is enabled and has value 'On Budget'.
-    const showMinistryCode = (this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
-      && this.props.activity[AC.ACTIVITY_BUDGET]
-      && this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET);
+    logger.debug('constructor');
+    // Show "Budget Extras" fields like ministry_code only when activity_budget is enabled and has value 'On Budget'.
+    const showBudgetExtras = this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
+      && this.isActivityOnBudget();
     this.state = {
-      showMinistryCode
+      showBudgetExtras
     };
     this.onActivityBudgetUpdate = this.onActivityBudgetUpdate.bind(this);
+    this.mapSimpleFieldDef = this.mapSimpleFieldDef.bind(this);
   }
 
   onActivityBudgetUpdate() {
-    const showMinistryCode = this.props.activity[AC.ACTIVITY_BUDGET] &&
-      this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET;
     this.setState({
-      showMinistryCode
+      showBudgetExtras: this.isActivityOnBudget()
     });
+  }
+
+  isActivityOnBudget() {
+    return this.props.activity[AC.ACTIVITY_BUDGET] && this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET;
+  }
+
+  mapSimpleFieldDef(fieldName) {
+    const type = CUSTOM_TYPE[fieldName] || null;
+    return <AFField key={fieldName} parent={this.props.activity} fieldPath={fieldName} type={type} />;
   }
 
   render() {
     // TODO update the layout per Llanoc design. If not available, adjust to work. For now grouping fields as in AMP.
+    const leftColumn = [AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.PROJECT_COMMENTS, AC.OBJECTIVE, AC.LESSONS_LEARNED,
+      AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.DESCRIPTION, AC.RESULTS].map(this.mapSimpleFieldDef);
+    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID, AC.A_C_CHAPTER].map(this.mapSimpleFieldDef);
+    rightColumn.push(
+      (<AFField
+        key={AC.ACTIVITY_BUDGET}
+        parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} onAfterUpdate={this.onActivityBudgetUpdate} />));
+    rightColumn.push(...[AC.GOVERNMENT_APPROVAL_PROCEDURES, AC.JOINT_CRITERIA, AC.HUMANITARIAN_AID]
+      .map(this.mapSimpleFieldDef));
+    if (this.state.showBudgetExtras) {
+      const budgetExtras = [
+        <AFField
+          key={AC.INDIRECT_ON_BUDGET} parent={this.props.activity} fieldPath={AC.INDIRECT_ON_BUDGET}
+          type={Types.CHECKBOX} />,
+        <AFField key={AC.FY} parent={this.props.activity} fieldPath={AC.FY} type={Types.MULTI_SELECT} />,
+        <AFField key={AC.MINISTRY_CODE} parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} showRequired />,
+        <AFField
+          key={AC.PROJECT_CODE} parent={this.props.activity} fieldPath={AC.PROJECT_CODE} type={Types.INPUT_TYPE}
+          showRequired />
+      ];
+      rightColumn.push(<div key="budgetExtras" className={afStyles.budget_extras}>
+        {budgetExtras}
+      </div>);
+    }
+    rightColumn.push(...[AC.FINANCIAL_INSTRUMENT, AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT, AC.GOVERNMENT_AGREEMENT_NUMBER,
+      AC.IATI_IDENTIFIER]
+      .map(this.mapSimpleFieldDef));
+
     return (
-      <div className={afStyles.full_width} >
-        <Grid className={afStyles.full_width} >
-          <Row>
-            <Col md={12} lg={12} >
-              <AFField parent={this.props.activity} fieldPath={AC.PROJECT_TITLE} />
+      <div className={afStyles.full_width}>
+        <Grid className={afStyles.full_width}>
+          <Row key="title-full-row">
+            <Col xs={12} >
+              <AFField key={AC.PROJECT_TITLE} parent={this.props.activity} fieldPath={AC.PROJECT_TITLE} />
             </Col>
           </Row>
-          <Row>
-            <Col md={6} lg={6} >
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_STATUS} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.STATUS_REASON} />
-              </div>
-              <div >
-                <AFField parent={this.props.activity} fieldPath={AC.OBJECTIVE} type={RICH_TEXT_AREA} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.LESSONS_LEARNED} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.PROJECT_IMPACT} />
-              </div>
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_SUMMARY} />
-              </div>
+          <Row key="col-split-data">
+            <Col key="left-col" md={6} sm={12}>
+              {leftColumn}
             </Col>
-            <Col md={6} lg={6} >
-              <div>
-                <AFField
-                  parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET}
-                  onAfterUpdate={this.onActivityBudgetUpdate} />
-              </div>
-              <div>
-                {(this.state.showMinistryCode) ?
-                  <AFField parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} forceRequired /> : null}
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6} lg={6} >
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.DESCRIPTION} />
-              </div>
-            </Col>
-            <Col md={6} lg={6} >
-              <div>
-                <AFField parent={this.props.activity} fieldPath={AC.PROJECT_MANAGEMENT} />
-              </div>
+            <Clearfix visibleSmBlock />
+            <Col key="right-col" md={6} sm={12}>
+              {rightColumn}
             </Col>
           </Row>
         </Grid>

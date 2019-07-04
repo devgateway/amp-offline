@@ -1,4 +1,6 @@
 import {
+  STATE_AMP_REGISTRY_CHECK_COMPLETED,
+  STATE_AMP_REGISTRY_CHECK_PENDING,
   STATE_SETUP_DEFAULTS_FULFILLED,
   STATE_SETUP_DEFAULTS_PENDING,
   STATE_SETUP_DEFAULTS_REJECTED,
@@ -16,6 +18,8 @@ import {
 
 const defaultState = {
   isSetupComplete: undefined,
+  isAmpRegistryChecking: false,
+  isAmpRegistryChecked: false,
   isDefaultLoaded: false,
   isDefaultLoading: false,
   errorMessage: null,
@@ -36,7 +40,7 @@ const defaultState = {
 export default function setupReducer(state = defaultState, action: Object) {
   switch (action.type) {
     case STATE_SETUP_STATUS_PENDING:
-      return { ...state, isSetupComplete: undefined, errorMessage: undefined };
+      return { ...state, isSetupComplete: false, errorMessage: undefined };
     case STATE_SETUP_STATUS_REJECTED:
       return { ...state, isSetupComplete: false, errorMessage: action.payload };
     case STATE_SETUP_STATUS_FULFILLED:
@@ -97,6 +101,10 @@ export default function setupReducer(state = defaultState, action: Object) {
         urlTestResult: urlTestResultState
       };
     }
+    case STATE_AMP_REGISTRY_CHECK_PENDING:
+      return { ...state, isAmpRegistryChecking: true, isAmpRegistryChecked: false };
+    case STATE_AMP_REGISTRY_CHECK_COMPLETED:
+      return { ...state, isAmpRegistryChecking: false, isAmpRegistryChecked: true };
     default:
       return state;
   }

@@ -2,8 +2,10 @@ import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
+import * as TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
+import * as UserHelper from '../modules/helpers/UserHelper';
 import ActivityHydrator from '../modules/helpers/ActivityHydrator';
-import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
 import {
@@ -16,14 +18,14 @@ import {
   PROJECT_TITLE,
   TEAM
 } from '../utils/constants/ActivityConstants';
-import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
+import { WORKSPACE_ID, WORKSPACE_LEAD_ID } from '../utils/constants/WorkspaceConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import {
   NOTIFICATION_ORIGIN_ACTIVITY,
   NOTIFICATION_SEVERITY_ERROR,
   NOTIFICATION_SEVERITY_INFO
 } from '../utils/constants/ErrorConstants';
-import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
+import { ADJUSTMENT_TYPE_PATHS } from '../utils/constants/FieldPathConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
@@ -33,6 +35,9 @@ import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
 import DateUtils from '../utils/DateUtils';
 import LoggerManager from '../modules/util/LoggerManager';
+import * as ContactAction from './ContactAction';
+import * as ResourceAction from './ResourceAction';
+import { TEAM_MEMBER_USER_ID } from '../utils/constants/UserConstants';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -51,7 +56,7 @@ const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 const logger = new LoggerManager('ActivityAction.js');
 
 export function loadActivityForActivityPreview(activityId) {
-  const paths = [ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, CREATED_BY, TEAM, MODIFIED_BY];
+  const paths = [...ADJUSTMENT_TYPE_PATHS, CREATED_BY, TEAM, MODIFIED_BY];
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
@@ -62,12 +67,16 @@ export function loadActivityForActivityPreview(activityId) {
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
         currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
         currentLanguage: ownProps().translationReducer.lang
+      }).then(data => {
+        ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
+        ResourceAction.loadHydratedResourcesForActivity(data.activity)(dispatch, ownProps);
+        return data;
       })
     });
 }
 
 export function loadActivityForActivityForm(activityId) {
-  return (dispatch, ownProps) =>
+  return (dispatch, ownProps) => {
     dispatch({
       type: ACTIVITY_LOAD,
       payload: _loadActivity({
@@ -80,16 +89,22 @@ export function loadActivityForActivityForm(activityId) {
         currentLanguage: ownProps().translationReducer.lang
       }).then(data => {
         dispatch({ type: ACTIVITY_LOADED_FOR_AF });
+        ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
+        ResourceAction.loadHydratedResourcesForActivity(data.activity)(dispatch, ownProps);
         return data;
       })
     });
+  };
 }
 
 export function unloadActivity() {
-  return (dispatch) =>
+  return (dispatch, ownProps) => {
     dispatch({
       type: ACTIVITY_UNLOADED
     });
+    ContactAction.unloadContacts()(dispatch, ownProps);
+    ResourceAction.unloadResources()(dispatch, ownProps);
+  };
 }
 
 export function reportActivityValidation(validationResult) {
@@ -110,10 +125,17 @@ export function reportFieldValidation(fieldPath, validationResult) {
 
 export function saveActivity(activity) {
   return (dispatch, ownProps) => {
+    ResourceAction.tryToAutoAddPendingResourcesToActivity(activity)(dispatch, ownProps);
     dispatch({
       type: ACTIVITY_SAVE,
       payload: _saveActivity(activity, ownProps().userReducer.teamMember,
         ownProps().activityReducer.activityFieldsManager.fieldsDef, dispatch)
+        .then((savedActivity) =>
+          Promise.all([
+            ContactAction.dehydrateAndSaveActivityContacts(savedActivity)(dispatch, ownProps),
+            ResourceAction.dehydrateAndSaveActivityResources(activity)(dispatch, ownProps)
+          ]).then(() => savedActivity)
+        )
     });
   };
 }
@@ -122,35 +144,43 @@ function _loadActivity({
                          activityId, teamMemberId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
                          isAF, currentLanguage
                        }) {
-  return new Promise((resolve, reject) => {
-    const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
-    return Promise.all([
-      _getActivity(activityId, teamMemberId),
-      FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
-      PossibleValuesHelper.findAll(pvFilter),
-      isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } }, Utils.toMap(PROJECT_TITLE, 1)) : []
-    ])
-      .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
-        fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
-        const activityFieldsManager = new ActivityFieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
-        const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
-          currentWorkspaceSettings, currencyRatesManager);
-        const activityWsId = activity[TEAM] && activity[TEAM].id;
-        otherProjectTitles = Utils.flattenToListByKey(otherProjectTitles, PROJECT_TITLE);
-        return WorkspaceHelper.findById(activityWsId).then(activityWorkspace =>
-          resolve({
+  const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
+  return Promise.all([
+    _getActivity(activityId, teamMemberId),
+    FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
+    PossibleValuesHelper.findAll(pvFilter),
+    isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } }, Utils.toMap(PROJECT_TITLE, 1)) : []
+  ])
+    .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
+      fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
+      const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
+      const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
+        currentWorkspaceSettings, currencyRatesManager);
+      const activityWsId = activity[TEAM] && activity[TEAM].id;
+      otherProjectTitles = Utils.flattenToListByKey(otherProjectTitles, PROJECT_TITLE);
+      return WorkspaceHelper.findById(activityWsId)
+        .then(activityWorkspace => _getActivityWsManager(activityWorkspace)
+          .then(activityWSManager => ({
             activity,
             activityWorkspace,
+            activityWSManager,
             activityFieldsManager,
             activityFundingTotals,
             currentWorkspaceSettings,
             currencyRatesManager,
             otherProjectTitles
-          })
-        ).catch(error => reject(_toNotification(error)));
-      }).catch(error => reject(_toNotification(error)));
-  });
+          })));
+    })
+    .catch(error => Promise.reject(_toNotification(error)));
 }
+
+const _getActivityWsManager = (activityWorkspace) => {
+  if (activityWorkspace) {
+    return TeamMemberHelper.findByTeamMemberId(activityWorkspace[WORKSPACE_LEAD_ID])
+      .then(teamMember => UserHelper.findById(teamMember[TEAM_MEMBER_USER_ID]));
+  }
+  return Promise.resolve(null);
+};
 
 const _toNotification = (error) => new Notification({ message: error, origin: NOTIFICATION_ORIGIN_ACTIVITY });
 
@@ -166,7 +196,7 @@ const _getActivity = (activityId, teamMemberId) => {
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
   return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
-    const modifiedOn = DateUtils.getISODateForAPI();
+    const modifiedOn = DateUtils.getTimestampForAPI();
     if (!dehydratedActivity[TEAM]) {
       dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
     }
@@ -194,16 +224,19 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
         return savedActivity;
       })
     ));
-  }).catch(error => dispatch(unableToSave(error)));
+  }).catch(error => {
+    logger.error(error);
+    return unableToSave('activitySavedError')(dispatch);
+  });
 }
 
-function unableToSave(error) {
-  logger.error(error);
-  return addMessage(new Notification({
-    message: translate('activitySavedError'),
+export function unableToSave(error) {
+  logger.info('unableToSave');
+  return dispatch => dispatch(addMessage(new Notification({
+    message: error,
     origin: NOTIFICATION_ORIGIN_ACTIVITY,
     severity: NOTIFICATION_SEVERITY_ERROR
-  }));
+  })));
 }
 
 export function updateActivityGlobalState(setting, value) {

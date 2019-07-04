@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { Modal, FormGroup, Radio, Button } from 'react-bootstrap';
-import { Link } from 'react-router';
 import translate from '../../../utils/translate';
 import Logger from '../../../modules/util/LoggerManager';
 import * as styles from './AFSaveDialog.css';
@@ -29,10 +28,9 @@ function debounce(cb, delay = 200) {
 export default class AFSaveDialog extends Component {
 
   static propTypes = {
-    teamMemberId: PropTypes.number.isRequired,
     actionTitle: PropTypes.string.isRequired,
-    activity: PropTypes.object.isRequired,
-    saveActivity: PropTypes.func.isRequired
+    saveActivity: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -59,19 +57,6 @@ export default class AFSaveDialog extends Component {
     window.addEventListener('resize', this.windowResizeListener);
   }
 
-  getProceedContent() {
-    if (this.state.goToDesktop === true) {
-      const desktopURL = `/desktop/${this.props.teamMemberId}`;
-      return (
-        <Link to={desktopURL} className={styles.save_as_draft_footer_proceed}>
-          {this.props.actionTitle}
-        </Link>
-      );
-    } else {
-      return this.props.actionTitle;
-    }
-  }
-
   recalcPaddingTop() {
     const el = document.querySelector('.modal-dialog');
     if (!el) return;
@@ -90,13 +75,14 @@ export default class AFSaveDialog extends Component {
     this.setState({ showDialog: true, goToDesktop: true });
   }
 
-  proceed() {
-    this.props.saveActivity(this.props.activity);
+  proceed(goToDesktop) {
+    this.props.saveActivity(goToDesktop);
     this.close();
   }
 
   close() {
     this.setState({ showDialog: false });
+    this.props.onClose();
     window.removeEventListener('resize', this.windowResizeListener);
   }
 
@@ -133,8 +119,9 @@ export default class AFSaveDialog extends Component {
           </FormGroup>
         </Modal.Body>
         <Modal.Footer className={styles.save_as_draft_footer}>
-          <Button onClick={this.proceed.bind(this)} className={styles.save_as_draft_button} {...buttonProps}>
-            {this.getProceedContent()}
+          <Button
+            onClick={this.proceed.bind(this, goToDesktop)} className={styles.save_as_draft_button} {...buttonProps}>
+            {this.props.actionTitle}
           </Button>
           <Button onClick={this.close.bind(this)} className={styles.save_as_draft_button} {...buttonProps}>
             {translate('Cancel')}

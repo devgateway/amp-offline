@@ -3,6 +3,10 @@ import Logger from '../modules/util/LoggerManager';
 import FileManager from '../modules/util/FileManager';
 import { HELP_DIR, HELP_PDF_FILENAME, STATIC_DIR } from '../utils/Constants';
 import store from '../index';
+import {
+  CLOSE_HELP_WINDOW_MSG,
+  CREATE_PDF_WINDOW_MSG
+} from '../utils/constants/MainDevelopmentConstants';
 
 export const STATE_HELP_WINDOW_OPEN = 'STATE_HELP_WINDOW_OPEN';
 export const STATE_HELP_WINDOW_CLOSED = 'STATE_HELP_WINDOW_CLOSED';
@@ -18,7 +22,7 @@ export function loadHelp() {
   const fromDir = FileManager.getFullPathForBuiltInResources(STATIC_DIR, HELP_DIR);
   const to = FileManager.copyDataFileToTmpSync(fileName, fromDir);
   logger.debug(to);
-  ipcRenderer.send('createPDFWindow', encodeURIComponent(to), closeHelpState);
+  ipcRenderer.send(CREATE_PDF_WINDOW_MSG, encodeURIComponent(to), closeHelpState);
 
   /* An alternative option if rendering pdf inside chrome fails is to rely on the client's pdf reader:
    * 1) const { exec } = require('child_process');
@@ -35,6 +39,6 @@ export function closeHelpState() {
 
 // Listen to message from main process.
 /* eslint no-unused-vars: 0 */
-ipcRenderer.on('closeHelpWindow', (event, args) => {
+ipcRenderer.on(CLOSE_HELP_WINDOW_MSG, (event, args) => {
   closeHelpState();
 });
