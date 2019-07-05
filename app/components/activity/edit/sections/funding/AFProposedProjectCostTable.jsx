@@ -5,9 +5,12 @@ import * as AC from '../../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
+import * as AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF proposed project cost table');
 
@@ -17,9 +20,10 @@ const logger = new Logger('AF proposed project cost table');
 export default class AFProposedProjectCostTable extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     currentWorkspaceSettings: PropTypes.object.isRequired,
-    activity: PropTypes.object.isRequired
+    activity: PropTypes.object.isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
   };
 
   constructor(props) {
@@ -28,6 +32,23 @@ export default class AFProposedProjectCostTable extends Component {
     this.options = {
       withoutNoDataText: true
     };
+  }
+
+  _createCurrencyField() {
+    const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
+    if (!activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] || !activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE].id) {
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
+      const wsCurrencyCode = currentWorkspaceSettings.currency.code;
+      const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
+      // TODO: Check why the structure of this object is {id: currecy_code, value: currency_code}.
+      const newCurrency = { id: currency.value, value: currency.value };
+      activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE] = newCurrency;
+    }
+    const field = (<AFField
+      parent={this.context.activity[AC.PPC_AMOUNT][0]}
+      fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
+      type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true, showOrigValue: true }} />);
+    return field;
   }
 
   render() {
@@ -48,10 +69,7 @@ export default class AFProposedProjectCostTable extends Component {
         columns.push(<TableHeaderColumn
           dataField={AC.CURRENCY_CODE} key={AC.CURRENCY_CODE}
           editable={false}
-          dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT][0]}
-            fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`}
-            type={Types.DROPDOWN} showLabel={false} />)} >{translate('Currency')}</TableHeaderColumn>);
+          dataFormat={() => (this._createCurrencyField())} >{translate('Currency')}</TableHeaderColumn>);
       }
       if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
         columns.push(<TableHeaderColumn

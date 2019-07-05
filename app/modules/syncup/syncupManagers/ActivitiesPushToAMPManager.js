@@ -4,6 +4,8 @@ import * as ActivityHelper from '../../helpers/ActivityHelper';
 import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
+import * as CC from '../../../utils/constants/ContactConstants';
+import * as RC from '../../../utils/constants/ResourceConstants';
 import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
@@ -12,6 +14,10 @@ import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import Logger from '../../util/LoggerManager';
+import ContactHelper from '../../helpers/ContactHelper';
+import { getActivityContactIds } from '../../../actions/ContactAction';
+import { getActivityResourceUuids } from '../../../actions/ResourceAction';
+import ResourceHelper from '../../helpers/ResourceHelper';
 
 const logger = new Logger('Activity push to AMP manager');
 
@@ -106,7 +112,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
    */
   static _getValidUsers() {
     logger.log('_getValidUsers');
-    const filter = { $and: [{ 'is-banned': { $ne: true } }, { 'is-active': { $ne: true } }] };
+    const filter = { 'is-banned': { $ne: true } };
     const projections = { id: 1 };
     return UserHelper.findAllClientRegisteredUsersByExample(filter, projections);
   }
@@ -154,8 +160,27 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
           return Promise.resolve();
         }
         // uninterruptible call
-        return this._pushActivity(nextActivity);
+        return this._pushOrRejectActivityClientSide(nextActivity);
       }), Promise.resolve());
+  }
+
+  _pushOrRejectActivityClientSide(activity) {
+    logger.log('_pushOrRejectActivityClientSide');
+    return this._getUnsyncedContacts(activity).then(unsyncedContacts => {
+      if (unsyncedContacts.length) {
+        const cNames = unsyncedContacts.map(c => `"${c[CC.NAME] || ''} ${c[CC.LAST_NAME] || ''}"`).join(', ');
+        const error = translate('rejectActivityWhenContactUnsynced2').replace('%contacts%', cNames);
+        return Promise.reject(error);
+      }
+      return this._getUnsyncedResources(activity);
+    }).then(unsyncedResources => {
+      if (unsyncedResources.length) {
+        const rNames = unsyncedResources.map(r => `"${r[RC.WEB_LINK] || r[RC.FILE_NAME]}"`).join(', ');
+        const error = translate('rejectActivityWhenResourceUnsynced2').replace('%resources%', rNames);
+        return Promise.reject(error);
+      }
+      return this._pushActivity(activity);
+    }).catch(error => this._processPushResult({ activity, error }));
   }
 
   _pushActivity(activity) {
@@ -171,6 +196,17 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         .then((pushResult) => this._processPushResult({ activity, pushResult })).then(resolve)
         .catch((error) => this._processPushResult({ activity, error }).then(resolve))
     );
+  }
+
+  _getUnsyncedContacts(activity) {
+    const contactIds = getActivityContactIds(activity);
+    return ContactHelper.findContactsByIds(contactIds)
+      .then(contacts => contacts.filter(c => ContactHelper.isModifiedOnClient(c)));
+  }
+
+  _getUnsyncedResources(activity) {
+    const resourceUuids = getActivityResourceUuids(activity);
+    return ResourceHelper.findAllResourcesModifiedOnClientByUuids(resourceUuids);
   }
 
   /**
@@ -248,9 +284,10 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _saveRejectedActivity(activity, rejectedId, error) {
-    const idToLog = activity[AC.AMP_ID] || activity.id;
-    const fieldNameToLog = activity[AC.AMP_ID] ? AC.AMP_ID : AC.INTERNAL_ID;
-    error = `(${fieldNameToLog} = ${idToLog}): ${error}`;
+    const ampId = activity[AC.AMP_ID] ? `${activity[AC.AMP_ID]} ` : '';
+    const idToLog = `${ampId}(${activity[AC.PROJECT_TITLE]})`;
+    const fieldNameToLog = `${activity[AC.AMP_ID] ? AC.AMP_ID : ''}(${AC.PROJECT_TITLE})`;
+    error = `${idToLog}: ${error}`;
     logger.error(`_saveRejectActivity for ${fieldNameToLog} = ${idToLog} with rejectedId=${rejectedId}`);
     const rejectedActivity = activity;
     rejectedActivity[AC.REJECTED_ID] = rejectedId;

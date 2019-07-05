@@ -6,8 +6,8 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import styles from './AFList.css';
 import afStyles from '../ActivityForm.css';
 import { LABEL } from './AFComponentTypes';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import ActivityValidator from '../../../../modules/field/EntityValidator';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFField from './AFField';
 import { addFullscreenAlert } from '../../../../actions/NotificationAction';
@@ -25,7 +25,7 @@ const logger = new Logger('AF List');
 class AFList extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
   };
 
@@ -35,7 +35,9 @@ class AFList extends Component {
     onDeleteRow: PropTypes.func,
     onEditRow: PropTypes.func,
     onConfirmationAlert: PropTypes.func.isRequired,
-    language: PropTypes.string // Needed to update header translations.
+    extraParams: PropTypes.object,
+    language: PropTypes.string, // Needed to update header translations.
+    onBeforeDelete: PropTypes.func
   };
 
   constructor(props) {
@@ -78,22 +80,24 @@ class AFList extends Component {
     });
   }
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps.values !== this.props.values || nextProps.language !== this.props.language;
-  }
-
   onDeleteRow(uniqueId) {
-    const { listPath, onDeleteRow, onConfirmationAlert } = this.props;
+    const { listPath, onDeleteRow, onConfirmationAlert, onBeforeDelete } = this.props;
     const { activityValidator } = this.context;
     const itemToDelete = this.state.values.find(item => uniqueId === item.uniqueId);
-    const validationResult = activityValidator.validateItemRemovalFromList(listPath, itemToDelete);
-    if (validationResult && validationResult !== true) {
-      onConfirmationAlert(validationResult);
-    } else {
-      this.setState({
-        values: this.state.values.filter(item => uniqueId !== item.uniqueId)
-      });
-      onDeleteRow(uniqueId);
+    let canDelete = true;
+    if (onBeforeDelete) {
+      canDelete = onBeforeDelete(itemToDelete);
+    }
+    if (canDelete) {
+      const validationResult = activityValidator.validateItemRemovalFromList(listPath, itemToDelete);
+      if (validationResult && validationResult !== true) {
+        onConfirmationAlert(validationResult);
+      } else {
+        this.setState({
+          values: this.state.values.filter(item => uniqueId !== item.uniqueId)
+        });
+        onDeleteRow(uniqueId);
+      }
     }
   }
 
@@ -208,7 +212,7 @@ class AFList extends Component {
   }
 
   renderAsSimpleTable() {
-    const { listPath } = this.props;
+    const { listPath, extraParams } = this.props;
     const headers = [];
     const content = [];
     const collWidth = { width: 90 / this.fields.length };
@@ -216,8 +220,9 @@ class AFList extends Component {
       const childFieldName = childDef.field_name;
       const fieldPath = `${listPath}~${childFieldName}`;
       const editable = childDef.id_only !== true;
+      const CustomType = extraParams && extraParams.custom && extraParams.custom[fieldPath];
       const fieldType = editable ? null : LABEL;
-      const className = editable ? styles.cell_editable : styles.cell_readonly;
+      const className = (editable || CustomType) ? styles.cell_editable : styles.cell_readonly;
 
       headers.push(this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath));
       let rowId = 0;
@@ -226,7 +231,8 @@ class AFList extends Component {
           content.push({ rowData, cells: [] });
         }
         const key = (rowData[childFieldName] && rowData[childFieldName].uniqueId) || Math.random();
-        const value = (<AFField
+        const RenderType = CustomType || AFField;
+        const value = (<RenderType
           fieldPath={fieldPath} parent={rowData} type={fieldType} showLabel={false} className={className} inline
           showRequired={editable} onAfterUpdate={this._afterSaveCell.bind(this, rowData, childFieldName)} />);
         content[rowId].cells.push({ key, value });

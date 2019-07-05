@@ -1,0 +1,39 @@
+.listContainer {
+  margin-bottom: 15px;
+}
+.headerContainer {
+  background-color: #f8f9fc;
+  font-size: 12px;
+}
+
+.header_year_of_publication {
+  width: 7%;
+}
+
+.header_file_size {
+  width: 7%;
+}
+
+.header_adding_date {
+  width: 13%;
+}
+
+.delete {
+  width: 5%;
+  text-overflow: unset !important;
+}
+
+.action {
+  width: 5%;
+}
+
+.cell {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 0.85em;
+}
+
+.formHeader {
+  text-align: center;
+  color: #4A687A;
+}

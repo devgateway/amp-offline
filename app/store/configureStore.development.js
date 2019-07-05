@@ -9,6 +9,7 @@ import * as loginActions from '../actions/LoginAction';
 import * as workspaceActions from '../actions/WorkspaceAction';
 import * as connectivityActions from '../actions/ConnectivityAction';
 import * as activityActions from '../actions/ActivityAction';
+import * as contactActions from '../actions/ContactAction';
 import * as syncUpActions from '../actions/SyncUpAction';
 import * as desktopActions from '../actions/DesktopAction';
 import * as translationActions from '../actions/TranslationAction';
@@ -22,6 +23,7 @@ const actionCreators = {
   ...workspaceActions,
   ...connectivityActions,
   ...activityActions,
+  ...contactActions,
   ...syncUpActions,
   ...desktopActions,
   ...translationActions,

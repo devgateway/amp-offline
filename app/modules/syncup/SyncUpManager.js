@@ -23,7 +23,7 @@ import {
   SYNCUP_SYNC_REQUESTED_BY
 } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
-import { loadCurrencyRatesOnStartup, loadFMTree, loadGlobalSettings } from '../../actions/StartUpAction';
+import { loadCalendar, loadCurrencyRatesOnStartup, loadFMTree, loadGlobalSettings } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
 import translate from '../../utils/translate';
 import DateUtils from '../../utils/DateUtils';
@@ -31,6 +31,8 @@ import * as Utils from '../../utils/Utils';
 import * as UserHelper from '../helpers/UserHelper';
 import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorConstants';
 import { addMessage } from '../../actions/NotificationAction';
+import * as CSC from '../../utils/constants/ClientSettingsConstants';
+import SetupManager from '../setup/SetupManager';
 
 const logger = new Logger('Syncup manager');
 
@@ -45,10 +47,11 @@ export default class SyncUpManager {
    * @private
    */
   static sortByLastSyncDateDesc(a, b) {
-    logger.log('_sortByLastSyncDateDesc');
-    return (a[SYNCUP_DATETIME_FIELD] > b[SYNCUP_DATETIME_FIELD]
-      ? -1
-      : a[SYNCUP_DATETIME_FIELD] < b[SYNCUP_DATETIME_FIELD] ? 1 : 0);
+    logger.debug('_sortByLastSyncDateDesc');
+    if (a[SYNCUP_DATETIME_FIELD] === b[SYNCUP_DATETIME_FIELD]) {
+      return a[SYNCUP_SYNC_REQUESTED_AT] > b[SYNCUP_SYNC_REQUESTED_AT] ? -1 : 1;
+    }
+    return a[SYNCUP_DATETIME_FIELD] > b[SYNCUP_DATETIME_FIELD] ? -1 : 1;
   }
 
   /**
@@ -102,9 +105,9 @@ export default class SyncUpManager {
     return this._startSyncUp()
       .then(result => {
         if (result && result.status === SYNCUP_STATUS_FAIL && !result.units) {
-          let error = result.errors && result.errors.length && result.errors.join(' ');
-          error = error || translate('unexpectedError');
-          logger.error(error);
+          // if cannot start, there would be one reason only
+          const error = result.errors && result.errors.length ? result.errors[0] : translate('unexpectedError');
+          logger.error(JSON.stringify(error));
           return Promise.reject(error);
         }
         syncResult = result;
@@ -160,7 +163,7 @@ export default class SyncUpManager {
     return Promise.all([
       SyncUpManager.cleanupOldSyncUpLogs(),
       SyncUpManager.dispatchLoadAllLanguages(),
-      loadGlobalSettings(),
+      loadGlobalSettings().then(loadCalendar),
       loadFMTree(),
       loadCurrencyRatesOnStartup(),
       checkIfShouldSyncBeforeLogout(),
@@ -200,13 +203,15 @@ export default class SyncUpManager {
   static checkIfToForceSyncUp() {
     logger.log('checkIfToForceSyncUp');
     return Promise.all([SyncUpManager.getLastSyncInDays(), SyncUpManager.getLastSuccessfulSyncUp(),
-      SyncUpManager.getLastSyncUpIdForCurrentUser()])
-      .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser]) => {
+      SyncUpManager.getLastSyncUpIdForCurrentUser(), SetupManager.getCurrentVersionAuditLog()])
+      .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser, currVerAudit]) => {
         const didSyncUp = !!lastSyncUpIdForCurrentUser;
         const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
         const user = store.getState().userReducer.userData; // No need to to go the DB in this stage.
         const hasUserData = lastSuccessful && lastSuccessful[SYNCUP_SYNC_REQUESTED_AT] > user.registeredOnClient;
-        const forceSyncUp = forceBecauseDays || !hasUserData;
+        const currVerFirstStartedAt = currVerAudit[CSC.FIRST_STARTED_AT];
+        const syncedForCurrVer = lastSuccessful && lastSuccessful[SYNCUP_SYNC_REQUESTED_AT] > currVerFirstStartedAt;
+        const forceSyncUp = forceBecauseDays || !hasUserData || !syncedForCurrVer;
         return {
           forceSyncUp,
           didUserSuccessfulSyncUp: hasUserData,

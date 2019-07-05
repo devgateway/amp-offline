@@ -10,10 +10,10 @@ import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
 import styles from '../ActivityForm.css';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import PossibleValuesManager from '../../../../modules/activity/PossibleValuesManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
-import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import ActivityValidator from '../../../../modules/field/EntityValidator';
 import { reportFieldValidation } from '../../../../actions/ActivityAction';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFListSelector from './AFListSelector';
@@ -21,6 +21,11 @@ import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
 import AFCheckbox from './AFCheckbox';
 import FeatureManager from '../../../../modules/util/FeatureManager';
+import AFMultiSelect from './AFMultiSelect';
+import translate from '../../../../utils/translate';
+import AFRadioBoolean from './AFRadioBoolean';
+import AFDateYear from './AFDateYear';
+import CurrencyRatesManager from '../../../../modules/util/CurrencyRatesManager';
 
 const logger = new Logger('AF field');
 
@@ -33,23 +38,26 @@ const logger = new Logger('AF field');
 class AFField extends Component {
   static contextTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired,
-    isSaveAndSubmit: PropTypes.bool.isRequired
+    validationResult: PropTypes.array,
   };
 
   static propTypes = {
     fieldPath: PropTypes.string.isRequired,
     parent: PropTypes.object.isRequired,
     id: PropTypes.string,
+    // children content used for the CUSTOM field type
+    children: PropTypes.any,
     filter: PropTypes.array,
+    customLabel: PropTypes.string,
     showLabel: PropTypes.bool,
     showRequired: PropTypes.bool,
+    showValidationError: PropTypes.bool,
     inline: PropTypes.bool,
     // the component can detect the type automatically or it can be explicitly configured
     type: PropTypes.string,
-    max: PropTypes.number,
-    min: PropTypes.number,
     className: PropTypes.string,
     onAfterUpdate: PropTypes.func,
     validationResult: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
@@ -57,13 +65,15 @@ class AFField extends Component {
     extraParams: PropTypes.object,
     defaultValueAsEmptyObject: PropTypes.bool,
     forceRequired: PropTypes.bool,
-    fmPath: PropTypes.string
+    fmPath: PropTypes.string,
+    onBeforeDelete: PropTypes.func,
+    calendar: PropTypes.object.isRequired
   };
 
   static defaultProps = {
     showLabel: true,
-    showRequired: true,
-    inline: false
+    inline: false,
+    showValidationError: true,
   };
 
   constructor(props) {
@@ -93,15 +103,14 @@ class AFField extends Component {
     this._processValidation(this.props.parent.errors);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
     if (!this.fieldExists) {
       return;
     }
-    if (this.context.isSaveAndSubmit) {
-      this.onChange(this.state.value, false);
-    } else if (nextProps.validationResult) {
+    if (nextProps.validationResult || nextContext.validationResult) {
       this._processValidation(this.props.parent.errors);
-    } else if (nextProps.parent[this.fieldName] !== this.state.value ||
+    }
+    if (nextProps.parent[this.fieldName] !== this.state.value ||
       nextProps.forceRequired !== this.props.forceRequired) {
       this.onChange(nextProps.parent[this.fieldName], false);
     }
@@ -119,22 +128,26 @@ class AFField extends Component {
       this.props.parent, asDraft, this.fieldDef, this.props.fieldPath);
     // TODO check if its still needed to have innerComponentValidationError, additionally to API rules
     this.context.activityValidator.processValidationResult(
-      this.props.parent, errors, this.props.fieldPath, innerComponentValidationError);
+      this.props.parent, this.props.fieldPath, innerComponentValidationError);
     this.setState({ value });
     this._processValidation(errors);
   }
 
   getLabel() {
-    const required = (this.requiredND || this.alwaysRequired || this.props.forceRequired)
-      && this.props.showRequired === true;
+    const { showRequired, parent, forceRequired, extraParams } = this.props;
+    const { activityValidator } = this.context;
+    const toShowRequired = showRequired === undefined ?
+      activityValidator.isRequiredDependencyMet(parent, this.fieldDef) : showRequired;
+    const required = toShowRequired && (this.requiredND || this.alwaysRequired || forceRequired);
     if (this.props.showLabel === false) {
       if (required) {
         return <span className={styles.required} />;
       }
       return null;
     }
-    const label = this.context.activityFieldsManager.getFieldLabelTranslation(this.props.fieldPath);
-    return <AFLabel value={label} required={required} className={styles.label_highlight} />;
+    const { customLabel, fieldPath } = this.props;
+    const label = translate(customLabel) || this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath);
+    return <AFLabel value={label} required={required} className={styles.label_highlight} extraParams={extraParams} />;
   }
 
   getComponentTypeByFieldType() {
@@ -158,6 +171,8 @@ class AFField extends Component {
         return Types.NUMBER;
       case 'date':
         return Types.DATE;
+      case 'boolean':
+        return Types.CHECKBOX;
       default:
         return null;
     }
@@ -180,25 +195,36 @@ class AFField extends Component {
       case Types.LABEL:
         return this._getValueAsLabel();
       case Types.CHECKBOX:
-        return this._getBoolean();
+        return this._getCheckbox();
+      case Types.RADIO_BOOLEAN:
+        return this._getRadioBoolean();
       case Types.INPUT_TYPE:
         return this._getInput();
+      case Types.MULTI_SELECT:
+        return this._getMultiSelect();
+      case Types.DATE_YEAR:
+        return this._getDateYear();
+      case Types.CUSTOM: {
+        return this._getCustom();
+      }
       default:
         return 'Not Implemented';
     }
   }
 
   _getDropDown() {
-    const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath));
     const selectedId = this.state.value ? this.state.value.id : null;
+    const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath, selectedId));
     return (<AFDropDown
       options={afOptions} onChange={this.onChange} selectedId={selectedId}
-      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject} />);
+      className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject}
+      extraParams={this.props.extraParams} />);
   }
 
   _getListSelector() {
     if (!this.fieldDef.children.find(item => item.id_only === true)) {
       // TODO: Lists without id_only field will be addressed on AMPOFFLINE-674.
+      logger.warn('Not supported (not id_only list.');
       return null;
     }
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
@@ -212,22 +238,36 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams} />);
+      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams}
+      onBeforeDelete={this.props.onBeforeDelete} />);
   }
 
-  _getOptions(fieldPath) {
+  _getOptions(fieldPath, selectedId) {
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
     if (options === null) {
       // TODO throw error but continue to render (?)
       logger.error(`Options not found for ${this.props.fieldPath}`);
       return [];
     }
-    return PossibleValuesManager.setVisibility(options, fieldPath, this.props.filter);
+    const isORFilter = (this.props.extraParams && this.props.extraParams.isORFilter) || false;
+    return PossibleValuesManager.setVisibility(
+      options, fieldPath, this.context.currencyRatesManager, this.props.filter, isORFilter, selectedId);
   }
 
   _toAFOptions(options) {
-    return PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
-      (option.visible ? new AFOption(option) : null)).filter(afOption => afOption !== null);
+    const { afOptionFormatter, sortByDisplayValue } = this.props.extraParams || {};
+    const afOptions = PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
+      (option.visible ? this._toAFOption(option, afOptionFormatter) : null)).filter(afOption => afOption !== null);
+    if (sortByDisplayValue) {
+      AFOption.sortByDisplayValue(afOptions);
+    }
+    return afOptions;
+  }
+
+  _toAFOption(option, afOptionFormatter) {
+    const afOption = new AFOption(option);
+    afOption.valueFormatter = afOptionFormatter;
+    return afOption;
   }
 
   _getRichTextEditor() {
@@ -247,16 +287,51 @@ class AFField extends Component {
 
   _getNumber() {
     return (<AFNumber
-      value={this.state.value} onChange={this.onChange} max={this.props.max}
-      min={this.props.min} className={this.props.className} />);
+      value={this.state.value} onChange={this.onChange}
+      extraParams={this.props.extraParams}
+      className={this.props.className} />);
   }
 
   _getDate() {
-    return (<AFDate value={this.state.value} onChange={this.onChange} />);
+    return (<AFDate value={this.state.value} onChange={this.onChange} extraParams={this.props.extraParams} />);
   }
 
-  _getBoolean() {
+  _getDateYear() {
+    const extraParams = this.props.extraParams || {};
+    const options = Array(extraParams.range).fill().map((_, i) => i + extraParams.startYear);
+    return (<AFDateYear
+      value={this.state.value} onChange={this.onChange} extraParams={extraParams} options={options}
+      calendar={this.props.calendar} />);
+  }
+
+  _getCheckbox() {
     return (<AFCheckbox value={this.state.value} onChange={this.onChange} />);
+  }
+
+  _getRadioBoolean() {
+    return <AFRadioBoolean value={this.state.value} onChange={this.onChange} />;
+  }
+
+  _getMultiSelect() {
+    const selectFieldDef = this.fieldDef.children.length === 1 ?
+      this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
+    if (!selectFieldDef) {
+      logger.error('Could not automatically detect multi-select field.');
+      return null;
+    }
+    const optionsPath = `${this.props.fieldPath}~${selectFieldDef.field_name}`;
+    const afOptions = this._toAFOptions(this._getOptions(optionsPath));
+    return (<AFMultiSelect
+      options={afOptions} values={this.state.value} listPath={this.props.fieldPath}
+      selectField={selectFieldDef.field_name} onChange={this.onChange} />);
+  }
+
+  _getCustom() {
+    const { children } = this.props;
+    const isArray = Array.isArray(children);
+    let cs = (isArray ? children : [children]).filter(child => child);
+    cs = React.Children.map(cs, child => React.cloneElement(child, { onChange: this.onChange }));
+    return cs;
   }
 
   _getValueAsLabel() {
@@ -264,7 +339,11 @@ class AFField extends Component {
     if (this.state.value) {
       val = this.state.value.displayFullValue || this.state.value.value || this.state.value;
     }
-    return <AFLabel value={val} />;
+    return <AFLabel value={val} extraParams={this.props.extraParams} />;
+  }
+
+  _isFullyInitialized() {
+    return !!this.context.activityFieldsManager;
   }
 
   _getValidationState() {
@@ -282,10 +361,10 @@ class AFField extends Component {
   }
 
   render() {
-    if (this.fieldExists === false) {
+    if (this.fieldExists === false || !this._isFullyInitialized()) {
       return null;
     }
-    const showValidationError = !(this.componentType === Types.LIST_SELECTOR ||
+    const showValidationError = this.props.showValidationError && !(this.componentType === Types.LIST_SELECTOR ||
       (this.componentType === Types.LABEL && !this.props.showLabel));
     return (
       <FormGroup
@@ -305,7 +384,8 @@ class AFField extends Component {
 export default connect(
   state => ({
     validationResult: state.activityReducer.validationResult,
-    lang: state.translationReducer.lang
+    lang: state.translationReducer.lang,
+    calendar: state.startUpReducer.calendar
   }),
   dispatch => ({
     onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))

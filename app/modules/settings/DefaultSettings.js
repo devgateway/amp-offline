@@ -26,7 +26,32 @@ const DEFAULT_SETTINGS = [
     visible: false,
     type: CS.SETTING_TYPE_BOOLEAN,
     value: false
-  }
+  },
+  {
+    id: CS.AMP_SERVER_ID,
+    name: CS.AMP_SERVER_ID,
+    visible: false,
+    type: CS.SETTING_TYPE_STRING,
+  },
+  {
+    id: CS.AMP_SETTINGS_FROM_AMP_REGISTRY,
+    name: CS.AMP_SETTINGS_FROM_AMP_REGISTRY,
+    visible: false,
+    type: CS.SETTING_TYPE_OBJECT,
+  },
+  {
+    id: CS.LAST_AMP_SETTINGS_STATUS,
+    name: CS.LAST_AMP_SETTINGS_STATUS,
+    visible: false,
+    type: CS.SETTING_TYPE_STRING,
+  },
+  {
+    id: CS.STARTUP_AUDIT_LOGS,
+    name: CS.STARTUP_AUDIT_LOGS,
+    visible: false,
+    type: CS.SETTING_TYPE_OBJECT,
+    value: {},
+  },
 ];
 
 export default DEFAULT_SETTINGS;

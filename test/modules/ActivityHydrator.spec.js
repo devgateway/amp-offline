@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
 import ActivityHydrator from '../../app/modules/helpers/ActivityHydrator';
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../app/utils/constants/ActivityConstants';
-import { DONOR_ORGANIZATIONS_PATH } from '../../app/utils/constants/FieldPathConstants';
+import { DONOR_ORGANIZATIONS_PATH, FIELD_OPTIONS, FIELD_PATH } from '../../app/utils/constants/FieldPathConstants';
 
 const chai = require('chai');
 // const chaiAsPromised = require('chai-as-promised');
@@ -41,20 +41,20 @@ org2[HIERARCHICAL_VALUE_DEPTH] = 0;
 const possibleValuesCollection = [
   {
     id: DONOR_ORGANIZATIONS_PATH,
-    'field-path': ['donor_organization', 'organization'],
-    'possible-options': { 1: org1, 2: org2 }
+    [FIELD_PATH]: ['donor_organization', 'organization'],
+    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
   },
   {
     id: 'final_list',
-    'field-path': ['final_list'],
-    'possible-options': { 1: org1, 2: org2 }
+    [FIELD_PATH]: ['final_list'],
+    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
   }
 ];
 const invalidPossibleValues = [
   {
     id: 'invalid_field',
-    'field-path': ['invalid_field'],
-    'possible-options': { 1: org1, 2: org2 }
+    [FIELD_PATH]: ['invalid_field'],
+    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
   }
 ];
 
@@ -74,10 +74,10 @@ const hydratedActivity = {
 const hydrator = new ActivityHydrator(fieldsDef);
 
 describe('@@ ActivityHydrator @@', () => {
-  describe('_hydrateActivitiesWithFullObjects',
+  describe('_hydrateEntitiesWithFullObjects',
     () => {
       // I had to take this line out from 'it' since for some reason this method was executed multiple times under 'it'
-      const newActivities = hydrator._hydrateActivitiesWithFullObjects(activities, possibleValuesCollection);
+      const newActivities = hydrator._hydrateEntitiesWithFullObjects(activities, possibleValuesCollection);
       describe('multiple fields', () =>
         it('should hydrate the activity with all possible values', () => {
           expect(newActivities).to.have.length(2);
@@ -93,15 +93,15 @@ describe('@@ ActivityHydrator @@', () => {
     }
   );
 
-  describe('_hydrateActivitiesWithFullObjects', () =>
+  describe('_hydrateEntitiesWithFullObjects', () =>
     it('should not fail if invalid field options are provided', () =>
-      expect(hydrator._hydrateActivitiesWithFullObjects(activities, invalidPossibleValues)).to.have.length(2)
+      expect(hydrator._hydrateEntitiesWithFullObjects(activities, invalidPossibleValues)).to.have.length(2)
     )
   );
 
-  describe('_hydrateActivitiesWithFullObjects',
+  describe('_hydrateEntitiesWithFullObjects',
     () => {
-      const dehydratedActivity = hydrator._hydrateActivitiesWithFullObjects([hydratedActivity],
+      const dehydratedActivity = hydrator._hydrateEntitiesWithFullObjects([hydratedActivity],
         possibleValuesCollection, false)[0];
       describe('dehyrating activity', () =>
         it('should dehydrate the activity', () => {

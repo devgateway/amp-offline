@@ -8,6 +8,10 @@ import AFPrograms from './AFPrograms';
 import AFSectors from './AFSectors';
 import AFOrganizations from './AFOrganizations';
 import AFFunding from './AFFunding';
+import AFIssues from './AFIssues';
+import { AFContactsPage } from '../../../../containers/ContactPage';
+import AFStructures from './AFStructures';
+import { AFDocumentPage } from '../../../../containers/ResourcePage';
 
 /**
  * Loads AF section
@@ -22,18 +26,28 @@ const loadSection = (sectionName) => {
       return <AFActivityInternalIds />;
     case SC.PLANNING:
       return <Planning />;
-    case SC.LOCATION:
-      return <AFLocation />;
-    case SC.PROGRAM:
-      return <AFPrograms />;
     case SC.SECTORS:
       return <AFSectors />;
+    case SC.PROGRAM:
+      return <AFPrograms />;
     case SC.ORGANIZATIONS:
       return <AFOrganizations />;
     case SC.FUNDING:
       return <AFFunding />;
-    /* case SC.COMPONENTS:
-      return <AFComponents />; */
+    case SC.LOCATION:
+      return <AFLocation />;
+    case SC.STRUCTURES:
+      return <AFStructures />;
+    case SC.ISSUES_SECTION:
+      return <AFIssues />;
+    case SC.CONTACTS:
+      return <AFContactsPage />;
+    case SC.RELATED_DOCUMENTS:
+      return <AFDocumentPage />;
+    /*
+    case SC.COMPONENTS:
+      return <AFComponents />;
+    */
     default:
       return 'Not Implemented';
   }

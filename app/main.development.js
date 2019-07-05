@@ -4,6 +4,8 @@ import ElectronUpdater from './modules/update/ElectronUpdater';
 const PDFWindow = require('electron-pdf-window');
 
 let mainWindow = null;
+const isMacOS = process.platform === 'darwin';
+let willQuitApp = !isMacOS;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -56,6 +58,13 @@ app.on('ready', async () => {
     mainWindow.focus();
   });
 
+  mainWindow.on('close', (event) => {
+    if (!willQuitApp) {
+      mainWindow.hide();
+      event.preventDefault();
+    }
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
     // Close help window if needed.
@@ -63,6 +72,67 @@ app.on('ready', async () => {
       global.HELP_PDF_WINDOW.close();
     }
   });
+
+  // we need to explicitly set application menu in MacOS to enable there Copy & Paste shortcuts
+  // there are libs that can configure entire menu, but since we want to rather stick to AmpOffline menu, limiting to:
+  if (process.platform === 'darwin') {
+    Menu.setApplicationMenu(Menu.buildFromTemplate([
+      {
+        label: 'Edit',
+        submenu: [
+          { role: 'undo' },
+          { role: 'redo' },
+          { type: 'separator' },
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+          { role: 'pasteandmatchstyle' },
+          { role: 'delete' },
+          { role: 'selectall' }
+        ]
+      },
+      {
+        label: 'Window',
+        submenu: [
+          {
+            label: 'Open',
+            accelerator: 'Cmd+0',
+            selector: 'unhideAllApplications:',
+            // eslint-disable-next-line
+            click: function() {
+              mainWindow.show();
+            }
+          },
+          {
+            label: 'Hide',
+            accelerator: 'Cmd+H',
+            selector: 'hide:'
+          },
+          {
+            label: 'Minimize',
+            accelerator: 'Cmd+M',
+            selector: 'performMiniaturize:'
+          },
+          {
+            label: 'Close',
+            accelerator: 'Cmd+W',
+            // eslint-disable-next-line
+            click: function() {
+              mainWindow.hide();
+            }
+          },
+          {
+            label: 'Quit',
+            accelerator: 'Cmd+Q',
+            // eslint-disable-next-line
+            click: function() {
+              app.quit();
+            }
+          }
+        ]
+      }
+    ]));
+  }
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools();
@@ -81,6 +151,16 @@ app.on('ready', async () => {
   ElectronUpdater.getElectronUpdater();
 
   mainWindow.setMenu(null);
+});
+
+app.on('activate', () => {
+  if (mainWindow) {
+    mainWindow.show();
+  }
+});
+
+app.on('before-quit', () => {
+  willQuitApp = true;
 });
 
 // Listen to message from renderer process.

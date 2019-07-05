@@ -6,7 +6,7 @@ import * as AF from '../../components/AFComponentTypes';
 import Logger from '../../../../../modules/util/LoggerManager';
 import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
 import afStyles from '../../ActivityForm.css';
 
@@ -18,7 +18,7 @@ const logger = new Logger('AF project cost');
 export default class AFProjectCost extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   static propTypes = {
@@ -41,7 +41,8 @@ export default class AFProjectCost extends Component {
         <Row>
           <Col md={5} lg={5} >
             <AFField
-              parent={this.props.activity} fieldPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} type={AF.NUMBER} min={0} />
+              parent={this.props.activity} fieldPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} type={AF.NUMBER}
+              extraParams={{ bigger: 0 }} />
           </Col>
           <Col md={5} lg={5} >
             <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_COOPERATION} />

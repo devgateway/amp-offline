@@ -1,9 +1,10 @@
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../utils/constants/ActivityConstants';
-import { LOCATION_PATH } from '../../utils/constants/FieldPathConstants';
-import Logger from '../../modules/util/LoggerManager';
-import ActivityFieldsManager from './ActivityFieldsManager';
+import * as FPC from '../../utils/constants/FieldPathConstants';
+import Logger from '../util/LoggerManager';
+import FieldsManager from './FieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+import CurrencyRatesManager from '../util/CurrencyRatesManager';
 
 const logger = new Logger('Possible values manager');
 
@@ -86,6 +87,10 @@ export default class PossibleValuesManager {
     return Object.values(options).find(o => o.id === id);
   }
 
+  static findOptionByValue(options, value) {
+    return Object.values(options).find(o => o.value === value);
+  }
+
   static getOptionTranslation(option) {
     let resVal = option.value;
     const translations = option['translated-value'];
@@ -96,23 +101,33 @@ export default class PossibleValuesManager {
     return resVal;
   }
 
-  static setVisibility(options, fieldPath, filters) {
+  static setVisibility(options, fieldPath, currencyRatesManager: CurrencyRatesManager, filters, isORFilter = false,
+    selectedId) {
+    const isLocations = FPC.LOCATION_PATH === fieldPath;
+    const isCurrency = FPC.PATHS_FOR_CURRENCY.has(fieldPath);
     options = { ...options };
     Object.values(options).forEach(option => {
-      option.visible = true;
-      if (LOCATION_PATH === fieldPath) {
+      option.visible = !isORFilter;
+      if (isLocations) {
         option.displayHierarchicalValue = true;
+      } else if (isCurrency) {
+        option[FPC.FIELD_OPTION_USABLE] = PossibleValuesManager.isCurrencyOptionUsable(option, currencyRatesManager);
+        if (!option[FPC.FIELD_OPTION_USABLE]) {
+          option.visible = option.id === selectedId;
+        }
       }
     });
     if (filters) {
       filters.forEach(filter => {
         const filterBy = filter.value;
         Object.values(options).forEach(option => {
-          const optionDataToCheck = ActivityFieldsManager.getValue(option, filter.path);
-          if (option.visible && optionDataToCheck && (
+          const optionDataToCheck = FieldsManager.getValue(option, filter.path);
+          if ((isORFilter || option.visible) && optionDataToCheck && (
             (optionDataToCheck instanceof Array && optionDataToCheck.includes(filterBy)) ||
             (optionDataToCheck === filterBy))) {
             option.visible = true;
+          } else if (isORFilter) {
+            // Do nothing, keep it visible/invisible.
           } else {
             option.visible = false;
           }
@@ -120,6 +135,12 @@ export default class PossibleValuesManager {
       });
     }
     return options;
+  }
+
+  static isCurrencyOptionUsable(option, currencyRatesManager: CurrencyRatesManager) {
+    const hasExchangeRates = currencyRatesManager.currenciesWithExchangeRates.has(option.value);
+    const isActive = option.extra_info && option.extra_info.active;
+    return isActive && hasExchangeRates;
   }
 
   static getTreeSortedOptionsList(optionsObj) {
