@@ -32,8 +32,8 @@ export default class Login extends Component {
     logger.debug('constructor');
 
     this.state = Utils.isReleaseBranch() ? {} : {
-      email: 'testuser@amp.org',
-      password: 'password'
+      email: process.env.AMP_TEST_USER,
+      password: process.env.AMP_TEST_PASSWORD
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
