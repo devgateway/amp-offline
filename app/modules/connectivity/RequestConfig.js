@@ -44,6 +44,7 @@ const RequestConfig = {
       headers,
       method,
       simple: false,
+      strictSSL: true,
       resolveWithFullResponse: true,
       gzip: true,
       forever: true,
