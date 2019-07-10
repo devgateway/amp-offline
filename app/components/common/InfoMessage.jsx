@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Alert, Fade } from 'react-bootstrap';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -10,7 +11,7 @@ const logger = new Logger('Info message');
  */
 export default class InfoMessage extends Component {
   static propTypes = {
-    message: PropTypes.object.isRequired,
+    message: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
     type: PropTypes.oneOf(['success', 'info']),
     timeout: PropTypes.number
   };
@@ -22,7 +23,7 @@ export default class InfoMessage extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       show: true
     };
@@ -30,7 +31,6 @@ export default class InfoMessage extends Component {
 
   componentWillMount() {
     const { timeout } = this.props;
-    // TODO in alerts & notifications ticket more behavior, styles, etc
     if (timeout !== 0) {
       setTimeout(() => {
         if (this.unmounted !== true) {

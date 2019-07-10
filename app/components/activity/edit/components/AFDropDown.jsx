@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
 import AFOption from './AFOption';
 import translate from '../../../../utils/translate';
@@ -81,9 +82,11 @@ export default class AFDropDown extends Component {
       return <option key={option.id} value={option.id} disabled={isDisabled}>{displayValue}</option>;
     });
 
+    const value = this.state.value || '';
+
     return (
       <FormControl
-        componentClass="select" value={this.state.value} onChange={this.handleChange.bind(this)}
+        componentClass="select" value={value} onChange={this.handleChange.bind(this)}
         placeholder={-1}>
         {extraParams.noChooseOneOption ? options : [defaultOption].concat(options)}
       </FormControl>

@@ -4,10 +4,11 @@ import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
-import { ACTIVITY_CONTACT_PATHS, FIELD_OPTIONS, FIELD_PATH } from '../../utils/constants/FieldPathConstants';
 import { CONTACT } from '../../utils/constants/ActivityConstants';
 import ContactHelper from './ContactHelper';
 import translate from '../../utils/translate';
+import * as FPC from '../../utils/constants/FieldPathConstants';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Possible values helper');
 
@@ -16,13 +17,11 @@ const optionSchema = {
   $schema: 'http://json-schema.org/draft-04/schema#',
   type: 'object',
   patternProperties: {
-    // since we need an artificial "resource_type" options, then we may not be able to limit to numbers (AMP-25785)
-    '^(0|[1-9]+[0-9]*)|[A-Za-z]{2,4}$': {
+    '^(0|[1-9]+[0-9]*)$': {
       type: 'object',
       properties: {
-        // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
         id: {
-          anyOf: [{ type: 'integer' }, { type: 'string' }]
+          type: 'integer'
         },
         value: {
           anyOf: [{ type: 'string' }]
@@ -47,13 +46,13 @@ const possibleValuesSchema = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    [FIELD_PATH]: {
+    [FPC.FIELD_PATH]: {
       type: 'array',
       items: { type: 'string' }
     },
-    [FIELD_OPTIONS]: { $ref: '/OptionSchema' }
+    [FPC.FIELD_OPTIONS]: { $ref: '/OptionSchema' }
   },
-  required: ['id', FIELD_PATH, FIELD_OPTIONS]
+  required: ['id', FPC.FIELD_PATH, FPC.FIELD_OPTIONS]
 };
 
 const validator = new Validator();
@@ -98,6 +97,9 @@ const PossibleValuesHelper = {
       } else {
         idsFilter = { $regex: new RegExp(`^${root}~.*`) };
       }
+    } else if (!idsFilter) {
+      const excludePrefixes = FPC.PREFIX_LIST.filter(p => p).map(p => `${p}~.*`).join('|');
+      idsFilter = { $regex: new RegExp(`^(?!${excludePrefixes})`) };
     }
     if (idsFilter) {
       if (filter.id) {
@@ -113,11 +115,27 @@ const PossibleValuesHelper = {
       if (root && root.length) {
         pvs.forEach(pv => {
           pv.id = pv.id.substring(root.length + 1);
-          pv[FIELD_PATH] = pv[FIELD_PATH].slice(1);
+          pv[FPC.FIELD_PATH] = pv[FPC.FIELD_PATH].slice(1);
         });
       }
       return pvs;
     });
+  },
+
+  findPossibleValuesPathsFor(prefix: String) {
+    return this.findAllByIdsWithoutPrefixAndCleanupPrefix(prefix).then(r => Utils.flattenToListByKey(r, 'id'));
+  },
+
+  findActivityPossibleValuesPaths() {
+    const prefixToExclude = FPC.PREFIX_LIST.filter(p => p !== FPC.PREFIX_ACTIVITY).map(p => `${p}~.*`).join('|');
+    const regex = new RegExp(`^(?!(?:${prefixToExclude})).*$`);
+    const filter = { id: { $regex: regex } };
+    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, { id: 1 })
+      .then(r => Utils.flattenToListByKey(r, 'id'));
+  },
+
+  findAllByExactIds(ids) {
+    return DatabaseManager.findAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
   },
 
   findAll(filter, projections) {
@@ -134,7 +152,7 @@ const PossibleValuesHelper = {
     if (contactOptionsPVC && contactOptionsPVC.length) {
       return ContactHelper.findAllContactsAsPossibleOptions().then(contactOptions => {
         // extend / update contact options with local new/update contact info
-        contactOptionsPVC.forEach(pv => (pv[FIELD_OPTIONS] = { ...pv[FIELD_OPTIONS], ...contactOptions }));
+        contactOptionsPVC.forEach(pv => (pv[FPC.FIELD_OPTIONS] = { ...pv[FPC.FIELD_OPTIONS], ...contactOptions }));
         return pvc;
       });
     }
@@ -209,8 +227,18 @@ const PossibleValuesHelper = {
    * @return {Promise}
    */
   deleteById(id) {
-    logger.log('replaceAll');
+    logger.log('deleteById');
     return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
+  },
+
+  /**
+   * Deletes possible values for matched fields paths
+   * @param ids the fields paths with possible values to delete
+   * @return {*}
+   */
+  deleteByIds(ids) {
+    logger.log('deleteByIds');
+    return DatabaseManager.removeAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
   },
 
   /**
@@ -224,8 +252,8 @@ const PossibleValuesHelper = {
     const possibleOptions = this._transformOptions(possibleOptionsFromAMP);
     const possibleValuesForLocalUsage = {
       id: fieldPath,
-      [FIELD_PATH]: fieldPathParts,
-      [FIELD_OPTIONS]: possibleOptions
+      [FPC.FIELD_PATH]: fieldPathParts,
+      [FPC.FIELD_OPTIONS]: possibleOptions
     };
     return possibleValuesForLocalUsage;
   },
@@ -273,8 +301,8 @@ const PossibleValuesHelper = {
   },
 
   isActivityContactPV(pv) {
-    return pv[FIELD_PATH].length === 2
-      && ACTIVITY_CONTACT_PATHS.includes(pv[FIELD_PATH][0]) && pv[FIELD_PATH][1] === CONTACT;
+    return pv[FPC.FIELD_PATH].length === 2
+      && FPC.ACTIVITY_CONTACT_PATHS.includes(pv[FPC.FIELD_PATH][0]) && pv[FPC.FIELD_PATH][1] === CONTACT;
   }
 };
 

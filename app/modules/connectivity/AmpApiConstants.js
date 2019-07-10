@@ -16,12 +16,14 @@ export const SYNC_URL = '/sync';
 export const TEST_URL = '/test/testjsonauth';
 export const ACTIVITY_IMPORT_URL = '/activity';
 export const ACTIVITY_EXPORT_URL = '/activity/project';
+export const ACTIVITY_EXPORT_BATCHES_URL = '/activity/projects';
 export const GAZETTEER_URL = '/gis/locators';
 // TODO remove as part of AMPOFFLINE-270
 export const ACTIVITY_SINGLE_FIELDS_TREE_URL = '/activity/fields-no-workspace';
 export const ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL = '/activity/ws-member-fields';
 export const ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS = '/activity/field/values';
 export const CONTACT_PULL_URL = '/contact';
+export const CONTACT_BATCHES_PULL_URL = '/contact/batch';
 export const CONTACT_PUSH_URL = '/contact';
 export const CONTACT_SINGLE_FIELDS_TREE_URL = '/contact/fields';
 export const CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL = '/contact/ws-member-fields';

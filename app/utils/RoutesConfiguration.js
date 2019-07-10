@@ -1,5 +1,6 @@
 import {
   ACTIVITY_EXPORT_URL,
+  ACTIVITY_EXPORT_BATCHES_URL,
   ACTIVITY_IMPORT_URL,
   ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
   ACTIVITY_SINGLE_FIELDS_TREE_URL,
@@ -10,6 +11,7 @@ import {
   CALENDAR_PULL_URL,
   CHANGE_PASSWORD_URL,
   CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  CONTACT_BATCHES_PULL_URL,
   CONTACT_PULL_URL,
   CONTACT_PUSH_URL,
   CONTACT_SINGLE_FIELDS_TREE_URL,
@@ -96,6 +98,10 @@ const routesConfiguration = [{
   method: 'GET',
   requiresAuth: true
 }, {
+  url: ACTIVITY_EXPORT_BATCHES_URL,
+  method: 'POST',
+  requiresAuth: true
+}, {
   url: ACTIVITY_SINGLE_FIELDS_TREE_URL,
   method: 'GET',
   requiresAuth: true
@@ -147,6 +153,10 @@ const routesConfiguration = [{
   method: 'GET',
   requiredAuth: false,
   translations: false,
+}, {
+  url: CONTACT_BATCHES_PULL_URL,
+  method: 'POST',
+  requiredAuth: true
 }, {
   url: CONTACT_PULL_URL,
   method: 'GET',

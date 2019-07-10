@@ -12,6 +12,8 @@ import { CONTENT_ID, CONTENT_TYPE, FILE_NAME, UUID } from '../../../utils/consta
 import RepositoryHelper from '../../helpers/RepositoryHelper';
 import RepositoryManager from '../../repository/RepositoryManager';
 import MultipartFormBuilder from '../../connectivity/MultipartFormBuilder';
+import Notification from '../../helpers/NotificationHelper';
+import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('ResourcesPushSyncUpManager');
 
@@ -26,7 +28,7 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
     super(SYNCUP_TYPE_RESOURCES_PUSH);
     this._cancel = false;
     this.diff = [];
-    this.pushed = new Set();
+    this._processed = new Set();
   }
 
   cancel() {
@@ -34,7 +36,7 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   getDiffLeftover() {
-    this.diff = this.diff.filter(id => !this.pushed.has(id));
+    this.diff = this.diff.filter(id => !this._processed.has(id));
     return this.diff;
   }
 
@@ -119,8 +121,9 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _processResult({ resource, pushResult, error }) {
-    if (pushResult) {
-      this.pushed.add(resource.id);
+    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    if (pushResult || !isConnectivityError) {
+      this._processed.add(resource.id);
     }
     const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
     if (errorData) {

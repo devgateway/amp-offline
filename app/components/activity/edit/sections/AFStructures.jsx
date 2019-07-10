@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Col, Grid, Panel, Row, Button } from 'react-bootstrap';
+import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import isNumber from 'is-number';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
@@ -13,6 +13,8 @@ import translate from '../../../../utils/translate';
 import AFViewStructure from './structures/AFViewStructure';
 import AFMapWindow from './structures/AFMapWindow';
 import MapTilesUtils from '../../../../utils/MapTilesUtils';
+import FeatureManager from '../../../../modules/util/FeatureManager';
+import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 
 const logger = new Logger('AF Structures');
 
@@ -31,20 +33,15 @@ class AFStructures extends Component {
     activity: PropTypes.object.isRequired
   };
 
+  static hasCoordinates(structure) {
+    return structure[AC.STRUCTURES_COORDINATES] && structure[AC.STRUCTURES_COORDINATES].length;
+  }
+
   static detectShapePoint(structure) {
-    let isPoint = false;
-    if (!structure[AC.STRUCTURES_SHAPE]) {
-      if (!structure[AC.STRUCTURES_LATITUDE] || !structure[AC.STRUCTURES_LONGITUDE]) {
-        isPoint = false;
-      } else {
-        isPoint = true;
-      }
-    } else if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
-      isPoint = true;
-    } else {
-      isPoint = false;
+    if (!structure[AC.STRUCTURES_SHAPE] && !AFStructures.hasCoordinates(structure)) {
+      return true;
     }
-    return isPoint;
+    return structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT;
   }
 
   static generateDataRow(structure) {
@@ -74,7 +71,7 @@ class AFStructures extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.handleDelete = this.handleDelete.bind(this);
     this.openMap = this.openMap.bind(this);
     this.handleViewCoordinates = this.handleViewCoordinates.bind(this);
@@ -94,9 +91,7 @@ class AFStructures extends Component {
   preProcessForIds() {
     if (this.state.structures) {
       this.state.structures.forEach(s => {
-        if (!s.id) {
-          s.id = Math.random();
-        }
+        s[AC.TEMPORAL_ID] = s.id || s[AC.TEMPORAL_ID] || Math.random();
       });
     }
   }
@@ -128,6 +123,7 @@ class AFStructures extends Component {
     if (AFStructures.detectShapePoint(structure)) {
       const point = {
         id: structure.id,
+        [AC.TEMPORAL_ID]: structure[AC.TEMPORAL_ID],
         [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
         [AC.STRUCTURES_LAT]: structure[AC.STRUCTURES_LATITUDE],
         [AC.STRUCTURES_LNG]: structure[AC.STRUCTURES_LONGITUDE],
@@ -147,8 +143,9 @@ class AFStructures extends Component {
       this.setState({
         showMapDialog: true,
         currentPolygon: {
-          [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
           id: structure.id,
+          [AC.TEMPORAL_ID]: structure[AC.TEMPORAL_ID],
+          [AC.STRUCTURES_COORDINATES]: structure[AC.STRUCTURES_COORDINATES],
           [AC.STRUCTURES_COLOR]: structure[AC.STRUCTURES_COLOR],
           [AC.STRUCTURES_TITLE]: structure[AC.STRUCTURES_TITLE],
           [AC.STRUCTURES_DESCRIPTION]: structure[AC.STRUCTURES_DESCRIPTION],
@@ -179,7 +176,7 @@ class AFStructures extends Component {
       [AC.STRUCTURES_LONGITUDE]: null,
       [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
       [AC.STRUCTURES_COORDINATES]: [],
-      id: Math.random()
+      [AC.TEMPORAL_ID]: Math.random()
     });
     this.setState({ structures: newStructures });
     this.context.activity[AC.STRUCTURES] = newStructures;
@@ -189,7 +186,7 @@ class AFStructures extends Component {
     // Add new layer or replace with changes.
     const newStructures = this.state.structures.slice();
     layersList.forEach(l => {
-      const index = newStructures.findIndex(s => (s.id === l.structureData.id));
+      const index = newStructures.findIndex(s => (s[AC.TEMPORAL_ID] === l.structureData[AC.TEMPORAL_ID]));
       if (index > -1) {
         newStructures.splice(index, 1);
       }
@@ -201,7 +198,8 @@ class AFStructures extends Component {
           [AC.STRUCTURES_LONGITUDE]: String(l.layer.getLatLng()[AC.STRUCTURES_LNG]),
           [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POINT,
           [AC.STRUCTURES_COORDINATES]: [],
-          id: l.structureData.id || Math.random()
+          id: l.structureData.id,
+          [AC.TEMPORAL_ID]: l.structureData[AC.TEMPORAL_ID] || Math.random()
         });
       } else {
         const coordinates = l.layer._latlngs[1] !== undefined
@@ -218,7 +216,8 @@ class AFStructures extends Component {
           [AC.STRUCTURES_DESCRIPTION]: l.structureData[AC.STRUCTURES_DESCRIPTION],
           [AC.STRUCTURES_SHAPE]: AC.STRUCTURES_POLYGON,
           [AC.STRUCTURES_COORDINATES]: [],
-          id: l.structureData.id || Math.random(),
+          id: l.structureData.id,
+          [AC.TEMPORAL_ID]: l.structureData[AC.TEMPORAL_ID] || Math.random(),
           [AC.STRUCTURES_COORDINATES]: coordinates,
           [AC.STRUCTURES_COLOR]: l.structureData[AC.STRUCTURES_COLOR]
         });
@@ -226,7 +225,7 @@ class AFStructures extends Component {
     });
     // Remove deleted layers.
     deletedLayersList.forEach(l => {
-      const index = newStructures.findIndex(s => (s.id === l.id));
+      const index = newStructures.findIndex(s => (s[AC.TEMPORAL_ID] === l[AC.TEMPORAL_ID]));
       if (index > -1) {
         newStructures.splice(index, 1);
       }
@@ -239,10 +238,10 @@ class AFStructures extends Component {
     this.preProcessForIds();
     return (<div className={afStyles.full_width}>
 
-      <Button
+      {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_STRUCTURES_ADD_STRUCTURE) ? <Button
         bsStyle="primary" className={afStyles.button}
         onClick={this.handleAddEmptyStructure}>{translate('Add Structure')}
-      </Button>
+      </Button> : null}
 
       <AFViewStructure
         show={this.state.showViewDialog}

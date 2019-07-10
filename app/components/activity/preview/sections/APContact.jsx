@@ -20,7 +20,7 @@ class APContact extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    contactFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    contactFieldsManager: PropTypes.instanceOf(FieldsManager),
     contactsByIds: PropTypes.object,
     buildSimpleField: PropTypes.func.isRequired,
   };

@@ -79,23 +79,6 @@ let ampFormatContact = {
   ]
 };
 
-let idAsStringNumnber = {
-  'fundings~funding_details~transaction_type': [
-    {
-      id: '0',
-      value: 'Commitments'
-    }
-  ]
-};
-let idAsCurrencyCode = {
-  'rpc_amount~currency_code': [
-    {
-      id: 'USD',
-      value: 'USD'
-    }
-  ]
-};
-
 let treeOptions = {
   'national_plan_objective~program': [
     {
@@ -119,17 +102,6 @@ let invalidPV = { 'invalid-field-name': 'some value' };
 let missingId = { [FIELD_OPTIONS]: [{ value: 'aa' }, { id: 2, value: 'bb' }] };
 let mixedValidInvalid = [/* ampFormatPV1, invalidPV */];
 
-const validCurrencyDBOptions = [{
-  id: 'rpc_amount~currency_code',
-  [FIELD_PATH]: ['rpc_amount', 'currency_code'],
-  [FIELD_OPTIONS]: {
-    USD: {
-      id: 'USD',
-      parentId: undefined,
-      value: 'USD'
-    }
-  }
-}];
 const validContactsOptions = [
   {
     id: 'organisation_contacts~organisation',
@@ -169,11 +141,8 @@ describe('@@ PossibleValuesHelper @@', () => {
         ampFormatPV2 = actions.transformToClientUsage(Object.entries(ampFormatPV2)[0]);
         ampFormatPVwithTranslations = actions.transformToClientUsage(Object.entries(ampFormatPVwithTranslations)[0]);
         ampFormatContact = actions.transformToClientUsage(Object.entries(ampFormatContact)[0]);
-        idAsStringNumnber = actions.transformToClientUsage((Object.entries(idAsStringNumnber)[0]));
-        idAsCurrencyCode = actions.transformToClientUsage((Object.entries(idAsCurrencyCode)[0]));
         treeOptions = actions.transformToClientUsage((Object.entries(treeOptions)[0]));
-        validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations, ampFormatContact,
-          idAsStringNumnber, idAsCurrencyCode];
+        validPossibleValuesColl = [ampFormatPV1, ampFormatPV2, ampFormatPVwithTranslations, ampFormatContact];
 
         invalidPV = actions.transformToClientUsage(Object.entries(invalidPV)[0]);
         missingId = actions.transformToClientUsage(Object.entries(missingId)[0]);
@@ -187,14 +156,6 @@ describe('@@ PossibleValuesHelper @@', () => {
     it('should save initial data', () =>
       expect(actions.saveOrUpdateCollection(validPossibleValuesColl))
         .to.eventually.have.lengthOf(validPossibleValuesColl.length)
-    )
-  );
-
-  describe('findAllByIdsWithoutPrefixAndCleanupPrefix', () =>
-    it('should find valid contact options in processed format', () =>
-      expect(actions.findAllByIdsWithoutPrefixAndCleanupPrefix(null, [], { id: 'rpc_amount~currency_code' })
-        .then(Utils.removeIdFromCollection)
-      ).to.eventually.deep.equal(validCurrencyDBOptions)
     )
   );
 

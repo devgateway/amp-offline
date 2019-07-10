@@ -7,7 +7,7 @@ import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Client settings helper');
 
-const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT' });
+const getInvalidFormatError = () => new Notification({ message: 'INVALID_FORMAT' });
 
 /**
  * A simplified helper for 'Client Settings' storage for loading, searching /
@@ -65,6 +65,15 @@ const ClientSettingsHelper = {
   },
 
   /**
+   * Get setting value or null if no setting
+   * @param name
+   * @return {Promise<T | null>}
+   */
+  getSettingValueByName(name) {
+    return this.findSettingByName(name).then(cs => cs && cs.value);
+  },
+
+  /**
    * Find a setting by a set of filters
    * @param filter filters to apply
    * @returns {Promise}
@@ -111,7 +120,7 @@ const ClientSettingsHelper = {
       setting['updated-at'] = (new Date()).toISOString();
       return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(getInvalidFormatError());
   },
 
   saveOrUpdateCollection(settings) {
@@ -122,7 +131,19 @@ const ClientSettingsHelper = {
       });
       return DatabaseManager.saveOrUpdateCollection(settings, COLLECTION_CLIENT_SETTINGS);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(getInvalidFormatError());
+  },
+
+  /**
+   * Updates an existing setting to the specified value
+   * @param name
+   * @param value
+   */
+  updateSettingValue(name, value) {
+    return this.findSettingByName(name).then(setting => {
+      setting.value = value;
+      return this.saveOrUpdateSetting(setting);
+    });
   },
 
   /**
