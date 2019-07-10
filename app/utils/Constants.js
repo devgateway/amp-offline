@@ -157,4 +157,4 @@ export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';
 export const RELEASE_BRANCH_REGEX = /release\//;
 // TODO temporary, restore before final merge
-export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX, 'feature/AMPOFFLINE-1437/external-lib'];
+export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];
