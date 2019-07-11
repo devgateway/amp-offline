@@ -1,13 +1,14 @@
 import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
+import os from 'os';
+import AmpClientSecurity from 'amp-client-security';
 import {
   DB_AUTOCOMPACT_INTERVAL_MILISECONDS,
   DB_COMMON_DATASTORE_OPTIONS,
   DB_DEFAULT_QUERY_LIMIT,
   DB_FILE_EXTENSION,
-  DB_FILE_PREFIX,
-  AKEY
+  DB_FILE_PREFIX
 } from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
@@ -16,6 +17,8 @@ import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
 import * as Utils from '../../utils/Utils';
 import translate from '../../utils/translate';
+
+let secureKey;
 
 const logger = new Logger('Database manager');
 
@@ -30,6 +33,13 @@ const logger = new Logger('Database manager');
  * ((object, callback, options)), find: ((object, callback, options))}}
  */
 const DatabaseManager = {
+  _initSecureKey() {
+    logger.debug('_initSecureKey');
+    const { username } = os.userInfo();
+    return AmpClientSecurity.getSecurityKey(`${username}@amp-client`).then(key => {
+      secureKey = key;
+    });
+  },
 
   // VERY IMPORTANT: NeDB can execute 1 operation at the same time and the rest is queued, so we always work async.
   // VERY IMPORTANT 2: Loading the same datastore more than once didnt throw an error but drastically increased the MEM
@@ -41,17 +51,19 @@ const DatabaseManager = {
 
   _getCollection(name) {
     logger.debug('_getCollection');
-    return new Promise((resolve, reject) => {
+    const useEncryption = Utils.isReleaseBranch();
+    const keyInitPromise = (useEncryption && !secureKey) ? this._initSecureKey() : Promise.resolve();
+    return keyInitPromise.then(() => new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
         filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
       });
       // Encrypt the DB only when built from a release branch
-      if (Utils.isReleaseBranch()) {
+      if (useEncryption) {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
       }
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
-    });
+    }));
   },
 
   getCollection(name, options) {
@@ -531,12 +543,12 @@ const DatabaseManager = {
 
   encryptData(dataString) {
     // logger.log('encryptData');
-    return Crypto.AES.encrypt(dataString, AKEY);
+    return Crypto.AES.encrypt(dataString, secureKey);
   },
 
   decryptData(dataString) {
     // logger.log('decryptData');
-    const bytes = Crypto.AES.decrypt(dataString, AKEY);
+    const bytes = Crypto.AES.decrypt(dataString, secureKey);
     return bytes.toString(Crypto.enc.Utf8);
   },
 
