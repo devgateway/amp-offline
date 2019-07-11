@@ -12,7 +12,6 @@ import WebpackStrip from 'strip-loader';
 import baseConfig from './webpack.config.base';
 
 const config = validate(merge(baseConfig, {
-  devtool: 'cheap-module-source-map',
 
   entry: [
     'babel-polyfill',
