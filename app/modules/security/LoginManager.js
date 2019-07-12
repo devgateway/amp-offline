@@ -23,7 +23,7 @@ const LoginManager = {
         return UserHelper.findByEmail(email).then((dbUser) => {
           if (dbUser !== null && dbUser.ampOfflinePassword && dbUser.ampOfflinePassword.toString() !== '') {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
-            return UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
+            return UserHelper.generateAMPOfflineHashFromPassword(email, password).then((hash) => {
               if (hash === dbUser.ampOfflinePassword) {
                 return resolve({ dbUser });
               } else {
@@ -94,7 +94,7 @@ const LoginManager = {
   saveLoginData(userData, email, password) {
     logger.log('saveLoginData');
     return UserHelper.findByEmail(email).then((dbData) => (
-      UserHelper.generateAMPOfflineHashFromPassword(password).then((hash) => {
+      UserHelper.generateAMPOfflineHashFromPassword(email, password).then((hash) => {
         if (!dbData) {
           dbData = { id: userData['user-id'], email };
         }
