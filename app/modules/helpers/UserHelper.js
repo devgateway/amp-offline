@@ -1,5 +1,6 @@
+import AmpClientSecurity from 'amp-client-security';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
+import { COLLECTION_USERS, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
@@ -62,9 +63,10 @@ const UserHelper = {
     return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS);
   },
 
-  generateAMPOfflineHashFromPassword(password) {
+  generateAMPOfflineHashFromPassword(username, password) {
     logger.log('generateAMPOfflineHashFromPassword');
-    return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
+    return AmpClientSecurity.getSecurityKey(username).then(key =>
+      Auth.secureHash(password, key, HASH_ITERATIONS));
   },
 
   saveOrUpdateUserCollection(usersData) {
