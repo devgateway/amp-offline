@@ -40,6 +40,7 @@ export const COLLECTION_WS_SETTINGS = 'workspace-settings';
 export const COLLECTION_CURRENCY_RATES = 'currency-rates';
 export const COLLECTION_FEATURE_MANAGER = 'feature-manager';
 export const COLLECTION_CONTACTS = 'contacts';
+export const COLLECTION_SANITY_CHECK = 'sanity-check';
 
 export const DB_FILE_PREFIX = 'database';
 export const DB_FILE_EXTENSION = '.db';

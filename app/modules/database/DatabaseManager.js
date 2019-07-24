@@ -4,6 +4,7 @@ import Crypto from 'crypto-js';
 import os from 'os';
 import AmpClientSecurity from 'amp-client-security';
 import {
+  COLLECTION_SANITY_CHECK,
   DB_AUTOCOMPACT_INTERVAL_MILISECONDS,
   DB_COMMON_DATASTORE_OPTIONS,
   DB_DEFAULT_QUERY_LIMIT,
@@ -50,7 +51,7 @@ const DatabaseManager = {
 
   _getCollection(name) {
     logger.debug('_getCollection');
-    const useEncryption = Utils.isReleaseBranch();
+    const useEncryption = Utils.isReleaseBranch() && name !== COLLECTION_SANITY_CHECK;
     const keyInitPromise = (useEncryption && !secureKey) ? this._initSecureKey() : Promise.resolve();
     return keyInitPromise.then(() => new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
