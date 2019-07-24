@@ -149,7 +149,7 @@ export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
 
 export const OTHER_ID = 999999999;
 export const NR_SYNC_HISTORY_ENTRIES = 20;
-export const NR_LOG_FILES = 100;
+export const NR_LOG_FILES = 150;
 // https://en.wikipedia.org/wiki/ISO_8601#Durations, example: "P1Y2M10DT2H30M"
 export const OLD_SYNC_LOGS_DURATION_ISO_8601 = 'P6M';
 export const NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM = NR_SYNC_HISTORY_ENTRIES;

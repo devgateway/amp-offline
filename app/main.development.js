@@ -1,9 +1,17 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
+import { IS_DEV_MODE, SHOW_SANITY_APP_DEBUG_WINDOW } from './modules/util/ElectronApp';
+import {
+  CLOSE_SANITY_APP,
+  FORCE_CLOSE_APP,
+  SHOW_SANITY_APP,
+  START_MAIN_APP
+} from './utils/constants/ElectronAppMessages';
 
 const PDFWindow = require('electron-pdf-window');
 
 let mainWindow = null;
+let sanityCheckWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -41,7 +49,16 @@ const installExtensions = async () => {
 };
 
 app.on('ready', async () => {
-  await installExtensions();
+  sanityCheckWindow = new BrowserWindow({
+    show: false,
+    width: 640,
+    height: 200,
+    center: true,
+    useContentSize: true,
+    closable: false,
+    resizable: SHOW_SANITY_APP_DEBUG_WINDOW,
+    frame: SHOW_SANITY_APP_DEBUG_WINDOW
+  });
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -49,7 +66,35 @@ app.on('ready', async () => {
     height: 728
   });
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  await installExtensions();
+
+  sanityCheckWindow.loadURL(`file://${__dirname}/app.html?sanity=true`);
+
+  sanityCheckWindow.webContents.on('did-finish-load', () => {
+    ipcMain.on(SHOW_SANITY_APP, () => {
+      sanityCheckWindow.show();
+      sanityCheckWindow.focus();
+    });
+  });
+
+  ipcMain.on(CLOSE_SANITY_APP, () => {
+    closeWindow(sanityCheckWindow);
+    sanityCheckWindow = null;
+  });
+
+  ipcMain.on(START_MAIN_APP, () => {
+    mainWindow.loadURL(`file://${__dirname}/app.html`);
+    if (IS_DEV_MODE) {
+      mainWindow.openDevTools();
+    }
+  });
+
+  // if sanity app is closed normally, we .destroy() it that won't trigger a 'close' event
+  sanityCheckWindow.on('close', () => closeApp());
+
+  ipcMain.on(FORCE_CLOSE_APP, () => {
+    closeApp();
+  });
 
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.show();
@@ -65,7 +110,11 @@ app.on('ready', async () => {
   });
 
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.openDevTools();
+    if (SHOW_SANITY_APP_DEBUG_WINDOW) {
+      sanityCheckWindow.maximize();
+      sanityCheckWindow.openDevTools();
+    }
+
     mainWindow.webContents.on('context-menu', (e, props) => {
       const { x, y } = props;
 
@@ -81,6 +130,7 @@ app.on('ready', async () => {
   ElectronUpdater.getElectronUpdater();
 
   mainWindow.setMenu(null);
+  sanityCheckWindow.setMenu(null);
 });
 
 // Listen to message from renderer process.
@@ -109,3 +159,15 @@ ipcMain.on('createPDFWindow', (event, url) => {
   global.HELP_PDF_WINDOW.loadURL(url);
   return global.HELP_PDF_WINDOW;
 });
+
+const closeApp = () => {
+  [sanityCheckWindow, mainWindow].forEach(closeWindow);
+  app.quit();
+};
+
+const closeWindow = (window) => {
+  if (window) {
+    window.hide();
+    window.destroy();
+  }
+};

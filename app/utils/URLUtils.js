@@ -1,4 +1,5 @@
 import { shell } from 'electron';
+import URI from 'urijs';
 import { history } from '../index';
 import Logger from '../modules/util/LoggerManager';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
@@ -78,6 +79,15 @@ const urlUtils = {
       options.forEach(alternative => options.push(`${otherProtocol}${alternative.substr(oldProtocolEnd)}`));
     }
     return options;
+  },
+
+  /**
+   * Parses the passed query string into an object
+   * @param url
+   * @returns {{}} {propertyName: propertyValue}
+   */
+  parseQuery(url) {
+    return URI.parseQuery(url);
   }
 
 };

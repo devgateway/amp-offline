@@ -196,7 +196,8 @@
     "stack-trace": "0.0.9",
     "stringify-object": "^3.1.0",
     "text-encoding": "^0.6.4",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "urijs": "^1.19.1"
   },
   "devEngines": {
     "node": ">=6.x",
