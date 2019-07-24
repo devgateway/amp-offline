@@ -21,6 +21,7 @@ import ConfirmationAlert from './confirmationAlert';
 
 class Notifications extends PureComponent {
   static propTypes = {
+    asModal: PropTypes.bool,
     fullscreenAlerts: PropTypes.arrayOf(PropTypes.instanceOf(Notification)).isRequired,
     fullscreenAlertsWithFollowup: PropTypes.arrayOf(PropTypes.shape({
       notification: PropTypes.instanceOf(Notification).isRequired,
@@ -32,6 +33,10 @@ class Notifications extends PureComponent {
     onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired,
     onDismissConfirmationAlert: PropTypes.func.isRequired,
     onDismissMessage: PropTypes.func.isRequired,
+  };
+
+  static defaultProps = {
+    asModal: true,
   };
 
   maybeGetFullscreenAlert() {
@@ -79,38 +84,41 @@ class Notifications extends PureComponent {
   }
 
   maybeGetConfirmationAlerts() {
-    const { confirmationAlerts, onDismissConfirmationAlert } = this.props;
+    const { confirmationAlerts, onDismissConfirmationAlert, asModal } = this.props;
 
     if (!confirmationAlerts[0]) return null;
 
     const alert: ConfirmationAlert = confirmationAlerts[0];
 
-    return (
-      <Modal show>
-        <Modal.Header>
-          <Modal.Title>
-            {alert.title}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {alert.notification.message}
-        </Modal.Body>
-        <Modal.Footer>
-          {alert.actions.map((followUp: FollowUp) => (
-            <Button
-              key={followUp.actionButtonTitle} onClick={onDismissConfirmationAlert.bind(null, alert, followUp.action)} >
-              {followUp.actionButtonTitle}
-            </Button>
-            )
-          )}
-          {alert.explicitCancel && (
-            <Button onClick={onDismissConfirmationAlert.bind(null, alert, null)} >
-              {translate('Cancel')}
-            </Button>
-          )}
-        </Modal.Footer>
-      </Modal>
-    );
+    const content = [
+      <Modal.Header key="notification-header">
+        <Modal.Title>
+          {alert.title}
+        </Modal.Title>
+      </Modal.Header>,
+      <Modal.Body key="notification-body">
+        {alert.notification.message}
+      </Modal.Body>,
+      <Modal.Footer key="notification-footer">
+        {alert.actions.map((followUp: FollowUp) => (
+          <Button
+            key={followUp.actionButtonTitle} onClick={onDismissConfirmationAlert.bind(null, alert, followUp.action)}>
+            {followUp.actionButtonTitle}
+          </Button>
+          )
+        )}
+        {alert.explicitCancel && (
+          <Button onClick={onDismissConfirmationAlert.bind(null, alert, null)}>
+            {translate('Cancel')}
+          </Button>
+        )}
+      </Modal.Footer>
+    ];
+
+    if (asModal) {
+      return <Modal show>{content}</Modal>;
+    }
+    return <div className={styles.no_modal}>{content}</div>;
   }
 
   maybeGetMessages() {
