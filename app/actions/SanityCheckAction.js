@@ -3,7 +3,7 @@ import store from '../index';
 import DatabaseSanityManager from '../modules/database/sanity/DatabaseSanityManager';
 import DatabaseSanityStatus from '../modules/database/sanity/DatabaseSanityStatus';
 import TranslationManager from '../modules/util/TranslationManager';
-import { initLanguage } from './TranslationAction';
+import { initLanguage, loadAllLanguages } from './TranslationAction';
 import Logger from '../modules/util/LoggerManager';
 import {
   CLOSE_SANITY_APP,
@@ -48,7 +48,12 @@ export const doSanityCheck = () => {
 
 const beforeSelfHealing = () => {
   logger.log('beforeSelfHealing');
-  return TranslationManager.initializeTranslations(false).then(initLanguage);
+  return TranslationManager.initializeTranslations(false)
+    .then(result => {
+      store.dispatch(loadAllLanguages());
+      store.dispatch(initLanguage());
+      return result;
+    });
 };
 
 export const doDBCleanup = (sanityStatus) => {

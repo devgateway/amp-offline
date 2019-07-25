@@ -78,7 +78,6 @@ const DatabaseSanityManager = {
         status.details.remainingCorruptedDBNames = [];
       }
     }
-    logger.log(`isSaveToDB=${isSaveToDB}, status = ${status}`);
     if (isSaveToDB) {
       return DatabaseSanityManager._saveOrUpdate(status);
     }
