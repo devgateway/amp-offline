@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import {
   dismissFullscreenAlert,
   dismissFullscreenAlertWithFollowup,
@@ -18,10 +18,13 @@ import styles from './style.css';
 import Message from './message';
 import FollowUp from './followup';
 import ConfirmationAlert from './confirmationAlert';
+import Switcher from '../i18n/Switcher';
 
 class Notifications extends PureComponent {
   static propTypes = {
     asModal: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
+    language: PropTypes.string.isRequired,
     fullscreenAlerts: PropTypes.arrayOf(PropTypes.instanceOf(Notification)).isRequired,
     fullscreenAlertsWithFollowup: PropTypes.arrayOf(PropTypes.shape({
       notification: PropTypes.instanceOf(Notification).isRequired,
@@ -89,21 +92,23 @@ class Notifications extends PureComponent {
     if (!confirmationAlerts[0]) return null;
 
     const alert: ConfirmationAlert = confirmationAlerts[0];
+    const isTranslated = alert.isTranslated;
 
     const content = [
       <Modal.Header key="notification-header">
         <Modal.Title>
-          {alert.title}
+          <span>{isTranslated ? alert.title : translate(alert.title)}</span>
+          {!isTranslated && <Switcher />}
         </Modal.Title>
       </Modal.Header>,
-      <Modal.Body key="notification-body">
-        {alert.notification.message}
+      <Modal.Body key="notification-body" className={styles.body}>
+        {isTranslated ? alert.notification.message : translate(alert.notification.message)}
       </Modal.Body>,
-      <Modal.Footer key="notification-footer">
+      <Modal.Footer key="notification-footer" className={styles.footer}>
         {alert.actions.map((followUp: FollowUp) => (
           <Button
             key={followUp.actionButtonTitle} onClick={onDismissConfirmationAlert.bind(null, alert, followUp.action)}>
-            {followUp.actionButtonTitle}
+            {isTranslated ? followUp.actionButtonTitle : translate(followUp.actionButtonTitle)}
           </Button>
           )
         )}
@@ -154,7 +159,8 @@ export default connect(
     fullscreenAlerts: state.notificationReducer.fullscreenAlerts,
     fullscreenAlertsWithFollowup: state.notificationReducer.fullscreenAlertsWithFollowup,
     confirmationAlerts: state.notificationReducer.confirmationAlerts,
-    messages: state.notificationReducer.messages
+    messages: state.notificationReducer.messages,
+    language: state.translationReducer.lang
   }),
 
   dispatch => ({
