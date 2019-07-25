@@ -18,7 +18,6 @@ import {
   STATE_DB_HEAL_CANCEL, STATE_DB_HEAL_FAILURE_MSG_VIEWED,
   STATE_DB_HEAL_PROCEED
 } from '../../actions/SanityCheckAction';
-import translate from '../../utils/translate';
 import ConfirmationAlert from '../notifications/confirmationAlert';
 import Logger from '../../modules/util/LoggerManager';
 import InProgress from '../common/InProgress';
@@ -87,7 +86,8 @@ class Sanity extends Component {
 
 const dbHealingConfirmationAlert = (databaseSanityStatus: DatabaseSanityStatus, isOnFailure = false) => {
   let message;
-  let okMsg = 'ok';
+  let okMsg = 'OK';
+  let title = 'AMP Offline Message';
   if (isOnFailure) {
     message = 'dbCleanupFailed';
   } else if (databaseSanityStatus.isDBIncompatibilityExpected) {
@@ -95,24 +95,26 @@ const dbHealingConfirmationAlert = (databaseSanityStatus: DatabaseSanityStatus, 
   } else {
     message = 'dbCorrupted';
     okMsg = 'cleanup';
+    title = 'Confirmation required';
   }
   const dbHealNotification = new Notification({
     message,
+    translateMsg: false,
     origin: NOTIFICATION_ORIGIN_SANITY_CHECK,
     severity: NOTIFICATION_SEVERITY_ERROR
   });
 
   const proceed = new FollowUp({
     type: isOnFailure ? STATE_DB_HEAL_FAILURE_MSG_VIEWED : STATE_DB_HEAL_PROCEED,
-  }, translate(okMsg), BUTTON_TYPE_OK);
+  }, okMsg, BUTTON_TYPE_OK);
   const actions = [proceed];
   if (!isOnFailure && !databaseSanityStatus.isDBIncompatibilityExpected) {
     const cancel = new FollowUp({
       type: STATE_DB_HEAL_CANCEL,
-    }, translate('cancel'), BUTTON_TYPE_CANCEL);
+    }, 'Cancel', BUTTON_TYPE_CANCEL);
     actions.push(cancel);
   }
-  return new ConfirmationAlert(dbHealNotification, actions, false, translate('error'));
+  return new ConfirmationAlert(dbHealNotification, actions, false, title, false);
 };
 
 export default connect(
