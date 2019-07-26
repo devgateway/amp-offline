@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { TestingSection } from 'amp-ui';
 import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
@@ -83,6 +84,7 @@ export default class Login extends Component {
     }
     return (
       <div className={styles.centered_form}>
+        <TestingSection ampLogger={logger} translate={translate} />
         <table>
           <tbody>
             <tr>
