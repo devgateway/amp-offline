@@ -29,7 +29,7 @@ export default class DatabaseCleanup {
     try {
       this.allDBNames.forEach(dbName => {
         const fullFileName = DatabaseManager.getDBFullPath(dbName);
-        FileManager.deleteFile(fullFileName);
+        FileManager.deleteFileSync(fullFileName);
         this.remainingDBs.delete(dbName);
         if (COLLECTION_SANITY_CHECK === dbName) {
           this.status.isSanityDBCorrupted = false;

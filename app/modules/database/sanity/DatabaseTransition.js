@@ -24,7 +24,8 @@ export default class DatabaseTransition {
     logger.warn('run');
     if (!Utils.isReleaseBranch()) {
       logger.warn('Halting DB transition - not a release branch');
-      return false;
+      this._status.healReason = SCC.REASON_NOT_RELEASED;
+      return Promise.resolve(this._status);
     }
     this._actualKey = DatabaseManager.getSecureKey();
     this._legacyKey = DatabaseManager.getLegacyKey();
@@ -52,7 +53,7 @@ export default class DatabaseTransition {
     logger.log(`_transitDB: ${dbName}`);
     const tmpDBName = `${dbName}${TMP_FILE_EXTENSION}`;
     const tmpPath = DatabaseManager.getDBFullPath(tmpDBName);
-    FileManager.deleteFile(tmpPath);
+    FileManager.deleteFileSync(tmpPath);
     DatabaseManager.setKey(this._legacyKey);
     return DatabaseManager.findAll({}, dbName)
       .then(data => this._transitData(dbName, tmpDBName, data))
@@ -78,7 +79,7 @@ export default class DatabaseTransition {
     const dbPath = DatabaseManager.getDBFullPath(dbName);
     const backupPath = DatabaseManager.getDBFullPath(`${dbName}${BACKUP_FILE_EXTENSION}`);
     try {
-      FileManager.deleteFile(backupPath);
+      FileManager.deleteFileSync(backupPath);
       FileManager.renameSyncAllFullPaths(dbPath, backupPath);
       try {
         FileManager.renameSyncAllFullPaths(tmpPath, dbPath);
@@ -87,7 +88,7 @@ export default class DatabaseTransition {
         return e;
       }
       try {
-        FileManager.deleteFile(backupPath);
+        FileManager.deleteFileSync(backupPath);
       } catch (e) {
         logger.warn(e);
       }

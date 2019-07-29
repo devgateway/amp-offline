@@ -16,6 +16,7 @@ import DateUtils from '../../../utils/DateUtils';
 import DatabaseCleanup from './DatabaseCleanup';
 import VersionUtils from '../../../utils/VersionUtils';
 import DatabaseTransition from './DatabaseTransition';
+import * as Utils from '../../../utils/Utils';
 
 const logger = new Logger('DatabaseSanityManager');
 
@@ -152,6 +153,9 @@ const DatabaseSanityManager = {
    */
   _isCheckPostUpgradeSanityStatus() {
     logger.log('_isCheckPostUpgradeSanityStatus');
+    if (!Utils.isReleaseBranch()) {
+      return Promise.resolve(false);
+    }
     return SanityStatusHelper.hasCurrentVersionStandardStatus()
       .then(result => !result)
       .catch(error => {
