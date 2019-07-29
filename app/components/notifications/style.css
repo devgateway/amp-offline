@@ -34,14 +34,14 @@
 .no_modal {
 }
 
-.body {
+.no_modal.body {
   margin: 0;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
 
-.footer {
+.no_modal.footer {
   position: absolute;
   bottom: 0;
   right: 0;
