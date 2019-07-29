@@ -5,6 +5,7 @@ import { setLanguage } from '../../actions/TranslationAction';
 import styles from './i18n.css';
 import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Switcher component');
 
@@ -19,7 +20,7 @@ class Switcher extends React.Component {
     const { translationReducer, onChangeLanguage } = this.props;
     const options = translationReducer.languageList.reduce((content, lang) => {
       content.push(<span role="link" key={lang} onClick={() => onChangeLanguage(lang)}>{translate(lang, lang)}</span>);
-      content.push(<span key="separator"> | </span>);
+      content.push(<span key={Utils.stringToUniqueId('separator')}> | </span>);
       return content;
     }, []);
     options.pop();
