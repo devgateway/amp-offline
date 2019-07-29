@@ -10,12 +10,24 @@ const logger = new Logger('SanityStatusHelper');
  * A simplified helper for using Sanity Check storage.
  *
  * For each app version, there can be:
- * a) only one entry for type: post-upgrade
- * b) multiple entries for type: standard
+ * a) only one entry for type: transition
+ * b) only one entry for type: post-upgrade
+ * c) multiple entries for type: standard
  *
  * @author Nadejda Mandrescu
  */
 const SanityStatusHelper = {
+
+  /**
+   * Finds DB transition sanity check status for the current app version
+   * @return {Promise} DB transition sanity status
+   */
+  findCurrentVersionTransitionStatus() {
+    logger.debug('findCurrentVersionTransitionStatus');
+    const filter = Utils.toMap(SCC.VERSION, VERSION);
+    filter[SCC.TYPE] = SCC.TYPE_TRANSITION;
+    return DatabaseManager.findOne(filter, COLLECTION_SANITY_CHECK);
+  },
 
   /**
    * Finds post-upgrade sanity check status for the current app version

@@ -27,7 +27,7 @@ export default class DatabaseSanityStatus {
       this.statusType = type;
       this.appVersion = VERSION;
       this.healStatus = SCC.STATUS_NOT_STARTED;
-      if (!this.isPostUpgrade) {
+      if (this.isStandard) {
         this.isDBIncompatibilityExpected = false;
       }
     }
@@ -44,6 +44,10 @@ export default class DatabaseSanityStatus {
 
   get isPostUpgrade() {
     return this.statusType === SCC.TYPE_POST_UPGRADE;
+  }
+
+  get isStandard() {
+    return this.statusType === SCC.TYPE_STANDARD;
   }
 
   set isSanityDBCorrupted(sanityDBIsCorrupted) {

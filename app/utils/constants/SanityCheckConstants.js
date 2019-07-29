@@ -14,6 +14,7 @@ export const CORRUPTED_DB_NAMES = 'corrupted-db-names';
 export const REMAINING_CORRUPTED_DB_NAMES = 'remaining-corrupted-db-names';
 export const TOTAL_DB_FILES_FOUND = 'total-db-files-found';
 
+export const TYPE_TRANSITION = 'transition';
 export const TYPE_POST_UPGRADE = 'post-upgrade';
 export const TYPE_STANDARD = 'standard';
 
