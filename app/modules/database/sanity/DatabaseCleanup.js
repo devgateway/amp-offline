@@ -1,9 +1,10 @@
 import DatabaseSanityStatus from './DatabaseSanityStatus';
 import * as SCC from '../../../utils/constants/SanityCheckConstants';
-import { COLLECTION_SANITY_CHECK, DB_FILE_EXTENSION, DB_FILE_PREFIX } from '../../../utils/Constants';
+import { COLLECTION_SANITY_CHECK } from '../../../utils/Constants';
 import FileManager from '../../util/FileManager';
 import DateUtils from '../../../utils/DateUtils';
 import Logger from '../../util/LoggerManager';
+import * as DatabaseManager from '../DatabaseManager';
 
 const logger = new Logger('DatabaseCleanup');
 
@@ -27,7 +28,7 @@ export default class DatabaseCleanup {
     // no partial cleanup -> will resync all than handle various use cases for partial resync
     try {
       this.allDBNames.forEach(dbName => {
-        const fullFileName = FileManager.getFullPath(DB_FILE_PREFIX, `${dbName}${DB_FILE_EXTENSION}`);
+        const fullFileName = DatabaseManager.getDBFullPath(dbName);
         FileManager.deleteFile(fullFileName);
         this.remainingDBs.delete(dbName);
         if (COLLECTION_SANITY_CHECK === dbName) {

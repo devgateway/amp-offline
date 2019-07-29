@@ -33,6 +33,10 @@ const logger = new Logger('Database manager');
  * ((object, callback, options)), find: ((object, callback, options))}}
  */
 const DatabaseManager = {
+  getDBFullPath(dbName) {
+    return FileManager.getFullPath(DB_FILE_PREFIX, `${dbName}${DB_FILE_EXTENSION}`);
+  },
+
   _initSecureKey() {
     logger.debug('_initSecureKey');
     const { username } = os.userInfo();
@@ -55,7 +59,7 @@ const DatabaseManager = {
     const keyInitPromise = (useEncryption && !secureKey) ? this._initSecureKey() : Promise.resolve();
     return keyInitPromise.then(() => new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
-        filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
+        filename: DatabaseManager.getDBFullPath(name)
       });
       // Encrypt the DB only when built from a release branch
       if (useEncryption) {
