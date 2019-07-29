@@ -35,7 +35,7 @@ export default class DatabaseCleanup {
           this.status.isSanityDBCorrupted = false;
         }
       });
-      this._cleanupEnded(SCC.STATUS_SUCCESS, SCC.HEALED_BY_APP);
+      this._cleanupEnded(SCC.STATUS_SUCCESS, SCC.HEALED_BY_APP, SCC.REASON_HEALED);
       logger.log('DB Cleanup completed successfully');
     } catch (e) {
       logger.error(`DB Cleanup failed: ${e}`);

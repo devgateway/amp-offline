@@ -37,6 +37,19 @@ const DatabaseManager = {
     return FileManager.getFullPath(DB_FILE_PREFIX, `${dbName}${DB_FILE_EXTENSION}`);
   },
 
+  getSecureKey() {
+    return secureKey;
+  },
+
+  getLegacyKey() {
+    return AmpClientSecurity.getLegacyKey();
+  },
+
+  setKey(key) {
+    secureKey = key;
+  },
+
+
   _initSecureKey() {
     logger.debug('_initSecureKey');
     const { username } = os.userInfo();

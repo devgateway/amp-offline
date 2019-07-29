@@ -225,7 +225,14 @@ const Utils = {
   isReleaseBranch() {
     const branch = this.getBranch();
     return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
-  }
+  },
+
+  selfBindMethods(obj) {
+    Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).filter(prop => typeof obj[prop] === 'function')
+      .forEach(methodName => {
+        obj[methodName] = obj[methodName].bind(obj);
+      });
+  },
 };
 
 module.exports = Utils;

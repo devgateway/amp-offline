@@ -44,6 +44,8 @@ export const COLLECTION_SANITY_CHECK = 'sanity-check';
 
 export const DB_FILE_PREFIX = 'database';
 export const DB_FILE_EXTENSION = '.db';
+export const TMP_FILE_EXTENSION = '.tmp';
+export const BACKUP_FILE_EXTENSION = '.bkp';
 export const DB_COMMON_DATASTORE_OPTIONS = { autoload: false, corruptAlertThreshold: 0 };
 export const DB_AUTOCOMPACT_INTERVAL_MILISECONDS = 60000;
 export const DB_DEFAULT_QUERY_LIMIT = 999999999;

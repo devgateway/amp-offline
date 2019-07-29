@@ -116,6 +116,10 @@ export default class DatabaseSanityStatus {
     return this[SCC.DB_HEAL_STATUS];
   }
 
+  get isHealNotStarted() {
+    return this.healStatus === SCC.STATUS_NOT_STARTED;
+  }
+
   get isHealedSuccessfully() {
     return this.healStatus === SCC.STATUS_SUCCESS;
   }

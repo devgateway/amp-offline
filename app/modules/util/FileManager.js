@@ -158,7 +158,16 @@ const FileManager = {
    */
   renameSync(fromPath, ...toPathParts) {
     const fullPath = this.getFullPath(...toPathParts);
-    fs.renameSync(fromPath, fullPath);
+    return this.renameSyncAllFullPaths(fromPath, fullPath);
+  },
+
+  /**
+   * Renames synchronously
+   * @param fromPath full source path
+   * @param toPath full destination path
+   */
+  renameSyncAllFullPaths(fromPath, toPath) {
+    fs.renameSync(fromPath, toPath);
   },
 
   /**

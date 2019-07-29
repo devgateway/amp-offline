@@ -2,8 +2,10 @@ import DatabaseSanityStatus from './DatabaseSanityStatus';
 import Logger from '../../util/LoggerManager';
 import FileManager from '../../util/FileManager';
 import {
+  BACKUP_FILE_EXTENSION,
   DB_FILE_EXTENSION,
   DB_FILE_PREFIX,
+  TMP_FILE_EXTENSION,
   VERSION
 } from '../../../utils/Constants';
 import * as DatabaseManager from '../DatabaseManager';
@@ -13,11 +15,12 @@ import * as SCC from '../../../utils/constants/SanityCheckConstants';
 import DateUtils from '../../../utils/DateUtils';
 import DatabaseCleanup from './DatabaseCleanup';
 import VersionUtils from '../../../utils/VersionUtils';
+import DatabaseTransition from './DatabaseTransition';
 
 const logger = new Logger('DatabaseSanityManager');
 
 const VERSIONS_WITH_POSSIBLE_DB_INCOMPATIBILITY_POST_UPGRADE = [
-  '1.0.0',
+  '1.0.1',
 ];
 
 /**
@@ -90,7 +93,8 @@ const DatabaseSanityManager = {
   findAllDatabaseFiles() {
     logger.log('findAllDatabaseFiles');
     return FileManager.readdirSync(DB_FILE_PREFIX)
-      .filter(f => f.endsWith(DB_FILE_EXTENSION));
+      .filter(f => f.endsWith(DB_FILE_EXTENSION) &&
+        [TMP_FILE_EXTENSION, BACKUP_FILE_EXTENSION].every(ext => !f.includes(ext)));
   },
 
   /**
@@ -236,7 +240,60 @@ const DatabaseSanityManager = {
     }
     return SanityStatusHelper.saveOrUpdate(status)
       .then(DatabaseSanityStatus.fromDB);
-  }
+  },
+
+  /**
+   * @param s the latest sanity status
+   * @returns {Promise<DatabaseSanityStatus>} the same sanity status provided as input param
+   */
+  attemptTransition(s: DatabaseSanityStatus) {
+    logger.log('attemptTransition');
+    if (s.isPostUpgrade && s.isDBIncompatibilityDetected && s.isHealNotStarted) {
+      return DatabaseSanityManager._getTransitionStatus(s)
+        .then((tStatus: DatabaseSanityStatus) => {
+          if (!tStatus.healReason || SCC.TRANSITION_CAN_RETRY_ON_REASONS.includes(tStatus.healReason)) {
+            return DatabaseSanityManager._doTransition(s, tStatus);
+          }
+          logger.log('Cannot retry the transition. It failed in the past for unhandled reasons.');
+          return s;
+        });
+    }
+    logger.log('Transition not applicable');
+    return s;
+  },
+
+  _getTransitionStatus(s: DatabaseSanityStatus) {
+    logger.log('_getTransitionStatus');
+    return SanityStatusHelper.findCurrentVersionTransitionStatus()
+      .then(DatabaseSanityStatus.fromDB)
+      .then((tStatus: DatabaseSanityStatus) => {
+        const d = s.details;
+        if (!tStatus) {
+          tStatus = new DatabaseSanityStatus(SCC.TYPE_TRANSITION);
+          tStatus.details = new DatabaseSanityStatusDetails(d.corruptedDBNames.slice(), d.totalDBFilesFound);
+          tStatus.details.remainingCorruptedDBNames = d.remainingCorruptedDBNames.slice();
+        } else {
+          tStatus.details.remainingCorruptedDBNames = d.remainingCorruptedDBNames.slice();
+        }
+        return DatabaseSanityManager._saveOrUpdate(tStatus);
+      });
+  },
+
+  _doTransition(s: DatabaseSanityStatus, tStatus: DatabaseSanityStatus) {
+    logger.log('_doTransition');
+    const dbT = new DatabaseTransition(tStatus);
+    return dbT.run()
+      .then(DatabaseSanityManager._saveOrUpdate)
+      .then(() => {
+        if (tStatus.isHealedSuccessfully) {
+          DatabaseCleanup.cleanupEnded(s, [], SCC.STATUS_SUCCESS, SCC.HEALED_BY_APP, SCC.REASON_TRANSITIONED);
+          return DatabaseSanityManager._saveOrUpdate(s);
+        } else {
+          s.healReason = tStatus.healReason;
+        }
+        return s;
+      });
+  },
 };
 
 export default DatabaseSanityManager;
