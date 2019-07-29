@@ -22,20 +22,26 @@ export const STATE_DB_HEAL_IN_PROGRESS = 'STATE_DB_HEAL_IN_PROGRESS';
 export const STATE_DB_HEAL_CANCEL = 'STATE_DB_HEAL_CANCEL';
 export const STATE_DB_HEAL_COMPLETE = 'STATE_DB_HEAL_COMPLETE';
 export const STATE_DB_HEAL_FAILURE_MSG_VIEWED = 'STATE_DB_HEAL_FAILURE_MSG_VIEWED';
-
+export const STATE_DB_RESTART_SANITY_CHECK = 'STATE_DB_RESTART_SANITY_CHECK';
 
 const logger = new Logger('SanityCheckAction');
 
-export const doSanityCheck = () => {
+export const restartSanityCheck = () => _doSanityCheck(true);
+export const doSanityCheck = () => _doSanityCheck(false);
+
+const _doSanityCheck = (isRestarted) => {
   logger.log('doSanityCheck');
-  const sanityPromise = DatabaseSanityManager.sanityCheck();
+  const sanityPromise = DatabaseSanityManager.sanityCheck().then(DatabaseSanityManager.attemptTransition);
   store.dispatch({
     type: STATE_SANITY_CHECK,
     payload: sanityPromise
   });
   return sanityPromise.then((status: DatabaseSanityStatus) => {
     if (status.isDBIncompatibilityDetected && !status.isHealedSuccessfully) {
-      logger.error('Database is corrupted');
+      logger.error('Database cleanup needed');
+      if (isRestarted) {
+        return status;
+      }
       ipcRenderer.send(SHOW_SANITY_APP);
       return beforeSelfHealing().then(() => status);
     } else {

@@ -15,12 +15,16 @@ import {
   cancelDBCleanup,
   doDBCleanup,
   flagCleanupComplete,
-  STATE_DB_HEAL_CANCEL, STATE_DB_HEAL_FAILURE_MSG_VIEWED,
-  STATE_DB_HEAL_PROCEED
+  restartSanityCheck,
+  STATE_DB_HEAL_CANCEL,
+  STATE_DB_HEAL_FAILURE_MSG_VIEWED,
+  STATE_DB_HEAL_PROCEED,
+  STATE_DB_RESTART_SANITY_CHECK
 } from '../../actions/SanityCheckAction';
 import ConfirmationAlert from '../notifications/confirmationAlert';
 import Logger from '../../modules/util/LoggerManager';
 import InProgress from '../common/InProgress';
+import * as SCC from '../../utils/constants/SanityCheckConstants';
 
 const logger = new Logger('Sanity');
 
@@ -50,9 +54,11 @@ class Sanity extends Component {
   checkNewProps(props) {
     const {
       sanityStatus, isPerformDBCleanup, isDBCleanupInProgress, isCancelDBCleanup, isDBCleanupCompleted,
-      isDBFailureMsgViewed, onDBHealingConfirmationAlert
+      isDBFailureMsgViewed, isSanityCheckRestart, onDBHealingConfirmationAlert
     } = props;
-    if (isDBCleanupCompleted) {
+    if (isSanityCheckRestart) {
+      restartSanityCheck();
+    } else if (isDBCleanupCompleted) {
       if (!sanityStatus.isHealedSuccessfully && !isDBFailureMsgViewed) {
         onDBHealingConfirmationAlert(sanityStatus, true);
       } else {
@@ -85,11 +91,18 @@ class Sanity extends Component {
 }
 
 const dbHealingConfirmationAlert = (databaseSanityStatus: DatabaseSanityStatus, isOnFailure = false) => {
+  const isNoDiskSpace = databaseSanityStatus.healReason === SCC.REASON_NO_DISK_SPACE;
   let message;
   let okMsg = 'OK';
   let title = 'AMP Offline Message';
+  let okState = STATE_DB_HEAL_PROCEED;
   if (isOnFailure) {
     message = 'dbCleanupFailed';
+    okState = STATE_DB_HEAL_FAILURE_MSG_VIEWED;
+  } else if (isNoDiskSpace) {
+    message = 'noDiskSpace';
+    okMsg = 'tryAgain';
+    okState = STATE_DB_RESTART_SANITY_CHECK;
   } else if (databaseSanityStatus.isDBIncompatibilityExpected) {
     message = 'dbCompatibilityError';
   } else {
@@ -104,9 +117,7 @@ const dbHealingConfirmationAlert = (databaseSanityStatus: DatabaseSanityStatus, 
     severity: NOTIFICATION_SEVERITY_ERROR
   });
 
-  const proceed = new FollowUp({
-    type: isOnFailure ? STATE_DB_HEAL_FAILURE_MSG_VIEWED : STATE_DB_HEAL_PROCEED,
-  }, okMsg, BUTTON_TYPE_OK);
+  const proceed = new FollowUp({ type: okState }, okMsg, BUTTON_TYPE_OK);
   const actions = [proceed];
   if (!isOnFailure && !databaseSanityStatus.isDBIncompatibilityExpected) {
     const cancel = new FollowUp({
