@@ -24,7 +24,8 @@ export default class DatabaseTransition {
     logger.warn('run');
     if (!Utils.isReleaseBranch()) {
       logger.warn('Halting DB transition - not a release branch');
-      return false;
+      this._status.healReason = SCC.REASON_NOT_RELEASED;
+      return Promise.resolve(this._status);
     }
     this._actualKey = DatabaseManager.getSecureKey();
     this._legacyKey = DatabaseManager.getLegacyKey();
