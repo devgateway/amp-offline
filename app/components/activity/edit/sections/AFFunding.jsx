@@ -1,11 +1,13 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-alert */
-import React, { Component, PropTypes } from 'react';
-import { Tab, Tabs } from 'react-bootstrap';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Panel, Tab, Tabs } from 'react-bootstrap';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../utils/constants/ValueConstants';
+import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
@@ -14,6 +16,8 @@ import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizat
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import styles from './funding/AFFunding.css';
 import AFUtils from './../util/AFUtils';
+import GlobalSettingsManager from '../../../../modules/util/GlobalSettingsManager';
+import * as GSC from '../../../../utils/constants/GlobalSettingsConstants';
 
 const logger = new Logger('AF funding');
 
@@ -25,6 +29,11 @@ class AFFunding extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    activity: PropTypes.object.isRequired,
+    activityFundingSectionPanelStatus: PropTypes.array.isRequired
+  };
+
+  static propTypes = {
     activity: PropTypes.object.isRequired
   };
 
@@ -34,7 +43,13 @@ class AFFunding extends Component {
     this.handleDonorSelect = this.handleDonorSelect.bind(this);
     this.removeFundingItem = this.removeFundingItem.bind(this);
     this.addFundingItem = this.addFundingItem.bind(this);
-    this.handlePanelSelect = this.handlePanelSelect.bind(this);
+    this.hasErrors = this.hasErrors.bind(this);
+    this._tabSelect = this._tabSelect.bind(this);
+    this.state = { activeTab: 0, refresh: 0 };
+  }
+
+  componentWillReceiveProps() {
+    this.setState({ refresh: Math.random() });
   }
 
   _getAcronym(sourceRole) {
@@ -58,17 +73,22 @@ class AFFunding extends Component {
     }
   }
 
+  _tabSelect(index) {
+    this.setState({ activeTab: index });
+  }
+
   handleDonorSelect(values) {
     logger.debug('handleDonorSelect');
     if (values) {
       const value = (values instanceof Array) ? values[values.length - 1][AC.ORGANIZATION] : values;
-      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value);
+      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value, VC.DONOR_AGENCY);
       // Needed for new activities or funding is not added.
       if (!this.context.activity[AC.FUNDINGS]) {
         this.context.activity[AC.FUNDINGS] = [];
       }
       this.context.activity[AC.FUNDINGS].push(fundingItem);
       this._addDonorToOrgRoleList(value.id, fundingItem[AC.SOURCE_ROLE]);
+      this.forceUpdate();
     }
   }
 
@@ -111,7 +131,7 @@ class AFFunding extends Component {
     }
   }
 
-  addFundingTabs() {
+  addDonorOrgs() {
     if (this.context.activity[AC.FUNDINGS]) {
       // Group fundings for the same funding organization and role (if enabled).
       const groups = [];
@@ -120,7 +140,7 @@ class AFFunding extends Component {
         const tab = groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
           && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)));
         // Look for errors on Commitments/Disbursements/Expenditures too.
-        const errorsOnInternalSections = this.hasErrors(f[AC.FUNDING_DETAILS])
+        const errorsOnInternalSections = FPC.TRANSACTION_TYPES.some(tt => this.hasErrors(f[tt]))
           || this.hasErrors(f[AC.MTEF_PROJECTIONS]);
         if (!tab) {
           const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
@@ -137,30 +157,79 @@ class AFFunding extends Component {
         }
         return groups;
       });
+      let tabIndex = 0;
       return groups.sort((i, j) => (i[AC.FUNDING_DONOR_ORG_ID].value > j[AC.FUNDING_DONOR_ORG_ID].value))
         .map((funding) => {
+          tabIndex += 1;
           // If source_role is disabled then the role is always "Donor".
           let sourceRole;
           if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
             sourceRole = funding[AC.SOURCE_ROLE];
           } else {
+            const enabledTrnType = FPC.TRANSACTION_TYPES
+              .find(tt => this.context.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, tt));
             const options = this.context.activityFieldsManager
-              .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.RECIPIENT_ROLE}`];
+              .possibleValuesMap[`${AC.FUNDINGS}~${enabledTrnType}~${AC.RECIPIENT_ROLE}`];
             sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
           }
-          return (<Tab
-            eventKey={Math.random()} key={Math.random()}
-            title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
-            tabClassName={funding.errors ? styles.error : ''}>
-            <AFFundingDonorSection
-              fundings={this.context.activity[AC.FUNDINGS] || []}
-              organization={funding[AC.FUNDING_DONOR_ORG_ID]}
-              role={sourceRole}
-              removeFundingItem={this.removeFundingItem}
-              addFundingItem={this.addFundingItem}
-              hasErrors={this.hasErrors}
-            />
-          </Tab>);
+
+          if (!this.context.activityFundingSectionPanelStatus.find(i =>
+            i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
+            && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id)) {
+            this.context.activityFundingSectionPanelStatus.push({
+              [AC.FUNDING_DONOR_ORG_ID]: funding[AC.FUNDING_DONOR_ORG_ID],
+              [AC.SOURCE_ROLE]: funding[AC.SOURCE_ROLE],
+              open: true,
+              forceClose: false
+            });
+          }
+
+          if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
+            return (<Tab
+              eventKey={tabIndex} key={Math.random()}
+              title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
+              tabClassName={funding.errors ? styles.error : ''}>
+              <AFFundingDonorSection
+                fundings={this.context.activity[AC.FUNDINGS] || []}
+                organization={funding[AC.FUNDING_DONOR_ORG_ID]}
+                role={sourceRole}
+                removeFundingItem={this.removeFundingItem}
+                addFundingItem={this.addFundingItem}
+                hasErrors={this.hasErrors}
+                tabIndex={tabIndex}
+              />
+            </Tab>);
+          } else {
+            const group = this.context.activityFundingSectionPanelStatus.find(i =>
+              i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
+              && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id);
+            let open = group.open;
+            if (funding.errors && !group.forceClose) {
+              open = true;
+            }
+            group.forceClose = false;
+            return (<Panel
+              key={Math.random()} collapsible expanded={open}
+              onSelect={() => {
+                group.open = !open;
+                group.forceClose = open;
+                this.setState({ refresh: Math.random() });
+              }}
+              header={<div className={funding.errors ? styles.error : ''}>
+                {`${funding[AC.FUNDING_DONOR_ORG_ID][AC.VALUE]} (${funding[AC.SOURCE_ROLE].value})`}
+              </div>}>
+              <AFFundingDonorSection
+                key={Math.random()}
+                fundings={this.context.activity[AC.FUNDINGS] || []}
+                organization={funding[AC.FUNDING_DONOR_ORG_ID]}
+                role={sourceRole}
+                removeFundingItem={this.removeFundingItem}
+                addFundingItem={this.addFundingItem}
+                hasErrors={this.hasErrors}
+                tabIndex={tabIndex}
+              />
+            </Panel>);
+          }
         });
     }
     return null;
@@ -175,9 +244,6 @@ class AFFunding extends Component {
   }
 
   addFundingItem() {
-  }
-
-  handlePanelSelect() {
   }
 
   generateOverviewTabContent() {
@@ -210,20 +276,33 @@ class AFFunding extends Component {
     return false;
   }
 
+  /**
+   * Here we render a container with amp_funding table info but grouped by donor and role with Tabs/Panels.
+   * @returns {*}
+   */
   render() {
-    const overviewTabHasErrors = (this.context.activity[AC.PPC_AMOUNT]
-      && this.context.activity[AC.PPC_AMOUNT][0]
-      && this.context.activity[AC.PPC_AMOUNT][0].errors
-      && this.context.activity[AC.PPC_AMOUNT][0].errors.length > 0);
-    return (<div>
-      <Tabs defaultActiveKey={0} onSelect={this.handlePanelSelect} id="funding-tabs-container-tabs">
-        <Tab
-          eventKey={0} title="Overview" key={0}
-          tabClassName={overviewTabHasErrors ? styles.error : ''}>{this.generateOverviewTabContent()}</Tab>
-        {this.addFundingTabs()}
-      </Tabs>
-      <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
-    </div>);
+    const ppc = this.context.activity[AC.PPC_AMOUNT];
+    const overviewTabHasErrors = ppc && ppc.errors && ppc.errors.length;
+    if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
+      return (<div>
+        <Tabs
+          defaultActiveKey={0} onSelect={this._tabSelect} id="funding-tabs-container-tabs"
+          activeKey={this.state.activeTab}>
+          <Tab
+            eventKey={0} title="Overview" key={0}
+            tabClassName={overviewTabHasErrors ? styles.error : ''}>{this.generateOverviewTabContent()}</Tab>
+          {this.addDonorOrgs()}
+        </Tabs>
+        <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
+      </div>);
+    } else {
+      return (
+        <div>
+          <div className={styles.overview_section}>{this.generateOverviewTabContent()}</div>
+          <div>{this.addDonorOrgs()}</div>
+          <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
+        </div>);
+    }
   }
 }
 

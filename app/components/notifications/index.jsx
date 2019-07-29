@@ -30,7 +30,7 @@ class Notifications extends PureComponent {
       notification: PropTypes.instanceOf(Notification).isRequired,
       nextAction: PropTypes.object.isRequired
     })).isRequired,
-    confirmationAlerts: PropTypes.arrayOf(ConfirmationAlert).isRequired,
+    confirmationAlerts: PropTypes.arrayOf(PropTypes.instanceOf(ConfirmationAlert)).isRequired,
     messages: PropTypes.arrayOf(PropTypes.instanceOf(Notification)).isRequired,
     onDismissFullscreenAlert: PropTypes.func.isRequired,
     onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired,

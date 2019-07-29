@@ -5,7 +5,7 @@ import mimeTypes from 'mime-types';
 import readChunk from 'read-chunk';
 import rimraf from 'rimraf';
 import { ELECTRON_APP } from './ElectronApp';
-import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
+import { APP_DIRECTORY, ASAR_DIR, TEST_DIRECTORY } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
 
 const fileType = require('file-type');
@@ -15,6 +15,7 @@ const app = ELECTRON_APP;
 let dataPath;
 let resourcesPath;
 let downloadPath;
+let testPath;
 
 /**
  * System File Manager that is intended to handle proper root directory detection in dev & prod mode. It servers as a
@@ -62,6 +63,13 @@ const FileManager = {
       downloadPath = app.getPath('downloads');
     }
     return downloadPath;
+  },
+
+  getTestsPath(...pathParts) {
+    if (!testPath) {
+      testPath = path.resolve(TEST_DIRECTORY);
+    }
+    return this.joinPath(testPath, ...pathParts);
   },
 
   /**

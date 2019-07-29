@@ -62,7 +62,8 @@ export default class ActivityForm extends Component {
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
-    currentWorkspaceSettings: PropTypes.object
+    currentWorkspaceSettings: PropTypes.object,
+    activityFundingSectionPanelStatus: PropTypes.array
   };
 
   constructor(props) {
@@ -78,7 +79,8 @@ export default class ActivityForm extends Component {
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       activityValidator: this.activityValidator,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
-      currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings
+      currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings,
+      activityFundingSectionPanelStatus: this.activityFundingSectionPanelStatus
     };
   }
 
@@ -88,6 +90,7 @@ export default class ActivityForm extends Component {
 
   init(activityId) { // eslint-disable-line react/sort-comp
     this.activity = undefined;
+    this.activityFundingSectionPanelStatus = [];
     this.props.loadActivityForActivityForm(activityId);
     this.setState({
       activityId,
@@ -318,7 +321,7 @@ export default class ActivityForm extends Component {
             <Col>{this._renderSaveDialog()}</Col>
           </Row>
           <Row>
-            <Col md={10} >
+            <Col xs={8} sm={8} >
               <div className={styles.form_main_content} >
                 <div className={styles.general_header} >
                   {translate('Edit Activity Form')}
@@ -329,7 +332,7 @@ export default class ActivityForm extends Component {
                 </div>
               </div>
             </Col>
-            <Col mdOffset={10} >
+            <Col xs={2} sm={2}>
               <div className={styles.actions} >
                 {this._renderQuickLinks()}
                 {this._renderActions()}

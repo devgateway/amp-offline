@@ -9,6 +9,13 @@ import Utils from '../../utils/Utils';
 
 let cookiesStore = request.jar();
 
+/*
+As of now we have 5 parallel pull activities requests and 5 contacts requests that run at the same time. Until
+contacts are pulled in batches, it takes about the same time to pull both, though I saw a few other requests come
+in between. According to stats, 11 brings optimal result, plus it's best to avoid running too many keep-alive requests.
+ */
+const pool = { maxSockets: 11 };
+
 const RequestConfig = {
   /**
    * A simple api connection builder
@@ -40,6 +47,8 @@ const RequestConfig = {
       strictSSL: true,
       resolveWithFullResponse: true,
       gzip: true,
+      forever: true,
+      pool,
       jar: cookiesStore // enables cookies to be saved
     };
     if (routeConfiguration.isBinary) {

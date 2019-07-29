@@ -26,8 +26,8 @@ export const RESOURCE_NAME = 'resource_name';
 export const RESOURCE_TYPE = 'resource_type';
 export const ACTION = 'action';
 
-export const TYPE_DOC_RESOURCE = 'file';
-export const TYPE_WEB_RESOURCE = 'link';
+export const TYPE_WEB_RESOURCE = 0;
+export const TYPE_DOC_RESOURCE = 1;
 
 export const DEPENDENCY_RESOURCE_TYPE_LINK = 'resource_type_link_valid_key';
 export const DEPENDENCY_RESOURCE_TYPE_FILE = 'resource_type_file_valid_key';

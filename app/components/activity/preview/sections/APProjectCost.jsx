@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Section from './Section';
 import styles from '../ActivityPreview.css';
 import * as AC from '../../../../utils/constants/ActivityConstants';
@@ -23,7 +24,7 @@ const APProjectCost = (fieldName) => class extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   getFieldValue(fieldPath) {
@@ -40,12 +41,10 @@ const APProjectCost = (fieldName) => class extends Component {
       const currency = this.props.activityFundingTotals._currentWorkspaceSettings.currency.code;
       let amount = 0;
       let showPPC = false;
-      if (this.props.activity[AC.PPC_AMOUNT] && this.props.activity[AC.PPC_AMOUNT][0]
-        && this.props.activity[AC.PPC_AMOUNT][0][AC.AMOUNT]
-        && this.props.activity[AC.PPC_AMOUNT][0][AC.CURRENCY_CODE]) {
+      const ppcAsFunding = this.props.activity[AC.PPC_AMOUNT];
+      if (ppcAsFunding && ppcAsFunding[AC.AMOUNT] && ppcAsFunding[AC.CURRENCY]) {
         showPPC = true;
-        const ppcAsFunding = this.props.activity[AC.PPC_AMOUNT][0];
-        ppcAsFunding[AC.CURRENCY] = ppcAsFunding[AC.CURRENCY_CODE];
+        ppcAsFunding[AC.CURRENCY] = ppcAsFunding[AC.CURRENCY];
         ppcAsFunding[AC.TRANSACTION_AMOUNT] = ppcAsFunding[AC.AMOUNT];
         if (ppcAsFunding[AC.CURRENCY] && ppcAsFunding[AC.TRANSACTION_AMOUNT]) {
           amount = this.props.activityFundingTotals
@@ -53,9 +52,8 @@ const APProjectCost = (fieldName) => class extends Component {
           amount = NumberUtils.rawNumberToFormattedString(amount);
         }
       }
-      if (this.props.activity.fundings && this.props.activity.fundings.length > 0 && showPPC) {
+      if (showPPC) {
         let date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
-        date = date ? date[0] : null;
         date = date ? DateUtils.createFormattedDate(date) : translate('No Data');
         content = (<div>
           <div className={styles.project_cost_left}>

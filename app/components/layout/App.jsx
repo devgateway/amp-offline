@@ -35,6 +35,9 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.disableUpdates = +process.env.DISABLE_UPDATE;
+    if (this.disableUpdates) {
+      logger.warn('AMP Offline upgrade workflow is disabled. This is by default during development.');
+    }
     this.isCheckUrlChanges = IS_CHECK_URL_CHANGES;
   }
 

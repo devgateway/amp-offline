@@ -1,4 +1,3 @@
-import * as ValueConstants from './ValueConstants';
 import * as FMC from './FeatureManagerConstants';
 import { capitalize } from '../Utils';
 
@@ -6,12 +5,11 @@ import { capitalize } from '../Utils';
  * @author Nadejda Mandrescu
  */
 
-export const ORG_ROLE_FIELDS = toFieldNames(ValueConstants.ORG_ROLE_NAMES);
-
 // Activity fields
 export const ACTIVITY_BUDGET = 'activity_budget';
 export const ACTIVITY_STATUS = 'activity_status';
 export const STATUS_REASON = 'status_reason';
+export const FINANCIAL_INSTRUMENT = 'financial_instrument';
 export const TYPE_OF_IMPLEMENTATION = 'type_of_implementation';
 export const OBJECTIVE = 'objective';
 export const RESULTS = 'results';
@@ -67,15 +65,21 @@ export const REGIONAL_GROUP = 'regional_group';
 export const SECTOR_GROUP = 'sector_group';
 export const BUDGETS = 'budgets';
 export const BUDGET_CODE = 'budget_code';
+export const BUDGET_ORGANIZATION_CODE = 'budget_organization_code';
 export const ARCHIVED = 'archived';
 export const TRANSACTION_DATE = 'transaction_date';
 export const TRANSACTION_TYPE = 'transaction_type';
+export const COMMITMENTS = 'commitments';
+export const DISBURSEMENTS = 'disbursements';
+export const EXPENDITURES = 'expenditures';
+export const ESTIMATED_DISBURSEMENTS = 'estimated_disbursements';
 export const TRANSACTION_AMOUNT = 'transaction_amount';
 export const ADJUSTMENT_TYPE = 'adjustment_type';
 export const ACTUAL_START_DATE = 'actual_start_date';
 export const PROPOSED_START_DATE = 'proposed_start_date';
 export const ACTUAL_COMPLETION_DATE = 'actual_completion_date';
 export const CONTRACTING_DATE = 'contracting_date';
+export const DISBURSEMENT_DATE = 'disbursement_date';
 export const PROPOSED_APPROVAL_DATE = 'proposed_approval_date';
 export const ORIGINAL_COMPLETION_DATE = 'original_completion_date';
 export const PROPOSED_COMPLETION_DATE = 'proposed_completion_date';
@@ -83,6 +87,10 @@ export const FINAL_DATE_FOR_DISBURSEMENTS = 'final_date_for_disbursements';
 export const FINAL_DATE_FOR_CONTRACTING = 'final_date_for_contracting';
 export const EFFECTIVE_FUNDING_DATE = 'effective_funding_date';
 export const FUNDING_CLOSING_DATE = 'funding_closing_date';
+export const RATIFICATION_DATE = 'ratification_date';
+export const MATURITY = 'maturity';
+export const LAST_AUDIT_DATE = 'last_audit_date';
+export const SIGNATURE_DATE = 'signature_date';
 export const HUMANITARIAN_AID = 'humanitarian_aid';
 export const DISASTER_RESPONSE = 'disaster_response';
 export const PROGRAM = 'program';
@@ -109,6 +117,8 @@ export const CLIENT_CHANGE_ID = 'client-change-id';
 export const CLIENT_CREATED_ON = 'client-created-on';
 export const CLIENT_UPDATED_ON = 'client-updated-on';
 export const IS_PUSHED = 'is-pushed';
+export const ACTIVITY_GROUP = 'activity_group';
+export const VERSION = 'version';
 export const PROJECT_COMMENTS = 'project_comments';
 export const LESSONS_LEARNED = 'lessons_learned';
 export const PROJECT_IMPACT = 'project_impact';
@@ -117,6 +127,7 @@ export const CONDITIONALITIES = 'conditionalities';
 export const PROJECT_MANAGEMENT = 'project_management';
 export const A_C_CHAPTER = 'a_c_chapter';
 export const CRIS_NUMBER = 'cris_number';
+export const IATI_IDENTIFIER = 'iati_identifier';
 export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
 export const HIERARCHICAL_VALUE = 'hierarchical_value';
 export const HIERARCHICAL_VALUE_PARTS = 'hierarchical_value_parts';
@@ -125,13 +136,12 @@ export const PPC_AMOUNT = 'ppc_amount';
 export const RPC_AMOUNT = 'rpc_amount';
 export const PPC_ANNUAL_BUDGETS = 'ppc_annual_budgets';
 export const AMOUNT = 'amount';
-export const CURRENCY_CODE = 'currency_code';
 export const CURRENCY = 'currency';
 export const FUNDING_DATE = 'funding_date';
 export const COMPONENTS = 'components';
 export const TOTAL_NUMBER_OF_FUNDING_SOURCES = 'total_number_of_funding_sources';
 export const SOURCE_ROLE = 'source_role';
-export const AMP_FUNDING_ID = 'amp_funding_id';
+export const AMP_FUNDING_ID = 'funding_id';
 export const ISSUES = 'issues';
 export const ISSUE_DATE = 'issue_date';
 export const ISSUE_NAME = 'name';
@@ -180,7 +190,9 @@ export const RECIPIENT_ROLE = 'recipient_role';
 export const RECIPIENT_ORGANIZATION = 'recipient_organization';
 export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
+export const PROJECT_CODE = 'project_code';
 export const FY = 'fy';
+export const INDIRECT_ON_BUDGET = 'indirect_on_budget';
 export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
 export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
 export const DONOR_CONTACT = 'donor_contact_information';
@@ -213,8 +225,6 @@ export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
 export const DEPENDENCY_ON_BUDGET = 'on_budget';
 export const DEPENDENCY_TRANSACTION_PRESENT = 'transaction_present';
 export const DEPENDENCY_COMPONENT_FUNDING_ORG_VALID = 'organization_present';
-export const DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED = 'disbursements_disaster_response_required';
-export const DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED = 'commitments_disaster_response_required';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =

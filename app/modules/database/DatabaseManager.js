@@ -300,7 +300,7 @@ const DatabaseManager = {
    * @param fieldsModifier the fields modifier rule
    * @param collectionName
    */
-  updateCollectionFields(filter, fieldsModifier, collectionName) {
+  updateCollectionFields(filter = {}, fieldsModifier, collectionName) {
     logger.log('updateCollectionFields');
     return new Promise((resolve, reject) => {
       const updateCollectionFieldsFunc = DatabaseManager._updateCollectionFields
@@ -547,7 +547,7 @@ const DatabaseManager = {
     });
   },
 
-  _count(example, collectionName, resolve, reject) {
+  _count(example = {}, collectionName, resolve, reject) {
     logger.debug('_count');
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.count(example, (err, count) => {

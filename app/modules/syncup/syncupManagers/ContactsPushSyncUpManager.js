@@ -9,6 +9,8 @@ import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConsta
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import { CONTACT } from '../../../utils/constants/ActivityConstants';
+import Notification from '../../helpers/NotificationHelper';
+import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Contacts push sync up manager');
 
@@ -21,7 +23,7 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
     super(SYNCUP_TYPE_CONTACTS_PUSH);
     this._cancel = false;
     this.diff = [];
-    this.pushed = new Set();
+    this._processed = new Set();
   }
 
   cancel() {
@@ -29,7 +31,7 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   getDiffLeftover() {
-    this.diff = this.diff.filter(id => !this.pushed.has(id));
+    this.diff = this.diff.filter(id => !this._processed.has(id));
     return this.diff;
   }
 
@@ -75,8 +77,9 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _processResult({ contact, pushResult, error, isNewContact }) {
-    if (pushResult) {
-      this.pushed.add(contact.id);
+    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    if (pushResult || !isConnectivityError) {
+      this._processed.add(contact.id);
     }
     const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
     if (errorData) {

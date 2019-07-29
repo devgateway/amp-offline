@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import styles from './AFListSelector.css';
 import AFList from './AFList';
@@ -10,6 +11,7 @@ import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import * as Utils from '../../../../utils/Utils';
+import Messages from '../../../common/Messages';
 
 const logger = new Logger('AF list selector');
 
@@ -37,7 +39,7 @@ export default class AFListSelector extends Component {
     listPath: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     // we need to report validation error before search box, thus passing to the component to display
-    validationError: PropTypes.string,
+    validationErrors: PropTypes.array,
     extraParams: PropTypes.object,
     onBeforeDelete: PropTypes.func
   };
@@ -63,38 +65,33 @@ export default class AFListSelector extends Component {
       || `Search ${AC.toOriginalLabel(this.idOnlyField)}`;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
-    this.setUniqueIdsAndUpdateState(this.props.selectedOptions);
+    this.setNewValues(this.props.selectedOptions);
     this.noMultipleValues = this.listDef.multiple_values !== true;
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selectedOptions !== this.props.selectedOptions) {
-      this.setUniqueIdsAndUpdateState(nextProps.selectedOptions);
+      this.setNewValues(nextProps.selectedOptions);
     }
   }
 
-  setUniqueIdsAndUpdateState(values = []) {
-    // set unique ids even if no unique items validation is request, to have unique id for deletion
-    values.forEach(value => {
-      if (!value.uniqueId) {
-        value.uniqueId = Utils.stringToUniqueId(value[this.uniqueIdCol].id);
-      }
-    });
-    this.setState({ values });
-  }
-
-  getListValues() {
+  setNewValues(values = []) {
     const { afOptionFormatter } = this.props.extraParams || {};
-    this.state.values.forEach(entry => {
+    // set unique ids even if no unique items validation is request, to have unique id for deletion
+    values.forEach(entry => {
       const idOnlyFieldValue = entry[this.idOnlyField];
-      if (!idOnlyFieldValue.isAFOption) {
+      if (!idOnlyFieldValue.isAFOption || !entry.uniqueId) {
         entry[this.idOnlyField] = new AFOption({ ...idOnlyFieldValue, displayHierarchicalValue: true });
         if (afOptionFormatter) {
           entry[this.idOnlyField].valueFormatter = afOptionFormatter;
         }
       }
+      if (!entry.uniqueId) {
+        entry.uniqueId = Utils.stringToUniqueId(entry[this.uniqueIdCol].id);
+      }
     });
-    return this.state.values;
+    values.sort((a, b) => a[this.idOnlyField].compareByDisplayValue(b[this.idOnlyField]));
+    this.setState({ values });
   }
 
   dividePercentage() {
@@ -132,19 +129,19 @@ export default class AFListSelector extends Component {
   }
 
   handleEditValue(rowData, colHeader, cellValue) {
-    const values = this.state.values;
+    const values = this.state.values.slice();
     const item = values.find(val => val.uniqueId === rowData.uniqueId);
     item[colHeader] = cellValue;
     this.handleChange(values);
   }
 
   handleChange(values) {
-    this.setUniqueIdsAndUpdateState(values);
+    this.setNewValues(values);
     this.props.onChange(values);
   }
 
   _getValidationState() {
-    if (this.props.validationError) {
+    if (this.props.validationErrors) {
       return 'error';
     }
     return null;
@@ -155,12 +152,12 @@ export default class AFListSelector extends Component {
     if (params['no-table'] !== true) {
       return (<div>
         <this.listType
-          onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
+          onDeleteRow={this.handleRemoveValue} values={this.state.values} listPath={this.props.listPath}
           extraParams={this.props.extraParams} onBeforeDelete={this.props.onBeforeDelete}
           onEditRow={this.handleEditValue.bind(this)} language={this.context.activityFieldsManager._lang} />
         <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()}>
           <FormControl.Feedback />
-          <HelpBlock>{this.props.validationError}</HelpBlock>
+          <HelpBlock><Messages messages={this.props.validationErrors} /></HelpBlock>
         </FormGroup>
       </div>);
     }
