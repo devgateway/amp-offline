@@ -14,8 +14,10 @@ export default class DatabaseSanityStatus {
     if (dbStatus) {
       const s = new DatabaseSanityStatus();
       Object.assign(s, dbStatus);
-      s.details = new DatabaseSanityStatusDetails();
-      Object.assign(s.details, dbStatus[SCC.STATUS_DETAILS]);
+      if (dbStatus[SCC.STATUS_DETAILS]) {
+        s.details = new DatabaseSanityStatusDetails();
+        Object.assign(s.details, dbStatus[SCC.STATUS_DETAILS]);
+      }
       return s;
     }
     return dbStatus;
