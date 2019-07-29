@@ -21,6 +21,7 @@ const logger = new Logger('DatabaseSanityManager');
 
 const VERSIONS_WITH_POSSIBLE_DB_INCOMPATIBILITY_POST_UPGRADE = [
   '1.0.1',
+  '1.3.1'
 ];
 
 /**
