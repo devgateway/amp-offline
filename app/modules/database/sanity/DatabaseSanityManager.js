@@ -57,7 +57,7 @@ const DatabaseSanityManager = {
 
   _initOrUpdateStatus(status: DatabaseSanityStatus, invalidDBs, totalDBFilesValidated) {
     logger.log('_initOrUpdateStatus');
-    const currentDateTime = DateUtils.getISODateForAPI();
+    const currentDateTime = DateUtils.getTimestampForAPI();
     const isDBCurrentlyInvalid = !!invalidDBs.length;
 
     if (isDBCurrentlyInvalid) {
