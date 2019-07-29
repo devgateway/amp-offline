@@ -4,7 +4,7 @@ import { Button, Panel } from 'react-bootstrap';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
 import * as Utils from '../../../../../utils/Utils';
@@ -18,7 +18,7 @@ const logger = new Logger('AF funding detail container');
 export default class AFFundingDetailContainer extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   static propTypes = {
@@ -26,26 +26,21 @@ export default class AFFundingDetailContainer extends Component {
     type: PropTypes.string.isRequired,
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
-    hasErrors: PropTypes.func.isRequired
+    hasErrors: PropTypes.func.isRequired,
+    funding: PropTypes.object.isRequired
   };
 
   constructor(props) {
     super(props);
     logger.log('constructor');
     this.state = {
-      openFDC: false
+      openFDC: this.hasErrors(props.fundingDetail, props.type)
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    // Expand the section that has errors.
-    if (this.hasErrors(nextProps.fundingDetail, nextProps.type)) {
-      this.setState({ openFDC: true });
-    }
-  }
-
   hasErrors(fundingDetail, type) {
-    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === type));
+    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
+      && fd[AC.TRANSACTION_TYPE].value === type));
     return this.props.hasErrors(fundingDetails);
   }
 
@@ -57,7 +52,8 @@ export default class AFFundingDetailContainer extends Component {
     const transactionTypes = Object.values(this.context.activityFieldsManager
       .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`]);
     if (transactionTypes.find(item => (item.value === this.props.type))) {
-      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE].value === this.props.type));
+      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
+        && fd[AC.TRANSACTION_TYPE].value === this.props.type));
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
@@ -93,9 +89,12 @@ export default class AFFundingDetailContainer extends Component {
             that array because that will confuse React. */
             return (<AFFundingDetailItem
               fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
-              removeFundingDetailItem={this.props.removeFundingDetailItem} />);
+              removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
           })}
-          <Button bsStyle="primary" onClick={this._addTransactionItem.bind(this)}>{button}</Button>
+          <Button
+            className={fundingStyles.add_button} bsStyle="primary"
+            onClick={this._addTransactionItem.bind(this)}>{button}
+          </Button>
         </Panel>
       </div>);
     } else {

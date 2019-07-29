@@ -8,6 +8,7 @@ import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import translate from '../../../../../utils/translate';
+import APFundingMTEFSection from './APFundingMTEFSection';
 
 const logger = new Logger('AP funding organization section');
 
@@ -18,7 +19,6 @@ class APFundingOrganizationSection extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    counter: PropTypes.number.isRequired,
     comparator: PropTypes.func.isRequired,
     buildSimpleField: PropTypes.func.isRequired
   };
@@ -53,6 +53,17 @@ class APFundingOrganizationSection extends Component {
     return tableContent;
   }
 
+  _buildFieldTable(field) {
+    const content = [];
+    const { buildSimpleField, funding } = this.props;
+    content.push(buildSimpleField(field, true, null, false, funding));
+    return Tablify.addRows(content, 1);
+  }
+
+  _buildMTEFDetailSection() {
+    return <APFundingMTEFSection funding={this.props.funding} />;
+  }
+
   _buildFundingDetailSection() {
     const content = [];
     // Group the list of funding details by adjustment_type and transaction_type.
@@ -61,7 +72,7 @@ class APFundingOrganizationSection extends Component {
     fd.forEach((item) => {
       const auxFd = {
         adjType: item[AC.ADJUSTMENT_TYPE],
-        trnType: item[AC.TRANSACTION_TYPE],
+        trnType: item[AC.TRANSACTION_TYPE] || {},
         key: item.id,
         currency: item[AC.CURRENCY]
       };
@@ -71,7 +82,8 @@ class APFundingOrganizationSection extends Component {
     });
     const sortedGroups = groups.sort(this.props.comparator);
     sortedGroups.forEach((group) => {
-      content.push(<APFundingTransactionTypeItem fundingDetails={fd} group={group} key={group.key} />);
+      content.push(<APFundingTransactionTypeItem
+        fundingDetails={fd} group={group} key={group.key} buildSimpleField={this.props.buildSimpleField} />);
     });
     return content;
   }
@@ -80,17 +92,22 @@ class APFundingOrganizationSection extends Component {
     let totalActualDisbursements = 0;
     let totalActualCommitments = 0;
     const fd = this.props.funding[AC.FUNDING_DETAILS];
+    if (!fd || fd.length === 0) {
+      // Dont show this section if there are no funding details.
+      return null;
+    }
     const fdActualCommitments = fd.filter((item) =>
-      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS
+      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL
+      && item[AC.TRANSACTION_TYPE] && item[AC.TRANSACTION_TYPE].value === VC.COMMITMENTS
     );
     totalActualCommitments = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualCommitments,
       this._currency);
     const fdActualDisbursements = fd.filter((item) =>
-      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS
+      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL
+      && item[AC.TRANSACTION_TYPE] && item[AC.TRANSACTION_TYPE].value === VC.DISBURSEMENTS
     );
     totalActualDisbursements = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualDisbursements,
       this._currency);
-
 
     return (<div>
       <APFundingTotalItem
@@ -102,10 +119,17 @@ class APFundingOrganizationSection extends Component {
   render() {
     logger.debug('render');
     return (<div>
-      <div className={styles.section_header}> {translate('Funding Item')} {this.props.counter} </div>
+      <div className={styles.section_header} />
       <table className={styles.two_box_table}>
         <tbody>{this._buildDonorInfo()}</tbody>
       </table>
+      <table className={styles.two_box_table}>
+        <tbody>{this._buildFieldTable(`${[AC.FUNDINGS]}~${[AC.DONOR_OBJECTIVE]}`)}</tbody>
+      </table>
+      <table className={styles.two_box_table}>
+        <tbody>{this._buildFieldTable(`${[AC.FUNDINGS]}~${[AC.CONDITIONS]}`)}</tbody>
+      </table>
+      <div className={styles.funding_detail}>{this._buildMTEFDetailSection()}</div>
       <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>
       <div>{this._buildUndisbursedBalanceSection()}</div>
     </div>);

@@ -17,6 +17,7 @@ import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstan
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
 import * as Utils from '../../utils/Utils';
+import translate from '../../utils/translate';
 
 let secureKey;
 
@@ -102,13 +103,13 @@ const DatabaseManager = {
         db.loadDatabase((err) => {
           if (err !== null) {
             DatabaseCollection.getInstance().removeCollection(name);
-            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+            reject(DatabaseManager._createNotification(err));
           } else {
             DatabaseManager.createIndex(db, {}, (err2) => {
               if (err2 === null) {
                 resolve(db);
               } else {
-                reject(new Notification({ message: err2.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+                reject(DatabaseManager._createNotification(err2));
               }
             });
           }
@@ -129,7 +130,7 @@ const DatabaseManager = {
       const exampleObject = { id };
       collection.find(exampleObject, (err, docs) => {
         if (err !== null) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          reject(DatabaseManager._createNotification(err));
         }
         if (docs.length === 1) {
           logger.log('Update');
@@ -137,23 +138,21 @@ const DatabaseManager = {
             if (err2 === null) {
               resolve(data);
             } else {
-              reject(new Notification({ message: err2.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+              reject(DatabaseManager._createNotification(err2));
             }
           });
         } else if (docs.length === 0) {
           logger.log('Insert');
           collection.insert(data, (err3, newDoc) => {
             if (err3 !== null) {
-              reject(new Notification({ message: err3.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+              reject(DatabaseManager._createNotification(err3));
             } else {
               resolve(newDoc);
             }
           });
         } else {
-          reject(new Notification({
-            message: `Something is really wrong with this record: ${exampleObject.id} - ${collectionName}`,
-            origin: NOTIFICATION_ORIGIN_DATABASE
-          }));
+          reject(DatabaseManager._createNotification(
+            `${translate('WrongRecord')}: ${exampleObject.id} - ${collectionName}`));
         }
       });
     }).catch(reject);
@@ -205,7 +204,7 @@ const DatabaseManager = {
     DatabaseManager._saveOrUpdateColl(collectionData, collectionName).then(newData => resolve(newData))
       .catch((saveUpdateError) =>
         // reject as a notification
-        reject(new Notification({ message: saveUpdateError.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }))
+        reject(DatabaseManager._createNotification(saveUpdateError.toString()))
       );
   },
 
@@ -317,7 +316,7 @@ const DatabaseManager = {
         if (err === null) {
           resolve(numAffected);
         } else {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          reject(DatabaseManager._createNotification(err));
         }
       });
     }).catch(reject);
@@ -332,11 +331,11 @@ const DatabaseManager = {
             if (err2 === null && newDocs.length === collectionData.length) {
               resolve(newDocs);
             } else {
-              reject(new Notification({ message: err2.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+              reject(DatabaseManager._createNotification(err2));
             }
           });
         } else {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          reject(DatabaseManager._createNotification(err));
         }
       });
     }).catch(reject);
@@ -349,7 +348,7 @@ const DatabaseManager = {
         if (err === null && newDocs.length === collectionData.length) {
           resolve(newDocs);
         } else {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          reject(DatabaseManager._createNotification(err));
         }
       });
     }).catch(reject);
@@ -380,14 +379,14 @@ const DatabaseManager = {
       const exampleObject = Object.assign({ id }, example);
       collection.findOne(exampleObject, (err, doc) => {
         if (err !== null) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          reject(DatabaseManager._createNotification(err));
         }
         if (doc !== null) {
           collection.remove(exampleObject, { multi: false }, (err2, count) => {
             if (err2 === null) {
               resolve(count);
             } else {
-              reject(new Notification({ message: err2.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+              reject(DatabaseManager._createNotification(err2));
             }
           });
         } else if (doc === null) {
@@ -433,7 +432,7 @@ const DatabaseManager = {
         if (err === null) {
           resolve(count);
         } else {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          reject(DatabaseManager._createNotification(err));
         }
       });
     }).catch(reject);
@@ -452,10 +451,7 @@ const DatabaseManager = {
             resolve(docs[0]);
             break;
           default:
-            reject(new Notification({
-              message: 'moreThanOneResultFound',
-              origin: NOTIFICATION_ORIGIN_DATABASE
-            }));
+            reject(DatabaseManager._createNotification(translate('moreThanOneResultFound')));
             break;
         }
       }).catch(reject);
@@ -481,10 +477,7 @@ const DatabaseManager = {
           case 1:
             return docs[0];
           default:
-            return Promise.reject(new Notification({
-              message: 'moreThanOneResultFound',
-              origin: NOTIFICATION_ORIGIN_DATABASE
-            }));
+            return Promise.reject(DatabaseManager._createNotification(translate('moreThanOneResultFound')));
         }
       });
   },
@@ -512,7 +505,7 @@ const DatabaseManager = {
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.find(example, newProjections, (err, docs) => {
         if (err !== null) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          reject(DatabaseManager._createNotification(err));
         }
         resolve(docs);
       });
@@ -536,7 +529,7 @@ const DatabaseManager = {
       collection.find(example, newProjections).sort(sort).skip(skip).limit(limit)
         .exec((err, docs) => {
           if (err !== null) {
-            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+            reject(DatabaseManager._createNotification(err));
           }
           resolve(docs);
         });
@@ -559,7 +552,7 @@ const DatabaseManager = {
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.count(example, (err, count) => {
         if (err !== null) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_DATABASE }));
+          reject(DatabaseManager._createNotification(err));
         }
         resolve(count);
       });
@@ -596,6 +589,10 @@ const DatabaseManager = {
   queuePromise(task) {
     logger.debug('queuePromise');
     DatabaseCollection.getInstance().addPromiseAndProcess(task);
+  },
+
+  _createNotification(err, origin = NOTIFICATION_ORIGIN_DATABASE) {
+    return new Notification({ message: `${translate('Database Error')}: ${err.toString()}`, origin });
   }
 };
 

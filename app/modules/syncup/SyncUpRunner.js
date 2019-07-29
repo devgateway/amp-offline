@@ -26,6 +26,8 @@ import {
   SYNCUP_TYPE_CONTACT_FIELDS,
   SYNCUP_TYPE_CONTACTS_PUSH,
   SYNCUP_TYPE_EXCHANGE_RATES,
+  SYNCUP_TYPE_RESOURCE_FIELDS,
+  SYNCUP_TYPE_RESOURCES_PUSH,
   SYNCUP_TYPE_TRANSLATIONS,
   SYNCUP_TYPE_WORKSPACE_MEMBERS
 } from '../../utils/Constants';
@@ -34,6 +36,7 @@ import * as Utils from '../../utils/Utils';
 import ContactHelper from '../helpers/ContactHelper';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
 import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
+import ResourceHelper from '../helpers/ResourceHelper';
 
 const logger = new Logger('Syncup runner');
 
@@ -76,7 +79,8 @@ export default class SyncUpRunner {
   /** Sync up run no 2 */
   static _SYNC_RUN_2 = 2;
 
-  static _SECOND_RUN_SKIP = new Set([SYNCUP_TYPE_ACTIVITIES_PUSH, SYNCUP_TYPE_CONTACTS_PUSH]);
+  static _SECOND_RUN_SKIP = new Set([SYNCUP_TYPE_ACTIVITIES_PUSH, SYNCUP_TYPE_CONTACTS_PUSH,
+    SYNCUP_TYPE_RESOURCES_PUSH]);
 
   /**
    * Generates a new instance of the Sync Up Runner. This must be only instance per user request.
@@ -153,13 +157,14 @@ export default class SyncUpRunner {
 
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
       ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
+      ResourceHelper.countAllResourcesModifiedOnClient(),
       TranslationSyncupManager.getNewTranslationsDifference()])
-      .then(([ampIds, userIds, activitiesToPush, contactsToPush, newTranslations]) => {
+      .then(([ampIds, userIds, activitiesToPush, contactsToPush, resourcesToPushCount, newTranslations]) => {
         this._ampIds = ampIds;
         this._registeredUserIds = userIds;
         this._hasActivitiesToPush = activitiesToPush && activitiesToPush.length > 0;
         this._hasContactsToPush = contactsToPush && contactsToPush.length > 0;
-        this._contactsToPush = contactsToPush;
+        this._hasResourcesToPush = resourcesToPushCount > 0;
         this._hasTranslationsToPush = newTranslations && newTranslations.length > 0;
         return this._getCumulativeSyncUpChanges();
       });
@@ -191,6 +196,7 @@ export default class SyncUpRunner {
     // TODO: remove this flag once AMP-25568 is done
     changes[SYNCUP_TYPE_ACTIVITY_FIELDS] = true;
     changes[SYNCUP_TYPE_CONTACT_FIELDS] = true;
+    changes[SYNCUP_TYPE_RESOURCE_FIELDS] = true;
     // TODO query only if changed
     changes[SYNCUP_TYPE_ASSETS] = true;
     changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
@@ -198,6 +204,7 @@ export default class SyncUpRunner {
     const hasWsMembersChanges = SyncUpDiff.hasChanges(changes[SYNCUP_TYPE_WORKSPACE_MEMBERS]);
     changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && (this._hasActivitiesToPush || hasWsMembersChanges);
     changes[SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._hasContactsToPush;
+    changes[SYNCUP_TYPE_RESOURCES_PUSH] = isFirstRun && this._hasResourcesToPush;
     changes[SYNCUP_TYPE_TRANSLATIONS] = changes[SYNCUP_TYPE_TRANSLATIONS] || this._hasTranslationsToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
@@ -235,10 +242,11 @@ export default class SyncUpRunner {
       unitPromise = syncUpManager.doSyncUp(this._syncUpDiffLeftOver.getSyncUpDiff(type))
         .then(() => this._buildUnitResult(syncUpManager))
         .catch(error => {
-          logger.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${error.stack}"`);
+          const errorStack = error && error.stack;
+          logger.error(`SyncUp Error for ${syncUpManager.type}: error = "${error}", stack = "${errorStack}"`);
           // We are not rolling back any data saved until here. We collect the leftover and resume the next sync from
           // where we left up to the latest. Dependencies will manage other units.
-          return this._buildUnitResult(syncUpManager, error);
+          return this._buildUnitResult(syncUpManager, error.message || error);
         });
       this._syncUpDependency.setState(type, SS.IN_PROGRESS);
     }
@@ -247,6 +255,7 @@ export default class SyncUpRunner {
 
   _prepareForSync(syncUpManager) {
     syncUpManager.lastSyncUpDate = this._lastTimestamp;
+    syncUpManager.totalSyncUpDiff = this._syncUpDiffLeftOver;
   }
 
   _buildUnitResult(syncUpManager: SyncUpManagerInterface, error) {
@@ -259,10 +268,11 @@ export default class SyncUpRunner {
     const unitLeftOver = this._syncUpDiffLeftOver.getSyncUpDiff(type);
     const state = this._getStateOrSetBasedOnLeftOver(type, originalDiff, unitLeftOver, syncUpManager.done);
     const status = SS.STATE_TO_STATUS[state] || SYNCUP_STATUS_FAIL;
-    if (!error && syncUpManager.errors && syncUpManager.errors.length) {
-      error = syncUpManager.errors.join('. ');
+    if (!error) {
+      error = this._getMessages(syncUpManager.errors);
     }
-    let unitResult = { type, status, state, error };
+    const warning = this._getMessages(syncUpManager.warnings);
+    let unitResult = { type, status, state, error, warning };
     // if no changes in the second run, keep run 1 result
     if (this._syncRunNo === SyncUpRunner._SYNC_RUN_2 && state === SS.NO_CHANGES) {
       unitResult = this._unitsResult.get(type);
@@ -272,6 +282,12 @@ export default class SyncUpRunner {
     }
     this._remainingSyncUpTypes.delete(syncUpManager.type);
     return unitResult;
+  }
+
+  _getMessages(messages) {
+    if (messages && messages.length) {
+      return Utils.joinMessages(messages);
+    }
   }
 
   _addStats(syncUpManager: SyncUpManagerInterface, unitResult, prevUnitResult) {
@@ -297,7 +313,7 @@ export default class SyncUpRunner {
         } else {
           logger.error(`Unexpected use case for "${type}" that was not skipped through expected means, has no
           leftover, but still is not done. Possibly a bug. Fallback to FAIL state.`);
-          state = SS.STATES_PENDING.includes(state) ? SS.FAIL : state;
+          state = (SS.STATES_PENDING.includes(state) || state === SS.IN_PROGRESS) ? SS.FAIL : state;
         }
       } else if (unitLeftOver !== true) {
         // this is not an atomic sync, let's compare original diff vs leftover to see if at least something was synced
@@ -357,11 +373,20 @@ export default class SyncUpRunner {
     const status = this._getStatus(unitsResult);
     logger.log(`SyncUp ${status}`);
     const syncUpDiff = status === SYNCUP_STATUS_SUCCESS ? null : this._syncUpDiffLeftOver.syncUpDiff;
+    let warnings;
     if (unitsResult.length) {
-      errors = this._collectErrors(unitsResult, errors);
+      const messages = this._collectMessages(unitsResult, errors);
+      errors = messages.errors;
+      warnings = messages.warnings;
     }
     return SyncUpRunner.buildResult({
-      status, userId: this._userId, units: unitsResult, errors, syncUpDiff, syncTimestamp: this._currentTimestamp
+      status,
+      userId: this._userId,
+      units: unitsResult,
+      errors,
+      warnings,
+      syncUpDiff,
+      syncTimestamp: this._currentTimestamp
     });
   }
 
@@ -386,13 +411,14 @@ export default class SyncUpRunner {
     return SYNCUP_STATUS_PARTIAL;
   }
 
-  static buildResult({ status, userId, units, errors, syncUpDiff, syncTimestamp }) {
+  static buildResult({ status, userId, units, errors, warnings, syncUpDiff, syncTimestamp }) {
     const syncDate = new Date();
     const syncUpGlobalResult = {
       status,
       'requested-by': userId,
       units,
       errors,
+      warnings,
       'sync-date': syncDate.toISOString()
     };
     syncUpGlobalResult[SYNCUP_DATETIME_FIELD] = syncTimestamp;
@@ -402,7 +428,7 @@ export default class SyncUpRunner {
     return syncUpGlobalResult;
   }
 
-  _collectErrors(unitsResult, errors = []) {
+  _collectMessages(unitsResult, errors = []) {
     const existingErrors = new Set();
     errors = errors.filter(err => {
       const errMsg = err.toString();
@@ -412,7 +438,7 @@ export default class SyncUpRunner {
       existingErrors.add(errMsg);
       return true;
     });
-    return unitsResult.reduce((errorsList, unitResult) => {
+    errors = unitsResult.reduce((errorsList, unitResult) => {
       if (unitResult.error) {
         const errMsg = unitResult.error.toString();
         if (!existingErrors.has(errMsg)) {
@@ -422,6 +448,8 @@ export default class SyncUpRunner {
       }
       return errorsList;
     }, errors);
+    const warnings = unitsResult.map(ur => ur.warning).filter(w => w);
+    return { errors, warnings };
   }
 
   /**

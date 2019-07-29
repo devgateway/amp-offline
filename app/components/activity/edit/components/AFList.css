@@ -36,6 +36,7 @@
     background-image: url('../../../../assets/images/ico_del.gif');
     background-repeat: no-repeat;
     padding: 1em;
+    background-position: center;
 }
 
 .cell {

@@ -9,7 +9,7 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
-import { RELEASE_BRANCHES } from './Constants';
+import { RELEASE_BRANCHES, ENDS_WITH_PUNCTUATION_REGEX, VERSION } from './Constants';
 
 const Utils = {
 
@@ -30,7 +30,7 @@ const Utils = {
    * @return {string}
    */
   stringToUniqueId(string: string) {
-    return `${this.stringToId(string)}-${Date.now()}-${Math.random()}`;
+    return `${this.stringToId(string)}-${Date.now()}-${Math.random().toString().substring(2)}`;
   },
 
   numberRandom() {
@@ -82,6 +82,16 @@ const Utils = {
    */
   flattenToListByKey(listOfMap, key) {
     return listOfMap.reduce((acc, val) => acc.concat(val[key]), []);
+  },
+
+  /**
+   * Converts a list of objects (e.g. from DB query) to a Map by specified unique key (e.g. usually id)
+   * @param listOfMap
+   * @param key (optional) the key to map by. Default is 'id'.
+   * @return {Map}
+   */
+  toMapByKey(listOfMap, key = 'id') {
+    return listOfMap.reduce((acc, val) => acc.set(val[key], val), new Map());
   },
 
   /**
@@ -148,6 +158,16 @@ const Utils = {
       return noTags;
     }
     return '';
+  },
+
+  joinMessages(messages: Array, endPunctuationIfMissing = '.') {
+    return messages && messages.map(m => {
+      const msg = `${m}`;
+      if (!msg.match(ENDS_WITH_PUNCTUATION_REGEX)) {
+        return `${msg}${endPunctuationIfMissing}`;
+      }
+      return msg;
+    }).join(' ');
   },
 
   /**
@@ -225,6 +245,19 @@ const Utils = {
   isReleaseBranch() {
     const branch = this.getBranch();
     return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
+  },
+
+  compareWithCollate(text1, text2, collator) {
+    collator = collator || { sensitivity: 'base', ignorePunctuation: true };
+    return new Intl.Collator('us', collator).compare(text1, text2);
+  },
+
+  arrayFlatMap(array: Array) {
+    return array.reduce((result, elem) => result.concat(elem), []);
+  },
+
+  versionAsFieldName() {
+    return VERSION.replace(/\./g, '_');
   },
 
   selfBindMethods(obj) {

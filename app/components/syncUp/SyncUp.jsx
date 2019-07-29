@@ -127,7 +127,6 @@ class SyncUp extends Component {
   }
 
   render() {
-    logger.log('render');
     const { syncUpReducer, currentUserHistory } = this.props;
     const { loadingSyncHistory, syncUpInProgress } = syncUpReducer;
     return (
@@ -142,9 +141,6 @@ class SyncUp extends Component {
             })}
             onClick={startSyncUpIfConnectionAvailable}
           />
-        </div>
-        <div className={styles.display_inline}>
-          <div className={classes({ [styles.loader]: loadingSyncHistory || syncUpInProgress })} />
         </div>
         <hr />
         {this.selectContentElementToDraw()}
@@ -200,7 +196,7 @@ const syncConfirmationAlert = (syncUpReducer) => {
   const proceedWithWorkspace = new FollowUp({
     type: STATE_SYNCUP_DISMISSED
   }, translate('Ignore'));
-  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Sync'));
+  const proceedWithSync = new FollowUp(() => startSyncUp(), translate('Synchronize'));
   const actions = [proceedWithSync, syncUpReducer.forceSyncUp ? proceedWithLogout : proceedWithWorkspace];
   // generate confirmation alert configuration
   return new ConfirmationAlert(syncNotification, actions, false);

@@ -5,7 +5,7 @@ import Logger from '../../../../modules/util/LoggerManager';
 import styles from './APComponents.css';
 import translate from '../../../../utils/translate';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP Components');
 
@@ -16,7 +16,7 @@ class APComponents extends Component {
   /* eslint-disable react/no-unused-prop-types */
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
   /* eslint-enable react/no-unused-prop-types */
 

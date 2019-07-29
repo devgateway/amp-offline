@@ -63,7 +63,7 @@ export default class Tablify extends Component {
         rowContent.push(<div style={cellwidthStyle} className={styles.tablify_inner_cell}>
           {this.props.content.pop()}</div>);
       }
-      tableContent.push(<div>{rowContent}</div>);
+      tableContent.push(<div className={styles.flex}>{rowContent}</div>);
     }
     return (<div>
       {tableContent}

@@ -26,7 +26,7 @@ export default class AFSearchList extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.applyFilter = this.applyFilter.bind(this);
     this.state = {
       filter: '',

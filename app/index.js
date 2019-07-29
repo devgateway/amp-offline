@@ -25,6 +25,7 @@ import NotificationHelper from './modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
 import { doSanityCheck } from './actions/SanityCheckAction';
 import * as URLUtils from './utils/URLUtils';
+import translate from './utils/translate';
 
 const logger = new Logger('index');
 
@@ -47,7 +48,7 @@ function checkAuth(nextState, replace) {
 
 function handleUnexpectedError(err) {
   logger.error(err);
-  const msg = 'An unexpected error occurred. Please collect logs, note your actions and contact the administrator.';
+  const msg = translate('unexpectedError');
   const toString = err.toString();
   const json = JSON.stringify(err);
   alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
@@ -101,7 +102,9 @@ if (params.sanity === 'true') {
 }
 
 window.addEventListener('error', ({ filename, message }) => {
-  handleUnexpectedError(`Uncaught error: ${message} IN ${filename}`);
+  logger.error(message, filename);
+  const trn = translate('uncaughtErrorInFile').replace('%message%', message).replace('%filename%', filename);
+  handleUnexpectedError(trn);
 });
 
 window.addEventListener('unhandledrejection', ({ reason }) => {
@@ -110,7 +113,8 @@ window.addEventListener('unhandledrejection', ({ reason }) => {
     const notification = reason;
     const { severity, origin } = notification;
     if (severity === NOTIFICATION_SEVERITY_ERROR && origin === NOTIFICATION_ORIGIN_DATABASE) {
-      handleUnexpectedError(notification.message);
+      // Try to translate.
+      handleUnexpectedError(translate(notification.message));
     }
   }
 });

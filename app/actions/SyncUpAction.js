@@ -7,8 +7,9 @@ import SyncUpManager from '../modules/syncup/SyncUpManager';
 import Logger from '../modules/util/LoggerManager';
 import { resetDesktop } from '../actions/DesktopAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
-import { connectivityCheck } from './ConnectivityAction';
-import { ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
+import { connectivityCheck, getStatusNotification, isAmpAccessible } from './ConnectivityAction';
+import { ERROR_CODE_ACCESS_DENIED, ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
+import NotificationHelper from '../modules/helpers/NotificationHelper';
 
 // Types of redux actions
 export const STATE_SYNCUP_SHOW_HISTORY = 'STATE_SYNCUP_SHOW_HISTORY';
@@ -42,10 +43,10 @@ export function loadSyncUpHistory() {
 
 export function startSyncUpIfConnectionAvailable() {
   return connectivityCheck().then(status => {
-    if (status.isAmpAvailable) {
+    if (isAmpAccessible(status, false)) {
       return startSyncUp();
     }
-    store.dispatch(syncConnectionUnavailable());
+    store.dispatch(syncConnectionUnavailable(getStatusNotification(status).message));
     return null;
   });
 }
@@ -74,13 +75,24 @@ export function startSyncUp(historyData) {
       }
     ).catch((err) => {
       logger.error(err);
-      const errorMessage = err.errorCode === ERROR_CODE_NO_CONNECTIVITY ? err.message : translate('defaultSyncError');
+      const errorMessage = getSyncErrorByCode(err);
       store.dispatch({ type: 'STATE_SYNCUP_FAILED', actionData: { errorMessage } });
       URLUtils.forwardTo('/syncUpSummary');
       return checkIfToForceSyncUp();
     });
   }
   return Promise.resolve();
+}
+
+function getSyncErrorByCode(error: NotificationHelper) {
+  switch (error.errorCode) {
+    case ERROR_CODE_NO_CONNECTIVITY:
+      return `${translate('defaultSyncError')} ${error.message}`;
+    case ERROR_CODE_ACCESS_DENIED:
+      return error.message;
+    default:
+      return translate('defaultSyncError');
+  }
 }
 
 export function checkIfToForceSyncUp() {
@@ -103,7 +115,6 @@ export function dismissSyncAndChooseWorkspace() {
 }
 
 function syncUpSearchHistoryOk(data) {
-  logger.log('syncUpSearchHistoryOk');
   return {
     type: STATE_SYNCUP_SHOW_HISTORY,
     actionData: data
@@ -132,9 +143,9 @@ function syncUpInProgress() {
   };
 }
 
-function syncConnectionUnavailable() {
+function syncConnectionUnavailable(errorMessage) {
   return {
     type: STATE_SYNCUP_CONNECTION_UNAVAILABLE,
-    actionData: { errorMessage: translate('AMPUnreachableError') }
+    actionData: { errorMessage }
   };
 }

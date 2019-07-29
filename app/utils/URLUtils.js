@@ -34,17 +34,18 @@ const urlUtils = {
     return url && (typeof url === 'string') && url.match(URL_PATTERN);
   },
 
-  normalizeUrl(url) {
+  normalizeUrl(url, fallbackProtocol = 'https') {
     if (url) {
-      url = url.trim();
+      url = url.trim().toLowerCase();
       while (url.endsWith('/')) {
         url = url.substr(0, url.length - 1);
       }
-      if (!url.startsWith('http')) {
-        while (url.startsWith('/')) {
-          url.substr(1, url.length);
-        }
-        url = `https://${url}`;
+      while (url.startsWith('/')) {
+        url = url.substr(1, url.length);
+      }
+      const uri = new URI(url);
+      if (!uri.protocol()) {
+        url = uri.protocol(fallbackProtocol).toString();
       }
     }
     return url;

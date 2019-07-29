@@ -1,9 +1,14 @@
+/* eslint-disable class-methods-use-this */
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import { SYNCUP_TYPE_CONTACTS_PUSH } from '../../../utils/Constants';
 import ContactHelper from '../../helpers/ContactHelper';
 import Logger from '../../util/LoggerManager';
 import { CONTACT_PUSH_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
+import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
+import * as Utils from '../../../utils/Utils';
+import * as ActivityHelper from '../../helpers/ActivityHelper';
+import { CONTACT } from '../../../utils/constants/ActivityConstants';
 
 const logger = new Logger('Contacts push sync up manager');
 
@@ -77,13 +82,37 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
     if (errorData) {
       logger.error(errorData);
       this.addError(errorData);
-    } else if (isNewContact) {
-      // TODO AMPOFFLINE-706 update activities references
-      return ContactHelper.deleteContactById(contact.id).then(() => {
-        contact.id = pushResult.id;
-        return ContactHelper.saveOrUpdateContact(contact);
-      });
+      return Promise.resolve();
+    } else {
+      return this._cleanupIfIsNewContact(contact, pushResult, isNewContact)
+        .then(() => ContactHelper.saveOrUpdateContact(pushResult));
     }
+  }
+
+  _cleanupIfIsNewContact(contact, pushResult, isNewContact) {
+    if (isNewContact) {
+      return ContactHelper.deleteContactById(contact.id)
+        .then(() => this._updateNewContactToActualIdsInActivities(contact.id, pushResult.id));
+    }
+    return Promise.resolve();
+  }
+
+  _updateNewContactToActualIdsInActivities(tmpContactId, newContactId) {
+    const queries = ACTIVITY_CONTACT_PATHS.map(cType =>
+      Utils.toMap(cType, { $elemMatch: { [CONTACT]: tmpContactId } }));
+    const filter = { $or: queries };
+    return ActivityHelper.findAllNonRejected(filter).then(activities => {
+      activities.forEach(activity => {
+        ACTIVITY_CONTACT_PATHS.forEach(cType => {
+          (activity[cType] || []).forEach(ac => {
+            if (ac[CONTACT] === tmpContactId) {
+              ac[CONTACT] = newContactId;
+            }
+          });
+        });
+      });
+      return ActivityHelper.saveOrUpdateCollection(activities);
+    });
   }
 
 }

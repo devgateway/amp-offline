@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APMeasure.css';
-import ActivityFieldsManager from '../../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../../modules/field/FieldsManager';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APActor from './APActor';
 
@@ -14,7 +14,7 @@ const logger = new Logger('AP measure');
 export default class APMeasures extends Component {
   /* eslint-disable react/no-unused-prop-types */
   static propTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     measure: PropTypes.object.isRequired
   };
   /* eslint-enable react/no-unused-prop-types */
@@ -28,9 +28,9 @@ export default class APMeasures extends Component {
     const content = [];
     let date = '';
     if (this.props.activityFieldsManager.isFieldPathEnabled(`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_DATE}`)) {
-      date = ` - ${createFormattedDate(this.props.measure[AC.MEASURE_DATE])}`;
+      date = ` ${createFormattedDate(this.props.measure[AC.MEASURE_DATE])}`;
     }
-    const measure = `${this.props.measure.name}${date}`;
+    const measure = `${this.props.measure.name || ''}${date}`;
     content.push(<div className={styles.measures}>{measure}</div>);
     this.props.measure[AC.ACTORS].forEach((actor) => {
       content.push(<APActor activityFieldsManager={this.props.activityFieldsManager} actor={actor} />);

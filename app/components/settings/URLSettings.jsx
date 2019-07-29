@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable no-alert */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,6 +15,8 @@ import * as URLUtils from '../../utils/URLUtils';
 import { testUrlByKeepingCurrentSetup, testUrlResultProcessed } from '../../actions/SetupAction';
 import URLInsertModal from './URLInsertModal';
 import settingsStyle from './Settings.css';
+import SimpleNotification from '../common/SimpleNotification';
+import Notification from '../../modules/helpers/NotificationHelper';
 
 const logger = new Logger('List Setting');
 
@@ -38,6 +41,16 @@ class URLSettings extends Component {
     return <URLInsertModal {...props} />;
   }
 
+  static getUrlError(errorMessage) {
+    const errorEl = errorMessage instanceof Notification ?
+      <SimpleNotification notification={errorMessage} asSimpleText /> : translate(errorMessage);
+    return (
+      <div className={settingsStyle.urlError}>
+        {errorEl}
+      </div>
+    );
+  }
+
   static availabilityFormatter(availability) {
     let tooltip;
     let content;
@@ -48,12 +61,12 @@ class URLSettings extends Component {
       tooltip = translate('connectionUp');
       content = <Glyphicon glyph="glyphicon glyphicon-ok-circle text-success" />;
     } else {
-      tooltip = translate('connectionDown');
+      tooltip = availability.errorMessage.message || translate('connectionDown');
       content = <Glyphicon glyph="glyphicon glyphicon-remove-circle text-danger" />;
     }
     return (<div>
       <AmpTooltip tooltip={tooltip} content={content} />
-      <div>{availability.errorMessage}</div>
+      {availability.errorMessage && URLSettings.getUrlError(availability.errorMessage)}
     </div>);
   }
 
@@ -91,7 +104,7 @@ class URLSettings extends Component {
         const isChanged = isAvailable !== urlDs.availability.isAvailable;
         if (isChanged) {
           urlDs.url = goodUrl || url;
-          urlDs.availability.isAvailable = !!goodUrl;
+          urlDs.availability.isAvailable = isAvailable;
           urlDs.availability.errorMessage = errorMessage;
         }
         const newDataSource = dataSource.filter(ds => ds.id === urlDs.id || ds.url !== urlDs.url);
@@ -131,6 +144,7 @@ class URLSettings extends Component {
     const { dataSource } = this.state;
     const dsUrl = dataSource.find(ds => ds.id === row.id);
     dsUrl.url = URLUtils.normalizeUrl(cellValue);
+    dsUrl.availability = {};
     this.props.onUrlTest(dsUrl.url);
     this.handleChange(dataSource);
   }
@@ -143,6 +157,12 @@ class URLSettings extends Component {
     this.props.onChange(setting);
   }
 
+  handleConfirmDelete(next) {
+    if (confirm(translate('Are you sure you want to delete?'))) {
+      next();
+    }
+  }
+
   render() {
     const { dataSource } = this.state;
     const options = {
@@ -151,7 +171,9 @@ class URLSettings extends Component {
       afterInsertRow: this.handleInsertedRow.bind(this),
       afterDeleteRow: this.handleDeletedRow.bind(this),
       insertModal: this.constructor.createCustomInsertModal,
-      insertFailIndicator: translate('duplicateUrl')
+      insertFailIndicator: translate('duplicateUrl'),
+      handleConfirmDeleteRow: this.handleConfirmDelete.bind(this),
+      noDataText: translate('noDataText'),
     };
     const selectRow = {
       mode: 'checkbox'

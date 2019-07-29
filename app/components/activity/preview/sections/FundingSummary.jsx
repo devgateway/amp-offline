@@ -4,7 +4,7 @@ import APField from '../components/APField';
 import * as VC from '../../../../utils/constants/ValueConstants';
 import * as PC from '../../../../utils/constants/FieldPathConstants';
 import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -21,7 +21,7 @@ const logger = new Logger('Funding summary');
  */
 class FundingSummary extends Component {
   static propTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals).isRequired,
     fieldNameClass: PropTypes.string,
     fieldValueClass: PropTypes.string
@@ -53,7 +53,7 @@ class FundingSummary extends Component {
             const value = this.props.activityFundingTotals.getTotals(adjType, trnType, {});
             measuresTotals[`${adjType} ${trnType}`] = value;
           }
-          // Save these 2 flags for "Delivery Rate".
+          // Save these 2 flags for "Delivery rate".
           if (trnType === VC.COMMITMENTS && adjType === VC.ACTUAL) {
             actualCommitmentsAreEnabled = true;
           }
@@ -72,6 +72,10 @@ class FundingSummary extends Component {
     if (adjTypeActualTrn && expendituresAreEnabled) {
       const ub = VC.UNALLOCATED_DISBURSEMENTS;
       measuresTotals[ub] = this.props.activityFundingTotals.getTotals(ub, {});
+    }
+    // Other measures: "Total MTEF Projections".
+    if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
+      measuresTotals[VC.MTEF_PROJECTIONS] = this.props.activityFundingTotals.getMTEFTotal();
     }
     // Other measures: "Delivery rate".
     if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DELIVERY_RATE)) {
@@ -100,6 +104,7 @@ class FundingSummary extends Component {
       { trn: VC.ACTUAL_EXPENDITURES, total: true },
       { trn: VC.UNALLOCATED_DISBURSEMENTS, total: false },
       { trn: VC.PLANNED_EXPENDITURES, total: true },
+      { trn: VC.MTEF_PROJECTIONS, total: true },
       { trn: VC.DELIVERY_RATE, total: false }];
     const fundingInfoSummary = [];
     measuresOrder.forEach(measure => {

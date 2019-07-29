@@ -38,6 +38,7 @@ export default class Login extends Component {
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.processKeyPress = this.processKeyPress.bind(this);
   }
 
   componentWillMount() {
@@ -63,8 +64,15 @@ export default class Login extends Component {
     this.setState({ email: e.target.value });
   }
 
-  processLogin(email, password) {
+  processLogin(email = this.state.email.toLowerCase(), password = this.state.password) {
     this.props.loginAction(email, password);
+  }
+
+  processKeyPress(e) {
+    // https://www.w3.org/TR/uievents-key/#keys-whitespace
+    if (e.key === 'Enter') {
+      this.processLogin();
+    }
   }
 
   render() {
@@ -82,7 +90,7 @@ export default class Login extends Component {
               <td>
                 <input
                   type="text" value={this.state.email} onChange={this.handleEmailChange}
-                  className="form-control" />
+                  className="form-control" onKeyPress={this.processKeyPress} />
               </td>
             </tr>
             <tr>
@@ -90,7 +98,7 @@ export default class Login extends Component {
               <td>
                 <input
                   type="password" value={this.state.password} onChange={this.handlePasswordChange}
-                  className="form-control" />
+                  className="form-control" onKeyPress={this.processKeyPress} />
               </td>
             </tr>
           </tbody>
@@ -98,14 +106,15 @@ export default class Login extends Component {
         <Button
           type="button" className={`btn btn-success ${(this.props.loginReducer.loginProcessing ? 'disabled' : '')}`}
           onClick={() => {
-            this.processLogin(this.state.email.toLowerCase(), this.state.password);
+            this.processLogin();
           }} text={translate('login')} />
         <hr />
         <LoginTroubleshootingLinks
           changePasswordOnline={this.props.changePasswordOnline}
           resetPasswordOnline={this.props.resetPasswordOnline} />
         <br />
-        <ErrorMessage message={this.props.loginReducer.errorMessage} />
+        {!this.props.loginReducer.loginProcessing ?
+          <ErrorMessage message={this.props.loginReducer.errorMessage} /> : null}
       </div>
     );
   }

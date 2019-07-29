@@ -28,6 +28,7 @@ export const PLANNED_DISBURSEMENTS = 'Planned Disbursements';
 export const PLANNED_EXPENDITURES = 'Planned Expenditures';
 export const UNALLOCATED_DISBURSEMENTS = 'Unallocated Disbursements';
 export const DELIVERY_RATE = 'Delivery rate';
+export const MTEF_PROJECTIONS = 'MTEF Projections';
 
 export const ADJUSTMENT_TYPES = [ACTUAL, PLANNED];
 export const TRANSACTION_TYPES = [COMMITMENTS, DISBURSEMENTS, EXPENDITURES];
@@ -55,3 +56,10 @@ export const ON_BUDGET = 'On Budget';
 
 export const INTERNATIONAL = 'International';
 export const COUNTRY = 'Country';
+
+export const RELATED_DOCUMENTS = 'Related Documents';
+
+export const TMP_ENTITY_VALIDATOR = 'entity-validator';
+
+/** Required status */
+export const ALWAYS_REQUIRED = 'Y';

@@ -4,8 +4,8 @@ import styles from './AFListSelector.css';
 import AFList from './AFList';
 import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
-import ActivityFieldsManager from '../../../../modules/activity/ActivityFieldsManager';
-import ActivityValidator from '../../../../modules/activity/ActivityValidator';
+import FieldsManager from '../../../../modules/field/FieldsManager';
+import ActivityValidator from '../../../../modules/field/EntityValidator';
 import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -27,7 +27,7 @@ fieldNameToSearchFieldLabel[AC.PROGRAM] = 'Add Program';
  */
 export default class AFListSelector extends Component {
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager).isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activityValidator: PropTypes.instanceOf(ActivityValidator).isRequired
   };
 
@@ -38,12 +38,14 @@ export default class AFListSelector extends Component {
     onChange: PropTypes.func.isRequired,
     // we need to report validation error before search box, thus passing to the component to display
     validationError: PropTypes.string,
-    extraParams: PropTypes.object
+    extraParams: PropTypes.object,
+    onBeforeDelete: PropTypes.func
   };
 
   constructor(props) {
     super(props);
     logger.debug('constructor');
+    this.listType = (this.props.extraParams || {}).listType || AFList;
     this.handleAddValue = this.handleAddValue.bind(this);
     this.handleRemoveValue = this.handleRemoveValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -82,10 +84,14 @@ export default class AFListSelector extends Component {
   }
 
   getListValues() {
-    this.state.values.forEach(value => {
-      const idOnlyFieldValue = value[this.idOnlyField];
+    const { afOptionFormatter } = this.props.extraParams || {};
+    this.state.values.forEach(entry => {
+      const idOnlyFieldValue = entry[this.idOnlyField];
       if (!idOnlyFieldValue.isAFOption) {
-        value[this.idOnlyField] = new AFOption({ ...idOnlyFieldValue, displayHierarchicalValue: true });
+        entry[this.idOnlyField] = new AFOption({ ...idOnlyFieldValue, displayHierarchicalValue: true });
+        if (afOptionFormatter) {
+          entry[this.idOnlyField].valueFormatter = afOptionFormatter;
+        }
       }
     });
     return this.state.values;
@@ -148,8 +154,9 @@ export default class AFListSelector extends Component {
     const params = this.props.extraParams || {};
     if (params['no-table'] !== true) {
       return (<div>
-        <AFList
+        <this.listType
           onDeleteRow={this.handleRemoveValue} values={this.getListValues()} listPath={this.props.listPath}
+          extraParams={this.props.extraParams} onBeforeDelete={this.props.onBeforeDelete}
           onEditRow={this.handleEditValue.bind(this)} language={this.context.activityFieldsManager._lang} />
         <FormGroup controlId={this.props.listPath} validationState={this._getValidationState()}>
           <FormControl.Feedback />

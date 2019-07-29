@@ -10,7 +10,8 @@ const logger = new Logger('translate');
  */
 export default (k, lng) => {
   // if lng === undefined, then i18next will ignore { lng: undefined } and will use the currently set language
-  let ret = i18next.t(k, { lng });
+  // we do not use namespaces, while some msgs may include : which is the default i18next ns separator => using &sup;
+  let ret = i18next.t(k, { lng, nsSeparator: '&sup;' });
   if (ret === undefined) {
     ret = k;
     logger.error(`Missing translation for: ${k}`);
