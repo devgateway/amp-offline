@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TestingSection } from 'amp-ui';
+import { CommonConstants, TestingSection } from 'amp-ui';
 import styles from './Login.css';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
@@ -84,6 +84,8 @@ export default class Login extends Component {
     }
     return (
       <div className={styles.centered_form}>
+        {`Activiy constant ${CommonConstants.ACTIVITY_BUDGET}`}<br/>
+        {`Activiy constant ${CommonConstants.ACTIVITY_STATUS}`}
         <TestingSection ampLogger={logger} translate={translate} />
         <table>
           <tbody>
