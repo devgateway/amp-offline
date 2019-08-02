@@ -84,7 +84,7 @@ export default class Login extends Component {
     }
     return (
       <div className={styles.centered_form}>
-        {`Activiy constant ${CommonConstants.ACTIVITY_BUDGET}`}<br/>
+        {`Activiy constant ${CommonConstants.ACTIVITY_BUDGET}`}<br />
         {`Activiy constant ${CommonConstants.ACTIVITY_STATUS}`}
         <TestingSection ampLogger={logger} translate={translate} />
         <table>
