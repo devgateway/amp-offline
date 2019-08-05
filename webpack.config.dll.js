@@ -9,8 +9,9 @@ const BLACKLISTED_PKGS = [ // use this to exclude pkgs if they're causing you tr
   'font-awesome',
   'babel-plugin-webpack-alias',
   'electron-debug',
-  'electron-mocha'
-];
+  'electron-mocha',
+  'amp-ui'
+]; // We ignore amp-ui library so its possible to hot reload changes
 
 const FORCE_PKGS = [ // use this to add pckgs that are not 1st level dependencies
   'core-js',
