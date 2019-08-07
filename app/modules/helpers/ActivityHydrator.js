@@ -1,3 +1,4 @@
+import { ActivityConstants } from 'amp-ui';
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../field/PossibleValuesManager';
@@ -5,7 +6,6 @@ import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstan
 import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
 import { PREFIX_ACTIVITY } from '../../utils/constants/FieldPathConstants';
-import { ACTIVITY_DOCUMENTS } from '../../utils/constants/ActivityConstants';
 import { UUID } from '../../utils/constants/ResourceConstants';
 import { TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
 
@@ -92,7 +92,7 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
 
   dehydrateActivity(activity) {
     // activity documents are not listed as possible options; for now will dehydrate explicitly
-    const adocs = activity[ACTIVITY_DOCUMENTS];
+    const adocs = activity[ActivityConstants.ACTIVITY_DOCUMENTS];
     if (adocs && adocs.length) {
       adocs.forEach(ad => {
         ad[UUID] = ad[UUID] && ad[UUID][UUID];

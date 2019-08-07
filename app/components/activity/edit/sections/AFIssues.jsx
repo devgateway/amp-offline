@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
+import { ActivityConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import { ISSUES_SECTION } from './AFSectionConstants';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import FeatureManager from '../../../../modules/util/FeatureManager';
@@ -30,7 +30,7 @@ class AFIssues extends Component {
     super(props);
     logger.debug('constructor');
     this.state = {
-      issues: this.props.activity[AC.ISSUES] || []
+      issues: this.props.activity[ActivityConstants.ISSUES] || []
     };
 
     this.addMeasureHandler = this.addMeasureHandler.bind(this);
@@ -43,59 +43,59 @@ class AFIssues extends Component {
   addIssueHandler() {
     const newIssuesList = this.state.issues.slice();
     const newIssue = {
-      [AC.ISSUE_DATE]: undefined,
-      [AC.MEASURES]: [],
-      [AC.ISSUE_NAME]: ''
+      [ActivityConstants.ISSUE_DATE]: undefined,
+      [ActivityConstants.MEASURES]: [],
+      [ActivityConstants.ISSUE_NAME]: ''
     };
     newIssuesList.push(newIssue);
     this.setState({ issues: newIssuesList });
-    if (!this.context.activity[AC.ISSUES]) {
-      this.context.activity[AC.ISSUES] = [];
+    if (!this.context.activity[ActivityConstants.ISSUES]) {
+      this.context.activity[ActivityConstants.ISSUES] = [];
     }
-    this.context.activity[AC.ISSUES].push(newIssue);
+    this.context.activity[ActivityConstants.ISSUES].push(newIssue);
   }
 
   addMeasureHandler(issueIndex) {
     const measure = {
-      [AC.MEASURE_NAME]: '',
-      [AC.MEASURE_DATE]: undefined,
-      [AC.ACTORS]: []
+      [ActivityConstants.MEASURE_NAME]: '',
+      [ActivityConstants.MEASURE_DATE]: undefined,
+      [ActivityConstants.ACTORS]: []
     };
     const issues = this.state.issues.slice();
-    issues[issueIndex][AC.MEASURES].push(measure);
+    issues[issueIndex][ActivityConstants.MEASURES].push(measure);
     this.setState({ issues });
-    this.context.activity[AC.ISSUES] = issues;
+    this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
   addActorHandler(issueIndex, measureIndex) {
     const actor = {
-      [AC.ACTOR_NAME]: ''
+      [ActivityConstants.ACTOR_NAME]: ''
     };
     const issues = this.state.issues.slice();
-    issues[issueIndex][AC.MEASURES][measureIndex][AC.ACTORS].push(actor);
+    issues[issueIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS].push(actor);
     this.setState({ issues });
-    this.context.activity[AC.ISSUES] = issues;
+    this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
   removeIssueHandler(issueIndex) {
     const issues = this.state.issues.slice();
     issues.splice(issueIndex, 1);
     this.setState({ issues });
-    this.context.activity[AC.ISSUES] = issues;
+    this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
   removeMeasureHandler(issueIndex, measureIndex) {
     const issues = this.state.issues.slice();
-    issues[issueIndex][AC.MEASURES].splice(measureIndex, 1);
+    issues[issueIndex][ActivityConstants.MEASURES].splice(measureIndex, 1);
     this.setState({ issues });
-    this.context.activity[AC.ISSUES] = issues;
+    this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
   removeActorHandler(issueIndex, measureIndex, actorIndex) {
     const issues = this.state.issues.slice();
-    issues[issueIndex][AC.MEASURES][measureIndex][AC.ACTORS].splice(actorIndex, 1);
+    issues[issueIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS].splice(actorIndex, 1);
     this.setState({ issues });
-    this.context.activity[AC.ISSUES] = issues;
+    this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
   render() {

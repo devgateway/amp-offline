@@ -1,10 +1,10 @@
 /* eslint-disable class-methods-use-this */
+import { ActivityConstants } from 'amp-ui';
 import { CURRENCY_HOUR, CURRENCY_PAIR, RATE_CURRENCY_NOT_FOUND, RATE_SAME_CURRENCY } from '../../utils/Constants';
 import translate from '../../utils/translate';
 import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/ErrorConstants';
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
 import DateUtils from '../../utils/DateUtils';
-import * as AC from '../../utils/constants/ActivityConstants';
 
 export default class CurrencyRatesManager {
   constructor(currencyRates, baseCurrency) {
@@ -81,10 +81,10 @@ export default class CurrencyRatesManager {
   }
 
   convertTransactionAmountToCurrency(fundingDetail, currencyTo) {
-    const fixedExchangeRate = fundingDetail[AC.FIXED_EXCHANGE_RATE];
-    const currencyFrom = fundingDetail[AC.CURRENCY].value;
-    const transactionDate = fundingDetail[AC.TRANSACTION_DATE];
-    const transactionAmount = fundingDetail[AC.TRANSACTION_AMOUNT];
+    const fixedExchangeRate = fundingDetail[ActivityConstants.FIXED_EXCHANGE_RATE];
+    const currencyFrom = fundingDetail[ActivityConstants.CURRENCY].value;
+    const transactionDate = fundingDetail[ActivityConstants.TRANSACTION_DATE];
+    const transactionAmount = fundingDetail[ActivityConstants.TRANSACTION_AMOUNT];
     return this.convertAmountToCurrency(transactionAmount, currencyFrom, transactionDate, fixedExchangeRate,
       currencyTo);
   }

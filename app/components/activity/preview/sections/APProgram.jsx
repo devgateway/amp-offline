@@ -1,22 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants } from 'amp-ui';
 import Section from './Section';
 import APPercentageList from '../components/APPercentageList';
-import {
-  PRIMARY_PROGRAMS,
-  SECONDARY_PROGRAMS,
-  PROGRAM,
-  PROGRAM_PERCENTAGE,
-  NATIONAL_PLAN_OBJECTIVE
-} from '../../../../utils/constants/ActivityConstants';
 import * as styles from '../ActivityPreview.css';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import Logger from '../../../../modules/util/LoggerManager';
 
-const APNationalPlanList = APPercentageList(NATIONAL_PLAN_OBJECTIVE, PROGRAM, PROGRAM_PERCENTAGE,
+const APNationalPlanList = APPercentageList(ActivityConstants.NATIONAL_PLAN_OBJECTIVE,
+  ActivityConstants.PROGRAM, ActivityConstants.PROGRAM_PERCENTAGE,
   'National Plan Objective');
-const PrimaryProgramList = APPercentageList(PRIMARY_PROGRAMS, PROGRAM, PROGRAM_PERCENTAGE, 'Primary Program');
-const SecondaryProgramList = APPercentageList(SECONDARY_PROGRAMS, PROGRAM, PROGRAM_PERCENTAGE, 'Secondary Program');
+const PrimaryProgramList = APPercentageList(ActivityConstants.PRIMARY_PROGRAMS, ActivityConstants.PROGRAM,
+  ActivityConstants.PROGRAM_PERCENTAGE, 'Primary Program');
+const SecondaryProgramList = APPercentageList(ActivityConstants.SECONDARY_PROGRAMS, ActivityConstants.PROGRAM,
+  ActivityConstants.PROGRAM_PERCENTAGE, 'Secondary Program');
 
 const logger = new Logger('AP Program');
 

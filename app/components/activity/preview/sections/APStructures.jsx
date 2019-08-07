@@ -1,8 +1,9 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants } from 'amp-ui';
 import Section from './Section';
 import Logger from '../../../../modules/util/LoggerManager';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import * as Utils from '../../../../utils/Utils';
@@ -21,16 +22,16 @@ class APStructures extends Component {
   };
 
   static getCoordinates(structure) {
-    if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+    if (structure[ActivityConstants.STRUCTURES_SHAPE] === ActivityConstants.STRUCTURES_POINT) {
       return (<div>
-        <div>{structure[AC.STRUCTURES_LATITUDE]}</div>
-        <div>{structure[AC.STRUCTURES_LONGITUDE]}</div>
+        <div>{structure[ActivityConstants.STRUCTURES_LATITUDE]}</div>
+        <div>{structure[ActivityConstants.STRUCTURES_LONGITUDE]}</div>
       </div>);
     } else {
       return (<div>
-        {structure[AC.STRUCTURES_COORDINATES].map(c => (<div>
-          <div>{c[AC.STRUCTURES_LATITUDE]}</div>
-          <div>{c[AC.STRUCTURES_LONGITUDE]}</div>
+        {structure[ActivityConstants.STRUCTURES_COORDINATES].map(c => (<div>
+          <div>{c[ActivityConstants.STRUCTURES_LATITUDE]}</div>
+          <div>{c[ActivityConstants.STRUCTURES_LONGITUDE]}</div>
         </div>))}
       </div>);
     }
@@ -44,13 +45,13 @@ class APStructures extends Component {
   getCoordinates(structure) {
     const { buildSimpleField } = this.props;
     let isPoint = false;
-    if (!structure[AC.STRUCTURES_SHAPE]) {
-      if (!structure[AC.STRUCTURES_LATITUDE] || !structure[AC.STRUCTURES_LONGITUDE]) {
+    if (!structure[ActivityConstants.STRUCTURES_SHAPE]) {
+      if (!structure[ActivityConstants.STRUCTURES_LATITUDE] || !structure[ActivityConstants.STRUCTURES_LONGITUDE]) {
         isPoint = false;
       } else {
         isPoint = true;
       }
-    } else if (structure[AC.STRUCTURES_SHAPE] === AC.STRUCTURES_POINT) {
+    } else if (structure[ActivityConstants.STRUCTURES_SHAPE] === ActivityConstants.STRUCTURES_POINT) {
       isPoint = true;
     } else {
       isPoint = false;
@@ -58,18 +59,20 @@ class APStructures extends Component {
     if (isPoint) {
       const content = [];
       content.push(
-        buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LATITUDE]}`, true, null, false, structure));
+        buildSimpleField(`${[ActivityConstants.STRUCTURES]}~${[ActivityConstants.STRUCTURES_LATITUDE]}`, true, null,
+          false, structure));
       content.push(
-        buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_LONGITUDE]}`, true, null, false, structure));
+        buildSimpleField(`${[ActivityConstants.STRUCTURES]}~${[ActivityConstants.STRUCTURES_LONGITUDE]}`, true, null,
+          false, structure));
       return content;
     } else {
       const content = [];
-      structure[AC.STRUCTURES_COORDINATES].forEach(c => {
+      structure[ActivityConstants.STRUCTURES_COORDINATES].forEach(c => {
         content.push(
           <tr key={Utils.stringToUniqueId()}>
-            <td>{buildSimpleField(`${[AC.STRUCTURES]}~${AC.STRUCTURES_COORDINATES}~${[AC.STRUCTURES_LATITUDE]}`,
+            <td>{buildSimpleField(`${[ActivityConstants.STRUCTURES]}~${ActivityConstants.STRUCTURES_COORDINATES}~${[ActivityConstants.STRUCTURES_LATITUDE]}`,
               true, null, true, c, null, { noTitle: true, fieldValueClass: styles.structures_coordinates_value })}</td>
-            <td>{buildSimpleField(`${[AC.STRUCTURES]}~${AC.STRUCTURES_COORDINATES}~${[AC.STRUCTURES_LONGITUDE]}`,
+            <td>{buildSimpleField(`${[ActivityConstants.STRUCTURES]}~${ActivityConstants.STRUCTURES_COORDINATES}~${[ActivityConstants.STRUCTURES_LONGITUDE]}`,
               true, null, true, c, null, { noTitle: true, fieldValueClass: styles.structures_coordinates_value })}</td>
           </tr>);
       });
@@ -89,15 +92,18 @@ class APStructures extends Component {
 
   render() {
     const { activity, buildSimpleField } = this.props;
-    if (activity[AC.STRUCTURES]) {
+    if (activity[ActivityConstants.STRUCTURES]) {
       return (
-        <div>{activity[AC.STRUCTURES].sort((a, b) => (a[AC.STRUCTURES_TITLE] > b[AC.STRUCTURES_TITLE])).map(s => (
-          <div key={Math.random()}>
-            <div className={styles.structure_title}>{s[AC.STRUCTURES_TITLE]}</div>
-            {buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_TITLE]}`, true, null, false, s)}
-            {buildSimpleField(`${[AC.STRUCTURES]}~${[AC.STRUCTURES_DESCRIPTION]}`, false, null, false, s)}
-            {this.getCoordinates(s)}
-          </div>)
+        <div>{activity[ActivityConstants.STRUCTURES].sort((a, b) =>
+          (a[ActivityConstants.STRUCTURES_TITLE] > b[ActivityConstants.STRUCTURES_TITLE])).map(s => (
+            <div key={Math.random()}>
+              <div className={styles.structure_title}>{s[ActivityConstants.STRUCTURES_TITLE]}</div>
+              {buildSimpleField(`${[ActivityConstants.STRUCTURES]}~${[ActivityConstants.STRUCTURES_TITLE]}`, true,
+              null, false, s)}
+              {buildSimpleField(`${[ActivityConstants.STRUCTURES]}~${[ActivityConstants.STRUCTURES_DESCRIPTION]}`,
+              false, null, false, s)}
+              {this.getCoordinates(s)}
+            </div>)
         )}
         </div>
       );

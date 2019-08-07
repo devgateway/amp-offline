@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants } from 'amp-ui';
 import Section from './Section';
 import APField from '../components/APField';
 import * as VC from '../../../../utils/constants/ValueConstants';
@@ -10,7 +11,6 @@ import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingT
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import FeatureManager from '../../../../modules/util/FeatureManager';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 
 const logger = new Logger('Funding summary');
 
@@ -45,11 +45,13 @@ class FundingSummary extends Component {
     let adEnabled = false;
     // Commitments, Disbursements, Expenditures
     FPC.TRANSACTION_TYPES.forEach(trnType => {
-      if (activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
-        const trnAdjOptPath = `${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`;
+      if (activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, trnType)) {
+        const trnAdjOptPath = `${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`;
         const atOptions = activityFieldsManager.getPossibleValuesOptions(trnAdjOptPath);
-        acEnabled = acEnabled || (trnType === AC.COMMITMENTS && !!atOptions.find(o => o.value === VC.ACTUAL));
-        adEnabled = adEnabled || (trnType === AC.DISBURSEMENTS && !!atOptions.find(o => o.value === VC.ACTUAL));
+        acEnabled = acEnabled ||
+          (trnType === ActivityConstants.COMMITMENTS && !!atOptions.find(o => o.value === VC.ACTUAL));
+        adEnabled = adEnabled ||
+          (trnType === ActivityConstants.DISBURSEMENTS && !!atOptions.find(o => o.value === VC.ACTUAL));
         // Actual, Planned
         atOptions.forEach(adjType => {
           const value = this.props.activityFundingTotals.getTotals(adjType.id, trnType, {});
@@ -59,7 +61,8 @@ class FundingSummary extends Component {
     });
     // Other measures: "Unallocated Disbursements".
     const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FPC.DISBURSEMENTS_PATH, VC.ACTUAL);
-    const expendituresAreEnabled = activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, AC.EXPENDITURES);
+    const expendituresAreEnabled = activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS,
+      ActivityConstants.EXPENDITURES);
     if (adjTypeActualTrn && expendituresAreEnabled) {
       const ub = VC.UNALLOCATED_DISBURSEMENTS;
       measuresTotals[ub] = this.props.activityFundingTotals.getTotals(ub, {});
@@ -70,8 +73,8 @@ class FundingSummary extends Component {
     }
     // Other measures: "Delivery rate".
     if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DELIVERY_RATE)) {
-      const actualCommitments = measuresTotals[`${VC.ACTUAL} ${AC.COMMITMENTS}`];
-      const actualDisbursements = measuresTotals[`${VC.ACTUAL} ${AC.DISBURSEMENTS}`];
+      const actualCommitments = measuresTotals[`${VC.ACTUAL} ${ActivityConstants.COMMITMENTS}`];
+      const actualDisbursements = measuresTotals[`${VC.ACTUAL} ${ActivityConstants.DISBURSEMENTS}`];
       let value = 0;
       if (actualCommitments && actualDisbursements && acEnabled && adEnabled) {
         value = (actualDisbursements / actualCommitments) * 100;

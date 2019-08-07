@@ -1,4 +1,5 @@
-import * as AC from './ActivityConstants';
+/* eslint-disable max-len */
+import { ActivityConstants } from 'amp-ui';
 import * as FM from './FeatureManagerConstants';
 import { ORG_ROLE_NAMES } from './ValueConstants';
 
@@ -8,18 +9,18 @@ import { ORG_ROLE_NAMES } from './ValueConstants';
  */
 
 export const FUNDING_ACTIVE_LIST = 'fundings~active_list';
-export const FUNDING_TYPE_OF_ASSISTANCE = `${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`;
-export const FUNDING_DETAILS_PATH = `${AC.FUNDINGS}~${AC.FUNDING_DETAILS}`;
+export const FUNDING_TYPE_OF_ASSISTANCE = `${ActivityConstants.FUNDINGS}~${ActivityConstants.TYPE_OF_ASSISTANCE}`;
+export const FUNDING_DETAILS_PATH = `${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_DETAILS}`;
 /**
  * Legacy funding currency path used for data migration
  * @deprecated since 1.4
  */
-export const FUNDING_CURRENCY_PATH = `${FUNDING_DETAILS_PATH}~${AC.CURRENCY}`;
-export const MTEF_CURRENCY_PATH = `${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.CURRENCY}`;
-export const PPC_CURRENCY_PATH = `${AC.PPC_AMOUNT}~${AC.CURRENCY}`;
-export const RPC_CURRENCY_PATH = `${AC.RPC_AMOUNT}~${AC.CURRENCY}`;
-export const COMPONENT_CURRENCY_PATH = `${AC.COMPONENTS}~${AC.COMPONENT_FUNDING}~${AC.CURRENCY}`;
-export const DISBURSEMENTS_PATH = `${AC.FUNDINGS}~${AC.DISBURSEMENTS}`;
+export const FUNDING_CURRENCY_PATH = `${FUNDING_DETAILS_PATH}~${ActivityConstants.CURRENCY}`;
+export const MTEF_CURRENCY_PATH = `${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.CURRENCY}`;
+export const PPC_CURRENCY_PATH = `${ActivityConstants.PPC_AMOUNT}~${ActivityConstants.CURRENCY}`;
+export const RPC_CURRENCY_PATH = `${ActivityConstants.RPC_AMOUNT}~${ActivityConstants.CURRENCY}`;
+export const COMPONENT_CURRENCY_PATH = `${ActivityConstants.COMPONENTS}~${ActivityConstants.COMPONENT_FUNDING}~${ActivityConstants.CURRENCY}`;
+export const DISBURSEMENTS_PATH = `${ActivityConstants.FUNDINGS}~${ActivityConstants.DISBURSEMENTS}`;
 export const ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH = 'activity_internal_ids~internal_id';
 export const ACTIVITY_INTERNAL_IDS_ORGANIZATION_PATH = 'activity_internal_ids~organization';
 export const LOCATION_PATH = 'locations~location';
@@ -30,14 +31,14 @@ export const PRIMARY_SECTOR_PATH = 'primary_sectors~sector';
 export const SECONDARY_SECTOR_PATH = 'secondary_sectors~sector';
 export const TERTIARY_SECTOR_PATH = 'tertiary_sectors~sector';
 export const DONOR_ORGANIZATIONS_PATH = 'donor_organization~organization';
-export const RESPONSIBLE_ORGANIZATION_BUDGETS_PATH = `${AC.RESPONSIBLE_ORGANIZATION}~${AC.BUDGETS}`;
+export const RESPONSIBLE_ORGANIZATION_BUDGETS_PATH = `${ActivityConstants.RESPONSIBLE_ORGANIZATION}~${ActivityConstants.BUDGETS}`;
 
-export const RELATED_ORGS_PATHS = ORG_ROLE_NAMES.map(orgRole => AC.toFieldName(orgRole));
+export const RELATED_ORGS_PATHS = ORG_ROLE_NAMES.map(orgRole => ActivityConstants.toFieldName(orgRole));
 export const RELATED_ORGS_ORGANIZATION_PATHS = ORG_ROLE_NAMES.map(
-  orgRole => `${AC.toFieldName(orgRole)}~${AC.ORGANIZATION}`);
+  orgRole => `${ActivityConstants.toFieldName(orgRole)}~${ActivityConstants.ORGANIZATION}`);
 
-export const RICH_TEXT_FIELDS = new Set([AC.STATUS_REASON, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS,
-  AC.LESSONS_LEARNED, AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.RESULTS,
+export const RICH_TEXT_FIELDS = new Set([ActivityConstants.STATUS_REASON, ActivityConstants.OBJECTIVE, ActivityConstants.DESCRIPTION, ActivityConstants.PROJECT_COMMENTS,
+  ActivityConstants.LESSONS_LEARNED, ActivityConstants.PROJECT_IMPACT, ActivityConstants.ACTIVITY_SUMMARY, ActivityConstants.CONDITIONALITIES, ActivityConstants.PROJECT_MANAGEMENT, ActivityConstants.RESULTS,
 ]);
 
 export const PATHS_WITH_TREE_STRUCTURE = new Set([NATIONAL_PLAN_OBJECTIVE_PATH, PRIMARY_PROGRAM_PATH,
@@ -46,31 +47,31 @@ export const PATHS_WITH_TREE_STRUCTURE = new Set([NATIONAL_PLAN_OBJECTIVE_PATH, 
 export const PATHS_WITH_HIERARCHICAL_VALUES = new Set([NATIONAL_PLAN_OBJECTIVE_PATH, PRIMARY_PROGRAM_PATH,
   SECONDARY_PROGRAM_PATH, PRIMARY_SECTOR_PATH, SECONDARY_SECTOR_PATH, TERTIARY_SECTOR_PATH, LOCATION_PATH]);
 
-export const ACTIVITY_CONTACT_PATHS = [AC.DONOR_CONTACT, AC.PROJECT_COORDINATOR_CONTACT,
-  AC.SECTOR_MINISTRY_CONTACT, AC.MOFED_CONTACT, AC.IMPLEMENTING_EXECUTING_AGENCY_CONTACT];
+export const ACTIVITY_CONTACT_PATHS = [ActivityConstants.DONOR_CONTACT, ActivityConstants.PROJECT_COORDINATOR_CONTACT,
+  ActivityConstants.SECTOR_MINISTRY_CONTACT, ActivityConstants.MOFED_CONTACT, ActivityConstants.IMPLEMENTING_EXECUTING_AGENCY_CONTACT];
 
-export const TRANSACTION_TYPES = [AC.COMMITMENTS, AC.DISBURSEMENTS, AC.EXPENDITURES];
+export const TRANSACTION_TYPES = [ActivityConstants.COMMITMENTS, ActivityConstants.DISBURSEMENTS, ActivityConstants.EXPENDITURES];
 export const TRANSACTION_TYPES_ORDERED = TRANSACTION_TYPES;
-export const FUNDING_TRANSACTION_TYPES = [...TRANSACTION_TYPES, AC.ESTIMATED_DISBURSEMENTS];
-export const ADJUSTMENT_TYPE_PATHS = FUNDING_TRANSACTION_TYPES.map(tt => `${AC.FUNDINGS}~${tt}~${AC.ADJUSTMENT_TYPE}`);
-export const FUNDING_CURRENCY_PATHS = TRANSACTION_TYPES.map(tt => `${AC.FUNDINGS}~${tt}~${AC.CURRENCY}`);
+export const FUNDING_TRANSACTION_TYPES = [...TRANSACTION_TYPES, ActivityConstants.ESTIMATED_DISBURSEMENTS];
+export const ADJUSTMENT_TYPE_PATHS = FUNDING_TRANSACTION_TYPES.map(tt => `${ActivityConstants.FUNDINGS}~${tt}~${ActivityConstants.ADJUSTMENT_TYPE}`);
+export const FUNDING_CURRENCY_PATHS = TRANSACTION_TYPES.map(tt => `${ActivityConstants.FUNDINGS}~${tt}~${ActivityConstants.CURRENCY}`);
 
 export const PATHS_FOR_ACTIVITY_CURRENCY = [FUNDING_CURRENCY_PATH, MTEF_CURRENCY_PATH, COMPONENT_CURRENCY_PATH,
   PPC_CURRENCY_PATH, RPC_CURRENCY_PATH, ...FUNDING_CURRENCY_PATHS];
 
-export const PATHS_FOR_CURRENCY = new Set([AC.CURRENCY, ...PATHS_FOR_ACTIVITY_CURRENCY]);
+export const PATHS_FOR_CURRENCY = new Set([ActivityConstants.CURRENCY, ...PATHS_FOR_ACTIVITY_CURRENCY]);
 
-export const DO_NOT_HYDRATE_FIELDS_LIST = [AC.APPROVAL_STATUS];
+export const DO_NOT_HYDRATE_FIELDS_LIST = [ActivityConstants.APPROVAL_STATUS];
 
 /* Fields paths alternative values location */
 export const ALTERNATE_VALUE_PATH = {};
-ALTERNATE_VALUE_PATH[AC.CREATED_ON] = AC.CLIENT_CREATED_ON;
-ALTERNATE_VALUE_PATH[AC.MODIFIED_ON] = AC.CLIENT_UPDATED_ON;
+ALTERNATE_VALUE_PATH[ActivityConstants.CREATED_ON] = ActivityConstants.CLIENT_CREATED_ON;
+ALTERNATE_VALUE_PATH[ActivityConstants.MODIFIED_ON] = ActivityConstants.CLIENT_UPDATED_ON;
 
 /* FM paths for some activity fields that are always present in fields def, but may be hidden from display through FM */
 export const ACTIVITY_FIELDS_FM_PATH = {};
-ACTIVITY_FIELDS_FM_PATH[AC.MODIFIED_BY] = FM.ACTIVITY_LAST_UPDATED_BY;
-ACTIVITY_FIELDS_FM_PATH[AC.MODIFIED_ON] = FM.ACTIVITY_LAST_UPDATED_ON;
+ACTIVITY_FIELDS_FM_PATH[ActivityConstants.MODIFIED_BY] = FM.ACTIVITY_LAST_UPDATED_BY;
+ACTIVITY_FIELDS_FM_PATH[ActivityConstants.MODIFIED_ON] = FM.ACTIVITY_LAST_UPDATED_ON;
 
 /* Possible Options fields path prefixes */
 export const PREFIX_ACTIVITY = null;

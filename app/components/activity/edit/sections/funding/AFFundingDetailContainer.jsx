@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
@@ -53,13 +53,13 @@ export default class AFFundingDetailContainer extends Component {
 
   _setOpenStatus(trnType, value) {
     switch (trnType) {
-      case AC.COMMITMENTS:
+      case ActivityConstants.COMMITMENTS:
         this.props.funding.commitmentsStatusOpen = value;
         break;
-      case AC.DISBURSEMENTS:
+      case ActivityConstants.DISBURSEMENTS:
         this.props.funding.disbursementsStatusOpen = value;
         break;
-      case AC.EXPENDITURES:
+      case ActivityConstants.EXPENDITURES:
         this.props.funding.expendituresStatusOpen = value;
         break;
       default:
@@ -73,24 +73,24 @@ export default class AFFundingDetailContainer extends Component {
 
   render() {
     const { trnType } = this.props;
-    if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
+    if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, trnType)) {
       const fundingDetails = this.props.funding[trnType] || [];
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
       let open = false;
       switch (this.props.trnType) {
-        case AC.COMMITMENTS:
+        case ActivityConstants.COMMITMENTS:
           header = translate('Commitments');
           button = translate('Add Commitments');
           open = this.props.funding.commitmentsStatusOpen;
           break;
-        case AC.DISBURSEMENTS:
+        case ActivityConstants.DISBURSEMENTS:
           header = translate('Disbursements');
           button = translate('Add Disbursements');
           open = this.props.funding.disbursementsStatusOpen;
           break;
-        case AC.EXPENDITURES:
+        case ActivityConstants.EXPENDITURES:
           header = translate('Expenditures');
           button = translate('Add Expenditures');
           open = this.props.funding.expendituresStatusOpen;
@@ -108,13 +108,13 @@ export default class AFFundingDetailContainer extends Component {
           }} className={this.state.errors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
-            if (!fd[AC.TEMPORAL_ID]) {
-              fd[AC.TEMPORAL_ID] = Utils.numberRandom();
+            if (!fd[ActivityConstants.TEMPORAL_ID]) {
+              fd[ActivityConstants.TEMPORAL_ID] = Utils.numberRandom();
             }
             /* Lesson learned: DO NOT use an array index as component key if later we will remove elements from
             that array because that will confuse React. */
             return (<AFFundingDetailItem
-              fundingDetail={fd} trnType={trnType} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
+              fundingDetail={fd} trnType={trnType} key={`${header}_${fd[ActivityConstants.TEMPORAL_ID]}`}
               removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
           })}
           <Button

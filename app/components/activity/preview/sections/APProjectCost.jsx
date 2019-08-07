@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants } from 'amp-ui';
 import Section from './Section';
 import styles from '../ActivityPreview.css';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -41,19 +41,19 @@ const APProjectCost = (fieldName) => class extends Component {
       const currency = this.props.activityFundingTotals._currentWorkspaceSettings.currency.code;
       let amount = 0;
       let showPPC = false;
-      const ppcAsFunding = this.props.activity[AC.PPC_AMOUNT];
-      if (ppcAsFunding && ppcAsFunding[AC.AMOUNT] && ppcAsFunding[AC.CURRENCY]) {
+      const ppcAsFunding = this.props.activity[ActivityConstants.PPC_AMOUNT];
+      if (ppcAsFunding && ppcAsFunding[ActivityConstants.AMOUNT] && ppcAsFunding[ActivityConstants.CURRENCY]) {
         showPPC = true;
-        ppcAsFunding[AC.CURRENCY] = ppcAsFunding[AC.CURRENCY];
-        ppcAsFunding[AC.TRANSACTION_AMOUNT] = ppcAsFunding[AC.AMOUNT];
-        if (ppcAsFunding[AC.CURRENCY] && ppcAsFunding[AC.TRANSACTION_AMOUNT]) {
+        ppcAsFunding[ActivityConstants.CURRENCY] = ppcAsFunding[ActivityConstants.CURRENCY];
+        ppcAsFunding[ActivityConstants.TRANSACTION_AMOUNT] = ppcAsFunding[ActivityConstants.AMOUNT];
+        if (ppcAsFunding[ActivityConstants.CURRENCY] && ppcAsFunding[ActivityConstants.TRANSACTION_AMOUNT]) {
           amount = this.props.activityFundingTotals
             ._currencyRatesManager.convertTransactionAmountToCurrency(ppcAsFunding, currency);
           amount = NumberUtils.rawNumberToFormattedString(amount);
         }
       }
       if (showPPC) {
-        let date = this.getFieldValue(`${fieldName}~${AC.FUNDING_DATE}`);
+        let date = this.getFieldValue(`${fieldName}~${ActivityConstants.FUNDING_DATE}`);
         date = date ? DateUtils.createFormattedDate(date) : translate('No Data');
         content = (<div>
           <div className={styles.project_cost_left}>
@@ -82,5 +82,5 @@ const APProjectCost = (fieldName) => class extends Component {
   }
 };
 
-export const APProposedProjectCost = Section(APProjectCost(AC.PPC_AMOUNT), 'Proposed Project Cost');
-export const APRevisedProjectCost = Section(APProjectCost(AC.RPC_AMOUNT), 'Revised Project Cost');
+export const APProposedProjectCost = Section(APProjectCost(ActivityConstants.PPC_AMOUNT), 'Proposed Project Cost');
+export const APRevisedProjectCost = Section(APProjectCost(ActivityConstants.RPC_AMOUNT), 'Revised Project Cost');

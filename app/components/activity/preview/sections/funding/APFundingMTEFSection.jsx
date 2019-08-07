@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
+import { ActivityConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import APLabel from '../../components/APLabel';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
 import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
 import styles from './APFundingTransactionTypeItem.css';
 import stylesMTEF from './APFundingMTEF.css';
 import APFundingMTEFItem from './APFundingMTEFItem';
@@ -33,10 +33,10 @@ class APFundingMTEFSection extends Component {
 
   drawSubTotal(funding, currency, type) {
     let subtotal = 0;
-    funding[AC.MTEF_PROJECTIONS].forEach(mtef => {
-      if (mtef[AC.PROJECTION].value === type) {
-        subtotal += this.context.currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT],
-          mtef[AC.CURRENCY].value, mtef[AC.PROJECTION_DATE], null, currency);
+    funding[ActivityConstants.MTEF_PROJECTIONS].forEach(mtef => {
+      if (mtef[ActivityConstants.PROJECTION].value === type) {
+        subtotal += this.context.currencyRatesManager.convertAmountToCurrency(mtef[ActivityConstants.AMOUNT],
+          mtef[ActivityConstants.CURRENCY].value, mtef[ActivityConstants.PROJECTION_DATE], null, currency);
       }
     });
     return (<div>
@@ -51,15 +51,15 @@ class APFundingMTEFSection extends Component {
   render() {
     logger.debug('render');
     const { funding } = this.props;
-    const types = [AC.PIPELINE, AC.PROJECTION];
+    const types = [ActivityConstants.PIPELINE, ActivityConstants.PROJECTION];
     const currency = this.context.currentWorkspaceSettings.currency.code;
     if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)
-      && funding[AC.MTEF_PROJECTIONS] && funding[AC.MTEF_PROJECTIONS].length > 0) {
+      && funding[ActivityConstants.MTEF_PROJECTIONS] && funding[ActivityConstants.MTEF_PROJECTIONS].length > 0) {
       const content = [];
       types.forEach(type => {
         let show = false;
-        funding[AC.MTEF_PROJECTIONS].forEach(mtef => {
-          if (mtef[AC.PROJECTION].value === type) {
+        funding[ActivityConstants.MTEF_PROJECTIONS].forEach(mtef => {
+          if (mtef[ActivityConstants.PROJECTION].value === type) {
             show = true;
             content.push(<div>
               {APFundingMTEFSection.drawTable(mtef, currency)}

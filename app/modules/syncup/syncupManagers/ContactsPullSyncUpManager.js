@@ -1,3 +1,4 @@
+import { ActivityConstants } from 'amp-ui';
 import ContactHelper from '../../helpers/ContactHelper';
 import {
   SYNCUP_CONTACTS_PULL_BATCH_SIZE,
@@ -7,7 +8,6 @@ import { CONTACT_BATCHES_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
 import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
-import { CONTACT } from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 
@@ -40,7 +40,7 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
     if (!removedContactIds || !removedContactIds.length) {
       return removedContactIds;
     }
-    const matchContact = Utils.toMap(CONTACT, { $in: removedContactIds });
+    const matchContact = Utils.toMap(ActivityConstants.CONTACT, { $in: removedContactIds });
     const queries = ACTIVITY_CONTACT_PATHS.map(type => Utils.toMap(type, { $elemMatch: matchContact }));
     const filter = { $or: queries };
     // When a contact is deleted from Address Book in AMP, it is automatically removed from activities.
@@ -56,7 +56,7 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
     ACTIVITY_CONTACT_PATHS.forEach(contactType => {
       let contacts = activity[contactType];
       if (contacts && contacts.length) {
-        contacts = contacts.filter(contact => !removedContactIds.includes(contact[CONTACT]));
+        contacts = contacts.filter(contact => !removedContactIds.includes(contact[ActivityConstants.CONTACT]));
         activity[contactType] = contacts;
       }
     });
