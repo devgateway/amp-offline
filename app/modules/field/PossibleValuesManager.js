@@ -1,9 +1,9 @@
+import { Constants } from 'amp-ui';
 import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../utils/constants/ActivityConstants';
 import * as FPC from '../../utils/constants/FieldPathConstants';
 import Logger from '../util/LoggerManager';
 import FieldsManager from './FieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
-import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 import CurrencyRatesManager from '../util/CurrencyRatesManager';
 
 const logger = new Logger('Possible values manager');
@@ -14,8 +14,8 @@ const logger = new Logger('Possible values manager');
  */
 export default class PossibleValuesManager {
   static _langState = {
-    lang: LANGUAGE_ENGLISH,
-    defaultLang: LANGUAGE_ENGLISH
+    lang: Constants.LANGUAGE_ENGLISH,
+    defaultLang: Constants.LANGUAGE_ENGLISH
   };
 
   static setLangState(langState) {

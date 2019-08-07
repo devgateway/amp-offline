@@ -1,8 +1,8 @@
+import { Constants } from 'amp-ui';
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../field/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
-import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
 import { PREFIX_ACTIVITY } from '../../utils/constants/FieldPathConstants';
 import { ACTIVITY_DOCUMENTS } from '../../utils/constants/ActivityConstants';
@@ -79,12 +79,12 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
     if (teamMemberId === undefined) {
       return Promise.reject(new Notification({ message: 'noWorkspace', origin: NOTIFICATION_ORIGIN_ACTIVITY }));
     }
-    return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS)
+    return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS)
       .then(fieldsDef => {
         if (fieldsDef === null) {
           throw new Notification({ message: 'noFieldsDef', origin: NOTIFICATION_ORIGIN_ACTIVITY });
         } else {
-          const hydrator = new ActivityHydrator(fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS]);
+          const hydrator = new ActivityHydrator(fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS]);
           return hydrator.hydrateEntities(activities, fieldPaths);
         }
       });

@@ -1,6 +1,6 @@
+import { Constants } from 'amp-ui';
 import store from '../index';
 import * as URLUtils from '../utils/URLUtils';
-import { SYNCUP_REDIRECT_URL, WORKSPACE_URL } from '../utils/Constants';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
 import translate from '../utils/translate';
 import SyncUpManager from '../modules/syncup/SyncUpManager';
@@ -61,7 +61,7 @@ export function startSyncUp(historyData) {
    the user to be able to leave the page if this syncup fails. */
   if (store.getState().syncUpReducer.syncUpInProgress === false) {
     store.dispatch(syncUpInProgress());
-    URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
+    URLUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL);
     store.dispatch(resetDesktop()); // Mark the desktop for reset the next time we open it.
 
     return SyncUpManager.syncUpAllTypesOnDemand()
@@ -115,7 +115,7 @@ export function isForceSyncUp() {
 
 export function dismissSyncAndChooseWorkspace() {
   store.dispatch({ type: STATE_SYNCUP_DISMISS_COMPLETE });
-  return checkIfShouldSyncBeforeLogout().then(() => URLUtils.forwardTo(WORKSPACE_URL));
+  return checkIfShouldSyncBeforeLogout().then(() => URLUtils.forwardTo(Constants.WORKSPACE_URL));
 }
 
 function syncUpSearchHistoryOk(data) {

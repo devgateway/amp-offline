@@ -1,4 +1,4 @@
-import { VERSION_PATTERN, VERSION_PATTERN_GROUPS_TO_EXTRACT } from './Constants';
+import { Constants } from 'amp-ui';
 
 /**
  * Version utilities
@@ -25,8 +25,8 @@ const VersionUtils = {
   },
 
   _splitIntoParts(version) {
-    const parts = version.split(VERSION_PATTERN);
-    return VERSION_PATTERN_GROUPS_TO_EXTRACT.map(idx => (idx < parts.length ? parts[idx] : null));
+    const parts = version.split(Constants.VERSION_PATTERN);
+    return Constants.VERSION_PATTERN_GROUPS_TO_EXTRACT.map(idx => (idx < parts.length ? parts[idx] : null));
   },
 
   _getVerPartOrDefault(verArray, idx) {

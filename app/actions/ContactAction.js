@@ -1,8 +1,8 @@
 import equal from 'fast-deep-equal';
+import { Constants } from 'amp-ui';
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
-import { SYNCUP_TYPE_CONTACT_FIELDS } from '../utils/Constants';
 import * as CC from '../utils/constants/ContactConstants';
 import * as AC from '../utils/constants/ActivityConstants';
 import { ACTIVITY_CONTACT_PATHS, PREFIX_CONTACT } from '../utils/constants/FieldPathConstants';
@@ -72,8 +72,8 @@ export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => 
 };
 
 const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_CONTACT_FIELDS)
-    .then(fields => fields[SYNCUP_TYPE_CONTACT_FIELDS]),
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
+    .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_CONTACT)
 ]).then(([cFields, possibleValuesCollection]) => ({
   contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage)
@@ -81,8 +81,8 @@ const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
 
 const _hydrateContacts = (ids, teamMemberId, contactFieldsManager, activity) => Promise.all([
   ContactHelper.findContactsByIds(ids),
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_CONTACT_FIELDS)
-    .then(fields => fields[SYNCUP_TYPE_CONTACT_FIELDS])
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
+    .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS])
 ]).then(([contacts, cFields]) => {
   const ch = new ContactHydrator(cFields);
   return ch.hydrateEntities(contacts);

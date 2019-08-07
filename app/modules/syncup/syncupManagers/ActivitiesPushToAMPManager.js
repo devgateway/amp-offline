@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import * as UserHelper from '../../helpers/UserHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
@@ -6,7 +7,6 @@ import Notification from '../../helpers/NotificationHelper';
 import * as AC from '../../../utils/constants/ActivityConstants';
 import * as CC from '../../../utils/constants/ContactConstants';
 import * as RC from '../../../utils/constants/ResourceConstants';
-import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
 import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
@@ -33,13 +33,13 @@ const paramsMap = {
  */
 export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   constructor() {
-    super(SYNCUP_TYPE_ACTIVITIES_PUSH);
+    super(Constants.SYNCUP_TYPE_ACTIVITIES_PUSH);
     logger.log('ActivitiesPushToAMPManager');
     this._cancel = false;
     this.diff = [];
     this._processed = new Set();
-    this._details[SYNCUP_DETAILS_SYNCED] = [];
-    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
+    this._details[Constants.SYNCUP_DETAILS_SYNCED] = [];
+    this._details[Constants.SYNCUP_DETAILS_UNSYNCED] = [];
   }
 
   /**
@@ -273,7 +273,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _updateDetails({ activity, pushResult, errorData }) {
-    const detailType = errorData ? SYNCUP_DETAILS_UNSYNCED : SYNCUP_DETAILS_SYNCED;
+    const detailType = errorData ? Constants.SYNCUP_DETAILS_UNSYNCED : Constants.SYNCUP_DETAILS_SYNCED;
     const detail = Utils.toMap(AC.PROJECT_TITLE, activity[AC.PROJECT_TITLE]);
     detail[AC.AMP_ID] = (pushResult && pushResult[AC.AMP_ID]) || activity[AC.AMP_ID];
     detail.id = (pushResult && pushResult[AC.INTERNAL_ID]) || activity.id;

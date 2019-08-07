@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import * as RC from '../../../utils/constants/ResourceConstants';
-import { COLLECTION_ACTIVITIES, COLLECTION_CLIENT_SETTINGS, COLLECTION_RESOURCES } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import * as CurrencyRatesHelper from '../../../modules/helpers/CurrencyRatesHelper';
 import * as MC from '../../../utils/constants/MigrationsConstants';
@@ -55,7 +55,7 @@ export default ({
         comment: 'Default value for the new "resource_type" field for web links',
         changes: [{
           update: {
-            table: COLLECTION_RESOURCES,
+            table: Constants.COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_WEB_RESOURCE,
             filter: linkFilter
@@ -68,7 +68,7 @@ export default ({
         comment: 'Default value for the new "resource_type" field for documents',
         changes: [{
           update: {
-            table: COLLECTION_RESOURCES,
+            table: Constants.COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_DOC_RESOURCE,
             filter: docFilter
@@ -174,7 +174,7 @@ export default ({
         }],
         changes: [{
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -242,7 +242,7 @@ export default ({
         }],
         changes: [{
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -260,14 +260,14 @@ export default ({
         }],
         changes: [...ALL_APPROVAL_STATUSES.map(as => ({
           update: {
-            table: COLLECTION_ACTIVITIES,
+            table: Constants.COLLECTION_ACTIVITIES,
             field: AC.APPROVAL_STATUS,
             value: as.id,
             filter: Utils.toMap(AC.APPROVAL_STATUS, as.value)
           }
         })), {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -303,7 +303,7 @@ export default ({
           }
         }, {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -319,21 +319,21 @@ export default ({
         comment: 'Migrate "resource_type" from string to long',
         changes: [{
           update: {
-            table: COLLECTION_RESOURCES,
+            table: Constants.COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_WEB_RESOURCE,
             filter: Utils.toMap(RC.RESOURCE_TYPE, 'link')
           }
         }, {
           update: {
-            table: COLLECTION_RESOURCES,
+            table: Constants.COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_DOC_RESOURCE,
             filter: Utils.toMap(RC.RESOURCE_TYPE, 'file')
           }
         }, {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -416,7 +416,7 @@ export default ({
           }
         }, {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -491,7 +491,7 @@ export default ({
           }
         }, {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }

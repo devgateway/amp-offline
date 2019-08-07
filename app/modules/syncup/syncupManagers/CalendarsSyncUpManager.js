@@ -1,9 +1,9 @@
 /* eslint-disable class-methods-use-this */
+import { Constants } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import CalendarHelper from '../../helpers/CalendarHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { CALENDAR_PULL_URL } from '../../connectivity/AmpApiConstants';
-import { SYNCUP_TYPE_CALENDARS } from '../../../utils/Constants';
 import Logger from '../../util/LoggerManager';
 
 const logger = new Logger('CalendarsSyncUpManager');
@@ -16,7 +16,7 @@ const logger = new Logger('CalendarsSyncUpManager');
  */
 export default class CalendarsSyncUpManager extends AbstractAtomicSyncUpManager {
   constructor() {
-    super(SYNCUP_TYPE_CALENDARS);
+    super(Constants.SYNCUP_TYPE_CALENDARS);
   }
 
   doAtomicSyncUp({ saved, removed }) {

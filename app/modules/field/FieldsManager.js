@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { LANGUAGE_ENGLISH } from '../../utils/Constants';
+import { Constants } from 'amp-ui';
 import PossibleValuesManager from './PossibleValuesManager';
 import Logger from '../util/LoggerManager';
 import * as FPC from '../../utils/constants/FieldPathConstants';
@@ -32,8 +32,8 @@ export default class FieldsManager {
       this._possibleValuesMap[pv.id] = pv[FPC.FIELD_OPTIONS];
     });
     this._fieldPathsEnabledStatusMap = {};
-    this._lang = currentLanguage || LANGUAGE_ENGLISH;
-    this._defaultLang = LANGUAGE_ENGLISH;
+    this._lang = currentLanguage || Constants.LANGUAGE_ENGLISH;
+    this._defaultLang = Constants.LANGUAGE_ENGLISH;
     this.cleanup(fieldsDef);
   }
 

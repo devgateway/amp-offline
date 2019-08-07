@@ -1,30 +1,4 @@
-import {
-  SYNCUP_TYPE_ACTIVITIES_PULL,
-  SYNCUP_TYPE_ACTIVITIES_PUSH,
-  SYNCUP_TYPE_ACTIVITY_FIELDS,
-  SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
-  SYNCUP_TYPE_ASSETS,
-  SYNCUP_TYPE_GAZETTEER,
-  SYNCUP_TYPE_CALENDARS,
-  SYNCUP_TYPE_CONTACT_FIELDS,
-  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
-  SYNCUP_TYPE_CONTACTS_PULL,
-  SYNCUP_TYPE_CONTACTS_PUSH,
-  SYNCUP_TYPE_EXCHANGE_RATES,
-  SYNCUP_TYPE_FEATURE_MANAGER,
-  SYNCUP_TYPE_GS,
-  SYNCUP_TYPE_MAP_TILES,
-  SYNCUP_TYPE_RESOURCE_FIELDS,
-  SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES,
-  SYNCUP_TYPE_RESOURCES_PULL,
-  SYNCUP_TYPE_RESOURCES_PUSH,
-  SYNCUP_TYPE_TRANSLATIONS,
-  SYNCUP_TYPE_USERS,
-  SYNCUP_TYPE_WORKSPACE_MEMBERS,
-  SYNCUP_TYPE_WORKSPACE_SETTINGS,
-  SYNCUP_TYPE_WORKSPACES,
-  SYNCUP_TYPE_COMMON_POSSIBLE_VALUES
-} from '../../utils/Constants';
+import { Constants } from 'amp-ui';
 import { throwSyncUpError } from './syncupManagers/SyncUpManagerInterface';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -56,29 +30,29 @@ export default class SyncUpDiff {
    */
   merge(type, diff) {
     switch (type) {
-      case SYNCUP_TYPE_TRANSLATIONS:
-      case SYNCUP_TYPE_GS:
-      case SYNCUP_TYPE_WORKSPACES:
-      case SYNCUP_TYPE_WORKSPACE_SETTINGS:
-      case SYNCUP_TYPE_ASSETS:
-      case SYNCUP_TYPE_GAZETTEER:
-      case SYNCUP_TYPE_MAP_TILES:
-      case SYNCUP_TYPE_EXCHANGE_RATES:
-      case SYNCUP_TYPE_ACTIVITY_FIELDS: // TODO update once AMP-25568 is also done, as part of AMPOFFLINE-270
-      case SYNCUP_TYPE_CONTACT_FIELDS:
-      case SYNCUP_TYPE_RESOURCE_FIELDS:
-      case SYNCUP_TYPE_FEATURE_MANAGER:
-      case SYNCUP_TYPE_ACTIVITIES_PUSH:
-      case SYNCUP_TYPE_CONTACTS_PUSH:
-      case SYNCUP_TYPE_RESOURCES_PUSH:
+      case Constants.SYNCUP_TYPE_TRANSLATIONS:
+      case Constants.SYNCUP_TYPE_GS:
+      case Constants.SYNCUP_TYPE_WORKSPACES:
+      case Constants.SYNCUP_TYPE_WORKSPACE_SETTINGS:
+      case Constants.SYNCUP_TYPE_ASSETS:
+      case Constants.SYNCUP_TYPE_GAZETTEER:
+      case Constants.SYNCUP_TYPE_MAP_TILES:
+      case Constants.SYNCUP_TYPE_EXCHANGE_RATES:
+      case Constants.SYNCUP_TYPE_ACTIVITY_FIELDS: // TODO update once AMP-25568 is also done, as part of AMPOFFLINE-270
+      case Constants.SYNCUP_TYPE_CONTACT_FIELDS:
+      case Constants.SYNCUP_TYPE_RESOURCE_FIELDS:
+      case Constants.SYNCUP_TYPE_FEATURE_MANAGER:
+      case Constants.SYNCUP_TYPE_ACTIVITIES_PUSH:
+      case Constants.SYNCUP_TYPE_CONTACTS_PUSH:
+      case Constants.SYNCUP_TYPE_RESOURCES_PUSH:
         diff = diff || this._syncUpDiff[type] || [];
         break;
-      case SYNCUP_TYPE_USERS:
-      case SYNCUP_TYPE_WORKSPACE_MEMBERS:
-      case SYNCUP_TYPE_CALENDARS:
-      case SYNCUP_TYPE_ACTIVITIES_PULL:
-      case SYNCUP_TYPE_CONTACTS_PULL:
-      case SYNCUP_TYPE_RESOURCES_PULL:
+      case Constants.SYNCUP_TYPE_USERS:
+      case Constants.SYNCUP_TYPE_WORKSPACE_MEMBERS:
+      case Constants.SYNCUP_TYPE_CALENDARS:
+      case Constants.SYNCUP_TYPE_ACTIVITIES_PULL:
+      case Constants.SYNCUP_TYPE_CONTACTS_PULL:
+      case Constants.SYNCUP_TYPE_RESOURCES_PULL:
         diff.removed = (this._syncUpDiff[type] ? (this._syncUpDiff[type].removed || []) : []).concat(diff.removed);
         diff.removed = Array.from(new Set(diff.removed)); // get unique entries; keep array as it is expected everywhere
         diff.saved = (this._syncUpDiff[type] ? (this._syncUpDiff[type].saved || []) : []).concat(diff.saved);
@@ -86,10 +60,10 @@ export default class SyncUpDiff {
         diff.saved = Array.from(new Set(diff.saved));
         break;
       // a list of elements to sync up
-      case SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES:
-      case SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES:
-      case SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES:
-      case SYNCUP_TYPE_COMMON_POSSIBLE_VALUES:
+      case Constants.SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES:
+      case Constants.SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES:
+      case Constants.SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES:
+      case Constants.SYNCUP_TYPE_COMMON_POSSIBLE_VALUES:
         diff = Array.from(new Set((this._syncUpDiff[type] || []).concat(diff)));
         break;
       default:

@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
+import { Constants } from 'amp-ui';
 import styles from './CKEditor.css';
 import translate from '../../utils/translate';
 import Logger from '../../modules/util/LoggerManager';
-import { LANGUAGE_ENGLISH } from '../../utils/Constants';
 
 const logger = new Logger('CK Editor');
 
@@ -83,7 +83,7 @@ export default class CKEditor extends Component {
         ['FontSize']
       ],
       extraPlugins: 'richcombo',
-      language: this.props.language || LANGUAGE_ENGLISH
+      language: this.props.language || Constants.LANGUAGE_ENGLISH
     };
     this.editorName = CKEDITOR.replace(this.placeholder, configuration).name;
     this.toggle = false;

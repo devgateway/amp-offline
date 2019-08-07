@@ -6,11 +6,11 @@ import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn, SizePerPageDropDown } from 'react-bootstrap-table';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import classNames from 'classnames';
+import { Constants } from 'amp-ui';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
 import IconFormatter from './IconFormatter';
 import LinkFormatter from './LinkFormatter';
-import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
 import * as AC from '../../utils/constants/ActivityConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
@@ -66,13 +66,13 @@ export default class ProjectList extends Component {
   static projectNameFormatter(cell, row, extraData) {
     const nameStyles = [];
     switch (row.status) {
-      case ACTIVITY_STATUS_DRAFT:
+      case Constants.ACTIVITY_STATUS_DRAFT:
         nameStyles.push(style.status_draft);
         break;
-      case ACTIVITY_STATUS_UNVALIDATED:
+      case Constants.ACTIVITY_STATUS_UNVALIDATED:
         nameStyles.push(style.status_unvalidated);
         break;
-      case ACTIVITY_STATUS_VALIDATED:
+      case Constants.ACTIVITY_STATUS_VALIDATED:
         nameStyles.push(style.status_validated);
         break;
       default:

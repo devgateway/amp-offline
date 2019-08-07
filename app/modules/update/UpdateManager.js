@@ -1,10 +1,10 @@
 import * as child from 'child_process';
 import * as path from 'path';
 import { app } from 'electron';
+import { Constants } from 'amp-ui';
 import Logger from '../util/LoggerManager';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import { DOWNLOAD_UPDATE_BINARY_URL } from '../connectivity/AmpApiConstants';
-import { CONTENT_DISPOSITION_HEADER, UPDATES_DIR, UPDATE_TMP_FILE } from '../../utils/Constants';
 import FileManager from '../util/FileManager';
 
 const logger = new Logger('Update manager');
@@ -16,10 +16,10 @@ export default class UpdateManager {
    */
   static downloadInstaller(id) {
     logger.log('downloadInstaller');
-    const installerTmpFile = FileManager.getFullPath(UPDATES_DIR, UPDATE_TMP_FILE);
-    FileManager.createDataDir(UPDATES_DIR);
+    const installerTmpFile = FileManager.getFullPath(Constants.UPDATES_DIR, Constants.UPDATE_TMP_FILE);
+    FileManager.createDataDir(Constants.UPDATES_DIR);
     FileManager.deleteFileSync(installerTmpFile);
-    const writeStream = FileManager.createWriteStream(UPDATES_DIR, UPDATE_TMP_FILE);
+    const writeStream = FileManager.createWriteStream(Constants.UPDATES_DIR, Constants.UPDATE_TMP_FILE);
     return ConnectionHelper.doGet({
       url: DOWNLOAD_UPDATE_BINARY_URL,
       shouldRetry: true,
@@ -29,7 +29,7 @@ export default class UpdateManager {
       logger.log('Save file to disk.');
       const actualFileName = UpdateManager.getActualFileName(response);
       if (actualFileName) {
-        FileManager.renameSync(installerTmpFile, UPDATES_DIR, actualFileName);
+        FileManager.renameSync(installerTmpFile, Constants.UPDATES_DIR, actualFileName);
       }
       return actualFileName;
     });
@@ -38,7 +38,7 @@ export default class UpdateManager {
   static getActualFileName(response) {
     const { statusCode, rawHeaders } = response;
     if (statusCode === 200) {
-      const contentDispositionIndex = rawHeaders.findIndex(header => header === CONTENT_DISPOSITION_HEADER);
+      const contentDispositionIndex = rawHeaders.findIndex(header => header === Constants.CONTENT_DISPOSITION_HEADER);
       const fileHeader = rawHeaders[contentDispositionIndex + 1].split(';').filter(e => e.includes('filename'))[0];
       const actualFileName = fileHeader.split('=')[1];
       return actualFileName.substring(1, actualFileName.length - 1);
@@ -65,12 +65,12 @@ export default class UpdateManager {
       detached: true,
       stdio: 'ignore'
     };
-    if (!FileManager.existsSync(UPDATES_DIR, installPath)) {
-      const fullFilePath = FileManager.getFullPath(UPDATES_DIR, installPath);
+    if (!FileManager.existsSync(Constants.UPDATES_DIR, installPath)) {
+      const fullFilePath = FileManager.getFullPath(Constants.UPDATES_DIR, installPath);
       logger.error(`Cant find file ${fullFilePath}, update will stop.`);
       return false;
     }
-    installPath = FileManager.getFullPath(UPDATES_DIR, installPath);
+    installPath = FileManager.getFullPath(Constants.UPDATES_DIR, installPath);
     try {
       (0, (child).spawn)(installPath, args, spawnOptions).unref();
       app.quit();

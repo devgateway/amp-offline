@@ -79,6 +79,7 @@ app.on('ready', async () => {
   await installExtensions();
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+  mainWindow.show();
 
   mainWindow.webContents.on('did-finish-load', () => {
     // Delay showing the main window (blank) until ampOfflineStartUp() is complete.

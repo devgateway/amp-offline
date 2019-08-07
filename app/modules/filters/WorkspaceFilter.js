@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
 import * as AC from '../../utils/constants/ActivityConstants';
@@ -6,7 +7,6 @@ import ActivityFilter from './ActivityFilter';
 import { IS_COMPUTED, IS_PRIVATE } from '../../utils/constants/WorkspaceConstants';
 import Logger from '../util/LoggerManager';
 import * as FieldsHelper from '../helpers/FieldsHelper';
-import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
 import FieldsManager from '../field/FieldsManager';
 import * as FPC from '../../utils/constants/FieldPathConstants';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
@@ -56,7 +56,7 @@ export default class WorkspaceFilterBuilder {
   _getActivityFiltersPromise() {
     if (this._isComputed && this._wsFilters && this._workspace['use-filter'] === true) {
       return Promise.all([
-        FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
+        FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
         PossibleValuesHelper.findAll(FPC.ADJUSTMENT_TYPE_PATHS),
       ]).then(([fieldsDef, pvs]) => {
         const fieldsManager = new FieldsManager(fieldsDef, pvs);

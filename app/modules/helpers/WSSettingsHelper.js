@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_WS_SETTINGS } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('WS Settings Helper');
@@ -17,7 +17,7 @@ const WSSettingsHelper = {
   findById(wsSettingId) {
     logger.log('findById');
     const filter = { id: wsSettingId };
-    return DatabaseManager.findOne(filter, COLLECTION_WS_SETTINGS);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_WS_SETTINGS);
   },
 
   /**
@@ -28,12 +28,12 @@ const WSSettingsHelper = {
   findByWorkspaceId(workspaceId) {
     logger.log('findByWorkspaceId');
     const filter = { 'workspace-id': workspaceId };
-    return DatabaseManager.findOne(filter, COLLECTION_WS_SETTINGS);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_WS_SETTINGS);
   },
 
   findAll(filter) {
     logger.log('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_WS_SETTINGS);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_WS_SETTINGS);
   },
 
   /**
@@ -43,7 +43,7 @@ const WSSettingsHelper = {
    */
   saveOrUpdateWSSettings(wsSettings) {
     logger.log('saveOrUpdateWSSettings');
-    return DatabaseManager.saveOrUpdate(wsSettings.id, wsSettings, COLLECTION_WS_SETTINGS, {});
+    return DatabaseManager.saveOrUpdate(wsSettings.id, wsSettings, Constants.COLLECTION_WS_SETTINGS, {});
   },
 
   /**
@@ -53,7 +53,7 @@ const WSSettingsHelper = {
    */
   saveOrUpdateWSSettingsCollection(wsSettingsCollection) {
     logger.log('saveOrUpdateWSSettingsCollection');
-    return DatabaseManager.saveOrUpdateCollection(wsSettingsCollection, COLLECTION_WS_SETTINGS);
+    return DatabaseManager.saveOrUpdateCollection(wsSettingsCollection, Constants.COLLECTION_WS_SETTINGS);
   },
 
   /**
@@ -63,7 +63,7 @@ const WSSettingsHelper = {
    */
   deleteById(wsSettingsId) {
     logger.log('saveOrUpdateWSSettings');
-    return DatabaseManager.removeById(wsSettingsId, COLLECTION_WS_SETTINGS);
+    return DatabaseManager.removeById(wsSettingsId, Constants.COLLECTION_WS_SETTINGS);
   },
 
   /**
@@ -73,7 +73,7 @@ const WSSettingsHelper = {
    */
   replaceAllWSSettings(wsSettingsCollection) {
     logger.log('replaceAllWSSettings');
-    return DatabaseManager.replaceCollection(wsSettingsCollection, COLLECTION_WS_SETTINGS);
+    return DatabaseManager.replaceCollection(wsSettingsCollection, Constants.COLLECTION_WS_SETTINGS);
   }
 };
 

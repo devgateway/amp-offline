@@ -1,8 +1,5 @@
+import { Constants } from 'amp-ui';
 import ResourceHelper from '../../helpers/ResourceHelper';
-import {
-  SYNCUP_RESOURCE_PULL_BATCH_SIZE,
-  SYNCUP_TYPE_RESOURCES_PULL
-} from '../../../utils/Constants';
 import { RESOURCE_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
@@ -27,7 +24,7 @@ const logger = new Logger('ResourcesPullSyncUpManager');
 export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemovedSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_RESOURCES_PULL);
+    super(Constants.SYNCUP_TYPE_RESOURCES_PULL);
     this.unlinkRemovedResourcesFromActivities = this.unlinkRemovedResourcesFromActivities.bind(this);
     this.unlinkRemovedResourcesFromActivity = this.unlinkRemovedResourcesFromActivity.bind(this);
   }
@@ -90,8 +87,8 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
 
   pullNewEntries() {
     const requestConfigurations = [];
-    for (let idx = 0; idx < this.diff.saved.length; idx += SYNCUP_RESOURCE_PULL_BATCH_SIZE) {
-      const uuids = this.diff.saved.slice(idx, idx + SYNCUP_RESOURCE_PULL_BATCH_SIZE);
+    for (let idx = 0; idx < this.diff.saved.length; idx += Constants.SYNCUP_RESOURCE_PULL_BATCH_SIZE) {
+      const uuids = this.diff.saved.slice(idx, idx + Constants.SYNCUP_RESOURCE_PULL_BATCH_SIZE);
       requestConfigurations.push({
         postConfig: {
           shouldRetry: true,

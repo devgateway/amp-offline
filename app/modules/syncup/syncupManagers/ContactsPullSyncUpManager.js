@@ -1,8 +1,5 @@
+import { Constants } from 'amp-ui';
 import ContactHelper from '../../helpers/ContactHelper';
-import {
-  SYNCUP_CONTACTS_PULL_BATCH_SIZE,
-  SYNCUP_TYPE_CONTACTS_PULL
-} from '../../../utils/Constants';
 import { CONTACT_BATCHES_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
@@ -22,7 +19,7 @@ const logger = new Logger('Contacts pull syncup manager');
 export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_CONTACTS_PULL);
+    super(Constants.SYNCUP_TYPE_CONTACTS_PULL);
     this.unlinkRemovedContactsFromActivities = this.unlinkRemovedContactsFromActivities.bind(this);
     this.unlinkRemovedContactsFromActivity = this.unlinkRemovedContactsFromActivity.bind(this);
   }
@@ -65,8 +62,8 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
   pullNewEntries() {
     const requestConfigurations = [];
     const { saved } = this.diff;
-    for (let idx = 0; idx < saved.length; idx += SYNCUP_CONTACTS_PULL_BATCH_SIZE) {
-      const batchIds = saved.slice(idx, idx + SYNCUP_CONTACTS_PULL_BATCH_SIZE);
+    for (let idx = 0; idx < saved.length; idx += Constants.SYNCUP_CONTACTS_PULL_BATCH_SIZE) {
+      const batchIds = saved.slice(idx, idx + Constants.SYNCUP_CONTACTS_PULL_BATCH_SIZE);
       requestConfigurations.push({
         postConfig: {
           shouldRetry: true,

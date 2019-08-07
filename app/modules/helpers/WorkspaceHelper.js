@@ -1,6 +1,6 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as TeamMemberHelper from './TeamMemberHelper';
-import { COLLECTION_WORKPACES } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('Workspace helper');
@@ -48,7 +48,7 @@ const WorkspaceHelper = {
 
   findAll(filter, projections) {
     logger.log('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_WORKPACES, projections);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_WORKPACES, projections);
   },
 
   /**
@@ -59,7 +59,7 @@ const WorkspaceHelper = {
    */
   findWorkspace(filter, projections) {
     logger.log('findWorkspace');
-    return DatabaseManager.findOne(filter, COLLECTION_WORKPACES, projections);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_WORKPACES, projections);
   },
 
   /**
@@ -69,7 +69,7 @@ const WorkspaceHelper = {
    */
   saveOrUpdateWorkspace(workspace) {
     logger.log('saveOrUpdateWorkspace');
-    return DatabaseManager.saveOrUpdate(workspace.id, workspace, COLLECTION_WORKPACES);
+    return DatabaseManager.saveOrUpdate(workspace.id, workspace, Constants.COLLECTION_WORKPACES);
   },
 
   /**
@@ -79,7 +79,7 @@ const WorkspaceHelper = {
    */
   deleteById(id) {
     logger.log('deleteById');
-    return DatabaseManager.removeById(id, COLLECTION_WORKPACES);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_WORKPACES);
   },
 
   /**
@@ -89,7 +89,7 @@ const WorkspaceHelper = {
    */
   replaceWorkspaces(workspaces) {
     logger.log('replaceWorkspaces');
-    return DatabaseManager.replaceCollection(workspaces, COLLECTION_WORKPACES);
+    return DatabaseManager.replaceCollection(workspaces, Constants.COLLECTION_WORKPACES);
   },
 
   /**
@@ -100,7 +100,7 @@ const WorkspaceHelper = {
    */
   saveOrUpdateWorkspaces(workspaces) {
     logger.log('saveOrUpdateWorkspaces');
-    return DatabaseManager.saveOrUpdateCollection(workspaces, COLLECTION_WORKPACES);
+    return DatabaseManager.saveOrUpdateCollection(workspaces, Constants.COLLECTION_WORKPACES);
   }
 
 };

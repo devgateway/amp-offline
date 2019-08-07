@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import store from '../index';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
@@ -14,7 +15,6 @@ import translate from '../utils/translate';
 import Logger from '../modules/util/LoggerManager';
 import { addConfirmationAlert, addMessage } from './NotificationAction';
 import * as UrlUtils from '../utils/URLUtils';
-import { SETTINGS_URL } from '../utils/Constants';
 import FollowUp from '../components/notifications/followup';
 import ConfirmationAlert from '../components/notifications/confirmationAlert';
 
@@ -84,7 +84,7 @@ export function newUrlsDetected(newUrls) {
 export const newUrlsProcessed = () => (dispatch) => dispatch({ type: STATE_URL_CHANGE_DETECTED, actionData: null });
 
 export function goToSettingsPage() {
-  UrlUtils.forwardTo(SETTINGS_URL);
+  UrlUtils.forwardTo(Constants.SETTINGS_URL);
 }
 
 export const confirmToLeave = (nextPath) => dispatch => dispatch(addConfirmationAlert(leaveConfirmation(nextPath)));

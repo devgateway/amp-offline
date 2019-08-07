@@ -3,8 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Constants } from 'amp-ui';
 import translate from '../../utils/translate';
-import { SYNCUP_REDIRECT_URL } from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_AUTHENTICATION,
   NOTIFICATION_SEVERITY_WARNING
@@ -89,7 +89,7 @@ export default connect(
   dispatch => ({
     onConfirmationAlert: () => dispatch(addConfirmationAlert(logoutConfirmationAlert())),
     onLogoutDismissToSync: () => {
-      URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
+      URLUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL);
     }
   })
 )(Logout);

@@ -1,8 +1,8 @@
+import { Constants } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import * as UserHelper from '../../helpers/UserHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { USER_PROFILE_URL } from '../../connectivity/AmpApiConstants';
-import { SYNCUP_TYPE_USERS } from '../../../utils/Constants';
 import Logger from '../../util/LoggerManager';
 
 const logger = new Logger('User syncup manager');
@@ -16,7 +16,7 @@ const logger = new Logger('User syncup manager');
 export default class UsersSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_USERS);
+    super(Constants.SYNCUP_TYPE_USERS);
   }
 
   /**

@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -19,7 +20,6 @@ import ResourceManager from '../modules/resource/ResourceManager';
 import Logger from '../modules/util/LoggerManager';
 import ResourceHydrator from '../modules/helpers/ResourceHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
-import { SYNCUP_TYPE_RESOURCE_FIELDS } from '../utils/Constants';
 import { PREFIX_RESOURCE } from '../utils/constants/FieldPathConstants';
 import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -206,8 +206,8 @@ export const configureResourceManagers = () => (dispatch, ownProps) => dispatch(
 });
 
 const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
-    .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS]),
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
+    .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_RESOURCE)
 ]).then(([rFields, possibleValuesCollection]) => ({
   resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage)
@@ -215,8 +215,8 @@ const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
 
 const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([
   ResourceManager.findResourcesByUuidsWithContent(uuids),
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
-    .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS])
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
+    .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
   if (resources && resources.length) {
     const rh = new ResourceHydrator(rFields);

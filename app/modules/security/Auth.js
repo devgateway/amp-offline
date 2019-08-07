@@ -1,11 +1,11 @@
 import encoding from 'text-encoding';
+import { Constants } from 'amp-ui';
 import { LOGIN_URL } from '../connectivity/AmpApiConstants';
 import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
 import store from '../../index';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_AUTHENTICATION } from '../../utils/constants/ErrorConstants';
 import { hexBufferToString } from '../../utils/Utils';
-import { DIGEST_ALGORITHM_SHA256 } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('auth');
@@ -53,7 +53,7 @@ export default class Auth {
           name: 'PBKDF2',
           salt: saltBuffer,
           iterations,
-          hash: DIGEST_ALGORITHM_SHA256
+          hash: Constants.DIGEST_ALGORITHM_SHA256
         },
         key,
         { name: 'AES-CBC', length: 256 },
@@ -75,7 +75,7 @@ export default class Auth {
   /**
    * Generate SHA digest from string.
    * @param password
-   * @param algorithm can be DIGEST_ALGORITHM_SHA256 or DIGEST_ALGORITHM_SHA1
+   * @param algorithm can be Constants.DIGEST_ALGORITHM_SHA256 or DIGEST_ALGORITHM_SHA1
    * @returns {Promise.<TResult>|*}
    */
   static sha(password, algorithm) {

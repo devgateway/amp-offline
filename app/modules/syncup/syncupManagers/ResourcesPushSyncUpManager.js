@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
+import { Constants } from 'amp-ui';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
-import { SYNCUP_TYPE_RESOURCES_PUSH } from '../../../utils/Constants';
 import ResourceHelper from '../../helpers/ResourceHelper';
 import Logger from '../../util/LoggerManager';
 import { RESOURCE_PUSH_URL } from '../../connectivity/AmpApiConstants';
@@ -25,7 +25,7 @@ const logger = new Logger('ResourcesPushSyncUpManager');
  */
 export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   constructor() {
-    super(SYNCUP_TYPE_RESOURCES_PUSH);
+    super(Constants.SYNCUP_TYPE_RESOURCES_PUSH);
     this._cancel = false;
     this.diff = [];
     this._processed = new Set();

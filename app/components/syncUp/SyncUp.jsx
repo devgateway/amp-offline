@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Constants } from 'amp-ui';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
 import InfoMessage from '../common/InfoMessage';
@@ -12,10 +13,6 @@ import DateUtils from '../../utils/DateUtils';
 import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
-import {
-  NR_SYNC_HISTORY_ENTRIES,
-  SYNCUP_HISTORY_TARGET,
-} from '../../utils/Constants';
 import {
   NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
   NOTIFICATION_SEVERITY_WARNING
@@ -76,7 +73,7 @@ class SyncUp extends Component {
     const { syncUpInProgress } = this.props.syncUpReducer;
     // history target is set only from the menu, which means explicit user navigation
     // otherwise brought in here to suggest / require user to sync
-    if (!syncUpInProgress && this.context.router.params.target !== SYNCUP_HISTORY_TARGET) {
+    if (!syncUpInProgress && this.context.router.params.target !== Constants.SYNCUP_HISTORY_TARGET) {
       this.props.onSyncConfirmationAlert(this.props.syncUpReducer);
     }
   }
@@ -213,7 +210,7 @@ export default connect(
       currentUserHistory: syncUpReducer.historyData
         .filter(datum => datum['requested-by'] === userReducer.userData.id)
         .sort((a, b) => new Date(b['sync-date']) - new Date(a['sync-date']))
-        .slice(0, NR_SYNC_HISTORY_ENTRIES)
+        .slice(0, Constants.NR_SYNC_HISTORY_ENTRIES)
     };
   },
 

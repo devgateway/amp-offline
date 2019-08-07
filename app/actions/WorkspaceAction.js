@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import WorkspaceManager from '../modules/workspace/WorkspaceManager';
 import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
@@ -9,7 +10,6 @@ import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as AC from '../utils/constants/ActivityConstants';
 import { isForceSyncUp } from './SyncUpAction';
-import { SYNCUP_REDIRECT_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
 import { NOTIFICATION_ORIGIN_WORKSPACE } from '../utils/constants/ErrorConstants';
 import { FIELD_OPTIONS, PREFIX_COMMON } from '../utils/constants/FieldPathConstants';
@@ -33,7 +33,7 @@ export function selectWorkspace(wsId) {
   // adding this check here to avoid doing significant changes in the ws selection workflow just before the release
   // TODO prepare ws load from the desktop component
   if (isForceSyncUp()) {
-    URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
+    URLUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL);
     return dispatch => dispatch({ type: STATE_WORKSPACE_LOAD_DENIED });
   }
   return (dispatch) => loadWorkspaceData(wsId).then(({ workspace, teamMember }) =>

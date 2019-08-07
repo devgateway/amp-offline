@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
+import { Constants } from 'amp-ui';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
-import { SYNCUP_TYPE_CONTACTS_PUSH } from '../../../utils/Constants';
 import ContactHelper from '../../helpers/ContactHelper';
 import Logger from '../../util/LoggerManager';
 import { CONTACT_PUSH_URL } from '../../connectivity/AmpApiConstants';
@@ -20,7 +20,7 @@ const logger = new Logger('Contacts push sync up manager');
  */
 export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   constructor() {
-    super(SYNCUP_TYPE_CONTACTS_PUSH);
+    super(Constants.SYNCUP_TYPE_CONTACTS_PUSH);
     this._cancel = false;
     this.diff = [];
     this._processed = new Set();
