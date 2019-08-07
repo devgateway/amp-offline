@@ -25,8 +25,8 @@
   "Cancel": "Cancel",
   "cleanup": "Cleanup",
   "tryAgain": "Try Again",
-  "noDiskSpace": "No space left on device. Free up some space, then try again.",
+  "noDiskSpace": "No space left on your device. Free up some space, then try again.",
   "dbCompatibilityError": "Database is no longer compatible and will be cleaned up. Any changes that have not been synced will be lost.",
-  "dbCorrupted": "Database is corrupted. Before cleaning it up, please stop the app, backup the database, collect logs, note your actions and contact the administrator.",
-  "dbCleanupFailed": "Database cleanup failed. Please backup the database, collect logs, note your actions and contact the administrator. You can delete the database files manually."
+  "dbCorrupted": "Database is corrupted. Please note your actions and send %error report% to the administrator.",
+  "dbCleanupFailed": "Database cleanup failed. Please send %error report% to the administrator. You can delete the %database% folder manually."
 }
