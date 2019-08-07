@@ -1,8 +1,8 @@
+import { Constants } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import GlobalSettingsHelper from '../../helpers/GlobalSettingsHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import { GLOBAL_SETTINGS_URL } from '../../connectivity/AmpApiConstants';
-import { SYNCUP_TYPE_GS } from '../../../utils/Constants';
 import Logger from '../../util/LoggerManager';
 
 const logger = new Logger('Global settings syncup manager');
@@ -11,7 +11,7 @@ const logger = new Logger('Global settings syncup manager');
 
 export default class GlobalSettingsSyncUpManager extends AbstractAtomicSyncUpManager {
   constructor() {
-    super(SYNCUP_TYPE_GS);
+    super(Constants.SYNCUP_TYPE_GS);
   }
 
   /**

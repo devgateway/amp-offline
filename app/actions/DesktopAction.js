@@ -1,8 +1,8 @@
 /* eslint flowtype-errors/show-errors: 0 */
+import { Constants } from 'amp-ui';
 import UrlUtils from '../utils/URLUtils';
 import DesktopManager from '../modules/desktop/DesktopManager';
 import Logger from '../modules/util/LoggerManager';
-import { DESKTOP_URL } from '../utils/Constants';
 
 export const STATE_DESKTOP_LOADING = 'STATE_DESKTOP_LOADING';
 export const STATE_DESKTOP_LOADED = 'STATE_DESKTOP_LOADED';
@@ -27,7 +27,7 @@ export function loadDesktop(workspace, teamMemberId) {
             rejectedProjects: data.rejectedProjects,
             tabs: data.defaultTabs
           }));
-          return UrlUtils.forwardTo(`${DESKTOP_URL}/${workspace.id}`);
+          return UrlUtils.forwardTo(`${Constants.DESKTOP_URL}/${workspace.id}`);
         }).catch((error) => {
           dispatch(errorLoadDesktop(error));
         });

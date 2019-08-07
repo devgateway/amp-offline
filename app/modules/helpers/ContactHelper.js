@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_CONTACTS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import
@@ -35,7 +35,7 @@ const ContactHelper = {
 
   findContact(filterRule) {
     logger.debug('findContact');
-    return DatabaseManager.findOne(filterRule, COLLECTION_CONTACTS);
+    return DatabaseManager.findOne(filterRule, Constants.COLLECTION_CONTACTS);
   },
 
   /**
@@ -66,7 +66,7 @@ const ContactHelper = {
 
   findAllContacts(filterRule, projections) {
     logger.debug('findAllContacts');
-    return DatabaseManager.findAll(filterRule, COLLECTION_CONTACTS, projections);
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_CONTACTS, projections);
   },
 
   stampClientChange(contact) {
@@ -114,7 +114,7 @@ const ContactHelper = {
   saveOrUpdateContact(contact) {
     logger.log('saveOrUpdateContact');
     ContactHelper._setOrUpdateIds(contact);
-    return DatabaseManager.saveOrUpdate(contact.id, contact, COLLECTION_CONTACTS);
+    return DatabaseManager.saveOrUpdate(contact.id, contact, Constants.COLLECTION_CONTACTS);
   },
 
   _setOrUpdateIds(contact) {
@@ -125,12 +125,12 @@ const ContactHelper = {
   saveOrUpdateContactCollection(contacts) {
     logger.log('saveOrUpdateContactCollection');
     contacts.forEach(contact => { ContactHelper._setOrUpdateIds(contact); });
-    return DatabaseManager.saveOrUpdateCollection(contacts, COLLECTION_CONTACTS);
+    return DatabaseManager.saveOrUpdateCollection(contacts, Constants.COLLECTION_CONTACTS);
   },
 
   replaceContacts(contacts) {
     logger.log('replaceContact');
-    return DatabaseManager.replaceCollection(contacts, COLLECTION_CONTACTS);
+    return DatabaseManager.replaceCollection(contacts, Constants.COLLECTION_CONTACTS);
   },
 
   /**
@@ -140,19 +140,19 @@ const ContactHelper = {
    */
   deleteContactById(id) {
     logger.log('deleteContactById');
-    return DatabaseManager.removeById(id, COLLECTION_CONTACTS);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_CONTACTS);
   },
 
   deleteContactByInternalId(internalId) {
     logger.log('deleteContactByInternalId');
     const filterRule = Utils.toMap(INTERNAL_ID, internalId);
-    return DatabaseManager.removeAll(filterRule, COLLECTION_CONTACTS);
+    return DatabaseManager.removeAll(filterRule, Constants.COLLECTION_CONTACTS);
   },
 
   removeAllByIds(ids) {
     logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
-    return DatabaseManager.removeAll(idsFilter, COLLECTION_CONTACTS);
+    return DatabaseManager.removeAll(idsFilter, Constants.COLLECTION_CONTACTS);
   }
 };
 

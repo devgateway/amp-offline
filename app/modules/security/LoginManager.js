@@ -1,4 +1,5 @@
 /* eslint no-else-return: 0*/
+import { Constants } from 'amp-ui';
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
 import Notification from '../helpers/NotificationHelper';
@@ -6,7 +7,6 @@ import {
   NOTIFICATION_ORIGIN_API_SECURITY,
   NOTIFICATION_ORIGIN_AUTHENTICATION
 } from '../../utils/constants/ErrorConstants';
-import { DIGEST_ALGORITHM_SHA1 } from '../../utils/Constants';
 import Logger from '../util/LoggerManager';
 
 const logger = new Logger('Login manager');
@@ -72,7 +72,7 @@ const LoginManager = {
   processOnlineLogin(email, password) {
     logger.log('processOnlineLogin');
     return new Promise((resolve, reject) => (
-      Auth.sha(password, DIGEST_ALGORITHM_SHA1).then((passwordDigest) => (
+      Auth.sha(password, Constants.DIGEST_ALGORITHM_SHA1).then((passwordDigest) => (
         Auth.onlineLogin(email, passwordDigest).then((data) => (
           this.saveLoginData(data, email, password).then((dbData) => (
             resolve({ dbUser: dbData, token: data.token })

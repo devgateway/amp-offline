@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { hashHistory, IndexRoute, Route, Router } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { ipcRenderer } from 'electron';
+import { Constants } from 'amp-ui';
 import configureStore from './store/configureStore';
 import './app.global.css';
 import AppPage from './containers/AppPage';
@@ -19,7 +20,6 @@ import auth from './modules/security/Auth';
 import { ampOfflinePreStartUp, ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import Logger from './modules/util/LoggerManager';
-import { LOGIN_URL, SYNCUP_REDIRECT_URL, SYNCUP_SUMMARY_URL } from './utils/Constants';
 import SetupPage from './containers/SetupPage';
 import NotificationHelper from './modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
@@ -34,15 +34,16 @@ const store = configureStore();
 export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
 
-const ignoreForceSyncUpFor = [LOGIN_URL, SYNCUP_REDIRECT_URL];
+const ignoreForceSyncUpFor = [Constants.LOGIN_URL, Constants.SYNCUP_REDIRECT_URL];
 
 function checkAuth(nextState, replace) {
   logger.log('checkAuth');
   const nextPath = nextState.location.pathname;
   if (!auth.loggedIn()) {
     replace({ state: { nextPathname: nextPath }, pathname: '/' });
-  } else if (!(ignoreForceSyncUpFor.includes(nextPath) || nextPath.startsWith(SYNCUP_SUMMARY_URL)) && isForceSyncUp()) {
-    replace({ state: { nextPathname: nextPath }, pathname: SYNCUP_REDIRECT_URL });
+  } else if (!(ignoreForceSyncUpFor.includes(nextPath) || nextPath.startsWith(Constants.SYNCUP_SUMMARY_URL)) &&
+    isForceSyncUp()) {
+    replace({ state: { nextPathname: nextPath }, pathname: Constants.SYNCUP_REDIRECT_URL });
   }
 }
 

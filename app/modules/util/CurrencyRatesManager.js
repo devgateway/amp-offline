@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants } from 'amp-ui';
-import { CURRENCY_HOUR, CURRENCY_PAIR, RATE_CURRENCY_NOT_FOUND, RATE_SAME_CURRENCY } from '../../utils/Constants';
+import { ActivityConstants, Constants } from 'amp-ui';
 import translate from '../../utils/translate';
 import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/ErrorConstants';
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
@@ -32,15 +31,16 @@ export default class CurrencyRatesManager {
    */
   convertCurrency(currencyFrom, currencyTo, dateToFind, fixedExchangeRate) {
     if (currencyFrom === currencyTo) {
-      return RATE_SAME_CURRENCY;
+      return Constants.RATE_SAME_CURRENCY;
     }
     if (fixedExchangeRate && fixedExchangeRate > 0) {
-      return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind, null) / fixedExchangeRate);
+      return (this.convertCurrency(this._baseCurrency, currencyTo, dateToFind,
+        null) / fixedExchangeRate);
     }
-    const timeDateToFind = (new Date(`${dateToFind} ${CURRENCY_HOUR}`)).getTime();
+    const timeDateToFind = (new Date(`${dateToFind} ${Constants.CURRENCY_HOUR}`)).getTime();
     if (this._currencyRates) {
       const currenciesToSearchDirect = this._currencyRates.find((item) =>
-        item[CURRENCY_PAIR].from === currencyFrom && item[CURRENCY_PAIR].to === currencyTo
+        item[Constants.CURRENCY_PAIR].from === currencyFrom && item[Constants.CURRENCY_PAIR].to === currencyTo
       );
       if (currenciesToSearchDirect) {
         return this.getExchangeRate(currenciesToSearchDirect, timeDateToFind);
@@ -48,7 +48,7 @@ export default class CurrencyRatesManager {
         // direct not found
         const currenciesToSearchInverse =
           this._currencyRates.find((item) =>
-            item[CURRENCY_PAIR].from === currencyTo && item[CURRENCY_PAIR].to === currencyFrom
+            item[Constants.CURRENCY_PAIR].from === currencyTo && item[Constants.CURRENCY_PAIR].to === currencyFrom
           );
         if (currenciesToSearchInverse) {
           return 1 / this.getExchangeRate(currenciesToSearchInverse, timeDateToFind);
@@ -94,9 +94,11 @@ export default class CurrencyRatesManager {
     let higherEnd = currenciesToSearch.rates.length - 1;
     while (lowerEnd < higherEnd) {
       const middle = Math.floor((lowerEnd + higherEnd) / 2);
-      const difference = Math.abs((new Date(`${currenciesToSearch.rates[middle].date}  ${CURRENCY_HOUR}`))
+      const difference = Math.abs((new Date(
+        `${currenciesToSearch.rates[middle].date}  ${Constants.CURRENCY_HOUR}`))
         - timeDateToFind);
-      const difference1 = Math.abs((new Date(`${currenciesToSearch.rates[middle + 1].date}  ${CURRENCY_HOUR}`))
+      const difference1 = Math.abs((new Date(
+        `${currenciesToSearch.rates[middle + 1].date}  ${Constants.CURRENCY_HOUR}`))
         - timeDateToFind);
       if (difference1 <= difference) {
         lowerEnd = middle + 1;
@@ -117,10 +119,10 @@ export default class CurrencyRatesManager {
 
   convertViaBaseCurrency(currencyFrom, currencyTo, timeDateToFind) {
     const rateFromToBase = this._currencyRates.find((item) =>
-      item[CURRENCY_PAIR].from === currencyFrom && item[CURRENCY_PAIR].to === this._baseCurrency
+      item[Constants.CURRENCY_PAIR].from === currencyFrom && item[Constants.CURRENCY_PAIR].to === this._baseCurrency
     );
     const rateBaseToTo = this._currencyRates.find((item) =>
-      item[CURRENCY_PAIR].from === this._baseCurrency && item[CURRENCY_PAIR].to === currencyTo
+      item[Constants.CURRENCY_PAIR].from === this._baseCurrency && item[Constants.CURRENCY_PAIR].to === currencyTo
     );
     if (rateFromToBase && rateBaseToTo) {
       // if we have both currencies we just return the product of ech rate
@@ -129,27 +131,27 @@ export default class CurrencyRatesManager {
       // if either of them is not found we try to find the inverse
       // we get the inverse of rateBaseToTo
       const rateToToBase = this._currencyRates.find((item) =>
-        item[CURRENCY_PAIR].from === currencyTo && item[CURRENCY_PAIR].to === this._baseCurrency
+        item[Constants.CURRENCY_PAIR].from === currencyTo && item[Constants.CURRENCY_PAIR].to === this._baseCurrency
       );
       if (rateToToBase) {
         return this.getExchangeRate(rateFromToBase, timeDateToFind)
           * (1 / this.getExchangeRate(rateToToBase, timeDateToFind));
       } else {
-        return RATE_CURRENCY_NOT_FOUND;
+        return Constants.RATE_CURRENCY_NOT_FOUND;
       }
     } else if (rateBaseToTo) {
       const rateBaseToFrom = this._currencyRates.find((item) =>
-        item[CURRENCY_PAIR].from === this._baseCurrency && item[CURRENCY_PAIR].to === currencyFrom
+        item[Constants.CURRENCY_PAIR].from === this._baseCurrency && item[Constants.CURRENCY_PAIR].to === currencyFrom
       );
       // we try to get the inverse of rateFromToBase
       if (rateBaseToFrom) {
         return (1 / this.getExchangeRate(rateBaseToFrom, timeDateToFind))
           * this.getExchangeRate(rateBaseToTo, timeDateToFind);
       } else {
-        return RATE_CURRENCY_NOT_FOUND;
+        return Constants.RATE_CURRENCY_NOT_FOUND;
       }
     } else {
-      return RATE_CURRENCY_NOT_FOUND;
+      return Constants.RATE_CURRENCY_NOT_FOUND;
     }
   }
 
@@ -157,8 +159,8 @@ export default class CurrencyRatesManager {
     const cs = new Set();
     if (this._currencyRates) {
       this._currencyRates.forEach(exchangeRates => {
-        cs.add(exchangeRates[CURRENCY_PAIR].from);
-        cs.add(exchangeRates[CURRENCY_PAIR].to);
+        cs.add(exchangeRates[Constants.CURRENCY_PAIR].from);
+        cs.add(exchangeRates[Constants.CURRENCY_PAIR].to);
       });
     }
     return cs;

@@ -1,7 +1,7 @@
+import { Constants } from 'amp-ui';
 import store from '../index';
 import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
-import { CONNECTIVITY_CHECK_INTERVAL } from '../utils/Constants';
 import Logger from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
@@ -124,7 +124,7 @@ export function getTimer() {
 function scheduleConnectivityCheck() {
   return connectivityCheck().then(() => {
     clearInterval(timer);
-    timer = setInterval(() => connectivityCheck(), CONNECTIVITY_CHECK_INTERVAL);
+    timer = setInterval(() => connectivityCheck(), Constants.CONNECTIVITY_CHECK_INTERVAL);
     store.dispatch({ type: TIMER_START });
     return Promise.resolve();
   });

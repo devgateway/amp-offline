@@ -7,33 +7,27 @@ import { Button, Modal } from 'react-bootstrap';
 import L from 'leaflet';
 import LD from 'leaflet-draw';
 import path from 'path';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from './AFMapWindow.css';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
 import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import FileManager from '../../../../../modules/util/FileManager';
-import {
-  MAP_MARKER_IMAGE,
-  MAP_MARKER_SHADOW,
-  POLYGON_BASE_COLOR,
-  MAP_MARKER_CIRCLE_RED
-} from '../../../../../utils/Constants';
 import AFMapPopup from './AFMapPopup';
 import GazetteerHelper from '../../../../../modules/helpers/GazetteerHelper';
 import * as MapTilesUtils from '../../../../../utils/MapTilesUtils';
 
 const logger = new Logger('Map Modal');
 const myIconMarker = L.icon({
-  iconUrl: MAP_MARKER_IMAGE,
+  iconUrl: Constants.MAP_MARKER_IMAGE,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [-3, -76],
-  shadowUrl: MAP_MARKER_SHADOW
+  shadowUrl: Constants.MAP_MARKER_SHADOW
 });
 const circleIconMarker = L.icon({
-  iconUrl: MAP_MARKER_CIRCLE_RED,
+  iconUrl: Constants.MAP_MARKER_CIRCLE_RED,
   iconSize: [20, 20],
   iconAnchor: [9, 9],
   popupAnchor: [0, 0]
@@ -332,7 +326,7 @@ export default class AFMapWindow extends Component {
       }
     } else {
       // Load polygon.
-      let color = POLYGON_BASE_COLOR;
+      let color = Constants.POLYGON_BASE_COLOR;
       if (polygon[ActivityConstants.STRUCTURES_COLOR]) {
         color = polygon[ActivityConstants.STRUCTURES_COLOR].value.substring(0, 7);
       }

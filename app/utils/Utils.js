@@ -1,5 +1,6 @@
 import md5 from 'js-md5';
 import os from 'os';
+import { Constants } from 'amp-ui';
 import {
   ARCH32,
   ARCH64,
@@ -10,7 +11,7 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
-import { ENDS_WITH_PUNCTUATION_REGEX, RELEASE_BRANCHES, VERSION } from './Constants';
+import { VERSION } from './Constants';
 
 const Utils = {
 
@@ -181,7 +182,7 @@ const Utils = {
   joinMessages(messages: Array, endPunctuationIfMissing = '.') {
     return messages && messages.map(m => {
       const msg = `${m.message || m}`;
-      if (!msg.match(ENDS_WITH_PUNCTUATION_REGEX)) {
+      if (!msg.match(Constants.ENDS_WITH_PUNCTUATION_REGEX)) {
         return `${msg}${endPunctuationIfMissing}`;
       }
       return msg;
@@ -262,7 +263,7 @@ const Utils = {
 
   isReleaseBranch() {
     const branch = this.getBranch();
-    return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
+    return Constants.RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
   },
 
   compareWithCollate(text1, text2, collator) {

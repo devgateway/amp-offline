@@ -1,7 +1,6 @@
 import { Validator } from 'jsonschema';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
@@ -77,7 +76,7 @@ const PossibleValuesHelper = {
 
   findOne(filter) {
     logger.debug('findOne');
-    return DatabaseManager.findOne(filter, COLLECTION_POSSIBLE_VALUES);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   /**
@@ -130,17 +129,17 @@ const PossibleValuesHelper = {
     const prefixToExclude = FPC.PREFIX_LIST.filter(p => p !== FPC.PREFIX_ACTIVITY).map(p => `${p}~.*`).join('|');
     const regex = new RegExp(`^(?!(?:${prefixToExclude})).*$`);
     const filter = { id: { $regex: regex } };
-    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, { id: 1 })
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_POSSIBLE_VALUES, { id: 1 })
       .then(r => Utils.flattenToListByKey(r, 'id'));
   },
 
   findAllByExactIds(ids) {
-    return DatabaseManager.findAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
+    return DatabaseManager.findAll({ id: { $in: ids } }, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   findAll(filter, projections) {
     logger.debug('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections).then(this._preProcess);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_POSSIBLE_VALUES, projections).then(this._preProcess);
   },
 
   _preProcess(pvc) {
@@ -167,7 +166,7 @@ const PossibleValuesHelper = {
     logger.log('saveOrUpdate');
     const validationResult = this._validate(fieldValues);
     if (validationResult.valid) {
-      return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, COLLECTION_POSSIBLE_VALUES);
+      return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, Constants.COLLECTION_POSSIBLE_VALUES);
     }
     return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
@@ -181,7 +180,7 @@ const PossibleValuesHelper = {
     logger.log('saveOrUpdateCollection');
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
-      return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
+      return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, Constants.COLLECTION_POSSIBLE_VALUES);
     }
     return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
@@ -196,7 +195,7 @@ const PossibleValuesHelper = {
     // if we are replacing existing collection, then let's just reject the new set if some of its data is invalid
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
-      return DatabaseManager.replaceCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
+      return DatabaseManager.replaceCollection(fieldValuesCollection, Constants.COLLECTION_POSSIBLE_VALUES);
     }
     return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
@@ -228,7 +227,7 @@ const PossibleValuesHelper = {
    */
   deleteById(id) {
     logger.log('deleteById');
-    return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   /**
@@ -238,7 +237,7 @@ const PossibleValuesHelper = {
    */
   deleteByIds(ids) {
     logger.log('deleteByIds');
-    return DatabaseManager.removeAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
+    return DatabaseManager.removeAll({ id: { $in: ids } }, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   /**

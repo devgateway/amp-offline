@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Constants } from 'amp-ui';
 import Logger from '../../modules/util/LoggerManager';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import { goToSettingsPage, STATE_GO_TO_SETTINGS } from '../../actions/SettingAction';
-import { SETTINGS_URL } from '../../utils/Constants';
 import Notification from '../../modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_WARNING } from '../../utils/constants/ErrorConstants';
 import FollowUp from '../notifications/followup';
@@ -43,7 +43,7 @@ class SettingsTrigger extends Component {
 
   checkForUpdates(props) {
     const { location, newUrls, isNavigateToSettings, onUrlsConfirmationAlert } = props;
-    if (location.pathname !== SETTINGS_URL && newUrls) {
+    if (location.pathname !== Constants.SETTINGS_URL && newUrls) {
       if (isNavigateToSettings) {
         goToSettingsPage();
       } else {

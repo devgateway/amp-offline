@@ -1,6 +1,5 @@
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_ACTIVITIES } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -21,7 +20,7 @@ const ActivityHelper = {
   findNonRejectedById(id) {
     logger.debug('findNonRejectedById');
     const filter = { $and: [this._getNonRejectedRule(), { id }] };
-    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -32,7 +31,7 @@ const ActivityHelper = {
   findNonRejectedByInternalId(internalId) {
     logger.debug('findNonRejectedByInternalId');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.INTERNAL_ID, internalId)] };
-    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -43,7 +42,7 @@ const ActivityHelper = {
   findNonRejectedByAmpId(ampId) {
     logger.debug('findNonRejectedByAmpId');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.AMP_ID, ampId)] };
-    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -54,7 +53,7 @@ const ActivityHelper = {
   findNonRejectedByProjectTitle(projectTitle) {
     logger.debug('findNonRejectedByProjectTitle');
     const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.PROJECT_TITLE, projectTitle)] };
-    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
   },
 
   findAllNonRejectedByAmpIds(ampIds) {
@@ -69,14 +68,14 @@ const ActivityHelper = {
    */
   findAllNonRejected(filterRule, projections) {
     const filter = { $and: [this._getNonRejectedRule(), filterRule] };
-    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   findAllNonRejectedModifiedOnClient(filterRule, projections) {
     const filter = {
       $and: [this._getNonRejectedRule(), this._getModifiedOnClientSide(), this._getNotPushed(), filterRule]
     };
-    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   /**
@@ -88,7 +87,7 @@ const ActivityHelper = {
   findAllRejectedByAmpId(ampId, projections) {
     logger.debug('findAllRejectedByAmpId');
     const filter = { $and: [this._getRejectedRule(), Utils.toMap(ActivityConstants.AMP_ID, ampId)] };
-    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   /**
@@ -100,7 +99,7 @@ const ActivityHelper = {
   findAllRejected(filterRule, projections) {
     logger.debug('findAllRejected');
     const filter = { $and: [this._getRejectedRule(), filterRule] };
-    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   /**
@@ -111,12 +110,12 @@ const ActivityHelper = {
    */
   findAll(filterRule, projections) {
     logger.debug('findAll');
-    return DatabaseManager.findAll(filterRule, COLLECTION_ACTIVITIES, projections);
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   count(filterRule) {
     logger.debug('findAll');
-    return DatabaseManager.count(filterRule, COLLECTION_ACTIVITIES);
+    return DatabaseManager.count(filterRule, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -138,7 +137,7 @@ const ActivityHelper = {
   saveOrUpdate(activity, isDiffChange) {
     logger.log('saveOrUpdate');
     this._setOrUpdateIds(activity, isDiffChange);
-    return DatabaseManager.saveOrUpdate(activity.id, activity, COLLECTION_ACTIVITIES);
+    return DatabaseManager.saveOrUpdate(activity.id, activity, Constants.COLLECTION_ACTIVITIES);
   },
 
   _setOrUpdateIds(activity, isDiffChange = false) {
@@ -175,7 +174,7 @@ const ActivityHelper = {
   saveOrUpdateCollection(activities, isDiffChange) {
     logger.log('saveOrUpdateCollection');
     activities.forEach(a => this._setOrUpdateIds(a, isDiffChange));
-    return DatabaseManager.saveOrUpdateCollection(activities, COLLECTION_ACTIVITIES);
+    return DatabaseManager.saveOrUpdateCollection(activities, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -186,12 +185,12 @@ const ActivityHelper = {
   replaceAll(activities) {
     logger.log('replaceAll');
     activities.forEach(this._setOrUpdateIds);
-    return DatabaseManager.replaceCollection(activities, COLLECTION_ACTIVITIES);
+    return DatabaseManager.replaceCollection(activities, Constants.COLLECTION_ACTIVITIES);
   },
 
   removeNonRejectedById(id) {
     logger.log('removeNonRejectedById');
-    return DatabaseManager.removeById(id, COLLECTION_ACTIVITIES, this._getNonRejectedRule());
+    return DatabaseManager.removeById(id, Constants.COLLECTION_ACTIVITIES, this._getNonRejectedRule());
   },
 
   removeNonRejectedByAmpId(ampId) {
@@ -200,13 +199,13 @@ const ActivityHelper = {
       if (result === null) {
         return null;
       }
-      return DatabaseManager.removeById(result.id, COLLECTION_ACTIVITIES, this._getNonRejectedRule());
+      return DatabaseManager.removeById(result.id, Constants.COLLECTION_ACTIVITIES, this._getNonRejectedRule());
     });
   },
 
   removeRejected(id) {
     logger.log('removeRejected');
-    return DatabaseManager.removeById(id, COLLECTION_ACTIVITIES, this._getRejectedRule());
+    return DatabaseManager.removeById(id, Constants.COLLECTION_ACTIVITIES, this._getRejectedRule());
   },
 
   removeAllNonRejectedByIds(ids) {
@@ -217,7 +216,7 @@ const ActivityHelper = {
 
   removeAll(filter) {
     logger.log('removeAll');
-    return DatabaseManager.removeAll(filter, COLLECTION_ACTIVITIES);
+    return DatabaseManager.removeAll(filter, Constants.COLLECTION_ACTIVITIES);
   },
 
   getVersion(activity) {

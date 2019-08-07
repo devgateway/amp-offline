@@ -3,10 +3,10 @@
 import rp from 'request-promise';
 import request from 'request';
 import Promise from 'bluebird';
+import { Constants } from 'amp-ui';
 import RequestConfig from './RequestConfig';
 import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import Notification from '../helpers/NotificationHelper';
-import { ERRORS_NO_AMP_SERVER, ERRORS_TO_RETRY, MAX_RETRY_ATEMPTS } from '../../utils/Constants';
 import * as EC from '../../utils/constants/ErrorConstants';
 import store from '../../index';
 import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
@@ -22,7 +22,7 @@ const ConnectionHelper = {
     logger.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
   /**
@@ -40,14 +40,14 @@ const ConnectionHelper = {
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
   doPut({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
     logger.debug('doPut');
     const method = 'PUT';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
@@ -110,7 +110,7 @@ const ConnectionHelper = {
 
   _processResultOrRetry({ error, response, body, requestConfig, maxRetryAttempts, shouldRetry, writeStream }) {
     if (error || !(response && response.statusCode >= 200 && response.statusCode < 400) || (body && body.error)) {
-      const shouldRetryOnError = ERRORS_TO_RETRY.filter((value) => (
+      const shouldRetryOnError = Constants.ERRORS_TO_RETRY.filter((value) => (
         value === (error ? error.code : (body ? body.error : EC.MSG_UNKNOWN_NETWORK_ERROR))
       ));
       if (shouldRetryOnError.length > 0) {
@@ -134,7 +134,7 @@ const ConnectionHelper = {
           });
       } else {
         // Being here means the server might not be accessible.
-        const isAMPunreachable = (error && ERRORS_NO_AMP_SERVER.includes(error.code)) || !response;
+        const isAMPunreachable = (error && Constants.Constants.ERRORS_NO_AMP_SERVER.includes(error.code)) || !response;
         const isAccessDenied = response && response.statusCode === 403;
         const errorCode = isAccessDenied ? EC.ERROR_CODE_ACCESS_DENIED : undefined;
         const message = isAMPunreachable ? EC.MSG_AMP_UNREACHABLE :

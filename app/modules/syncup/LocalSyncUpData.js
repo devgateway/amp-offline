@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import * as ActivityHelper from '../helpers/ActivityHelper';
 import * as UserHelper from '../helpers/UserHelper';
 import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';
@@ -5,11 +6,6 @@ import ContactHelper from '../helpers/ContactHelper';
 import ResourceHelper from '../helpers/ResourceHelper';
 import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
 import * as FieldsHelper from '../helpers/FieldsHelper';
-import {
-  SYNCUP_TYPE_ACTIVITY_FIELDS,
-  SYNCUP_TYPE_CONTACT_FIELDS,
-  SYNCUP_TYPE_RESOURCE_FIELDS
-} from '../../utils/Constants';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import * as FPC from '../../utils/constants/FieldPathConstants';
 
@@ -28,9 +24,9 @@ export default class LocalSyncUpData {
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
       ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
       ResourceHelper.countAllResourcesModifiedOnClient(), TranslationSyncupManager.getNewTranslationsDifference(),
-      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_ACTIVITY_FIELDS),
-      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_CONTACT_FIELDS),
-      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_RESOURCE_FIELDS),
+      FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
+      FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_CONTACT_FIELDS),
+      FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_RESOURCE_FIELDS),
       PossibleValuesHelper.findActivityPossibleValuesPaths(),
       PossibleValuesHelper.findPossibleValuesPathsFor(FPC.PREFIX_CONTACT),
       PossibleValuesHelper.findPossibleValuesPathsFor(FPC.PREFIX_RESOURCE),

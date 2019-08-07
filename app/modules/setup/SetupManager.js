@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import {
   AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
@@ -9,15 +10,6 @@ import TranslationManager from '../util/TranslationManager';
 import translate from '../../utils/translate';
 import { NOTIFICATION_ORIGIN_SETUP } from '../../utils/constants/ErrorConstants';
 import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
-import {
-  BASE_PORT,
-  BASE_REST_URL,
-  CONNECTION_FORCED_TIMEOUT,
-  CONNECTION_TIMEOUT,
-  OTHER_ID,
-  PROTOCOL,
-  SERVER_URL,
-} from '../../utils/Constants';
 import ConnectionInformation from '../connectivity/ConnectionInformation';
 import AssetsUtils from '../../utils/AssetsUtils';
 import SetupSyncUpManager from '../syncup/SetupSyncUpManager';
@@ -50,9 +42,9 @@ const SetupManager = {
     return ClientSettingsHelper.findSettingByName(CSC.SETUP_CONFIG).then(setupConfigSetting => {
       const isFallbackToDefault = +process.env.USE_TEST_AMP_URL;
       const fullUrl = setupConfigSetting && setupConfigSetting.value && setupConfigSetting.value.urls[0];
-      const url = fullUrl || (isFallbackToDefault && SERVER_URL) || null;
-      const protocol = (!fullUrl && isFallbackToDefault && PROTOCOL) || null;
-      const port = (!fullUrl && isFallbackToDefault && BASE_PORT) || null;
+      const url = fullUrl || (isFallbackToDefault && Constants.SERVER_URL) || null;
+      const protocol = (!fullUrl && isFallbackToDefault && Constants.PROTOCOL) || null;
+      const port = (!fullUrl && isFallbackToDefault && Constants.BASE_PORT) || null;
       return this.buildConnectionInformation(url, protocol, port, false);
     });
   },
@@ -68,7 +60,8 @@ const SetupManager = {
   buildConnectionInformation(url, protocol, port, isTestUrl) {
     const isFullUrl = !(protocol || port);
     return new ConnectionInformation(
-      url, BASE_REST_URL, protocol, port, CONNECTION_TIMEOUT, CONNECTION_FORCED_TIMEOUT, isFullUrl, isTestUrl);
+      url, Constants.BASE_REST_URL, protocol, port, Constants.CONNECTION_TIMEOUT, Constants.CONNECTION_FORCED_TIMEOUT,
+      isFullUrl, isTestUrl);
   },
 
   buildConnectionInformationForTest(fullUrl) {
@@ -98,7 +91,7 @@ const SetupManager = {
    */
   getCustomOption(languageList: Array<string>) {
     return new AmpServer({
-      id: OTHER_ID,
+      id: Constants.OTHER_ID,
       name: languageList.reduce((resultMap, code) => {
         resultMap[code] = translate('Other', code);
         return resultMap;

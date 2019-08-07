@@ -1,6 +1,6 @@
+import { Constants } from 'amp-ui';
 import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
-import { LANGUAGE_ENGLISH, SETUP_URL } from '../utils/Constants';
 import * as CSC from '../utils/constants/ClientSettingsConstants';
 import * as GSC from '../utils/constants/GlobalSettingsConstants';
 import * as URLUtils from '../utils/URLUtils';
@@ -81,7 +81,7 @@ export function checkIfSetupComplete() {
 
 export function doSetupFirst() {
   logger.log('doSetupFirst');
-  URLUtils.forwardTo(SETUP_URL);
+  URLUtils.forwardTo(Constants.SETUP_URL);
 }
 
 export function didSetupComplete() {
@@ -105,7 +105,7 @@ export function configureOnLoad() {
   return SetupManager.getConnectionInformation().then((connectionInformation: ConnectionInformation) => {
     const isTestingEnv = +process.env.USE_TEST_AMP_URL;
     if (isTestingEnv && !didSetupComplete()) {
-      const customOption = SetupManager.getCustomOption([LANGUAGE_ENGLISH]);
+      const customOption = SetupManager.getCustomOption([Constants.LANGUAGE_ENGLISH]);
       customOption.urls = [connectionInformation.getFullUrl()];
       const setupCompletePromise = attemptToConfigureAndSaveSetup(customOption);
       store.dispatch(notifySetupComplete(setupCompletePromise));

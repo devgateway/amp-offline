@@ -1,4 +1,4 @@
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -22,7 +22,6 @@ import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import translate from '../utils/translate';
 import * as Utils from '../utils/Utils';
-import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
 import DateUtils from '../utils/DateUtils';
 import LoggerManager from '../modules/util/LoggerManager';
@@ -139,13 +138,13 @@ function _loadActivity({
   const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
   return Promise.all([
     _getActivity(activityId, teamMemberId),
-    FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
+    FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
     PossibleValuesHelper.findAll(pvFilter),
     isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } },
       Utils.toMap(ActivityConstants.PROJECT_TITLE, 1)) : []
   ])
     .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
-      fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
+      fieldsDef = fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS];
       const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
       const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
         currentWorkspaceSettings, currencyRatesManager);

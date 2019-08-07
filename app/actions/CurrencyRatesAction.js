@@ -1,10 +1,10 @@
 /**
  * Created by Julian de Anquin
  */
+import { Constants } from 'amp-ui';
 import CurrencyRatesHelper from '../modules/helpers/CurrencyRatesHelper';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import Logger from '../modules/util/LoggerManager';
-import { DEFAULT_CURRENCY } from '../utils/Constants';
 import { BASE_CURRENCY_KEY } from '../utils/constants/GlobalSettingsConstants';
 
 export const STATE_LOADING_CURRENCY_RATES = 'STATE_LOADING_CURRENCY_RATES';
@@ -31,7 +31,7 @@ export function loadCurrencyRates() {
         if (gsBaseCurrency) {
           baseCurrency = gsBaseCurrency.value;
         } else {
-          baseCurrency = DEFAULT_CURRENCY;
+          baseCurrency = Constants.DEFAULT_CURRENCY;
         }
         return dispatch(ratesLoaded(rates, baseCurrency));
       })

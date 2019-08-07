@@ -1,7 +1,6 @@
 /* eslint "no-nested-ternary": 0 */
-import { ActivityConstants } from 'amp-ui';
+import { Constants, ActivityConstants } from 'amp-ui';
 import translate from '../../utils/translate';
-import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
@@ -138,12 +137,12 @@ const DesktopManager = {
     let status = '';
     const approvalStatusId = item[ActivityConstants.APPROVAL_STATUS];
     if (item[ActivityConstants.IS_DRAFT]) {
-      status = ACTIVITY_STATUS_DRAFT;
+      status = Constants.ACTIVITY_STATUS_DRAFT;
     } else if (approvalStatusId === ApprovalStatus.APPROVED.id ||
       approvalStatusId === ApprovalStatus.STARTED_APPROVED.id) {
-      status = ACTIVITY_STATUS_VALIDATED;
+      status = Constants.ACTIVITY_STATUS_VALIDATED;
     } else {
-      status = ACTIVITY_STATUS_UNVALIDATED;
+      status = Constants.ACTIVITY_STATUS_UNVALIDATED;
     }
     return status;
   },

@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
+import { Constants } from 'amp-ui';
 import * as styles from './Setup.css';
-import { LOGIN_URL, OTHER_ID } from '../../utils/Constants';
 import * as URLUtils from '../../utils/URLUtils';
 import AFOption from '../activity/edit/components/AFOption';
 import AFDropDown from '../activity/edit/components/AFDropDown';
@@ -65,7 +65,7 @@ export default class Setup extends Component {
     const { isSetupOptionsLoaded, isSetupOptionsLoading, isSetupOptionsLoadFailed, loadSetupOptions } = props;
     const optionsCount = this.state.countryOptions.length;
     if (props.isSetupComplete) {
-      URLUtils.forwardTo(LOGIN_URL);
+      URLUtils.forwardTo(Constants.LOGIN_URL);
     } else if (props.isAppInitialized) {
       if (!(isSetupOptionsLoaded || isSetupOptionsLoading || isSetupOptionsLoadFailed)) {
         loadSetupOptions();
@@ -93,7 +93,7 @@ export default class Setup extends Component {
 
   onOptionChange(option) {
     const selectedOptionId = option && option.id > 0 ? option.id : undefined;
-    const isCustom = selectedOptionId === OTHER_ID;
+    const isCustom = selectedOptionId === Constants.OTHER_ID;
     const isValid = (isCustom && this.isCustomValueValid(this.state.customValue)) || (!isCustom && selectedOptionId);
     this.setState({ selectedOptionId, isCustom, isValid });
   }

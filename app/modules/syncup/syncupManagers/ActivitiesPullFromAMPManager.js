@@ -1,11 +1,5 @@
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
-import {
-  SYNCUP_ACTIVITIES_PULL_BATCH_SIZE,
-  SYNCUP_DETAILS_SYNCED,
-  SYNCUP_DETAILS_UNSYNCED,
-  SYNCUP_TYPE_ACTIVITIES_PULL
-} from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import { ACTIVITY_EXPORT_BATCHES_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
@@ -26,10 +20,10 @@ const logger = new Logger('Activities pull from AMP manager');
 export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemovedSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_ACTIVITIES_PULL);
+    super(Constants.SYNCUP_TYPE_ACTIVITIES_PULL);
     this._saveNewActivities = this._saveNewActivities.bind(this);
-    this._details[SYNCUP_DETAILS_SYNCED] = [];
-    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
+    this._details[Constants.SYNCUP_DETAILS_SYNCED] = [];
+    this._details[Constants.SYNCUP_DETAILS_UNSYNCED] = [];
   }
 
   set activitiesPushToAMPManager(activitiesPushToAMPManager: ActivitiesPushToAMPManager) {
@@ -37,27 +31,27 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
   }
 
   mergeDetails(previousDetails) {
-    const synced = this._details[SYNCUP_DETAILS_SYNCED];
-    const prevSynced = previousDetails && previousDetails[SYNCUP_DETAILS_SYNCED];
+    const synced = this._details[Constants.SYNCUP_DETAILS_SYNCED];
+    const prevSynced = previousDetails && previousDetails[Constants.SYNCUP_DETAILS_SYNCED];
     if (prevSynced && prevSynced.length) {
       const syncedAmpIds = new Set(synced.map(detail => detail[ActivityConstants.AMP_ID]));
       synced.push(...prevSynced.filter(detail => !syncedAmpIds.has(detail[ActivityConstants.AMP_ID])));
     }
-    const merged = Utils.toMap(SYNCUP_DETAILS_SYNCED, synced);
+    const merged = Utils.toMap(Constants.SYNCUP_DETAILS_SYNCED, synced);
     /* If the current sync didn't even start (e.g. connection interruption or canceled before 2nd run), then keep
     previous result, otherwise only the latest unsyced are relevant, since those from the previous attempt were retried
     this time */
     const unsycedSource = this.diff ? this._details : (previousDetails || []);
-    merged[SYNCUP_DETAILS_UNSYNCED] = unsycedSource[SYNCUP_DETAILS_UNSYNCED];
+    merged[Constants.SYNCUP_DETAILS_UNSYNCED] = unsycedSource[Constants.SYNCUP_DETAILS_UNSYNCED];
     return merged;
   }
 
   static mergeDetails(...details) {
-    const result = Utils.toMap(SYNCUP_DETAILS_SYNCED, []);
-    result[SYNCUP_DETAILS_UNSYNCED] = [];
+    const result = Utils.toMap(Constants.SYNCUP_DETAILS_SYNCED, []);
+    result[Constants.SYNCUP_DETAILS_UNSYNCED] = [];
     details.forEach(detail => {
-      result[SYNCUP_DETAILS_SYNCED].push(...(detail[SYNCUP_DETAILS_SYNCED] || []));
-      result[SYNCUP_DETAILS_UNSYNCED].push(...(detail[SYNCUP_DETAILS_UNSYNCED] || []));
+      result[Constants.SYNCUP_DETAILS_SYNCED].push(...(detail[Constants.SYNCUP_DETAILS_SYNCED] || []));
+      result[Constants.SYNCUP_DETAILS_UNSYNCED].push(...(detail[Constants.SYNCUP_DETAILS_UNSYNCED] || []));
     });
     return result;
   }
@@ -75,8 +69,8 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
   pullNewEntries() {
     const requestConfigurations = [];
     const { saved } = this.diff;
-    for (let idx = 0; idx < saved.length; idx += SYNCUP_ACTIVITIES_PULL_BATCH_SIZE) {
-      const batchAmpIds = saved.slice(idx, idx + SYNCUP_ACTIVITIES_PULL_BATCH_SIZE);
+    for (let idx = 0; idx < saved.length; idx += Constants.SYNCUP_ACTIVITIES_PULL_BATCH_SIZE) {
+      const batchAmpIds = saved.slice(idx, idx + Constants.SYNCUP_ACTIVITIES_PULL_BATCH_SIZE);
       requestConfigurations.push({
         postConfig: {
           shouldRetry: true,
@@ -210,7 +204,7 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
 
   _updateDetails(activities) {
     activities.forEach(activity => {
-      const detailType = activity.error ? SYNCUP_DETAILS_UNSYNCED : SYNCUP_DETAILS_SYNCED;
+      const detailType = activity.error ? Constants.SYNCUP_DETAILS_UNSYNCED : Constants.SYNCUP_DETAILS_SYNCED;
       const detail = Utils.toMap(ActivityConstants.AMP_ID, activity[ActivityConstants.AMP_ID]);
       if (activity[ActivityConstants.INTERNAL_ID]) {
         detail[ActivityConstants.PROJECT_TITLE] = activity[ActivityConstants.PROJECT_TITLE];
