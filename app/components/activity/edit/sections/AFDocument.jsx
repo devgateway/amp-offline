@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Panel } from 'react-bootstrap';
+import { ActivityConstants } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
@@ -11,7 +12,6 @@ import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
-import { ACTIVITY_DOCUMENTS } from '../../../../utils/constants/ActivityConstants';
 import Loading from '../../../common/Loading';
 import {
   ACTION,
@@ -120,8 +120,8 @@ class AFDocument extends Component {
   }
 
   onDelete(uuid) {
-    const aDocs = this.context.activity[ACTIVITY_DOCUMENTS];
-    this.context.activity[ACTIVITY_DOCUMENTS] = aDocs.filter(ad => ad[UUID][UUID] !== uuid);
+    const aDocs = this.context.activity[ActivityConstants.ACTIVITY_DOCUMENTS];
+    this.context.activity[ActivityConstants.ACTIVITY_DOCUMENTS] = aDocs.filter(ad => ad[UUID][UUID] !== uuid);
     this.setState({ docs: this.getDocuments() });
   }
 
@@ -134,7 +134,7 @@ class AFDocument extends Component {
   }
 
   getDocuments(context = this.context) {
-    const docs = context.activity[ACTIVITY_DOCUMENTS] || [];
+    const docs = context.activity[ActivityConstants.ACTIVITY_DOCUMENTS] || [];
     return docs.map(ac => {
       const doc = { ...ac[UUID] };
       const srcFile = RepositoryManager.getFullContentFilePath(doc[CONTENT_ID]);

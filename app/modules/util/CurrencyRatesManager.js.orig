@@ -1,5 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants, Constants } from 'amp-ui';
+<<<<<<< HEAD
+import { Constants } from 'amp-ui';
+=======
+import { ActivityConstants } from 'amp-ui';
+import { CURRENCY_HOUR, CURRENCY_PAIR, RATE_CURRENCY_NOT_FOUND, RATE_SAME_CURRENCY } from '../../utils/Constants';
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
 import translate from '../../utils/translate';
 import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/ErrorConstants';
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
@@ -109,7 +114,7 @@ export default class CurrencyRatesManager {
     return currenciesToSearch.rates[higherEnd].rate;
   }
 
-  _getCurrencyError(errorMesage) {
+  _getCurrencyErr or(errorMesage) {
     const notifErrorCurrency = ErrorNotificationHelper.createNotification({
       message: translate(errorMesage),
       origin: NOTIFICATION_ORIGIN_CURRENCY_MANAGER

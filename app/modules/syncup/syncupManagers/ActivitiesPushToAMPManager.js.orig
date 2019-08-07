@@ -1,4 +1,8 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+<<<<<<< HEAD
+import { Constants } from 'amp-ui';
+=======
+import { ActivityConstants } from 'amp-ui';
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
 import * as UserHelper from '../../helpers/UserHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
@@ -272,12 +276,20 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _updateDetails({ activity, pushResult, errorData }) {
+<<<<<<< HEAD
     const detailType = errorData ? Constants.SYNCUP_DETAILS_UNSYNCED : Constants.SYNCUP_DETAILS_SYNCED;
+    const detail = Utils.toMap(AC.PROJECT_TITLE, activity[AC.PROJECT_TITLE]);
+    detail[AC.AMP_ID] = (pushResult && pushResult[AC.AMP_ID]) || activity[AC.AMP_ID];
+    detail.id = (pushResult && pushResult[AC.INTERNAL_ID]) || activity.id;
+    logger.log(`Activity push ${detailType} ${detail[AC.AMP_ID] || activity.id}`);
+=======
+    const detailType = errorData ? SYNCUP_DETAILS_UNSYNCED : SYNCUP_DETAILS_SYNCED;
     const detail = Utils.toMap(ActivityConstants.PROJECT_TITLE, activity[ActivityConstants.PROJECT_TITLE]);
     detail[ActivityConstants.AMP_ID] = (pushResult && pushResult[ActivityConstants.AMP_ID]) ||
       activity[ActivityConstants.AMP_ID];
     detail.id = (pushResult && pushResult[ActivityConstants.INTERNAL_ID]) || activity.id;
     logger.log(`Activity push ${detailType} ${detail[ActivityConstants.AMP_ID] || activity.id}`);
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
     this._details[detailType].push(detail);
   }
 

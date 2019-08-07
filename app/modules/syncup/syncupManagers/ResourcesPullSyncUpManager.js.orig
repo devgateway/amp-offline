@@ -1,4 +1,8 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+<<<<<<< HEAD
+import { Constants } from 'amp-ui';
+=======
+import { ActivityConstants } from 'amp-ui';
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
 import ResourceHelper from '../../helpers/ResourceHelper';
 import { RESOURCE_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';

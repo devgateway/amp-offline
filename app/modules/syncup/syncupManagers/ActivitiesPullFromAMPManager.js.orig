@@ -1,5 +1,17 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+<<<<<<< HEAD
+import { Constants } from 'amp-ui';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
+import * as AC from '../../../utils/constants/ActivityConstants';
+=======
+import { ActivityConstants } from 'amp-ui';
+import * as ActivityHelper from '../../helpers/ActivityHelper';
+import {
+  SYNCUP_ACTIVITIES_PULL_BATCH_SIZE,
+  SYNCUP_DETAILS_SYNCED,
+  SYNCUP_DETAILS_UNSYNCED,
+  SYNCUP_TYPE_ACTIVITIES_PULL
+} from '../../../utils/Constants';
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
 import * as Utils from '../../../utils/Utils';
 import { ACTIVITY_EXPORT_BATCHES_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
@@ -204,11 +216,19 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
 
   _updateDetails(activities) {
     activities.forEach(activity => {
+<<<<<<< HEAD
       const detailType = activity.error ? Constants.SYNCUP_DETAILS_UNSYNCED : Constants.SYNCUP_DETAILS_SYNCED;
+      const detail = Utils.toMap(AC.AMP_ID, activity[AC.AMP_ID]);
+      if (activity[AC.INTERNAL_ID]) {
+        detail[AC.PROJECT_TITLE] = activity[AC.PROJECT_TITLE];
+        detail.id = activity[AC.INTERNAL_ID];
+=======
+      const detailType = activity.error ? SYNCUP_DETAILS_UNSYNCED : SYNCUP_DETAILS_SYNCED;
       const detail = Utils.toMap(ActivityConstants.AMP_ID, activity[ActivityConstants.AMP_ID]);
       if (activity[ActivityConstants.INTERNAL_ID]) {
         detail[ActivityConstants.PROJECT_TITLE] = activity[ActivityConstants.PROJECT_TITLE];
         detail.id = activity[ActivityConstants.INTERNAL_ID];
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
       }
       this._details[detailType].push(detail);
     });

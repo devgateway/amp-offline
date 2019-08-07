@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import { CONTACTS } from './AFSectionConstants';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import { ACTIVITY_CONTACT_PATHS } from '../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import AFContactList from './contact/AFContactList';
@@ -84,7 +84,7 @@ class AFContacts extends Component {
     const ids = new Set();
     const { activity } = this.state;
     activity[activityContactsField].forEach(ac => {
-      const id = ac[AC.CONTACT].id;
+      const id = ac[ActivityConstants.CONTACT].id;
       if (!ids.has(id)) {
         ids.add(id);
         uniqueAC.push(ac);

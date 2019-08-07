@@ -1,11 +1,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Constants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import translate from '../../utils/translate';
 import { createFormattedDateTime } from '../../utils/DateUtils';
 import ErrorMessage from '../common/ErrorMessage';
 import styles from './SyncUpSummary.css';
-import { AMP_ID } from '../../utils/constants/ActivityConstants';
 import Utils from '../../utils/Utils';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
 import { translateSyncStatus } from './tools';
@@ -21,7 +20,7 @@ class SyncUpSummary extends PureComponent {
 
   static listActivities(activities, source) {
     return activities.map((activity) => {
-      const id = activity[AMP_ID];
+      const id = activity[ActivityConstants.AMP_ID];
       const { project_title: title } = activity;
       return (
         <div key={id || Utils.stringToId(title)}>

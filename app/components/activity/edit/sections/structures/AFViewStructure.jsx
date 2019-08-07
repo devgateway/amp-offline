@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { ActivityConstants } from 'amp-ui';
 import translate from '../../../../../utils/translate';
 import Logger from '../../../../../modules/util/LoggerManager';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as styles from '../../AFSaveDialog.css';
 import * as stylesStructure from './AFViewStructure.css';
 
@@ -106,10 +106,10 @@ export default class AFViewStructure extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.props.structure[AC.STRUCTURES_COORDINATES].map(c => (
+                {this.props.structure[ActivityConstants.STRUCTURES_COORDINATES].map(c => (
                   <tr key={Math.random()}>
-                    <td className={stylesStructure.coordinates}>{c[AC.STRUCTURES_LATITUDE]}</td>
-                    <td className={stylesStructure.coordinates}>{c[AC.STRUCTURES_LONGITUDE]}</td>
+                    <td className={stylesStructure.coordinates}>{c[ActivityConstants.STRUCTURES_LATITUDE]}</td>
+                    <td className={stylesStructure.coordinates}>{c[ActivityConstants.STRUCTURES_LONGITUDE]}</td>
                   </tr>
                 ))}
               </tbody>

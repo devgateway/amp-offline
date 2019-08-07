@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants } from 'amp-ui';
 import Section from './Section';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as VC from '../../../../utils/constants/ValueConstants';
@@ -26,21 +26,25 @@ class APIdentification extends Component {
 
   render() {
     const { buildSimpleField } = this.props;
-    const fieldPaths = [AC.STATUS_REASON, AC.TYPE_OF_COOPERATION, AC.TYPE_OF_IMPLEMENTATION,
-      AC.MODALITIES, AC.OBJECTIVE, AC.DESCRIPTION, AC.PROJECT_COMMENTS, AC.RESULTS, AC.LESSONS_LEARNED,
-      AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.CONDITIONALITIES, AC.PROJECT_MANAGEMENT, AC.BUDGET_CODE_PROJECT_ID,
-      AC.A_C_CHAPTER, AC.CRIS_NUMBER, AC.ACTIVITY_BUDGET, AC.GOVERNMENT_AGREEMENT_NUMBER,
-      AC.GOVERNMENT_APPROVAL_PROCEDURES, AC.JOINT_CRITERIA, AC.HUMANITARIAN_AID];
+    const fieldPaths = [ActivityConstants.STATUS_REASON, ActivityConstants.TYPE_OF_COOPERATION,
+      ActivityConstants.TYPE_OF_IMPLEMENTATION, ActivityConstants.MODALITIES, ActivityConstants.OBJECTIVE,
+      ActivityConstants.DESCRIPTION, ActivityConstants.PROJECT_COMMENTS, ActivityConstants.RESULTS,
+      ActivityConstants.LESSONS_LEARNED, ActivityConstants.PROJECT_IMPACT, ActivityConstants.ACTIVITY_SUMMARY,
+      ActivityConstants.CONDITIONALITIES, ActivityConstants.PROJECT_MANAGEMENT,
+      ActivityConstants.BUDGET_CODE_PROJECT_ID, ActivityConstants.A_C_CHAPTER, ActivityConstants.CRIS_NUMBER,
+      ActivityConstants.ACTIVITY_BUDGET, ActivityConstants.GOVERNMENT_AGREEMENT_NUMBER,
+      ActivityConstants.GOVERNMENT_APPROVAL_PROCEDURES, ActivityConstants.JOINT_CRITERIA,
+      ActivityConstants.HUMANITARIAN_AID];
     // Show budget extras fields like ministry_code, etc only when activity_budget is enabled and has value 'On Budget'.
-    if (this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
-      && this.props.activity[AC.ACTIVITY_BUDGET]
-      && this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET) {
-      fieldPaths.push(AC.INDIRECT_ON_BUDGET);
-      fieldPaths.push(AC.FY);
-      fieldPaths.push(AC.MINISTRY_CODE);
-      fieldPaths.push(AC.PROJECT_CODE);
+    if (this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.ACTIVITY_BUDGET)
+      && this.props.activity[ActivityConstants.ACTIVITY_BUDGET]
+      && this.props.activity[ActivityConstants.ACTIVITY_BUDGET].value === VC.ON_BUDGET) {
+      fieldPaths.push(ActivityConstants.INDIRECT_ON_BUDGET);
+      fieldPaths.push(ActivityConstants.FY);
+      fieldPaths.push(ActivityConstants.MINISTRY_CODE);
+      fieldPaths.push(ActivityConstants.PROJECT_CODE);
     }
-    fieldPaths.push(...[AC.FINANCIAL_INSTRUMENT, AC.IATI_IDENTIFIER]);
+    fieldPaths.push(...[ActivityConstants.FINANCIAL_INSTRUMENT, ActivityConstants.IATI_IDENTIFIER]);
     return (
       <div>
         {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true))}

@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { Col, Grid, Row } from 'react-bootstrap';
+import { ActivityConstants } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { PROGRAM } from './AFSectionConstants';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AF programs');
@@ -29,17 +29,17 @@ class AFPrograms extends Component {
       <Grid className={afStyles.full_width} >
         <Row>
           <Col md={12} lg={12} >
-            <AFField parent={this.props.activity} fieldPath={AC.NATIONAL_PLAN_OBJECTIVE} />
+            <AFField parent={this.props.activity} fieldPath={ActivityConstants.NATIONAL_PLAN_OBJECTIVE} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12} >
-            <AFField parent={this.props.activity} fieldPath={AC.PRIMARY_PROGRAMS} />
+            <AFField parent={this.props.activity} fieldPath={ActivityConstants.PRIMARY_PROGRAMS} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12} >
-            <AFField parent={this.props.activity} fieldPath={AC.SECONDARY_PROGRAMS} />
+            <AFField parent={this.props.activity} fieldPath={ActivityConstants.SECONDARY_PROGRAMS} />
           </Col>
         </Row>
       </Grid>

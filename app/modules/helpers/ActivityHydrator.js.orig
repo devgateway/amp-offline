@@ -1,4 +1,8 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+<<<<<<< HEAD
+import { Constants } from 'amp-ui';
+=======
+import { ActivityConstants } from 'amp-ui';
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../field/PossibleValuesManager';

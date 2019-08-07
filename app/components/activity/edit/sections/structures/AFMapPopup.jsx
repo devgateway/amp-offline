@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
+import { ActivityConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
 import PossibleValuesManager from '../../../../../modules/field/PossibleValuesManager';
 import AFLabel from '../../components/AFLabel';
 import styles from './AFMapWindow.css';
@@ -42,29 +42,33 @@ export default class AFMapPopup extends Component {
     this.handleDeleteBtnClick = this.handleDeleteBtnClick.bind(this);
     this.handleChangeColor = this.handleChangeColor.bind(this);
     this.state = {
-      [AC.STRUCTURES_TITLE]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_TITLE] : ''),
-      [AC.STRUCTURES_DESCRIPTION]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_DESCRIPTION] : '',
-      [AC.STRUCTURES_COLOR]: (this.props.structureData ? this.props.structureData[AC.STRUCTURES_COLOR] : null),
-      [AC.STRUCTURES_SHAPE]: this.props.structureData ? this.props.structureData[AC.STRUCTURES_SHAPE] : null,
+      [ActivityConstants.STRUCTURES_TITLE]: (this.props.structureData ?
+        this.props.structureData[ActivityConstants.STRUCTURES_TITLE] : ''),
+      [ActivityConstants.STRUCTURES_DESCRIPTION]: this.props.structureData ?
+        this.props.structureData[ActivityConstants.STRUCTURES_DESCRIPTION] : '',
+      [ActivityConstants.STRUCTURES_COLOR]: (this.props.structureData ?
+        this.props.structureData[ActivityConstants.STRUCTURES_COLOR] : null),
+      [ActivityConstants.STRUCTURES_SHAPE]: this.props.structureData ?
+        this.props.structureData[ActivityConstants.STRUCTURES_SHAPE] : null,
     };
   }
 
   componentWillReceiveProps(newProps) {
     if (newProps.structureData) {
       this.setState({
-        [AC.STRUCTURES_TITLE]: newProps.structureData[AC.STRUCTURES_TITLE],
-        [AC.STRUCTURES_COLOR]: newProps.structureData[AC.STRUCTURES_COLOR],
-        isNew: (!newProps.structureData[AC.STRUCTURES_TITLE]),
-        [AC.STRUCTURES_DESCRIPTION]: newProps.structureData[AC.STRUCTURES_DESCRIPTION],
-        [AC.STRUCTURES_SHAPE]: newProps.structureData[AC.STRUCTURES_SHAPE],
+        [ActivityConstants.STRUCTURES_TITLE]: newProps.structureData[ActivityConstants.STRUCTURES_TITLE],
+        [ActivityConstants.STRUCTURES_COLOR]: newProps.structureData[ActivityConstants.STRUCTURES_COLOR],
+        isNew: (!newProps.structureData[ActivityConstants.STRUCTURES_TITLE]),
+        [ActivityConstants.STRUCTURES_DESCRIPTION]: newProps.structureData[ActivityConstants.STRUCTURES_DESCRIPTION],
+        [ActivityConstants.STRUCTURES_SHAPE]: newProps.structureData[ActivityConstants.STRUCTURES_SHAPE],
         isGazetteer: newProps.structureData.isGazetteer
       });
     } else {
       this.setState({
-        [AC.STRUCTURES_TITLE]: '',
-        [AC.STRUCTURES_COLOR]: null,
+        [ActivityConstants.STRUCTURES_TITLE]: '',
+        [ActivityConstants.STRUCTURES_COLOR]: null,
         isNew: true,
-        [AC.STRUCTURES_DESCRIPTION]: ''
+        [ActivityConstants.STRUCTURES_DESCRIPTION]: ''
       });
     }
   }
@@ -77,17 +81,20 @@ export default class AFMapPopup extends Component {
 
   handleCancel() {
     const { layer } = this.props;
-    this.setState({ [AC.STRUCTURES_TITLE]: '', [AC.STRUCTURES_COLOR]: null, [AC.STRUCTURES_DESCRIPTION]: '' });
+    this.setState({ [ActivityConstants.STRUCTURES_TITLE]: '',
+      [ActivityConstants.STRUCTURES_COLOR]: null,
+      [ActivityConstants.STRUCTURES_DESCRIPTION]: '' });
     const del = this.state.isNew;
     this.props.onCancel(layer, del);
   }
 
   handleSaveBtnClick() {
     const { onSubmit, structureData, layer } = this.props;
-    const title = this.state[AC.STRUCTURES_TITLE].trim();
+    const title = this.state[ActivityConstants.STRUCTURES_TITLE].trim();
     if (title) {
-      onSubmit((layer.layer || layer), structureData.id, structureData[AC.TEMPORAL_ID], title,
-        this.state[AC.STRUCTURES_COLOR], this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE],
+      onSubmit((layer.layer || layer), structureData.id, structureData[ActivityConstants.TEMPORAL_ID], title,
+        this.state[ActivityConstants.STRUCTURES_COLOR], this.state[ActivityConstants.STRUCTURES_DESCRIPTION],
+        this.state[ActivityConstants.STRUCTURES_SHAPE],
         this.state.isGazetteer);
     } else {
       alert(translate('emptyTitle'));
@@ -100,18 +107,19 @@ export default class AFMapPopup extends Component {
   }
 
   handleChangeTitle(obj) {
-    this.setState({ [AC.STRUCTURES_TITLE]: obj.target.value });
+    this.setState({ [ActivityConstants.STRUCTURES_TITLE]: obj.target.value });
   }
 
   handleChangeColor(id, colors) {
     const newColor = PossibleValuesManager.findOption(colors, id);
-    this.setState({ [AC.STRUCTURES_COLOR]: newColor });
+    this.setState({ [ActivityConstants.STRUCTURES_COLOR]: newColor });
   }
 
   generateColorList() {
     const { structure_color } = this.state;
     const content = [];
-    const colors = this.context.activityFieldsManager.possibleValuesMap[`${AC.STRUCTURES}~${AC.STRUCTURES_COLOR}`];
+    const colors = this.context.activityFieldsManager
+      .possibleValuesMap[`${ActivityConstants.STRUCTURES}~${ActivityConstants.STRUCTURES_COLOR}`];
     Object.values(colors).forEach(c => {
       const color = c.value.substring(0, 7);
       const text = c.value.substring(8);
@@ -145,7 +153,7 @@ export default class AFMapPopup extends Component {
           ref="title"
           type={'text'} value={title} onChange={this.handleChangeTitle} disabled={isGazetteer}
           className="form-control" />
-        {shape !== AC.STRUCTURES_POINT ? this.generateColorList() : null}
+        {shape !== ActivityConstants.STRUCTURES_POINT ? this.generateColorList() : null}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={this.handleSaveBtnClick} bsStyle="success">

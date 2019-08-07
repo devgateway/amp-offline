@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -14,7 +14,6 @@ import {
   WEB_LINK,
   RESOURCE_TYPE
 } from '../utils/constants/ResourceConstants';
-import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
 import ResourceManager from '../modules/resource/ResourceManager';
 import Logger from '../modules/util/LoggerManager';
@@ -105,11 +104,11 @@ export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownPro
 
 export const addNewActivityResource = (activity, resource, isDoc) => (dispatch, ownProps) => {
   logger.info('addNewActivityResource');
-  if (!activity[AC.ACTIVITY_DOCUMENTS]) {
-    activity[AC.ACTIVITY_DOCUMENTS] = [];
+  if (!activity[ActivityConstants.ACTIVITY_DOCUMENTS]) {
+    activity[ActivityConstants.ACTIVITY_DOCUMENTS] = [];
   }
-  activity[AC.ACTIVITY_DOCUMENTS].push({
-    [AC.DOCUMENT_TYPE]: RELATED_DOCUMENTS,
+  activity[ActivityConstants.ACTIVITY_DOCUMENTS].push({
+    [ActivityConstants.DOCUMENT_TYPE]: RELATED_DOCUMENTS,
     [UUID]: resource,
   });
   loadNewResource(resource)(dispatch, ownProps);
@@ -228,7 +227,7 @@ const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity)
 const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
   if (resources && resources.length) {
     const rMap = Utils.toMapByKey(resources, UUID);
-    const ars = activity[AC.ACTIVITY_DOCUMENTS];
+    const ars = activity[ActivityConstants.ACTIVITY_DOCUMENTS];
     ars.forEach(ar => {
       const r = rMap.get(ar[UUID]);
       if (r) {
@@ -292,7 +291,7 @@ export const getActivityResourceUuids = (activity) => _getActivityResources(acti
 
 const _getActivityResources = (activity, asIds = true) => {
   const resources = new Set();
-  const docs = activity[AC.ACTIVITY_DOCUMENTS];
+  const docs = activity[ActivityConstants.ACTIVITY_DOCUMENTS];
   if (docs && docs.length) {
     docs.forEach(d => resources.add((asIds && d[UUID] && d[UUID][UUID]) || d[UUID]));
   }

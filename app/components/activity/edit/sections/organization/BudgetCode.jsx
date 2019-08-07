@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Row } from 'react-bootstrap';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import EntryListWrapper from '../../../../common/edit/EntryListWrapper';
@@ -14,16 +14,17 @@ import * as styles from './BudgetCode.css';
  */
 
 const getEntryFunc = (parentPath, id, budget, props) => {
-  if (budget[AC.BUDGET_CODE] === undefined) {
+  if (budget[ActivityConstants.BUDGET_CODE] === undefined) {
     // eslint-disable-next-line react/prop-types
-    const org = props.parent && props.parent[AC.ORGANIZATION];
-    budget[AC.BUDGET_CODE] = org[AC.EXTRA_INFO] && org[AC.EXTRA_INFO][AC.BUDGET_ORGANIZATION_CODE];
+    const org = props.parent && props.parent[ActivityConstants.ORGANIZATION];
+    budget[ActivityConstants.BUDGET_CODE] = org[ActivityConstants.EXTRA_INFO] &&
+      org[ActivityConstants.EXTRA_INFO][ActivityConstants.BUDGET_ORGANIZATION_CODE];
   }
   return (
     <Row key={id}>
       <Col>
         <AFField
-          parent={budget} fieldPath={`${parentPath}~${AC.BUDGET_CODE}`} showLabel={false} inline
+          parent={budget} fieldPath={`${parentPath}~${ActivityConstants.BUDGET_CODE}`} showLabel={false} inline
           type={Types.INPUT_TYPE} />
       </Col>
     </Row>);
@@ -42,7 +43,8 @@ const afFieldPropsConverter = (props) => ({
   type: Types.CUSTOM
 });
 
-const BudgetCode = (parentPath) => EntryListWrapper('Add New Budget', getEntryFunc.bind(null, parentPath), AC.BUDGETS);
+const BudgetCode = (parentPath) => EntryListWrapper('Add New Budget',
+  getEntryFunc.bind(null, parentPath), ActivityConstants.BUDGETS);
 const BudgetCodeWrapper = (parentPath) =>
   CustomField(BudgetCode(parentPath), customPropsConverter, afFieldPropsConverter);
 export default BudgetCodeWrapper;

@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+import { Constants } from 'amp-ui';
+=======
 /* eslint-disable max-len */
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants } from 'amp-ui';
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
 import * as RC from '../../../utils/constants/ResourceConstants';
 import * as Utils from '../../../utils/Utils';
 import * as CurrencyRatesHelper from '../../../modules/helpers/CurrencyRatesHelper';
@@ -260,8 +264,13 @@ export default ({
         }],
         changes: [...ALL_APPROVAL_STATUSES.map(as => ({
           update: {
+<<<<<<< HEAD
             table: Constants.COLLECTION_ACTIVITIES,
+            field: AC.APPROVAL_STATUS,
+=======
+            table: COLLECTION_ACTIVITIES,
             field: ActivityConstants.APPROVAL_STATUS,
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
             value: as.id,
             filter: Utils.toMap(ActivityConstants.APPROVAL_STATUS, as.value)
           }

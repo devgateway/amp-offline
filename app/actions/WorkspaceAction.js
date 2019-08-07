@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import WorkspaceManager from '../modules/workspace/WorkspaceManager';
 import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
@@ -8,8 +8,8 @@ import store from '../index';
 import Logger from '../modules/util/LoggerManager';
 import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
-import * as AC from '../utils/constants/ActivityConstants';
 import { isForceSyncUp } from './SyncUpAction';
+
 import * as URLUtils from '../utils/URLUtils';
 import { NOTIFICATION_ORIGIN_WORKSPACE } from '../utils/constants/ErrorConstants';
 import { FIELD_OPTIONS, PREFIX_COMMON } from '../utils/constants/FieldPathConstants';
@@ -46,7 +46,7 @@ function loadWorkspaceData(wsId) {
     WorkspaceHelper.findById(wsId),
     TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId, true),
     WSSettingsHelper.findByWorkspaceId(wsId),
-    PossibleValuesHelper.findById(`${PREFIX_COMMON}~${AC.CURRENCY}`)
+    PossibleValuesHelper.findById(`${PREFIX_COMMON}~${ActivityConstants.CURRENCY}`)
   ])
     .then(([workspace, teamMember, workspaceSettings, possibleValue]) => {
       if (!teamMember) {

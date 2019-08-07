@@ -1,7 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants, Constants } from 'amp-ui';
+<<<<<<< HEAD
+import { Constants } from 'amp-ui';
+=======
+import { ActivityConstants } from 'amp-ui';
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
 import SyncUpManagerInterface from './SyncUpManagerInterface';
-
 import ContactHelper from '../../helpers/ContactHelper';
 import Logger from '../../util/LoggerManager';
 import { CONTACT_PUSH_URL } from '../../connectivity/AmpApiConstants';

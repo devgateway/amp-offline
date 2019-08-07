@@ -1,4 +1,4 @@
-import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../../../utils/constants/ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 /* eslint-disable class-methods-use-this */
@@ -44,7 +44,7 @@ export default class AFOption {
   }
 
   get hierarchicalValue() {
-    return this[HIERARCHICAL_VALUE];
+    return this[ActivityConstants.HIERARCHICAL_VALUE];
   }
 
   get displayHierarchicalValue() {
@@ -64,7 +64,7 @@ export default class AFOption {
   }
 
   get hierarchicalDepth() {
-    return this[HIERARCHICAL_VALUE_DEPTH];
+    return this[ActivityConstants.HIERARCHICAL_VALUE_DEPTH];
   }
 
   get formattedValue() {

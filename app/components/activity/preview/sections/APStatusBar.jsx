@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import { ActivityConstants } from 'amp-ui';
 import Section from './Section';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AP status bar');
@@ -21,7 +21,7 @@ class APStatusBar extends Component {
 
   render() {
     const { buildSimpleField } = this.props;
-    const fieldPaths = [AC.AMP_ID, AC.ACTIVITY_STATUS, AC.ACTIVITY_BUDGET];
+    const fieldPaths = [ActivityConstants.AMP_ID, ActivityConstants.ACTIVITY_STATUS, ActivityConstants.ACTIVITY_BUDGET];
     return (
       <div>
         {fieldPaths.map(fieldPath => buildSimpleField(fieldPath, true, null, true))}

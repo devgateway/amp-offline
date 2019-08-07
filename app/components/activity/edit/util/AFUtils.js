@@ -1,18 +1,19 @@
-import * as AC from '../../../../utils/constants/ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 import Utils from '../../../../utils/Utils';
 import FeatureManager from '../../../../modules/util/FeatureManager';
 import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const orgTypes = {
-  [AC.BENEFICIARY_AGENCY]: { constant: 'BENEFICIARY_AGENCY', name: 'Beneficiary Agency' },
-  [AC.CONTRACTING_AGENCY]: { constant: 'CONTRACTING_AGENCY', name: 'Contracting Agency' },
-  [AC.DONOR_ORGANIZATION]: { constant: 'DONOR_ORGANIZATION', name: ['Donor Organization', 'Donor'] },
-  [AC.EXECUTING_AGENCY]: { constant: 'EXECUTING_AGENCY', name: 'Executing Agency' },
-  [AC.IMPLEMENTING_AGENCY]: { constant: 'IMPLEMENTING_AGENCY', name: 'Implementing Agency' },
-  [AC.REGIONAL_GROUP]: { constant: 'REGIONAL_GROUP', name: 'Regional Group' },
-  [AC.RESPONSIBLE_ORGANIZATION]: { constant: 'RESPONSIBLE_ORGANIZATION', name: 'Responsible Organization' },
-  [AC.SECTOR_GROUP]: { constant: 'SECTOR_GROUP', name: 'Sector Group' }
+  [ActivityConstants.BENEFICIARY_AGENCY]: { constant: 'BENEFICIARY_AGENCY', name: 'Beneficiary Agency' },
+  [ActivityConstants.CONTRACTING_AGENCY]: { constant: 'CONTRACTING_AGENCY', name: 'Contracting Agency' },
+  [ActivityConstants.DONOR_ORGANIZATION]: { constant: 'DONOR_ORGANIZATION', name: ['Donor Organization', 'Donor'] },
+  [ActivityConstants.EXECUTING_AGENCY]: { constant: 'EXECUTING_AGENCY', name: 'Executing Agency' },
+  [ActivityConstants.IMPLEMENTING_AGENCY]: { constant: 'IMPLEMENTING_AGENCY', name: 'Implementing Agency' },
+  [ActivityConstants.REGIONAL_GROUP]: { constant: 'REGIONAL_GROUP', name: 'Regional Group' },
+  [ActivityConstants.RESPONSIBLE_ORGANIZATION]: { constant: 'RESPONSIBLE_ORGANIZATION',
+    name: 'Responsible Organization' },
+  [ActivityConstants.SECTOR_GROUP]: { constant: 'SECTOR_GROUP', name: 'Sector Group' }
 };
 
 const AFUtils = {
@@ -25,21 +26,25 @@ const AFUtils = {
    */
   createFundingItem(activityFieldsManager, org, orgName) {
     const fundingItem = {};
-    fundingItem[AC.FUNDING_DONOR_ORG_ID] = {
+    fundingItem[ActivityConstants.FUNDING_DONOR_ORG_ID] = {
       id: org.id,
       value: org.value,
       extra_info: org.extra_info,
       'translated-value': org['translated-value']
     };
-    fundingItem[AC.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
-    fundingItem[AC.AMP_FUNDING_ID] = Utils.numberRandom();
+    fundingItem[ActivityConstants.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
+    fundingItem[ActivityConstants.AMP_FUNDING_ID] = Utils.numberRandom();
     // Find the 'Donor' org type if enabled.
-    if (activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
-      const donorList = activityFieldsManager.possibleValuesMap[`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`];
-      fundingItem[AC.SOURCE_ROLE] = Object.values(donorList).find(item => item.value === orgName);
+    if (activityFieldsManager
+      .isFieldPathEnabled(`${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`)) {
+      const donorList = activityFieldsManager
+        .possibleValuesMap[`${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`];
+      fundingItem[ActivityConstants.SOURCE_ROLE] = Object.values(donorList)
+        .find(item => item.value === orgName);
     }
-    if (activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}`)) {
-      fundingItem[AC.MTEF_PROJECTIONS] = [];
+    if (activityFieldsManager
+      .isFieldPathEnabled(`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}`)) {
+      fundingItem[ActivityConstants.MTEF_PROJECTIONS] = [];
     }
     return fundingItem;
   },
@@ -51,10 +56,11 @@ const AFUtils = {
   },
 
   checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization, activityFieldsManager, activity) {
-    const fundingList = activity[AC.FUNDINGS] || [];
-    const sourceRoleOn = activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`);
-    return fundingList.find(f => (f[AC.FUNDING_DONOR_ORG_ID].id === organization.id
-      && (sourceRoleOn ? f[AC.SOURCE_ROLE].value === orgTypeName : true)));
+    const fundingList = activity[ActivityConstants.FUNDINGS] || [];
+    const sourceRoleOn = activityFieldsManager
+      .isFieldPathEnabled(`${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`);
+    return fundingList.find(f => (f[ActivityConstants.FUNDING_DONOR_ORG_ID].id === organization.id
+      && (sourceRoleOn ? f[ActivityConstants.SOURCE_ROLE].value === orgTypeName : true)));
   },
 
   findOrgTypeByCode(code) {

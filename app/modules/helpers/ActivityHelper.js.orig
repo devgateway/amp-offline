@@ -1,5 +1,12 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+<<<<<<< HEAD
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
+import * as AC from '../../utils/constants/ActivityConstants';
+=======
+import { ActivityConstants } from 'amp-ui';
+import * as DatabaseManager from '../database/DatabaseManager';
+import { COLLECTION_ACTIVITIES } from '../../utils/Constants';
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -30,8 +37,13 @@ const ActivityHelper = {
    */
   findNonRejectedByInternalId(internalId) {
     logger.debug('findNonRejectedByInternalId');
-    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.INTERNAL_ID, internalId)] };
+<<<<<<< HEAD
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.INTERNAL_ID, internalId)] };
     return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
+=======
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.INTERNAL_ID, internalId)] };
+    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
   },
 
   /**
@@ -41,8 +53,13 @@ const ActivityHelper = {
    */
   findNonRejectedByAmpId(ampId) {
     logger.debug('findNonRejectedByAmpId');
-    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.AMP_ID, ampId)] };
+<<<<<<< HEAD
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.AMP_ID, ampId)] };
     return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
+=======
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.AMP_ID, ampId)] };
+    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
   },
 
   /**
@@ -52,8 +69,13 @@ const ActivityHelper = {
    */
   findNonRejectedByProjectTitle(projectTitle) {
     logger.debug('findNonRejectedByProjectTitle');
-    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.PROJECT_TITLE, projectTitle)] };
+<<<<<<< HEAD
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.PROJECT_TITLE, projectTitle)] };
     return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
+=======
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.PROJECT_TITLE, projectTitle)] };
+    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
   },
 
   findAllNonRejectedByAmpIds(ampIds) {
@@ -86,8 +108,13 @@ const ActivityHelper = {
    */
   findAllRejectedByAmpId(ampId, projections) {
     logger.debug('findAllRejectedByAmpId');
-    const filter = { $and: [this._getRejectedRule(), Utils.toMap(ActivityConstants.AMP_ID, ampId)] };
+<<<<<<< HEAD
+    const filter = { $and: [this._getRejectedRule(), Utils.toMap(AC.AMP_ID, ampId)] };
     return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
+=======
+    const filter = { $and: [this._getRejectedRule(), Utils.toMap(ActivityConstants.AMP_ID, ampId)] };
+    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+>>>>>>> feature/AMPUI-10/extract-managers-phaseI
   },
 
   /**

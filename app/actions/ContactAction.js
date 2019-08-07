@@ -1,10 +1,10 @@
 import equal from 'fast-deep-equal';
-import { Constants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
+
 import * as CC from '../utils/constants/ContactConstants';
-import * as AC from '../utils/constants/ActivityConstants';
 import { ACTIVITY_CONTACT_PATHS, PREFIX_CONTACT } from '../utils/constants/FieldPathConstants';
 import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -162,7 +162,7 @@ const _getActivityContacts = (activity, asIds = true) => {
     const cs = activity[cType];
     if (cs && cs.length) {
       // contact may be eventually hydrated
-      cs.forEach(c => contactsIds.add((asIds && c[AC.CONTACT].id) || c[AC.CONTACT]));
+      cs.forEach(c => contactsIds.add((asIds && c[ActivityConstants.CONTACT].id) || c[ActivityConstants.CONTACT]));
     }
   });
   return Array.from(contactsIds);
@@ -174,7 +174,7 @@ export const buildNewActivityContact = (contactFieldsManager) => {
   contact[CC.TMP_HYDRATED] = true;
   contact[CC.TMP_ENTITY_VALIDATOR] = new EntityValidator(contact, contactFieldsManager, null, ['id']);
   return {
-    [AC.CONTACT]: contact,
-    [AC.PRIMARY_CONTACT]: false,
+    [ActivityConstants.CONTACT]: contact,
+    [ActivityConstants.PRIMARY_CONTACT]: false,
   };
 };

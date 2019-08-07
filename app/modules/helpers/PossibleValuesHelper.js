@@ -1,10 +1,9 @@
-import { Constants } from 'amp-ui';
 import { Validator } from 'jsonschema';
+import { ActivityConstants, Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
-import { CONTACT } from '../../utils/constants/ActivityConstants';
 import ContactHelper from './ContactHelper';
 import translate from '../../utils/translate';
 import * as FPC from '../../utils/constants/FieldPathConstants';
@@ -302,7 +301,8 @@ const PossibleValuesHelper = {
 
   isActivityContactPV(pv) {
     return pv[FPC.FIELD_PATH].length === 2
-      && FPC.ACTIVITY_CONTACT_PATHS.includes(pv[FPC.FIELD_PATH][0]) && pv[FPC.FIELD_PATH][1] === CONTACT;
+      && FPC.ACTIVITY_CONTACT_PATHS.includes(pv[FPC.FIELD_PATH][0])
+      && pv[FPC.FIELD_PATH][1] === ActivityConstants.CONTACT;
   }
 };
 

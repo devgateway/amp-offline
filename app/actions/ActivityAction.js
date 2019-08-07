@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { ActivityConstants, Constants } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -9,16 +9,6 @@ import ActivityHydrator from '../modules/helpers/ActivityHydrator';
 import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
-import {
-  CLIENT_CREATED_ON,
-  CLIENT_UPDATED_ON,
-  CREATED_BY,
-  CREATED_ON,
-  IS_PUSHED,
-  MODIFIED_BY,
-  PROJECT_TITLE,
-  TEAM
-} from '../utils/constants/ActivityConstants';
 import { WORKSPACE_ID, WORKSPACE_LEAD_ID } from '../utils/constants/WorkspaceConstants';
 import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import {
@@ -56,7 +46,8 @@ const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 const logger = new LoggerManager('ActivityAction.js');
 
 export function loadActivityForActivityPreview(activityId) {
-  const paths = [...ADJUSTMENT_TYPE_PATHS, CREATED_BY, TEAM, MODIFIED_BY];
+  const paths = [...ADJUSTMENT_TYPE_PATHS, ActivityConstants.CREATED_BY, ActivityConstants.TEAM,
+    ActivityConstants.MODIFIED_BY];
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
@@ -149,15 +140,16 @@ function _loadActivity({
     _getActivity(activityId, teamMemberId),
     FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
     PossibleValuesHelper.findAll(pvFilter),
-    isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } }, Utils.toMap(PROJECT_TITLE, 1)) : []
+    isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } },
+      Utils.toMap(ActivityConstants.PROJECT_TITLE, 1)) : []
   ])
     .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
       fieldsDef = fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS];
       const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
       const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
         currentWorkspaceSettings, currencyRatesManager);
-      const activityWsId = activity[TEAM] && activity[TEAM].id;
-      otherProjectTitles = Utils.flattenToListByKey(otherProjectTitles, PROJECT_TITLE);
+      const activityWsId = activity[ActivityConstants.TEAM] && activity[ActivityConstants.TEAM].id;
+      otherProjectTitles = Utils.flattenToListByKey(otherProjectTitles, ActivityConstants.PROJECT_TITLE);
       return WorkspaceHelper.findById(activityWsId)
         .then(activityWorkspace => _getActivityWsManager(activityWorkspace)
           .then(activityWSManager => ({
@@ -197,18 +189,18 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
   return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
     const modifiedOn = DateUtils.getTimestampForAPI();
-    if (!dehydratedActivity[TEAM]) {
-      dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
+    if (!dehydratedActivity[ActivityConstants.TEAM]) {
+      dehydratedActivity[ActivityConstants.TEAM] = teamMember[WORKSPACE_ID];
     }
-    if (!dehydratedActivity[CREATED_BY]) {
-      dehydratedActivity[CREATED_BY] = teamMember.id;
+    if (!dehydratedActivity[ActivityConstants.CREATED_BY]) {
+      dehydratedActivity[ActivityConstants.CREATED_BY] = teamMember.id;
     }
-    if (!dehydratedActivity[CREATED_ON] && !dehydratedActivity[CLIENT_CREATED_ON]) {
-      dehydratedActivity[CLIENT_CREATED_ON] = modifiedOn;
+    if (!dehydratedActivity[ActivityConstants.CREATED_ON] && !dehydratedActivity[ActivityConstants.CLIENT_CREATED_ON]) {
+      dehydratedActivity[ActivityConstants.CLIENT_CREATED_ON] = modifiedOn;
     }
-    dehydratedActivity[MODIFIED_BY] = teamMember.id;
-    dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
-    delete dehydratedActivity[IS_PUSHED];
+    dehydratedActivity[ActivityConstants.MODIFIED_BY] = teamMember.id;
+    dehydratedActivity[ActivityConstants.CLIENT_UPDATED_ON] = modifiedOn;
+    delete dehydratedActivity[ActivityConstants.IS_PUSHED];
 
     return ActivityStatusValidation.statusValidation(dehydratedActivity, teamMember, false).then(() => (
       ActivityHelper.saveOrUpdate(dehydratedActivity, true).then((savedActivity) => {

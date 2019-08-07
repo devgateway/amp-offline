@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
 import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
 import styles from './APFundingTransactionTypeItem.css';
@@ -34,13 +34,16 @@ export default class APFundingTransactionTypeItem extends Component {
     super(props);
     logger.debug('constructor');
     this._currency = context.currentWorkspaceSettings.currency.code;
-    this._adjType = props.fundingDetails[0][AC.ADJUSTMENT_TYPE];
+    this._adjType = props.fundingDetails[0][ActivityConstants.ADJUSTMENT_TYPE];
     this._measure = `${this._adjType.value} ${props.trnType}`;
     this._key = this._adjType.value + props.trnType;
-    const trnPath = `${AC.FUNDINGS}~${props.trnType}`;
-    this._showFixedExRate = context.activityFieldsManager.isFieldPathEnabled(`${trnPath}~${AC.FIXED_EXCHANGE_RATE}`);
-    this._showDisasterResponse = context.activityFieldsManager.isFieldPathEnabled(`${trnPath}~${AC.DISASTER_RESPONSE}`);
-    this._showPledge = context.activityFieldsManager.isFieldPathEnabled(`${trnPath}~${AC.PLEDGE}`);
+    const trnPath = `${ActivityConstants.FUNDINGS}~${props.trnType}`;
+    this._showFixedExRate = context.activityFieldsManager
+      .isFieldPathEnabled(`${trnPath}~${ActivityConstants.FIXED_EXCHANGE_RATE}`);
+    this._showDisasterResponse = context.activityFieldsManager
+      .isFieldPathEnabled(`${trnPath}~${ActivityConstants.DISASTER_RESPONSE}`);
+    this._showPledge = context.activityFieldsManager
+      .isFieldPathEnabled(`${trnPath}~${ActivityConstants.PLEDGE}`);
   }
 
   _drawHeader() {

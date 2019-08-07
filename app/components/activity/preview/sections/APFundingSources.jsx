@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+import { ActivityConstants } from 'amp-ui';
 import Section from './Section';
 import Logger from '../../../../modules/util/LoggerManager';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 
 const logger = new Logger('AP funding sources');
 
@@ -20,7 +20,7 @@ class APFundingSources extends Component {
   }
 
   render() {
-    const content = this.props.buildSimpleField(AC.TOTAL_NUMBER_OF_FUNDING_SOURCES, true, null, true);
+    const content = this.props.buildSimpleField(ActivityConstants.TOTAL_NUMBER_OF_FUNDING_SOURCES, true, null, true);
     return (<div>{content}</div>);
   }
 }
