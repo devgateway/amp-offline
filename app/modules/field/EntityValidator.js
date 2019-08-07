@@ -29,7 +29,8 @@ const logger = new Logger('EntityValidator');
  */
 export default class EntityValidator {
   constructor(entity, fieldsManager: FieldsManager, otherProjectTitles: Array,
-    excludedFields = [ActivityConstants.APPROVAL_DATE, ActivityConstants.APPROVAL_STATUS, ActivityConstants.APPROVED_BY]) {
+    excludedFields = [ActivityConstants.APPROVAL_DATE, ActivityConstants.APPROVAL_STATUS,
+      ActivityConstants.APPROVED_BY]) {
     logger.log('constructor');
     this._entity = entity;
     this._fieldsDef = fieldsManager.fieldsDef;

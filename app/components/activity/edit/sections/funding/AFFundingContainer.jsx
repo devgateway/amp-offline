@@ -47,8 +47,10 @@ export default class AFFundingContainer extends Component {
     const mtefItem = {};
     // Get default year from GS and auto-increment each new item.
     let year = GlobalSettingsManager.getSettingByKey(GS.GS_CURRENT_FISCAL_YEAR);
-    if (this.props.funding[ActivityConstants.MTEF_PROJECTIONS] && this.props.funding[ActivityConstants.MTEF_PROJECTIONS].length > 0) {
-      year = Math.max(...this.props.funding[ActivityConstants.MTEF_PROJECTIONS].map((i) => Moment(i[ActivityConstants.PROJECTION_DATE]).year())) + 1;
+    if (this.props.funding[ActivityConstants.MTEF_PROJECTIONS] &&
+      this.props.funding[ActivityConstants.MTEF_PROJECTIONS].length > 0) {
+      year = Math.max(...this.props.funding[ActivityConstants.MTEF_PROJECTIONS]
+        .map((i) => Moment(i[ActivityConstants.PROJECTION_DATE]).year())) + 1;
     }
     mtefItem[ActivityConstants.PROJECTION_DATE] = DateUtils.formatDateForAPI(Moment(`${year}-01-01`));
     mtefItem[ActivityConstants.PROJECTION] = {};
@@ -109,8 +111,9 @@ export default class AFFundingContainer extends Component {
         <Grid>
           <Row>
             <Col md={2} lg={2}>
-              <AFField parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.ACTIVE}`}
-                       type={Types.CHECKBOX} />
+              <AFField
+                parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.ACTIVE}`}
+                type={Types.CHECKBOX} />
             </Col>
             <Col md={2} lg={2}>
               <AFField
@@ -148,8 +151,9 @@ export default class AFFundingContainer extends Component {
         hasErrors={this.props.hasErrors}
         handleNewTransaction={this._addTransactionItem}
         funding={funding} />
-      <AFField parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.DONOR_OBJECTIVE}`}
-               type={Types.TEXT_AREA} />
+      <AFField
+        parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.DONOR_OBJECTIVE}`}
+        type={Types.TEXT_AREA} />
       <AFField
         key={Math.random()} parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.CONDITIONS}`}
         type={Types.TEXT_AREA} />

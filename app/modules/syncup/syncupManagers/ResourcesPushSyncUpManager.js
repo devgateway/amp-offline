@@ -67,7 +67,8 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
     const uuids = Array.from(resByUuid.keys());
     const filter = Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: uuids }) });
     return ActivityHelper.findAllNonRejected(filter, Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS, 1))
-      .then(activities => Utils.arrayFlatMap(activities.map(a => a[ActivityConstants.ACTIVITY_DOCUMENTS].map(ad => ad[UUID]))))
+      .then(activities => Utils.arrayFlatMap(activities.map(a => a[ActivityConstants.ACTIVITY_DOCUMENTS]
+        .map(ad => ad[UUID]))))
       .then(usedUuids => usedUuids.map(uuid => resByUuid.get(uuid)).filter(r => r));
   }
 
@@ -143,7 +144,8 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _updateResourceToActualIdInActivities(tmpResourceUuid, newResourceUuid) {
-    const filter = Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, tmpResourceUuid) });
+    const filter = Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS,
+      { $elemMatch: Utils.toMap(UUID, tmpResourceUuid) });
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
       activities.forEach(activity => {
         activity[ActivityConstants.ACTIVITY_DOCUMENTS].forEach(ad => {

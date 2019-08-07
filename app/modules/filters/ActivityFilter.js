@@ -78,7 +78,8 @@ export default class ActivityFilter {
    */
   _generateFilter() {
     logger.log('_generateFilter');
-    this._tmpFilter = (this._wsIds && this._wsIds.length > 0) ? Utils.toMap(ActivityConstants.TEAM, { $in: this._wsIds }) : {};
+    this._tmpFilter = (this._wsIds && this._wsIds.length > 0) ?
+      Utils.toMap(ActivityConstants.TEAM, { $in: this._wsIds }) : {};
 
     // note that some filters were not replicated since they are obsolete (AMP-25215)
     // or either irrelevant (pledges)

@@ -35,7 +35,8 @@ export default class PossibleValuesManager {
     const option = Object.assign({}, options[selectedId]);
     const valueParts = PossibleValuesManager.getHierarchicalValue(options, selectedId);
     option[ActivityConstants.HIERARCHICAL_VALUE] = PossibleValuesManager.formatValueParts(valueParts);
-    option[ActivityConstants.HIERARCHICAL_VALUE_DEPTH] = (valueParts && valueParts instanceof Array) ? valueParts.length : 0;
+    option[ActivityConstants.HIERARCHICAL_VALUE_DEPTH] =
+      (valueParts && valueParts instanceof Array) ? valueParts.length : 0;
     return option;
   }
 

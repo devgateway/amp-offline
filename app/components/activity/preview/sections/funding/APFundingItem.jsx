@@ -94,7 +94,9 @@ export default class APFundingItem extends Component {
         <tr className={styles.row}>
           <td className={styles.left_text}>{translate(this.props.item[ActivityConstants.ADJUSTMENT_TYPE].value)}</td>
           <td className={styles.disaster_response}>{this.getDisasterResponse()}</td>
-          <td className={styles.right_text}>{createFormattedDate(this.props.item[ActivityConstants.TRANSACTION_DATE])}</td>
+          <td className={styles.right_text}>
+            {createFormattedDate(this.props.item[ActivityConstants.TRANSACTION_DATE])}
+          </td>
           <td
             className={styles.right_text}>
             {`${rawNumberToFormattedString(convertedAmount)} ${this.props.wsCurrency}`}</td>
