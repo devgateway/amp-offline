@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+import { ActivityConstants } from 'amp-ui';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import { SYNCUP_TYPE_RESOURCES_PUSH } from '../../../utils/Constants';
 import ResourceHelper from '../../helpers/ResourceHelper';
@@ -7,7 +8,6 @@ import { RESOURCE_PUSH_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
-import * as AC from '../../../utils/constants/ActivityConstants';
 import { CONTENT_ID, CONTENT_TYPE, FILE_NAME, UUID } from '../../../utils/constants/ResourceConstants';
 import RepositoryHelper from '../../helpers/RepositoryHelper';
 import RepositoryManager from '../../repository/RepositoryManager';
@@ -65,9 +65,10 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   _ignoreUnreferencedResources(resources) {
     const resByUuid = Utils.toMapByKey(resources, UUID);
     const uuids = Array.from(resByUuid.keys());
-    const filter = Utils.toMap(AC.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: uuids }) });
-    return ActivityHelper.findAllNonRejected(filter, Utils.toMap(AC.ACTIVITY_DOCUMENTS, 1))
-      .then(activities => Utils.arrayFlatMap(activities.map(a => a[AC.ACTIVITY_DOCUMENTS].map(ad => ad[UUID]))))
+    const filter = Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: uuids }) });
+    return ActivityHelper.findAllNonRejected(filter, Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS, 1))
+      .then(activities => Utils.arrayFlatMap(activities.map(a => a[ActivityConstants.ACTIVITY_DOCUMENTS]
+        .map(ad => ad[UUID]))))
       .then(usedUuids => usedUuids.map(uuid => resByUuid.get(uuid)).filter(r => r));
   }
 
@@ -143,10 +144,11 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _updateResourceToActualIdInActivities(tmpResourceUuid, newResourceUuid) {
-    const filter = Utils.toMap(AC.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, tmpResourceUuid) });
+    const filter = Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS,
+      { $elemMatch: Utils.toMap(UUID, tmpResourceUuid) });
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
       activities.forEach(activity => {
-        activity[AC.ACTIVITY_DOCUMENTS].forEach(ad => {
+        activity[ActivityConstants.ACTIVITY_DOCUMENTS].forEach(ad => {
           if (ad[UUID] === tmpResourceUuid) {
             ad[UUID] = newResourceUuid;
           }

@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import * as AC from '../../utils/constants/ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 import * as FPC from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import translate from '../../utils/translate';
@@ -29,7 +29,8 @@ const logger = new Logger('EntityValidator');
  */
 export default class EntityValidator {
   constructor(entity, fieldsManager: FieldsManager, otherProjectTitles: Array,
-    excludedFields = [AC.APPROVAL_DATE, AC.APPROVAL_STATUS, AC.APPROVED_BY]) {
+    excludedFields = [ActivityConstants.APPROVAL_DATE, ActivityConstants.APPROVAL_STATUS,
+      ActivityConstants.APPROVED_BY]) {
     logger.log('constructor');
     this._entity = entity;
     this._fieldsDef = fieldsManager.fieldsDef;
@@ -137,10 +138,10 @@ export default class EntityValidator {
   _validateDependentFields(asDraft, mainFieldPath) {
     // TODO going custom until we have more generic dependencies definition in API
     let dependencies = [];
-    if (mainFieldPath === AC.ACTIVITY_BUDGET) {
-      dependencies = [AC.DEPENDENCY_PROJECT_CODE_ON_BUDGET, AC.DEPENDENCY_ON_BUDGET];
+    if (mainFieldPath === ActivityConstants.ACTIVITY_BUDGET) {
+      dependencies = [ActivityConstants.DEPENDENCY_PROJECT_CODE_ON_BUDGET, ActivityConstants.DEPENDENCY_ON_BUDGET];
     } else if (FPC.RELATED_ORGS_PATHS.includes(mainFieldPath)) {
-      dependencies = [AC.DEPENDENCY_COMPONENT_FUNDING_ORG_VALID];
+      dependencies = [ActivityConstants.DEPENDENCY_COMPONENT_FUNDING_ORG_VALID];
     }
     const fieldPaths = this._fieldsManager.getFieldPathsByDependencies(dependencies);
     fieldPaths.forEach(fieldPath => {
@@ -258,7 +259,7 @@ export default class EntityValidator {
           if (fieldDef.length && fieldDef.length < value.length) {
             this.processValidationResult(obj, fieldPath, stringLengthError);
           }
-          if (fieldPath === AC.PROJECT_TITLE) {
+          if (fieldPath === ActivityConstants.PROJECT_TITLE) {
             this.processValidationResult(obj, fieldPath, this.projectTitleValidator(value));
           }
           if (regexPattern && !regexPattern.test(value)) {
@@ -321,7 +322,8 @@ export default class EntityValidator {
    */
   _isAllowInvalidNumber(value, fieldPath) {
     const parts = fieldPath.split('~');
-    const isContactId = (parts.length === 2 && FPC.ACTIVITY_CONTACT_PATHS.includes(parts[0]) && AC.CONTACT === parts[1])
+    const isContactId = (parts.length === 2 && FPC.ACTIVITY_CONTACT_PATHS.includes(parts[0]) &&
+      ActivityConstants.CONTACT === parts[1])
       || (parts.length === 1 && this.excludedFields.includes(parts[0]));
     if (isContactId && `${value}`.startsWith(CLIENT_CHANGE_ID_PREFIX)) {
       return true;
@@ -424,7 +426,7 @@ export default class EntityValidator {
     values.forEach(item => {
       const option = fieldName ? item[fieldName] : item;
       const id = option.id;
-      const value = option[AC.HIERARCHICAL_VALUE] || option.value;
+      const value = option[ActivityConstants.HIERARCHICAL_VALUE] || option.value;
       if (unique.has(id)) {
         repeating.add(value);
       } else {
@@ -456,7 +458,7 @@ export default class EntityValidator {
       let parentId = value[noParentChildMixingFieldName].parentId;
       while (parentId) {
         if (uniqueRoots.has(parentId)) {
-          childrenMixedWithParents.add(value[noParentChildMixingFieldName][AC.HIERARCHICAL_VALUE]);
+          childrenMixedWithParents.add(value[noParentChildMixingFieldName][ActivityConstants.HIERARCHICAL_VALUE]);
           uniqueRoots.delete(value[noParentChildMixingFieldName].id);
           parentId = null;
         } else {
@@ -487,11 +489,11 @@ export default class EntityValidator {
       dependencies.forEach(dep => {
         // eslint-disable-next-line default-case
         switch (dep) {
-          case AC.DEPENDENCY_ON_BUDGET:
-          case AC.DEPENDENCY_PROJECT_CODE_ON_BUDGET:
+          case ActivityConstants.DEPENDENCY_ON_BUDGET:
+          case ActivityConstants.DEPENDENCY_PROJECT_CODE_ON_BUDGET:
             met = met && this._isActivityOnBudget();
             break;
-          case AC.DEPENDENCY_TRANSACTION_PRESENT:
+          case ActivityConstants.DEPENDENCY_TRANSACTION_PRESENT:
             met = met && this._hasTransactions(parent);
             break;
           case RC.DEPENDENCY_RESOURCE_TYPE_LINK:
@@ -511,21 +513,24 @@ export default class EntityValidator {
     if (dependencies && dependencies.length) {
       const hasLocations = this._hasLocations();
       // reporting some dependency errors only for the top objects
-      if (hasLocations && dependencies.includes(AC.DEPENDENCY_IMPLEMENTATION_LEVEL_PRESENT)) {
-        this.processValidationResult(this._entity, AC.LOCATIONS, this._validateImplementationLevelPresent());
+      if (hasLocations && dependencies.includes(ActivityConstants.DEPENDENCY_IMPLEMENTATION_LEVEL_PRESENT)) {
+        this.processValidationResult(this._entity, ActivityConstants.LOCATIONS,
+          this._validateImplementationLevelPresent());
       }
-      if (dependencies.includes(AC.DEPENDENCY_IMPLEMENTATION_LEVEL_VALID)) {
-        this.processValidationResult(this._entity, AC.LOCATIONS, this._validateImplementationLevelValid());
+      if (dependencies.includes(ActivityConstants.DEPENDENCY_IMPLEMENTATION_LEVEL_VALID)) {
+        this.processValidationResult(this._entity, ActivityConstants.LOCATIONS,
+          this._validateImplementationLevelValid());
       }
-      if (hasLocations && dependencies.includes(AC.DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT)) {
-        this.processValidationResult(this._entity, AC.LOCATIONS, this._validateImplementationLocationPresent());
+      if (hasLocations && dependencies.includes(ActivityConstants.DEPENDENCY_IMPLEMENTATION_LOCATION_PRESENT)) {
+        this.processValidationResult(this._entity, ActivityConstants.LOCATIONS,
+          this._validateImplementationLocationPresent());
       }
       objects.forEach(obj => {
         const hydratedValue = obj[fieldDef.name];
-        if (dependencies.includes(AC.DEPENDENCY_IMPLEMENTATION_LOCATION_VALID)) {
+        if (dependencies.includes(ActivityConstants.DEPENDENCY_IMPLEMENTATION_LOCATION_VALID)) {
           this.processValidationResult(obj, fieldPath, this._validateImplementationLocationValid());
         }
-        if (dependencies.includes(AC.DEPENDENCY_COMPONENT_FUNDING_ORG_VALID)) {
+        if (dependencies.includes(ActivityConstants.DEPENDENCY_COMPONENT_FUNDING_ORG_VALID)) {
           const validationResult = this._validateComponentFundingOrgValid(hydratedValue);
           this.processValidationResult(obj, fieldPath, validationResult);
         }
@@ -543,12 +548,14 @@ export default class EntityValidator {
   }
 
   _hasLocations() {
-    return this._entity[AC.LOCATIONS] && this._entity[AC.LOCATIONS].length && this._entity[AC.LOCATIONS]
+    return this._entity[ActivityConstants.LOCATIONS] &&
+      this._entity[ActivityConstants.LOCATIONS].length && this._entity[ActivityConstants.LOCATIONS]
       .some(ampLoc => !!ampLoc.location);
   }
 
   _getImplementationLevelId() {
-    return this._entity[AC.IMPLEMENTATION_LEVEL] && this._entity[AC.IMPLEMENTATION_LEVEL].id;
+    return this._entity[ActivityConstants.IMPLEMENTATION_LEVEL] &&
+      this._entity[ActivityConstants.IMPLEMENTATION_LEVEL].id;
   }
 
   _validateImplementationLevelPresent() {
@@ -560,14 +567,15 @@ export default class EntityValidator {
     let isValid = true;
     const implLevelId = this._getImplementationLevelId();
     if (implLevelId) {
-      const options = this._possibleValuesMap[AC.IMPLEMENTATION_LEVEL];
+      const options = this._possibleValuesMap[ActivityConstants.IMPLEMENTATION_LEVEL];
       isValid = !!options[implLevelId];
     }
     return isValid || translate('dependencyNotMet').replace('%depName%', translate('depImplLevelValid'));
   }
 
   _getImplementationLocation() {
-    return this._entity[AC.IMPLEMENTATION_LOCATION] && this._entity[AC.IMPLEMENTATION_LOCATION].id;
+    return this._entity[ActivityConstants.IMPLEMENTATION_LOCATION] &&
+      this._entity[ActivityConstants.IMPLEMENTATION_LOCATION].id;
   }
 
   _validateImplementationLocationPresent() {
@@ -580,12 +588,13 @@ export default class EntityValidator {
     let isValid = true;
     if (implLocId) {
       const implLevelId = this._getImplementationLevelId();
-      const options = this._possibleValuesMap[AC.IMPLEMENTATION_LOCATION];
+      const options = this._possibleValuesMap[ActivityConstants.IMPLEMENTATION_LOCATION];
       const implOption = options && options[implLocId];
       if (!implLevelId || !implOption) {
         isValid = false;
       } else {
-        const implLevels = (implOption[AC.EXTRA_INFO] && implOption[AC.EXTRA_INFO][AC.IMPLEMENTATION_LEVELS_EXTRA_INFO])
+        const implLevels = (implOption[ActivityConstants.EXTRA_INFO]
+          && implOption[ActivityConstants.EXTRA_INFO][ActivityConstants.IMPLEMENTATION_LEVELS_EXTRA_INFO])
           || [];
         isValid = implLevels.includes(implLevelId);
       }
@@ -594,7 +603,8 @@ export default class EntityValidator {
   }
 
   _isActivityOnBudget() {
-    const onOffBudget = this._entity[AC.ACTIVITY_BUDGET] && this._entity[AC.ACTIVITY_BUDGET].value;
+    const onOffBudget = this._entity[ActivityConstants.ACTIVITY_BUDGET] &&
+      this._entity[ActivityConstants.ACTIVITY_BUDGET].value;
     return onOffBudget && onOffBudget === ON_BUDGET;
   }
 
@@ -624,7 +634,7 @@ export default class EntityValidator {
    */
   validateItemRemovalFromList(listPath, item) {
     if (FPC.RELATED_ORGS_PATHS.includes(listPath)) {
-      return this.validateOrgRemoval(listPath, item && item[AC.ORGANIZATION]);
+      return this.validateOrgRemoval(listPath, item && item[ActivityConstants.ORGANIZATION]);
     }
     return true;
   }
@@ -651,7 +661,7 @@ export default class EntityValidator {
   }
 
   _getComponentOrgs() {
-    const components = this._entity[AC.COMPONENTS];
+    const components = this._entity[ActivityConstants.COMPONENTS];
     const compFundingOrgs = [];
     if (components && components.length) {
       components.forEach(component => {
@@ -659,7 +669,7 @@ export default class EntityValidator {
           const componentFundings = [];
           FPC.TRANSACTION_TYPES.forEach(tt => componentFundings.push(...(component[tt] || [])));
           componentFundings.forEach(funding => {
-            const compOrg = funding[AC.COMPONENT_ORGANIZATION];
+            const compOrg = funding[ActivityConstants.COMPONENT_ORGANIZATION];
             if (compOrg && compOrg.id) {
               compFundingOrgs.push(compOrg);
             }
@@ -676,17 +686,18 @@ export default class EntityValidator {
       const orgRoles = this._entity[orgRolePath];
       if (orgRoles) {
         activityOrgs.push(
-          ...orgRoles.map(entry => entry[AC.ORGANIZATION] && entry[AC.ORGANIZATION].id).filter(el => !!el));
+          ...orgRoles.map(entry => entry[ActivityConstants.ORGANIZATION] &&
+            entry[ActivityConstants.ORGANIZATION].id).filter(el => !!el));
       }
     });
     return activityOrgs;
   }
 
   _isUniquePrimaryContact(contacts, contactListFieldName) {
-    const isValid = contacts.filter(c => c[AC.PRIMARY_CONTACT]).length < 2;
+    const isValid = contacts.filter(c => c[ActivityConstants.PRIMARY_CONTACT]).length < 2;
     let error = null;
     if (!isValid) {
-      const pcPath = `${contactListFieldName}~${AC.PRIMARY_CONTACT}`;
+      const pcPath = `${contactListFieldName}~${ActivityConstants.PRIMARY_CONTACT}`;
       const primaryContactLabel = this._fieldsManager.getFieldLabelTranslation(pcPath);
       error = translate('dependencyNotMet').replace('%depName%', primaryContactLabel);
     }

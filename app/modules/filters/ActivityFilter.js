@@ -1,4 +1,4 @@
-import * as AC from '../../utils/constants/ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 import * as FPC from '../../utils/constants/FieldPathConstants';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
@@ -78,7 +78,8 @@ export default class ActivityFilter {
    */
   _generateFilter() {
     logger.log('_generateFilter');
-    this._tmpFilter = (this._wsIds && this._wsIds.length > 0) ? Utils.toMap(AC.TEAM, { $in: this._wsIds }) : {};
+    this._tmpFilter = (this._wsIds && this._wsIds.length > 0) ?
+      Utils.toMap(ActivityConstants.TEAM, { $in: this._wsIds }) : {};
 
     // note that some filters were not replicated since they are obsolete (AMP-25215)
     // or either irrelevant (pledges)
@@ -97,7 +98,7 @@ export default class ActivityFilter {
     this._filters.locationSelected =
       PossibleValuesManager.expandParentWithChildren(this._locationOptions, this._filters.locationSelected);
       */
-    this._addListMapValueFilter(AC.LOCATIONS, AC.LOCATION, '$in', 'locationSelected');
+    this._addListMapValueFilter(ActivityConstants.LOCATIONS, ActivityConstants.LOCATION, '$in', 'locationSelected');
     this._addProgramFilters();
     this._addOrgsFilters();
     this._addApprovalStatusFilter('approvalStatusSelected');
@@ -111,37 +112,39 @@ export default class ActivityFilter {
 
   _addGeneralFilters() {
     logger.log('_addGeneralFilters');
-    this._addValueFilter(AC.ARCHIVED, getEqOrNe(this._filters.showArchived), 'showArchived', null, true);
-    this._addValueFilter(AC.HUMANITARIAN_AID, '$in', 'humanitarianAid', null,
+    this._addValueFilter(ActivityConstants.ARCHIVED, getEqOrNe(this._filters.showArchived), 'showArchived', null, true);
+    this._addValueFilter(ActivityConstants.HUMANITARIAN_AID, '$in', 'humanitarianAid', null,
       listToBoolean(this._filters.humanitarianAid));
-    this._addValueFilter(AC.GOVERNMENT_APPROVAL_PROCEDURES, getEqOrNe(this._filters.governmentApprovalProcedures),
+    this._addValueFilter(ActivityConstants.GOVERNMENT_APPROVAL_PROCEDURES,
+      getEqOrNe(this._filters.governmentApprovalProcedures),
       'governmentApprovalProcedures', null, true);
-    this._addValueFilter(AC.JOINT_CRITERIA, getEqOrNe(this._filters.jointCriteria), 'jointCriteria', null, true);
+    this._addValueFilter(ActivityConstants.JOINT_CRITERIA, getEqOrNe(this._filters.jointCriteria),
+      'jointCriteria', null, true);
 
-    this._addValueFilter(AC.ACTIVITY_BUDGET, '$in', 'budget');
-    this._addValueFilter(AC.ACTIVITY_STATUS, '$in', 'statuses');
-    this._addValueFilter(AC.PROJECT_CATEGORY, '$in', 'projectCategory');
-    this._addValueFilter(AC.PROJECT_IMPLEMENTING_UNIT, '$in', 'projectImplementingUnits');
-    this._addValueFilter(AC.MODALITIES, '$in', 'aidModalities');
-    this._addValueFilter(AC.LINE_MINISTRY_RANK, '$in', 'lineMinRank');
+    this._addValueFilter(ActivityConstants.ACTIVITY_BUDGET, '$in', 'budget');
+    this._addValueFilter(ActivityConstants.ACTIVITY_STATUS, '$in', 'statuses');
+    this._addValueFilter(ActivityConstants.PROJECT_CATEGORY, '$in', 'projectCategory');
+    this._addValueFilter(ActivityConstants.PROJECT_IMPLEMENTING_UNIT, '$in', 'projectImplementingUnits');
+    this._addValueFilter(ActivityConstants.MODALITIES, '$in', 'aidModalities');
+    this._addValueFilter(ActivityConstants.LINE_MINISTRY_RANK, '$in', 'lineMinRank');
   }
 
   _addDateFilters() {
     logger.log('_addDateFilters');
-    this._addYearFilter(AC.ACTUAL_APPROVAL_DATE, 'actualAppYear');
+    this._addYearFilter(ActivityConstants.ACTUAL_APPROVAL_DATE, 'actualAppYear');
 
     // both 'toXXX' and filter dates timestamps are zeros, so it should work. But caution if smt changes
-    this._addValueFilter(AC.ACTUAL_START_DATE, '$gte', 'fromActivityStartDate');
-    this._addValueFilter(AC.ACTUAL_START_DATE, '$lte', 'toActivityStartDate');
+    this._addValueFilter(ActivityConstants.ACTUAL_START_DATE, '$gte', 'fromActivityStartDate');
+    this._addValueFilter(ActivityConstants.ACTUAL_START_DATE, '$lte', 'toActivityStartDate');
 
-    this._addValueFilter(AC.ACTUAL_COMPLETION_DATE, '$gte', 'fromActivityActualCompletionDate');
-    this._addValueFilter(AC.ACTUAL_COMPLETION_DATE, '$lte', 'toActivityActualCompletionDate');
+    this._addValueFilter(ActivityConstants.ACTUAL_COMPLETION_DATE, '$gte', 'fromActivityActualCompletionDate');
+    this._addValueFilter(ActivityConstants.ACTUAL_COMPLETION_DATE, '$lte', 'toActivityActualCompletionDate');
 
-    this._addValueFilter(AC.CONTRACTING_DATE, '$gte', 'fromActivityFinalContractingDate');
-    this._addValueFilter(AC.CONTRACTING_DATE, '$lte', 'toActivityFinalContractingDate');
+    this._addValueFilter(ActivityConstants.CONTRACTING_DATE, '$gte', 'fromActivityFinalContractingDate');
+    this._addValueFilter(ActivityConstants.CONTRACTING_DATE, '$lte', 'toActivityFinalContractingDate');
 
-    this._addValueFilter(AC.PROPOSED_APPROVAL_DATE, '$gte', 'fromProposedApprovalDate');
-    this._addValueFilter(AC.PROPOSED_APPROVAL_DATE, '$lte', 'toProposedApprovalDate');
+    this._addValueFilter(ActivityConstants.PROPOSED_APPROVAL_DATE, '$gte', 'fromProposedApprovalDate');
+    this._addValueFilter(ActivityConstants.PROPOSED_APPROVAL_DATE, '$lte', 'toProposedApprovalDate');
   }
 
   _addSectorFilters() {
@@ -151,18 +154,22 @@ export default class ActivityFilter {
      Thus when a new sector, e.g. A101 is added to "A", then it will be filtered out from results.
      On the other hand, locations and programs descendants are built at filtering time, not saved.
      */
-    this._addListMapValueFilter(AC.PRIMARY_SECTORS, AC.SECTOR, '$in', 'sectors');
-    this._addListMapValueFilter(AC.SECONDARY_SECTORS, AC.SECTOR, '$in', 'secondarySectors');
-    this._addListMapValueFilter(AC.TERTIARY_SECTORS, AC.SECTOR, '$in', 'tertiarySectors');
-    this._addListMapValueFilter(AC.TAG_SECTORS, AC.SECTOR, '$in', 'tagSectors');
+    this._addListMapValueFilter(ActivityConstants.PRIMARY_SECTORS, ActivityConstants.SECTOR, '$in', 'sectors');
+    this._addListMapValueFilter(ActivityConstants.SECONDARY_SECTORS, ActivityConstants.SECTOR, '$in',
+      'secondarySectors');
+    this._addListMapValueFilter(ActivityConstants.TERTIARY_SECTORS, ActivityConstants.SECTOR, '$in', 'tertiarySectors');
+    this._addListMapValueFilter(ActivityConstants.TAG_SECTORS, ActivityConstants.SECTOR, '$in', 'tagSectors');
   }
 
   _addProgramFilters() {
     logger.log('_addProgramFilters');
     // TODO: expand with descendants program filters once the full programs tree is available, AMPOFFLINE-378
-    this._addListMapValueFilter(AC.NATIONAL_PLAN_OBJECTIVE, AC.PROGRAM, '$in', 'nationalPlanningObjectives');
-    this._addListMapValueFilter(AC.PRIMARY_PROGRAMS, AC.PROGRAM, '$in', 'primaryPrograms');
-    this._addListMapValueFilter(AC.SECONDARY_PROGRAMS, AC.PROGRAM, '$in', 'secondaryPrograms');
+    this._addListMapValueFilter(ActivityConstants.NATIONAL_PLAN_OBJECTIVE, ActivityConstants.PROGRAM, '$in',
+      'nationalPlanningObjectives');
+    this._addListMapValueFilter(ActivityConstants.PRIMARY_PROGRAMS, ActivityConstants.PROGRAM, '$in',
+      'primaryPrograms');
+    this._addListMapValueFilter(ActivityConstants.SECONDARY_PROGRAMS, ActivityConstants.PROGRAM, '$in',
+      'secondaryPrograms');
   }
 
   _addOrgsFilters() {
@@ -170,27 +177,33 @@ export default class ActivityFilter {
     /* TODO: add donorTypes, donorGroups and contractingAgencyGroups filters, iteration 2+, AMPOFFLINE-380
      once we have an EP providing their options to get the mappings based on activities orgs */
 
-    this._addListMapValueFilter(AC.EXECUTING_AGENCY, AC.ORGANIZATION, '$in', 'executingAgency');
-    this._addListMapValueFilter(AC.CONTRACTING_AGENCY, AC.ORGANIZATION, '$in', 'contractingAgency');
-    this._addListMapValueFilter(AC.BENEFICIARY_AGENCY, AC.ORGANIZATION, '$in', 'beneficiaryAgency');
-    this._addListMapValueFilter(AC.IMPLEMENTING_AGENCY, AC.ORGANIZATION, '$in', 'implementingAgency');
-    this._addListMapValueFilter(AC.RESPONSIBLE_ORGANIZATION, AC.ORGANIZATION, '$in', 'responsibleorg');
-    this._addListMapValueFilter(AC.DONOR_ORGANIZATION, AC.ORGANIZATION, '$in', 'donnorgAgency');
+    this._addListMapValueFilter(ActivityConstants.EXECUTING_AGENCY, ActivityConstants.ORGANIZATION, '$in',
+      'executingAgency');
+    this._addListMapValueFilter(ActivityConstants.CONTRACTING_AGENCY, ActivityConstants.ORGANIZATION, '$in',
+      'contractingAgency');
+    this._addListMapValueFilter(ActivityConstants.BENEFICIARY_AGENCY, ActivityConstants.ORGANIZATION, '$in',
+      'beneficiaryAgency');
+    this._addListMapValueFilter(ActivityConstants.IMPLEMENTING_AGENCY, ActivityConstants.ORGANIZATION, '$in',
+      'implementingAgency');
+    this._addListMapValueFilter(ActivityConstants.RESPONSIBLE_ORGANIZATION, ActivityConstants.ORGANIZATION, '$in',
+      'responsibleorg');
+    this._addListMapValueFilter(ActivityConstants.DONOR_ORGANIZATION, ActivityConstants.ORGANIZATION, '$in',
+      'donnorgAgency');
   }
 
   _addFundingsFilter() {
     logger.log('_addFundingsFilter');
     const fundings = {};
-    this._addValueFilter(AC.FINANCING_INSTRUMENT, '$in', 'financingInstruments', fundings);
-    this._addValueFilter(AC.FUNDING_STATUS, '$in', 'fundingStatus', fundings);
-    this._addValueFilter(AC.TYPE_OF_ASSISTANCE, '$in', 'typeOfAssistance', fundings);
-    this._addValueFilter(AC.MODE_OF_PAYMENT, '$in', 'modeOfPayment', fundings);
+    this._addValueFilter(ActivityConstants.FINANCING_INSTRUMENT, '$in', 'financingInstruments', fundings);
+    this._addValueFilter(ActivityConstants.FUNDING_STATUS, '$in', 'fundingStatus', fundings);
+    this._addValueFilter(ActivityConstants.TYPE_OF_ASSISTANCE, '$in', 'typeOfAssistance', fundings);
+    this._addValueFilter(ActivityConstants.MODE_OF_PAYMENT, '$in', 'modeOfPayment', fundings);
 
-    this._addValueFilter(AC.EFFECTIVE_FUNDING_DATE, '$gte', 'fromEffectiveFundingDate', fundings);
-    this._addValueFilter(AC.EFFECTIVE_FUNDING_DATE, '$lte', 'toEffectiveFundingDate', fundings);
+    this._addValueFilter(ActivityConstants.EFFECTIVE_FUNDING_DATE, '$gte', 'fromEffectiveFundingDate', fundings);
+    this._addValueFilter(ActivityConstants.EFFECTIVE_FUNDING_DATE, '$lte', 'toEffectiveFundingDate', fundings);
 
-    this._addValueFilter(AC.FUNDING_CLOSING_DATE, '$gte', 'fromFundingClosingDate', fundings);
-    this._addValueFilter(AC.FUNDING_CLOSING_DATE, '$lte', 'toFundingClosingDate', fundings);
+    this._addValueFilter(ActivityConstants.FUNDING_CLOSING_DATE, '$gte', 'fromFundingClosingDate', fundings);
+    this._addValueFilter(ActivityConstants.FUNDING_CLOSING_DATE, '$lte', 'toFundingClosingDate', fundings);
 
     const fundingDetails = this._getFundingDetails();
     if (fundingDetails) {
@@ -198,7 +211,7 @@ export default class ActivityFilter {
     }
 
     if (Object.keys(fundings).length > 0) {
-      this._tmpFilter[AC.FUNDINGS] = fundings;
+      this._tmpFilter[ActivityConstants.FUNDINGS] = fundings;
     }
   }
 
@@ -207,24 +220,25 @@ export default class ActivityFilter {
     let result;
     const details = {};
     if (this._dateFilterHidesProjects) {
-      this._addValueFilter(AC.TRANSACTION_DATE, '$gte', 'fromDate', details);
+      this._addValueFilter(ActivityConstants.TRANSACTION_DATE, '$gte', 'fromDate', details);
       // both 'toDate' and transaction date timestamps are zeros, so it should work. But caution if smt changes
-      this._addValueFilter(AC.TRANSACTION_DATE, '$lte', 'toDate', details);
+      this._addValueFilter(ActivityConstants.TRANSACTION_DATE, '$lte', 'toDate', details);
     }
-    this._addValueFilter(AC.DISASTER_RESPONSE, '$in', 'disasterResponse', details,
+    this._addValueFilter(ActivityConstants.DISASTER_RESPONSE, '$in', 'disasterResponse', details,
       listToBoolean(this._filters.disasterResponse));
 
-    this._addValueFilter(AC.EXPENDITURE_CLASS, '$in', 'expenditureClass', details);
+    this._addValueFilter(ActivityConstants.EXPENDITURE_CLASS, '$in', 'expenditureClass', details);
 
     if (Object.keys(details).length > 0) {
       const trnAdjRules = FPC.TRANSACTION_TYPES.map(trnType => {
         // TODO TBC how hidden adj type data is handled on AMP and should be handled in AMP Offline
-        let ato = this._fieldsManager.getPossibleValuesOptions(`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`);
+        let ato = this._fieldsManager
+          .getPossibleValuesOptions(`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`);
         ato = ato.map(o => o.id);
         return Utils.toMap(trnType, {
           $elemMatch: {
             ...details,
-            [AC.ADJUSTMENT_TYPE]: { $in: ato }
+            [ActivityConstants.ADJUSTMENT_TYPE]: { $in: ato }
           }
         });
       });
@@ -362,8 +376,8 @@ function getApprovalStatusFilter(id) {
     });
   }
   const approvalStatusOptions = Utils.toMap('$in', options);
-  const approvalStatusfilter = Utils.toMap(AC.APPROVAL_STATUS, approvalStatusOptions);
-  const includeDraftFilter = Utils.toMap(AC.IS_DRAFT, Utils.toMap(getEqOrNe(isDraft), true));
+  const approvalStatusfilter = Utils.toMap(ActivityConstants.APPROVAL_STATUS, approvalStatusOptions);
+  const includeDraftFilter = Utils.toMap(ActivityConstants.IS_DRAFT, Utils.toMap(getEqOrNe(isDraft), true));
   const filter = Utils.toMap('$and', [approvalStatusfilter, includeDraftFilter]);
 
   return filter;

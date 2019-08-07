@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
@@ -37,60 +37,65 @@ export default class AFProposedProjectCostTable extends Component {
 
   _createCurrencyField() {
     const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
-    const ppc = activity[AC.PPC_AMOUNT];
-    if (!ppc[AC.CURRENCY] || !ppc[AC.CURRENCY].id) {
+    const ppc = activity[ActivityConstants.PPC_AMOUNT];
+    if (!ppc[ActivityConstants.CURRENCY] || !ppc[ActivityConstants.CURRENCY].id) {
       const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.PPC_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
-      ppc[AC.CURRENCY] = currency;
+      ppc[ActivityConstants.CURRENCY] = currency;
     }
     const field = (<AFField
       parent={ppc}
-      fieldPath={`${AC.PPC_AMOUNT}~${AC.CURRENCY}`}
+      fieldPath={`${ActivityConstants.PPC_AMOUNT}~${ActivityConstants.CURRENCY}`}
       type={Types.DROPDOWN} showLabel={false} extraParams={{ noChooseOneOption: true, showOrigValue: true }} />);
     return field;
   }
 
   render() {
-    if (this.context.activityFieldsManager.isFieldPathEnabled(AC.PPC_AMOUNT)) {
+    if (this.context.activityFieldsManager.isFieldPathEnabled(ActivityConstants.PPC_AMOUNT)) {
       /* IMPORTANT: Since we want to mimic the AF that shows inputs on tables not only when the user clicks the
        cell, then is easier to set editable={false} and use our AFField components inside dateFormat, this way
        we dont need to have a fake input for displaying and then extra code for editing (plus many other advantages). */
-      const columns = [<TableHeaderColumn dataField={AC.FUNDING_AMOUNT_ID} isKey hidden key={AC.FUNDING_AMOUNT_ID} />];
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.AMOUNT}`)) {
+      const columns = [<TableHeaderColumn
+        dataField={ActivityConstants.FUNDING_AMOUNT_ID}
+        isKey hidden key={ActivityConstants.FUNDING_AMOUNT_ID} />];
+      if (this.context.activityFieldsManager
+        .isFieldPathEnabled(`${ActivityConstants.PPC_AMOUNT}~${ActivityConstants.AMOUNT}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.AMOUNT} editable={false} key={AC.AMOUNT}
+          dataField={ActivityConstants.AMOUNT} editable={false} key={ActivityConstants.AMOUNT}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT]}
-            fieldPath={`${AC.PPC_AMOUNT}~${AC.AMOUNT}`}
+            parent={this.context.activity[ActivityConstants.PPC_AMOUNT]}
+            fieldPath={`${ActivityConstants.PPC_AMOUNT}~${ActivityConstants.AMOUNT}`}
             type={Types.NUMBER} showLabel={false} readonly />)}>{translate('Amount')}</TableHeaderColumn>);
       }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.CURRENCY}`)) {
+      if (this.context.activityFieldsManager
+        .isFieldPathEnabled(`${ActivityConstants.PPC_AMOUNT}~${ActivityConstants.CURRENCY}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.CURRENCY} key={AC.CURRENCY}
+          dataField={ActivityConstants.CURRENCY} key={ActivityConstants.CURRENCY}
           editable={false}
           dataFormat={() => (this._createCurrencyField())}>{translate('Currency')}</TableHeaderColumn>);
       }
-      if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`)) {
+      if (this.context.activityFieldsManager
+        .isFieldPathEnabled(`${ActivityConstants.PPC_AMOUNT}~${ActivityConstants.FUNDING_DATE}`)) {
         columns.push(<TableHeaderColumn
-          dataField={AC.FUNDING_DATE} editable={false} key={AC.FUNDING_DATE}
+          dataField={ActivityConstants.FUNDING_DATE} editable={false} key={ActivityConstants.FUNDING_DATE}
           dataFormat={() => (<AFField
-            parent={this.context.activity[AC.PPC_AMOUNT]}
-            fieldPath={`${AC.PPC_AMOUNT}~${AC.FUNDING_DATE}`}
+            parent={this.context.activity[ActivityConstants.PPC_AMOUNT]}
+            fieldPath={`${ActivityConstants.PPC_AMOUNT}~${ActivityConstants.FUNDING_DATE}`}
             type={Types.DATE} showLabel={false} />)}>{translate('Date')}</TableHeaderColumn>);
       }
       // Create empty row for new activities.
-      this.context.activity[AC.PPC_AMOUNT] = this.context.activity[AC.PPC_AMOUNT]
+      this.context.activity[ActivityConstants.PPC_AMOUNT] = this.context.activity[ActivityConstants.PPC_AMOUNT]
         || {
-          [AC.AMOUNT]: null,
-          [AC.CURRENCY]: this.context.currentWorkspaceSettings.currency.code,
-          [AC.FUNDING_DATE]: null
+          [ActivityConstants.AMOUNT]: null,
+          [ActivityConstants.CURRENCY]: this.context.currentWorkspaceSettings.currency.code,
+          [ActivityConstants.FUNDING_DATE]: null
         };
       return (<div>
         <span><label htmlFor="ppc_table">{translate('Proposed Project Cost')}</label></span>
         <BootstrapTable
           options={this.options} containerClass={styles.containerTable} tableHeaderClass={styles.header}
-          thClassName={styles.thClassName} hover data={[this.context.activity[AC.PPC_AMOUNT]]}>
+          thClassName={styles.thClassName} hover data={[this.context.activity[ActivityConstants.PPC_AMOUNT]]}>
           {columns}
         </BootstrapTable>
       </div>);

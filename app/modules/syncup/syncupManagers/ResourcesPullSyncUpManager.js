@@ -1,3 +1,4 @@
+import { ActivityConstants } from 'amp-ui';
 import ResourceHelper from '../../helpers/ResourceHelper';
 import {
   SYNCUP_RESOURCE_PULL_BATCH_SIZE,
@@ -6,7 +7,6 @@ import {
 import { RESOURCE_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
-import { ACTIVITY_DOCUMENTS, AMP_ID, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import ResourceManager from '../../resource/ResourceManager';
@@ -54,7 +54,8 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
     // and in the meantime until this new sync round started, this resource was deleted in AMP (fringe case).
     // So we will remove obsolete resource reference from pending activities to be pushed only. For the rest, the change
     // must have had happened in AMP. We will report a warning about removal for such pending to push activities.
-    const uuidFilter = Utils.toMap(ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: removedResourcesIds }) });
+    const uuidFilter = Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS,
+      { $elemMatch: Utils.toMap(UUID, { $in: removedResourcesIds }) });
     return ActivityHelper.findAllNonRejectedModifiedOnClient(uuidFilter).then(activities => {
       activities.forEach(activity =>
         this.unlinkRemovedResourcesFromActivity(activity, removedResourcesIds, removedResourcesMap));
@@ -63,7 +64,7 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
   }
 
   unlinkRemovedResourcesFromActivity(activity, removedResourcesIds, removedResourcesMap) {
-    let resources = activity[ACTIVITY_DOCUMENTS];
+    let resources = activity[ActivityConstants.ACTIVITY_DOCUMENTS];
     if (resources && resources.length) {
       const removedResources = [];
       resources = resources.filter(ar => {
@@ -74,11 +75,11 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
         }
         return true;
       });
-      activity[ACTIVITY_DOCUMENTS] = resources;
+      activity[ActivityConstants.ACTIVITY_DOCUMENTS] = resources;
       if (removedResources.length) {
         const titles = removedResources.map(r => `"${r[TITLE] || r[UUID] || r}"`).join(', ');
-        const formattedAmpId = activity[AMP_ID] ? `(${activity[AMP_ID]}) ` : '';
-        const activityInfo = `"${formattedAmpId}${activity[PROJECT_TITLE]}"`;
+        const formattedAmpId = activity[ActivityConstants.AMP_ID] ? `(${activity[ActivityConstants.AMP_ID]}) ` : '';
+        const activityInfo = `"${formattedAmpId}${activity[ActivityConstants.PROJECT_TITLE]}"`;
         const replacePairs = [['%titles%', titles], ['%activityInfo%', activityInfo]];
         const message = 'resourcesDeletedFromActivity';
         const warn = new NotificationHelper({ message, replacePairs, severity: NOTIFICATION_SEVERITY_WARNING });

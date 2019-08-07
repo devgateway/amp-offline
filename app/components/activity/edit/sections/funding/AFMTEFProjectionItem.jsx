@@ -1,9 +1,10 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
@@ -39,11 +40,11 @@ class AFMTEFProjectionItem extends Component {
     const { mtefItem, removeMTEFItem, calendar } = this.props;
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
-    if (!mtefItem[AC.CURRENCY].id) {
+    if (!mtefItem[ActivityConstants.CURRENCY].id) {
       const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
-      mtefItem[AC.CURRENCY] = currency;
+      mtefItem[ActivityConstants.CURRENCY] = currency;
     }
     const isFiscalCalendar = calendar[IS_FISCAL];
     const range = Number(GlobalSettingsManager.getSettingByKey(GS_YEARS_IN_RANGE));
@@ -56,17 +57,17 @@ class AFMTEFProjectionItem extends Component {
               <div className={styles.row}>
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_PROJECTION}
-                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION}`} />
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.PROJECTION}`} />
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_AMOUNT}
-                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.AMOUNT}`} />
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.AMOUNT}`} />
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_CURRENCY}
-                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.CURRENCY}`} defaultValueAsEmptyObject
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.CURRENCY}`} defaultValueAsEmptyObject
                   extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
                 <AFField
                   parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_DATE}
-                  fieldPath={`${AC.FUNDINGS}~${AC.MTEF_PROJECTIONS}~${AC.PROJECTION_DATE}`} type={Types.DATE_YEAR}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.PROJECTION_DATE}`} type={Types.DATE_YEAR}
                   extraParams={{ range, startYear, isFiscalCalendar }} />
               </div>
             </td>
@@ -74,7 +75,7 @@ class AFMTEFProjectionItem extends Component {
               <div className={styles.grid}>
                 <div className={styles.cell_10}>
                   <a
-                    onClick={removeMTEFItem.bind(this, mtefItem[AC.TEMPORAL_ID])}
+                    onClick={removeMTEFItem.bind(this, mtefItem[ActivityConstants.TEMPORAL_ID])}
                     className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
                 </div>
               </div>

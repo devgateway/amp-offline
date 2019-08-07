@@ -2,7 +2,7 @@
  * @author Nadejda Mandrescu
  */
 
-import * as AC from './ActivityConstants';
+import { ActivityConstants } from 'amp-ui';
 
 export const DONOR_ORGANIZATION = 'Donor Organization';
 export const RESPONSIBLE_ORGANIZATION = 'Responsible Organization';
@@ -22,12 +22,12 @@ export const PLANNED = 'Planned';
 export const COMMITMENTS = 'Commitments';
 export const DISBURSEMENTS = 'Disbursements';
 export const EXPENDITURES = 'Expenditures';
-export const ACTUAL_COMMITMENTS = `${ACTUAL} ${AC.COMMITMENTS}`;
-export const ACTUAL_DISBURSEMENTS = `${ACTUAL} ${AC.DISBURSEMENTS}`;
-export const ACTUAL_EXPENDITURES = `${ACTUAL} ${AC.EXPENDITURES}`;
-export const PLANNED_COMMITMENTS = `${PLANNED} ${AC.COMMITMENTS}`;
-export const PLANNED_DISBURSEMENTS = `${PLANNED} ${AC.DISBURSEMENTS}`;
-export const PLANNED_EXPENDITURES = `${PLANNED} ${AC.EXPENDITURES}`;
+export const ACTUAL_COMMITMENTS = `${ACTUAL} ${ActivityConstants.COMMITMENTS}`;
+export const ACTUAL_DISBURSEMENTS = `${ACTUAL} ${ActivityConstants.DISBURSEMENTS}`;
+export const ACTUAL_EXPENDITURES = `${ACTUAL} ${ActivityConstants.EXPENDITURES}`;
+export const PLANNED_COMMITMENTS = `${PLANNED} ${ActivityConstants.COMMITMENTS}`;
+export const PLANNED_DISBURSEMENTS = `${PLANNED} ${ActivityConstants.DISBURSEMENTS}`;
+export const PLANNED_EXPENDITURES = `${PLANNED} ${ActivityConstants.EXPENDITURES}`;
 export const UNALLOCATED_DISBURSEMENTS = 'Unallocated Disbursements';
 export const DELIVERY_RATE = 'Delivery rate';
 export const MTEF_PROJECTIONS = 'MTEF Projections';

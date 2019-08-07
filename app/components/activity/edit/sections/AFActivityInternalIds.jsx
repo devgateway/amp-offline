@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
+import { ActivityConstants } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { ACTIVITY_INTERNAL_IDS } from './AFSectionConstants';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AF activity internal ids');
@@ -30,7 +30,7 @@ class AFActivityInternalIds extends Component {
       <Grid className={afStyles.full_width} >
         <Row>
           <Col md={12} lg={12} >
-            <AFField parent={this.props.activity} fieldPath={AC.ACTIVITY_INTERNAL_IDS} />
+            <AFField parent={this.props.activity} fieldPath={ActivityConstants.ACTIVITY_INTERNAL_IDS} />
           </Col>
         </Row>
       </Grid>
