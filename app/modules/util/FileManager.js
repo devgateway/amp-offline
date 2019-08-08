@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import os from 'os';
-import path from 'path';
+import * as path from 'path';
 import mimeTypes from 'mime-types';
 import readChunk from 'read-chunk';
 import rimraf from 'rimraf';
@@ -33,7 +33,7 @@ const FileManager = {
       if (process.env.NODE_ENV === 'production') {
         dataPath = app.getPath('userData');
       } else {
-        dataPath = '.';
+        dataPath = path.resolve('.');
       }
     }
     return dataPath;

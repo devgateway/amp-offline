@@ -13,6 +13,8 @@ export const STATUS_DETAILS = 'status-details';
 export const CORRUPTED_DB_NAMES = 'corrupted-db-names';
 export const REMAINING_CORRUPTED_DB_NAMES = 'remaining-corrupted-db-names';
 export const TOTAL_DB_FILES_FOUND = 'total-db-files-found';
+export const ERROR_REPORT_PATH = 'error-report-path';
+export const FAILURE_ERROR_REPORT_PATH = 'failure-error-report-path';
 
 export const TYPE_TRANSITION = 'transition';
 export const TYPE_POST_UPGRADE = 'post-upgrade';
