@@ -28,5 +28,7 @@
   "noDiskSpace": "No space left on your device. Free up some space, then try again.",
   "dbCompatibilityError": "Database is no longer compatible and will be cleaned up. Any changes that have not been synced will be lost.",
   "dbCorrupted": "Database is corrupted. Please note your actions and send %error report% to the administrator.",
-  "dbCleanupFailed": "Database cleanup failed. Please send %error report% to the administrator. You can delete the %database% folder manually."
+  "dbCorruptedFallback": "Database is corrupted. Please note your actions and send %logs% and %database% to the administrator.",
+  "dbCleanupFailed": "Database cleanup failed. Please send %error report% to the administrator. You can delete the %database% folder manually.",
+  "dbCleanupFailedFallback": "Database cleanup failed. Please send %logs% and %database% to the administrator. You can delete the %database% folder manually."
 }

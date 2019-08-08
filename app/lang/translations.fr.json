@@ -28,5 +28,7 @@
   "noDiskSpace": "Pas d'espace disponible sur votre dispositif. Libérez de l'espace, puis réessayez.",
   "dbCompatibilityError": "La base de données n'est plus compatible et sera nettoyée. Toute modification non synchronisée sera perdue.",
   "dbCorrupted": "La base de données est corrompue. Veuillez noter vos actions et envoyer %report d'erreur% à l'administrateur.",
-  "dbCleanupFailed": "Le nettoyage de la base de données a échoué. Veuillez envoyer %rapport d'erreur% à l'administrateur. Vous pouvez supprimer le dossier %database% manuellement."
+  "dbCorruptedFallback": "La base de données est corrompue. Veuillez noter vos actions et envoyer %les journaux% et %base de données% à l'administrateur.",
+  "dbCleanupFailed": "Le nettoyage de la base de données a échoué. Veuillez envoyer %rapport d'erreur% à l'administrateur. Vous pouvez supprimer le dossier %database% manuellement.",
+  "dbCleanupFailedFallback": "Le nettoyage de la base de données a échoué. Veuillez envoyer %les journaux% et %base de données% à l'administrateur. Vous pouvez supprimer le dossier %database% manuellement."
 }
