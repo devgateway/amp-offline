@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import os from 'os';
-import path from 'path';
+import * as path from 'path';
 import { ELECTRON_APP } from './ElectronApp';
 import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
@@ -26,7 +26,7 @@ const FileManager = {
       if (process.env.NODE_ENV === 'production') {
         dataPath = app.getPath('userData');
       } else {
-        dataPath = '.';
+        dataPath = path.resolve('.');
       }
     }
     return dataPath;
@@ -66,10 +66,10 @@ const FileManager = {
 
   /**
    * Creates a data directory synchronously if it doesn't exist
-   * @param dirName
+   * @param dirPathParts
    */
-  createDataDir(dirName) {
-    const fullPath = this.getFullPath(dirName);
+  createDataDir(...dirPathParts) {
+    const fullPath = this.getFullPath(...dirPathParts);
     fs.ensureDirSync(fullPath);
     return fullPath;
   },

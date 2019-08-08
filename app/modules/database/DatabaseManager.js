@@ -33,8 +33,12 @@ const logger = new Logger('Database manager');
  * ((object, callback, options)), find: ((object, callback, options))}}
  */
 const DatabaseManager = {
+  getDBPathParts(dbName) {
+    return [DB_FILE_PREFIX, `${dbName}${DB_FILE_EXTENSION}`];
+  },
+
   getDBFullPath(dbName) {
-    return FileManager.getFullPath(DB_FILE_PREFIX, `${dbName}${DB_FILE_EXTENSION}`);
+    return FileManager.getFullPath(...DatabaseManager.getDBPathParts(dbName));
   },
 
   getSecureKey() {
