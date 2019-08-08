@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import { ISSUES_SECTION } from './AFSectionConstants';
-import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import FeatureManager from '../../../../modules/util/FeatureManager';
 import translate from '../../../../utils/translate';
@@ -100,7 +99,7 @@ class AFIssues extends Component {
 
   render() {
     const content = [];
-    if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ISSUE)) {
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_ISSUE)) {
       content.push(<Button
         bsStyle="primary"
         key={Math.random()}

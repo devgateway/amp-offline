@@ -1,10 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import Logger from '../../../../../../modules/util/LoggerManager';
 import AFField from '../../../components/AFField';
 import styles from '../AFFunding.css';
-import * as FMC from '../../../../../../utils/constants/FeatureManagerConstants';
 import FeatureManager from '../../../../../../modules/util/FeatureManager';
 import { orgFormatter } from '../../AFOrganizations';
 
@@ -32,7 +31,7 @@ export default class AFFundingOrganizationSelect extends Component {
   }
 
   render() {
-    if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_FUNDING_SEARCH_ORGANIZATION)) {
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_FUNDING_SEARCH_ORGANIZATION)) {
       return (<div className={styles.funding_org}>
         <AFField
           parent={this.props.activity} fieldPath={ActivityConstants.DONOR_ORGANIZATION}

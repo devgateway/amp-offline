@@ -2,14 +2,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormControl, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import BudgetCode from './organization/BudgetCode';
 import { ORGANIZATIONS } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
-import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import { RESPONSIBLE_ORGANIZATION_BUDGETS_PATH } from '../../../../utils/constants/FieldPathConstants';
 import AFOption from '../components/AFOption';
 import AFUtils from './../util/AFUtils';
@@ -136,7 +135,7 @@ class AFOrganizations extends Component {
             <AFField
               parent={this.props.activity}
               fieldPath={ActivityConstants.DONOR_ORGANIZATION} extraParams={extraParams}
-              fmPath={FMC.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION}
+              fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION}
               onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.DONOR_ORGANIZATION, VC.DONOR_AGENCY)}
               onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.DONOR_ORGANIZATION, VC.DONOR_AGENCY)} />
           </Col>

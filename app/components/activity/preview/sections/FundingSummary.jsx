@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import Section from './Section';
 import APField from '../components/APField';
 import * as VC from '../../../../utils/constants/ValueConstants';
 import * as FPC from '../../../../utils/constants/FieldPathConstants';
-import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
@@ -68,11 +67,11 @@ class FundingSummary extends Component {
       measuresTotals[ub] = this.props.activityFundingTotals.getTotals(ub, {});
     }
     // Other measures: "Total MTEF Projections".
-    if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.MTEF_PROJECTIONS)) {
       measuresTotals[VC.MTEF_PROJECTIONS] = this.props.activityFundingTotals.getMTEFTotal();
     }
     // Other measures: "Delivery rate".
-    if (FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DELIVERY_RATE)) {
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_DELIVERY_RATE)) {
       const actualCommitments = measuresTotals[`${VC.ACTUAL} ${ActivityConstants.COMMITMENTS}`];
       const actualDisbursements = measuresTotals[`${VC.ACTUAL} ${ActivityConstants.DISBURSEMENTS}`];
       let value = 0;

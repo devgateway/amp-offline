@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
@@ -10,7 +10,6 @@ import fundingStyles from './AFFundingContainer.css';
 import AFMTEFProjectionItem from './AFMTEFProjectionItem';
 import * as Utils from '../../../../../utils/Utils';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 
 const logger = new Logger('AF MTEF container');
 
@@ -51,7 +50,7 @@ export default class AFMTEFProjectionContainer extends Component {
   }
 
   render() {
-    if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)) {
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.MTEF_PROJECTIONS)) {
       const { mtefProjections, handleRemoveItem, handleNewItem } = this.props;
       const hasErrors = this.props.hasErrors(mtefProjections);
       const open = this.props.funding.mtefSectionOpen;

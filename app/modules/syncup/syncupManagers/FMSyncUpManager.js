@@ -1,8 +1,7 @@
-import { Constants } from 'amp-ui';
+import { Constants, FeatureManagerConstants } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import { FEATURE_MANAGER_URL } from '../../connectivity/AmpApiConstants';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
-import * as FMPaths from '../../../utils/constants/FeatureManagerConstants';
 import Logger from '../../util/LoggerManager';
 import FMHelper from '../../helpers/FMHelper';
 import FeatureManager from '../../util/FeatureManager';
@@ -19,7 +18,7 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
     super(Constants.SYNCUP_TYPE_FEATURE_MANAGER);
-    this.fmPaths = Object.values(FMPaths);
+    this.fmPaths = Object.values(FeatureManagerConstants);
   }
 
   doAtomicSyncUp() {
