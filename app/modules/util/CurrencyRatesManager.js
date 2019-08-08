@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import translate from '../../utils/translate';
-import { NOTIFICATION_ORIGIN_CURRENCY_MANAGER } from '../../utils/constants/ErrorConstants';
 import ErrorNotificationHelper from '../../modules/helpers/ErrorNotificationHelper';
 import DateUtils from '../../utils/DateUtils';
 
@@ -112,7 +111,7 @@ export default class CurrencyRatesManager {
   _getCurrencyError(errorMesage) {
     const notifErrorCurrency = ErrorNotificationHelper.createNotification({
       message: translate(errorMesage),
-      origin: NOTIFICATION_ORIGIN_CURRENCY_MANAGER
+      origin: ErrorConstants.NOTIFICATION_ORIGIN_CURRENCY_MANAGER
     });
     return notifErrorCurrency;
   }

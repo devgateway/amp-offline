@@ -1,10 +1,9 @@
 import encoding from 'text-encoding';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import { LOGIN_URL } from '../connectivity/AmpApiConstants';
 import ConnectionHelper from '../../modules/connectivity/ConnectionHelper';
 import store from '../../index';
 import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_AUTHENTICATION } from '../../utils/constants/ErrorConstants';
 import { hexBufferToString } from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -66,7 +65,7 @@ export default class Auth {
         .catch((err) => {
           reject(new Notification({
             message: `Key derivation failed: ${err.message}`,
-            origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+            origin: ErrorConstants.NOTIFICATION_ORIGIN_AUTHENTICATION
           }));
         });
     });

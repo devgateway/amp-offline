@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import * as UserHelper from '../../helpers/UserHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
@@ -16,7 +16,6 @@ import ContactHelper from '../../helpers/ContactHelper';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { getActivityResourceUuids } from '../../../actions/ResourceAction';
 import ResourceHelper from '../../helpers/ResourceHelper';
-import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Activity push to AMP manager');
 
@@ -123,7 +122,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     }
     return Promise.reject(new Notification({
       message: 'SyncupDeniedMustRelogin',
-      origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
+      origin: ErrorConstants.NOTIFICATION_ORIGIN_API_SYNCUP
     }));
   }
 
@@ -242,7 +241,8 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // If we got an EP result, no matter if the import was rejected, then the push was successful.
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
-    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    const isConnectivityError = error instanceof Notification && error.errorCode ===
+      ErrorConstants.ERROR_CODE_NO_CONNECTIVITY;
     if (pushResult || !isConnectivityError) {
       this._processed.add(activity.id);
     }
@@ -324,7 +324,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
       if (error instanceof Notification) {
         error.replacePairs = error.replacePairs || [];
         error.prefix = prefix;
-        if (error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY) {
+        if (error.errorCode === ErrorConstants.ERROR_CODE_NO_CONNECTIVITY) {
           genericError = error.shallowClone();
           genericError.prefix = '';
         }

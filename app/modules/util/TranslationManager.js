@@ -1,9 +1,8 @@
 import Backend from 'i18next-sync-fs-backend';
 import i18next from 'i18next';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import TranslationSyncUpManager from '../syncup/syncupManagers/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_I18NEXT } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from './FileManager';
@@ -117,7 +116,7 @@ const TranslationManager = {
       }
       return i18next.use(Backend).init(i18nOptions, (err) => {
         if (err) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_I18NEXT }));
+          reject(new Notification({ message: err.toString(), origin: ErrorConstants.NOTIFICATION_ORIGIN_I18NEXT }));
         } else {
           resolve();
         }
@@ -130,7 +129,7 @@ const TranslationManager = {
     return new Promise((resolve, reject) => {
       i18next.changeLanguage(lang, (err) => {
         if (err) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_I18NEXT }));
+          reject(new Notification({ message: err.toString(), origin: ErrorConstants.NOTIFICATION_ORIGIN_I18NEXT }));
         } else {
           resolve(lang);
         }

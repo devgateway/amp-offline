@@ -1,12 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import Moment from 'moment';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import ElectronUpdater from './ElectronUpdater';
 import RequestConfig from '../connectivity/RequestConfig';
 import Logger from '../util/LoggerManager';
 import { ELECTRON_UPDATER_CHECK_URL } from '../connectivity/AmpApiConstants';
 import * as Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_UPDATE } from '../../utils/constants/ErrorConstants';
 import translate from '../../utils/translate';
 import * as Utils from '../../utils/Utils';
 import NumberUtils from '../../utils/NumberUtils';
@@ -43,7 +42,7 @@ export default class ElectronUpdaterManager {
       return new ElectronUpdaterManager(progressUpdateFunc);
     } catch (errorObject) {
       logger.error(`${errorObject}`);
-      return Promise.reject(new Notification({ origin: NOTIFICATION_ORIGIN_UPDATE, errorObject }));
+      return Promise.reject(new Notification({ origin: ErrorConstants.NOTIFICATION_ORIGIN_UPDATE, errorObject }));
     }
   }
 

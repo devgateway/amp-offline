@@ -1,9 +1,8 @@
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import Notification from './NotificationHelper';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Fields helper');
 
@@ -67,7 +66,7 @@ const FieldsHelper = {
       // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
       return Promise.reject(new Notification({
         message: 'noUniqueFieldsTree',
-        origin: NOTIFICATION_ORIGIN_DATABASE
+        origin: ErrorConstants.NOTIFICATION_ORIGIN_DATABASE
       }));
     });
   },

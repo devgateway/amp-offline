@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
 import InfoMessage from '../common/InfoMessage';
@@ -13,10 +13,6 @@ import DateUtils from '../../utils/DateUtils';
 import translate from '../../utils/translate';
 import FollowUp from '../notifications/followup';
 import ConfirmationAlert from '../notifications/confirmationAlert';
-import {
-  NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
-  NOTIFICATION_SEVERITY_WARNING
-} from '../../utils/constants/ErrorConstants';
 import { STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import {
   dismissSyncAndChooseWorkspace,
@@ -182,8 +178,8 @@ const syncConfirmationAlert = (syncUpReducer) => {
   const message = SyncUpManager.getSyncUpStatusMessage();
   const syncNotification = new Notification({
     message,
-    origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
-    severity: NOTIFICATION_SEVERITY_WARNING
+    origin: ErrorConstants.NOTIFICATION_ORIGIN_SYNCUP_PROCESS,
+    severity: ErrorConstants.NOTIFICATION_SEVERITY_WARNING
   });
   // build action buttons
   const proceedWithLogout = new FollowUp({

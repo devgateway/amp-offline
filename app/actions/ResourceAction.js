@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -30,7 +30,6 @@ import DateUtils from '../utils/DateUtils';
 import FileManager from '../modules/util/FileManager';
 import FileDialog from '../modules/util/FileDialog';
 import Notification from '../modules/helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_RESOURCE } from '../utils/constants/ErrorConstants';
 import { addMessage } from './NotificationAction';
 import RepositoryManager from '../modules/repository/RepositoryManager';
 import translate from '../utils/translate';
@@ -317,4 +316,5 @@ export const saveFileDialog = (srcFile, fileName) => (dispatch) => {
   }
 };
 
-const toNotif = (message) => new Notification({ message, origin: NOTIFICATION_ORIGIN_RESOURCE, translateMsg: true });
+const toNotif = (message) => new Notification(
+  { message, origin: ErrorConstants.NOTIFICATION_ORIGIN_RESOURCE, translateMsg: true });

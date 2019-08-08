@@ -1,12 +1,8 @@
 /* eslint no-else-return: 0*/
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
 import Notification from '../helpers/NotificationHelper';
-import {
-  NOTIFICATION_ORIGIN_API_SECURITY,
-  NOTIFICATION_ORIGIN_AUTHENTICATION
-} from '../../utils/constants/ErrorConstants';
 import Logger from '../util/LoggerManager';
 
 const logger = new Logger('Login manager');
@@ -29,7 +25,7 @@ const LoginManager = {
               } else {
                 return reject(new Notification({
                   message: 'wrongPassword',
-                  origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+                  origin: ErrorConstants.NOTIFICATION_ORIGIN_AUTHENTICATION
                 }));
               }
             }).catch(reject);
@@ -38,14 +34,14 @@ const LoginManager = {
           } else {
             return reject(new Notification({
               message: 'AMPUnreachableError',
-              origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+              origin: ErrorConstants.NOTIFICATION_ORIGIN_AUTHENTICATION
             }));
           }
         }).catch(reject);
       } else {
         reject(new Notification({
           message: 'AMPOfflineUnavailableError',
-          origin: NOTIFICATION_ORIGIN_AUTHENTICATION
+          origin: ErrorConstants.NOTIFICATION_ORIGIN_AUTHENTICATION
         }));
       }
     });
@@ -79,7 +75,7 @@ const LoginManager = {
           )).catch(reject)
         )).catch((error) => {
           // If error was caused because an authentication problem then we clear ampOfflinePassword.
-          if (error.origin === NOTIFICATION_ORIGIN_API_SECURITY) {
+          if (error.origin === ErrorConstants.NOTIFICATION_ORIGIN_API_SECURITY) {
             return this.clearCredentialsInDB(email).then(() => reject(error)).catch(() => reject(error));
           }
           reject(error);

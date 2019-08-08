@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import store from '../index';
 import * as URLUtils from '../utils/URLUtils';
 import { SYNC_STATUS_COMPLETED } from '../utils/constants/syncConstants';
@@ -12,7 +12,6 @@ import {
   getStatusNotification,
   isAmpUsableByCurrentClient
 } from './ConnectivityAction';
-import { ERROR_CODE_ACCESS_DENIED, ERROR_CODE_NO_CONNECTIVITY } from '../utils/constants/ErrorConstants';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
 
 // Types of redux actions
@@ -90,9 +89,9 @@ export function startSyncUp(historyData) {
 
 function getSyncErrorByCode(error: NotificationHelper) {
   switch (error.errorCode) {
-    case ERROR_CODE_NO_CONNECTIVITY:
+    case ErrorConstants.ERROR_CODE_NO_CONNECTIVITY:
       return `${translate('defaultSyncError')} ${error.message}`;
-    case ERROR_CODE_ACCESS_DENIED:
+    case ErrorConstants.ERROR_CODE_ACCESS_DENIED:
       return error.message;
     default:
       return translate('defaultSyncError');

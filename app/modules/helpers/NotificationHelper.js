@@ -1,6 +1,6 @@
+import { ErrorConstants } from 'amp-ui';
 import stringifyObject from 'stringify-object';
 import translate from '../../utils/translate';
-import * as constants from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('Notification helper');
@@ -74,7 +74,7 @@ export default class NotificationHelper {
    */
   constructor({
                 message, prefix, details, origin, errorCode, errorObject, translateMsg = true, translateDetails = true,
-                replacePairs, severity = constants.NOTIFICATION_SEVERITY_ERROR
+                replacePairs, severity = ErrorConstants.NOTIFICATION_SEVERITY_ERROR
               }) {
     logger.log('constructor');
     this._prefix = prefix || '';

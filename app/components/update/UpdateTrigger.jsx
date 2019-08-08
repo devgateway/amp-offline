@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { ErrorConstants } from 'amp-ui';
 import translate from '../../utils/translate';
 import FollowUp from '../../components/notifications/followup';
 import ConfirmationAlert from '../../components/notifications/confirmationAlert';
 import Notification from '../../modules/helpers/NotificationHelper';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
-import { NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_WARNING } from '../../utils/constants/ErrorConstants';
 import {
   getNewClientVersion,
   goToDownloadPage,
@@ -85,8 +85,8 @@ const updateConfirmationAlert = (forceUpdate) => {
   const message = forceUpdate ? translate('offlineVersionCritical') : translate('offlineVersionOutdated');
   const downloadNotification = new Notification({
     message,
-    origin: NOTIFICATION_ORIGIN_UPDATE_CHECK,
-    severity: NOTIFICATION_SEVERITY_WARNING
+    origin: ErrorConstants.NOTIFICATION_ORIGIN_UPDATE_CHECK,
+    severity: ErrorConstants.NOTIFICATION_SEVERITY_WARNING
   });
   const proceedWithDownload = new FollowUp({
     type: STATE_DOWNLOAD_UPDATE_CONFIRMED

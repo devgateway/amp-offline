@@ -2,12 +2,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import Logger from '../../modules/util/LoggerManager';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import { goToSettingsPage, STATE_GO_TO_SETTINGS } from '../../actions/SettingAction';
 import Notification from '../../modules/helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_UPDATE_CHECK, NOTIFICATION_SEVERITY_WARNING } from '../../utils/constants/ErrorConstants';
 import FollowUp from '../notifications/followup';
 import translate from '../../utils/translate';
 import ConfirmationAlert from '../notifications/confirmationAlert';
@@ -60,8 +59,8 @@ class SettingsTrigger extends Component {
 const urlsConfirmationAlert = () => {
   const urlNotification = new Notification({
     message: translate('urlChanges'),
-    origin: NOTIFICATION_ORIGIN_UPDATE_CHECK,
-    severity: NOTIFICATION_SEVERITY_WARNING
+    origin: ErrorConstants.NOTIFICATION_ORIGIN_UPDATE_CHECK,
+    severity: ErrorConstants.NOTIFICATION_SEVERITY_WARNING
   });
   const proceed = new FollowUp({
     type: STATE_GO_TO_SETTINGS
