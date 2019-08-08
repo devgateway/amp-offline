@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
-import { ActivityConstants } from 'amp-ui';
-import * as FM from './FeatureManagerConstants';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import { ORG_ROLE_NAMES } from './ValueConstants';
 
 /**
@@ -70,8 +69,8 @@ ALTERNATE_VALUE_PATH[ActivityConstants.MODIFIED_ON] = ActivityConstants.CLIENT_U
 
 /* FM paths for some activity fields that are always present in fields def, but may be hidden from display through FM */
 export const ACTIVITY_FIELDS_FM_PATH = {};
-ACTIVITY_FIELDS_FM_PATH[ActivityConstants.MODIFIED_BY] = FM.ACTIVITY_LAST_UPDATED_BY;
-ACTIVITY_FIELDS_FM_PATH[ActivityConstants.MODIFIED_ON] = FM.ACTIVITY_LAST_UPDATED_ON;
+ACTIVITY_FIELDS_FM_PATH[ActivityConstants.MODIFIED_BY] = FeatureManagerConstants.ACTIVITY_LAST_UPDATED_BY;
+ACTIVITY_FIELDS_FM_PATH[ActivityConstants.MODIFIED_ON] = FeatureManagerConstants.ACTIVITY_LAST_UPDATED_ON;
 
 /* Possible Options fields path prefixes */
 export const PREFIX_ACTIVITY = null;

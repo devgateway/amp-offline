@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import styles from './ActivityPreview.css';
-import * as FMC from '../../../utils/constants/FeatureManagerConstants';
 import APIdentification from './sections/APIdentification';
 import { APInternalIds } from './sections/APInternalIds';
 import APPlanning from './sections/APPlanning';
@@ -33,21 +32,21 @@ export default class MainGroup extends Component {
   render() {
     // TODO (iteration 2+) hide sections that are not directly connected to a single field (e.g. planning, program)
     return (<div className={styles.main_group_container}>
-      <APIdentification fmPath={FMC.ACTIVITY_IDENTIFICATION} />
+      <APIdentification fmPath={FeatureManagerConstants.ACTIVITY_IDENTIFICATION} />
       <APInternalIds
         sectionPath={ActivityConstants.ACTIVITY_INTERNAL_IDS} />
       <APPlanning
-        fmPath={FMC.ACTIVITY_PLANNING}
+        fmPath={FeatureManagerConstants.ACTIVITY_PLANNING}
         inline={false}
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
       <APLocation
         sectionPath={ActivityConstants.LOCATIONS} tablify columns={ActivityConstants.ACTIVITY_LOCATION_COLS}
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
       <APProgram
-        fieldNameClass={styles.sector_title} fmPath={FMC.ACTIVITY_PROGRAM}
+        fieldNameClass={styles.sector_title} fmPath={FeatureManagerConstants.ACTIVITY_PROGRAM}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APSector
-        fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FMC.ACTIVITY_SECTORS}
+        fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FeatureManagerConstants.ACTIVITY_SECTORS}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APFundingSources
         sectionPath={ActivityConstants.TOTAL_NUMBER_OF_FUNDING_SOURCES} fieldValueClass={styles.box_field_value} />
@@ -55,12 +54,13 @@ export default class MainGroup extends Component {
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value}
         sectionPath={ActivityConstants.FUNDINGS} />
       <APRelatedOrganizations
-        fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FMC.ACTIVITY_ORGANIZATIONS}
+        fieldNameClass={styles.sector_title} fieldValueClass={''}
+        fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APIssues sectionPath={ActivityConstants.ISSUES} />
       <APContact
         fieldNameClass={styles.hidden} fieldValueClass={styles.box_field_value_tight}
-        columns={ActivityConstants.ACTIVITY_CONTACT_COLS} fmPath={FMC.ACTIVITY_CONTACT} />
+        columns={ActivityConstants.ACTIVITY_CONTACT_COLS} fmPath={FeatureManagerConstants.ACTIVITY_CONTACT} />
       <APStructures sectionPath={ActivityConstants.STRUCTURES} />
       <APDocumentPage
         sectionPath={ActivityConstants.ACTIVITY_DOCUMENTS}

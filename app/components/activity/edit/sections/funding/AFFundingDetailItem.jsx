@@ -4,13 +4,12 @@
 /* eslint-disable react/jsx-indent */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import styles from './AFFundingDetailItem.css';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import translate from '../../../../../utils/translate';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
@@ -82,7 +81,8 @@ export default class AFFundingDetailItem extends Component {
     }];
     options.forEach(o => {
       const collection = ORG_TYPE_NAME_2_COLLECTION[o.value];
-      if (FeatureManager.isFMSettingEnabled(FMC[o.id]) && activity[collection] && activity[collection].length > 0) {
+      if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants[o.id]) &&
+        activity[collection] && activity[collection].length > 0) {
         filter.push({ path: 'value', value: o.value });
       }
     });

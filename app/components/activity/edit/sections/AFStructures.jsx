@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import isNumber from 'is-number';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { STRUCTURES } from './AFSectionConstants';
@@ -14,7 +14,6 @@ import AFViewStructure from './structures/AFViewStructure';
 import AFMapWindow from './structures/AFMapWindow';
 import MapTilesUtils from '../../../../utils/MapTilesUtils';
 import FeatureManager from '../../../../modules/util/FeatureManager';
-import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 
 const logger = new Logger('AF Structures');
 
@@ -248,7 +247,7 @@ class AFStructures extends Component {
     this.preProcessForIds();
     return (<div className={afStyles.full_width}>
 
-      {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_STRUCTURES_ADD_STRUCTURE) ? <Button
+      {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_STRUCTURES_ADD_STRUCTURE) ? <Button
         bsStyle="primary" className={afStyles.button}
         onClick={this.handleAddEmptyStructure}>{translate('Add Structure')}
       </Button> : null}

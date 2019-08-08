@@ -2,10 +2,9 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import AFField from './../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
@@ -57,7 +56,7 @@ export default class Item extends Component {
               showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_MEASURE) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Measure')}:</span>
                 <a
@@ -66,7 +65,7 @@ export default class Item extends Component {
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ISSUE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ISSUE) ?
               <a
                 title={translate('Delete Issue')}
                 className={styles.delete}
@@ -106,7 +105,7 @@ export default class Item extends Component {
               type={Types.DATE} showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_ACTOR) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Actor')}:</span>
                 <a
@@ -115,7 +114,7 @@ export default class Item extends Component {
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_MEASURE) ?
               <a
                 title={translate('Delete Measure')}
                 className={styles.delete}
@@ -151,7 +150,7 @@ export default class Item extends Component {
               type={Types.TEXT_AREA} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ACTOR) ?
               <a
                 title={translate('Delete Actor')}
                 className={[styles.delete, styles.delete_actor].join(' ')}

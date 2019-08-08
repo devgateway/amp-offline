@@ -1,7 +1,6 @@
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import Utils from '../../../../utils/Utils';
 import FeatureManager from '../../../../modules/util/FeatureManager';
-import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const orgTypes = {
@@ -52,7 +51,7 @@ const AFUtils = {
   checkIfAutoAddFundingEnabled(orgTypeCode) {
     const orgTypeConstantName = orgTypes[orgTypeCode].constant;
     const fmc = `ACTIVITY_ORGANIZATIONS_${orgTypeConstantName}_ADD_FUNDING_AUTO`;
-    return FeatureManager.isFMSettingEnabled(FMC[fmc]);
+    return FeatureManager.isFMSettingEnabled(FeatureManagerConstants[fmc]);
   },
 
   checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization, activityFieldsManager, activity) {

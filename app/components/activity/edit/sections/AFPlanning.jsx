@@ -2,24 +2,22 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Checkbox, Col, Grid, Row } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import afStyles from '../ActivityForm.css';
 import { PLANNING } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
-import {
-  ACTIVITY_SAME_AS_PROPOSED_APPROVAL_DATE,
-  ACTIVITY_SAME_AS_PROPOSED_START_DATE
-} from '../../../../utils/constants/FeatureManagerConstants';
 import FeatureManager from '../../../../modules/util/FeatureManager';
 import translate from '../../../../utils/translate';
 import { updateActivityGlobalState } from '../../../../actions/ActivityAction';
 import DateUtils from '../../../../utils/DateUtils';
 
 const SAME_AS_FM_PATH = {};
-SAME_AS_FM_PATH[ActivityConstants.SAME_AS_PROPOSED_START_DATE_LABEL] = ACTIVITY_SAME_AS_PROPOSED_START_DATE;
-SAME_AS_FM_PATH[ActivityConstants.SAME_AS_PROPOSED_APPROVAL_DATE_LABEL] = ACTIVITY_SAME_AS_PROPOSED_APPROVAL_DATE;
+SAME_AS_FM_PATH[ActivityConstants.SAME_AS_PROPOSED_START_DATE_LABEL] =
+  FeatureManagerConstants.ACTIVITY_SAME_AS_PROPOSED_START_DATE;
+SAME_AS_FM_PATH[ActivityConstants.SAME_AS_PROPOSED_APPROVAL_DATE_LABEL] =
+  FeatureManagerConstants.ACTIVITY_SAME_AS_PROPOSED_APPROVAL_DATE;
 
 const logger = new Logger('AF Planning');
 

@@ -3,12 +3,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Panel } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
 import { FIELD_NAME } from '../../../../utils/constants/FieldPathConstants';
-import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
@@ -85,8 +84,8 @@ class AFDocument extends Component {
     this.toAction = this.toAction.bind(this);
     this.onAdd = this.onAdd.bind(this);
     this.onCancel = this.onCancel.bind(this);
-    this.allowAddDocuments = FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DOCUMENTS_ADD_DOCUMENT);
-    this.allowAddWebLinks = FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DOCUMENTS_ADD_WEBLINK);
+    this.allowAddDocuments = FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_DOCUMENTS_ADD_DOCUMENT);
+    this.allowAddWebLinks = FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_DOCUMENTS_ADD_WEBLINK);
     this.state = {
       docs: this.getDocuments(context),
       docFormOpened: false,

@@ -1,10 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import APLabel from '../../components/APLabel';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import styles from './APFundingTransactionTypeItem.css';
 import stylesMTEF from './APFundingMTEF.css';
 import APFundingMTEFItem from './APFundingMTEFItem';
@@ -53,7 +52,7 @@ class APFundingMTEFSection extends Component {
     const { funding } = this.props;
     const types = [ActivityConstants.PIPELINE, ActivityConstants.PROJECTION];
     const currency = this.context.currentWorkspaceSettings.currency.code;
-    if (FeatureManager.isFMSettingEnabled(FMC.MTEF_PROJECTIONS)
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.MTEF_PROJECTIONS)
       && funding[ActivityConstants.MTEF_PROJECTIONS] && funding[ActivityConstants.MTEF_PROJECTIONS].length > 0) {
       const content = [];
       types.forEach(type => {

@@ -4,13 +4,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import translate from '../../../../../utils/translate';
 import * as Types from '../../components/AFComponentTypes';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
@@ -56,17 +55,17 @@ class AFMTEFProjectionItem extends Component {
             <td>
               <div className={styles.row}>
                 <AFField
-                  parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_PROJECTION}
+                  parent={mtefItem} className={styles.cell_3} fmPath={FeatureManagerConstants.MTEF_PROJECTIONS_PROJECTION}
                   fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.PROJECTION}`} />
                 <AFField
-                  parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_AMOUNT}
+                  parent={mtefItem} className={styles.cell_3} fmPath={FeatureManagerConstants.MTEF_PROJECTIONS_AMOUNT}
                   fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.AMOUNT}`} />
                 <AFField
-                  parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_CURRENCY}
+                  parent={mtefItem} className={styles.cell_3} fmPath={FeatureManagerConstants.MTEF_PROJECTIONS_CURRENCY}
                   fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.CURRENCY}`} defaultValueAsEmptyObject
                   extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
                 <AFField
-                  parent={mtefItem} className={styles.cell_3} fmPath={FMC.MTEF_PROJECTIONS_DATE}
+                  parent={mtefItem} className={styles.cell_3} fmPath={FeatureManagerConstants.MTEF_PROJECTIONS_DATE}
                   fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MTEF_PROJECTIONS}~${ActivityConstants.PROJECTION_DATE}`} type={Types.DATE_YEAR}
                   extraParams={{ range, startYear, isFiscalCalendar }} />
               </div>
