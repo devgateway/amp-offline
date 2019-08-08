@@ -19,6 +19,7 @@ import Message from './message';
 import FollowUp from './followup';
 import ConfirmationAlert from './confirmationAlert';
 import Switcher from '../i18n/Switcher';
+import MessageWithActions from './MessageWithActions';
 
 class Notifications extends PureComponent {
   static propTypes = {
@@ -93,6 +94,7 @@ class Notifications extends PureComponent {
 
     const alert: ConfirmationAlert = confirmationAlerts[0];
     const isTranslated = alert.isTranslated;
+    const message = isTranslated ? alert.notification.message : translate(alert.notification.message);
 
     const content = [
       <Modal.Header key="notification-header">
@@ -102,7 +104,7 @@ class Notifications extends PureComponent {
         </Modal.Title>
       </Modal.Header>,
       <Modal.Body key="notification-body" className={styles.body}>
-        {isTranslated ? alert.notification.message : translate(alert.notification.message)}
+        <MessageWithActions message={message} actions={alert.notification.tagActions} />
       </Modal.Body>,
       <Modal.Footer key="notification-footer" className={styles.footer}>
         {alert.actions.map((followUp: FollowUp) => (

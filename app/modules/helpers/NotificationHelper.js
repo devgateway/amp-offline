@@ -2,6 +2,7 @@ import stringifyObject from 'stringify-object';
 import translate from '../../utils/translate';
 import * as constants from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
+import ActionDef from '../util/ActionDef';
 
 const logger = new Logger('Notification helper');
 
@@ -20,14 +21,16 @@ export default class NotificationHelper {
    * @param errorCode
    * @param errorObject
    * @param translateMsg translate the message or not (default true for now, since was used this since AMPOFFLINE-122)
+   * @param tagLinks an array of links to use to replace each %tag%
    * @param severity
    */
   constructor({
-    message, origin, errorCode, errorObject, translateMsg = true,
+    message, origin, errorCode, errorObject, translateMsg = true, tagActions,
     severity = constants.NOTIFICATION_SEVERITY_ERROR
   }) {
     logger.log('constructor');
     this.translateMsg = translateMsg;
+    this.tagActions = tagActions;
     if (errorObject) {
       this.message = errorObject.message;
       this.internalCode = errorObject.internalCode;
@@ -95,6 +98,14 @@ export default class NotificationHelper {
 
   get severity() {
     return this._severity;
+  }
+
+  get tagActions() {
+    return this._tagActions;
+  }
+
+  set tagActions(tagActions: Array<ActionDef>) {
+    this._tagActions = tagActions;
   }
 
   set message(message) {
