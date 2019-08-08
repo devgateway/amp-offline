@@ -36,6 +36,7 @@ export default class LoggerManager {
         streams: [{ level: settings.level, path: file }
         ]
       });
+      this.bunyanLog.info('LoggerManager initialized');
     }
     return this.bunyanLog;
   }

@@ -3,6 +3,7 @@ import Logger from '../../util/LoggerManager';
 import FileManager from '../../util/FileManager';
 import {
   BACKUP_FILE_EXTENSION,
+  COLLECTION_SANITY_CHECK,
   DB_FILE_EXTENSION,
   DB_FILE_PREFIX,
   TMP_FILE_EXTENSION,
@@ -17,6 +18,7 @@ import DatabaseCleanup from './DatabaseCleanup';
 import VersionUtils from '../../../utils/VersionUtils';
 import DatabaseTransition from './DatabaseTransition';
 import * as Utils from '../../../utils/Utils';
+import ErrorReportManager from '../../status/ErrorReportManager';
 
 const logger = new Logger('DatabaseSanityManager');
 
@@ -84,6 +86,13 @@ const DatabaseSanityManager = {
       }
     }
     if (isSaveToDB) {
+      if (status.isStandard && !status.details.errorReportPath) {
+        const errorReport = new ErrorReportManager(false);
+        return errorReport.generate().then(errorReportPath => {
+          status.details.errorReportPath = errorReportPath;
+          return DatabaseSanityManager._saveOrUpdate(status);
+        });
+      }
       return DatabaseSanityManager._saveOrUpdate(status);
     }
     return status;
@@ -201,7 +210,7 @@ const DatabaseSanityManager = {
   getStandardStatus() {
     logger.log('getStandardStatus');
     return DatabaseSanityManager._getPendingStandardStatus()
-      .then(standardStatus => {
+      .then((standardStatus: DatabaseSanityStatus) => {
         if (!standardStatus) {
           standardStatus = new DatabaseSanityStatus(SCC.TYPE_STANDARD);
         }
@@ -227,6 +236,13 @@ const DatabaseSanityManager = {
       .then(() => {
         const dbCleanup = new DatabaseCleanup(status, DatabaseSanityManager.findAllDBNames());
         dbCleanup.run();
+        if (status.isHealFailed) {
+          const errorReport = new ErrorReportManager(false, [COLLECTION_SANITY_CHECK]);
+          return errorReport.generate().then(errorReportPath => {
+            status.details.failureErrorReportPath = errorReportPath;
+            return DatabaseSanityManager._saveOrUpdate(status);
+          });
+        }
         return DatabaseSanityManager._saveOrUpdate(status);
       });
   },

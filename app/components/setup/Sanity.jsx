@@ -25,6 +25,9 @@ import ConfirmationAlert from '../notifications/confirmationAlert';
 import Logger from '../../modules/util/LoggerManager';
 import InProgress from '../common/InProgress';
 import * as SCC from '../../utils/constants/SanityCheckConstants';
+import ActionDef from '../../modules/util/ActionDef';
+import SetupConfig from '../../modules/setup/SetupConfig';
+import * as Utils from '../../utils/URLUtils';
 
 const logger = new Logger('Sanity');
 
@@ -96,8 +99,17 @@ const dbHealingConfirmationAlert = (databaseSanityStatus: DatabaseSanityStatus, 
   let okMsg = 'OK';
   let title = 'AMP Offline Message';
   let okState = STATE_DB_HEAL_PROCEED;
+  const tagActions = [];
   if (isOnFailure) {
-    message = 'dbCleanupFailed';
+    if (databaseSanityStatus.details.failureErrorReportPath) {
+      message = 'dbCleanupFailed';
+      tagActions.push(new ActionDef({ href: Utils.toFileUrl(databaseSanityStatus.details.failureErrorReportPath) }));
+    } else {
+      message = 'dbCleanupFailedFallback';
+      tagActions.push(new ActionDef({ href: Utils.toFileUrl(SetupConfig.getLogsDir()) }));
+      tagActions.push(new ActionDef({ href: Utils.toFileUrl(SetupConfig.getDatabaseDir()) }));
+    }
+    tagActions.push(new ActionDef({ href: Utils.toFileUrl(SetupConfig.getDatabaseDir()) }));
     okState = STATE_DB_HEAL_FAILURE_MSG_VIEWED;
   } else if (isNoDiskSpace) {
     message = 'noDiskSpace';
@@ -106,13 +118,21 @@ const dbHealingConfirmationAlert = (databaseSanityStatus: DatabaseSanityStatus, 
   } else if (databaseSanityStatus.isDBIncompatibilityExpected) {
     message = 'dbCompatibilityError';
   } else {
-    message = 'dbCorrupted';
+    if (databaseSanityStatus.details.errorReportPath) {
+      message = 'dbCorrupted';
+      tagActions.push(new ActionDef({ href: Utils.toFileUrl(databaseSanityStatus.details.errorReportPath) }));
+    } else {
+      message = 'dbCorruptedFallback';
+      tagActions.push(new ActionDef({ href: Utils.toFileUrl(SetupConfig.getLogsDir()) }));
+      tagActions.push(new ActionDef({ href: Utils.toFileUrl(SetupConfig.getDatabaseDir()) }));
+    }
     okMsg = 'cleanup';
     title = 'Confirmation required';
   }
   const dbHealNotification = new Notification({
     message,
     translateMsg: false,
+    tagActions,
     origin: NOTIFICATION_ORIGIN_SANITY_CHECK,
     severity: NOTIFICATION_SEVERITY_ERROR
   });

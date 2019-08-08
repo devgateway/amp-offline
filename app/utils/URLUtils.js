@@ -1,5 +1,6 @@
 import { shell } from 'electron';
 import URI from 'urijs';
+import fileUrl from 'file-url';
 import { history } from '../index';
 import Logger from '../modules/util/LoggerManager';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
@@ -89,6 +90,10 @@ const urlUtils = {
    */
   parseQuery(url) {
     return URI.parseQuery(url);
+  },
+
+  toFileUrl(filePath) {
+    return fileUrl(filePath);
   }
 
 };
