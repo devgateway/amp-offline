@@ -55,4 +55,20 @@ export default class DatabaseSanityStatusDetails {
     return this[SCC.TOTAL_DB_FILES_FOUND];
   }
 
+  set errorReportPath(errorReportPath: string) {
+    this[SCC.ERROR_REPORT_PATH] = errorReportPath;
+  }
+
+  get errorReportPath() {
+    return this[SCC.ERROR_REPORT_PATH];
+  }
+
+  set failureErrorReportPath(failureErrorReportPath: string) {
+    this[SCC.FAILURE_ERROR_REPORT_PATH] = failureErrorReportPath;
+  }
+
+  get failureErrorReportPath() {
+    return this[SCC.FAILURE_ERROR_REPORT_PATH];
+  }
+
 }
