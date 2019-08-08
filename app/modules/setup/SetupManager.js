@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import {
   AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
@@ -8,7 +8,6 @@ import {
 import Notification from '../helpers/NotificationHelper';
 import TranslationManager from '../util/TranslationManager';
 import translate from '../../utils/translate';
-import { NOTIFICATION_ORIGIN_SETUP } from '../../utils/constants/ErrorConstants';
 import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
 import ConnectionInformation from '../connectivity/ConnectionInformation';
 import AssetsUtils from '../../utils/AssetsUtils';
@@ -105,7 +104,7 @@ const SetupManager = {
     if (!currentUrlToUse) {
       return Promise.reject(new Notification({
         message: translate('wrongSetup'),
-        origin: NOTIFICATION_ORIGIN_SETUP
+        origin: ErrorConstants.NOTIFICATION_ORIGIN_SETUP
       }));
     }
     return ClientSettingsHelper.findSettingById(CSC.SETUP_CONFIG)

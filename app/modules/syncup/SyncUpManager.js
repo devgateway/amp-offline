@@ -1,5 +1,5 @@
 /* eslint "no-nested-ternary": 0 */
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import SyncUpDiff from './SyncUpDiff';
 import SyncUpRunner from './SyncUpRunner';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
@@ -16,7 +16,6 @@ import translate from '../../utils/translate';
 import DateUtils from '../../utils/DateUtils';
 import * as Utils from '../../utils/Utils';
 import * as UserHelper from '../helpers/UserHelper';
-import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorConstants';
 import { addMessage } from '../../actions/NotificationAction';
 import * as CSC from '../../utils/constants/ClientSettingsConstants';
 import SetupManager from '../setup/SetupManager';
@@ -250,7 +249,8 @@ export default class SyncUpManager {
       .catch(errorObject => {
         // no need to reject and interrupt other actions, just log and notify
         logger.error(`Could not properly cleanup old sync up logs: ${errorObject}`);
-        const notification = new ErrorNotificationHelper({ errorObject, origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS });
+        const notification = new ErrorNotificationHelper(
+          { errorObject, origin: ErrorConstants.NOTIFICATION_ORIGIN_SYNCUP_PROCESS });
         store.dispatch(addMessage(notification));
       });
   }

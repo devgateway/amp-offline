@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
 import * as CSC from '../utils/constants/ClientSettingsConstants';
@@ -22,7 +22,6 @@ import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import { newUrlsDetected } from './SettingAction';
 import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
-import * as constants from '../utils/constants/ErrorConstants';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import AmpServer from '../modules/setup/AmpServer';
 
@@ -63,7 +62,7 @@ export function canCurrentVersionStartOrConfirmationNeeded() {
     const replacePairs = [['%current-version%', currentVersion], ['%newest-used%', newestUsed]];
     return new NotificationHelper({
       message: 'oldVersionWarning',
-      origin: constants.NOTIFICATION_ORIGIN_SETUP,
+      origin: ErrorConstants.NOTIFICATION_ORIGIN_SETUP,
       replacePairs
     });
   });

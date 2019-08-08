@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import LanguageHelper from '../../helpers/LanguageHelper';
 import {
@@ -8,7 +8,6 @@ import {
   POST_TRANSLATIONS_URL
 } from '../../connectivity/AmpApiConstants';
 import Notification from '../../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../../utils/constants/ErrorConstants';
 import TranslationManager from '../../util/TranslationManager';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import Logger from '../../util/LoggerManager';
@@ -233,7 +232,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
           Constants.FS_LOCALES_DIRECTORY, localTrnFile)
           .then(() => resolve(copyMasterTrnFile))
           .catch(err =>
-            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }))
+            reject(new Notification(
+              { message: err.toString(), origin: ErrorConstants.NOTIFICATION_ORIGIN_SYNCUP_PROCESS }))
           );
       });
     };

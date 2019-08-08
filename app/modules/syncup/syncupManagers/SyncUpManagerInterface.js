@@ -1,5 +1,5 @@
+import { ErrorConstants } from 'amp-ui';
 import Notification from '../../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_API_SYNCUP } from '../../../utils/constants/ErrorConstants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -107,7 +107,7 @@ export const throwSyncUpError = (message) => {
   throw new Notification({
     errorObject: {
       message,
-      origin: NOTIFICATION_ORIGIN_API_SYNCUP
+      origin: ErrorConstants.NOTIFICATION_ORIGIN_API_SYNCUP
     }
   });
 };

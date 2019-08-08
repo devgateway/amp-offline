@@ -3,11 +3,10 @@
 import rp from 'request-promise';
 import request from 'request';
 import Promise from 'bluebird';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import RequestConfig from './RequestConfig';
 import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import Notification from '../helpers/NotificationHelper';
-import * as EC from '../../utils/constants/ErrorConstants';
 import store from '../../index';
 import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginAction';
 import Logger from '../../modules/util/LoggerManager';
@@ -55,7 +54,7 @@ const ConnectionHelper = {
     const url = requestConfig.url;
     logger.log(url);
     if (!URLUtils.isValidUrl(url)) {
-      return this._reportError(EC.MSG_INVALID_URL, EC.NOTIFICATION_ORIGIN_API_NETWORK);
+      return this._reportError(ErrorConstants.MSG_INVALID_URL, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     }
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
     const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
@@ -78,7 +77,7 @@ const ConnectionHelper = {
           if (shouldRetry && maxRetryAttempts) {
             return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
           } else {
-            return this._reportError(EC.MSG_TIMEOUT, EC.NOTIFICATION_ORIGIN_API_NETWORK);
+            return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
           }
         }
       });
@@ -111,13 +110,13 @@ const ConnectionHelper = {
   _processResultOrRetry({ error, response, body, requestConfig, maxRetryAttempts, shouldRetry, writeStream }) {
     if (error || !(response && response.statusCode >= 200 && response.statusCode < 400) || (body && body.error)) {
       const shouldRetryOnError = Constants.ERRORS_TO_RETRY.filter((value) => (
-        value === (error ? error.code : (body ? body.error : EC.MSG_UNKNOWN_NETWORK_ERROR))
+        value === (error ? error.code : (body ? body.error : ErrorConstants.MSG_UNKNOWN_NETWORK_ERROR))
       ));
       if (shouldRetryOnError.length > 0) {
         if (maxRetryAttempts > 0 && shouldRetry) {
           return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
         } else {
-          return this._reportError(EC.MSG_TIMEOUT, EC.NOTIFICATION_ORIGIN_API_NETWORK);
+          return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
         }
       } else if (response && response.statusCode === 401) {
         // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
@@ -130,29 +129,32 @@ const ConnectionHelper = {
               // If we couldn't relogin online automatically then we logout completely and forward to login page.
               store.dispatch(logoutAction());
             }
-            return this._reportError(null, EC.NOTIFICATION_ORIGIN_API_SECURITY, null, authError);
+            return this._reportError(null, ErrorConstants.NOTIFICATION_ORIGIN_API_SECURITY, null,
+              authError);
           });
       } else {
         // Being here means the server might not be accessible.
         const isAMPunreachable = (error && Constants.Constants.ERRORS_NO_AMP_SERVER.includes(error.code)) || !response;
         const isAccessDenied = response && response.statusCode === 403;
-        const errorCode = isAccessDenied ? EC.ERROR_CODE_ACCESS_DENIED : undefined;
-        const message = isAMPunreachable ? EC.MSG_AMP_UNREACHABLE :
-          error || (ApiErrorConverter.toLocalError(body && body.error)) || EC.MSG_UNKNOWN_NETWORK_ERROR;
+        const errorCode = isAccessDenied ? ErrorConstants.ERROR_CODE_ACCESS_DENIED : undefined;
+        const message = isAMPunreachable ? ErrorConstants.MSG_AMP_UNREACHABLE :
+          error || (ApiErrorConverter.toLocalError(body && body.error)) ||
+          ErrorConstants.MSG_UNKNOWN_NETWORK_ERROR;
         // We need to detect statusCode 403 to throw a security error.
-        const origin = isAccessDenied ? EC.NOTIFICATION_ORIGIN_API_SECURITY : EC.NOTIFICATION_ORIGIN_API_NETWORK;
+        const origin = isAccessDenied ? ErrorConstants.NOTIFICATION_ORIGIN_API_SECURITY :
+          ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK;
         return this._reportError(message, origin, errorCode);
       }
     } else if (response && !response.complete) {
-      return this._reportError('corruptedResponse', EC.NOTIFICATION_ORIGIN_API_NETWORK);
+      return this._reportError('corruptedResponse', ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     } else {
       return writeStream ? response : body;
     }
   },
 
   _reportError(message, origin, errorCode, errorObject) {
-    if (!errorCode && EC.GENERAL_CONNECTION_ERRORS.includes(message)) {
-      errorCode = EC.ERROR_CODE_NO_CONNECTIVITY;
+    if (!errorCode && ErrorConstants.GENERAL_CONNECTION_ERRORS.includes(message)) {
+      errorCode = ErrorConstants.ERROR_CODE_NO_CONNECTIVITY;
     }
     return Promise.reject(ErrorNotificationHelper.createNotification({ message, origin, errorCode, errorObject }));
   }

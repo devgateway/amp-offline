@@ -2,11 +2,10 @@ import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
 import os from 'os';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import AmpClientSecurity from 'amp-client-security';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
 import * as Utils from '../../utils/Utils';
@@ -567,7 +566,7 @@ const DatabaseManager = {
     DatabaseCollection.getInstance().addPromiseAndProcess(task);
   },
 
-  _createNotification(err, origin = NOTIFICATION_ORIGIN_DATABASE) {
+  _createNotification(err, origin = ErrorConstants.NOTIFICATION_ORIGIN_DATABASE) {
     return new Notification({ message: `${translate('Database Error')}: ${err.toString()}`, origin });
   }
 };

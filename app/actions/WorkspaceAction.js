@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import WorkspaceManager from '../modules/workspace/WorkspaceManager';
 import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
@@ -11,7 +11,6 @@ import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import { isForceSyncUp } from './SyncUpAction';
 
 import * as URLUtils from '../utils/URLUtils';
-import { NOTIFICATION_ORIGIN_WORKSPACE } from '../utils/constants/ErrorConstants';
 import { FIELD_OPTIONS, PREFIX_COMMON } from '../utils/constants/FieldPathConstants';
 import PossibleValuesManager from '../modules/field/PossibleValuesManager';
 
@@ -52,7 +51,7 @@ function loadWorkspaceData(wsId) {
       if (!teamMember) {
         throw ErrorNotificationHelper.createNotification({
           message: 'Access Denied',
-          origin: NOTIFICATION_ORIGIN_WORKSPACE
+          origin: ErrorConstants.NOTIFICATION_ORIGIN_WORKSPACE
         });
       }
       const currency = {};

@@ -1,14 +1,9 @@
 import { Alert } from 'react-bootstrap';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import Notification from '../../modules/helpers/NotificationHelper';
 import styles from './style.css';
-import {
-  NOTIFICATION_SEVERITY_WARNING,
-  NOTIFICATION_SEVERITY_INFO,
-  NOTIFICATION_SEVERITY_ERROR
-} from '../../utils/constants/ErrorConstants';
 
 class Message extends PureComponent {
   static propTypes = {
@@ -49,9 +44,9 @@ class Message extends PureComponent {
   getBsStyle() {
     const { notification } = this.props;
     switch (notification.severity) {
-      case NOTIFICATION_SEVERITY_ERROR: return 'danger';
-      case NOTIFICATION_SEVERITY_WARNING: return 'warning';
-      case NOTIFICATION_SEVERITY_INFO: return 'info';
+      case ErrorConstants.NOTIFICATION_SEVERITY_ERROR: return 'danger';
+      case ErrorConstants.NOTIFICATION_SEVERITY_WARNING: return 'warning';
+      case ErrorConstants.NOTIFICATION_SEVERITY_INFO: return 'info';
       default: return 'success';
     }
   }

@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 
 import ContactHelper from '../../helpers/ContactHelper';
@@ -10,7 +10,6 @@ import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConsta
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import Notification from '../../helpers/NotificationHelper';
-import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Contacts push sync up manager');
 
@@ -77,7 +76,8 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _processResult({ contact, pushResult, error, isNewContact }) {
-    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    const isConnectivityError = error instanceof Notification && error.errorCode ===
+      ErrorConstants.ERROR_CODE_NO_CONNECTIVITY;
     if (pushResult || !isConnectivityError) {
       this._processed.add(contact.id);
     }
