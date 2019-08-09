@@ -1,4 +1,5 @@
-import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants,
+  FieldsManager } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -19,7 +20,6 @@ import ResourceManager from '../modules/resource/ResourceManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import ResourceHydrator from '../modules/helpers/ResourceHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
-import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import EntityValidator from '../modules/field/EntityValidator';
 import ResourceHelper from '../modules/helpers/ResourceHelper';

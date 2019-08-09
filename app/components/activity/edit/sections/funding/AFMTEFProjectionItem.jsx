@@ -4,8 +4,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FieldPathConstants } from 'amp-ui';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FieldPathConstants,
+  FieldsManager } from 'amp-ui';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel, Tab, Tabs } from 'react-bootstrap';
-import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -12,7 +12,6 @@ import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import styles from './funding/AFFunding.css';
 import AFUtils from './../util/AFUtils';
 import GlobalSettingsManager from '../../../../modules/util/GlobalSettingsManager';

@@ -1,10 +1,9 @@
 /* eslint-disable react/no-unused-prop-types,class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import APPercentageList from '../components/APPercentageList';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const DO = APPercentageList(ActivityConstants.DONOR_ORGANIZATION, ActivityConstants.ORGANIZATION,
   ActivityConstants.PERCENTAGE, 'Donor Organization');

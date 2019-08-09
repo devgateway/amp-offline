@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormControl, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import BudgetCode from './organization/BudgetCode';
@@ -11,7 +11,6 @@ import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
 import AFOption from '../components/AFOption';
 import AFUtils from './../util/AFUtils';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
 
 const logger = new Logger('AF organizations');

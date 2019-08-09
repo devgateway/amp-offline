@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import APField from '../components/APField';
 import * as WSC from '../../../../utils/constants/WorkspaceConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as UC from '../../../../utils/constants/UserConstants';
 import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 

@@ -2,11 +2,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { FieldPathConstants } from 'amp-ui';
+import { FieldPathConstants, FieldsManager } from 'amp-ui';
 import * as styles from './ContactForm.css';
 import * as afStyles from '../../activity/edit/ActivityForm.css';
 import * as CC from '../../../utils/constants/ContactConstants';
-import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
 import AFField from '../../activity/edit/components/AFField';
 import { CUSTOM, INPUT_TYPE, TEXT_AREA } from '../../activity/edit/components/AFComponentTypes';

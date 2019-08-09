@@ -1,11 +1,10 @@
-import { ActivityConstants, Constants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
 import ActivityFilter from './ActivityFilter';
 import { IS_COMPUTED, IS_PRIVATE } from '../../utils/constants/WorkspaceConstants';
 import LoggerManager from '../util/LoggerManager';
 import * as FieldsHelper from '../helpers/FieldsHelper';
-import FieldsManager from '../field/FieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 const logger = new LoggerManager('Workspace filter');

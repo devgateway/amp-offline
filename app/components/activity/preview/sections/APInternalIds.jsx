@@ -1,10 +1,9 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Tablify from '../components/Tablify';
 import Section from './Section';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';

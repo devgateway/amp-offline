@@ -1,12 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { Col, Grid, Row } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import * as AF from '../../components/AFComponentTypes';
 import Logger from '../../../../../modules/util/LoggerManager';
 import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
 import afStyles from '../../ActivityForm.css';
 

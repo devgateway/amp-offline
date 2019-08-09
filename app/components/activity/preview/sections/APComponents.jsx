@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import Logger from '../../../../modules/util/LoggerManager';
 import styles from './APComponents.css';
 import translate from '../../../../utils/translate';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP Components');
 

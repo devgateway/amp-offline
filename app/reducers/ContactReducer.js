@@ -1,3 +1,4 @@
+import { FieldsManager } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
 import {
   CONTACTS_LOAD_PENDING,
@@ -12,7 +13,6 @@ import {
   CONTACT_MANAGERS_REJECTED, CONTACTS_SAVE_PENDING, CONTACTS_SAVE_FULFILLED, CONTACTS_SAVE_REJECTED,
 } from '../actions/ContactAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
-import FieldsManager from '../modules/field/FieldsManager';
 
 const logger = new Logger('ContactReducer');
 

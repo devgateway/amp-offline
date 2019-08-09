@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import styles from './APActor.css';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP actor');
 

@@ -1,4 +1,5 @@
-import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants
+  , FieldsManager } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -6,7 +7,6 @@ import * as WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
 import * as TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
 import * as UserHelper from '../modules/helpers/UserHelper';
 import ActivityHydrator from '../modules/helpers/ActivityHydrator';
-import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
 import { WORKSPACE_ID, WORKSPACE_LEAD_ID } from '../utils/constants/WorkspaceConstants';

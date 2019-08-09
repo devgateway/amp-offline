@@ -1,11 +1,10 @@
 import equal from 'fast-deep-equal';
-import { ActivityConstants, Constants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 
 import * as CC from '../utils/constants/ContactConstants';
-import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as Utils from '../utils/Utils';
 import EntityValidator from '../modules/field/EntityValidator';

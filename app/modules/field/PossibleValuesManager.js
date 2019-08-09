@@ -1,6 +1,5 @@
-import { ActivityConstants, Constants, CurrencyRatesManager, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, CurrencyRatesManager, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Logger from '../util/LoggerManager';
-import FieldsManager from './FieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 const logger = new Logger('Possible values manager');

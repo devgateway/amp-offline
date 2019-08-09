@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonToolbar, Col, FormGroup, Grid, Row } from 'react-bootstrap';
-import { ValueConstants } from 'amp-ui';
+import { ValueConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../modules/util/LoggerManager';
 import * as RC from '../../../utils/constants/ResourceConstants';
 import AFField from '../../activity/edit/components/AFField';
-import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
 import * as Types from '../../activity/edit/components/AFComponentTypes';
 import translate from '../../../utils/translate';

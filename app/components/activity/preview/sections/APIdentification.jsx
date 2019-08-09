@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import Logger from '../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP Identification');
 

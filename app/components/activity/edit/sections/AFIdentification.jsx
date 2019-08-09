@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Clearfix, Col, Grid, Row } from 'react-bootstrap';
-import { ActivityConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldsManager } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import * as Types from '../components/AFComponentTypes';
 import { IDENTIFICATION } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AF identification');
 

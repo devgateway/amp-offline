@@ -4,9 +4,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Panel } from 'react-bootstrap';
-import { ActivityConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingContainer from './AFFundingContainer';
 import AFField from '../../components/AFField';

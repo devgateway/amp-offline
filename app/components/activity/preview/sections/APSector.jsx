@@ -1,9 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import APPercentageList from '../components/APPercentageList';
 import styles from './APSector.css';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const PrimarySectorList = APPercentageList(ActivityConstants.PRIMARY_SECTORS, ActivityConstants.SECTOR,

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import APField from '../components/APField';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';

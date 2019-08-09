@@ -1,10 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import AFSection from './AFSection';
 import { CONTACTS } from './AFSectionConstants';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import AFContactList from './contact/AFContactList';
 import { getActivityContactIds } from '../../../../actions/ContactAction';
 import AFField from '../components/AFField';

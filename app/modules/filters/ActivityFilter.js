@@ -1,4 +1,4 @@
-import { ActivityConstants, ErrorConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, ErrorConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
@@ -6,7 +6,6 @@ import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import Logger from '../../modules/util/LoggerManager';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
-import FieldsManager from '../field/FieldsManager';
 
 const logger = new Logger('Activity filter');
 

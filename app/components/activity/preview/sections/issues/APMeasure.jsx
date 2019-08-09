@@ -1,11 +1,10 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APMeasure.css';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import APActor from './APActor';
 import * as Utils from '../../../../../utils/Utils';
 

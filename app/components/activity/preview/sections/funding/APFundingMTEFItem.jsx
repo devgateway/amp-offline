@@ -1,11 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import Moment from 'moment';
 import { connect } from 'react-redux';
-import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import styles from './APFundingItem.css';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
 import stylesMTEF from './APFundingMTEF.css';
 import { IS_FISCAL } from '../../../../../utils/constants/CalendarConstants';

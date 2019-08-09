@@ -2,11 +2,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { ActivityConstants, CurrencyRatesManager, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import * as AFUtils from '../../util/AFUtils';

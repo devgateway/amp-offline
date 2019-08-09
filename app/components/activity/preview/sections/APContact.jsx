@@ -1,10 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import Tablify from '../components/Tablify';
 import styles from '../ActivityPreview.css';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import { getActivityContactIds } from '../../../../actions/ContactAction';
 import * as CC from '../../../../utils/constants/ContactConstants';
 import translate from '../../../../utils/translate';
