@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import FileManager from '../util/FileManager';
 import Logger from '../util/LoggerManager';
 
@@ -26,6 +27,16 @@ export default class AbstractArchiver {
 
   get fullArchivePath() {
     return this._fullArchivePath;
+  }
+
+  _toFilterFunc(filter) {
+    if (filter === undefined || filter === null) {
+      return () => true;
+    }
+    if (filter instanceof RegExp) {
+      return (file) => filter.test(file);
+    }
+    return filter;
   }
 
 }
