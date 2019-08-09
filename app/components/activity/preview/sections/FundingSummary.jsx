@@ -58,7 +58,8 @@ class FundingSummary extends Component {
       }
     });
     // Other measures: "Unallocated Disbursements".
-    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FieldPathConstants.DISBURSEMENTS_PATH, ValueConstants.ACTUAL,
+    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FieldPathConstants.DISBURSEMENTS_PATH,
+      ValueConstants.ACTUAL,
       PossibleValuesManager.getOptionTranslation);
     const expendituresAreEnabled = activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS,
       ActivityConstants.EXPENDITURES);

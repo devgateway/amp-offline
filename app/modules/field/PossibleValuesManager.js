@@ -110,7 +110,8 @@ export default class PossibleValuesManager {
       if (isLocations) {
         option.displayHierarchicalValue = true;
       } else if (isCurrency) {
-        option[FieldPathConstants.FIELD_OPTION_USABLE] = PossibleValuesManager.isCurrencyOptionUsable(option, currencyRatesManager);
+        option[FieldPathConstants.FIELD_OPTION_USABLE] = PossibleValuesManager
+          .isCurrencyOptionUsable(option, currencyRatesManager);
         if (!option[FieldPathConstants.FIELD_OPTION_USABLE]) {
           option.visible = option.id === selectedId;
         }

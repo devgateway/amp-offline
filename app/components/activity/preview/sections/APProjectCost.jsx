@@ -8,7 +8,7 @@ import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import NumberUtils from '../../../../utils/NumberUtils';
 import DateUtils from '../../../../utils/DateUtils';
-import PossibleValuesManager from "../../../../modules/field/PossibleValuesManager";
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP project cost');
 
