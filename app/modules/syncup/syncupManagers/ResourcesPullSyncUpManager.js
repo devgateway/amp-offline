@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import ResourceHelper from '../../helpers/ResourceHelper';
 import { RESOURCE_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
@@ -8,7 +8,6 @@ import * as ActivityHelper from '../../helpers/ActivityHelper';
 import ResourceManager from '../../resource/ResourceManager';
 import { TITLE, UUID } from '../../../utils/constants/ResourceConstants';
 import NotificationHelper from '../../helpers/NotificationHelper';
-import { NOTIFICATION_SEVERITY_WARNING } from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('ResourcesPullSyncUpManager');
 
@@ -78,7 +77,8 @@ export default class ResourcesPullSyncUpManager extends BatchPullSavedAndRemoved
         const activityInfo = `"${formattedAmpId}${activity[ActivityConstants.PROJECT_TITLE]}"`;
         const replacePairs = [['%titles%', titles], ['%activityInfo%', activityInfo]];
         const message = 'resourcesDeletedFromActivity';
-        const warn = new NotificationHelper({ message, replacePairs, severity: NOTIFICATION_SEVERITY_WARNING });
+        const warn = new NotificationHelper(
+          { message, replacePairs, severity: ErrorConstants.NOTIFICATION_SEVERITY_WARNING });
         this.addWarning(warn);
         logger.warn(warn.message);
       }

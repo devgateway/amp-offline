@@ -1,6 +1,5 @@
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import DatabaseManager from '../database/DatabaseManager';
-import { NOTIFICATION_ORIGIN_WRONG_METHOD_USAGE } from '../../utils/constants/ErrorConstants';
 
 import { stringToId } from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
@@ -12,7 +11,8 @@ const GlobalSettingsHelper = {
   saveGlobalSetting(setting) {
     logger.log('saveGlobalSetting');
     if (Object.keys(setting).length > 1) {
-      throw new Notification({ message: 'MoreThanOneRecord', origin: NOTIFICATION_ORIGIN_WRONG_METHOD_USAGE });
+      throw new Notification(
+        { message: 'MoreThanOneRecord', origin: ErrorConstants.NOTIFICATION_ORIGIN_WRONG_METHOD_USAGE });
     }
     let teamMember;
     Object.keys(setting).forEach((key) => {

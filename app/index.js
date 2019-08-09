@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { hashHistory, IndexRoute, Route, Router } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { ipcRenderer } from 'electron';
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import configureStore from './store/configureStore';
 import './app.global.css';
 import AppPage from './containers/AppPage';
@@ -22,7 +22,6 @@ import { isForceSyncUp } from './actions/SyncUpAction';
 import Logger from './modules/util/LoggerManager';
 import SetupPage from './containers/SetupPage';
 import NotificationHelper from './modules/helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
 import translate from './utils/translate';
 import { FORCE_CLOSE_APP_MSG, INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
 import * as ElectronApp from './modules/util/ElectronApp';
@@ -127,7 +126,8 @@ window.addEventListener('unhandledrejection', (e) => {
   if (reason instanceof NotificationHelper) {
     const notification = reason;
     const { severity, origin } = notification;
-    if (severity === NOTIFICATION_SEVERITY_ERROR && origin === NOTIFICATION_ORIGIN_DATABASE) {
+    if (severity === ErrorConstants.NOTIFICATION_SEVERITY_ERROR &&
+      origin === ErrorConstants.NOTIFICATION_ORIGIN_DATABASE) {
       handleUnexpectedError(notification.message);
     }
   }

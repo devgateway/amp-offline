@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ErrorConstants } from 'amp-ui';
 import Notification from '../../modules/helpers/NotificationHelper';
 import InfoTooltip from './InfoTooltip';
 import ErrorMessage from './ErrorMessage';
 import InfoMessage from './InfoMessage';
-import * as EC from '../../utils/constants/ErrorConstants';
 import WarnMessage from './WarnMessage';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -33,11 +33,11 @@ export default class SimpleNotification extends Component {
       return displayMessage;
     }
     switch (severity) {
-      case EC.NOTIFICATION_SEVERITY_ERROR:
+      case ErrorConstants.NOTIFICATION_SEVERITY_ERROR:
         return <ErrorMessage message={displayMessage} />;
-      case EC.NOTIFICATION_SEVERITY_INFO:
+      case ErrorConstants.NOTIFICATION_SEVERITY_INFO:
         return <InfoMessage message={displayMessage} />;
-      case EC.NOTIFICATION_SEVERITY_WARNING:
+      case ErrorConstants.NOTIFICATION_SEVERITY_WARNING:
         return <WarnMessage message={displayMessage} />;
       default:
         logger.error('Cannot display the notification: no severity configured');

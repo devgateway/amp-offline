@@ -1,9 +1,8 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import Tablify from '../../components/Tablify';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';

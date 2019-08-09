@@ -1,14 +1,14 @@
-import { Constants } from 'amp-ui';
+import { Constants, ErrorConstants } from 'amp-ui';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import {
   AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
   AMP_REGISTRY_STAGING_SETTINGS_URL,
   TEST_URL
 } from '../connectivity/AmpApiConstants';
+import { SERVER_URL, BASE_PORT, PROTOCOL } from '../../utils/Constants';
 import Notification from '../helpers/NotificationHelper';
 import TranslationManager from '../util/TranslationManager';
 import translate from '../../utils/translate';
-import { NOTIFICATION_ORIGIN_SETUP } from '../../utils/constants/ErrorConstants';
 import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
 import ConnectionInformation from '../connectivity/ConnectionInformation';
 import AssetsUtils from '../../utils/AssetsUtils';
@@ -42,9 +42,9 @@ const SetupManager = {
     return ClientSettingsHelper.findSettingByName(CSC.SETUP_CONFIG).then(setupConfigSetting => {
       const isFallbackToDefault = +process.env.USE_TEST_AMP_URL;
       const fullUrl = setupConfigSetting && setupConfigSetting.value && setupConfigSetting.value.urls[0];
-      const url = fullUrl || (isFallbackToDefault && Constants.SERVER_URL) || null;
-      const protocol = (!fullUrl && isFallbackToDefault && Constants.PROTOCOL) || null;
-      const port = (!fullUrl && isFallbackToDefault && Constants.BASE_PORT) || null;
+      const url = fullUrl || (isFallbackToDefault && SERVER_URL) || null;
+      const protocol = (!fullUrl && isFallbackToDefault && PROTOCOL) || null;
+      const port = (!fullUrl && isFallbackToDefault && BASE_PORT) || null;
       return this.buildConnectionInformation(url, protocol, port, false);
     });
   },
@@ -105,7 +105,7 @@ const SetupManager = {
     if (!currentUrlToUse) {
       return Promise.reject(new Notification({
         message: translate('wrongSetup'),
-        origin: NOTIFICATION_ORIGIN_SETUP
+        origin: ErrorConstants.NOTIFICATION_ORIGIN_SETUP
       }));
     }
     return ClientSettingsHelper.findSettingById(CSC.SETUP_CONFIG)

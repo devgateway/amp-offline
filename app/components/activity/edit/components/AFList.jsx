@@ -1,3 +1,4 @@
+import { ErrorConstants } from 'amp-ui';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -9,7 +10,6 @@ import ActivityValidator from '../../../../modules/field/EntityValidator';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFField from './AFField';
 import { addFullscreenAlert } from '../../../../actions/NotificationAction';
-import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorConstants';
 import Notification from '../../../../modules/helpers/NotificationHelper';
 
 const logger = new Logger('AF List');
@@ -205,7 +205,7 @@ export default connect(
   state => state,
   dispatch => ({
     onConfirmationAlert: (message) => dispatch(addFullscreenAlert(
-      new Notification({ message, origin: NOTIFICATION_ORIGIN_ACTIVITY, translateMsg: false })
+      new Notification({ message, origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY, translateMsg: false })
     ))
   })
 )(AFList);

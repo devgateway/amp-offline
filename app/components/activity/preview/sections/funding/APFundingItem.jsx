@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import translate from '../../../../../utils/translate';
-import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APFundingItem.css';
+import { createFormattedDate } from '../../../../../utils/DateUtils';
 import { rawNumberToFormattedString } from '../../../../../utils/NumberUtils';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 

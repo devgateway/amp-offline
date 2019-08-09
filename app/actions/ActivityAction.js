@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -10,11 +10,6 @@ import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
 import { WORKSPACE_ID, WORKSPACE_LEAD_ID } from '../utils/constants/WorkspaceConstants';
-import {
-  NOTIFICATION_ORIGIN_ACTIVITY,
-  NOTIFICATION_SEVERITY_ERROR,
-  NOTIFICATION_SEVERITY_INFO
-} from '../utils/constants/ErrorConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
@@ -173,7 +168,9 @@ const _getActivityWsManager = (activityWorkspace) => {
   return Promise.resolve(null);
 };
 
-const _toNotification = (error) => new Notification({ message: error, origin: NOTIFICATION_ORIGIN_ACTIVITY });
+const _toNotification = (error) => new Notification(
+
+  { message: error, origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY });
 
 const _getActivity = (activityId, teamMemberId) => {
   // special case for the new activity
@@ -205,8 +202,8 @@ function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
       ActivityHelper.saveOrUpdate(dehydratedActivity, true).then((savedActivity) => {
         dispatch(addMessage(new Notification({
           message: translate('activitySavedMsg'),
-          origin: NOTIFICATION_ORIGIN_ACTIVITY,
-          severity: NOTIFICATION_SEVERITY_INFO
+          origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY,
+          severity: ErrorConstants.NOTIFICATION_SEVERITY_INFO
         })));
         // TODO this reset is useless if we choose to stay within AF when activity is saved
         dispatch(resetDesktop());
@@ -225,8 +222,8 @@ export function unableToSave(error) {
   logger.info('unableToSave');
   return dispatch => dispatch(addMessage(new Notification({
     message: error,
-    origin: NOTIFICATION_ORIGIN_ACTIVITY,
-    severity: NOTIFICATION_SEVERITY_ERROR
+    origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY,
+    severity: ErrorConstants.NOTIFICATION_SEVERITY_ERROR
   })));
 }
 

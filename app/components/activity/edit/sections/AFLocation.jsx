@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Col, Grid, Row } from 'react-bootstrap';
-import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, ErrorConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
@@ -10,7 +10,6 @@ import { LOCATION } from './AFSectionConstants';
 import { DEFAULT_COUNTRY } from '../../../../utils/constants/GlobalSettingsConstants';
 import { addMessage } from '../../../../actions/NotificationAction';
 import { createNotification } from '../../../../modules/helpers/ErrorNotificationHelper';
-import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 
@@ -51,7 +50,7 @@ class AFLocation extends Component {
     }
     if (this.defaultCountry === null) {
       const message = translate('defaultCountryError');
-      this.props.onAddMessage(createNotification({ message, origin: NOTIFICATION_ORIGIN_ACTIVITY }));
+      this.props.onAddMessage(createNotification({ message, origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY }));
       logger.error(message);
     }
     this.setState({

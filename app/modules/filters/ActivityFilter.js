@@ -1,10 +1,9 @@
-import { ActivityConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, ErrorConstants, FieldPathConstants } from 'amp-ui';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
 import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
-import { NOTIFICATION_ORIGIN_WORKSPACE_FILTER } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 import FieldsManager from '../field/FieldsManager';
@@ -371,7 +370,7 @@ function getApprovalStatusFilter(id) {
   if (options === undefined) {
     throw new Notification({
       message: `Unrecognized approval status value: ${id}`,
-      origin: NOTIFICATION_ORIGIN_WORKSPACE_FILTER
+      origin: ErrorConstants.NOTIFICATION_ORIGIN_WORKSPACE_FILTER
     });
   }
   const approvalStatusOptions = Utils.toMap('$in', options);
@@ -397,7 +396,7 @@ function listToBoolean(intList) {
       }
       throw new Notification({
         message: `Unable to convert int value to boolean (expecting 1 or 2): ${int}`,
-        origin: NOTIFICATION_ORIGIN_WORKSPACE_FILTER
+        origin: ErrorConstants.NOTIFICATION_ORIGIN_WORKSPACE_FILTER
       });
     });
   }

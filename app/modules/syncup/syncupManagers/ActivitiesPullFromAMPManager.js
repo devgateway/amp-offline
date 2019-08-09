@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import * as Utils from '../../../utils/Utils';
 import { ACTIVITY_EXPORT_BATCHES_URL } from '../../connectivity/AmpApiConstants';
@@ -6,7 +6,6 @@ import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyn
 import Logger from '../../util/LoggerManager';
 import ActivitiesPushToAMPManager from './ActivitiesPushToAMPManager';
 import Notification from '../../helpers/NotificationHelper';
-import * as EC from '../../../utils/constants/ErrorConstants';
 import ApiErrorConverter from '../../connectivity/ApiErrorConverter';
 
 const logger = new Logger('Activities pull from AMP manager');
@@ -141,7 +140,7 @@ export default class ActivitiesPullFromAMPManager extends BatchPullSavedAndRemov
           }
           const error = new Notification({
             message: 'rejectedStaleActivity',
-            origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
+            origin: ErrorConstants.NOTIFICATION_ORIGIN_API_SYNCUP
           });
           rejectActivityPromises.push(this._activitiesPushToAMPManager.rejectActivityClientSide(dbActivity, error)
             .catch(err => {

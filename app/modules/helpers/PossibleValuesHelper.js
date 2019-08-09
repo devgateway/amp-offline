@@ -1,8 +1,7 @@
 import { Validator } from 'jsonschema';
-import { ActivityConstants, Constants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import Notification from './NotificationHelper';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import ContactHelper from './ContactHelper';
 import translate from '../../utils/translate';
@@ -297,7 +296,7 @@ const PossibleValuesHelper = {
     const jsonError = JSON.stringify(errors).substring(0, 1000);
     const errorMessage = `${translate('Database Error')}: ${jsonError}`;
     logger.error(jsonError);
-    return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
+    return new Notification({ message: errorMessage, origin: ErrorConstants.NOTIFICATION_ORIGIN_DATABASE });
   },
 
   isActivityContactPV(pv) {
