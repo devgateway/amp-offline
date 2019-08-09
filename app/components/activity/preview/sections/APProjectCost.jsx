@@ -8,6 +8,7 @@ import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import NumberUtils from '../../../../utils/NumberUtils';
 import DateUtils from '../../../../utils/DateUtils';
+import PossibleValuesManager from "../../../../modules/field/PossibleValuesManager";
 
 const logger = new Logger('AP project cost');
 
@@ -30,7 +31,8 @@ const APProjectCost = (fieldName) => class extends Component {
   getFieldValue(fieldPath) {
     // apparently you can disable Amount in FM... but probably this is unrealistic to happen
     if (this.props.activityFieldsManager.isFieldPathEnabled(fieldPath)) {
-      return this.props.activityFieldsManager.getValue(this.props.activity, fieldPath);
+      return this.props.activityFieldsManager.getValue(this.props.activity, fieldPath,
+        PossibleValuesManager.getOptionTranslation);
     }
     return null;
   }

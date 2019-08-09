@@ -40,6 +40,7 @@ import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
 import { buildNewResource } from '../../../../actions/ResourceAction';
 import FeatureManager from '../../../../modules/util/FeatureManager';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,
@@ -193,7 +194,8 @@ class AFDocument extends Component {
   toAPLabel(cell, row, formatExtraData) {
     const { fd } = formatExtraData;
     const { resourceFieldsManager } = this.props.resourceReducer;
-    let value = fd ? resourceFieldsManager.getValue(row, fd[FIELD_NAME]) : cell;
+    let value = fd ? resourceFieldsManager.getValue(row, fd[FIELD_NAME], PossibleValuesManager.getOptionTranslation) :
+      cell;
     if (fd && fd.field_type === 'date') {
       value = DateUtils.createFormattedDate(value);
     }

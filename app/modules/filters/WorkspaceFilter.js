@@ -4,13 +4,13 @@ import Utils from '../../utils/Utils';
 import * as VC from '../../utils/constants/ValueConstants';
 import ActivityFilter from './ActivityFilter';
 import { IS_COMPUTED, IS_PRIVATE } from '../../utils/constants/WorkspaceConstants';
-import Logger from '../util/LoggerManager';
+import LoggerManager from '../util/LoggerManager';
 import * as FieldsHelper from '../helpers/FieldsHelper';
 import FieldsManager from '../field/FieldsManager';
 import * as FPC from '../../utils/constants/FieldPathConstants';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
-const logger = new Logger('Workspace filter');
+const logger = new LoggerManager('Workspace filter');
 
 /**
  * Workspace Filter class
@@ -58,7 +58,7 @@ export default class WorkspaceFilterBuilder {
         FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
         PossibleValuesHelper.findAll(FPC.ADJUSTMENT_TYPE_PATHS),
       ]).then(([fieldsDef, pvs]) => {
-        const fieldsManager = new FieldsManager(fieldsDef, pvs);
+        const fieldsManager = new FieldsManager(fieldsDef, pvs, LoggerManager);
         return (new ActivityFilter(this._wsFilters, fieldsManager)).getDBFilter();
       });
     }

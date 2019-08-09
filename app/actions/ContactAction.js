@@ -10,6 +10,7 @@ import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as Utils from '../utils/Utils';
 import EntityValidator from '../modules/field/EntityValidator';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const CONTACTS_LOAD = 'CONTACTS_LOAD';
 export const CONTACTS_LOAD_PENDING = 'CONTACTS_LOAD_PENDING';
@@ -76,7 +77,7 @@ const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
     .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_CONTACT)
 ]).then(([cFields, possibleValuesCollection]) => ({
-  contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage)
+  contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage, LoggerManager)
 }));
 
 const _hydrateContacts = (ids, teamMemberId, contactFieldsManager, activity) => Promise.all([

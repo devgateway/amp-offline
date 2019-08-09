@@ -10,6 +10,7 @@ import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingT
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import FeatureManager from '../../../../modules/util/FeatureManager';
+import PossibleValuesManager from "../../../../modules/field/PossibleValuesManager";
 
 const logger = new Logger('Funding summary');
 
@@ -59,7 +60,8 @@ class FundingSummary extends Component {
       }
     });
     // Other measures: "Unallocated Disbursements".
-    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FPC.DISBURSEMENTS_PATH, VC.ACTUAL);
+    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FPC.DISBURSEMENTS_PATH, VC.ACTUAL,
+      PossibleValuesManager.getOptionTranslation);
     const expendituresAreEnabled = activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS,
       ActivityConstants.EXPENDITURES);
     if (adjTypeActualTrn && expendituresAreEnabled) {

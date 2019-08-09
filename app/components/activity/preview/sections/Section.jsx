@@ -10,6 +10,7 @@ import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
 import * as Utils from '../../../../utils/Utils';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP section');
 
@@ -78,9 +79,11 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         valuePath = fieldPathParts[fieldPathParts.length - 1];
       }
       const alternatePath = FPC.ALTERNATE_VALUE_PATH[valuePath];
-      let value = fieldsManager.getValue(parent || this.context.activity, valuePath);
+      let value = fieldsManager.getValue(parent || this.context.activity, valuePath,
+        PossibleValuesManager.getOptionTranslation);
       if ((value === null || value === undefined) && alternatePath) {
-        value = fieldsManager.getValue(this.context.activity, alternatePath);
+        value = fieldsManager.getValue(this.context.activity, alternatePath,
+          PossibleValuesManager.getOptionTranslation);
       }
       const fieldDef = fieldsManager.getFieldDef(path);
       if (fieldDef.field_type === FPC.FIELD_TYPE_DATE) {

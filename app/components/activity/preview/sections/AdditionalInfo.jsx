@@ -8,6 +8,7 @@ import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as UC from '../../../../utils/constants/UserConstants';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP Additional info');
 
@@ -41,7 +42,8 @@ class AdditionalInfo extends Component {
 
   _buildAdditionalInfo() {
     const additionalInfo = [];
-    const teamName = this.props.activityFieldsManager.getValue(this.props.activity, ActivityConstants.TEAM);
+    const teamName = this.props.activityFieldsManager.getValue(this.props.activity, ActivityConstants.TEAM,
+      PossibleValuesManager.getOptionTranslation);
     // no need to export repeating translation for the access type through workspaces EP
     const accessType = translate(this.props.activityWorkspace[WSC.ACCESS_TYPE]);
     const isComputedTeam = this.props.activityWorkspace[WSC.IS_COMPUTED] === true ? translate('Yes') : translate('No');

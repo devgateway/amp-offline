@@ -16,7 +16,7 @@ import {
 } from '../utils/constants/ResourceConstants';
 import * as Utils from '../utils/Utils';
 import ResourceManager from '../modules/resource/ResourceManager';
-import Logger from '../modules/util/LoggerManager';
+import LoggerManager from '../modules/util/LoggerManager';
 import ResourceHydrator from '../modules/helpers/ResourceHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import { PREFIX_RESOURCE } from '../utils/constants/FieldPathConstants';
@@ -60,7 +60,7 @@ export const RESOURCE_FILE_UPLOAD_FULFILLED = 'RESOURCE_FILE_UPLOAD_FULFILLED';
 export const RESOURCE_FILE_UPLOAD_REJECTED = 'RESOURCE_FILE_UPLOAD_REJECTED';
 
 
-const logger = new Logger('ResourceAction');
+const logger = new LoggerManager('ResourceAction');
 
 /* eslint-disable import/prefer-default-export */
 /**
@@ -209,7 +209,7 @@ const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
     .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_RESOURCE)
 ]).then(([rFields, possibleValuesCollection]) => ({
-  resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage)
+  resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage, LoggerManager)
 }));
 
 const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([

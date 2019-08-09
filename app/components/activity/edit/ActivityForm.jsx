@@ -17,6 +17,7 @@ import translate from '../../../utils/translate';
 import Logger from '../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 import FeatureManager from '../../../modules/util/FeatureManager';
+import PossibleValuesManager from '../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('Activity form');
 
@@ -313,7 +314,8 @@ export default class ActivityForm extends Component {
 
   _renderActivity() {
     const { activityFieldsManager } = this.props.activityReducer;
-    const projectTitle = activityFieldsManager.getValue(this.activity, ActivityConstants.PROJECT_TITLE);
+    const projectTitle = activityFieldsManager.getValue(this.activity, ActivityConstants.PROJECT_TITLE,
+      PossibleValuesManager.getOptionTranslation);
 
     return (
       <div className={styles.form_content}>

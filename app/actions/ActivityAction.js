@@ -145,7 +145,8 @@ function _loadActivity({
   ])
     .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
       fieldsDef = fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS];
-      const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
+      const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage,
+        LoggerManager);
       const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
         currentWorkspaceSettings, currencyRatesManager);
       const activityWsId = activity[ActivityConstants.TEAM] && activity[ActivityConstants.TEAM].id;

@@ -9,6 +9,7 @@ import translate from '../../../../utils/translate';
 import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
+import PossibleValuesManager from "../../../../modules/field/PossibleValuesManager";
 
 const logger = new Logger('AP Internal ids');
 
@@ -48,7 +49,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
         ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH);
       orgIds = [];
       const actIntIds = this.props.activityFieldsManager.getValue(this.props.activity,
-        ActivityConstants.ACTIVITY_INTERNAL_IDS);
+        ActivityConstants.ACTIVITY_INTERNAL_IDS, PossibleValuesManager.getOptionTranslation);
       if (actIntIds && actIntIds.length > 0) {
         actIntIds.forEach(actIntId => orgIds.push(this._getActInternalIdContent(actIntId, showInternalId)));
       }

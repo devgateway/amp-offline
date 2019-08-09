@@ -146,7 +146,7 @@ export default class EntityValidator {
     const fieldPaths = this._fieldsManager.getFieldPathsByDependencies(dependencies);
     fieldPaths.forEach(fieldPath => {
       const parentPath = fieldPath.substring(0, fieldPath.lastIndexOf('~'));
-      const parent = this._fieldsManager.getValue(this._entity, parentPath);
+      const parent = this._fieldsManager.getValue(this._entity, parentPath, PossibleValuesManager.getOptionTranslation);
       if (parent) {
         const fieldDef = new FieldDefinition(this._fieldsManager.getFieldDef(fieldPath));
         // flatten parents to the last leaf level
