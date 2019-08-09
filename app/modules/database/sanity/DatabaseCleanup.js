@@ -28,8 +28,12 @@ export default class DatabaseCleanup {
     // no partial cleanup -> will resync all than handle various use cases for partial resync
     try {
       this.allDBNames.forEach(dbName => {
+        logger.log(`deleting ${dbName}`);
         const fullFileName = DatabaseManager.getDBFullPath(dbName);
         FileManager.deleteFileSync(fullFileName);
+        if (FileManager.existsSync(fullFileName)) {
+          throw new Error(`File is in use and could not be deleted: ${fullFileName}`);
+        }
         this.remainingDBs.delete(dbName);
         if (COLLECTION_SANITY_CHECK === dbName) {
           this.status.isSanityDBCorrupted = false;

@@ -32,13 +32,14 @@ export default class YazlArchive extends AbstractArchiver {
   }
 
   /**
-   * @param filter {RegExp|Function}
+   * @param filter optional {RegExp|Function}
    * @param folderParts
    */
   addFolder(filter, ...folderParts) {
     logger.log(`addFolder: ${folderParts}`);
     const files = FileManager.readdirSync(...folderParts);
-    files.forEach(file => this.addFile(...folderParts, file));
+    const filterFunc = this._toFilterFunc(filter);
+    files.filter(filterFunc).forEach(file => this.addFile(...folderParts, file));
   }
 
   generateZip() {

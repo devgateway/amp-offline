@@ -16,6 +16,7 @@ import * as ElectronApp from './ElectronApp';
  * 50: error */
 export default class LoggerManager {
   static bunyanLog = null;
+  static logPath = null;
 
   static getBunyanLog() {
     if (!this.bunyanLog) {
@@ -30,11 +31,11 @@ export default class LoggerManager {
         .forEach(filename => FileManager.deleteFileSync(path.join(logDirFullPath, filename)));
 
       const date = new Date();
-      let file = `${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
-      file = FileManager.getFullPath(LOG_DIR, file);
+      const file = `${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
+      this.logPath = FileManager.getFullPath(LOG_DIR, file);
       this.bunyanLog = bunyan.createLogger({
         name: 'amp',
-        streams: [{ level: settings.level, path: file }
+        streams: [{ level: settings.level, path: this.logPath }
         ]
       });
       this.bunyanLog.info('LoggerManager initialized');
