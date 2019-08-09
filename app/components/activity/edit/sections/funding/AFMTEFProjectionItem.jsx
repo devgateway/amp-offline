@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager } from 'amp-ui';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
@@ -15,7 +15,6 @@ import * as Types from '../../components/AFComponentTypes';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
 import { GS_YEAR_RANGE_START, GS_YEARS_IN_RANGE } from '../../../../../utils/constants/GlobalSettingsConstants';
 import { IS_FISCAL } from '../../../../../utils/constants/CalendarConstants';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AFUtils from '../../util/AFUtils';
 
 /**

@@ -5,6 +5,7 @@ import {
   AMP_REGISTRY_STAGING_SETTINGS_URL,
   TEST_URL
 } from '../connectivity/AmpApiConstants';
+import { SERVER_URL, BASE_PORT, PROTOCOL } from '../../utils/Constants';
 import Notification from '../helpers/NotificationHelper';
 import TranslationManager from '../util/TranslationManager';
 import translate from '../../utils/translate';
@@ -41,9 +42,9 @@ const SetupManager = {
     return ClientSettingsHelper.findSettingByName(CSC.SETUP_CONFIG).then(setupConfigSetting => {
       const isFallbackToDefault = +process.env.USE_TEST_AMP_URL;
       const fullUrl = setupConfigSetting && setupConfigSetting.value && setupConfigSetting.value.urls[0];
-      const url = fullUrl || (isFallbackToDefault && Constants.SERVER_URL) || null;
-      const protocol = (!fullUrl && isFallbackToDefault && Constants.PROTOCOL) || null;
-      const port = (!fullUrl && isFallbackToDefault && Constants.BASE_PORT) || null;
+      const url = fullUrl || (isFallbackToDefault && SERVER_URL) || null;
+      const protocol = (!fullUrl && isFallbackToDefault && PROTOCOL) || null;
+      const port = (!fullUrl && isFallbackToDefault && BASE_PORT) || null;
       return this.buildConnectionInformation(url, protocol, port, false);
     });
   },

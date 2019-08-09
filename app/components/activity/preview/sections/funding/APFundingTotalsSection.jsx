@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../../utils/translate';

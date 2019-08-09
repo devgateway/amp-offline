@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import APLabel from '../../components/APLabel';
@@ -8,7 +8,6 @@ import styles from './APFundingTransactionTypeItem.css';
 import stylesMTEF from './APFundingMTEF.css';
 import APFundingMTEFItem from './APFundingMTEFItem';
 import Utils from '../../../../../utils/Utils';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import APFundingTotalItem from './APFundingTotalItem';
 
 const logger = new Logger('AP Funding MTEF section');
