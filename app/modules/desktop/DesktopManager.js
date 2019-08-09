@@ -1,10 +1,9 @@
 /* eslint "no-nested-ternary": 0 */
-import { Constants, ActivityConstants } from 'amp-ui';
+import { Constants, ActivityConstants, ValueConstants } from 'amp-ui';
 import translate from '../../utils/translate';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
-import * as VC from '../../utils/constants/ValueConstants';
 import {
   ADJUSTMENT_TYPE_PATHS,
   DONOR_ORGANIZATIONS_PATH,
@@ -109,7 +108,7 @@ const DesktopManager = {
     if (item[ActivityConstants.FUNDINGS]) {
       item[ActivityConstants.FUNDINGS].forEach((funding) => {
         const fds = funding[trnType] && funding[trnType]
-          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE].value === VC.ACTUAL);
+          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE].value === ValueConstants.ACTUAL);
         if (fds) {
           fds.forEach((fd) => {
             amount += currencyRatesManager

@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants } from 'amp-ui';
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../field/PossibleValuesManager';
@@ -6,7 +6,6 @@ import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstan
 import AbstractEntityHydrator from './AbstractEntityHydrator';
 import { PREFIX_ACTIVITY } from '../../utils/constants/FieldPathConstants';
 import { UUID } from '../../utils/constants/ResourceConstants';
-import { TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -95,7 +94,7 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
     if (adocs && adocs.length) {
       adocs.forEach(ad => {
         ad[UUID] = ad[UUID] && ad[UUID][UUID];
-        delete ad[TMP_ENTITY_VALIDATOR];
+        delete ad[ValueConstants.TMP_ENTITY_VALIDATOR];
       });
     }
     return this.dehydrateEntity(activity);

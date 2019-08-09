@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Clearfix, Col, Grid, Row } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import * as Types from '../components/AFComponentTypes';
 import { IDENTIFICATION } from './AFSectionConstants';
-import * as VC from '../../../../utils/constants/ValueConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 
@@ -56,7 +55,7 @@ class AFIdentification extends Component {
 
   isActivityOnBudget() {
     return this.props.activity[ActivityConstants.ACTIVITY_BUDGET] &&
-      this.props.activity[ActivityConstants.ACTIVITY_BUDGET].value === VC.ON_BUDGET;
+      this.props.activity[ActivityConstants.ACTIVITY_BUDGET].value === ValueConstants.ON_BUDGET;
   }
 
   mapSimpleFieldDef(fieldName) {

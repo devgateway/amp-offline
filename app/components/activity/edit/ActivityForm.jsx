@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants } from 'amp-ui';
 import Loading from '../../common/Loading';
 import * as styles from './ActivityForm.css';
 import { FIELDS_PER_SECTIONS, IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
-import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
 import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
@@ -95,7 +94,7 @@ export default class ActivityForm extends Component {
     this.props.loadActivityForActivityForm(activityId);
     this.setState({
       activityId,
-      isNewActivity: activityId === NEW_ACTIVITY_ID,
+      isNewActivity: activityId === ValueConstants.NEW_ACTIVITY_ID,
       quickLinksExpanded: true,
       currentSection: undefined,
       content: undefined,

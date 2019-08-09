@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants } from 'amp-ui';
 import * as FPC from '../../utils/constants/FieldPathConstants';
 import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import translate from '../../utils/translate';
@@ -7,10 +7,6 @@ import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
 import FieldsManager from './FieldsManager';
-import {
-  ON_BUDGET,
-  TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR
-} from '../../utils/constants/ValueConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
 import ValidationErrorsCollector from './ValidationErrorsCollector';
@@ -333,7 +329,7 @@ export default class EntityValidator {
 
   _wasValidatedSeparately(obj, fieldPath, fieldDef: FieldDefinition, asDraft) {
     const hValue = obj[fieldDef.name];
-    const entityValidator = hValue && hValue[VC_TMP_ENTITY_VALIDATOR];
+    const entityValidator = hValue && hValue[ValueConstants.VC_TMP_ENTITY_VALIDATOR];
     if (entityValidator) {
       if (entityValidator._entity[VALIDATE_ON_CHANGE_ONLY] && !entityValidator._entity[CLIENT_CHANGE_ID]) {
         return true;
@@ -605,7 +601,7 @@ export default class EntityValidator {
   _isActivityOnBudget() {
     const onOffBudget = this._entity[ActivityConstants.ACTIVITY_BUDGET] &&
       this._entity[ActivityConstants.ACTIVITY_BUDGET].value;
-    return onOffBudget && onOffBudget === ON_BUDGET;
+    return onOffBudget && onOffBudget === ValueConstants.ON_BUDGET;
   }
 
   _hasTransactions(fundingItem) {

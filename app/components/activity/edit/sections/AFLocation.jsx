@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Col, Grid, Row } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
@@ -13,7 +13,6 @@ import { createNotification } from '../../../../modules/helpers/ErrorNotificatio
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import { COUNTRY, INTERNATIONAL } from '../../../../utils/constants/ValueConstants';
 import { LOCATION_PATH } from '../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AF location');
@@ -85,8 +84,8 @@ class AFLocation extends Component {
       path: `${ActivityConstants.EXTRA_INFO}~${ActivityConstants.IMPLEMENTATION_LOCATION_EXTRA_INFO}`,
       value: this.state.implementationLocation ? this.state.implementationLocation.value : null
     }];
-    if (this.state.implementationLevel && this.state.implementationLevel.value !== INTERNATIONAL
-      && this.state.implementationLocation && this.state.implementationLocation.value === COUNTRY) {
+    if (this.state.implementationLevel && this.state.implementationLevel.value !== ValueConstants.INTERNATIONAL
+      && this.state.implementationLocation && this.state.implementationLocation.value === ValueConstants.COUNTRY) {
       locFilter.push({
         path: 'value',
         value: this.defaultCountry

@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -24,7 +24,6 @@ import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import EntityValidator from '../modules/field/EntityValidator';
 import ResourceHelper from '../modules/helpers/ResourceHelper';
-import { RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import DateUtils from '../utils/DateUtils';
 import FileManager from '../modules/util/FileManager';
@@ -108,7 +107,7 @@ export const addNewActivityResource = (activity, resource, isDoc) => (dispatch, 
     activity[ActivityConstants.ACTIVITY_DOCUMENTS] = [];
   }
   activity[ActivityConstants.ACTIVITY_DOCUMENTS].push({
-    [ActivityConstants.DOCUMENT_TYPE]: RELATED_DOCUMENTS,
+    [ActivityConstants.DOCUMENT_TYPE]: ValueConstants.RELATED_DOCUMENTS,
     [UUID]: resource,
   });
   loadNewResource(resource)(dispatch, ownProps);
@@ -164,7 +163,7 @@ export const prepareNewResourceForSave = (resource, isDoc) => (dispatch, ownProp
   resource[TEAM] = ownProps().userReducer.teamMember[WORKSPACE_ID];
   resource[PRIVATE] = true;
   resource[PUBLIC] = false;
-  resource[TMP_ENTITY_VALIDATOR].entity = resource;
+  resource[ValueConstants.TMP_ENTITY_VALIDATOR].entity = resource;
   if (!isDoc && resource[WEB_LINK]) {
     resource[WEB_LINK] = URLUtils.normalizeUrl(resource[WEB_LINK], 'http');
   }
@@ -173,7 +172,7 @@ export const prepareNewResourceForSave = (resource, isDoc) => (dispatch, ownProp
 
 export const validate = (resource, isDoc) => {
   logger.debug('validate');
-  const errors = resource[TMP_ENTITY_VALIDATOR].areAllConstraintsMet(resource);
+  const errors = resource[ValueConstants.TMP_ENTITY_VALIDATOR].areAllConstraintsMet(resource);
   const docError = isDoc && errors.length && errors.find((ve: ValidationError) => ve.path === FILE_NAME);
   if (docError) {
     docError.errorMessage = translate('FileNotAvailable');
@@ -231,10 +230,10 @@ const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
     ars.forEach(ar => {
       const r = rMap.get(ar[UUID]);
       if (r) {
-        r[TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
+        r[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
         r[VALIDATE_ON_CHANGE_ONLY] = true;
         ar[UUID] = r;
-        ar[TMP_ENTITY_VALIDATOR] = r[TMP_ENTITY_VALIDATOR];
+        ar[ValueConstants.TMP_ENTITY_VALIDATOR] = r[ValueConstants.TMP_ENTITY_VALIDATOR];
       }
     });
   }

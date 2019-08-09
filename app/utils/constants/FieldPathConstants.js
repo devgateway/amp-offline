@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
-import { ORG_ROLE_NAMES } from './ValueConstants';
+import { ActivityConstants, FeatureManagerConstants, ValueConstants } from 'amp-ui';
 
 /**
  * This is a set of field paths that are used for frequent needs
@@ -32,8 +31,8 @@ export const TERTIARY_SECTOR_PATH = 'tertiary_sectors~sector';
 export const DONOR_ORGANIZATIONS_PATH = 'donor_organization~organization';
 export const RESPONSIBLE_ORGANIZATION_BUDGETS_PATH = `${ActivityConstants.RESPONSIBLE_ORGANIZATION}~${ActivityConstants.BUDGETS}`;
 
-export const RELATED_ORGS_PATHS = ORG_ROLE_NAMES.map(orgRole => ActivityConstants.toFieldName(orgRole));
-export const RELATED_ORGS_ORGANIZATION_PATHS = ORG_ROLE_NAMES.map(
+export const RELATED_ORGS_PATHS = ValueConstants.ORG_ROLE_NAMES.map(orgRole => ActivityConstants.toFieldName(orgRole));
+export const RELATED_ORGS_ORGANIZATION_PATHS = ValueConstants.ORG_ROLE_NAMES.map(
   orgRole => `${ActivityConstants.toFieldName(orgRole)}~${ActivityConstants.ORGANIZATION}`);
 
 export const RICH_TEXT_FIELDS = new Set([ActivityConstants.STATUS_REASON, ActivityConstants.OBJECTIVE, ActivityConstants.DESCRIPTION, ActivityConstants.PROJECT_COMMENTS,

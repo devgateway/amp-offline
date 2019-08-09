@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -10,7 +10,6 @@ import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
 import { WORKSPACE_ID, WORKSPACE_LEAD_ID } from '../utils/constants/WorkspaceConstants';
-import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
 import {
   NOTIFICATION_ORIGIN_ACTIVITY,
   NOTIFICATION_SEVERITY_ERROR,
@@ -179,7 +178,7 @@ const _toNotification = (error) => new Notification({ message: error, origin: NO
 
 const _getActivity = (activityId, teamMemberId) => {
   // special case for the new activity
-  if (activityId === NEW_ACTIVITY_ID) {
+  if (activityId === ValueConstants.NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
   return ActivityHelper.findAll({ id: activityId }).then(activity =>

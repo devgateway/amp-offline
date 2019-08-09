@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
-import * as VC from '../../../../../utils/constants/ValueConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../../utils/translate';
 import APFundingTotalItem from './APFundingTotalItem';
@@ -44,9 +43,9 @@ class APFundingTotalsSection extends Component {
         atOptions.forEach(at => {
           const value = activityFundingTotals.getTotals(at.id, trnType);
           options.push({ label: translate(`Total ${at.value} ${trnType}`), value });
-          actualCommitments = (trnType === ActivityConstants.COMMITMENTS && at.value === VC.ACTUAL)
+          actualCommitments = (trnType === ActivityConstants.COMMITMENTS && at.value === ValueConstants.ACTUAL)
             ? value : actualCommitments;
-          actualDisbursements = (trnType === ActivityConstants.DISBURSEMENTS && at.value === VC.ACTUAL)
+          actualDisbursements = (trnType === ActivityConstants.DISBURSEMENTS && at.value === ValueConstants.ACTUAL)
             ? value : actualDisbursements;
         });
       }

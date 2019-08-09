@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { ActivityConstants } from 'amp-ui';
-import * as VC from '../../../../../utils/constants/ValueConstants';
+import { ActivityConstants, ValueConstants } from 'amp-ui';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
@@ -50,10 +49,10 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f1.adjType.value) {
-      case VC.PLANNED:
+      case ValueConstants.PLANNED:
         f1String += 'b';
         break;
-      case VC.ACTUAL:
+      case ValueConstants.ACTUAL:
         f1String += 'a';
         break;
       default:
@@ -72,10 +71,10 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f2.adjType.value) {
-      case VC.PLANNED:
+      case ValueConstants.PLANNED:
         f2String += 'b';
         break;
-      case VC.ACTUAL:
+      case ValueConstants.ACTUAL:
         f2String += 'a';
         break;
       default:
