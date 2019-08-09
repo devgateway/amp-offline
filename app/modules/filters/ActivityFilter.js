@@ -1,5 +1,4 @@
-import { ActivityConstants, ErrorConstants } from 'amp-ui';
-import * as FPC from '../../utils/constants/FieldPathConstants';
+import { ActivityConstants, ErrorConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
@@ -7,7 +6,6 @@ import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import Logger from '../../modules/util/LoggerManager';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
-import FieldsManager from '../field/FieldsManager';
 
 const logger = new Logger('Activity filter');
 
@@ -47,13 +45,13 @@ export default class ActivityFilter {
     return Promise.all([
       this._getWorkspaces(),
       GlobalSettingsHelper.findByKey(FILTER_BY_DATE_HIDE_PROJECTS),
-      PossibleValuesHelper.findById(FPC.LOCATION_PATH)
+      PossibleValuesHelper.findById(FieldPathConstants.LOCATION_PATH)
     ])
       .then(([workspaces, dateFilterHidesProjects, locationOptions]) => {
         this._wsIds = workspaces;
         this._dateFilterHidesProjects = (dateFilterHidesProjects && dateFilterHidesProjects.value === 'true');
-        if (locationOptions && locationOptions[FPC.FIELD_OPTIONS]) {
-          this._locationOptions = locationOptions[FPC.FIELD_OPTIONS];
+        if (locationOptions && locationOptions[FieldPathConstants.FIELD_OPTIONS]) {
+          this._locationOptions = locationOptions[FieldPathConstants.FIELD_OPTIONS];
         } else {
           this._locationOptions = [];
         }
@@ -229,7 +227,7 @@ export default class ActivityFilter {
     this._addValueFilter(ActivityConstants.EXPENDITURE_CLASS, '$in', 'expenditureClass', details);
 
     if (Object.keys(details).length > 0) {
-      const trnAdjRules = FPC.TRANSACTION_TYPES.map(trnType => {
+      const trnAdjRules = FieldPathConstants.TRANSACTION_TYPES.map(trnType => {
         // TODO TBC how hidden adj type data is handled on AMP and should be handled in AMP Offline
         let ato = this._fieldsManager
           .getPossibleValuesOptions(`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`);

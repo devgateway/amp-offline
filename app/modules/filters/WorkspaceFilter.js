@@ -1,16 +1,13 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
-import * as VC from '../../utils/constants/ValueConstants';
 import ActivityFilter from './ActivityFilter';
 import { IS_COMPUTED, IS_PRIVATE } from '../../utils/constants/WorkspaceConstants';
-import Logger from '../util/LoggerManager';
+import LoggerManager from '../util/LoggerManager';
 import * as FieldsHelper from '../helpers/FieldsHelper';
-import FieldsManager from '../field/FieldsManager';
-import * as FPC from '../../utils/constants/FieldPathConstants';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
-const logger = new Logger('Workspace filter');
+const logger = new LoggerManager('Workspace filter');
 
 /**
  * Workspace Filter class
@@ -56,9 +53,9 @@ export default class WorkspaceFilterBuilder {
     if (this._isComputed && this._wsFilters && this._workspace['use-filter'] === true) {
       return Promise.all([
         FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
-        PossibleValuesHelper.findAll(FPC.ADJUSTMENT_TYPE_PATHS),
+        PossibleValuesHelper.findAll(FieldPathConstants.ADJUSTMENT_TYPE_PATHS),
       ]).then(([fieldsDef, pvs]) => {
-        const fieldsManager = new FieldsManager(fieldsDef, pvs);
+        const fieldsManager = new FieldsManager(fieldsDef, pvs, LoggerManager);
         return (new ActivityFilter(this._wsFilters, fieldsManager)).getDBFilter();
       });
     }
@@ -107,7 +104,7 @@ export default class WorkspaceFilterBuilder {
     if (orgIds && orgIds.length > 0) {
       // build activity orgs filter
       const activityOrgs = [];
-      ActivityConstants.toFieldNames(VC.ORG_ROLE_NAMES).forEach(orgField => {
+      ActivityConstants.toFieldNames(ValueConstants.ORG_ROLE_NAMES).forEach(orgField => {
         const orgFilter = Utils.toMap(ActivityConstants.ORG_ROLE_ORG_ID, { $in: orgIds });
         const orgRoleFilter = Utils.toMap(orgField, { $elemMatch: orgFilter });
         activityOrgs.push(orgRoleFilter);

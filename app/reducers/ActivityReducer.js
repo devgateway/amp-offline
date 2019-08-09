@@ -1,3 +1,4 @@
+import { FieldsManager } from 'amp-ui';
 import {
   ACTIVITY_LOAD_FULFILLED,
   ACTIVITY_LOAD_PENDING,
@@ -13,7 +14,6 @@ import {
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
 import Logger from '../modules/util/LoggerManager';
-import FieldsManager from '../modules/field/FieldsManager';
 
 const logger = new Logger('Activity reducer');
 

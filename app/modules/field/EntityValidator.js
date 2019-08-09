@@ -1,16 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants } from 'amp-ui';
-import * as FPC from '../../utils/constants/FieldPathConstants';
+import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import translate from '../../utils/translate';
 import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
-import FieldsManager from './FieldsManager';
-import {
-  ON_BUDGET,
-  TMP_ENTITY_VALIDATOR as VC_TMP_ENTITY_VALIDATOR
-} from '../../utils/constants/ValueConstants';
 import PossibleValuesManager from './PossibleValuesManager';
 import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
 import ValidationErrorsCollector from './ValidationErrorsCollector';
@@ -78,8 +72,8 @@ export default class EntityValidator {
             // simulate complex structure for value data type validation only
             childrenObj = childrenObj.map(o => Utils.toMap(fd.name, o));
             const elemFieldDef = new FieldDefinition({
-              [FPC.FIELD_NAME]: fd.name,
-              [FPC.FIELD_TYPE]: fd.itemType
+              [FieldPathConstants.FIELD_NAME]: fd.name,
+              [FieldPathConstants.FIELD_TYPE]: fd.itemType
             });
             this._validateValue(childrenObj, asDraft, elemFieldDef, fieldPath);
           } else {
@@ -140,13 +134,13 @@ export default class EntityValidator {
     let dependencies = [];
     if (mainFieldPath === ActivityConstants.ACTIVITY_BUDGET) {
       dependencies = [ActivityConstants.DEPENDENCY_PROJECT_CODE_ON_BUDGET, ActivityConstants.DEPENDENCY_ON_BUDGET];
-    } else if (FPC.RELATED_ORGS_PATHS.includes(mainFieldPath)) {
+    } else if (FieldPathConstants.RELATED_ORGS_PATHS.includes(mainFieldPath)) {
       dependencies = [ActivityConstants.DEPENDENCY_COMPONENT_FUNDING_ORG_VALID];
     }
     const fieldPaths = this._fieldsManager.getFieldPathsByDependencies(dependencies);
     fieldPaths.forEach(fieldPath => {
       const parentPath = fieldPath.substring(0, fieldPath.lastIndexOf('~'));
-      const parent = this._fieldsManager.getValue(this._entity, parentPath);
+      const parent = this._fieldsManager.getValue(this._entity, parentPath, PossibleValuesManager.getOptionTranslation);
       if (parent) {
         const fieldDef = new FieldDefinition(this._fieldsManager.getFieldDef(fieldPath));
         // flatten parents to the last leaf level
@@ -250,7 +244,7 @@ export default class EntityValidator {
             this.processValidationResult(obj, fieldPath, listLengthError);
           }
         }
-      } else if (fieldDef.type === FPC.FIELD_TYPE_STRING) {
+      } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_STRING) {
         if (this._wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft)) {
           // TODO multilingual support Iteration 2+
         } else if (!(typeof value === 'string' || value instanceof String)) {
@@ -266,26 +260,26 @@ export default class EntityValidator {
             this.processValidationResult(obj, fieldPath, regexError);
           }
         }
-      } else if (fieldDef.type === FPC.FIELD_TYPE_LONG) {
+      } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_LONG) {
         if (!Number.isInteger(value) && !this._isAllowInvalidNumber(value, fieldPath)) {
           this.processValidationResult(obj, fieldPath, this.invalidNumber);
         } else {
           this._wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft);
         }
-      } else if (fieldDef.type === FPC.FIELD_TYPE_FLOAT) {
+      } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_FLOAT) {
         if (value !== +value || value.toString().indexOf('e') > -1) {
           this.processValidationResult(obj, fieldPath, this.invalidNumber);
         }
-      } else if (fieldDef.type === FPC.FIELD_TYPE_BOOLEAN) {
+      } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_BOOLEAN) {
         if (!(typeof value === 'boolean' || value instanceof Boolean)) {
           this.processValidationResult(obj, fieldPath, this.invalidBoolean.replace('%value%', value));
         }
-      } else if (fieldDef.type === FPC.FIELD_TYPE_DATE) {
+      } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_DATE) {
         if (!(typeof value === 'string' || value instanceof String)
           || !(value !== '' && DateUtils.isValidDateFormat(value, API_SHORT_DATE_FORMAT))) {
           this.processValidationResult(obj, fieldPath, this.invalidDate.replace('%value%', value));
         }
-      } else if (fieldDef.type === FPC.FIELD_TYPE_TIMESTAMP) {
+      } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_TIMESTAMP) {
         if (!(typeof value === 'string' || value instanceof String)
           || !(value !== '' && DateUtils.isValidDateFormat(value, API_LONG_DATE_FORMAT))) {
           this.processValidationResult(obj, fieldPath, this.invalidTimestamp.replace('%value%', value));
@@ -298,7 +292,7 @@ export default class EntityValidator {
   }
 
   _wasHydrated(fieldPath) {
-    return !!this._possibleValuesMap[fieldPath] && !FPC.DO_NOT_HYDRATE_FIELDS_LIST.includes(fieldPath);
+    return !!this._possibleValuesMap[fieldPath] && !FieldPathConstants.DO_NOT_HYDRATE_FIELDS_LIST.includes(fieldPath);
   }
 
   _getValue(obj, fieldDef: FieldDefinition, wasHydrated) {
@@ -322,7 +316,7 @@ export default class EntityValidator {
    */
   _isAllowInvalidNumber(value, fieldPath) {
     const parts = fieldPath.split('~');
-    const isContactId = (parts.length === 2 && FPC.ACTIVITY_CONTACT_PATHS.includes(parts[0]) &&
+    const isContactId = (parts.length === 2 && FieldPathConstants.ACTIVITY_CONTACT_PATHS.includes(parts[0]) &&
       ActivityConstants.CONTACT === parts[1])
       || (parts.length === 1 && this.excludedFields.includes(parts[0]));
     if (isContactId && `${value}`.startsWith(CLIENT_CHANGE_ID_PREFIX)) {
@@ -333,7 +327,7 @@ export default class EntityValidator {
 
   _wasValidatedSeparately(obj, fieldPath, fieldDef: FieldDefinition, asDraft) {
     const hValue = obj[fieldDef.name];
-    const entityValidator = hValue && hValue[VC_TMP_ENTITY_VALIDATOR];
+    const entityValidator = hValue && hValue[ValueConstants.VC_TMP_ENTITY_VALIDATOR];
     if (entityValidator) {
       if (entityValidator._entity[VALIDATE_ON_CHANGE_ONLY] && !entityValidator._entity[CLIENT_CHANGE_ID]) {
         return true;
@@ -540,7 +534,7 @@ export default class EntityValidator {
     objects.forEach(obj => {
       const fieldName = fieldDef.name;
       const hydratedValue = obj[fieldName];
-      if (hydratedValue && FPC.ACTIVITY_CONTACT_PATHS.includes(fieldName)) {
+      if (hydratedValue && FieldPathConstants.ACTIVITY_CONTACT_PATHS.includes(fieldName)) {
         const validationResult = this._isUniquePrimaryContact(hydratedValue, fieldName);
         this.processValidationResult(this._entity, fieldName, validationResult);
       }
@@ -605,11 +599,11 @@ export default class EntityValidator {
   _isActivityOnBudget() {
     const onOffBudget = this._entity[ActivityConstants.ACTIVITY_BUDGET] &&
       this._entity[ActivityConstants.ACTIVITY_BUDGET].value;
-    return onOffBudget && onOffBudget === ON_BUDGET;
+    return onOffBudget && onOffBudget === ValueConstants.ON_BUDGET;
   }
 
   _hasTransactions(fundingItem) {
-    return fundingItem && FPC.TRANSACTION_TYPES.some(tt => fundingItem[tt] && fundingItem[tt].length);
+    return fundingItem && FieldPathConstants.TRANSACTION_TYPES.some(tt => fundingItem[tt] && fundingItem[tt].length);
   }
 
   _matchesResourceType(resource, resourceType) {
@@ -633,7 +627,7 @@ export default class EntityValidator {
    * @return {boolean}
    */
   validateItemRemovalFromList(listPath, item) {
-    if (FPC.RELATED_ORGS_PATHS.includes(listPath)) {
+    if (FieldPathConstants.RELATED_ORGS_PATHS.includes(listPath)) {
       return this.validateOrgRemoval(listPath, item && item[ActivityConstants.ORGANIZATION]);
     }
     return true;
@@ -667,7 +661,7 @@ export default class EntityValidator {
       components.forEach(component => {
         if (component) {
           const componentFundings = [];
-          FPC.TRANSACTION_TYPES.forEach(tt => componentFundings.push(...(component[tt] || [])));
+          FieldPathConstants.TRANSACTION_TYPES.forEach(tt => componentFundings.push(...(component[tt] || [])));
           componentFundings.forEach(funding => {
             const compOrg = funding[ActivityConstants.COMPONENT_ORGANIZATION];
             if (compOrg && compOrg.id) {
@@ -682,7 +676,7 @@ export default class EntityValidator {
 
   _getActivityOrgIds() {
     const activityOrgs = [];
-    FPC.RELATED_ORGS_PATHS.forEach(orgRolePath => {
+    FieldPathConstants.RELATED_ORGS_PATHS.forEach(orgRolePath => {
       const orgRoles = this._entity[orgRolePath];
       if (orgRoles) {
         activityOrgs.push(

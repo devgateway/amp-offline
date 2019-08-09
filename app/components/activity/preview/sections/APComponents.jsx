@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
-import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import styles from './APComponents.css';
 import translate from '../../../../utils/translate';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP Components');
 
@@ -51,7 +49,7 @@ class APComponents extends Component {
   static _buildDetail(component) {
     const content = [];
     // TODO: Apply currency conversion to show all fundings in the same currency
-    FPC.TRANSACTION_TYPES.forEach(trnType => {
+    FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
       const fundings = component[trnType];
       if (fundings && fundings.length) {
         const groups = APComponents._extractGroups(fundings, trnType);

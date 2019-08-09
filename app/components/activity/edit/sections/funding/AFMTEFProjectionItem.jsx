@@ -4,9 +4,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager } from 'amp-ui';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FieldPathConstants,
+  FieldsManager } from 'amp-ui';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
@@ -39,7 +38,7 @@ class AFMTEFProjectionItem extends Component {
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
     if (!mtefItem[ActivityConstants.CURRENCY].id) {
-      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.FUNDING_CURRENCY_PATH);
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FieldPathConstants.FUNDING_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
       mtefItem[ActivityConstants.CURRENCY] = currency;

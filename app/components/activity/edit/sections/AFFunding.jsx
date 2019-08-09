@@ -4,17 +4,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel, Tab, Tabs } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
-import * as VC from '../../../../utils/constants/ValueConstants';
-import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import styles from './funding/AFFunding.css';
 import AFUtils from './../util/AFUtils';
 import GlobalSettingsManager from '../../../../modules/util/GlobalSettingsManager';
@@ -57,21 +54,21 @@ class AFFunding extends Component {
     if (this.context.activityFieldsManager.isFieldPathEnabled(
       `${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`)) {
       switch (sourceRole.value) {
-        case VC.DONOR_AGENCY:
-          return translate(VC.ACRONYM_DONOR_ORGANIZATION);
-        case VC.BENEFICIARY_AGENCY:
-          return translate(VC.ACRONYM_BENEFICIARY_AGENCY);
-        case VC.IMPLEMENTING_AGENCY:
-          return translate(VC.ACRONYM_IMPLEMENTING_AGENCY);
-        case VC.EXECUTING_AGENCY:
-          return translate(VC.ACRONYM_EXECUTING_AGENCY);
-        case VC.RESPONSIBLE_ORGANIZATION:
-          return translate(VC.ACRONYM_RESPONSIBLE_ORGANIZATION);
+        case ValueConstants.DONOR_AGENCY:
+          return translate(ValueConstants.ACRONYM_DONOR_ORGANIZATION);
+        case ValueConstants.BENEFICIARY_AGENCY:
+          return translate(ValueConstants.ACRONYM_BENEFICIARY_AGENCY);
+        case ValueConstants.IMPLEMENTING_AGENCY:
+          return translate(ValueConstants.ACRONYM_IMPLEMENTING_AGENCY);
+        case ValueConstants.EXECUTING_AGENCY:
+          return translate(ValueConstants.ACRONYM_EXECUTING_AGENCY);
+        case ValueConstants.RESPONSIBLE_ORGANIZATION:
+          return translate(ValueConstants.ACRONYM_RESPONSIBLE_ORGANIZATION);
         default:
           return null;
       }
     } else {
-      return translate(VC.ACRONYM_DONOR_ORGANIZATION);
+      return translate(ValueConstants.ACRONYM_DONOR_ORGANIZATION);
     }
   }
 
@@ -83,7 +80,7 @@ class AFFunding extends Component {
     logger.debug('handleDonorSelect');
     if (values) {
       const value = (values instanceof Array) ? values[values.length - 1][ActivityConstants.ORGANIZATION] : values;
-      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value, VC.DONOR_AGENCY);
+      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value, ValueConstants.DONOR_AGENCY);
       // Needed for new activities or funding is not added.
       if (!this.context.activity[ActivityConstants.FUNDINGS]) {
         this.context.activity[ActivityConstants.FUNDINGS] = [];
@@ -101,22 +98,22 @@ class AFFunding extends Component {
     let sourceRolePath = '';
     const roleValue = role ? role.value : null;
     switch (roleValue) {
-      case VC.DONOR_AGENCY:
+      case ValueConstants.DONOR_AGENCY:
         sourceRolePath = ActivityConstants.DONOR_ORGANIZATION;
         break;
-      case VC.BENEFICIARY_AGENCY:
+      case ValueConstants.BENEFICIARY_AGENCY:
         sourceRolePath = ActivityConstants.BENEFICIARY_AGENCY;
         break;
-      case VC.EXECUTING_AGENCY:
+      case ValueConstants.EXECUTING_AGENCY:
         sourceRolePath = ActivityConstants.EXECUTING_AGENCY;
         break;
-      case VC.CONTRACTING_AGENCY:
+      case ValueConstants.CONTRACTING_AGENCY:
         sourceRolePath = ActivityConstants.CONTRACTING_AGENCY;
         break;
-      case VC.IMPLEMENTING_AGENCY:
+      case ValueConstants.IMPLEMENTING_AGENCY:
         sourceRolePath = ActivityConstants.IMPLEMENTING_AGENCY;
         break;
-      case VC.RESPONSIBLE_ORGANIZATION:
+      case ValueConstants.RESPONSIBLE_ORGANIZATION:
         sourceRolePath = ActivityConstants.RESPONSIBLE_ORGANIZATION;
         break;
       default:
@@ -144,7 +141,7 @@ class AFFunding extends Component {
             && (i[ActivityConstants.SOURCE_ROLE] === undefined ||
               i[ActivityConstants.SOURCE_ROLE].id === f[ActivityConstants.SOURCE_ROLE].id)));
         // Look for errors on Commitments/Disbursements/Expenditures too.
-        const errorsOnInternalSections = FPC.TRANSACTION_TYPES.some(tt => this.hasErrors(f[tt]))
+        const errorsOnInternalSections = FieldPathConstants.TRANSACTION_TYPES.some(tt => this.hasErrors(f[tt]))
           || this.hasErrors(f[ActivityConstants.MTEF_PROJECTIONS]);
         if (!tab) {
           const acronym = this._getAcronym(f[ActivityConstants.SOURCE_ROLE]);
@@ -172,11 +169,11 @@ class AFFunding extends Component {
             `${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`)) {
             sourceRole = funding[ActivityConstants.SOURCE_ROLE];
           } else {
-            const enabledTrnType = FPC.TRANSACTION_TYPES
+            const enabledTrnType = FieldPathConstants.TRANSACTION_TYPES
               .find(tt => this.context.activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, tt));
             const options = this.context.activityFieldsManager
               .possibleValuesMap[`${ActivityConstants.FUNDINGS}~${enabledTrnType}~${ActivityConstants.RECIPIENT_ROLE}`];
-            sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
+            sourceRole = Object.values(options).find(i => (i.value === ValueConstants.DONOR_AGENCY));
           }
 
           if (!this.context.activityFundingSectionPanelStatus.find(i =>

@@ -2,20 +2,18 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
-import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Loading from '../../common/Loading';
 import * as styles from './ActivityForm.css';
 import { FIELDS_PER_SECTIONS, IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
-import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
-import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
-import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import ActivityValidator from '../../../modules/field/EntityValidator';
 import translate from '../../../utils/translate';
 import Logger from '../../../modules/util/LoggerManager';
 import FeatureManager from '../../../modules/util/FeatureManager';
+import PossibleValuesManager from '../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('Activity form');
 
@@ -93,7 +91,7 @@ export default class ActivityForm extends Component {
     this.props.loadActivityForActivityForm(activityId);
     this.setState({
       activityId,
-      isNewActivity: activityId === NEW_ACTIVITY_ID,
+      isNewActivity: activityId === ValueConstants.NEW_ACTIVITY_ID,
       quickLinksExpanded: true,
       currentSection: undefined,
       content: undefined,
@@ -228,7 +226,7 @@ export default class ActivityForm extends Component {
     let validationError;
     // TODO to adjust this list once is fixed to properly define activity
     const fieldPathsToSkipSet = new Set([ActivityConstants.AMP_ID,
-      ActivityConstants.INTERNAL_ID, FUNDING_ACTIVE_LIST]);
+      ActivityConstants.INTERNAL_ID, FieldPathConstants.FUNDING_ACTIVE_LIST]);
     this.activity[ActivityConstants.IS_DRAFT] = asDraft;
     const errors = this.activityValidator.areAllConstraintsMet(this.activity, asDraft, fieldPathsToSkipSet);
     if (errors.length) {
@@ -312,7 +310,8 @@ export default class ActivityForm extends Component {
 
   _renderActivity() {
     const { activityFieldsManager } = this.props.activityReducer;
-    const projectTitle = activityFieldsManager.getValue(this.activity, ActivityConstants.PROJECT_TITLE);
+    const projectTitle = activityFieldsManager.getValue(this.activity, ActivityConstants.PROJECT_TITLE,
+      PossibleValuesManager.getOptionTranslation);
 
     return (
       <div className={styles.form_content}>

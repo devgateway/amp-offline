@@ -1,4 +1,5 @@
-import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants
+  , FieldsManager } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -6,12 +7,9 @@ import * as WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
 import * as TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
 import * as UserHelper from '../modules/helpers/UserHelper';
 import ActivityHydrator from '../modules/helpers/ActivityHydrator';
-import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
 import { WORKSPACE_ID, WORKSPACE_LEAD_ID } from '../utils/constants/WorkspaceConstants';
-import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
-import { ADJUSTMENT_TYPE_PATHS } from '../utils/constants/FieldPathConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
@@ -41,7 +39,7 @@ const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 const logger = new LoggerManager('ActivityAction.js');
 
 export function loadActivityForActivityPreview(activityId) {
-  const paths = [...ADJUSTMENT_TYPE_PATHS, ActivityConstants.CREATED_BY, ActivityConstants.TEAM,
+  const paths = [...FieldPathConstants.ADJUSTMENT_TYPE_PATHS, ActivityConstants.CREATED_BY, ActivityConstants.TEAM,
     ActivityConstants.MODIFIED_BY];
   return (dispatch, ownProps) =>
     dispatch({
@@ -140,7 +138,8 @@ function _loadActivity({
   ])
     .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
       fieldsDef = fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS];
-      const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
+      const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage,
+        LoggerManager);
       const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
         currentWorkspaceSettings, currencyRatesManager);
       const activityWsId = activity[ActivityConstants.TEAM] && activity[ActivityConstants.TEAM].id;
@@ -175,7 +174,7 @@ const _toNotification = (error) => new Notification(
 
 const _getActivity = (activityId, teamMemberId) => {
   // special case for the new activity
-  if (activityId === NEW_ACTIVITY_ID) {
+  if (activityId === ValueConstants.NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
   return ActivityHelper.findAll({ id: activityId }).then(activity =>

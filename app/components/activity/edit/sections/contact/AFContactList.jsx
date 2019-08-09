@@ -2,11 +2,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Panel, Row } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import * as styles from './AFContactList.css';
 import * as afStyles from '../../ActivityForm.css';
 import { ContactFormPage } from '../../../../../containers/ContactPage';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Utils from '../../../../../utils/Utils';
 import { buildNewActivityContact } from '../../../../../actions/ContactAction';

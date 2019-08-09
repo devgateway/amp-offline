@@ -2,9 +2,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import AFOption from './AFOption';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as styles from './AFMultiSelect.css';
 import FieldDefinition from '../../../../modules/field/FieldDefinition';
 

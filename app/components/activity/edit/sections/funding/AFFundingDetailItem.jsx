@@ -4,9 +4,8 @@
 /* eslint-disable react/jsx-indent */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager } from 'amp-ui';
-import * as VC from '../../../../../utils/constants/ValueConstants';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, ValueConstants,
+  FieldsManager } from 'amp-ui';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import styles from './AFFundingDetailItem.css';
@@ -15,14 +14,14 @@ import FeatureManager from '../../../../../modules/util/FeatureManager';
 import * as AFUtils from '../../util/AFUtils';
 
 const ORG_TYPE_NAME_2_COLLECTION = {
-  [VC.IMPLEMENTING_AGENCY]: ActivityConstants.IMPLEMENTING_AGENCY,
-  [VC.RESPONSIBLE_ORGANIZATION]: ActivityConstants.RESPONSIBLE_ORGANIZATION,
-  [VC.REGIONAL_GROUP]: ActivityConstants.REGIONAL_GROUP,
-  [VC.EXECUTING_AGENCY]: ActivityConstants.EXECUTING_AGENCY,
-  [VC.DONOR_ORGANIZATION]: ActivityConstants.DONOR_ORGANIZATION,
-  [VC.BENEFICIARY_AGENCY]: ActivityConstants.BENEFICIARY_AGENCY,
-  [VC.CONTRACTING_AGENCY]: ActivityConstants.CONTRACTING_AGENCY,
-  [VC.SECTOR_GROUP]: ActivityConstants.SECTOR_GROUP
+  [ValueConstants.IMPLEMENTING_AGENCY]: ActivityConstants.IMPLEMENTING_AGENCY,
+  [ValueConstants.RESPONSIBLE_ORGANIZATION]: ActivityConstants.RESPONSIBLE_ORGANIZATION,
+  [ValueConstants.REGIONAL_GROUP]: ActivityConstants.REGIONAL_GROUP,
+  [ValueConstants.EXECUTING_AGENCY]: ActivityConstants.EXECUTING_AGENCY,
+  [ValueConstants.DONOR_ORGANIZATION]: ActivityConstants.DONOR_ORGANIZATION,
+  [ValueConstants.BENEFICIARY_AGENCY]: ActivityConstants.BENEFICIARY_AGENCY,
+  [ValueConstants.CONTRACTING_AGENCY]: ActivityConstants.CONTRACTING_AGENCY,
+  [ValueConstants.SECTOR_GROUP]: ActivityConstants.SECTOR_GROUP
 };
 
 /**
@@ -54,28 +53,28 @@ export default class AFFundingDetailItem extends Component {
     const filter = [];
     const typeName = this.props.trnType.toUpperCase();
     const options = [{
-      value: VC.CONTRACTING_AGENCY,
+      value: ValueConstants.CONTRACTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY`
     }, {
-      value: VC.BENEFICIARY_AGENCY,
+      value: ValueConstants.BENEFICIARY_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_BENEFICIARY_AGENCY`
     }, {
-      value: VC.DONOR_ORGANIZATION,
+      value: ValueConstants.DONOR_ORGANIZATION,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_DONOR_ORGANIZATION`
     }, {
-      value: VC.EXECUTING_AGENCY,
+      value: ValueConstants.EXECUTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_EXECUTING_AGENCY`
     }, {
-      value: VC.REGIONAL_GROUP,
+      value: ValueConstants.REGIONAL_GROUP,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_REGIONAL_GROUP`
     }, {
-      value: VC.RESPONSIBLE_ORGANIZATION,
+      value: ValueConstants.RESPONSIBLE_ORGANIZATION,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZATION`
     }, {
-      value: VC.SECTOR_GROUP,
+      value: ValueConstants.SECTOR_GROUP,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP`
     }, {
-      value: VC.IMPLEMENTING_AGENCY,
+      value: ValueConstants.IMPLEMENTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY`
     }];
     options.forEach(o => {

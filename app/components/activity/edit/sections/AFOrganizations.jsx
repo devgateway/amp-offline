@@ -2,18 +2,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormControl, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import BudgetCode from './organization/BudgetCode';
 import { ORGANIZATIONS } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
-import { RESPONSIBLE_ORGANIZATION_BUDGETS_PATH } from '../../../../utils/constants/FieldPathConstants';
 import AFOption from '../components/AFOption';
 import AFUtils from './../util/AFUtils';
-import FieldsManager from '../../../../modules/field/FieldsManager';
-import * as VC from '../../../../utils/constants/ValueConstants';
 import translate from '../../../../utils/translate';
 
 const logger = new Logger('AF organizations');
@@ -136,8 +133,8 @@ class AFOrganizations extends Component {
               parent={this.props.activity}
               fieldPath={ActivityConstants.DONOR_ORGANIZATION} extraParams={extraParams}
               fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION}
-              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.DONOR_ORGANIZATION, VC.DONOR_AGENCY)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.DONOR_ORGANIZATION, VC.DONOR_AGENCY)} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.DONOR_ORGANIZATION, ValueConstants.DONOR_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.DONOR_ORGANIZATION, ValueConstants.DONOR_AGENCY)} />
           </Col>
         </Row>
         <Row>
@@ -146,14 +143,14 @@ class AFOrganizations extends Component {
               parent={this.props.activity} fieldPath={ActivityConstants.RESPONSIBLE_ORGANIZATION}
               extraParams={{
                 custom: {
-                  [RESPONSIBLE_ORGANIZATION_BUDGETS_PATH]: BudgetCode(RESPONSIBLE_ORGANIZATION_BUDGETS_PATH)
+                  [FieldPathConstants.RESPONSIBLE_ORGANIZATION_BUDGETS_PATH]: BudgetCode(FieldPathConstants.RESPONSIBLE_ORGANIZATION_BUDGETS_PATH)
                 },
                 ...extraParams
               }}
               onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.RESPONSIBLE_ORGANIZATION,
-                VC.RESPONSIBLE_ORGANIZATION)}
+                ValueConstants.RESPONSIBLE_ORGANIZATION)}
               onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.RESPONSIBLE_ORGANIZATION,
-                VC.RESPONSIBLE_ORGANIZATION)} />
+                ValueConstants.RESPONSIBLE_ORGANIZATION)} />
           </Col>
         </Row>
         <Row>
@@ -161,48 +158,48 @@ class AFOrganizations extends Component {
             <AFField
               parent={this.props.activity} fieldPath={ActivityConstants.EXECUTING_AGENCY}
               extraParams={extraParams}
-              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.EXECUTING_AGENCY, VC.EXECUTING_AGENCY)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.EXECUTING_AGENCY, VC.EXECUTING_AGENCY)} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.EXECUTING_AGENCY, ValueConstants.EXECUTING_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.EXECUTING_AGENCY, ValueConstants.EXECUTING_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={ActivityConstants.IMPLEMENTING_AGENCY} extraParams={extraParams}
-              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.IMPLEMENTING_AGENCY, VC.IMPLEMENTING_AGENCY)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.IMPLEMENTING_AGENCY, VC.IMPLEMENTING_AGENCY)} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.IMPLEMENTING_AGENCY, ValueConstants.IMPLEMENTING_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.IMPLEMENTING_AGENCY, ValueConstants.IMPLEMENTING_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={ActivityConstants.BENEFICIARY_AGENCY} extraParams={extraParams}
-              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.BENEFICIARY_AGENCY, VC.BENEFICIARY_AGENCY)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.BENEFICIARY_AGENCY, VC.BENEFICIARY_AGENCY)} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.BENEFICIARY_AGENCY, ValueConstants.BENEFICIARY_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.BENEFICIARY_AGENCY, ValueConstants.BENEFICIARY_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={ActivityConstants.CONTRACTING_AGENCY} extraParams={extraParams}
-              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.CONTRACTING_AGENCY, VC.CONTRACTING_AGENCY)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.CONTRACTING_AGENCY, VC.CONTRACTING_AGENCY)} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.CONTRACTING_AGENCY, ValueConstants.CONTRACTING_AGENCY)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.CONTRACTING_AGENCY, ValueConstants.CONTRACTING_AGENCY)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={ActivityConstants.REGIONAL_GROUP} extraParams={extraParams}
-              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.REGIONAL_GROUP, VC.REGIONAL_GROUP)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.REGIONAL_GROUP, VC.REGIONAL_GROUP)} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.REGIONAL_GROUP, ValueConstants.REGIONAL_GROUP)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.REGIONAL_GROUP, ValueConstants.REGIONAL_GROUP)} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={ActivityConstants.SECTOR_GROUP} extraParams={extraParams}
-              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.SECTOR_GROUP, VC.SECTOR_GROUP)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.SECTOR_GROUP, VC.SECTOR_GROUP)} />
+              onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.SECTOR_GROUP, ValueConstants.SECTOR_GROUP)}
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.SECTOR_GROUP, ValueConstants.SECTOR_GROUP)} />
           </Col>
         </Row>
       </Grid>

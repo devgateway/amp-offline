@@ -1,7 +1,5 @@
-import { ActivityConstants, Constants, CurrencyRatesManager } from 'amp-ui';
-import * as FPC from '../../utils/constants/FieldPathConstants';
+import { ActivityConstants, Constants, CurrencyRatesManager, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Logger from '../util/LoggerManager';
-import FieldsManager from './FieldsManager';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 const logger = new Logger('Possible values manager');
@@ -102,16 +100,17 @@ export default class PossibleValuesManager {
 
   static setVisibility(options, fieldPath, currencyRatesManager: CurrencyRatesManager, filters, isORFilter = false,
     selectedId) {
-    const isLocations = FPC.LOCATION_PATH === fieldPath;
-    const isCurrency = FPC.PATHS_FOR_CURRENCY.has(fieldPath);
+    const isLocations = FieldPathConstants.LOCATION_PATH === fieldPath;
+    const isCurrency = FieldPathConstants.PATHS_FOR_CURRENCY.has(fieldPath);
     options = { ...options };
     Object.values(options).forEach(option => {
       option.visible = !isORFilter;
       if (isLocations) {
         option.displayHierarchicalValue = true;
       } else if (isCurrency) {
-        option[FPC.FIELD_OPTION_USABLE] = PossibleValuesManager.isCurrencyOptionUsable(option, currencyRatesManager);
-        if (!option[FPC.FIELD_OPTION_USABLE]) {
+        option[FieldPathConstants.FIELD_OPTION_USABLE] = PossibleValuesManager
+          .isCurrencyOptionUsable(option, currencyRatesManager);
+        if (!option[FieldPathConstants.FIELD_OPTION_USABLE]) {
           option.visible = option.id === selectedId;
         }
       }

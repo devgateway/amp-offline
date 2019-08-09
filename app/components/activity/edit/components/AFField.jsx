@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
-import { CurrencyRatesManager } from 'amp-ui';
+import { CurrencyRatesManager, FieldPathConstants, FieldsManager } from 'amp-ui';
 import AFLabel from './AFLabel';
 import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
@@ -11,9 +11,7 @@ import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
 import styles from '../ActivityForm.css';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
-import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import { reportFieldValidation } from '../../../../actions/ActivityAction';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -238,7 +236,7 @@ class AFField extends Component {
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
     const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
     let options = this._getOptions(optionsFieldPath);
-    if (PATHS_WITH_HIERARCHICAL_VALUES.has(optionsFieldPath)) {
+    if (FieldPathConstants.PATHS_WITH_HIERARCHICAL_VALUES.has(optionsFieldPath)) {
       options = PossibleValuesManager.buildFormattedHierarchicalValues(options);
       options = PossibleValuesManager.fillHierarchicalDepth(options);
     }

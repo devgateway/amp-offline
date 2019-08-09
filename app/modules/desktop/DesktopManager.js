@@ -1,15 +1,9 @@
 /* eslint "no-nested-ternary": 0 */
-import { Constants, ActivityConstants } from 'amp-ui';
+import { Constants, ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import translate from '../../utils/translate';
 import * as ActivityHelper from '../../modules/helpers/ActivityHelper';
 import ActivityHydrator from '../helpers/ActivityHydrator';
 import { ACTIVITIES_TAB_TITLE, REJECTED_TAB_TITLE } from '../../utils/constants/TabsConstants';
-import * as VC from '../../utils/constants/ValueConstants';
-import {
-  ADJUSTMENT_TYPE_PATHS,
-  DONOR_ORGANIZATIONS_PATH,
-  FUNDING_CURRENCY_PATHS
-} from '../../utils/constants/FieldPathConstants';
 import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 import WorkspaceFilter from '../filters/WorkspaceFilter';
 import Logger from '../../modules/util/LoggerManager';
@@ -59,7 +53,9 @@ const DesktopManager = {
     logger.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
-      fieldPaths: [DONOR_ORGANIZATIONS_PATH, ...ADJUSTMENT_TYPE_PATHS, ...FUNDING_CURRENCY_PATHS],
+      fieldPaths: [FieldPathConstants.DONOR_ORGANIZATIONS_PATH,
+        ...FieldPathConstants.ADJUSTMENT_TYPE_PATHS,
+        ...FieldPathConstants.FUNDING_CURRENCY_PATHS],
       teamMemberId
     });
   },
@@ -109,7 +105,7 @@ const DesktopManager = {
     if (item[ActivityConstants.FUNDINGS]) {
       item[ActivityConstants.FUNDINGS].forEach((funding) => {
         const fds = funding[trnType] && funding[trnType]
-          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE].value === VC.ACTUAL);
+          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE].value === ValueConstants.ACTUAL);
         if (fds) {
           fds.forEach((fd) => {
             amount += currencyRatesManager
