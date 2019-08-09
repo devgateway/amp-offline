@@ -3,8 +3,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, Panel, Row } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import { ActivityConstants, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
@@ -61,7 +60,7 @@ export default class AFFundingClassificationPanel extends Component {
     // TODO: Add 'agreement' with the same component than locations + a restriction to have only 1 value at the time,
     // this field is not yet implemented on possible-values (and is not used in Chad).
     const { funding } = this.props;
-    const hasFundingDetails = FPC.TRANSACTION_TYPES.some(tt => funding[tt] && funding[tt].length);
+    const hasFundingDetails = FieldPathConstants.TRANSACTION_TYPES.some(tt => funding[tt] && funding[tt].length);
     const hasErrors = this.props.hasErrors(funding);
     return (<div className={afStyles.full_width}>
       <Panel

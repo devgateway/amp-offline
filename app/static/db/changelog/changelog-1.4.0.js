@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, FieldPathConstants } from 'amp-ui';
 import * as RC from '../../../utils/constants/ResourceConstants';
 import * as Utils from '../../../utils/Utils';
 import * as CurrencyRatesHelper from '../../../modules/helpers/CurrencyRatesHelper';
@@ -8,7 +8,6 @@ import * as GSC from '../../../utils/constants/GlobalSettingsConstants';
 import * as GlobalSettingsHelper from '../../../modules/helpers/GlobalSettingsHelper';
 import * as CSC from '../../../utils/constants/ClientSettingsConstants';
 import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
-import * as FPC from '../../../utils/constants/FieldPathConstants';
 import * as ActivityHelper from '../../../modules/helpers/ActivityHelper';
 import logger from '../ChangelogLogger';
 import { ALL_APPROVAL_STATUSES } from '../../../utils/constants/ApprovalStatus';
@@ -91,12 +90,12 @@ export default ({
         }, {
           func: () => PossibleValuesHelper.findAllByExactIds(
             // locate at least one list of synced currencies
-            [FPC.FUNDING_CURRENCY_PATH, FPC.MTEF_CURRENCY_PATH, FPC.COMPONENT_CURRENCY_PATH]
+            [FieldPathConstants.FUNDING_CURRENCY_PATH, FieldPathConstants.MTEF_CURRENCY_PATH, FieldPathConstants.COMPONENT_CURRENCY_PATH]
           ).then(pvs => {
-            pvs = pvs && pvs.length && pvs.find(p => p && p[FPC.FIELD_OPTIONS]);
+            pvs = pvs && pvs.length && pvs.find(p => p && p[FieldPathConstants.FIELD_OPTIONS]);
             if (pvs) {
               codeToId = {};
-              Object.values(pvs[FPC.FIELD_OPTIONS]).forEach(c => {
+              Object.values(pvs[FieldPathConstants.FIELD_OPTIONS]).forEach(c => {
                 codeToId[c.value] = c.id;
               });
             }
@@ -206,11 +205,11 @@ export default ({
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
         changes: [{
-          func: () => PossibleValuesHelper.findAllByExactIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY).then(cpvs => {
+          func: () => PossibleValuesHelper.findAllByExactIds(FieldPathConstants.PATHS_FOR_ACTIVITY_CURRENCY).then(cpvs => {
             currencyPVs = cpvs;
             return Promise.all([
               CurrencyRatesHelper.replaceAllCurrencyRates([]),
-              PossibleValuesHelper.deleteByIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY)
+              PossibleValuesHelper.deleteByIds(FieldPathConstants.PATHS_FOR_ACTIVITY_CURRENCY)
             ]);
           })
         }],
@@ -458,13 +457,13 @@ export default ({
                   ActivityConstants.FUNDING_CLASSIFICATION_DATE, ActivityConstants.EFFECTIVE_FUNDING_DATE, ActivityConstants.FUNDING_CLOSING_DATE,
                   ActivityConstants.RATIFICATION_DATE, ActivityConstants.MATURITY]
                   .forEach(datePath => Utils.pushByKey(dateFieldsObj, datePath, funding));
-                FPC.TRANSACTION_TYPES.forEach(trnType => {
+                FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
                   (funding[trnType] || []).forEach(fd => Utils.pushByKey(dateFieldsObj, ActivityConstants.TRANSACTION_DATE, fd));
                 });
                 Utils.pushByKey(dateFieldsObj, ActivityConstants.TRANSACTION_DATE, funding[ActivityConstants.MTEF_PROJECTIONS]);
               });
               (a[ActivityConstants.COMPONENTS] || []).forEach(component => {
-                FPC.TRANSACTION_TYPES.forEach(trnType => {
+                FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
                   (component[trnType] || []).forEach(fd => Utils.pushByKey(dateFieldsObj, ActivityConstants.TRANSACTION_DATE, fd));
                 });
               });

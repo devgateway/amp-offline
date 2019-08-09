@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { ActivityConstants, ValueConstants } from 'amp-ui';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import NumberUtils from '../../../../../utils/NumberUtils';
@@ -88,7 +87,7 @@ export default class AFOverallFundingTotals extends Component {
     const groups = [];
     if (fundings) {
       fundings.forEach((item) => {
-        FPC.TRANSACTION_TYPES.forEach(trnType => {
+        FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
           const details = item[trnType] || [];
           details.forEach(item2 => {
             if (item2[ActivityConstants.ADJUSTMENT_TYPE]) {

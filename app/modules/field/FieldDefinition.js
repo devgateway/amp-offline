@@ -1,4 +1,4 @@
-import * as FPC from '../../utils/constants/FieldPathConstants';
+import { FieldPathConstants } from 'amp-ui';
 
 /**
  * Field Definition
@@ -18,82 +18,82 @@ export default class FieldDefinition {
    * @return {String} an internal unchangeable name (not affected by translations or country) like ID
    */
   get name() {
-    return this._fieldDef[FPC.FIELD_NAME];
+    return this._fieldDef[FieldPathConstants.FIELD_NAME];
   }
 
   get label() {
-    return this._fieldDef[FPC.FIELD_LABEL];
+    return this._fieldDef[FieldPathConstants.FIELD_LABEL];
   }
 
   /**
    * @return {String}
    */
   get type() {
-    return this._fieldDef[FPC.FIELD_TYPE];
+    return this._fieldDef[FieldPathConstants.FIELD_TYPE];
   }
 
   /**
    * @return {String|null} the list entry type
    */
   get itemType() {
-    return this._fieldDef[FPC.FIELD_ITEM_TYPE];
+    return this._fieldDef[FieldPathConstants.FIELD_ITEM_TYPE];
   }
 
   get length() {
-    return this._fieldDef[FPC.FIELD_LENGTH];
+    return this._fieldDef[FieldPathConstants.FIELD_LENGTH];
   }
 
   get listMaxSize() {
-    return this._fieldDef[FPC.LIST_MAX_SIZE];
+    return this._fieldDef[FieldPathConstants.LIST_MAX_SIZE];
   }
 
   /**
    * @return {String|null}
    */
   get required() {
-    return this._fieldDef[FPC.FIELD_REQUIRED];
+    return this._fieldDef[FieldPathConstants.FIELD_REQUIRED];
   }
 
   get uniqueConstraint() {
-    return this._fieldDef[FPC.FIELD_UNIQUE_CONSTRAINT];
+    return this._fieldDef[FieldPathConstants.FIELD_UNIQUE_CONSTRAINT];
   }
 
   get percentageConstraint() {
-    return this._fieldDef[FPC.FIELD_PERCENTAGE_CONSTRAINT];
+    return this._fieldDef[FieldPathConstants.FIELD_PERCENTAGE_CONSTRAINT];
   }
 
   get regexPattern() {
-    return this._fieldDef[FPC.REGEX_PATTERN];
+    return this._fieldDef[FieldPathConstants.REGEX_PATTERN];
   }
 
   /**
    * @return {Array|null}
    */
   get children() {
-    return this._fieldDef[FPC.FIELD_CHILDREN];
+    return this._fieldDef[FieldPathConstants.FIELD_CHILDREN];
   }
 
   /**
    * @return {Array|null}
    */
   get dependencies() {
-    return this._fieldDef[FPC.FIELD_DEPENDENCIES];
+    return this._fieldDef[FieldPathConstants.FIELD_DEPENDENCIES];
   }
 
   isPercentage() {
-    return this._fieldDef[FPC.FIELD_PERCENTAGE] === true;
+    return this._fieldDef[FieldPathConstants.FIELD_PERCENTAGE] === true;
   }
 
   isImportable() {
-    return this._fieldDef[FPC.FIELD_IMPORTABLE] === true;
+    return this._fieldDef[FieldPathConstants.FIELD_IMPORTABLE] === true;
   }
 
   allowsMultipleValues() {
-    return this._fieldDef[FPC.FIELD_MULTIPLE_VALUES_ALLOWED] === true;
+    return this._fieldDef[FieldPathConstants.FIELD_MULTIPLE_VALUES_ALLOWED] === true;
   }
 
   isTreeCollection() {
-    return this._fieldDef[FPC.FIELD_TREE_COLLECTION];
+    return this._fieldDef[FieldPathConstants.FIELD_TREE_COLLECTION];
   }
 
   /**
@@ -114,7 +114,7 @@ export default class FieldDefinition {
    * @return {boolean}
    */
   isIdOnly() {
-    return this._fieldDef[FPC.FIELD_ID_ONLY] === true;
+    return this._fieldDef[FieldPathConstants.FIELD_ID_ONLY] === true;
   }
 
   /**
@@ -122,7 +122,7 @@ export default class FieldDefinition {
    */
   isList() {
     if (this._isList === undefined) {
-      this._isList = this._fieldDef[FPC.FIELD_TYPE] === FPC.FIELD_TYPE_LIST;
+      this._isList = this._fieldDef[FieldPathConstants.FIELD_TYPE] === FieldPathConstants.FIELD_TYPE_LIST;
     }
     return this._isList;
   }
@@ -132,7 +132,7 @@ export default class FieldDefinition {
    */
   isSimpleTypeList() {
     if (this._isSimpleTypeList === undefined) {
-      this._isSimpleTypeList = this.isList() && this.itemType !== FPC.FIELD_TYPE_OBJECT;
+      this._isSimpleTypeList = this.isList() && this.itemType !== FieldPathConstants.FIELD_TYPE_OBJECT;
     }
     return this._isSimpleTypeList;
   }

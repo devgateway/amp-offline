@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import Section from './Section';
 import APField from '../components/APField';
-import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
@@ -43,7 +42,7 @@ class FundingSummary extends Component {
     let acEnabled = false;
     let adEnabled = false;
     // Commitments, Disbursements, Expenditures
-    FPC.TRANSACTION_TYPES.forEach(trnType => {
+    FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
       if (activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, trnType)) {
         const trnAdjOptPath = `${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`;
         const atOptions = activityFieldsManager.getPossibleValuesOptions(trnAdjOptPath);
@@ -59,7 +58,7 @@ class FundingSummary extends Component {
       }
     });
     // Other measures: "Unallocated Disbursements".
-    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FPC.DISBURSEMENTS_PATH, ValueConstants.ACTUAL,
+    const adjTypeActualTrn = this.props.activityFieldsManager.getValue(FieldPathConstants.DISBURSEMENTS_PATH, ValueConstants.ACTUAL,
       PossibleValuesManager.getOptionTranslation);
     const expendituresAreEnabled = activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS,
       ActivityConstants.EXPENDITURES);

@@ -4,10 +4,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel, Tab, Tabs } from 'react-bootstrap';
-import { ActivityConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
-import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
@@ -143,7 +142,7 @@ class AFFunding extends Component {
             && (i[ActivityConstants.SOURCE_ROLE] === undefined ||
               i[ActivityConstants.SOURCE_ROLE].id === f[ActivityConstants.SOURCE_ROLE].id)));
         // Look for errors on Commitments/Disbursements/Expenditures too.
-        const errorsOnInternalSections = FPC.TRANSACTION_TYPES.some(tt => this.hasErrors(f[tt]))
+        const errorsOnInternalSections = FieldPathConstants.TRANSACTION_TYPES.some(tt => this.hasErrors(f[tt]))
           || this.hasErrors(f[ActivityConstants.MTEF_PROJECTIONS]);
         if (!tab) {
           const acronym = this._getAcronym(f[ActivityConstants.SOURCE_ROLE]);
@@ -171,7 +170,7 @@ class AFFunding extends Component {
             `${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`)) {
             sourceRole = funding[ActivityConstants.SOURCE_ROLE];
           } else {
-            const enabledTrnType = FPC.TRANSACTION_TYPES
+            const enabledTrnType = FieldPathConstants.TRANSACTION_TYPES
               .find(tt => this.context.activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, tt));
             const options = this.context.activityFieldsManager
               .possibleValuesMap[`${ActivityConstants.FUNDINGS}~${enabledTrnType}~${ActivityConstants.RECIPIENT_ROLE}`];

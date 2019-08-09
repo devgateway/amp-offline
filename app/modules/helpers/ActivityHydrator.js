@@ -1,10 +1,9 @@
-import { ActivityConstants, Constants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../field/PossibleValuesManager';
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../utils/constants/ErrorConstants';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
-import { PREFIX_ACTIVITY } from '../../utils/constants/FieldPathConstants';
 import { UUID } from '../../utils/constants/ResourceConstants';
 
 /* eslint-disable class-methods-use-this */
@@ -39,7 +38,7 @@ import { UUID } from '../../utils/constants/ResourceConstants';
  */
 export default class ActivityHydrator extends AbstractEntityHydrator {
   constructor(fieldsDef) {
-    super(fieldsDef, PREFIX_ACTIVITY);
+    super(fieldsDef, FieldPathConstants.PREFIX_ACTIVITY);
   }
 
   // old mechanism for locations, using v1 API

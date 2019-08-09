@@ -1,7 +1,6 @@
 import { describe, it } from 'mocha';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants } from 'amp-ui';
 import ActivityHydrator from '../../app/modules/helpers/ActivityHydrator';
-import { DONOR_ORGANIZATIONS_PATH, FIELD_OPTIONS, FIELD_PATH } from '../../app/utils/constants/FieldPathConstants';
 
 const chai = require('chai');
 // const chaiAsPromised = require('chai-as-promised');
@@ -40,21 +39,21 @@ org2[ActivityConstants.HIERARCHICAL_VALUE_DEPTH] = 0;
 
 const possibleValuesCollection = [
   {
-    id: DONOR_ORGANIZATIONS_PATH,
-    [FIELD_PATH]: ['donor_organization', 'organization'],
-    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
+    id: FieldPathConstants.DONOR_ORGANIZATIONS_PATH,
+    [FieldPathConstants.FIELD_PATH]: ['donor_organization', 'organization'],
+    [FieldPathConstants.FIELD_OPTIONS]: { 1: org1, 2: org2 }
   },
   {
     id: 'final_list',
-    [FIELD_PATH]: ['final_list'],
-    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
+    [FieldPathConstants.FIELD_PATH]: ['final_list'],
+    [FieldPathConstants.FIELD_OPTIONS]: { 1: org1, 2: org2 }
   }
 ];
 const invalidPossibleValues = [
   {
     id: 'invalid_field',
-    [FIELD_PATH]: ['invalid_field'],
-    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
+    [FieldPathConstants.FIELD_PATH]: ['invalid_field'],
+    [FieldPathConstants.FIELD_OPTIONS]: { 1: org1, 2: org2 }
   }
 ];
 

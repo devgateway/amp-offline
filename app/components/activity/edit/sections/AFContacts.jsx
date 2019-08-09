@@ -1,10 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import { CONTACTS } from './AFSectionConstants';
-import { ACTIVITY_CONTACT_PATHS } from '../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import AFContactList from './contact/AFContactList';
 import { getActivityContactIds } from '../../../../actions/ContactAction';
@@ -56,7 +55,7 @@ class AFContacts extends Component {
   componentWillMount() {
     const { activity } = this.context;
     this.setState({ activity });
-    ACTIVITY_CONTACT_PATHS.forEach(acp => {
+    FieldPathConstants.ACTIVITY_CONTACT_PATHS.forEach(acp => {
       if (this.context.activityFieldsManager.isFieldPathEnabled(acp) && !activity[acp]) {
         activity[acp] = [];
       }
@@ -106,7 +105,7 @@ class AFContacts extends Component {
     const extraParams = {
       listType: AFContactList
     };
-    const contactGroups = ACTIVITY_CONTACT_PATHS
+    const contactGroups = FieldPathConstants.ACTIVITY_CONTACT_PATHS
       .filter(acp => this.context.activityFieldsManager.isFieldPathEnabled(acp))
       .map(acp => (
         <div key={acp}>

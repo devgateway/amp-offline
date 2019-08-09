@@ -4,8 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Panel } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import { ActivityConstants, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
@@ -67,7 +66,7 @@ export default class AFFundingDonorSection extends Component {
 
   _checkChildrenForErrors(f) {
     const { hasErrors } = this.props;
-    return (hasErrors(f) || FPC.TRANSACTION_TYPES.some(tt => hasErrors(f[tt])) ||
+    return (hasErrors(f) || FieldPathConstants.TRANSACTION_TYPES.some(tt => hasErrors(f[tt])) ||
       hasErrors(f[ActivityConstants.MTEF_PROJECTIONS]));
   }
 

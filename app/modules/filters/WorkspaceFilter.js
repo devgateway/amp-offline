@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
 import ActivityFilter from './ActivityFilter';
@@ -6,7 +6,6 @@ import { IS_COMPUTED, IS_PRIVATE } from '../../utils/constants/WorkspaceConstant
 import LoggerManager from '../util/LoggerManager';
 import * as FieldsHelper from '../helpers/FieldsHelper';
 import FieldsManager from '../field/FieldsManager';
-import * as FPC from '../../utils/constants/FieldPathConstants';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 const logger = new LoggerManager('Workspace filter');
@@ -55,7 +54,7 @@ export default class WorkspaceFilterBuilder {
     if (this._isComputed && this._wsFilters && this._workspace['use-filter'] === true) {
       return Promise.all([
         FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
-        PossibleValuesHelper.findAll(FPC.ADJUSTMENT_TYPE_PATHS),
+        PossibleValuesHelper.findAll(FieldPathConstants.ADJUSTMENT_TYPE_PATHS),
       ]).then(([fieldsDef, pvs]) => {
         const fieldsManager = new FieldsManager(fieldsDef, pvs, LoggerManager);
         return (new ActivityFilter(this._wsFilters, fieldsManager)).getDBFilter();

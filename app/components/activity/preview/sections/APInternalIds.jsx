@@ -1,15 +1,14 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants } from 'amp-ui';
 import Tablify from '../components/Tablify';
 import Section from './Section';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
-import { ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH } from '../../../../utils/constants/FieldPathConstants';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
-import PossibleValuesManager from "../../../../modules/field/PossibleValuesManager";
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP Internal ids');
 
@@ -46,7 +45,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     let orgIds;
     if (this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.ACTIVITY_INTERNAL_IDS)) {
       const showInternalId = this.props.activityFieldsManager.isFieldPathEnabled(
-        ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH);
+        FieldPathConstants.ACTIVITY_INTERNAL_IDS_INTERNAL_ID_PATH);
       orgIds = [];
       const actIntIds = this.props.activityFieldsManager.getValue(this.props.activity,
         ActivityConstants.ACTIVITY_INTERNAL_IDS, PossibleValuesManager.getOptionTranslation);

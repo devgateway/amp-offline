@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -19,7 +19,6 @@ import ResourceManager from '../modules/resource/ResourceManager';
 import LoggerManager from '../modules/util/LoggerManager';
 import ResourceHydrator from '../modules/helpers/ResourceHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
-import { PREFIX_RESOURCE } from '../utils/constants/FieldPathConstants';
 import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import EntityValidator from '../modules/field/EntityValidator';
@@ -206,7 +205,7 @@ export const configureResourceManagers = () => (dispatch, ownProps) => dispatch(
 const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
   FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS]),
-  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_RESOURCE)
+  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_RESOURCE)
 ]).then(([rFields, possibleValuesCollection]) => ({
   resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage, LoggerManager)
 }));
@@ -267,7 +266,7 @@ const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
 
 const _cleanupTmpFields = (resources) => {
   resources.forEach(r => {
-    delete r[TMP_ENTITY_VALIDATOR];
+    delete r[FieldPathConstants.TMP_ENTITY_VALIDATOR];
     const content = r[CONTENT_ID];
     if (content) {
       r[CONTENT_ID] = r[CONTENT_ID].id;
@@ -300,7 +299,7 @@ const _getActivityResources = (activity, asIds = true) => {
 export const buildNewResource = (resourceFieldsManager, resourceType) => {
   const resource = {};
   ResourceHelper.stampClientChange(resource);
-  resource[TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  resource[FieldPathConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
   resource[RESOURCE_TYPE] = { id: resourceType, value: resourceType };
   return resource;
 };

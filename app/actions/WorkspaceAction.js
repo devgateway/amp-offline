@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, FieldPathConstants } from 'amp-ui';
 import WorkspaceManager from '../modules/workspace/WorkspaceManager';
 import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
@@ -12,7 +12,6 @@ import { isForceSyncUp } from './SyncUpAction';
 
 import * as URLUtils from '../utils/URLUtils';
 import { NOTIFICATION_ORIGIN_WORKSPACE } from '../utils/constants/ErrorConstants';
-import { FIELD_OPTIONS, PREFIX_COMMON } from '../utils/constants/FieldPathConstants';
 import PossibleValuesManager from '../modules/field/PossibleValuesManager';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
@@ -46,7 +45,7 @@ function loadWorkspaceData(wsId) {
     WorkspaceHelper.findById(wsId),
     TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId, true),
     WSSettingsHelper.findByWorkspaceId(wsId),
-    PossibleValuesHelper.findById(`${PREFIX_COMMON}~${ActivityConstants.CURRENCY}`)
+    PossibleValuesHelper.findById(`${FieldPathConstants.PREFIX_COMMON}~${ActivityConstants.CURRENCY}`)
   ])
     .then(([workspace, teamMember, workspaceSettings, possibleValue]) => {
       if (!teamMember) {
@@ -58,8 +57,9 @@ function loadWorkspaceData(wsId) {
       const currency = {};
       currency.code = workspaceSettings.currency;
       let currencyOption = {};
-      if (possibleValue && possibleValue[FIELD_OPTIONS]) {
-        currencyOption = PossibleValuesManager.findOptionByValue(possibleValue[FIELD_OPTIONS], currency.code) || {};
+      if (possibleValue && possibleValue[FieldPathConstants.FIELD_OPTIONS]) {
+        currencyOption = PossibleValuesManager.findOptionByValue(possibleValue[FieldPathConstants.FIELD_OPTIONS],
+          currency.code) || {};
       }
       currency['translated-value'] = currencyOption['translated-value'];
       workspaceSettings.currency = currency;

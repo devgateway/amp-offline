@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../../utils/translate';
 import APFundingTotalItem from './APFundingTotalItem';
 import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
@@ -36,7 +35,7 @@ class APFundingTotalsSection extends Component {
     let actualCommitments;
     let actualDisbursements;
     const options = [];
-    FPC.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
+    FieldPathConstants.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
       if (activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, trnType)) {
         const fieldPath = `${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`;
         const atOptions = activityFieldsManager.getPossibleValuesOptions(fieldPath);

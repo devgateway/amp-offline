@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
-import { ActivityConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import Loading from '../../common/Loading';
 import * as styles from './ActivityForm.css';
 import { FIELDS_PER_SECTIONS, IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
-import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import ActivityValidator from '../../../modules/field/EntityValidator';
@@ -229,7 +228,7 @@ export default class ActivityForm extends Component {
     let validationError;
     // TODO to adjust this list once is fixed to properly define activity
     const fieldPathsToSkipSet = new Set([ActivityConstants.AMP_ID,
-      ActivityConstants.INTERNAL_ID, FUNDING_ACTIVE_LIST]);
+      ActivityConstants.INTERNAL_ID, FieldPathConstants.FUNDING_ACTIVE_LIST]);
     this.activity[ActivityConstants.IS_DRAFT] = asDraft;
     const errors = this.activityValidator.areAllConstraintsMet(this.activity, asDraft, fieldPathsToSkipSet);
     if (errors.length) {

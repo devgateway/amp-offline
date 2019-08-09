@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Col, Grid, Row } from 'react-bootstrap';
-import { ActivityConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
@@ -13,7 +13,6 @@ import { createNotification } from '../../../../modules/helpers/ErrorNotificatio
 import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import { LOCATION_PATH } from '../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AF location');
 
@@ -44,7 +43,7 @@ class AFLocation extends Component {
     const { globalSettings, activityFieldsManager } = this.props;
     if (globalSettings) {
       const iso2 = globalSettings[DEFAULT_COUNTRY] ? globalSettings[DEFAULT_COUNTRY].toUpperCase() : null;
-      const defaultCountry = Object.values(activityFieldsManager.possibleValuesMap[LOCATION_PATH])
+      const defaultCountry = Object.values(activityFieldsManager.possibleValuesMap[FieldPathConstants.LOCATION_PATH])
         .find(l => (l[ActivityConstants.EXTRA_INFO] &&
           l[ActivityConstants.EXTRA_INFO][ActivityConstants.ISO2] &&
           l[ActivityConstants.EXTRA_INFO][ActivityConstants.ISO2].toUpperCase() === iso2));

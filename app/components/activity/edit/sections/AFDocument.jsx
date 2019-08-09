@@ -3,11 +3,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Panel } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FieldPathConstants } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
-import { FIELD_NAME } from '../../../../utils/constants/FieldPathConstants';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
@@ -161,21 +160,23 @@ class AFDocument extends Component {
   getDocListHeaders() {
     const { resourceFieldsManager } = this.props.resourceReducer;
     const allFieldsDef = resourceFieldsManager.fieldsDef;
-    const fieldsDef = AF_FIELDS.map(f => allFieldsDef.find(fd => f === fd[FIELD_NAME])).filter(fd => fd);
+    const fieldsDef = AF_FIELDS.map(f => allFieldsDef.find(fd => f === fd[FieldPathConstants.FIELD_NAME]))
+      .filter(fd => fd);
     const headers = [<TableHeaderColumn key={UUID} dataField={UUID} isKey hidden />].concat(fieldsDef.map(fd => {
-      const fieldName = fd[FIELD_NAME];
+      const fieldName = fd[FieldPathConstants.FIELD_NAME];
       const formatExtraData = { fd };
       const customTrn = AF_CUSTOM_TRN[fieldName];
       const label = customTrn ? translate(customTrn) : resourceFieldsManager.getFieldLabelTranslation(fieldName);
       return (
         <TableHeaderColumn
           key={fieldName} dataField={fieldName} dataFormat={this.toAPLabel} formatExtraData={formatExtraData}
-          columnClassName={docStyles[`header_${fd[FIELD_NAME]}`]}>
+          columnClassName={docStyles[`header_${fd[FieldPathConstants.FIELD_NAME]}`]}>
           {label}
         </TableHeaderColumn>
       );
     }));
-    const fds = resourceFieldsManager.fieldsDef.filter(fd => [WEB_LINK, FILE_NAME].includes(fd[FIELD_NAME]));
+    const fds = resourceFieldsManager.fieldsDef.filter(fd => [WEB_LINK, FILE_NAME]
+      .includes(fd[FieldPathConstants.FIELD_NAME]));
     const formatExtraData = { fds };
     headers.splice(2, 0, (
       <TableHeaderColumn
@@ -194,7 +195,8 @@ class AFDocument extends Component {
   toAPLabel(cell, row, formatExtraData) {
     const { fd } = formatExtraData;
     const { resourceFieldsManager } = this.props.resourceReducer;
-    let value = fd ? resourceFieldsManager.getValue(row, fd[FIELD_NAME], PossibleValuesManager.getOptionTranslation) :
+    let value = fd ? resourceFieldsManager.getValue(row, fd[FieldPathConstants.FIELD_NAME],
+      PossibleValuesManager.getOptionTranslation) :
       cell;
     if (fd && fd.field_type === 'date') {
       value = DateUtils.createFormattedDate(value);

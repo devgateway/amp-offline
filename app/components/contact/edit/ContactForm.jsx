@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
+import { FieldPathConstants } from 'amp-ui';
 import * as styles from './ContactForm.css';
 import * as afStyles from '../../activity/edit/ActivityForm.css';
 import * as CC from '../../../utils/constants/ContactConstants';
@@ -13,7 +14,6 @@ import ContactPhone from './ContactPhone';
 import ContactEmail from './ContactEmail';
 import ContactFax from './ContactFax';
 import * as Utils from '../../../utils/Utils';
-import { LIST_MAX_SIZE } from '../../../utils/constants/FieldPathConstants';
 import translate from '../../../utils/translate';
 
 /**
@@ -127,7 +127,7 @@ class ContactForm extends Component {
     // Hence we'll .pop() the last item (__ADD_ENTRY_ASSUMPTION__) and display the error using ContactForm.
     const currentMaxSizeValidation = maxSizeValidation[fieldName];
     const { fieldDef } = currentMaxSizeValidation;
-    const maxListSize = fieldDef[LIST_MAX_SIZE];
+    const maxListSize = fieldDef[FieldPathConstants.LIST_MAX_SIZE];
     if (maxListSize && maxListSize < newItems.length) {
       const fieldLabel = contactFieldsManager.getFieldLabelTranslation(fieldName);
       newItems.pop();

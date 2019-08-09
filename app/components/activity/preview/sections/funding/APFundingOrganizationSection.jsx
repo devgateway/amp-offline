@@ -1,10 +1,9 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import Tablify from '../../components/Tablify';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
@@ -76,7 +75,7 @@ class APFundingOrganizationSection extends Component {
   _buildFundingDetailSection() {
     // Group the list of funding details by adjustment_type and transaction_type.
     const groups = [];
-    FPC.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
+    FieldPathConstants.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
       const fds = this.props.funding[trnType];
       if (fds && fds.length) {
         const fdByAT = new Map();

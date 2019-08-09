@@ -2,14 +2,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormControl, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import BudgetCode from './organization/BudgetCode';
 import { ORGANIZATIONS } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import afStyles from '../ActivityForm.css';
-import { RESPONSIBLE_ORGANIZATION_BUDGETS_PATH } from '../../../../utils/constants/FieldPathConstants';
 import AFOption from '../components/AFOption';
 import AFUtils from './../util/AFUtils';
 import FieldsManager from '../../../../modules/field/FieldsManager';
@@ -145,7 +144,7 @@ class AFOrganizations extends Component {
               parent={this.props.activity} fieldPath={ActivityConstants.RESPONSIBLE_ORGANIZATION}
               extraParams={{
                 custom: {
-                  [RESPONSIBLE_ORGANIZATION_BUDGETS_PATH]: BudgetCode(RESPONSIBLE_ORGANIZATION_BUDGETS_PATH)
+                  [FieldPathConstants.RESPONSIBLE_ORGANIZATION_BUDGETS_PATH]: BudgetCode(FieldPathConstants.RESPONSIBLE_ORGANIZATION_BUDGETS_PATH)
                 },
                 ...extraParams
               }}

@@ -1,8 +1,7 @@
 /* eslint-disable class-methods-use-this */
-import { Constants } from 'amp-ui';
+import { Constants, FieldPathConstants } from 'amp-ui';
 import PossibleValuesManager from './PossibleValuesManager';
 import Logger from '../util/LoggerManager';
-import * as FPC from '../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('Fields manager');
 
@@ -29,7 +28,7 @@ export default class FieldsManager {
     this._fieldsDef = fieldsDef;
     this._possibleValuesMap = {};
     possibleValuesCollection.forEach(pv => {
-      this._possibleValuesMap[pv.id] = pv[FPC.FIELD_OPTIONS];
+      this._possibleValuesMap[pv.id] = pv[FieldPathConstants.FIELD_OPTIONS];
     });
     this._fieldPathsEnabledStatusMap = {};
     this._lang = currentLanguage || Constants.LANGUAGE_ENGLISH;
@@ -92,9 +91,9 @@ export default class FieldsManager {
     let currentTree = this._fieldsDef;
     const isDisabled = pathParts.some(part => {
       currentTree = currentTree.find(field => field.field_name === part);
-      if (currentTree && ((currentTree[FPC.FIELD_TYPE] === FPC.FIELD_TYPE_LIST
-        && currentTree[FPC.FIELD_ITEM_TYPE] === FPC.FIELD_TYPE_OBJECT)
-        || currentTree[FPC.FIELD_TYPE] === FPC.FIELD_TYPE_OBJECT)) {
+      if (currentTree && ((currentTree[FieldPathConstants.FIELD_TYPE] === FieldPathConstants.FIELD_TYPE_LIST
+        && currentTree[FieldPathConstants.FIELD_ITEM_TYPE] === FieldPathConstants.FIELD_TYPE_OBJECT)
+        || currentTree[FieldPathConstants.FIELD_TYPE] === FieldPathConstants.FIELD_TYPE_OBJECT)) {
         currentTree = currentTree.children;
       }
       return !currentTree;

@@ -1,11 +1,10 @@
 import equal from 'fast-deep-equal';
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, FieldPathConstants } from 'amp-ui';
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 
 import * as CC from '../utils/constants/ContactConstants';
-import { ACTIVITY_CONTACT_PATHS, PREFIX_CONTACT } from '../utils/constants/FieldPathConstants';
 import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as Utils from '../utils/Utils';
@@ -75,7 +74,7 @@ export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => 
 const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
   FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS]),
-  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_CONTACT)
+  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_CONTACT)
 ]).then(([cFields, possibleValuesCollection]) => ({
   contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage, LoggerManager)
 }));
@@ -159,7 +158,7 @@ export const getActivityContactIds = (activity) => _getActivityContacts(activity
 
 const _getActivityContacts = (activity, asIds = true) => {
   const contactsIds = new Set();
-  ACTIVITY_CONTACT_PATHS.forEach(cType => {
+  FieldPathConstants.ACTIVITY_CONTACT_PATHS.forEach(cType => {
     const cs = activity[cType];
     if (cs && cs.length) {
       // contact may be eventually hydrated

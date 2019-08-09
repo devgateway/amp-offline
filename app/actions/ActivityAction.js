@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants, FieldPathConstants } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -15,7 +15,6 @@ import {
   NOTIFICATION_SEVERITY_ERROR,
   NOTIFICATION_SEVERITY_INFO
 } from '../utils/constants/ErrorConstants';
-import { ADJUSTMENT_TYPE_PATHS } from '../utils/constants/FieldPathConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
@@ -45,7 +44,7 @@ const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 const logger = new LoggerManager('ActivityAction.js');
 
 export function loadActivityForActivityPreview(activityId) {
-  const paths = [...ADJUSTMENT_TYPE_PATHS, ActivityConstants.CREATED_BY, ActivityConstants.TEAM,
+  const paths = [...FieldPathConstants.ADJUSTMENT_TYPE_PATHS, ActivityConstants.CREATED_BY, ActivityConstants.TEAM,
     ActivityConstants.MODIFIED_BY];
   return (dispatch, ownProps) =>
     dispatch({
