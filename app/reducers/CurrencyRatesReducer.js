@@ -1,6 +1,9 @@
+import { CurrencyRatesManager } from 'amp-ui';
 import { STATE_LOADING_CURRENCY_RATES, STATE_CURRENCY_RATES_LOADED } from '../actions/CurrencyRatesAction';
-import CurrencyRatesManager from '../modules/util/CurrencyRatesManager';
 import Logger from '../modules/util/LoggerManager';
+import translate from '../utils/translate';
+import DateUtils from '../utils/DateUtils';
+import * as ErrorNotificationHelper from '../modules/helpers/ErrorNotificationHelper';
 
 const logger = new Logger('Currency rates reducer');
 
@@ -17,8 +20,9 @@ export default function currencyRatesReducer(state: Object = defaultState, actio
         loadingCurrencyRates: true
       });
     case STATE_CURRENCY_RATES_LOADED: {
-      const currencyRatesManager = new CurrencyRatesManager(action.actionData.rates,
-        action.actionData.baseCurrency);
+      const currencyRatesManager = new CurrencyRatesManager(action.actionData.rates, action.actionData.baseCurrency,
+        translate, DateUtils,
+        ErrorNotificationHelper);
       return Object.assign({}, state, {
         currencyRatesManager,
         loadingCurrencyRates: false

@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
 import styles from './APFundingTransactionTypeItem.css';
 import APFundingTotalItem from './APFundingTotalItem';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import APLabel from '../../components/APLabel';
 import Utils from '../../../../../utils/Utils';
 import FieldsManager from '../../../../../modules/field/FieldsManager';

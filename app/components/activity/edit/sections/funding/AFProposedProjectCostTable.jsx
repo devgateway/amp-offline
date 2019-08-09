@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
@@ -10,7 +10,6 @@ import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF proposed project cost table');

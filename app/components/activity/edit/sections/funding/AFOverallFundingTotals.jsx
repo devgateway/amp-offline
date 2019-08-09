@@ -2,14 +2,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 
 const logger = new Logger('AF overall funding totals');
 

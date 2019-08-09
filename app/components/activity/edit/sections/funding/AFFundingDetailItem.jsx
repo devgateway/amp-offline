@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-indent */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager } from 'amp-ui';
 import * as VC from '../../../../../utils/constants/ValueConstants';
 import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
@@ -12,7 +12,6 @@ import * as Types from '../../components/AFComponentTypes';
 import styles from './AFFundingDetailItem.css';
 import translate from '../../../../../utils/translate';
 import FeatureManager from '../../../../../modules/util/FeatureManager';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AFUtils from '../../util/AFUtils';
 
 const ORG_TYPE_NAME_2_COLLECTION = {
