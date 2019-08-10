@@ -1,5 +1,4 @@
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
-import * as FC from '../../../../utils/constants/FieldPathConstants';
+import { ActivityConstants, FeatureManagerConstants, FieldPathConstants } from 'amp-ui';
 
 export const IDENTIFICATION = 'Identification';
 export const ACTIVITY_INTERNAL_IDS = 'Activity Internal IDs';
@@ -101,6 +100,6 @@ FIELDS_PER_SECTIONS[STRUCTURES] = new Set([ActivityConstants.STRUCTURES_SHAPE,
   ActivityConstants.STRUCTURES_COORDINATES, ActivityConstants.STRUCTURES_COLOR]);
 FIELDS_PER_SECTIONS[ISSUES_SECTION] = new Set([ActivityConstants.ISSUES, ActivityConstants.MEASURES,
   ActivityConstants.ACTORS]);
-FIELDS_PER_SECTIONS[CONTACTS] = new Set(FC.ACTIVITY_CONTACT_PATHS);
+FIELDS_PER_SECTIONS[CONTACTS] = new Set(FieldPathConstants.ACTIVITY_CONTACT_PATHS);
 FIELDS_PER_SECTIONS[M_E] = new Set([]);
 FIELDS_PER_SECTIONS[RELATED_DOCUMENTS] = new Set([]);

@@ -2,14 +2,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from '../../components/AFList.css';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import * as AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF proposed project cost table');
@@ -38,7 +36,7 @@ export default class AFProposedProjectCostTable extends Component {
     const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     const ppc = activity[ActivityConstants.PPC_AMOUNT];
     if (!ppc[ActivityConstants.CURRENCY] || !ppc[ActivityConstants.CURRENCY].id) {
-      const currencies = activityFieldsManager.getPossibleValuesOptions(FPC.PPC_CURRENCY_PATH);
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FieldPathConstants.PPC_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
       ppc[ActivityConstants.CURRENCY] = currency;

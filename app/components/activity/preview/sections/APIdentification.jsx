@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import Logger from '../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../modules/field/FieldsManager';
-import * as VC from '../../../../utils/constants/ValueConstants';
 
 const logger = new Logger('AP Identification');
 
@@ -38,7 +36,7 @@ class APIdentification extends Component {
     // Show budget extras fields like ministry_code, etc only when activity_budget is enabled and has value 'On Budget'.
     if (this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.ACTIVITY_BUDGET)
       && this.props.activity[ActivityConstants.ACTIVITY_BUDGET]
-      && this.props.activity[ActivityConstants.ACTIVITY_BUDGET].value === VC.ON_BUDGET) {
+      && this.props.activity[ActivityConstants.ACTIVITY_BUDGET].value === ValueConstants.ON_BUDGET) {
       fieldPaths.push(ActivityConstants.INDIRECT_ON_BUDGET);
       fieldPaths.push(ActivityConstants.FY);
       fieldPaths.push(ActivityConstants.MINISTRY_CODE);

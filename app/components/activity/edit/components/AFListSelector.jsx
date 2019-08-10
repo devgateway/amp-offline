@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import styles from './AFListSelector.css';
 import AFList from './AFList';
 import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';

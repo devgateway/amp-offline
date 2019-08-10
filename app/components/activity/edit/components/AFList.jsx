@@ -1,11 +1,10 @@
-import { ErrorConstants } from 'amp-ui';
+import { ErrorConstants, FieldsManager } from 'amp-ui';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styles from './AFList.css';
 import afStyles from '../ActivityForm.css';
 import { LABEL } from './AFComponentTypes';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFField from './AFField';

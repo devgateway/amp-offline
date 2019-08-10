@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { FeatureManager } from 'amp-ui';
 import PropTypes from 'prop-types';
+import { FieldPathConstants, FieldsManager,FeatureManager } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import APField from '../components/APField';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
-import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
 import * as Utils from '../../../../utils/Utils';
+import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP section');
 
@@ -67,7 +66,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
   buildSimpleField(path, showIfNotAvailable, NAOptions: Set, inline = false, parent = null, fieldsManager = null
     , options) {
     const options_ = options || {};
-    const fmPath = FPC.ACTIVITY_FIELDS_FM_PATH[path];
+    const fmPath = FieldPathConstants.ACTIVITY_FIELDS_FM_PATH[path];
     fieldsManager = fieldsManager || this.context.activityFieldsManager;
     if (fieldsManager.isFieldPathEnabled(path)
       && (!fmPath || FeatureManager.isFMSettingEnabled(fmPath, false))) {
@@ -77,15 +76,17 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         const fieldPathParts = path.split('~');
         valuePath = fieldPathParts[fieldPathParts.length - 1];
       }
-      const alternatePath = FPC.ALTERNATE_VALUE_PATH[valuePath];
-      let value = fieldsManager.getValue(parent || this.context.activity, valuePath);
+      const alternatePath = FieldPathConstants.ALTERNATE_VALUE_PATH[valuePath];
+      let value = fieldsManager.getValue(parent || this.context.activity, valuePath,
+        PossibleValuesManager.getOptionTranslation);
       if ((value === null || value === undefined) && alternatePath) {
-        value = fieldsManager.getValue(this.context.activity, alternatePath);
+        value = fieldsManager.getValue(this.context.activity, alternatePath,
+          PossibleValuesManager.getOptionTranslation);
       }
       const fieldDef = fieldsManager.getFieldDef(path);
-      if (fieldDef.field_type === FPC.FIELD_TYPE_DATE) {
+      if (fieldDef.field_type === FieldPathConstants.FIELD_TYPE_DATE) {
         value = DateUtils.createFormattedDate(value);
-      } else if (fieldDef.field_type === FPC.FIELD_TYPE_TIMESTAMP) {
+      } else if (fieldDef.field_type === FieldPathConstants.FIELD_TYPE_TIMESTAMP) {
         // matching AP online to format as date for now
         value = DateUtils.createFormattedDate(value);
       } else if (Array.isArray(value) && !value.length) {
@@ -99,7 +100,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
         value = translate('No Data');
       }
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
-        const useInnerHTML = FPC.RICH_TEXT_FIELDS.has(path);
+        const useInnerHTML = FieldPathConstants.RICH_TEXT_FIELDS.has(path);
         return (<APField
           key={Utils.stringToUniqueId(path)} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline}
           separator={false}

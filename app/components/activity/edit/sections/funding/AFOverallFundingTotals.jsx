@@ -2,9 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
-import * as VC from '../../../../../utils/constants/ValueConstants';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import NumberUtils from '../../../../../utils/NumberUtils';
@@ -49,10 +47,10 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f1.adjType.value) {
-      case VC.PLANNED:
+      case ValueConstants.PLANNED:
         f1String += 'b';
         break;
-      case VC.ACTUAL:
+      case ValueConstants.ACTUAL:
         f1String += 'a';
         break;
       default:
@@ -71,10 +69,10 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f2.adjType.value) {
-      case VC.PLANNED:
+      case ValueConstants.PLANNED:
         f2String += 'b';
         break;
-      case VC.ACTUAL:
+      case ValueConstants.ACTUAL:
         f2String += 'a';
         break;
       default:
@@ -88,7 +86,7 @@ export default class AFOverallFundingTotals extends Component {
     const groups = [];
     if (fundings) {
       fundings.forEach((item) => {
-        FPC.TRANSACTION_TYPES.forEach(trnType => {
+        FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
           const details = item[trnType] || [];
           details.forEach(item2 => {
             if (item2[ActivityConstants.ADJUSTMENT_TYPE]) {

@@ -2,12 +2,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Grid } from 'react-bootstrap';
+import { FieldsManager } from 'amp-ui';
 import Logger from '../../../modules/util/LoggerManager';
 import translate from '../../../utils/translate';
 import * as styles from './EntryList.css';
 import * as Utils from '../../../utils/Utils';
 import EntryList from './EntryList';
-import FieldsManager from '../../../modules/field/FieldsManager';
 
 const logger = new Logger('EntryListWrapper');
 

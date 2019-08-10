@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonToolbar, Col, FormGroup, Grid, Row } from 'react-bootstrap';
+import { ValueConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../modules/util/LoggerManager';
 import * as RC from '../../../utils/constants/ResourceConstants';
 import AFField from '../../activity/edit/components/AFField';
-import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
-import { TMP_ENTITY_VALIDATOR } from '../../../utils/constants/ValueConstants';
 import * as Types from '../../activity/edit/components/AFComponentTypes';
 import translate from '../../../utils/translate';
 import FileDialog from '../../../modules/util/FileDialog';
@@ -66,7 +65,7 @@ export default class ResourceForm extends Component {
       activity: this.context.activity,
       validationResult: resource.errors,
       activityFieldsManager: resourceReducer.resourceFieldsManager,
-      activityValidator: resource && resource[TMP_ENTITY_VALIDATOR],
+      activityValidator: resource && resource[ValueConstants.TMP_ENTITY_VALIDATOR],
     };
   }
 

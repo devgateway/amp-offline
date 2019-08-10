@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, FeatureManager } from 'amp-ui';
 import APField from '../components/APField';
 import APPercentageField from '../components/APPercentageField';
 import Tablify from '../components/Tablify';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';

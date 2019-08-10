@@ -1,12 +1,11 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants } from 'amp-ui';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 
 import ContactHelper from '../../helpers/ContactHelper';
 import Logger from '../../util/LoggerManager';
 import { CONTACT_PUSH_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
-import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import Notification from '../../helpers/NotificationHelper';
@@ -101,12 +100,12 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _updateNewContactToActualIdsInActivities(tmpContactId, newContactId) {
-    const queries = ACTIVITY_CONTACT_PATHS.map(cType =>
+    const queries = FieldPathConstants.ACTIVITY_CONTACT_PATHS.map(cType =>
       Utils.toMap(cType, { $elemMatch: { [ActivityConstants.CONTACT]: tmpContactId } }));
     const filter = { $or: queries };
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
       activities.forEach(activity => {
-        ACTIVITY_CONTACT_PATHS.forEach(cType => {
+        FieldPathConstants.ACTIVITY_CONTACT_PATHS.forEach(cType => {
           (activity[cType] || []).forEach(ac => {
             if (ac[ActivityConstants.CONTACT] === tmpContactId) {
               ac[ActivityConstants.CONTACT] = newContactId;

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import { FieldsManager } from 'amp-ui';
 import * as styles from '../ActivityForm.css';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';

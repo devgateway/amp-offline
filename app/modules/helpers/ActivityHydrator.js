@@ -1,11 +1,9 @@
-import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants, ValueConstants } from 'amp-ui';
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
 import PossibleValuesManager from '../field/PossibleValuesManager';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
-import { PREFIX_ACTIVITY } from '../../utils/constants/FieldPathConstants';
 import { UUID } from '../../utils/constants/ResourceConstants';
-import { TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
 
 /* eslint-disable class-methods-use-this */
 
@@ -39,7 +37,7 @@ import { TMP_ENTITY_VALIDATOR } from '../../utils/constants/ValueConstants';
  */
 export default class ActivityHydrator extends AbstractEntityHydrator {
   constructor(fieldsDef) {
-    super(fieldsDef, PREFIX_ACTIVITY);
+    super(fieldsDef, FieldPathConstants.PREFIX_ACTIVITY);
   }
 
   // old mechanism for locations, using v1 API
@@ -96,7 +94,7 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
     if (adocs && adocs.length) {
       adocs.forEach(ad => {
         ad[UUID] = ad[UUID] && ad[UUID][UUID];
-        delete ad[TMP_ENTITY_VALIDATOR];
+        delete ad[ValueConstants.TMP_ENTITY_VALIDATOR];
       });
     }
     return this.dehydrateEntity(activity);
