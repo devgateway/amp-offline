@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, FeatureManager } from 'amp-ui';
 import store from '../index';
 import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
@@ -7,7 +7,6 @@ import NumberUtils from '../utils/NumberUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
 import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
-import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';

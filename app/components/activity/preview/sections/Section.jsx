@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import { FeatureManager } from 'amp-ui';
 import PropTypes from 'prop-types';
 import styles from '../ActivityPreview.css';
 import APField from '../components/APField';
 import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';

@@ -1,6 +1,5 @@
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import Utils from '../../../../utils/Utils';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const orgTypes = {

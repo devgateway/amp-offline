@@ -1,10 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import Logger from '../../../../../../modules/util/LoggerManager';
 import AFField from '../../../components/AFField';
 import styles from '../AFFunding.css';
-import FeatureManager from '../../../../../../modules/util/FeatureManager';
 import { orgFormatter } from '../../AFOrganizations';
 
 const logger = new Logger('AP Funding Organization select');

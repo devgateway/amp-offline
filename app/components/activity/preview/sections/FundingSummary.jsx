@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import Section from './Section';
 import APField from '../components/APField';
 import * as VC from '../../../../utils/constants/ValueConstants';
@@ -9,7 +9,6 @@ import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 
 const logger = new Logger('Funding summary');
 

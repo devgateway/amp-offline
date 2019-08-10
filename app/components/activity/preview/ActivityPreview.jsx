@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
-import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FeatureManager } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
 import SummaryGroup from './SummaryGroup';
@@ -14,7 +14,6 @@ import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
 import * as WC from '../../../utils/constants/WorkspaceConstants';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
-import FeatureManager from '../../../modules/util/FeatureManager';
 
 const logger = new Logger('Activity preview');
 

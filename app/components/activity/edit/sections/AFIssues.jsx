@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import AFSection from './AFSection';
 import { ISSUES_SECTION } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 import translate from '../../../../utils/translate';
 import Item from './issues/Item';
 

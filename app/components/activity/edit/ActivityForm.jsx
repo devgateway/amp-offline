@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
-import { ActivityConstants, CurrencyRatesManager } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FeatureManager } from 'amp-ui';
 import Loading from '../../common/Loading';
 import * as styles from './ActivityForm.css';
 import { FIELDS_PER_SECTIONS, IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
@@ -15,7 +15,6 @@ import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTota
 import ActivityValidator from '../../../modules/field/EntityValidator';
 import translate from '../../../utils/translate';
 import Logger from '../../../modules/util/LoggerManager';
-import FeatureManager from '../../../modules/util/FeatureManager';
 
 const logger = new Logger('Activity form');
 

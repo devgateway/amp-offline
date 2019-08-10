@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManager } from 'amp-ui';
 import APField from '../components/APField';
 import APPercentageField from '../components/APPercentageField';
 import Tablify from '../components/Tablify';
@@ -9,7 +9,6 @@ import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';
 import Logger from '../../../../modules/util/LoggerManager';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP percentage list');
