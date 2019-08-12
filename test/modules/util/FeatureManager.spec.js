@@ -20,19 +20,19 @@ const fmTree = {
     }
   }
 };
-const actions = new FeatureManager(fmTree, LoggerManager);
-
+FeatureManager.setFMTree(fmTree);
+FeatureManager.setLoggerManager(LoggerManager);
 const FM_PATH = '/PROJECT MANAGEMENT/Funding/Funding Information/Delivery rate';
 
 describe('@@ FeatureManager @@', () => {
   describe('isFMSettingEnabled', () =>
     it('should report "Delivery rate" is disabled when full path is checked', () =>
-      expect(actions.isFMSettingEnabled(FM_PATH, false, fmTree)).to.be.false
+      expect(FeatureManager.isFMSettingEnabled(FM_PATH, false, fmTree)).to.be.false
     )
   );
   describe('isFMSettingEnabled', () =>
     it('should report "Delivery rate" is enabled when only last segment must be checked', () =>
-      expect(actions.isFMSettingEnabled(FM_PATH, true, fmTree)).to.be.true
+      expect(FeatureManager.isFMSettingEnabled(FM_PATH, true, fmTree)).to.be.true
     )
   );
 });

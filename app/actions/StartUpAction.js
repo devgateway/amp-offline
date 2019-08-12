@@ -58,6 +58,9 @@ const logger = new Logger('Startup action');
  * @return {true|NotificationHelper} continue or ask for user confirmation to continue
  */
 export function ampOfflinePreStartUp() {
+  // We need to set Logger so FeaturesManager can log in.
+  // It's a Singleton so we need to ensure its setup as soon as offline start
+  FeatureManager.setLoggerManager(Logger);
   return ClientSettingsManager.initDBWithDefaults()
     .then(SetupManager.auditStartup)
     .then(checkIfSetupComplete)
