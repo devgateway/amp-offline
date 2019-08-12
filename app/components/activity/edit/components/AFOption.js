@@ -1,5 +1,4 @@
-import { ActivityConstants } from 'amp-ui';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
+import { ActivityConstants, PossibleValuesManager } from 'amp-ui';
 
 /* eslint-disable class-methods-use-this */
 

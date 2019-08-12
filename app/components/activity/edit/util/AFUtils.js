@@ -1,6 +1,5 @@
-import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager, PossibleValuesManager } from 'amp-ui';
 import Utils from '../../../../utils/Utils';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const orgTypes = {
   [ActivityConstants.BENEFICIARY_AGENCY]: { constant: 'BENEFICIARY_AGENCY', name: 'Beneficiary Agency' },

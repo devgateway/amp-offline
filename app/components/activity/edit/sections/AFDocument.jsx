@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Panel } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants, FieldPathConstants, FieldsManager, FeatureManager } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FieldPathConstants, FieldsManager, FeatureManager,
+  PossibleValuesManager } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
@@ -37,7 +38,6 @@ import RepositoryManager from '../../../../modules/repository/RepositoryManager'
 import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
 import { buildNewResource } from '../../../../actions/ResourceAction';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,

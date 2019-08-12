@@ -1,7 +1,7 @@
-import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants, ValueConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants, ValueConstants,
+  PossibleValuesManager } from 'amp-ui';
 import * as FieldsHelper from './FieldsHelper';
 import Notification from './NotificationHelper';
-import PossibleValuesManager from '../field/PossibleValuesManager';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
 import { UUID } from '../../utils/constants/ResourceConstants';
 

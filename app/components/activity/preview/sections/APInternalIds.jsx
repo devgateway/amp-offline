@@ -1,13 +1,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
 import Tablify from '../components/Tablify';
 import Section from './Section';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP Internal ids');
 
