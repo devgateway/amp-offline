@@ -1,14 +1,13 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FieldsManager, FeatureManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import afStyles from '../../ActivityForm.css';
 import fundingStyles from './AFFundingContainer.css';
 import AFMTEFProjectionItem from './AFMTEFProjectionItem';
 import * as Utils from '../../../../../utils/Utils';
-import FeatureManager from '../../../../../modules/util/FeatureManager';
 
 const logger = new Logger('AF MTEF container');
 

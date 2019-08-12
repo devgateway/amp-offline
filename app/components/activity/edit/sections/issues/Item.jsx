@@ -2,12 +2,11 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import AFField from './../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
-import FeatureManager from '../../../../../modules/util/FeatureManager';
 import styles from './Item.css';
 
 const logger = new Logger('AF Issues Item');

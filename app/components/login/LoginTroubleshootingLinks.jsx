@@ -1,9 +1,8 @@
 /* eslint jsx-a11y/href-no-hash: 0 */
 import React, { Component, PropTypes } from 'react';
-import { FeatureManagerConstants } from 'amp-ui';
+import { FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
-import FeatureManager from '../../modules/util/FeatureManager';
 
 const logger = new Logger('Login troubleshooting links');
 

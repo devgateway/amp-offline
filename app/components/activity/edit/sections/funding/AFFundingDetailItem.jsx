@@ -5,12 +5,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, ValueConstants,
-  FieldsManager } from 'amp-ui';
+  FieldsManager, FeatureManager } from 'amp-ui';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import styles from './AFFundingDetailItem.css';
 import translate from '../../../../../utils/translate';
-import FeatureManager from '../../../../../modules/util/FeatureManager';
 import * as AFUtils from '../../util/AFUtils';
 
 const ORG_TYPE_NAME_2_COLLECTION = {

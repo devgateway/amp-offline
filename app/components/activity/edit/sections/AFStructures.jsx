@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import isNumber from 'is-number';
-import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { STRUCTURES } from './AFSectionConstants';
@@ -13,7 +13,6 @@ import translate from '../../../../utils/translate';
 import AFViewStructure from './structures/AFViewStructure';
 import AFMapWindow from './structures/AFMapWindow';
 import MapTilesUtils from '../../../../utils/MapTilesUtils';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 
 const logger = new Logger('AF Structures');
 
