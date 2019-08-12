@@ -169,7 +169,7 @@ export function loadCalendar() {
 
 export function loadPossibleValuesManager() {
   logger.log('loadPossibleValuesManager');
-  const possibleValuesManager = new PossibleValuesManager(Logger);
+  PossibleValuesManager.setLogger(Logger);
   return Promise.resolve();
 }
 
