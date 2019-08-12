@@ -1,9 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FeatureManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import APLabel from '../../components/APLabel';
-import FeatureManager from '../../../../../modules/util/FeatureManager';
 import styles from './APFundingTransactionTypeItem.css';
 import stylesMTEF from './APFundingMTEF.css';
 import APFundingMTEFItem from './APFundingMTEFItem';
