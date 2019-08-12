@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
 import Section from './Section';
 import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import NumberUtils from '../../../../utils/NumberUtils';
 import DateUtils from '../../../../utils/DateUtils';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP project cost');
 

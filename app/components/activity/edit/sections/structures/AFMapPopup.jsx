@@ -3,10 +3,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, PossibleValuesManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import PossibleValuesManager from '../../../../../modules/field/PossibleValuesManager';
 import AFLabel from '../../components/AFLabel';
 import styles from './AFMapWindow.css';
 

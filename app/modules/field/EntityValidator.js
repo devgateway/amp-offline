@@ -1,11 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
 import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import translate from '../../utils/translate';
 import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
-import PossibleValuesManager from './PossibleValuesManager';
 import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
 import ValidationErrorsCollector from './ValidationErrorsCollector';
 import ValidationError from './ValidationError';

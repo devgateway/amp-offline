@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
-import { FieldPathConstants } from 'amp-ui';
+import { FieldPathConstants, PossibleValuesManager } from 'amp-ui';
 import Logger from '../util/LoggerManager';
-import PossibleValuesManager from '../field/PossibleValuesManager';
 import PossibleValuesHelper from './PossibleValuesHelper';
 
 const logger = new Logger('AbstractEntityHydrator');

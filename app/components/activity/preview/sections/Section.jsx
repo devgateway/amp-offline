@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FieldPathConstants, FieldsManager } from 'amp-ui';
+import { FieldPathConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import APField from '../components/APField';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
@@ -9,7 +9,6 @@ import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
 import * as Utils from '../../../../utils/Utils';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP section');
 

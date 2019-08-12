@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants, PossibleValuesManager } from 'amp-ui';
 import WorkspaceManager from '../modules/workspace/WorkspaceManager';
 import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
@@ -11,7 +11,6 @@ import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import { isForceSyncUp } from './SyncUpAction';
 
 import * as URLUtils from '../utils/URLUtils';
-import PossibleValuesManager from '../modules/field/PossibleValuesManager';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_SELECT_WORKSPACE_ERROR = 'STATE_SELECT_WORKSPACE_ERROR';

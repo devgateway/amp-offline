@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, PossibleValuesManager } from 'amp-ui';
 import store from '../index';
 import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
@@ -91,6 +91,7 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
+    .then(loadPossibleValuesManager)
     .then(() => (isPostLogout ? postLogoutInit() : null));
   store.dispatch({
     type: STATE_INITIALIZATION,
@@ -164,6 +165,12 @@ export function loadCalendar() {
     payload: calendarPromise
   });
   return calendarPromise;
+}
+
+export function loadPossibleValuesManager() {
+  logger.log('loadPossibleValuesManager');
+  const possibleValuesManager = new PossibleValuesManager(Logger);
+  return Promise.resolve();
 }
 
 /**

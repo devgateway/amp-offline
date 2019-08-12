@@ -1,8 +1,7 @@
-import { Constants } from 'amp-ui';
+import { Constants, PossibleValuesManager } from 'amp-ui';
 import TranslationManager from '../modules/util/TranslationManager';
 import Logger from '../modules/util/LoggerManager';
 import DateUtils from '../utils/DateUtils';
-import PossibleValuesManager from '../modules/field/PossibleValuesManager';
 import store from '../index';
 
 export const STATE_CHANGE_LANGUAGE = 'STATE_CHANGE_LANGUAGE';
