@@ -58,9 +58,6 @@ const logger = new Logger('Startup action');
  * @return {true|NotificationHelper} continue or ask for user confirmation to continue
  */
 export function ampOfflinePreStartUp() {
-  // We need to set Logger so FeaturesManager can log in.
-  // It's a Singleton so we need to ensure its setup as soon as offline start
-  FeatureManager.setLoggerManager(Logger);
   return ClientSettingsManager.initDBWithDefaults()
     .then(SetupManager.auditStartup)
     .then(checkIfSetupComplete)
@@ -93,6 +90,7 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
+    .then()
     .then(() => (isPostLogout ? postLogoutInit() : null));
   store.dispatch({
     type: STATE_INITIALIZATION,
@@ -174,6 +172,7 @@ export function loadCalendar() {
  */
 export function loadFMTree(id = undefined) {
   logger.log('loadFMTree');
+  FeatureManager.setLoggerManager(Logger);
   const dbFilter = id ? { id } : {};
   const fmPromise = FMHelper.findAll(dbFilter)
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))
