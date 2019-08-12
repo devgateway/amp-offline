@@ -90,7 +90,6 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
-    .then()
     .then(() => (isPostLogout ? postLogoutInit() : null));
   store.dispatch({
     type: STATE_INITIALIZATION,
