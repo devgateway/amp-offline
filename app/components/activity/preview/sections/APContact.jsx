@@ -1,13 +1,13 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager, APField } from 'amp-ui';
 import Section from './Section';
 import Tablify from '../components/Tablify';
 import styles from '../ActivityPreview.css';
 import { getActivityContactIds } from '../../../../actions/ContactAction';
 import * as CC from '../../../../utils/constants/ContactConstants';
 import translate from '../../../../utils/translate';
-import APField from '../components/APField';
+import Logger from '../../../../modules/util/LoggerManager';
 
 /**
  * Activity Preview Contact section
@@ -53,7 +53,7 @@ class APContact extends Component {
     return (
       <APField
         fieldNameClass={styles.hidden} fieldValueClass={styles.nodata} fieldClass={styles.flex} separator={false}
-        value={translate('No Data')} />
+        value={translate('No Data')} translate={translate} Logger={Logger} />
     );
   }
 

@@ -1,18 +1,18 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FieldsManager } from 'amp-ui';
+import { FieldsManager, APField } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
 import * as RC from '../../../../utils/constants/ResourceConstants';
 import Section from './Section';
 import { getActivityResourceUuids } from '../../../../actions/ResourceAction';
-import APField from '../components/APField';
 import Loading from '../../../common/Loading';
 import ActionIcon from '../../../common/ActionIcon';
 import docSyles from './APDocument.css';
 import ActionUrl from '../../../common/ActionUrl';
 import RepositoryManager from '../../../../modules/repository/RepositoryManager';
+import Logger from '../../../../modules/util/LoggerManager';
 
 /**
  * Activity Preview Documents section
@@ -110,7 +110,7 @@ class APDocument extends Component {
     return (
       <APField
         fieldNameClass={styles.hidden} fieldValueClass={styles.nodata} fieldClass={styles.flex} separator={false}
-        value={translate('No Data')} />
+        value={translate('No Data')} translate={translate} Logger={Logger} />
     );
   }
 
