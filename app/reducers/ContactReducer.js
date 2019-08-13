@@ -130,7 +130,7 @@ const contactReducer = (state = defaultState, action: Object) => {
       let contactFieldsManager = state.contactFieldsManager;
       if (contactFieldsManager) {
         // we no longer will use the previous contactFieldsManager, thus shallow clone is acceptable
-        contactFieldsManager = FieldsManager.clone(contactFieldsManager);
+        contactFieldsManager = FieldsManager.clone(contactFieldsManager, Logger);
         contactFieldsManager.currentLanguageCode = action.actionData;
       }
       return { ...state };
