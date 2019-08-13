@@ -100,7 +100,7 @@ const resourceReducer = (state = defaultState, action: Object) => {
       let resourceFieldsManager = state.resourceFieldsManager;
       if (resourceFieldsManager) {
         // we no longer will use the previous resourceFieldsManager, thus shallow clone is acceptable
-        resourceFieldsManager = FieldsManager.clone(resourceFieldsManager);
+        resourceFieldsManager = FieldsManager.clone(resourceFieldsManager, Logger);
         resourceFieldsManager.currentLanguageCode = action.actionData;
       }
       return { ...state };

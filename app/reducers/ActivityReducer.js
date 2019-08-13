@@ -67,7 +67,7 @@ const activityReducer = (state = defaultState, action: Object) => {
       let activityFieldsManager = state.activityFieldsManager;
       if (activityFieldsManager) {
         // we no longer will use the previous activityFieldsManager, thus shallow clone is acceptable
-        activityFieldsManager = FieldsManager.clone(activityFieldsManager);
+        activityFieldsManager = FieldsManager.clone(activityFieldsManager, Logger);
         activityFieldsManager.currentLanguageCode = action.actionData;
       }
       return { ...state, activityFieldsManager };
