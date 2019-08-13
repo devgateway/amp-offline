@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager, FeatureManager, PossibleValuesManager } from 'amp-ui';
-import APField from '../components/APField';
+import { ActivityConstants, FieldsManager, FeatureManager, PossibleValuesManager, APField } from 'amp-ui';
 import APPercentageField from '../components/APPercentageField';
 import Tablify from '../components/Tablify';
 import translate from '../../../../utils/translate';
@@ -67,12 +66,14 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
         }
         content = (<APField
           key={listField} title={title} value={content} separator={false} inline={this.props.tablify === true}
-          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
+          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass}
+          translate={translate} Logger={Logger} />);
       } else {
         content = (<APField
           key={listField} title={title} value={translate('No Data')} separator={false}
           inline={this.props.tablify === true}
-          fieldNameClass={this.props.fieldNameClass} fieldValueClass={styles.nodata} />);
+          fieldNameClass={this.props.fieldNameClass} fieldValueClass={styles.nodata}
+          translate={translate} Logger={Logger} />);
       }
     }
     return content;

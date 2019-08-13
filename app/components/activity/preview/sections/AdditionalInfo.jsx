@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, PossibleValuesManager, APField } from 'amp-ui';
 import Section from './Section';
-import APField from '../components/APField';
 import * as WSC from '../../../../utils/constants/WorkspaceConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -52,13 +51,13 @@ class AdditionalInfo extends Component {
     additionalInfo.push(this.props.buildSimpleField(ActivityConstants.MODIFIED_BY, true));
     additionalInfo.push(this.props.buildSimpleField(ActivityConstants.MODIFIED_ON, true));
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`,
-      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass, translate, Logger));
 
     additionalInfo.push(APField.instance('workspaceManager', this._getWorkspaceLeadData(),
-      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass, translate, Logger));
 
     additionalInfo.push(APField.instance('computation', isComputedTeam,
-      false, false, this.props.fieldNameClass, this.props.fieldValueClass));
+      false, false, this.props.fieldNameClass, this.props.fieldValueClass, translate, Logger));
 
     return additionalInfo;
   }

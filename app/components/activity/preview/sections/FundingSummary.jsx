@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants, FieldsManager, FeatureManager,
-  PossibleValuesManager } from 'amp-ui';
+import {
+  ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants, FieldsManager, FeatureManager,
+  PossibleValuesManager, APField
+} from 'amp-ui';
 import Section from './Section';
-import APField from '../components/APField';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -107,7 +108,8 @@ class FundingSummary extends Component {
         const key = `Summary-Total-${measure.trn}`;
         fundingInfoSummary.push(<APField
           key={key} title={title} value={value} separator={false}
-          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass} />);
+          fieldNameClass={this.props.fieldNameClass} fieldValueClass={this.props.fieldValueClass}
+          translate={translate} Logger={Logger} />);
       }
     });
     return fundingInfoSummary;

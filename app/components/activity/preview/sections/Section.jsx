@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager } from 'amp-ui';
+import { FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager, APField } from 'amp-ui';
 import styles from '../ActivityPreview.css';
-import APField from '../components/APField';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -105,7 +104,8 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
           separator={false}
           fieldClass={options_.fieldClass || this.props.fieldClass}
           fieldNameClass={this.props.fieldNameClass}
-          fieldValueClass={options_.fieldValueClass || this.props.fieldValueClass} />);
+          fieldValueClass={options_.fieldValueClass || this.props.fieldValueClass}
+          translate={translate} Logger={Logger} />);
       }
     }
   }
