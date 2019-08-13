@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FeatureManager } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FeatureManager, APLabel } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import APLabel from '../../components/APLabel';
 import styles from './APFundingTransactionTypeItem.css';
 import stylesMTEF from './APFundingMTEF.css';
 import APFundingMTEFItem from './APFundingMTEFItem';
@@ -69,7 +68,9 @@ class APFundingMTEFSection extends Component {
       });
       return (<div>
         <div className={stylesMTEF.header}>
-          <APLabel label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()} />
+          <APLabel
+            label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()}
+            translate={translate} Logger={Logger} />
         </div>
         {content}
       </div>);

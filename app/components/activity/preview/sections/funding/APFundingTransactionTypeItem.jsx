@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, CurrencyRatesManager, FieldsManager } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FieldsManager, APLabel } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
 import styles from './APFundingTransactionTypeItem.css';
 import APFundingTotalItem from './APFundingTotalItem';
-import APLabel from '../../components/APLabel';
 import Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP Funding transaction type item');
@@ -47,9 +46,13 @@ export default class APFundingTransactionTypeItem extends Component {
   _drawHeader() {
     return (
       <div>
-        <APLabel label={translate(this._measure)} labelClass={styles.header} key={this._key} />
+        <APLabel
+          label={translate(this._measure)} labelClass={styles.header} key={this._key}
+          translate={translate} Logger={Logger} />
         {this._showFixedExRate ?
-          <APLabel label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate} /> : null}
+          <APLabel
+            label={translate('Fixed Exchange Rate')} labelClass={styles.exchange_rate}
+            translate={translate} Logger={Logger} /> : null}
       </div>);
   }
 
