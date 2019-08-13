@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Panel } from 'react-bootstrap';
 import { ActivityConstants, FeatureManagerConstants, FieldPathConstants, FieldsManager, FeatureManager,
-  PossibleValuesManager } from 'amp-ui';
+  PossibleValuesManager, APLabel } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
@@ -31,13 +31,13 @@ import {
 import * as docStyles from './document/AFDocument.css';
 import * as listStyles from '../components/AFList.css';
 import translate from '../../../../utils/translate';
-import APLabel from '../../preview/components/APLabel';
 import DateUtils from '../../../../utils/DateUtils';
 import ActionIcon from '../../../common/ActionIcon';
 import RepositoryManager from '../../../../modules/repository/RepositoryManager';
 import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
 import { buildNewResource } from '../../../../actions/ResourceAction';
+import Logger from '../../../../modules/util/LoggerManager';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,
@@ -200,7 +200,9 @@ class AFDocument extends Component {
       value = DateUtils.createFormattedDate(value);
     }
     value = `${value || ''}`;
-    return <APLabel label={value} tooltip={value} dontTranslate labelClass={docStyles.cell} />;
+    return (<APLabel
+      label={value} tooltip={value} dontTranslate labelClass={docStyles.cell}
+      translate={translate} Logger={Logger} />);
   }
 
   toDelete(cell) {
