@@ -1,14 +1,14 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, Tablify } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import Tablify from '../../components/Tablify';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
 import APFundingTotalItem from './APFundingTotalItem';
 import translate from '../../../../../utils/translate';
 import APFundingMTEFSection from './APFundingMTEFSection';
+import Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP funding organization section');
 
@@ -56,7 +56,7 @@ class APFundingOrganizationSection extends Component {
     content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.AGREEMENT]}~${[ActivityConstants.AGREEMENT_CODE]}`,
       true, null, false, funding && funding[ActivityConstants.AGREEMENT]));
 
-    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_FUNDING_COLS);
+    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_FUNDING_COLS, Utils.stringToUniqueId);
     return tableContent;
   }
 
@@ -64,7 +64,7 @@ class APFundingOrganizationSection extends Component {
     const content = [];
     const { buildSimpleField, funding } = this.props;
     content.push(buildSimpleField(field, true, null, false, funding));
-    return Tablify.addRows(content, 1);
+    return Tablify.addRows(content, 1, Utils.stringToUniqueId);
   }
 
   _buildMTEFDetailSection() {

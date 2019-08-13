@@ -1,12 +1,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
-import Tablify from '../components/Tablify';
+import { ActivityConstants, FieldPathConstants, FieldsManager, PossibleValuesManager, Tablify } from 'amp-ui';
 import Section from './Section';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
+import Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP Internal ids');
 
@@ -59,7 +59,9 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     if (isSeparateSection === true) {
       // make sure content exists before formatting
       const noData = <tr><td>{translate('No Data')}</td></tr>;
-      const tableContent = content ? Tablify.addRows(content, ActivityConstants.ACTIVITY_INTERNAL_IDS_COLS) : noData;
+      const tableContent = content ?
+        Tablify.addRows(content, ActivityConstants.ACTIVITY_INTERNAL_IDS_COLS, Utils.stringToUniqueId) :
+        noData;
       content = <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
     } else if (content || this.props.showIfEmpty) {
       return (

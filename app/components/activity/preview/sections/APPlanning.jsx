@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, Tablify } from 'amp-ui';
 import Section from './Section';
-import Tablify from '../components/Tablify';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
+import Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP Planning');
 
@@ -36,7 +36,7 @@ class APPlanning extends Component {
       this.props.buildSimpleField(fieldPath, showIfNotAvailable.has(fieldPath), null, false)
     ).filter(data => data !== undefined));
 
-    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_PLANNING_COLS);
+    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_PLANNING_COLS, Utils.stringToUniqueId);
     return <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
   }
 

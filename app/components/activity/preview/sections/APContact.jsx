@@ -1,13 +1,13 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants, FieldsManager, APField } from 'amp-ui';
+import { ActivityConstants, APField, FieldPathConstants, FieldsManager, Tablify } from 'amp-ui';
 import Section from './Section';
-import Tablify from '../components/Tablify';
 import styles from '../ActivityPreview.css';
 import { getActivityContactIds } from '../../../../actions/ContactAction';
 import * as CC from '../../../../utils/constants/ContactConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
+import Utils from '../../../../utils/Utils';
 
 /**
  * Activity Preview Contact section
@@ -79,7 +79,9 @@ class APContact extends Component {
       })
       // TODO tablify must not reverses the order
       .reverse();
-    return <Tablify key="contact-info" content={contactGroups} columns={ActivityConstants.ACTIVITY_CONTACT_COLS} />;
+    return (<Tablify
+      key="contact-info" content={contactGroups} columns={ActivityConstants.ACTIVITY_CONTACT_COLS}
+      Logger={Logger} stringToUniqueId={Utils.stringToUniqueId} />);
   }
 }
 
