@@ -56,7 +56,7 @@ class APFundingOrganizationSection extends Component {
     content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.AGREEMENT]}~${[ActivityConstants.AGREEMENT_CODE]}`,
       true, null, false, funding && funding[ActivityConstants.AGREEMENT]));
 
-    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_FUNDING_COLS, Utils.stringToUniqueId);
+    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_FUNDING_COLS, Utils);
     return tableContent;
   }
 
@@ -64,7 +64,7 @@ class APFundingOrganizationSection extends Component {
     const content = [];
     const { buildSimpleField, funding } = this.props;
     content.push(buildSimpleField(field, true, null, false, funding));
-    return Tablify.addRows(content, 1, Utils.stringToUniqueId);
+    return Tablify.addRows(content, 1, Utils);
   }
 
   _buildMTEFDetailSection() {

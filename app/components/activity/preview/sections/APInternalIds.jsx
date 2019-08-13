@@ -60,7 +60,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
       // make sure content exists before formatting
       const noData = <tr><td>{translate('No Data')}</td></tr>;
       const tableContent = content ?
-        Tablify.addRows(content, ActivityConstants.ACTIVITY_INTERNAL_IDS_COLS, Utils.stringToUniqueId) :
+        Tablify.addRows(content, ActivityConstants.ACTIVITY_INTERNAL_IDS_COLS, Utils) :
         noData;
       content = <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
     } else if (content || this.props.showIfEmpty) {

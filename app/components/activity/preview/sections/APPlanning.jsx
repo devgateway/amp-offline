@@ -36,7 +36,7 @@ class APPlanning extends Component {
       this.props.buildSimpleField(fieldPath, showIfNotAvailable.has(fieldPath), null, false)
     ).filter(data => data !== undefined));
 
-    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_PLANNING_COLS, Utils.stringToUniqueId);
+    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_PLANNING_COLS, Utils);
     return <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
   }
 

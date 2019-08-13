@@ -81,7 +81,7 @@ class APContact extends Component {
       .reverse();
     return (<Tablify
       key="contact-info" content={contactGroups} columns={ActivityConstants.ACTIVITY_CONTACT_COLS}
-      Logger={Logger} stringToUniqueId={Utils.stringToUniqueId} />);
+      Logger={Logger} Utils={Utils} />);
   }
 }
 

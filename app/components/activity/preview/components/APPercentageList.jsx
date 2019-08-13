@@ -63,7 +63,7 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
         if (this.props.tablify) {
           content = (<Tablify
             content={content} columns={this.props.columns} Logger={Logger}
-            stringToUniqueId={Utils.stringToUniqueId} />);
+            Utils={Utils} />);
         }
         content = (<APField
           key={listField} title={title} value={content} separator={false} inline={this.props.tablify === true}
