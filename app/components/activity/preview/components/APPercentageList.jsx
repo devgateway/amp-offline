@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager, FeatureManager, PossibleValuesManager, APField } from 'amp-ui';
+import { ActivityConstants, FieldsManager, FeatureManager, PossibleValuesManager, APField, Tablify } from 'amp-ui';
 import APPercentageField from '../components/APPercentageField';
-import Tablify from '../components/Tablify';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';
@@ -62,7 +61,9 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
             titleClass={this.props.percentTitleClass} valueClass={this.props.percentValueClass} />
         );
         if (this.props.tablify) {
-          content = <Tablify content={content} columns={this.props.columns} />;
+          content = (<Tablify
+            content={content} columns={this.props.columns} Logger={Logger}
+            Utils={Utils} />);
         }
         content = (<APField
           key={listField} title={title} value={content} separator={false} inline={this.props.tablify === true}
