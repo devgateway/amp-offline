@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, APPercentageList } from 'amp-ui';
 import Section from './Section';
-import APPercentageList from '../components/APPercentageList';
 import * as styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
+import translate from '../../../../utils/translate';
+import Utils from '../../../../utils/Utils';
+import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const APNationalPlanList = APPercentageList(ActivityConstants.NATIONAL_PLAN_OBJECTIVE,
   ActivityConstants.PROGRAM, ActivityConstants.PROGRAM_PERCENTAGE,
@@ -36,13 +38,19 @@ class APProgram extends Component {
   render() {
     return (<div>
       <div className={styles.primary_sector}>
-        <APNationalPlanList key="national-plan-list" {...this.props} />
+        <APNationalPlanList
+          key="national-plan-list" {...this.props} translate={translate} Logger={Logger} Utils={Utils}
+          rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
       <div className={styles.primary_sector}>
-        <PrimaryProgramList key="primary-programs-list" {...this.props} />
+        <PrimaryProgramList
+          key="primary-programs-list" {...this.props} translate={translate} Logger={Logger} Utils={Utils}
+          rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
       <div className={styles.secondary_sector}>
-        <SecondaryProgramList key="secondary-programs-list" {...this.props} />
+        <SecondaryProgramList
+          key="secondary-programs-list" {...this.props} translate={translate} Logger={Logger} Utils={Utils}
+          rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
     </div>);
   }
