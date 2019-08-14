@@ -45,19 +45,27 @@ const DatabaseSanityManager = {
     logger.log('validateDatabase');
     const dbNames = DatabaseSanityManager.findAllDBNames();
     const totalDBFilesValidated = dbNames.length;
+    let nonSanityDBsWithDataCount = 0;
     const flagInvalidDBPromises = dbNames.map(
       dbName => DatabaseManager.count({}, dbName)
-        .then(() => null)
+        .then((entriesCount) => {
+          if (dbName !== COLLECTION_SANITY_CHECK && entriesCount) {
+            // at this moment no .db is anyhow changed, hence this _may_ mean a cleanup leftover
+            nonSanityDBsWithDataCount += 1;
+          }
+          return null;
+        })
         .catch(() => dbName));
 
     logger.log(`Found ${totalDBFilesValidated} DBs to validate: ${dbNames}`);
 
     return Promise.all(flagInvalidDBPromises)
       .then(result => result.filter(name => name))
-      .then(invalidDBs => DatabaseSanityManager._initOrUpdateStatus(status, invalidDBs, totalDBFilesValidated));
+      .then(invalidDBs => DatabaseSanityManager._initOrUpdateStatus(
+        status, invalidDBs, totalDBFilesValidated, nonSanityDBsWithDataCount));
   },
 
-  _initOrUpdateStatus(status: DatabaseSanityStatus, invalidDBs, totalDBFilesValidated) {
+  _initOrUpdateStatus(status: DatabaseSanityStatus, invalidDBs, totalDBFilesValidated, nonSanityDBsWithDataCount) {
     logger.log('_initOrUpdateStatus');
     const currentDateTime = DateUtils.getISODateForAPI();
     const isDBCurrentlyInvalid = !!invalidDBs.length;
@@ -78,7 +86,9 @@ const DatabaseSanityManager = {
       status.isDBIncompatibilityDetected = isDBCurrentlyInvalid;
       status.validatedAt = currentDateTime;
     } else if (status.isDBIncompatibilityDetected) {
-      if (!isDBCurrentlyInvalid) {
+      if (nonSanityDBsWithDataCount) {
+        logger.warn('Cleanup did not complete and will be resumed');
+      } else if (!isDBCurrentlyInvalid) {
         status.healedAt = currentDateTime;
         status.healedBy = SCC.HEALED_BY_USER;
         status.healStatus = SCC.STATUS_SUCCESS;
