@@ -5,7 +5,6 @@ import Section from './Section';
 import * as styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
-import Utils from '../../../../utils/Utils';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const APNationalPlanList = APPercentageList(ActivityConstants.NATIONAL_PLAN_OBJECTIVE,
@@ -39,17 +38,17 @@ class APProgram extends Component {
     return (<div>
       <div className={styles.primary_sector}>
         <APNationalPlanList
-          key="national-plan-list" {...this.props} translate={translate} Logger={Logger} Utils={Utils}
+          key="national-plan-list" {...this.props} translate={translate} Logger={Logger}
           rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
       <div className={styles.primary_sector}>
         <PrimaryProgramList
-          key="primary-programs-list" {...this.props} translate={translate} Logger={Logger} Utils={Utils}
+          key="primary-programs-list" {...this.props} translate={translate} Logger={Logger}
           rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
       <div className={styles.secondary_sector}>
         <SecondaryProgramList
-          key="secondary-programs-list" {...this.props} translate={translate} Logger={Logger} Utils={Utils}
+          key="secondary-programs-list" {...this.props} translate={translate} Logger={Logger}
           rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
     </div>);

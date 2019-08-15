@@ -1,12 +1,11 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APMeasure.css';
 import APActor from './APActor';
-import * as Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP measure');
 
@@ -34,11 +33,11 @@ export default class APMeasures extends Component {
       date = ` ${createFormattedDate(this.props.measure[ActivityConstants.MEASURE_DATE])}`;
     }
     const measure = `${this.props.measure.name || ''}${date}`;
-    content.push(<div className={styles.measures} key={Utils.stringToUniqueId()}>{measure}</div>);
+    content.push(<div className={styles.measures} key={UIUtils.stringToUniqueId()}>{measure}</div>);
     this.props.measure[ActivityConstants.ACTORS].forEach((actor) => {
       content.push(
         <APActor
-          key={Utils.stringToUniqueId()} activityFieldsManager={this.props.activityFieldsManager} actor={actor} />);
+          key={UIUtils.stringToUniqueId()} activityFieldsManager={this.props.activityFieldsManager} actor={actor} />);
     });
     return content;
   }

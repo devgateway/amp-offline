@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, UIUtils } from 'amp-ui';
 import Section from '../Section';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { APProposedProjectCost } from '../APProjectCost';
@@ -9,7 +9,6 @@ import APFundingOrganizationSection from './APFundingOrganizationSection';
 import APFundingTotalsSection from './APFundingTotalsSection';
 import fundingStyles from './APFundingSection.css';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
-import * as Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP funding section');
 
@@ -35,7 +34,7 @@ class APFundingSection extends Component {
     if (this.props.activity.fundings) {
       this.props.activity.fundings.forEach((funding) => {
         const item = (<APFundingOrganizationSection
-          funding={funding} key={funding[ActivityConstants.AMP_FUNDING_ID] || Utils.stringToUniqueId()}
+          funding={funding} key={funding[ActivityConstants.AMP_FUNDING_ID] || UIUtils.stringToUniqueId()}
           buildSimpleField={this.props.buildSimpleField} />);
         fundingList.push(item);
       });

@@ -1,6 +1,5 @@
-import { Constants } from 'amp-ui';
+import { Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('FM Helper');
@@ -59,7 +58,7 @@ const FMHelper = {
     // when we'll be using multiple trees, we'll likely change EP to provide the id as well
     fmTrees.forEach(fm => {
       if (!fm.id) {
-        fm.id = Utils.stringToUniqueId('');
+        fm.id = UIUtils.stringToUniqueId('');
       }
     });
   },

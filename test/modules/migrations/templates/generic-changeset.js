@@ -1,8 +1,8 @@
-import * as Utils from '../../../../app/utils/Utils';
+import { UIUtils } from 'amp-ui';
 import * as MC from '../../../../app/utils/constants/MigrationsConstants';
 
 export const changeset = (changeid) => ({
-  changeid: `${changeid}-${Utils.stringToUniqueId()}`,
+  changeid: `${changeid}-${UIUtils.stringToUniqueId()}`,
   author: 'nmandrescu',
   comment: 'Generic changeset',
   context: 'startup',
@@ -13,7 +13,7 @@ export const changeset = (changeid) => ({
 });
 
 export const changesetUpdate = (changeid) => ({
-  changeid: `${changeid}-${Utils.stringToUniqueId()}`,
+  changeid: `${changeid}-${UIUtils.stringToUniqueId()}`,
   author: 'nmandrescu',
   comment: 'Generic changeset',
   context: 'startup',
@@ -28,7 +28,7 @@ export const changesetUpdate = (changeid) => ({
 });
 
 export const changesetWithMultipleChanges = (changeid) => ({
-  changeid: `${changeid}-${Utils.stringToUniqueId()}`,
+  changeid: `${changeid}-${UIUtils.stringToUniqueId()}`,
   author: 'nmandrescu',
   comment: 'Generic changeset',
   context: 'startup',
