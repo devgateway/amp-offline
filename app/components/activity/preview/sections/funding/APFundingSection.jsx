@@ -1,14 +1,13 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, Section } from 'amp-ui';
+import { ActivityConstants, UIUtils, Section } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { APProposedProjectCost } from '../APProjectCost';
 import APFundingOrganizationSection from './APFundingOrganizationSection';
 import APFundingTotalsSection from './APFundingTotalsSection';
 import fundingStyles from './APFundingSection.css';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
-import * as Utils from '../../../../../utils/Utils';
 import translate from '../../../../../utils/translate';
 import DateUtils from '../../../../../utils/DateUtils';
 
@@ -36,7 +35,7 @@ class APFundingSection extends Component {
     if (this.props.activity.fundings) {
       this.props.activity.fundings.forEach((funding) => {
         const item = (<APFundingOrganizationSection
-          funding={funding} key={funding[ActivityConstants.AMP_FUNDING_ID] || Utils.stringToUniqueId()}
+          funding={funding} key={funding[ActivityConstants.AMP_FUNDING_ID] || UIUtils.stringToUniqueId()}
           buildSimpleField={this.props.buildSimpleField} />);
         fundingList.push(item);
       });
@@ -55,6 +54,5 @@ export default Section(APFundingSection, { SectionTitle: 'Funding',
   sID: 'APFunding',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

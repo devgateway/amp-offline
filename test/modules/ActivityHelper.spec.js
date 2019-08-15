@@ -1,5 +1,5 @@
 import { describe, it } from 'mocha';
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, UIUtils } from 'amp-ui';
 import * as actions from '../../app/modules/helpers/ActivityHelper';
 import * as Utils from '../../app/utils/Utils';
 
@@ -17,9 +17,9 @@ const updatedOfflineActivity = Object.assign({ id: '100' },
   Utils.toMap(ActivityConstants.INTERNAL_ID, '123'),
   Utils.toMap(ActivityConstants.PROJECT_TITLE, title2));
 const rejectedActivity1 = Object.assign({}, updatedOfflineActivity,
-  { id: Utils.stringToUniqueId(title2) }, Utils.toMap(ActivityConstants.REJECTED_ID, 1));
+  { id: UIUtils.stringToUniqueId(title2) }, Utils.toMap(ActivityConstants.REJECTED_ID, 1));
 const rejectedActivity2 = Object.assign({}, updatedOfflineActivity,
-  { id: Utils.stringToUniqueId(title2) }, Utils.toMap(ActivityConstants.REJECTED_ID, 2));
+  { id: UIUtils.stringToUniqueId(title2) }, Utils.toMap(ActivityConstants.REJECTED_ID, 2));
 const onlyRejected = [rejectedActivity1, rejectedActivity2];
 const activities = [newOfflineActivity, updatedOfflineActivity, rejectedActivity1, rejectedActivity2];
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import Menu, { MenuItem, SubMenu } from 'rc-menu';
-import { ValueConstants } from 'amp-ui';
+import { ValueConstants, UIUtils } from 'amp-ui';
 import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
@@ -9,7 +9,6 @@ import store from '../index';
 import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
 import Logger from '../modules/util/LoggerManager';
 import { didSetupComplete } from '../actions/SetupAction';
-import * as Utils from './Utils';
 
 const logger = new Logger('Menu utils');
 
@@ -24,7 +23,7 @@ class MenuUtils {
     const { workspaceList } = workspaceReducer;
     const firstLevelEntries = [];
     const isSetupComplete = didSetupComplete();
-    const newMenu = Utils.cloneDeep(menu);
+    const newMenu = UIUtils.cloneDeep(menu);
 
     // Dynamic list of workspaces.
     if (newMenu.menu.DESKTOP) {

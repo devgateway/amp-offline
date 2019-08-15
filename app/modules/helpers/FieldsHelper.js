@@ -1,4 +1,4 @@
-import { Constants, ErrorConstants } from 'amp-ui';
+import { Constants, ErrorConstants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
@@ -115,7 +115,7 @@ const FieldsHelper = {
   _setIdIfUndefined(fields) {
     logger.debug('_setIdIfUndefined');
     if (fields.id === undefined) {
-      fields.id = Utils.stringToUniqueId('');
+      fields.id = UIUtils.stringToUniqueId('');
     }
   },
 

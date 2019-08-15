@@ -1,12 +1,11 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, Section } from 'amp-ui';
-import DateUtils from '../../../../utils/DateUtils';
+import { ActivityConstants, UIUtils, Section } from 'amp-ui';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
-import * as Utils from '../../../../utils/Utils';
+import DateUtils from '../../../../utils/DateUtils';
 
 const logger = new Logger('AP structures');
 
@@ -69,7 +68,7 @@ class APStructures extends Component {
       const content = [];
       structure[ActivityConstants.STRUCTURES_COORDINATES].forEach(c => {
         content.push(
-          <tr key={Utils.stringToUniqueId()}>
+          <tr key={UIUtils.stringToUniqueId()}>
             <td>{buildSimpleField(`${[ActivityConstants.STRUCTURES]}~${ActivityConstants.STRUCTURES_COORDINATES}~${[ActivityConstants.STRUCTURES_LATITUDE]}`,
               true, null, true, c, null, { noTitle: true, fieldValueClass: styles.structures_coordinates_value })}</td>
             <td>{buildSimpleField(`${[ActivityConstants.STRUCTURES]}~${ActivityConstants.STRUCTURES_COORDINATES}~${[ActivityConstants.STRUCTURES_LONGITUDE]}`,
@@ -116,6 +115,5 @@ export default Section(APStructures, { SectionTitle: 'Structures',
   sID: 'APStructures',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

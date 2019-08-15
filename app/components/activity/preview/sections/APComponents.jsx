@@ -6,7 +6,6 @@ import styles from './APComponents.css';
 import translate from '../../../../utils/translate';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 import DateUtils from '../../../../utils/DateUtils';
-import * as Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP Components');
 
@@ -107,6 +106,5 @@ class APComponents extends Component {
 export default Section(APComponents, { SectionTitle: 'Components',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

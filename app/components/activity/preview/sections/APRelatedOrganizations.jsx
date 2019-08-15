@@ -5,7 +5,6 @@ import { ActivityConstants, FeatureManagerConstants, FieldsManager, APPercentage
 import DateUtils from '../../../../utils/DateUtils';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import Utils from '../../../../utils/Utils';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const DO = APPercentageList(ActivityConstants.DONOR_ORGANIZATION, ActivityConstants.ORGANIZATION,
@@ -49,7 +48,6 @@ class APRelatedOrganizations extends Component {
       getItemTitle: this.getItemTitle,
       Logger,
       translate,
-      Utils,
       rawNumberToFormattedString };
     return (<div>
       <DO key="do-org-list" {...props} fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
@@ -68,6 +66,5 @@ export default Section(APRelatedOrganizations, { SectionTitle: 'Related Organiza
   sID: 'APRelatedOrganizations',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

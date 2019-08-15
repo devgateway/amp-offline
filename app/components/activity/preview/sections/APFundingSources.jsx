@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { ActivityConstants, Section } from 'amp-ui';
 import translate from '../../../../utils/translate';
-import Utils from '../../../../utils/Utils';
 import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 
@@ -31,6 +30,5 @@ export default Section(APFundingSources, { SectionTitle: 'Funding Sources',
   sID: 'APFundingSources',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

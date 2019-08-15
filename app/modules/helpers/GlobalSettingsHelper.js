@@ -1,7 +1,5 @@
-import { Constants, ErrorConstants } from 'amp-ui';
+import { Constants, ErrorConstants, UIUtils } from 'amp-ui';
 import DatabaseManager from '../database/DatabaseManager';
-
-import { stringToId } from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('Global settings helper');
@@ -62,7 +60,7 @@ const GlobalSettingsHelper = {
     const newItem = {};
     newItem.key = key;
     newItem.value = settings[key];
-    newItem.id = stringToId(newItem.key);
+    newItem.id = UIUtils.stringToId(newItem.key);
     return newItem;
   },
 

@@ -8,7 +8,6 @@ import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingT
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
-import * as Utils from '../../../../utils/Utils';
 
 const logger = new Logger('Funding summary');
 
@@ -125,6 +124,5 @@ export default Section(FundingSummary, {
   SectionTitle: 'fundingInformation',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

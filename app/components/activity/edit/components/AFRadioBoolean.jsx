@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, Radio } from 'react-bootstrap';
+import { UIUtils } from 'amp-ui';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
-import * as Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AFRadioBoolean');
 
@@ -28,7 +28,7 @@ export default class AFRadioBoolean extends Component {
   constructor(props) {
     super(props);
     logger.debug('constructor');
-    this.groupName = `yesNoGroup-${Utils.stringToUniqueId('yesNoGroup')}`;
+    this.groupName = `yesNoGroup-${UIUtils.stringToUniqueId('yesNoGroup')}`;
   }
 
   render() {

@@ -1,4 +1,4 @@
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
@@ -149,14 +149,14 @@ const ActivityHelper = {
         // set the id as string for consistency with other use cases
         activity.id = `${activity[ActivityConstants.INTERNAL_ID]}`;
       } else {
-        activity.id = Utils.stringToUniqueId(activity[ActivityConstants.PROJECT_TITLE]);
+        activity.id = UIUtils.stringToUniqueId(activity[ActivityConstants.PROJECT_TITLE]);
         // also flag activity changed on the client side
         activity[ActivityConstants.CLIENT_CHANGE_ID] = activity.id;
       }
     } else {
       if (isDiffChange) {
         activity[ActivityConstants.CLIENT_CHANGE_ID] =
-          Utils.stringToUniqueId(activity[ActivityConstants.PROJECT_TITLE]);
+          UIUtils.stringToUniqueId(activity[ActivityConstants.PROJECT_TITLE]);
       }
       if (activity[ActivityConstants.REJECTED_ID]) {
         activity.id = `${activity.id}-${activity[ActivityConstants.CLIENT_CHANGE_ID]}`;

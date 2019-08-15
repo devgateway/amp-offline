@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { FieldsManager, APField, Section } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import DateUtils from '../../../../utils/DateUtils';
-import Utils from '../../../../utils/Utils';
 import translate from '../../../../utils/translate';
 import * as RC from '../../../../utils/constants/ResourceConstants';
 import { getActivityResourceUuids } from '../../../../actions/ResourceAction';
@@ -128,6 +127,5 @@ export default Section(APDocument, { SectionTitle: 'Related Documents',
   sID: 'APDocument',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

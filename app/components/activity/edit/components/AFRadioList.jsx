@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, Radio } from 'react-bootstrap';
+import { UIUtils } from 'amp-ui';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFOption from './AFOption';
-import * as Utils from '../../../../utils/Utils';
 import * as styles from './AFRadioList.css';
 
 const logger = new Logger('AFRadioList');
@@ -23,7 +23,7 @@ export default class AFRadioList extends Component {
   constructor(props) {
     super(props);
     logger.debug('constructor');
-    this.groupName = `radioListGroup-${Utils.stringToUniqueId('radioListGroup')}`;
+    this.groupName = `radioListGroup-${UIUtils.stringToUniqueId('radioListGroup')}`;
   }
 
   render() {

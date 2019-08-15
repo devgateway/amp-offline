@@ -6,7 +6,6 @@ import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
 import * as UC from '../../../../utils/constants/UserConstants';
-import * as Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP Additional info');
 
@@ -72,6 +71,5 @@ class AdditionalInfo extends Component {
 export default Section(AdditionalInfo, { SectionTitle: 'additionalInfo',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

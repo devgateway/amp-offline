@@ -5,7 +5,6 @@ import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
-import Utils from '../../../../utils/Utils';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const APLocationsList = APPercentageList(ActivityConstants.LOCATIONS, ActivityConstants.LOCATION,
@@ -32,7 +31,7 @@ class APLocation extends Component {
     let content = [<APLocationsList
       key="locations-list" {...this.props}
       percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} tablify={false}
-      translate={translate} Logger={Logger} Utils={Utils} rawNumberToFormattedString={rawNumberToFormattedString} />];
+      translate={translate} Logger={Logger} rawNumberToFormattedString={rawNumberToFormattedString} />];
     const topContent = [ActivityConstants.IMPLEMENTATION_LEVEL, ActivityConstants.IMPLEMENTATION_LOCATION]
       .map(fp => <td key={fp}>{this.props.buildSimpleField(fp, true, new Set([0]))}</td>);
     content = content.filter(el => el !== undefined);
@@ -62,6 +61,5 @@ export default Section(APLocation, { SectionTitle: 'Location',
   sID: 'APLocation',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

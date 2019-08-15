@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ActivityConstants, ValueConstants, FieldsManager, Section } from 'amp-ui';
 import translate from '../../../../utils/translate';
-import Utils from '../../../../utils/Utils';
 import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 
@@ -58,6 +57,5 @@ export default Section(APIdentification, { SectionTitle: 'Identification',
   sID: 'APIdentification',
   Logger,
   translate,
-  DateUtils,
-  Utils
+  DateUtils
 });

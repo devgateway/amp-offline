@@ -6,7 +6,6 @@ import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import NumberUtils from '../../../../utils/NumberUtils';
 import DateUtils from '../../../../utils/DateUtils';
-import Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP project cost');
 
@@ -85,13 +84,11 @@ export const APProposedProjectCost = Section(APProjectCost(ActivityConstants.PPC
   { SectionTitle: 'Proposed Project Cost',
     Logger,
     translate,
-    DateUtils,
-    Utils
+    DateUtils
   });
 export const APRevisedProjectCost = Section(APProjectCost(ActivityConstants.RPC_AMOUNT),
   { SectionTitle: 'Revised Project Cost',
     Logger,
     translate,
-    DateUtils,
-    Utils
+    DateUtils
   });

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Panel } from 'react-bootstrap';
-import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldPathConstants, FieldsManager, UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import AFFundingContainer from './AFFundingContainer';
@@ -12,7 +12,6 @@ import AFField from '../../components/AFField';
 import styles from './AFFundingDonorSection.css';
 import fundingStyles from './AFFunding.css';
 import * as Types from '../../components/AFComponentTypes';
-import * as Utils from '../../../../../utils/Utils';
 import AFUtils from '../../util/AFUtils';
 
 const logger = new Logger('AF funding donor section');
@@ -78,7 +77,7 @@ export default class AFFundingDonorSection extends Component {
       .isFieldPathEnabled(`${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`)) {
       fundingItem[ActivityConstants.SOURCE_ROLE] = this.props.role;
     }
-    fundingItem[ActivityConstants.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
+    fundingItem[ActivityConstants.GROUP_VERSIONED_FUNDING] = UIUtils.numberRandom();
 
     // Open/Closed state for Panels.
     fundingItem.open = DEFAULT_OPEN;
