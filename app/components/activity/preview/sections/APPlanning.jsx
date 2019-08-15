@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, Tablify } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, Tablify, Section } from 'amp-ui';
+import translate from '../../../../utils/translate';
+import DateUtils from '../../../../utils/DateUtils';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
-import Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP Planning');
 
@@ -36,10 +36,15 @@ class APPlanning extends Component {
       this.props.buildSimpleField(fieldPath, showIfNotAvailable.has(fieldPath), null, false)
     ).filter(data => data !== undefined));
 
-    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_PLANNING_COLS, Utils);
+    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_PLANNING_COLS);
     return <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
   }
 
 }
-
-export default Section(APPlanning, 'Planning', true, 'APPlanning');
+export default Section(APPlanning, { SectionTitle: 'Planning',
+  useEncapsulateHeader: true,
+  sID: 'APPlanning',
+  Logger,
+  translate,
+  DateUtils
+});

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager, APPercentageList } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, FieldsManager, APPercentageList, Section } from 'amp-ui';
 import * as styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
+import DateUtils from '../../../../utils/DateUtils';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const APNationalPlanList = APPercentageList(ActivityConstants.NATIONAL_PLAN_OBJECTIVE,
@@ -55,5 +55,10 @@ class APProgram extends Component {
   }
 
 }
-
-export default Section(APProgram, 'Program', true, 'APProgram');
+export default Section(APProgram, { SectionTitle: 'Program',
+  useEncapsulateHeader: true,
+  sID: 'APProgram',
+  Logger,
+  translate,
+  DateUtils
+});

@@ -1,12 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, APField, FieldPathConstants, FieldsManager, Tablify } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, APField, FieldPathConstants, FieldsManager, Tablify, Section } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import { getActivityContactIds } from '../../../../actions/ContactAction';
 import * as CC from '../../../../utils/constants/ContactConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
+import DateUtils from '../../../../utils/DateUtils';
 
 /**
  * Activity Preview Contact section
@@ -84,4 +84,10 @@ class APContact extends Component {
   }
 }
 
-export default Section(APContact, 'Contact Information', true, 'APContact');
+export default Section(APContact, { SectionTitle: 'Contact Information',
+  useEncapsulateHeader: true,
+  sID: 'APContact',
+  Logger,
+  translate,
+  DateUtils
+});

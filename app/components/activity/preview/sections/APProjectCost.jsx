@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, FieldsManager, PossibleValuesManager, Section } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -81,6 +80,15 @@ const APProjectCost = (fieldName) => class extends Component {
     return content;
   }
 };
-
-export const APProposedProjectCost = Section(APProjectCost(ActivityConstants.PPC_AMOUNT), 'Proposed Project Cost');
-export const APRevisedProjectCost = Section(APProjectCost(ActivityConstants.RPC_AMOUNT), 'Revised Project Cost');
+export const APProposedProjectCost = Section(APProjectCost(ActivityConstants.PPC_AMOUNT),
+  { SectionTitle: 'Proposed Project Cost',
+    Logger,
+    translate,
+    DateUtils
+  });
+export const APRevisedProjectCost = Section(APProjectCost(ActivityConstants.RPC_AMOUNT),
+  { SectionTitle: 'Revised Project Cost',
+    Logger,
+    translate,
+    DateUtils
+  });

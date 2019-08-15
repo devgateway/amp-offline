@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldsManager, APPercentageList } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, FieldsManager, APPercentageList, Section } from 'amp-ui';
 import styles from './APSector.css';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
+import DateUtils from '../../../../utils/DateUtils';
 
 const PrimarySectorList = APPercentageList(ActivityConstants.PRIMARY_SECTORS, ActivityConstants.SECTOR,
   ActivityConstants.SECTOR_PERCENTAGE, 'Primary Sector');
@@ -45,5 +45,11 @@ class APSector extends Component {
     </div>);
   }
 }
+export default Section(APSector, { SectionTitle: 'Sectors',
+  useEncapsulateHeader: true,
+  sID: 'APSector',
+  Logger,
+  translate,
+  DateUtils
+});
 
-export default Section(APSector, 'Sectors', true, 'APSector');

@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants, FieldsManager, FeatureManager,
-  PossibleValuesManager, APField
+  PossibleValuesManager, APField, Section
 } from 'amp-ui';
-import Section from './Section';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
+import DateUtils from '../../../../utils/DateUtils';
 
 const logger = new Logger('Funding summary');
 
@@ -120,4 +120,9 @@ class FundingSummary extends Component {
   }
 }
 
-export default Section(FundingSummary, 'fundingInformation');
+export default Section(FundingSummary, {
+  SectionTitle: 'fundingInformation',
+  Logger,
+  translate,
+  DateUtils
+});

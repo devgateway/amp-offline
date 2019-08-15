@@ -1,12 +1,11 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants, FieldsManager, PossibleValuesManager, Tablify } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, FieldPathConstants, FieldsManager, PossibleValuesManager, Tablify, Section } from 'amp-ui';
 import translate from '../../../../utils/translate';
+import DateUtils from '../../../../utils/DateUtils';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
-import Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP Internal ids');
 
@@ -60,7 +59,7 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
       // make sure content exists before formatting
       const noData = <tr><td>{translate('No Data')}</td></tr>;
       const tableContent = content ?
-        Tablify.addRows(content, ActivityConstants.ACTIVITY_INTERNAL_IDS_COLS, Utils) :
+        Tablify.addRows(content, ActivityConstants.ACTIVITY_INTERNAL_IDS_COLS) :
         noData;
       content = <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
     } else if (content || this.props.showIfEmpty) {
@@ -75,5 +74,10 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     return content;
   }
 };
-
-export const APInternalIds = Section(APInternalIdsSection(true), 'Agency Internal IDs', true, 'APInternalIds');
+export const APInternalIds = Section(APInternalIdsSection(true), { SectionTitle: 'Agency Internal IDs',
+  useEncapsulateHeader: true,
+  sID: 'APInternalIds',
+  Logger,
+  translate,
+  DateUtils
+});

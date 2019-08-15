@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, FieldPathConstants, FieldsManager, Section } from 'amp-ui';
 import Logger from '../../../../modules/util/LoggerManager';
 import styles from './APComponents.css';
 import translate from '../../../../utils/translate';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
+import DateUtils from '../../../../utils/DateUtils';
 
 const logger = new Logger('AP Components');
 
@@ -103,4 +103,8 @@ class APComponents extends Component {
   }
 }
 
-export default Section(APComponents, 'Components');
+export default Section(APComponents, { SectionTitle: 'Components',
+  Logger,
+  translate,
+  DateUtils
+});

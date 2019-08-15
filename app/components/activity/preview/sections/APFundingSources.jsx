@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, Section } from 'amp-ui';
+import translate from '../../../../utils/translate';
+import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AP funding sources');
@@ -24,5 +25,10 @@ class APFundingSources extends Component {
     return (<div>{content}</div>);
   }
 }
-
-export default Section(APFundingSources, 'Funding Sources', true, 'APFundingSources');
+export default Section(APFundingSources, { SectionTitle: 'Funding Sources',
+  useEncapsulateHeader: true,
+  sID: 'APFundingSources',
+  Logger,
+  translate,
+  DateUtils
+});

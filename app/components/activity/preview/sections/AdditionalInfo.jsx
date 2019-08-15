@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager, PossibleValuesManager, APField } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, FieldsManager, PossibleValuesManager, APField, Section } from 'amp-ui';
 import * as WSC from '../../../../utils/constants/WorkspaceConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
+import DateUtils from '../../../../utils/DateUtils';
 import * as UC from '../../../../utils/constants/UserConstants';
 
 const logger = new Logger('AP Additional info');
@@ -68,4 +68,8 @@ class AdditionalInfo extends Component {
 
 }
 
-export default Section(AdditionalInfo, 'additionalInfo');
+export default Section(AdditionalInfo, { SectionTitle: 'additionalInfo',
+  Logger,
+  translate,
+  DateUtils
+});

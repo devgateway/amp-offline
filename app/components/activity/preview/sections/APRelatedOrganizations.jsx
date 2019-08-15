@@ -1,11 +1,10 @@
 /* eslint-disable react/no-unused-prop-types,class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants, FieldsManager, APPercentageList } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, FeatureManagerConstants, FieldsManager, APPercentageList, Section } from 'amp-ui';
+import DateUtils from '../../../../utils/DateUtils';
 import translate from '../../../../utils/translate';
-import LoggerManager from '../../../../modules/util/LoggerManager';
-import Utils from '../../../../utils/Utils';
+import Logger from '../../../../modules/util/LoggerManager';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const DO = APPercentageList(ActivityConstants.DONOR_ORGANIZATION, ActivityConstants.ORGANIZATION,
@@ -47,9 +46,8 @@ class APRelatedOrganizations extends Component {
   render() {
     const props = { ...this.props,
       getItemTitle: this.getItemTitle,
-      Logger: LoggerManager,
+      Logger,
       translate,
-      Utils,
       rawNumberToFormattedString };
     return (<div>
       <DO key="do-org-list" {...props} fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
@@ -63,5 +61,10 @@ class APRelatedOrganizations extends Component {
     </div>);
   }
 }
-
-export default Section(APRelatedOrganizations, 'Related Organizations', true, 'APRelatedOrganizations');
+export default Section(APRelatedOrganizations, { SectionTitle: 'Related Organizations',
+  useEncapsulateHeader: true,
+  sID: 'APRelatedOrganizations',
+  Logger,
+  translate,
+  DateUtils
+});
