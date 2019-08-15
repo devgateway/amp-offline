@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager, APField } from 'amp-ui';
+import { FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager, APField, UIUtils } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import ActivityFundingTotals from '../../../../modules/activity/ActivityFundingTotals';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import DateUtils from '../../../../utils/DateUtils';
-import * as Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP section');
 
@@ -100,7 +99,7 @@ const Section = (ComposedSection, SectionTitle = null, useEncapsulateHeader = tr
       if (showIfNotAvailable === true || (value !== undefined && value !== null)) {
         const useInnerHTML = FieldPathConstants.RICH_TEXT_FIELDS.has(path);
         return (<APField
-          key={Utils.stringToUniqueId(path)} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline}
+          key={UIUtils.stringToUniqueId(path)} title={title} value={value} useInnerHTML={useInnerHTML} inline={inline}
           separator={false}
           fieldClass={options_.fieldClass || this.props.fieldClass}
           fieldNameClass={this.props.fieldNameClass}

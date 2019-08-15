@@ -1,3 +1,4 @@
+import { UIUtils } from 'amp-ui';
 import * as MC from '../../../utils/constants/MigrationsConstants';
 import * as Utils from '../../../utils/Utils';
 import PreCondition from './PreCondition';
@@ -263,7 +264,7 @@ export default class Changeset {
   }
 
   static _cloneWithDefaults(origChangeset, changelogDef) {
-    const m = Utils.cloneDeep(origChangeset);
+    const m = UIUtils.cloneDeep(origChangeset);
     m.id = Changeset.buildId(origChangeset, changelogDef);
 
     Changeset._setDefaultIfUndefined(m, MC.CONTEXT, MC.DEFAULT_CONTEXT);

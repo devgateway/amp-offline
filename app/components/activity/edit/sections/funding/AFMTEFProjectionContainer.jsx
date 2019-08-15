@@ -1,13 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants, FieldsManager, FeatureManager } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, FieldsManager, FeatureManager, UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import afStyles from '../../ActivityForm.css';
 import fundingStyles from './AFFundingContainer.css';
 import AFMTEFProjectionItem from './AFMTEFProjectionItem';
-import * as Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AF MTEF container');
 
@@ -62,7 +61,7 @@ export default class AFMTEFProjectionContainer extends Component {
           {mtefProjections.map((mtef) => {
             // Add a temporal_id field so we can delete items.
             if (!mtef[ActivityConstants.TEMPORAL_ID]) {
-              mtef[ActivityConstants.TEMPORAL_ID] = Utils.numberRandom();
+              mtef[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
             }
             return (<AFMTEFProjectionItem
               mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={mtef[ActivityConstants.TEMPORAL_ID]}

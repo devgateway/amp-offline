@@ -1,8 +1,7 @@
-import { Constants } from 'amp-ui';
+import { Constants, UIUtils } from 'amp-ui';
 import CurrencyRatesHelper from '../../helpers/CurrencyRatesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
-import Utils from '../../../utils/Utils';
 import {
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
@@ -115,6 +114,6 @@ export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpMana
   }
 
   _fromToToId(currencyPair) {
-    return Utils.stringToUniqueId(currencyPair.from + currencyPair.to);
+    return UIUtils.stringToUniqueId(currencyPair.from + currencyPair.to);
   }
 }

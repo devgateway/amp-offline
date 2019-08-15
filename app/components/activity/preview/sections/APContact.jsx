@@ -7,7 +7,6 @@ import { getActivityContactIds } from '../../../../actions/ContactAction';
 import * as CC from '../../../../utils/constants/ContactConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import Utils from '../../../../utils/Utils';
 
 /**
  * Activity Preview Contact section
@@ -81,7 +80,7 @@ class APContact extends Component {
       .reverse();
     return (<Tablify
       key="contact-info" content={contactGroups} columns={ActivityConstants.ACTIVITY_CONTACT_COLS}
-      Logger={Logger} Utils={Utils} />);
+      Logger={Logger} />);
   }
 }
 

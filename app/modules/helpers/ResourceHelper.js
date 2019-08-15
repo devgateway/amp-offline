@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
@@ -93,7 +93,7 @@ const ResourceHelper = {
 
   stampClientChange(resource) {
     if (!resource[CLIENT_CHANGE_ID]) {
-      resource[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${Utils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
+      resource[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${UIUtils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
     }
     if (!resource.id) {
       resource.id = resource[CLIENT_CHANGE_ID];
@@ -169,7 +169,7 @@ const ResourceHelper = {
   },
 
   _setOrUpdateIds(resource) {
-    resource.uuid = resource.uuid || resource[INTERNAL_ID] || Utils.stringToId(resource);
+    resource.uuid = resource.uuid || resource[INTERNAL_ID] || UIUtils.stringToId(resource);
     resource.id = resource.id || resource.uuid;
     return resource;
   },

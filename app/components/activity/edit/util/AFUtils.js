@@ -1,5 +1,4 @@
-import { ActivityConstants, FeatureManagerConstants, FeatureManager, PossibleValuesManager } from 'amp-ui';
-import Utils from '../../../../utils/Utils';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager, PossibleValuesManager, UIUtils } from 'amp-ui';
 
 const orgTypes = {
   [ActivityConstants.BENEFICIARY_AGENCY]: { constant: 'BENEFICIARY_AGENCY', name: 'Beneficiary Agency' },
@@ -29,8 +28,8 @@ const AFUtils = {
       extra_info: org.extra_info,
       'translated-value': org['translated-value']
     };
-    fundingItem[ActivityConstants.GROUP_VERSIONED_FUNDING] = Utils.numberRandom();
-    fundingItem[ActivityConstants.AMP_FUNDING_ID] = Utils.numberRandom();
+    fundingItem[ActivityConstants.GROUP_VERSIONED_FUNDING] = UIUtils.numberRandom();
+    fundingItem[ActivityConstants.AMP_FUNDING_ID] = UIUtils.numberRandom();
     // Find the 'Donor' org type if enabled.
     if (activityFieldsManager
       .isFieldPathEnabled(`${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`)) {

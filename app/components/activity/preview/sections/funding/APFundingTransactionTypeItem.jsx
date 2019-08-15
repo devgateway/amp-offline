@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, CurrencyRatesManager, FieldsManager, APLabel } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FieldsManager, APLabel, UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import APFundingItem from './APFundingItem';
 import styles from './APFundingTransactionTypeItem.css';
 import APFundingTotalItem from './APFundingTotalItem';
-import Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP Funding transaction type item');
 
@@ -61,7 +60,7 @@ export default class APFundingTransactionTypeItem extends Component {
     return (<table className={styles.funding_table}>
       {fundingDetails.map(item =>
         <APFundingItem
-          item={item} trnType={trnType} key={Utils.numberRandom()} wsCurrency={this._currency}
+          item={item} trnType={trnType} key={UIUtils.numberRandom()} wsCurrency={this._currency}
           showDisasterResponse={this._showDisasterResponse} showPledge={this._showPledge}
           showFixedExchangeRate={this._showFixedExRate}
           buildSimpleField={this.props.buildSimpleField} />)

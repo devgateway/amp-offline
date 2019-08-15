@@ -4,7 +4,6 @@ import Section from './Section';
 import styles from './APSector.css';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
-import Utils from '../../../../utils/Utils';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const PrimarySectorList = APPercentageList(ActivityConstants.PRIMARY_SECTORS, ActivityConstants.SECTOR,
@@ -35,12 +34,12 @@ class APSector extends Component {
     return (<div className={styles.sector_container}>
       <div className={styles.primary_sector}>
         <PrimarySectorList
-          key="primary-programs-list" {...this.props} translate={translate} Logger={Logger} Utils={Utils}
+          key="primary-programs-list" {...this.props} translate={translate} Logger={Logger}
           rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
       <div className={styles.secondary_sector}>
         <SecondarySectorList
-          key="secondary-programs-list" {...this.props} translate={translate} Logger={Logger} Utils={Utils}
+          key="secondary-programs-list" {...this.props} translate={translate} Logger={Logger}
           rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
     </div>);

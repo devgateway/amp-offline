@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
@@ -71,7 +71,7 @@ const ContactHelper = {
 
   stampClientChange(contact) {
     if (!contact[CLIENT_CHANGE_ID]) {
-      contact[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${Utils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
+      contact[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${UIUtils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
     }
     if (!contact.id) {
       contact.id = contact[CLIENT_CHANGE_ID];
@@ -118,7 +118,7 @@ const ContactHelper = {
   },
 
   _setOrUpdateIds(contact) {
-    contact.id = contact.id || contact[INTERNAL_ID] || Utils.stringToId(contact);
+    contact.id = contact.id || contact[INTERNAL_ID] || UIUtils.stringToId(contact);
     return contact;
   },
 

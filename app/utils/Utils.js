@@ -15,30 +15,6 @@ import { VERSION } from './Constants';
 
 const Utils = {
 
-  stringToId(string: string) {
-    string = string || '';
-    let hash = 5381;
-    for (let i = string.length - 1; i >= 0; i--) {
-      /* eslint-disable no-bitwise */
-      hash = (hash * 33) ^ string.charCodeAt(i);
-    }
-    return hash >>> 0;
-    /* eslint-enable no-bitwise */
-  },
-
-  /**
-   * Generates a unique id for each call, over the same string
-   * @param string
-   * @return {string}
-   */
-  stringToUniqueId(string: string) {
-    return `${this.stringToId(string)}-${Date.now()}-${Math.random().toString().substring(2)}`;
-  },
-
-  numberRandom() {
-    return Math.trunc((Math.random() * 1000000));
-  },
-
   hexBufferToString(buffer) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
     const hexCodes = [];
@@ -166,10 +142,6 @@ const Utils = {
     return item;
   },
 
-  capitalize(text: string) {
-    return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
-  },
-
   stripTags(tagString) {
     if (tagString) {
       const htmlTags = /<[^>]*>/g;
@@ -285,10 +257,6 @@ const Utils = {
 
   getCurrentVersion() {
     return VERSION;
-  },
-
-  cloneDeep(obj) {
-    return JSON.parse(JSON.stringify(obj));
   },
 
   md5(obj) {

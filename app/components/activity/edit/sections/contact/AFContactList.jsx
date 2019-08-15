@@ -2,12 +2,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Panel, Row } from 'react-bootstrap';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, UIUtils } from 'amp-ui';
 import * as styles from './AFContactList.css';
 import * as afStyles from '../../ActivityForm.css';
 import { ContactFormPage } from '../../../../../containers/ContactPage';
 import AFField from '../../components/AFField';
-import * as Utils from '../../../../../utils/Utils';
 import { buildNewActivityContact } from '../../../../../actions/ContactAction';
 import * as entryListStyles from '../../../../common/edit/EntryList.css';
 
@@ -87,7 +86,7 @@ export default class AFContactList extends Component {
     const contactId = contactRow[ActivityConstants.CONTACT].id;
     const cFullName = contactRow[ActivityConstants.CONTACT].displayFullValue;
     const isNowPrimary = contactRow[ActivityConstants.PRIMARY_CONTACT];
-    contactRow.uniqueId = contactRow.uniqueId || Utils.stringToUniqueId(); // generate for new contacts
+    contactRow.uniqueId = contactRow.uniqueId || UIUtils.stringToUniqueId(); // generate for new contacts
     const header = (
       <div>
         <Row key={contactRow.uniqueId}>

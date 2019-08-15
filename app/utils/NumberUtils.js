@@ -2,6 +2,7 @@
  * Created by Gabriel on 20/04/2017.
  */
 import numeral from 'numeral';
+import { UIUtils } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
 import {
   GS_AMOUNT_OPTION_IN_BILLIONS,
@@ -13,7 +14,6 @@ import {
   GS_DEFAULT_GROUPING_SEPARATOR,
   GS_DEFAULT_NUMBER_FORMAT
 } from './constants/GlobalSettingsConstants';
-import Utils from './Utils';
 import translate from './translate';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 
@@ -25,7 +25,7 @@ export default class NumberUtils {
 
   static createLanguage() {
     logger.log('buildLocale');
-    const localeName = `locale_${Utils.stringToUniqueId('')}`;
+    const localeName = `locale_${UIUtils.stringToUniqueId('')}`;
     numeral.register('locale', localeName, {
       delimiters: {
         thousands: GlobalSettingsManager.getSettingByKey(GS_DEFAULT_GROUPING_SEPARATOR),
