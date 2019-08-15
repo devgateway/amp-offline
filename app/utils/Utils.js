@@ -142,10 +142,6 @@ const Utils = {
     return item;
   },
 
-  capitalize(text: string) {
-    return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
-  },
-
   stripTags(tagString) {
     if (tagString) {
       const htmlTags = /<[^>]*>/g;
@@ -261,10 +257,6 @@ const Utils = {
 
   getCurrentVersion() {
     return VERSION;
-  },
-
-  cloneDeep(obj) {
-    return JSON.parse(JSON.stringify(obj));
   },
 
   md5(obj) {
