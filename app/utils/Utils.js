@@ -15,10 +15,6 @@ import { VERSION } from './Constants';
 
 const Utils = {
 
-  numberRandom() {
-    return Math.trunc((Math.random() * 1000000));
-  },
-
   hexBufferToString(buffer) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
     const hexCodes = [];

@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, UIUtils } from 'amp-ui';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
@@ -6,7 +6,6 @@ import mimeTypes from 'mime-types';
 import readChunk from 'read-chunk';
 import rimraf from 'rimraf';
 import { ELECTRON_APP } from './ElectronApp';
-import Utils from '../../utils/Utils';
 
 const fileType = require('file-type');
 
@@ -346,7 +345,7 @@ const FileManager = {
    */
   copyDataFileToTmpSync(file, fullPath) {
     const from = path.join(fullPath, file);
-    const to = path.join(os.tmpdir(), `${Utils.numberRandom()}-${file}`);
+    const to = path.join(os.tmpdir(), `${UIUtils.numberRandom()}-${file}`);
     fs.writeFileSync(to, fs.readFileSync(from));
     return to;
   },
