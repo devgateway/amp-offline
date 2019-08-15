@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, APPercentageList } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, APPercentageList, Section } from 'amp-ui';
+import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
@@ -57,5 +57,11 @@ class APLocation extends Component {
     </div>);
   }
 }
-
-export default Section(APLocation, 'Location', true, 'APLocation');
+export default Section(APLocation, { SectionTitle: 'Location',
+  useEncapsulateHeader: true,
+  sID: 'APLocation',
+  Logger,
+  translate,
+  DateUtils,
+  Utils
+});

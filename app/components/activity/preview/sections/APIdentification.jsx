@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, ValueConstants, FieldsManager } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, ValueConstants, FieldsManager, Section } from 'amp-ui';
+import translate from '../../../../utils/translate';
+import Utils from '../../../../utils/Utils';
+import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AP Identification');
@@ -51,4 +53,11 @@ class APIdentification extends Component {
   }
 }
 
-export default Section(APIdentification, 'Identification', true, 'APIdentification');
+export default Section(APIdentification, { SectionTitle: 'Identification',
+  useEncapsulateHeader: true,
+  sID: 'APIdentification',
+  Logger,
+  translate,
+  DateUtils,
+  Utils
+});

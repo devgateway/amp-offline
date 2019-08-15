@@ -1,12 +1,13 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants, FieldsManager, PossibleValuesManager, Tablify } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, FieldPathConstants, FieldsManager, PossibleValuesManager, Tablify, Section } from 'amp-ui';
+
 import translate from '../../../../utils/translate';
+import DateUtils from '../../../../utils/DateUtils';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
-import Utils from '../../../../utils/Utils';
+import * as Utils from '../../../../utils/Utils';
 
 const logger = new Logger('AP Internal ids');
 
@@ -75,5 +76,11 @@ const APInternalIdsSection = (isSeparateSection) => class extends Component {
     return content;
   }
 };
-
-export const APInternalIds = Section(APInternalIdsSection(true), 'Agency Internal IDs', true, 'APInternalIds');
+export const APInternalIds = Section(APInternalIdsSection(true), { SectionTitle: 'Agency Internal IDs',
+  useEncapsulateHeader: true,
+  sID: 'APInternalIds',
+  Logger,
+  translate,
+  DateUtils,
+  Utils
+});

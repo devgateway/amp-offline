@@ -1,8 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
-import Section from '../Section';
+import { ActivityConstants, Section } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { APProposedProjectCost } from '../APProjectCost';
 import APFundingOrganizationSection from './APFundingOrganizationSection';
@@ -10,6 +9,8 @@ import APFundingTotalsSection from './APFundingTotalsSection';
 import fundingStyles from './APFundingSection.css';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
 import * as Utils from '../../../../../utils/Utils';
+import translate from '../../../../../utils/translate';
+import DateUtils from '../../../../../utils/DateUtils';
 
 const logger = new Logger('AP funding section');
 
@@ -49,5 +50,11 @@ class APFundingSection extends Component {
     </div>);
   }
 }
-
-export default Section(APFundingSection, 'Funding', true, 'APFunding');
+export default Section(APFundingSection, { SectionTitle: 'Funding',
+  useEncapsulateHeader: true,
+  sID: 'APFunding',
+  Logger,
+  translate,
+  DateUtils,
+  Utils
+});

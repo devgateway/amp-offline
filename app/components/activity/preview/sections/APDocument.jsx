@@ -1,11 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FieldsManager, APField } from 'amp-ui';
+import { FieldsManager, APField, Section } from 'amp-ui';
 import styles from '../ActivityPreview.css';
+import DateUtils from '../../../../utils/DateUtils';
+import Utils from '../../../../utils/Utils';
 import translate from '../../../../utils/translate';
 import * as RC from '../../../../utils/constants/ResourceConstants';
-import Section from './Section';
 import { getActivityResourceUuids } from '../../../../actions/ResourceAction';
 import Loading from '../../../common/Loading';
 import ActionIcon from '../../../common/ActionIcon';
@@ -122,5 +123,11 @@ class APDocument extends Component {
     return <div className={docSyles.docList}>{resources.map(this.renderResource.bind(this))}</div>;
   }
 }
-
-export default Section(APDocument, 'Related Documents', true, 'APDocument');
+export default Section(APDocument, { SectionTitle: 'Related Documents',
+  useEncapsulateHeader: true,
+  sID: 'APDocument',
+  Logger,
+  translate,
+  DateUtils,
+  Utils
+});

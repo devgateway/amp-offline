@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, Section } from 'amp-ui';
+import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
@@ -111,5 +111,11 @@ class APStructures extends Component {
     return null;
   }
 }
-
-export default Section(APStructures, 'Structures', true, 'APStructures');
+export default Section(APStructures, { SectionTitle: 'Structures',
+  useEncapsulateHeader: true,
+  sID: 'APStructures',
+  Logger,
+  translate,
+  DateUtils,
+  Utils
+});
