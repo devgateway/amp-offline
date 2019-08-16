@@ -1,10 +1,8 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import Tablify from '../../components/Tablify';
 import APFundingTransactionTypeItem from './APFundingTransactionTypeItem';
 import styles from './APFundingOrganizationSection.css';
@@ -37,20 +35,28 @@ class APFundingOrganizationSection extends Component {
   _buildDonorInfo() {
     const content = [];
     const { buildSimpleField, funding } = this.props;
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_DONOR_ORG_ID]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.SOURCE_ROLE]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.TYPE_OF_ASSISTANCE]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_INSTRUMENT]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_STATUS]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.MODE_OF_PAYMENT]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FUNDING_CLASSIFICATION_DATE]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.FINANCING_ID]}`, true, null, false, funding));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_TITLE]}`,
-      true, null, false, funding && funding[AC.AGREEMENT]));
-    content.push(buildSimpleField(`${[AC.FUNDINGS]}~${[AC.AGREEMENT]}~${[AC.AGREEMENT_CODE]}`,
-      true, null, false, funding && funding[AC.AGREEMENT]));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.FUNDING_DONOR_ORG_ID]}`, true,
+      null, false, funding));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.SOURCE_ROLE]}`, true, null,
+      false, funding));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.TYPE_OF_ASSISTANCE]}`, true,
+      null, false, funding));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.FINANCING_INSTRUMENT]}`, true,
+      null, false, funding));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.FUNDING_STATUS]}`, true, null,
+      false, funding));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.MODE_OF_PAYMENT]}`, true, null,
+      false, funding));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.FUNDING_CLASSIFICATION_DATE]}`,
+      true, null, false, funding));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.FINANCING_ID]}`, true, null,
+      false, funding));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.AGREEMENT]}~${[ActivityConstants.AGREEMENT_TITLE]}`,
+      true, null, false, funding && funding[ActivityConstants.AGREEMENT]));
+    content.push(buildSimpleField(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.AGREEMENT]}~${[ActivityConstants.AGREEMENT_CODE]}`,
+      true, null, false, funding && funding[ActivityConstants.AGREEMENT]));
 
-    const tableContent = Tablify.addRows(content, AC.ACTIVITY_FUNDING_COLS);
+    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_FUNDING_COLS);
     return tableContent;
   }
 
@@ -68,18 +74,19 @@ class APFundingOrganizationSection extends Component {
   _buildFundingDetailSection() {
     // Group the list of funding details by adjustment_type and transaction_type.
     const groups = [];
-    FPC.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
+    FieldPathConstants.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
       const fds = this.props.funding[trnType];
       if (fds && fds.length) {
         const fdByAT = new Map();
-        VC.ADJUSTMENT_TYPES_AP_ORDER.forEach(adjType => fdByAT.set(adjType, []));
+        ValueConstants.ADJUSTMENT_TYPES_AP_ORDER.forEach(adjType => fdByAT.set(adjType, []));
         fds.forEach(it => {
-          const items = fdByAT.get(it[AC.ADJUSTMENT_TYPE] && it[AC.ADJUSTMENT_TYPE].value);
+          const items = fdByAT.get(it[ActivityConstants.ADJUSTMENT_TYPE] &&
+            it[ActivityConstants.ADJUSTMENT_TYPE].value);
           if (items) {
             items.push(it);
           }
         });
-        VC.ADJUSTMENT_TYPES_AP_ORDER.forEach(adjType => {
+        ValueConstants.ADJUSTMENT_TYPES_AP_ORDER.forEach(adjType => {
           const items = fdByAT.get(adjType);
           if (items.length) {
             groups.push([trnType, items]);
@@ -101,13 +108,13 @@ class APFundingOrganizationSection extends Component {
       // Dont show this section if there are no funding details.
       return null;
     }
-    const fdActualCommitments = (fd[AC.COMMITMENTS] || []).filter(item =>
-      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL
+    const fdActualCommitments = (fd[ActivityConstants.COMMITMENTS] || []).filter(item =>
+      item[ActivityConstants.ADJUSTMENT_TYPE].value === ValueConstants.ACTUAL
     );
     totalActualCommitments = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualCommitments,
       this._currency);
-    const fdActualDisbursements = (fd[AC.DISBURSEMENTS] || []).filter(item =>
-      item[AC.ADJUSTMENT_TYPE].value === VC.ACTUAL
+    const fdActualDisbursements = (fd[ActivityConstants.DISBURSEMENTS] || []).filter(item =>
+      item[ActivityConstants.ADJUSTMENT_TYPE].value === ValueConstants.ACTUAL
     );
     totalActualDisbursements = this.context.currencyRatesManager.convertFundingDetailsToCurrency(fdActualDisbursements,
       this._currency);
@@ -127,10 +134,10 @@ class APFundingOrganizationSection extends Component {
         <tbody>{this._buildDonorInfo()}</tbody>
       </table>
       <table className={styles.two_box_table}>
-        <tbody>{this._buildFieldTable(`${[AC.FUNDINGS]}~${[AC.DONOR_OBJECTIVE]}`)}</tbody>
+        <tbody>{this._buildFieldTable(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.DONOR_OBJECTIVE]}`)}</tbody>
       </table>
       <table className={styles.two_box_table}>
-        <tbody>{this._buildFieldTable(`${[AC.FUNDINGS]}~${[AC.CONDITIONS]}`)}</tbody>
+        <tbody>{this._buildFieldTable(`${[ActivityConstants.FUNDINGS]}~${[ActivityConstants.CONDITIONS]}`)}</tbody>
       </table>
       <div className={styles.funding_detail}>{this._buildMTEFDetailSection()}</div>
       <div className={styles.funding_detail}>{this._buildFundingDetailSection()}</div>

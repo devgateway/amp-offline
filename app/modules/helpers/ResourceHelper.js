@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_RESOURCES } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import {
@@ -39,7 +39,7 @@ const ResourceHelper = {
 
   findResource(filterRule) {
     logger.debug('findResource');
-    return DatabaseManager.findOne(filterRule, COLLECTION_RESOURCES);
+    return DatabaseManager.findOne(filterRule, Constants.COLLECTION_RESOURCES);
   },
 
   findResourcesByUuids(uuids) {
@@ -77,7 +77,7 @@ const ResourceHelper = {
 
   findAllResources(filterRule, projections) {
     logger.debug('findAllResources');
-    return DatabaseManager.findAll(filterRule, COLLECTION_RESOURCES, projections);
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_RESOURCES, projections);
   },
 
   countAllResourcesModifiedOnClient(filterRule = {}) {
@@ -88,7 +88,7 @@ const ResourceHelper = {
 
   countAllResources(filterRule = {}) {
     logger.debug('countAllResources');
-    return DatabaseManager.count(filterRule, COLLECTION_RESOURCES);
+    return DatabaseManager.count(filterRule, Constants.COLLECTION_RESOURCES);
   },
 
   stampClientChange(resource) {
@@ -159,13 +159,13 @@ const ResourceHelper = {
   saveOrUpdateResource(resource) {
     logger.log('saveOrUpdateResource');
     ResourceHelper._setOrUpdateIds(resource);
-    return DatabaseManager.saveOrUpdate(resource.id, resource, COLLECTION_RESOURCES);
+    return DatabaseManager.saveOrUpdate(resource.id, resource, Constants.COLLECTION_RESOURCES);
   },
 
   saveOrUpdateResourceCollection(resources) {
     logger.log('saveOrUpdateResourceCollection');
     resources.forEach(resource => { ResourceHelper._setOrUpdateIds(resource); });
-    return DatabaseManager.saveOrUpdateCollection(resources, COLLECTION_RESOURCES);
+    return DatabaseManager.saveOrUpdateCollection(resources, Constants.COLLECTION_RESOURCES);
   },
 
   _setOrUpdateIds(resource) {
@@ -177,7 +177,7 @@ const ResourceHelper = {
   replaceResources(resources) {
     logger.log('replaceResources');
     resources.forEach(resource => { ResourceHelper._setOrUpdateIds(resource); });
-    return DatabaseManager.replaceCollection(resources, COLLECTION_RESOURCES);
+    return DatabaseManager.replaceCollection(resources, Constants.COLLECTION_RESOURCES);
   },
 
   /**
@@ -187,19 +187,19 @@ const ResourceHelper = {
    */
   deleteResourceById(id) {
     logger.log('deleteResourceById');
-    return DatabaseManager.removeById(id, COLLECTION_RESOURCES);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_RESOURCES);
   },
 
   deleteResourceByInternalId(internalId) {
     logger.log('deleteResourceByInternalId');
     const filterRule = Utils.toMap(INTERNAL_ID, internalId);
-    return DatabaseManager.removeAll(filterRule, COLLECTION_RESOURCES);
+    return DatabaseManager.removeAll(filterRule, Constants.COLLECTION_RESOURCES);
   },
 
   removeAllByIds(ids) {
     logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
-    return DatabaseManager.removeAll(idsFilter, COLLECTION_RESOURCES);
+    return DatabaseManager.removeAll(idsFilter, Constants.COLLECTION_RESOURCES);
   }
 };
 

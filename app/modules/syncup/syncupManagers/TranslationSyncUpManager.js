@@ -1,3 +1,4 @@
+import { Constants, ErrorConstants } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import LanguageHelper from '../../helpers/LanguageHelper';
 import {
@@ -6,16 +7,7 @@ import {
   LAST_SYNC_TIME_PARAM,
   POST_TRANSLATIONS_URL
 } from '../../connectivity/AmpApiConstants';
-import {
-  FS_LOCALES_DIRECTORY,
-  LANGUAGE_ENGLISH,
-  LANGUAGE_MASTER_TRANSLATIONS_FILE,
-  LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC,
-  LANGUAGE_TRANSLATIONS_FILE,
-  SYNCUP_TYPE_TRANSLATIONS
-} from '../../../utils/Constants';
 import Notification from '../../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../../utils/constants/ErrorConstants';
 import TranslationManager from '../../util/TranslationManager';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
 import Logger from '../../util/LoggerManager';
@@ -29,7 +21,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
 
   // TODO partial sync up once partial sync up is possible for translations. For now it will be as an atomic one.
   constructor() {
-    super(SYNCUP_TYPE_TRANSLATIONS);
+    super(Constants.SYNCUP_TYPE_TRANSLATIONS);
     this.done = false;
   }
 
@@ -41,7 +33,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   static detectSynchronizedTranslationFile(lang) {
     logger.log('detectSynchronizedTranslationFile');
     let ret = false;
-    const stats = FileManager.statSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`);
+    const stats = FileManager.statSync(Constants.FS_LOCALES_DIRECTORY,
+      `${Constants.LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`);
     if (stats) {
       const fileSize = stats.size;
       if (fileSize > 10) { // Just to test the file has something in it.
@@ -52,8 +45,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   }
 
   static parseMasterTrnFile() {
-    const masterTrnFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
-    return JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, masterTrnFileName));
+    const masterTrnFileName = `${Constants.LANGUAGE_MASTER_TRANSLATIONS_FILE}.${Constants.LANGUAGE_ENGLISH}.json`;
+    return JSON.parse(FileManager.readTextDataFileSync(Constants.FS_LOCALES_DIRECTORY, masterTrnFileName));
   }
 
   /**
@@ -63,17 +56,18 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
   static getNewTranslationsDifference() {
     let diffTexts = [];
     const originalMasterTrnFile = TranslationSyncUpManager.parseMasterTrnFile();
-    if (TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
-      const localTrnFileName = `${LANGUAGE_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+    if (TranslationSyncUpManager.detectSynchronizedTranslationFile(Constants.LANGUAGE_ENGLISH)) {
+      const localTrnFileName = `${Constants.LANGUAGE_TRANSLATIONS_FILE}.${Constants.LANGUAGE_ENGLISH}.json`;
       const localTrnFileInLangDir = JSON.parse(FileManager
-        .readTextDataFileSync(FS_LOCALES_DIRECTORY, localTrnFileName));
+        .readTextDataFileSync(Constants.FS_LOCALES_DIRECTORY, localTrnFileName));
       const diffKeys = Object.keys(originalMasterTrnFile).filter(key => localTrnFileInLangDir[key] === undefined);
       if (diffKeys.length > 0) {
         diffTexts = diffKeys.map(k => originalMasterTrnFile[k]);
       }
-      if (FileManager.existsSync(FS_LOCALES_DIRECTORY, LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC)) {
+      if (FileManager.existsSync(Constants.FS_LOCALES_DIRECTORY, Constants.LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC)) {
         const must = JSON
-          .parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC));
+          .parse(FileManager.readTextDataFileSync(Constants.FS_LOCALES_DIRECTORY,
+            Constants.LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC));
         Object.keys(must).forEach(k => {
           diffTexts.push(k);
         });
@@ -89,7 +83,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     return this.syncUpLangList().then((result) => {
       this.done = true;
       // After sucessfull sync remove must-sync translations file.
-      FileManager.deleteFileSync(FileManager.getFullPath(FS_LOCALES_DIRECTORY, LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC));
+      FileManager.deleteFileSync(FileManager.getFullPath(Constants.FS_LOCALES_DIRECTORY,
+        Constants.LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC));
       return result;
     });
   }
@@ -214,7 +209,8 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       let oldTrnFile;
       if (oldTranslationFileExists) {
         oldTrnFile = JSON.parse(FileManager
-          .readTextDataFileSync(FS_LOCALES_DIRECTORY, `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
+          .readTextDataFileSync(Constants.FS_LOCALES_DIRECTORY,
+            `${Constants.LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
       }
       const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
       return new Promise((resolve, reject) => {
@@ -231,11 +227,13 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
         });
 
         // Overwrite local file for this language with the new translations from server.
-        const localTrnFile = `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`;
-        return FileManager.writeDataFile(JSON.stringify(copyMasterTrnFile), FS_LOCALES_DIRECTORY, localTrnFile)
+        const localTrnFile = `${Constants.LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`;
+        return FileManager.writeDataFile(JSON.stringify(copyMasterTrnFile),
+          Constants.FS_LOCALES_DIRECTORY, localTrnFile)
           .then(() => resolve(copyMasterTrnFile))
           .catch(err =>
-            reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS }))
+            reject(new Notification(
+              { message: err.toString(), origin: ErrorConstants.NOTIFICATION_ORIGIN_SYNCUP_PROCESS }))
           );
       });
     };

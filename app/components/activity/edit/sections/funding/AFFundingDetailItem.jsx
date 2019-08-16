@@ -1,28 +1,26 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable max-len */
+/* eslint-disable react/jsx-indent */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, ValueConstants,
+  FieldsManager, FeatureManager } from 'amp-ui';
 import AFField from '../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import styles from './AFFundingDetailItem.css';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import translate from '../../../../../utils/translate';
-import FeatureManager from '../../../../../modules/util/FeatureManager';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 import * as AFUtils from '../../util/AFUtils';
 
 const ORG_TYPE_NAME_2_COLLECTION = {
-  [VC.IMPLEMENTING_AGENCY]: AC.IMPLEMENTING_AGENCY,
-  [VC.RESPONSIBLE_ORGANIZATION]: AC.RESPONSIBLE_ORGANIZATION,
-  [VC.REGIONAL_GROUP]: AC.REGIONAL_GROUP,
-  [VC.EXECUTING_AGENCY]: AC.EXECUTING_AGENCY,
-  [VC.DONOR_ORGANIZATION]: AC.DONOR_ORGANIZATION,
-  [VC.BENEFICIARY_AGENCY]: AC.BENEFICIARY_AGENCY,
-  [VC.CONTRACTING_AGENCY]: AC.CONTRACTING_AGENCY,
-  [VC.SECTOR_GROUP]: AC.SECTOR_GROUP
+  [ValueConstants.IMPLEMENTING_AGENCY]: ActivityConstants.IMPLEMENTING_AGENCY,
+  [ValueConstants.RESPONSIBLE_ORGANIZATION]: ActivityConstants.RESPONSIBLE_ORGANIZATION,
+  [ValueConstants.REGIONAL_GROUP]: ActivityConstants.REGIONAL_GROUP,
+  [ValueConstants.EXECUTING_AGENCY]: ActivityConstants.EXECUTING_AGENCY,
+  [ValueConstants.DONOR_ORGANIZATION]: ActivityConstants.DONOR_ORGANIZATION,
+  [ValueConstants.BENEFICIARY_AGENCY]: ActivityConstants.BENEFICIARY_AGENCY,
+  [ValueConstants.CONTRACTING_AGENCY]: ActivityConstants.CONTRACTING_AGENCY,
+  [ValueConstants.SECTOR_GROUP]: ActivityConstants.SECTOR_GROUP
 };
 
 /**
@@ -46,7 +44,7 @@ export default class AFFundingDetailItem extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { selectedOrgRole: props.fundingDetail[AC.RECIPIENT_ROLE] || undefined };
+    this.state = { selectedOrgRole: props.fundingDetail[ActivityConstants.RECIPIENT_ROLE] || undefined };
   }
 
   _getRecipientRoleFilter() {
@@ -54,33 +52,34 @@ export default class AFFundingDetailItem extends Component {
     const filter = [];
     const typeName = this.props.trnType.toUpperCase();
     const options = [{
-      value: VC.CONTRACTING_AGENCY,
+      value: ValueConstants.CONTRACTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_CONTRACTING_AGENCY`
     }, {
-      value: VC.BENEFICIARY_AGENCY,
+      value: ValueConstants.BENEFICIARY_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_BENEFICIARY_AGENCY`
     }, {
-      value: VC.DONOR_ORGANIZATION,
+      value: ValueConstants.DONOR_ORGANIZATION,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_DONOR_ORGANIZATION`
     }, {
-      value: VC.EXECUTING_AGENCY,
+      value: ValueConstants.EXECUTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_EXECUTING_AGENCY`
     }, {
-      value: VC.REGIONAL_GROUP,
+      value: ValueConstants.REGIONAL_GROUP,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_REGIONAL_GROUP`
     }, {
-      value: VC.RESPONSIBLE_ORGANIZATION,
+      value: ValueConstants.RESPONSIBLE_ORGANIZATION,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_RESPONSIBLE_ORGANIZATION`
     }, {
-      value: VC.SECTOR_GROUP,
+      value: ValueConstants.SECTOR_GROUP,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_SECTOR_GROUP`
     }, {
-      value: VC.IMPLEMENTING_AGENCY,
+      value: ValueConstants.IMPLEMENTING_AGENCY,
       id: `ACTIVITY_${typeName}_FUNDING_FLOWS_ORGROLE_ADD_IMPLEMENTING_AGENCY`
     }];
     options.forEach(o => {
       const collection = ORG_TYPE_NAME_2_COLLECTION[o.value];
-      if (FeatureManager.isFMSettingEnabled(FMC[o.id]) && activity[collection] && activity[collection].length > 0) {
+      if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants[o.id]) &&
+        activity[collection] && activity[collection].length > 0) {
         filter.push({ path: 'value', value: o.value });
       }
     });
@@ -113,12 +112,12 @@ export default class AFFundingDetailItem extends Component {
     const content = [];
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2} key={Math.random()}
-      fieldPath={`${AC.FUNDINGS}~${this.props.trnType}~${AC.RECIPIENT_ROLE}`}
+      fieldPath={`${ActivityConstants.FUNDINGS}~${this.props.trnType}~${ActivityConstants.RECIPIENT_ROLE}`}
       filter={this._getRecipientRoleFilter()} extraParams={{ isORFilter: true }}
       onAfterUpdate={this.handleSelectRecipientRole.bind(this)} />);
     content.push(<AFField
       parent={fundingDetail} className={styles.cell_2} key={Math.random()}
-      fieldPath={`${AC.FUNDINGS}~${this.props.trnType}~${AC.RECIPIENT_ORGANIZATION}`}
+      fieldPath={`${ActivityConstants.FUNDINGS}~${this.props.trnType}~${ActivityConstants.RECIPIENT_ORGANIZATION}`}
       filter={this._getRecipientOrgFilter()} extraParams={{ isORFilter: true }} />);
     return content;
   }
@@ -127,63 +126,67 @@ export default class AFFundingDetailItem extends Component {
     const { trnType, fundingDetail, funding, removeFundingDetailItem } = this.props;
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
-    if (!fundingDetail[AC.CURRENCY].id) {
-      const currencyPath = `${AC.FUNDINGS}~${trnType}~${AC.CURRENCY}`;
+    if (!fundingDetail[ActivityConstants.CURRENCY].id) {
+      const currencyPath = `${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.CURRENCY}`;
       const currencies = activityFieldsManager.getPossibleValuesOptions(currencyPath);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
-      fundingDetail[AC.CURRENCY] = currency;
+      fundingDetail[ActivityConstants.CURRENCY] = currency;
     }
-    const orgGroupName = funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ORGANIZATION_GROUP];
+    const orgGroupName = funding[ActivityConstants.FUNDING_DONOR_ORG_ID][ActivityConstants.EXTRA_INFO][ActivityConstants.ORGANIZATION_GROUP];
     return (<div className={styles.full_width}>
       <table>
         <tbody>
-          <tr>
-            <td>
-              <div className={styles.row}>
+        <tr>
+          <td>
+            <div className={styles.row}>
+              <AFField
+                parent={fundingDetail} className={styles.cell_3}
+                fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`} />
+              <AFField
+                parent={fundingDetail} className={styles.cell_3}
+                fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.TRANSACTION_AMOUNT}`} />
+              <AFField
+                parent={fundingDetail} className={styles.cell_3}
+                fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.CURRENCY}`}
+                defaultValueAsEmptyObject
+                extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
+              <AFField
+                parent={fundingDetail} className={styles.cell_3}
+                fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.TRANSACTION_DATE}`} />
+              <AFField
+                parent={fundingDetail} className={styles.cell_3}
+                type={Types.RADIO_BOOLEAN}
+                fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.DISASTER_RESPONSE}`} />
+              {(trnType === ActivityConstants.DISBURSEMENTS) ?
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`} />
-                <AFField
-                  parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.TRANSACTION_AMOUNT}`} />
-                <AFField
-                  parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.CURRENCY}`} defaultValueAsEmptyObject
-                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
-                <AFField
-                  parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.TRANSACTION_DATE}`} />
-                <AFField
-                  parent={fundingDetail} className={styles.cell_3}
-                  type={Types.RADIO_BOOLEAN}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISASTER_RESPONSE}`} />
-                {(trnType === AC.DISBURSEMENTS) ?
-                  <AFField
-                    parent={fundingDetail} className={styles.cell_3}
-                    fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.DISBURSEMENT_ORDER_ID}`} />
-                    : null}
-                <AFField
-                  parent={fundingDetail} className={styles.cell_3}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.PLEDGE}`}
-                  filter={[{ value: orgGroupName, path: `${AC.EXTRA_INFO}~${AC.ORGANIZATION_GROUP}` }]} />
-                <AFField
-                  parent={fundingDetail} className={styles.cell_4}
-                  fieldPath={`${AC.FUNDINGS}~${trnType}~${AC.FIXED_EXCHANGE_RATE}`}
-                  extraParams={{ bigger: 0 }} />
-                {this.generateRecipients(fundingDetail)}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.DISBURSEMENT_ORDER_ID}`} />
+                : null}
+              <AFField
+                parent={fundingDetail} className={styles.cell_3}
+                fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.PLEDGE}`}
+                filter={[{
+                  value: orgGroupName,
+                  path: `${ActivityConstants.EXTRA_INFO}~${ActivityConstants.ORGANIZATION_GROUP}`
+                }]} />
+              <AFField
+                parent={fundingDetail} className={styles.cell_4}
+                fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.FIXED_EXCHANGE_RATE}`}
+                extraParams={{ bigger: 0 }} />
+              {this.generateRecipients(fundingDetail)}
+            </div>
+          </td>
+          <td className={styles.delete_col}>
+            <div className={styles.grid}>
+              <div className={styles.cell_10}>
+                <a
+                  onClick={removeFundingDetailItem.bind(this, fundingDetail[ActivityConstants.TEMPORAL_ID])}
+                  className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
               </div>
-            </td>
-            <td className={styles.delete_col}>
-              <div className={styles.grid}>
-                <div className={styles.cell_10}>
-                  <a
-                    onClick={removeFundingDetailItem.bind(this, fundingDetail[AC.TEMPORAL_ID])}
-                    className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
-                </div>
-              </div>
-            </td>
-          </tr>
+            </div>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>);

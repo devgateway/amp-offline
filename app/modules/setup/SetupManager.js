@@ -1,23 +1,15 @@
+import { Constants, ErrorConstants } from 'amp-ui';
 import * as ConnectionHelper from '../connectivity/ConnectionHelper';
 import {
   AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
   AMP_REGISTRY_STAGING_SETTINGS_URL,
   TEST_URL
 } from '../connectivity/AmpApiConstants';
+import { SERVER_URL, BASE_PORT, PROTOCOL } from '../../utils/Constants';
 import Notification from '../helpers/NotificationHelper';
 import TranslationManager from '../util/TranslationManager';
 import translate from '../../utils/translate';
-import { NOTIFICATION_ORIGIN_SETUP } from '../../utils/constants/ErrorConstants';
 import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
-import {
-  BASE_PORT,
-  BASE_REST_URL,
-  CONNECTION_FORCED_TIMEOUT,
-  CONNECTION_TIMEOUT,
-  OTHER_ID,
-  PROTOCOL,
-  SERVER_URL,
-} from '../../utils/Constants';
 import ConnectionInformation from '../connectivity/ConnectionInformation';
 import AssetsUtils from '../../utils/AssetsUtils';
 import SetupSyncUpManager from '../syncup/SetupSyncUpManager';
@@ -68,7 +60,8 @@ const SetupManager = {
   buildConnectionInformation(url, protocol, port, isTestUrl) {
     const isFullUrl = !(protocol || port);
     return new ConnectionInformation(
-      url, BASE_REST_URL, protocol, port, CONNECTION_TIMEOUT, CONNECTION_FORCED_TIMEOUT, isFullUrl, isTestUrl);
+      url, Constants.BASE_REST_URL, protocol, port, Constants.CONNECTION_TIMEOUT, Constants.CONNECTION_FORCED_TIMEOUT,
+      isFullUrl, isTestUrl);
   },
 
   buildConnectionInformationForTest(fullUrl) {
@@ -98,7 +91,7 @@ const SetupManager = {
    */
   getCustomOption(languageList: Array<string>) {
     return new AmpServer({
-      id: OTHER_ID,
+      id: Constants.OTHER_ID,
       name: languageList.reduce((resultMap, code) => {
         resultMap[code] = translate('Other', code);
         return resultMap;
@@ -112,7 +105,7 @@ const SetupManager = {
     if (!currentUrlToUse) {
       return Promise.reject(new Notification({
         message: translate('wrongSetup'),
-        origin: NOTIFICATION_ORIGIN_SETUP
+        origin: ErrorConstants.NOTIFICATION_ORIGIN_SETUP
       }));
     }
     return ClientSettingsHelper.findSettingById(CSC.SETUP_CONFIG)

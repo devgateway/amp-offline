@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import os from 'os';
+import { Constants } from 'amp-ui';
 import translate from '../../utils/translate';
 import styles from './Footer.css';
-import {
-  DG_ADDRESS_1,
-  DG_ADDRESS_2,
-  DG_COMPANY_NAME,
-  DG_CONTACT_INFO,
-  VERSION
-} from '../../utils/Constants';
 import DateUtils from '../../utils/DateUtils';
 import * as Utils from '../../utils/Utils';
 
@@ -29,7 +23,7 @@ export default class Home extends Component {
     }
 
     const osAndArch = `${os.type()} ${os.arch()}`;
-    return `${VERSION}${branchOrPr} ${translate('build')} ${releaseDate} ${osAndArch}`;
+    return `${Constants.VERSION}${branchOrPr} ${translate('build')} ${releaseDate} ${osAndArch}`;
   }
 
   render() {
@@ -43,13 +37,13 @@ export default class Home extends Component {
         <div className={[styles.footerText, styles.footerImageContainer].join(' ')}>
           <img className={styles.footerImage} alt={'footer'} />
           <br />
-          {DG_COMPANY_NAME}
+          {Constants.DG_COMPANY_NAME}
           <br />
-          {DG_ADDRESS_1}
+          {Constants.DG_ADDRESS_1}
           <br />
-          {DG_ADDRESS_2}
+          {Constants.DG_ADDRESS_2}
           <br />
-          {DG_CONTACT_INFO}
+          {Constants.DG_CONTACT_INFO}
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
+import { FieldPathConstants } from 'amp-ui';
 import AbstractEntityHydrator from './AbstractEntityHydrator';
-import { PREFIX_CONTACT } from '../../utils/constants/FieldPathConstants';
 
 /**
  * Converts a contact Similar to ActivityHydrator,
@@ -8,7 +8,7 @@ import { PREFIX_CONTACT } from '../../utils/constants/FieldPathConstants';
  */
 export default class ContactHydrator extends AbstractEntityHydrator {
   constructor(fieldsDef) {
-    super(fieldsDef, PREFIX_CONTACT);
+    super(fieldsDef, FieldPathConstants.PREFIX_CONTACT);
   }
 
 }

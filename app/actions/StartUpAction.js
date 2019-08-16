@@ -1,13 +1,12 @@
+import { Constants, PossibleValuesManager, FeatureManager } from 'amp-ui';
 import store from '../index';
 import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
-import { CONNECTIVITY_CHECK_INTERVAL } from '../utils/Constants';
 import Logger from '../modules/util/LoggerManager';
 import NumberUtils from '../utils/NumberUtils';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
 import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
-import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
@@ -91,6 +90,7 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
+    .then(loadPossibleValuesManager)
     .then(() => (isPostLogout ? postLogoutInit() : null));
   store.dispatch({
     type: STATE_INITIALIZATION,
@@ -124,7 +124,7 @@ export function getTimer() {
 function scheduleConnectivityCheck() {
   return connectivityCheck().then(() => {
     clearInterval(timer);
-    timer = setInterval(() => connectivityCheck(), CONNECTIVITY_CHECK_INTERVAL);
+    timer = setInterval(() => connectivityCheck(), Constants.CONNECTIVITY_CHECK_INTERVAL);
     store.dispatch({ type: TIMER_START });
     return Promise.resolve();
   });
@@ -166,12 +166,19 @@ export function loadCalendar() {
   return calendarPromise;
 }
 
+export function loadPossibleValuesManager() {
+  logger.log('loadPossibleValuesManager');
+  PossibleValuesManager.setLogger(Logger);
+  return Promise.resolve();
+}
+
 /**
  * Loads FM tree, since it's a very small structure and is handy to check synchronously
  * @param id FM tree ID. If not specified, the first one will be used (Iteration 1 countries)
  */
 export function loadFMTree(id = undefined) {
   logger.log('loadFMTree');
+  FeatureManager.setLoggerManager(Logger);
   const dbFilter = id ? { id } : {};
   const fmPromise = FMHelper.findAll(dbFilter)
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))

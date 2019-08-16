@@ -1,18 +1,14 @@
 import React, { Component, PropTypes } from 'react';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import APPercentageList from '../components/APPercentageList';
-import {
-  PRIMARY_SECTORS,
-  SECONDARY_SECTORS,
-  SECTOR,
-  SECTOR_PERCENTAGE
-} from '../../../../utils/constants/ActivityConstants';
 import styles from './APSector.css';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import Logger from '../../../../modules/util/LoggerManager';
 
-const PrimarySectorList = APPercentageList(PRIMARY_SECTORS, SECTOR, SECTOR_PERCENTAGE, 'Primary Sector');
-const SecondarySectorList = APPercentageList(SECONDARY_SECTORS, SECTOR, SECTOR_PERCENTAGE, 'Secondary Sector');
+const PrimarySectorList = APPercentageList(ActivityConstants.PRIMARY_SECTORS, ActivityConstants.SECTOR,
+  ActivityConstants.SECTOR_PERCENTAGE, 'Primary Sector');
+const SecondarySectorList = APPercentageList(ActivityConstants.SECONDARY_SECTORS, ActivityConstants.SECTOR,
+  ActivityConstants.SECTOR_PERCENTAGE, 'Secondary Sector');
 
 const logger = new Logger('AP sector');
 

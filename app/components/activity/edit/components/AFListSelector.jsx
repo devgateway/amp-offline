@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import styles from './AFListSelector.css';
 import AFList from './AFList';
 import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import * as Utils from '../../../../utils/Utils';
@@ -19,9 +18,9 @@ const logger = new Logger('AF list selector');
 
 /** Explicit definition of the search field label parts (instead of automatic detection), e.g. when plural is used */
 const fieldNameToSearchFieldLabel = {};
-fieldNameToSearchFieldLabel[AC.ORGANIZATION] = 'Search Organizations';
-fieldNameToSearchFieldLabel[AC.LOCATION] = 'Search Locations';
-fieldNameToSearchFieldLabel[AC.PROGRAM] = 'Add Program';
+fieldNameToSearchFieldLabel[ActivityConstants.ORGANIZATION] = 'Search Organizations';
+fieldNameToSearchFieldLabel[ActivityConstants.LOCATION] = 'Search Locations';
+fieldNameToSearchFieldLabel[ActivityConstants.PROGRAM] = 'Add Program';
 
 /**
  * Activity Form List options selection, with possibility to add percentage and additional element input text
@@ -62,7 +61,7 @@ export default class AFListSelector extends Component {
     // assumption based on current use cases is that we have only one id-only field to select
     this.idOnlyField = this.listDef.children.find(item => item.id_only === true).field_name;
     this.searchLabel = fieldNameToSearchFieldLabel[this.idOnlyField]
-      || `Search ${AC.toOriginalLabel(this.idOnlyField)}`;
+      || `Search ${ActivityConstants.toOriginalLabel(this.idOnlyField)}`;
     this.percentageFieldDef = this.listDef.children.find(item => item.percentage === true);
     this.uniqueIdCol = this.uniqueConstraint || this.idOnlyField;
     this.setNewValues(this.props.selectedOptions);

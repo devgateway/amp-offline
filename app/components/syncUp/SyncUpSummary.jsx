@@ -1,15 +1,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants, Constants } from 'amp-ui';
 import translate from '../../utils/translate';
 import { createFormattedDateTime } from '../../utils/DateUtils';
-import {
-  SYNCUP_STATUS_FAIL,
-  SYNCUP_TYPE_ACTIVITIES_PULL,
-  SYNCUP_TYPE_ACTIVITIES_PUSH
-} from '../../utils/Constants';
 import ErrorMessage from '../common/ErrorMessage';
 import styles from './SyncUpSummary.css';
-import { AMP_ID } from '../../utils/constants/ActivityConstants';
 import Utils from '../../utils/Utils';
 import SyncUpManager from '../../modules/syncup/SyncUpManager';
 import { translateSyncStatus } from './tools';
@@ -25,7 +20,7 @@ class SyncUpSummary extends PureComponent {
 
   static listActivities(activities, source) {
     return activities.map((activity) => {
-      const id = activity[AMP_ID];
+      const id = activity[ActivityConstants.AMP_ID];
       const { project_title: title } = activity;
       return (
         <div key={id || Utils.stringToId(title)}>
@@ -129,8 +124,8 @@ class SyncUpSummary extends PureComponent {
       const { status, errors, warnings, dateStarted } = data;
       const { listActivities } = this.constructor;
       const fallbackToNone = arr => (arr.length ? arr : translate('None'));
-      const pulled = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PULL);
-      const pushed = this.getActivitiesByType(SYNCUP_TYPE_ACTIVITIES_PUSH);
+      const pulled = this.getActivitiesByType(Constants.SYNCUP_TYPE_ACTIVITIES_PULL);
+      const pushed = this.getActivitiesByType(Constants.SYNCUP_TYPE_ACTIVITIES_PUSH);
       if (forceSyncUpError) {
         errors.push(forceSyncUpError);
       }
@@ -149,7 +144,7 @@ class SyncUpSummary extends PureComponent {
       });
     } else if (errorMessage) {
       return this.constructor.report({
-        status: SYNCUP_STATUS_FAIL,
+        status: Constants.SYNCUP_STATUS_FAIL,
         errors: forceSyncUpError ? [errorMessage, forceSyncUpError] : [errorMessage],
         dateStarted: 'n/a',
         dateFinished: 'n/a',

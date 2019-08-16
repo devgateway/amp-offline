@@ -1,12 +1,11 @@
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import * as UserHelper from '../../helpers/UserHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
-import * as AC from '../../../utils/constants/ActivityConstants';
 import * as CC from '../../../utils/constants/ContactConstants';
 import * as RC from '../../../utils/constants/ResourceConstants';
-import { SYNCUP_DETAILS_SYNCED, SYNCUP_DETAILS_UNSYNCED, SYNCUP_TYPE_ACTIVITIES_PUSH } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
 import { ACTIVITY_IMPORT_URL } from '../../connectivity/AmpApiConstants';
@@ -17,7 +16,6 @@ import ContactHelper from '../../helpers/ContactHelper';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { getActivityResourceUuids } from '../../../actions/ResourceAction';
 import ResourceHelper from '../../helpers/ResourceHelper';
-import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Activity push to AMP manager');
 
@@ -33,13 +31,13 @@ const paramsMap = {
  */
 export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   constructor() {
-    super(SYNCUP_TYPE_ACTIVITIES_PUSH);
+    super(Constants.SYNCUP_TYPE_ACTIVITIES_PUSH);
     logger.log('ActivitiesPushToAMPManager');
     this._cancel = false;
     this.diff = [];
     this._processed = new Set();
-    this._details[SYNCUP_DETAILS_SYNCED] = [];
-    this._details[SYNCUP_DETAILS_UNSYNCED] = [];
+    this._details[Constants.SYNCUP_DETAILS_SYNCED] = [];
+    this._details[Constants.SYNCUP_DETAILS_UNSYNCED] = [];
   }
 
   /**
@@ -81,7 +79,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   static _getActivitiesToPush(workspaceMembers) {
     logger.log('_getActivitiesToPush');
     const wsMembersIds = Utils.flattenToListByKey(workspaceMembers, 'id');
-    const modifiedBySpecificWSMembers = Utils.toMap(AC.MODIFIED_BY, { $in: wsMembersIds });
+    const modifiedBySpecificWSMembers = Utils.toMap(ActivityConstants.MODIFIED_BY, { $in: wsMembersIds });
     return ActivityHelper.findAllNonRejectedModifiedOnClient(modifiedBySpecificWSMembers);
   }
 
@@ -124,7 +122,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     }
     return Promise.reject(new Notification({
       message: 'SyncupDeniedMustRelogin',
-      origin: EC.NOTIFICATION_ORIGIN_API_SYNCUP
+      origin: ErrorConstants.NOTIFICATION_ORIGIN_API_SYNCUP
     }));
   }
 
@@ -212,7 +210,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
         url: ACTIVITY_IMPORT_URL,
         body: activity,
         shouldRetry: false,
-        extraUrlParam: activity[AC.INTERNAL_ID],
+        extraUrlParam: activity[ActivityConstants.INTERNAL_ID],
         paramsMap
       })
         .then((pushResult) => this._processPushResult({ activity, pushResult })).then(resolve)
@@ -243,7 +241,8 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // If we got an EP result, no matter if the import was rejected, then the push was successful.
     // The user may either use a newer activity or fix some validation issues.
     // We also don't need to remember it as a leftover, since we  have to recalculate activities to push each time.
-    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    const isConnectivityError = error instanceof Notification && error.errorCode ===
+      ErrorConstants.ERROR_CODE_NO_CONNECTIVITY;
     if (pushResult || !isConnectivityError) {
       this._processed.add(activity.id);
     }
@@ -262,48 +261,50 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
     // The activity may be pushed, but the connection may be lost until we pull its latest change from AMP.
     // We could simply remove client-change-id once it is pushed successfully, but we want to use it in next iteration
     // for conflicts resolution. So for now we'll flag the activity as pushed to filter it out from next push attempt.
-    activity[AC.IS_PUSHED] = true;
-    activity[AC.ACTIVITY_GROUP] = pushResult[AC.ACTIVITY_GROUP];
-    if (!activity[AC.AMP_ID]) {
+    activity[ActivityConstants.IS_PUSHED] = true;
+    activity[ActivityConstants.ACTIVITY_GROUP] = pushResult[ActivityConstants.ACTIVITY_GROUP];
+    if (!activity[ActivityConstants.AMP_ID]) {
       // update the activity with AMP ID to be matched during pull
-      activity[AC.AMP_ID] = pushResult[AC.AMP_ID];
-      activity[AC.INTERNAL_ID] = pushResult[AC.INTERNAL_ID];
+      activity[ActivityConstants.AMP_ID] = pushResult[ActivityConstants.AMP_ID];
+      activity[ActivityConstants.INTERNAL_ID] = pushResult[ActivityConstants.INTERNAL_ID];
     }
     return ActivityHelper.saveOrUpdate(activity, false);
   }
 
   _updateDetails({ activity, pushResult, errorData }) {
-    const detailType = errorData ? SYNCUP_DETAILS_UNSYNCED : SYNCUP_DETAILS_SYNCED;
-    const detail = Utils.toMap(AC.PROJECT_TITLE, activity[AC.PROJECT_TITLE]);
-    detail[AC.AMP_ID] = (pushResult && pushResult[AC.AMP_ID]) || activity[AC.AMP_ID];
-    detail.id = (pushResult && pushResult[AC.INTERNAL_ID]) || activity.id;
-    logger.log(`Activity push ${detailType} ${detail[AC.AMP_ID] || activity.id}`);
+    const detailType = errorData ? Constants.SYNCUP_DETAILS_UNSYNCED : Constants.SYNCUP_DETAILS_SYNCED;
+    const detail = Utils.toMap(ActivityConstants.PROJECT_TITLE, activity[ActivityConstants.PROJECT_TITLE]);
+    detail[ActivityConstants.AMP_ID] = (pushResult && pushResult[ActivityConstants.AMP_ID]) ||
+      activity[ActivityConstants.AMP_ID];
+    detail.id = (pushResult && pushResult[ActivityConstants.INTERNAL_ID]) || activity.id;
+    logger.log(`Activity push ${detailType} ${detail[ActivityConstants.AMP_ID] || activity.id}`);
     this._details[detailType].push(detail);
   }
 
   _getRejectedId(activity) {
     logger.log('_getRejectedId');
     // check if it was already rejected before and increment the maximum rejectedId
-    const ampId = activity[AC.AMP_ID];
-    const projectTile = activity[AC.PROJECT_TITLE];
+    const ampId = activity[ActivityConstants.AMP_ID];
+    const projectTile = activity[ActivityConstants.PROJECT_TITLE];
     let filter = null;
     // first by ampId, if the activity is also available on AMP server
     if (ampId) {
-      filter = Utils.toMap(AC.AMP_ID, ampId);
+      filter = Utils.toMap(ActivityConstants.AMP_ID, ampId);
     } else if (projectTile) {
       // or try to match by the same project title for same named activities not yet available on AMP server
       // TODO adjust for multilingual - iteration 2+
-      filter = Utils.toMap(AC.PROJECT_TITLE, projectTile);
+      filter = Utils.toMap(ActivityConstants.PROJECT_TITLE, projectTile);
     }
     if (filter !== null) {
-      const projections = Utils.toMap(AC.REJECTED_ID, 1);
+      const projections = Utils.toMap(ActivityConstants.REJECTED_ID, 1);
       /* Assuming for simplicity for now we'll use the max found rejectedId and increment it.
        Once we add the option to delete rejected activities from storage, some rejectedIds will be reused.
        If it will be needed, we can always increment, that will require tracking rejected # per activity
        */
       return new Promise((resolve, reject) => ActivityHelper.findAllRejected(filter, projections).then(
         prevRejections => {
-          const maxRejectedId = prevRejections.reduce((curr, next) => Math.max(curr, next[AC.REJECTED_ID]), 0);
+          const maxRejectedId = prevRejections.reduce((curr, next) =>
+            Math.max(curr, next[ActivityConstants.REJECTED_ID]), 0);
           return maxRejectedId + 1;
         }).then(resolve).catch(reject));
     }
@@ -311,9 +312,10 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
   }
 
   _processErrors(activity, rejectedId, errorData) {
-    const ampId = activity[AC.AMP_ID] ? `${activity[AC.AMP_ID]} ` : '';
-    const idToLog = `${ampId}(${activity[AC.PROJECT_TITLE]})`;
-    const fieldNameToLog = `${activity[AC.AMP_ID] ? AC.AMP_ID : ''}(${AC.PROJECT_TITLE})`;
+    const ampId = activity[ActivityConstants.AMP_ID] ? `${activity[ActivityConstants.AMP_ID]} ` : '';
+    const idToLog = `${ampId}(${activity[ActivityConstants.PROJECT_TITLE]})`;
+    const fieldNameToLog = `${activity[ActivityConstants.AMP_ID] ?
+      ActivityConstants.AMP_ID : ''}(${ActivityConstants.PROJECT_TITLE})`;
     const prefix = `${idToLog}: `;
     let errors = errorData instanceof Array ? errorData : [errorData];
     const unitErrors = [];
@@ -322,7 +324,7 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
       if (error instanceof Notification) {
         error.replacePairs = error.replacePairs || [];
         error.prefix = prefix;
-        if (error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY) {
+        if (error.errorCode === ErrorConstants.ERROR_CODE_NO_CONNECTIVITY) {
           genericError = error.shallowClone();
           genericError.prefix = '';
         }
@@ -340,8 +342,9 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
 
   _saveRejectedActivity(activity, rejectedId, errorData) {
     const rejectedActivity = activity;
-    rejectedActivity[AC.REJECTED_ID] = rejectedId;
-    rejectedActivity[AC.PROJECT_TITLE] = `${activity[AC.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
+    rejectedActivity[ActivityConstants.REJECTED_ID] = rejectedId;
+    rejectedActivity[ActivityConstants.PROJECT_TITLE] =
+      `${activity[ActivityConstants.PROJECT_TITLE]}_${translate('Rejected')}${rejectedId}`;
     rejectedActivity.errors = this._processErrors(activity, rejectedId, errorData);
     return ActivityHelper.saveOrUpdate(rejectedActivity);
   }

@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+import { ActivityConstants } from 'amp-ui';
 import Section from './Section';
 import Tablify from '../components/Tablify';
 import styles from '../ActivityPreview.css';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AP Planning');
@@ -23,16 +23,20 @@ class APPlanning extends Component {
 
   render() {
     let content = [];
-    content.push(this.props.buildSimpleField(AC.LINE_MINISTRY_RANK, true, new Set([-1]), false));
-    const fieldPaths = [AC.ORIGINAL_COMPLETION_DATE, AC.ACTUAL_START_DATE, AC.ACTUAL_COMPLETION_DATE,
-      AC.PROPOSED_START_DATE, AC.ACTUAL_APPROVAL_DATE, AC.PROPOSED_COMPLETION_DATE, AC.PROPOSED_APPROVAL_DATE];
-    const showIfNotAvailable = new Set([AC.ORIGINAL_COMPLETION_DATE, AC.ACTUAL_START_DATE, AC.ACTUAL_COMPLETION_DATE,
-      AC.PROPOSED_START_DATE, AC.ACTUAL_APPROVAL_DATE, AC.PROPOSED_COMPLETION_DATE, AC.PROPOSED_APPROVAL_DATE]);
+    content.push(this.props.buildSimpleField(ActivityConstants.LINE_MINISTRY_RANK, true, new Set([-1]), false));
+    const fieldPaths = [ActivityConstants.ORIGINAL_COMPLETION_DATE, ActivityConstants.ACTUAL_START_DATE,
+      ActivityConstants.ACTUAL_COMPLETION_DATE, ActivityConstants.PROPOSED_START_DATE,
+      ActivityConstants.ACTUAL_APPROVAL_DATE, ActivityConstants.PROPOSED_COMPLETION_DATE,
+      ActivityConstants.PROPOSED_APPROVAL_DATE];
+    const showIfNotAvailable = new Set([ActivityConstants.ORIGINAL_COMPLETION_DATE,
+      ActivityConstants.ACTUAL_START_DATE, ActivityConstants.ACTUAL_COMPLETION_DATE,
+      ActivityConstants.PROPOSED_START_DATE, ActivityConstants.ACTUAL_APPROVAL_DATE,
+      ActivityConstants.PROPOSED_COMPLETION_DATE, ActivityConstants.PROPOSED_APPROVAL_DATE]);
     content = content.concat(fieldPaths.map(fieldPath =>
       this.props.buildSimpleField(fieldPath, showIfNotAvailable.has(fieldPath), null, false)
     ).filter(data => data !== undefined));
 
-    const tableContent = Tablify.addRows(content, AC.ACTIVITY_PLANNING_COLS);
+    const tableContent = Tablify.addRows(content, ActivityConstants.ACTIVITY_PLANNING_COLS);
     return <div><table className={styles.box_table}><tbody>{tableContent}</tbody></table></div>;
   }
 

@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
+import { Constants } from 'amp-ui';
 import translate from '../../utils/translate';
 import style from './Navbar.css';
 import TopMenuContainer from './TopMenu';
 import * as MenuUtils from '../../utils/MenuUtils';
 import Logout from '../login/Logout';
 import Logger from '../../modules/util/LoggerManager';
-import { AMP_COUNTRY_LOGO, DESKTOP_CURRENT_URL } from '../../utils/Constants';
 import AssetsUtils from '../../utils/AssetsUtils';
 import NotificationsContainer from '../notifications';
 
@@ -52,10 +52,10 @@ export default class Navbar extends Component {
     return (
       <div className={style.container}>
         <div className={style.navbar}>
-          <Link to={DESKTOP_CURRENT_URL}>
+          <Link to={Constants.DESKTOP_CURRENT_URL}>
             <img
               alt="Logo"
-              src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
+              src={AssetsUtils.loadImage(Constants.AMP_COUNTRY_LOGO)}
               className={[style.countryFlag, style.navbar_left_side].join(' ')}
             />
             <span className={style.navbar_left_side}>{translate('amp-title')}</span>

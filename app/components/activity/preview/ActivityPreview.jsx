@@ -2,20 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
+import { ActivityConstants, CurrencyRatesManager, FieldsManager, FeatureManager } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
-import * as AC from '../../../utils/constants/ActivityConstants';
 import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
 import APStatusBar from './sections/APStatusBar';
-import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
-import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
 import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
 import * as WC from '../../../utils/constants/WorkspaceConstants';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
-import FeatureManager from '../../../modules/util/FeatureManager';
 
 const logger = new Logger('Activity preview');
 
@@ -98,7 +95,7 @@ export default class ActivityPreview extends Component {
   _renderData() {
     const activity = this.props.activityReducer.activity;
 
-    const categories = AC.AP_SECTION_IDS.map((category) => {
+    const categories = ActivityConstants.AP_SECTION_IDS.map((category) => {
       if (category.sectionPath
         && !this.props.activityReducer.activityFieldsManager.isFieldPathEnabled(category.sectionPath)) {
         return null;
@@ -109,7 +106,7 @@ export default class ActivityPreview extends Component {
       return <li key={category.value}><a href={category.hash}> {translate(category.value)} </a></li>;
     });
 
-    const categoryKeys = AC.AP_SECTION_IDS.map(category => category.key);
+    const categoryKeys = ActivityConstants.AP_SECTION_IDS.map(category => category.key);
 
     const teamLeadFlag = this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_MANAGER
       || this.props.userReducer.teamMember[WC.ROLE_ID] === WC.ROLE_TEAM_MEMBER_WS_APPROVER;
@@ -121,13 +118,13 @@ export default class ActivityPreview extends Component {
       <div className={styles.preview_container}>
         <div className={styles.preview_header} >
           <span className={styles.top_warning_text}>{privateWSWarning}</span>
-          <span className={styles.preview_title} >{activity[AC.PROJECT_TITLE]}</span>
+          <span className={styles.preview_title} >{activity[ActivityConstants.PROJECT_TITLE]}</span>
           <span className={styles.preview_icons} >
             <ul>
               <IconFormatter
-                id={activity.id} edit={!activity[AC.REJECTED_ID]} view={false}
+                id={activity.id} edit={!activity[ActivityConstants.REJECTED_ID]} view={false}
                 status={DesktopManager.getActivityStatus(activity)}
-                activityTeamId={activity[AC.TEAM].id}
+                activityTeamId={activity[ActivityConstants.TEAM].id}
                 teamId={this.props.userReducer.teamMember[WC.WORKSPACE_ID]}
                 teamLeadFlag={teamLeadFlag}
                 wsAccessType={this.props.workspaceReducer.currentWorkspace[WC.ACCESS_TYPE]}

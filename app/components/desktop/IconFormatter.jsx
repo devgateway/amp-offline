@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
-import {
-  ACTIVITY_PREVIEW_URL,
-  ACTIVITY_EDIT_URL,
-  ACTIVITY_STATUS_UNVALIDATED,
-} from '../../utils/Constants';
+import { Constants } from 'amp-ui';
 import { WS_ACCESS_TYPE_MANAGEMENT } from '../../utils/constants/WorkspaceConstants';
 import translate from '../../utils/translate';
 import styles from './IconFormatter.css';
@@ -26,8 +22,8 @@ export default class IconFormatter extends Component {
 
   render() {
     // TODO: These links could be dispatch to some action too if needed.
-    const editUrl = `${ACTIVITY_EDIT_URL}/${this.props.id}`;
-    const viewUrl = `${ACTIVITY_PREVIEW_URL}/${this.props.id}`;
+    const editUrl = `${Constants.ACTIVITY_EDIT_URL}/${this.props.id}`;
+    const viewUrl = `${Constants.ACTIVITY_PREVIEW_URL}/${this.props.id}`;
     const editLink = (<Link to={editUrl} title={translate('clickToEditActivity')}>
       <img className={styles.edit_icon} alt="edit" />
     </Link>);
@@ -40,7 +36,7 @@ export default class IconFormatter extends Component {
     let showEditValidate;
     let showView;
     if (this.props.edit) {
-      if (this.props.status === ACTIVITY_STATUS_UNVALIDATED) {
+      if (this.props.status === Constants.ACTIVITY_STATUS_UNVALIDATED) {
         if (this.props.crossTeamWS && this.props.teamLeadFlag) {
           if (this.props.wsAccessType !== WS_ACCESS_TYPE_MANAGEMENT) {
             showEditValidate = validateLink;

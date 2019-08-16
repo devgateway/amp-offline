@@ -1,11 +1,11 @@
 import React from 'react';
 import Menu, { MenuItem, SubMenu } from 'rc-menu';
+import { ValueConstants } from 'amp-ui';
 import translate from './translate';
 import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
 import { loadHelp } from '../actions/HelpAction';
 import store from '../index';
-import { NEW_ACTIVITY_ID } from './constants/ValueConstants';
 import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
 import Logger from '../modules/util/LoggerManager';
 import { didSetupComplete } from '../actions/SetupAction';
@@ -38,7 +38,8 @@ class MenuUtils {
         delete newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY];
       } else {
         const addActivityRoute = newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route;
-        newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route = addActivityRoute.replace('NEW_ACTIVITY_ID', NEW_ACTIVITY_ID);
+        newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route = addActivityRoute.replace('NEW_ACTIVITY_ID',
+          ValueConstants.NEW_ACTIVITY_ID);
       }
       if (!workspaceReducer.currentWorkspace) {
         delete newMenu.menu.DESKTOP.nodes[MY_DESKTOP];

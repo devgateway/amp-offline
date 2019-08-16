@@ -3,15 +3,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Panel } from 'react-bootstrap';
+import { ActivityConstants, FeatureManagerConstants, FieldPathConstants, FieldsManager, FeatureManager,
+  PossibleValuesManager } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
-import { FIELD_NAME } from '../../../../utils/constants/FieldPathConstants';
-import * as FMC from '../../../../utils/constants/FeatureManagerConstants';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
-import { ACTIVITY_DOCUMENTS } from '../../../../utils/constants/ActivityConstants';
 import Loading from '../../../common/Loading';
 import {
   ACTION,
@@ -40,7 +38,6 @@ import RepositoryManager from '../../../../modules/repository/RepositoryManager'
 import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
 import { buildNewResource } from '../../../../actions/ResourceAction';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,
@@ -85,8 +82,8 @@ class AFDocument extends Component {
     this.toAction = this.toAction.bind(this);
     this.onAdd = this.onAdd.bind(this);
     this.onCancel = this.onCancel.bind(this);
-    this.allowAddDocuments = FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DOCUMENTS_ADD_DOCUMENT);
-    this.allowAddWebLinks = FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_DOCUMENTS_ADD_WEBLINK);
+    this.allowAddDocuments = FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_DOCUMENTS_ADD_DOCUMENT);
+    this.allowAddWebLinks = FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_DOCUMENTS_ADD_WEBLINK);
     this.state = {
       docs: this.getDocuments(context),
       docFormOpened: false,
@@ -120,8 +117,8 @@ class AFDocument extends Component {
   }
 
   onDelete(uuid) {
-    const aDocs = this.context.activity[ACTIVITY_DOCUMENTS];
-    this.context.activity[ACTIVITY_DOCUMENTS] = aDocs.filter(ad => ad[UUID][UUID] !== uuid);
+    const aDocs = this.context.activity[ActivityConstants.ACTIVITY_DOCUMENTS];
+    this.context.activity[ActivityConstants.ACTIVITY_DOCUMENTS] = aDocs.filter(ad => ad[UUID][UUID] !== uuid);
     this.setState({ docs: this.getDocuments() });
   }
 
@@ -134,7 +131,7 @@ class AFDocument extends Component {
   }
 
   getDocuments(context = this.context) {
-    const docs = context.activity[ACTIVITY_DOCUMENTS] || [];
+    const docs = context.activity[ActivityConstants.ACTIVITY_DOCUMENTS] || [];
     return docs.map(ac => {
       const doc = { ...ac[UUID] };
       const srcFile = RepositoryManager.getFullContentFilePath(doc[CONTENT_ID]);
@@ -161,21 +158,23 @@ class AFDocument extends Component {
   getDocListHeaders() {
     const { resourceFieldsManager } = this.props.resourceReducer;
     const allFieldsDef = resourceFieldsManager.fieldsDef;
-    const fieldsDef = AF_FIELDS.map(f => allFieldsDef.find(fd => f === fd[FIELD_NAME])).filter(fd => fd);
+    const fieldsDef = AF_FIELDS.map(f => allFieldsDef.find(fd => f === fd[FieldPathConstants.FIELD_NAME]))
+      .filter(fd => fd);
     const headers = [<TableHeaderColumn key={UUID} dataField={UUID} isKey hidden />].concat(fieldsDef.map(fd => {
-      const fieldName = fd[FIELD_NAME];
+      const fieldName = fd[FieldPathConstants.FIELD_NAME];
       const formatExtraData = { fd };
       const customTrn = AF_CUSTOM_TRN[fieldName];
       const label = customTrn ? translate(customTrn) : resourceFieldsManager.getFieldLabelTranslation(fieldName);
       return (
         <TableHeaderColumn
           key={fieldName} dataField={fieldName} dataFormat={this.toAPLabel} formatExtraData={formatExtraData}
-          columnClassName={docStyles[`header_${fd[FIELD_NAME]}`]}>
+          columnClassName={docStyles[`header_${fd[FieldPathConstants.FIELD_NAME]}`]}>
           {label}
         </TableHeaderColumn>
       );
     }));
-    const fds = resourceFieldsManager.fieldsDef.filter(fd => [WEB_LINK, FILE_NAME].includes(fd[FIELD_NAME]));
+    const fds = resourceFieldsManager.fieldsDef.filter(fd => [WEB_LINK, FILE_NAME]
+      .includes(fd[FieldPathConstants.FIELD_NAME]));
     const formatExtraData = { fds };
     headers.splice(2, 0, (
       <TableHeaderColumn
@@ -194,7 +193,9 @@ class AFDocument extends Component {
   toAPLabel(cell, row, formatExtraData) {
     const { fd } = formatExtraData;
     const { resourceFieldsManager } = this.props.resourceReducer;
-    let value = fd ? resourceFieldsManager.getValue(row, fd[FIELD_NAME]) : cell;
+    let value = fd ? resourceFieldsManager.getValue(row, fd[FieldPathConstants.FIELD_NAME],
+      PossibleValuesManager.getOptionTranslation) :
+      cell;
     if (fd && fd.field_type === 'date') {
       value = DateUtils.createFormattedDate(value);
     }

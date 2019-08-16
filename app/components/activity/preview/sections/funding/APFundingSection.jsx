@@ -1,12 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants } from 'amp-ui';
 import Section from '../Section';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { APProposedProjectCost } from '../APProjectCost';
 import APFundingOrganizationSection from './APFundingOrganizationSection';
 import APFundingTotalsSection from './APFundingTotalsSection';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
 import fundingStyles from './APFundingSection.css';
 import { getAmountsInThousandsMessage } from '../../../../../utils/NumberUtils';
 import * as Utils from '../../../../../utils/Utils';
@@ -35,14 +35,14 @@ class APFundingSection extends Component {
     if (this.props.activity.fundings) {
       this.props.activity.fundings.forEach((funding) => {
         const item = (<APFundingOrganizationSection
-          funding={funding} key={funding[AC.AMP_FUNDING_ID] || Utils.stringToUniqueId()}
+          funding={funding} key={funding[ActivityConstants.AMP_FUNDING_ID] || Utils.stringToUniqueId()}
           buildSimpleField={this.props.buildSimpleField} />);
         fundingList.push(item);
       });
     }
     return (<div className={fundingStyles.container}>
       <div className={fundingStyles.byline}>{getAmountsInThousandsMessage()}</div>
-      <APProposedProjectCost sectionPath={AC.PPC_AMOUNT} titleClass={fundingStyles.section_header} />
+      <APProposedProjectCost sectionPath={ActivityConstants.PPC_AMOUNT} titleClass={fundingStyles.section_header} />
       <div>{fundingList}</div>
       <div><APFundingTotalsSection /></div>
       <div className={fundingStyles.clear} />

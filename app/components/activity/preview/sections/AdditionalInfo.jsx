@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
 import Section from './Section';
 import APField from '../components/APField';
-import * as AC from '../../../../utils/constants/ActivityConstants';
 import * as WSC from '../../../../utils/constants/WorkspaceConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import * as UC from '../../../../utils/constants/UserConstants';
 
 const logger = new Logger('AP Additional info');
@@ -41,16 +40,17 @@ class AdditionalInfo extends Component {
 
   _buildAdditionalInfo() {
     const additionalInfo = [];
-    const teamName = this.props.activityFieldsManager.getValue(this.props.activity, AC.TEAM);
+    const teamName = this.props.activityFieldsManager.getValue(this.props.activity, ActivityConstants.TEAM,
+      PossibleValuesManager.getOptionTranslation);
     // no need to export repeating translation for the access type through workspaces EP
     const accessType = translate(this.props.activityWorkspace[WSC.ACCESS_TYPE]);
     const isComputedTeam = this.props.activityWorkspace[WSC.IS_COMPUTED] === true ? translate('Yes') : translate('No');
 
     // TODO: the right value as defined in AMP-25403 will be shown after AMP-26295.
-    additionalInfo.push(this.props.buildSimpleField(AC.CREATED_BY, true));
-    additionalInfo.push(this.props.buildSimpleField(AC.CREATED_ON, true));
-    additionalInfo.push(this.props.buildSimpleField(AC.MODIFIED_BY, true));
-    additionalInfo.push(this.props.buildSimpleField(AC.MODIFIED_ON, true));
+    additionalInfo.push(this.props.buildSimpleField(ActivityConstants.CREATED_BY, true));
+    additionalInfo.push(this.props.buildSimpleField(ActivityConstants.CREATED_ON, true));
+    additionalInfo.push(this.props.buildSimpleField(ActivityConstants.MODIFIED_BY, true));
+    additionalInfo.push(this.props.buildSimpleField(ActivityConstants.MODIFIED_ON, true));
     additionalInfo.push(APField.instance('createdInWorkspace', `${teamName} - ${accessType}`,
       false, false, this.props.fieldNameClass, this.props.fieldValueClass));
 

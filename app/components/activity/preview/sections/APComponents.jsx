@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
-import * as AC from '../../../../utils/constants/ActivityConstants';
-import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import styles from './APComponents.css';
 import translate from '../../../../utils/translate';
 import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP Components');
 
@@ -29,12 +27,12 @@ class APComponents extends Component {
   static _extractGroups(funding, trnType) {
     const groups = [];
     const auxFd = {
-      adjType: funding[AC.ADJUSTMENT_TYPE],
+      adjType: funding[ActivityConstants.ADJUSTMENT_TYPE],
       trnType,
       key: funding.id,
-      currency: funding[AC.CURRENCY],
-      amount: funding[AC.AMOUNT],
-      year: APComponents._extractYear(funding[AC.TRANSACTION_DATE])
+      currency: funding[ActivityConstants.CURRENCY],
+      amount: funding[ActivityConstants.AMOUNT],
+      year: APComponents._extractYear(funding[ActivityConstants.TRANSACTION_DATE])
     };
     const group = groups.find(o => o.adjType.id === auxFd.adjType.id
     && o.trnType === auxFd.trnType
@@ -51,7 +49,7 @@ class APComponents extends Component {
   static _buildDetail(component) {
     const content = [];
     // TODO: Apply currency conversion to show all fundings in the same currency
-    FPC.TRANSACTION_TYPES.forEach(trnType => {
+    FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
       const fundings = component[trnType];
       if (fundings && fundings.length) {
         const groups = APComponents._extractGroups(fundings, trnType);
@@ -81,14 +79,14 @@ class APComponents extends Component {
 
   _buildComponents() {
     const content = [];
-    this.props.activity[AC.COMPONENTS].forEach((component) => {
-      if (this.props.activityFieldsManager.isFieldPathEnabled(AC.COMPONENT_TITLE)) {
-        content.push(<div className={styles.title}>{component[AC.COMPONENT_TITLE]}</div>);
+    this.props.activity[ActivityConstants.COMPONENTS].forEach((component) => {
+      if (this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.COMPONENT_TITLE)) {
+        content.push(<div className={styles.title}>{component[ActivityConstants.COMPONENT_TITLE]}</div>);
       }
-      if (this.props.activityFieldsManager.isFieldPathEnabled(AC.COMPONENT_TYPE)) {
-        content.push(<div className={styles.title}>{component[AC.COMPONENT_TYPE].value}</div>);
+      if (this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.COMPONENT_TYPE)) {
+        content.push(<div className={styles.title}>{component[ActivityConstants.COMPONENT_TYPE].value}</div>);
       }
-      if (this.props.activityFieldsManager.isFieldPathEnabled(AC.COMPONENT_DESCRIPTION)) {
+      if (this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.COMPONENT_DESCRIPTION)) {
         content.push(<div>{component.description}</div>);
       }
       content.push(<div>{translate('Finance of the component')}</div>);

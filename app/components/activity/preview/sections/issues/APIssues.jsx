@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import Section from '../Section';
 import Logger from '../../../../../modules/util/LoggerManager';
 import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APIssues.css';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
 import APMeasure from './APMeasure';
 import translate from '../../../../../utils/translate';
 import * as Utils from '../../../../../utils/Utils';
@@ -30,15 +29,16 @@ class APIssues extends Component {
 
   _buildIssues() {
     let content = [];
-    if (this.props.activity[AC.ISSUES]) {
-      this.props.activity[AC.ISSUES].forEach((issue) => {
+    if (this.props.activity[ActivityConstants.ISSUES]) {
+      this.props.activity[ActivityConstants.ISSUES].forEach((issue) => {
         let date = '';
-        if (this.props.activityFieldsManager.isFieldPathEnabled(`${AC.ISSUES}~${AC.ISSUE_DATE}`)) {
-          date = ` ${createFormattedDate(issue[AC.ISSUE_DATE])}`;
+        if (this.props.activityFieldsManager
+          .isFieldPathEnabled(`${ActivityConstants.ISSUES}~${ActivityConstants.ISSUE_DATE}`)) {
+          date = ` ${createFormattedDate(issue[ActivityConstants.ISSUE_DATE])}`;
         }
         content.push(
           <div className={styles.issues} key={Utils.stringToUniqueId()}>{`${issue.name || ''}${date}`}</div>);
-        issue[AC.MEASURES].forEach((measure) => {
+        issue[ActivityConstants.MEASURES].forEach((measure) => {
           content.push(
             <APMeasure
               key={Utils.stringToUniqueId()} activityFieldsManager={this.props.activityFieldsManager}
@@ -53,7 +53,7 @@ class APIssues extends Component {
   }
 
   render() {
-    if (this.props.activityFieldsManager.isFieldPathEnabled(AC.ISSUES)) {
+    if (this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.ISSUES)) {
       return <div>{this._buildIssues()}</div>;
     } else {
       return <div className={styles.nodata}>{translate('No Data')}</div>;

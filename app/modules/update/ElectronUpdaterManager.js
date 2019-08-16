@@ -1,15 +1,14 @@
 /* eslint-disable class-methods-use-this */
 import Moment from 'moment';
+import { Constants, ErrorConstants } from 'amp-ui';
 import ElectronUpdater from './ElectronUpdater';
 import RequestConfig from '../connectivity/RequestConfig';
 import Logger from '../util/LoggerManager';
 import { ELECTRON_UPDATER_CHECK_URL } from '../connectivity/AmpApiConstants';
 import * as Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_UPDATE } from '../../utils/constants/ErrorConstants';
 import translate from '../../utils/translate';
 import * as Utils from '../../utils/Utils';
 import NumberUtils from '../../utils/NumberUtils';
-import { CONNECTION_TIMEOUT, TIMEOUT_CHECK_INTERVAL } from '../../utils/Constants';
 
 const autoUpdater = ElectronUpdater.getElectronUpdater();
 
@@ -43,7 +42,7 @@ export default class ElectronUpdaterManager {
       return new ElectronUpdaterManager(progressUpdateFunc);
     } catch (errorObject) {
       logger.error(`${errorObject}`);
-      return Promise.reject(new Notification({ origin: NOTIFICATION_ORIGIN_UPDATE, errorObject }));
+      return Promise.reject(new Notification({ origin: ErrorConstants.NOTIFICATION_ORIGIN_UPDATE, errorObject }));
     }
   }
 
@@ -127,13 +126,13 @@ export default class ElectronUpdaterManager {
   }
 
   continueOrAbort() {
-    const isTimeout = this.lastUpdate ? Moment().diff(this.lastUpdate) > CONNECTION_TIMEOUT : false;
+    const isTimeout = this.lastUpdate ? Moment().diff(this.lastUpdate) > Constants.CONNECTION_TIMEOUT : false;
     if (isTimeout) {
       logger.error('Update download timeout');
       this.cancellationToken.cancel();
       this.isTimeout = true;
     } else if (this.lastUpdate) {
-      setTimeout(this.continueOrAbort.bind(this), TIMEOUT_CHECK_INTERVAL);
+      setTimeout(this.continueOrAbort.bind(this), Constants.TIMEOUT_CHECK_INTERVAL);
     }
   }
 

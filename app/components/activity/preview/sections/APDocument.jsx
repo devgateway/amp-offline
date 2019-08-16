@@ -1,10 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { FieldsManager } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import translate from '../../../../utils/translate';
 import * as RC from '../../../../utils/constants/ResourceConstants';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import Section from './Section';
 import { getActivityResourceUuids } from '../../../../actions/ResourceAction';
 import APField from '../components/APField';

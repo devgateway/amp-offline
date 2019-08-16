@@ -1,19 +1,17 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-alert */
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel, Tab, Tabs } from 'react-bootstrap';
+import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
-import * as AC from '../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../utils/constants/ValueConstants';
-import * as FPC from '../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFProjectCost from './funding/AFProjectCost';
 import AFFundingDonorSection from './funding/AFFundingDonorSection';
 import translate from '../../../../utils/translate';
 import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizationSelect';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import styles from './funding/AFFunding.css';
 import AFUtils from './../util/AFUtils';
 import GlobalSettingsManager from '../../../../modules/util/GlobalSettingsManager';
@@ -53,23 +51,24 @@ class AFFunding extends Component {
   }
 
   _getAcronym(sourceRole) {
-    if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
+    if (this.context.activityFieldsManager.isFieldPathEnabled(
+      `${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`)) {
       switch (sourceRole.value) {
-        case VC.DONOR_AGENCY:
-          return translate(VC.ACRONYM_DONOR_ORGANIZATION);
-        case VC.BENEFICIARY_AGENCY:
-          return translate(VC.ACRONYM_BENEFICIARY_AGENCY);
-        case VC.IMPLEMENTING_AGENCY:
-          return translate(VC.ACRONYM_IMPLEMENTING_AGENCY);
-        case VC.EXECUTING_AGENCY:
-          return translate(VC.ACRONYM_EXECUTING_AGENCY);
-        case VC.RESPONSIBLE_ORGANIZATION:
-          return translate(VC.ACRONYM_RESPONSIBLE_ORGANIZATION);
+        case ValueConstants.DONOR_AGENCY:
+          return translate(ValueConstants.ACRONYM_DONOR_ORGANIZATION);
+        case ValueConstants.BENEFICIARY_AGENCY:
+          return translate(ValueConstants.ACRONYM_BENEFICIARY_AGENCY);
+        case ValueConstants.IMPLEMENTING_AGENCY:
+          return translate(ValueConstants.ACRONYM_IMPLEMENTING_AGENCY);
+        case ValueConstants.EXECUTING_AGENCY:
+          return translate(ValueConstants.ACRONYM_EXECUTING_AGENCY);
+        case ValueConstants.RESPONSIBLE_ORGANIZATION:
+          return translate(ValueConstants.ACRONYM_RESPONSIBLE_ORGANIZATION);
         default:
           return null;
       }
     } else {
-      return translate(VC.ACRONYM_DONOR_ORGANIZATION);
+      return translate(ValueConstants.ACRONYM_DONOR_ORGANIZATION);
     }
   }
 
@@ -80,14 +79,14 @@ class AFFunding extends Component {
   handleDonorSelect(values) {
     logger.debug('handleDonorSelect');
     if (values) {
-      const value = (values instanceof Array) ? values[values.length - 1][AC.ORGANIZATION] : values;
-      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value, VC.DONOR_AGENCY);
+      const value = (values instanceof Array) ? values[values.length - 1][ActivityConstants.ORGANIZATION] : values;
+      const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value, ValueConstants.DONOR_AGENCY);
       // Needed for new activities or funding is not added.
-      if (!this.context.activity[AC.FUNDINGS]) {
-        this.context.activity[AC.FUNDINGS] = [];
+      if (!this.context.activity[ActivityConstants.FUNDINGS]) {
+        this.context.activity[ActivityConstants.FUNDINGS] = [];
       }
-      this.context.activity[AC.FUNDINGS].push(fundingItem);
-      this._addDonorToOrgRoleList(value.id, fundingItem[AC.SOURCE_ROLE]);
+      this.context.activity[ActivityConstants.FUNDINGS].push(fundingItem);
+      this._addDonorToOrgRoleList(value.id, fundingItem[ActivityConstants.SOURCE_ROLE]);
       this.forceUpdate();
     }
   }
@@ -99,27 +98,27 @@ class AFFunding extends Component {
     let sourceRolePath = '';
     const roleValue = role ? role.value : null;
     switch (roleValue) {
-      case VC.DONOR_AGENCY:
-        sourceRolePath = AC.DONOR_ORGANIZATION;
+      case ValueConstants.DONOR_AGENCY:
+        sourceRolePath = ActivityConstants.DONOR_ORGANIZATION;
         break;
-      case VC.BENEFICIARY_AGENCY:
-        sourceRolePath = AC.BENEFICIARY_AGENCY;
+      case ValueConstants.BENEFICIARY_AGENCY:
+        sourceRolePath = ActivityConstants.BENEFICIARY_AGENCY;
         break;
-      case VC.EXECUTING_AGENCY:
-        sourceRolePath = AC.EXECUTING_AGENCY;
+      case ValueConstants.EXECUTING_AGENCY:
+        sourceRolePath = ActivityConstants.EXECUTING_AGENCY;
         break;
-      case VC.CONTRACTING_AGENCY:
-        sourceRolePath = AC.CONTRACTING_AGENCY;
+      case ValueConstants.CONTRACTING_AGENCY:
+        sourceRolePath = ActivityConstants.CONTRACTING_AGENCY;
         break;
-      case VC.IMPLEMENTING_AGENCY:
-        sourceRolePath = AC.IMPLEMENTING_AGENCY;
+      case ValueConstants.IMPLEMENTING_AGENCY:
+        sourceRolePath = ActivityConstants.IMPLEMENTING_AGENCY;
         break;
-      case VC.RESPONSIBLE_ORGANIZATION:
-        sourceRolePath = AC.RESPONSIBLE_ORGANIZATION;
+      case ValueConstants.RESPONSIBLE_ORGANIZATION:
+        sourceRolePath = ActivityConstants.RESPONSIBLE_ORGANIZATION;
         break;
       default:
         // This is the case when SOURCE_ROLE is disabled.
-        sourceRolePath = AC.DONOR_ORGANIZATION;
+        sourceRolePath = ActivityConstants.DONOR_ORGANIZATION;
         break;
     }
     if (!this.context.activity[sourceRolePath]) {
@@ -132,21 +131,23 @@ class AFFunding extends Component {
   }
 
   addDonorOrgs() {
-    if (this.context.activity[AC.FUNDINGS]) {
+    if (this.context.activity[ActivityConstants.FUNDINGS]) {
       // Group fundings for the same funding organization and role (if enabled).
       const groups = [];
-      this.context.activity[AC.FUNDINGS].forEach(f => {
-        // If source_role is disabled i[AC.SOURCE_ROLE] will be undefined so we ignore it.
-        const tab = groups.find(i => (i[AC.FUNDING_DONOR_ORG_ID].id === f[AC.FUNDING_DONOR_ORG_ID].id
-          && (i[AC.SOURCE_ROLE] === undefined || i[AC.SOURCE_ROLE].id === f[AC.SOURCE_ROLE].id)));
+      this.context.activity[ActivityConstants.FUNDINGS].forEach(f => {
+        // If source_role is disabled i[ActivityConstants.SOURCE_ROLE] will be undefined so we ignore it.
+        const tab = groups
+          .find(i => (i[ActivityConstants.FUNDING_DONOR_ORG_ID].id === f[ActivityConstants.FUNDING_DONOR_ORG_ID].id
+            && (i[ActivityConstants.SOURCE_ROLE] === undefined ||
+              i[ActivityConstants.SOURCE_ROLE].id === f[ActivityConstants.SOURCE_ROLE].id)));
         // Look for errors on Commitments/Disbursements/Expenditures too.
-        const errorsOnInternalSections = FPC.TRANSACTION_TYPES.some(tt => this.hasErrors(f[tt]))
-          || this.hasErrors(f[AC.MTEF_PROJECTIONS]);
+        const errorsOnInternalSections = FieldPathConstants.TRANSACTION_TYPES.some(tt => this.hasErrors(f[tt]))
+          || this.hasErrors(f[ActivityConstants.MTEF_PROJECTIONS]);
         if (!tab) {
-          const acronym = this._getAcronym(f[AC.SOURCE_ROLE]);
+          const acronym = this._getAcronym(f[ActivityConstants.SOURCE_ROLE]);
           groups.push({
-            [AC.FUNDING_DONOR_ORG_ID]: f[AC.FUNDING_DONOR_ORG_ID],
-            [AC.SOURCE_ROLE]: f[AC.SOURCE_ROLE],
+            [ActivityConstants.FUNDING_DONOR_ORG_ID]: f[ActivityConstants.FUNDING_DONOR_ORG_ID],
+            [ActivityConstants.SOURCE_ROLE]: f[ActivityConstants.SOURCE_ROLE],
             acronym,
             errors: (f.errors && f.errors.length > 0) || errorsOnInternalSections
           });
@@ -158,27 +159,29 @@ class AFFunding extends Component {
         return groups;
       });
       let tabIndex = 0;
-      return groups.sort((i, j) => (i[AC.FUNDING_DONOR_ORG_ID].value > j[AC.FUNDING_DONOR_ORG_ID].value))
+      return groups.sort((i, j) =>
+        (i[ActivityConstants.FUNDING_DONOR_ORG_ID].value > j[ActivityConstants.FUNDING_DONOR_ORG_ID].value))
         .map((funding) => {
           tabIndex += 1;
           // If source_role is disabled then the role is always "Donor".
           let sourceRole;
-          if (this.context.activityFieldsManager.isFieldPathEnabled(`${AC.FUNDINGS}~${AC.SOURCE_ROLE}`)) {
-            sourceRole = funding[AC.SOURCE_ROLE];
+          if (this.context.activityFieldsManager.isFieldPathEnabled(
+            `${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`)) {
+            sourceRole = funding[ActivityConstants.SOURCE_ROLE];
           } else {
-            const enabledTrnType = FPC.TRANSACTION_TYPES
-              .find(tt => this.context.activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, tt));
+            const enabledTrnType = FieldPathConstants.TRANSACTION_TYPES
+              .find(tt => this.context.activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, tt));
             const options = this.context.activityFieldsManager
-              .possibleValuesMap[`${AC.FUNDINGS}~${enabledTrnType}~${AC.RECIPIENT_ROLE}`];
-            sourceRole = Object.values(options).find(i => (i.value === VC.DONOR_AGENCY));
+              .possibleValuesMap[`${ActivityConstants.FUNDINGS}~${enabledTrnType}~${ActivityConstants.RECIPIENT_ROLE}`];
+            sourceRole = Object.values(options).find(i => (i.value === ValueConstants.DONOR_AGENCY));
           }
 
           if (!this.context.activityFundingSectionPanelStatus.find(i =>
-            i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
-            && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id)) {
+            i[ActivityConstants.FUNDING_DONOR_ORG_ID].id === funding[ActivityConstants.FUNDING_DONOR_ORG_ID].id
+            && i[ActivityConstants.SOURCE_ROLE].id === funding[ActivityConstants.SOURCE_ROLE].id)) {
             this.context.activityFundingSectionPanelStatus.push({
-              [AC.FUNDING_DONOR_ORG_ID]: funding[AC.FUNDING_DONOR_ORG_ID],
-              [AC.SOURCE_ROLE]: funding[AC.SOURCE_ROLE],
+              [ActivityConstants.FUNDING_DONOR_ORG_ID]: funding[ActivityConstants.FUNDING_DONOR_ORG_ID],
+              [ActivityConstants.SOURCE_ROLE]: funding[ActivityConstants.SOURCE_ROLE],
               open: true,
               forceClose: false
             });
@@ -187,11 +190,11 @@ class AFFunding extends Component {
           if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
             return (<Tab
               eventKey={tabIndex} key={Math.random()}
-              title={`${funding[AC.FUNDING_DONOR_ORG_ID][AC.EXTRA_INFO][AC.ACRONYM]} (${funding.acronym})`}
+              title={`${funding[ActivityConstants.FUNDING_DONOR_ORG_ID][ActivityConstants.EXTRA_INFO][ActivityConstants.ACRONYM]} (${funding.acronym})`}
               tabClassName={funding.errors ? styles.error : ''}>
               <AFFundingDonorSection
-                fundings={this.context.activity[AC.FUNDINGS] || []}
-                organization={funding[AC.FUNDING_DONOR_ORG_ID]}
+                fundings={this.context.activity[ActivityConstants.FUNDINGS] || []}
+                organization={funding[ActivityConstants.FUNDING_DONOR_ORG_ID]}
                 role={sourceRole}
                 removeFundingItem={this.removeFundingItem}
                 addFundingItem={this.addFundingItem}
@@ -201,8 +204,8 @@ class AFFunding extends Component {
             </Tab>);
           } else {
             const group = this.context.activityFundingSectionPanelStatus.find(i =>
-              i[AC.FUNDING_DONOR_ORG_ID].id === funding[AC.FUNDING_DONOR_ORG_ID].id
-              && i[AC.SOURCE_ROLE].id === funding[AC.SOURCE_ROLE].id);
+              i[ActivityConstants.FUNDING_DONOR_ORG_ID].id === funding[ActivityConstants.FUNDING_DONOR_ORG_ID].id
+              && i[ActivityConstants.SOURCE_ROLE].id === funding[ActivityConstants.SOURCE_ROLE].id);
             let open = group.open;
             if (funding.errors && !group.forceClose) {
               open = true;
@@ -216,12 +219,12 @@ class AFFunding extends Component {
                 this.setState({ refresh: Math.random() });
               }}
               header={<div className={funding.errors ? styles.error : ''}>
-                {`${funding[AC.FUNDING_DONOR_ORG_ID][AC.VALUE]} (${funding[AC.SOURCE_ROLE].value})`}
+                {`${funding[ActivityConstants.FUNDING_DONOR_ORG_ID][ActivityConstants.VALUE]} (${funding[ActivityConstants.SOURCE_ROLE].value})`}
               </div>}>
               <AFFundingDonorSection
                 key={Math.random()}
-                fundings={this.context.activity[AC.FUNDINGS] || []}
-                organization={funding[AC.FUNDING_DONOR_ORG_ID]}
+                fundings={this.context.activity[ActivityConstants.FUNDINGS] || []}
+                organization={funding[ActivityConstants.FUNDING_DONOR_ORG_ID]}
                 role={sourceRole}
                 removeFundingItem={this.removeFundingItem}
                 addFundingItem={this.addFundingItem}
@@ -281,7 +284,7 @@ class AFFunding extends Component {
    * @returns {*}
    */
   render() {
-    const ppc = this.context.activity[AC.PPC_AMOUNT];
+    const ppc = this.context.activity[ActivityConstants.PPC_AMOUNT];
     const overviewTabHasErrors = ppc && ppc.errors && ppc.errors.length;
     if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
       return (<div>

@@ -3,12 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Constants, ErrorConstants } from 'amp-ui';
 import translate from '../../utils/translate';
-import { SYNCUP_REDIRECT_URL } from '../../utils/Constants';
-import {
-  NOTIFICATION_ORIGIN_AUTHENTICATION,
-  NOTIFICATION_SEVERITY_WARNING
-} from '../../utils/constants/ErrorConstants';
 import URLUtils from '../../utils/URLUtils';
 import { logoutAction, STATE_LOGOUT_REQUESTED } from '../../actions/LoginAction';
 import Notification from '../../modules/helpers/NotificationHelper';
@@ -67,8 +63,8 @@ class Logout extends React.Component {
 const logoutConfirmationAlert = () => {
   const logoutNotification = new Notification({
     message: translate('logoutConfirmation'),
-    origin: NOTIFICATION_ORIGIN_AUTHENTICATION,
-    severity: NOTIFICATION_SEVERITY_WARNING
+    origin: ErrorConstants.NOTIFICATION_ORIGIN_AUTHENTICATION,
+    severity: ErrorConstants.NOTIFICATION_SEVERITY_WARNING
   });
   const proceedWithLogout = new FollowUp({
     type: STATE_LOGOUT_REQUESTED,
@@ -89,7 +85,7 @@ export default connect(
   dispatch => ({
     onConfirmationAlert: () => dispatch(addConfirmationAlert(logoutConfirmationAlert())),
     onLogoutDismissToSync: () => {
-      URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
+      URLUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL);
     }
   })
 )(Logout);

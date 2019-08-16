@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import PossibleValuesSyncUpManager from './PossibleValuesSyncUpManager';
-import { SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES } from '../../../utils/Constants';
 import { RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS } from '../../connectivity/AmpApiConstants';
 
 /**
@@ -9,6 +9,6 @@ import { RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS } from '../../connectivity/Amp
  */
 export default class ResourcePossibleValuesSyncUpManager extends PossibleValuesSyncUpManager {
   constructor() {
-    super(SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES, RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS);
+    super(Constants.SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES, RESOURCE_POSSIBLE_VALUES_PER_FIELD_PATHS);
   }
 }

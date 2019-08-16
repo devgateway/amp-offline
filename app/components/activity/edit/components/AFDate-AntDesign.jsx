@@ -27,8 +27,8 @@ import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Moment from 'moment';
 import { DatePicker, LocaleProvider } from 'antd';
+import { Constants } from 'amp-ui';
 import * as ADLocales from './AntDesignLocales';
-import { MIN_SUPPORTED_YEAR, MAX_SUPPORTED_YEAR } from '../../../../utils/Constants';
 import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 
@@ -83,7 +83,7 @@ class AFDateAntDesign extends Component {
   }
 
   isOutsideRange(date: Moment) {
-    return date && (date.year() < MIN_SUPPORTED_YEAR || date.year() > MAX_SUPPORTED_YEAR);
+    return date && (date.year() < Constants.MIN_SUPPORTED_YEAR || date.year() > Constants.MAX_SUPPORTED_YEAR);
   }
 
   render() {

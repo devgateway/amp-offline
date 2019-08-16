@@ -1,11 +1,9 @@
+import { Constants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
-import { SYNCUP_TYPE_FEATURE_MANAGER } from '../../../utils/Constants';
 import { FEATURE_MANAGER_URL } from '../../connectivity/AmpApiConstants';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
-import * as FMPaths from '../../../utils/constants/FeatureManagerConstants';
 import Logger from '../../util/LoggerManager';
 import FMHelper from '../../helpers/FMHelper';
-import FeatureManager from '../../util/FeatureManager';
 
 const logger = new Logger('FM sync up manager');
 
@@ -18,8 +16,8 @@ const logger = new Logger('FM sync up manager');
 export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_FEATURE_MANAGER);
-    this.fmPaths = Object.values(FMPaths);
+    super(Constants.SYNCUP_TYPE_FEATURE_MANAGER);
+    this.fmPaths = Object.values(FeatureManagerConstants);
   }
 
   doAtomicSyncUp() {
@@ -61,7 +59,7 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
   }
 
   _setUndetectedFMSettingsAsDisabled(newFmTree) {
-    const futureFM = new FeatureManager(newFmTree);
+    const futureFM = new FeatureManager(newFmTree, Logger);
     this.fmPaths.forEach(fmPath => {
       if (!futureFM.hasFMSetting(fmPath)) {
         logger.warn('FM Path was not found in AMP. Either it doesn\'t exist or the path is wrong. Storing as disabled.'

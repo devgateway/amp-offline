@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import CurrencyRatesHelper from '../../helpers/CurrencyRatesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
@@ -7,14 +8,13 @@ import {
   GET_INCREMENTAL_EXCHANGE_RATES,
   LAST_SYNC_TIME_PARAM
 } from '../../connectivity/AmpApiConstants';
-import { SYNCUP_TYPE_EXCHANGE_RATES } from '../../../utils/Constants';
 
 /* eslint-disable class-methods-use-this */
 
 export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_EXCHANGE_RATES);
+    super(Constants.SYNCUP_TYPE_EXCHANGE_RATES);
   }
 
   /**

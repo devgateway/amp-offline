@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import translate from '../../../../../utils/translate';
 import APFundingTotalItem from './APFundingTotalItem';
 import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
 import Utils from '../../../../../utils/Utils';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AP funding totals section');
 
@@ -37,15 +33,17 @@ class APFundingTotalsSection extends Component {
     let actualCommitments;
     let actualDisbursements;
     const options = [];
-    FPC.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
-      if (activityFieldsManager.isFieldPathByPartsEnabled(AC.FUNDINGS, trnType)) {
-        const fieldPath = `${AC.FUNDINGS}~${trnType}~${AC.ADJUSTMENT_TYPE}`;
+    FieldPathConstants.FUNDING_TRANSACTION_TYPES.forEach(trnType => {
+      if (activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, trnType)) {
+        const fieldPath = `${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`;
         const atOptions = activityFieldsManager.getPossibleValuesOptions(fieldPath);
         atOptions.forEach(at => {
           const value = activityFundingTotals.getTotals(at.id, trnType);
           options.push({ label: translate(`Total ${at.value} ${trnType}`), value });
-          actualCommitments = (trnType === AC.COMMITMENTS && at.value === VC.ACTUAL) ? value : actualCommitments;
-          actualDisbursements = (trnType === AC.DISBURSEMENTS && at.value === VC.ACTUAL) ? value : actualDisbursements;
+          actualCommitments = (trnType === ActivityConstants.COMMITMENTS && at.value === ValueConstants.ACTUAL)
+            ? value : actualCommitments;
+          actualDisbursements = (trnType === ActivityConstants.DISBURSEMENTS && at.value === ValueConstants.ACTUAL)
+            ? value : actualDisbursements;
         });
       }
     });

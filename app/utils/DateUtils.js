@@ -2,12 +2,12 @@
  * Created by Anya on 24/04/2017.
  */
 import Moment from 'moment';
+import { ErrorConstants } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
 import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../modules/connectivity/AmpApiConstants';
 import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import * as ErrorNotificationHelper from '../modules/helpers/ErrorNotificationHelper';
-import { NOTIFICATION_ORIGIN_DATES } from './constants/ErrorConstants';
 import translate from '../utils/translate';
 
 const logger = new Logger('Date utils');
@@ -50,7 +50,7 @@ export default class DateUtils {
       }
       const message = `${translate('Invalid date provided')}: ${date}`;
       logger.error(message);
-      throw ErrorNotificationHelper.createNotification({ message, origin: NOTIFICATION_ORIGIN_DATES });
+      throw ErrorNotificationHelper.createNotification({ message, origin: ErrorConstants.NOTIFICATION_ORIGIN_DATES });
     }
     return '';
   }

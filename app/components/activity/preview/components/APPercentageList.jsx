@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ActivityConstants, FieldsManager, FeatureManager, PossibleValuesManager } from 'amp-ui';
 import APField from '../components/APField';
 import APPercentageField from '../components/APPercentageField';
 import Tablify from '../components/Tablify';
-import { HIERARCHICAL_VALUE } from '../../../../utils/constants/ActivityConstants';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import translate from '../../../../utils/translate';
 import styles from '../ActivityPreview.css';
 import Utils from '../../../../utils/Utils';
 import Logger from '../../../../modules/util/LoggerManager';
-import FeatureManager from '../../../../modules/util/FeatureManager';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
 
 const logger = new Logger('AP percentage list');
 
@@ -42,7 +39,8 @@ const APPercentageList = (listField, valueField, percentageField, listTitle = nu
       return this.props.getItemTitle(item);
     }
     const obj = item[valueField];
-    return obj[HIERARCHICAL_VALUE] ? obj[HIERARCHICAL_VALUE] : PossibleValuesManager.getOptionTranslation(obj);
+    return obj[ActivityConstants.HIERARCHICAL_VALUE] ?
+      obj[ActivityConstants.HIERARCHICAL_VALUE] : PossibleValuesManager.getOptionTranslation(obj);
   }
 
   render() {

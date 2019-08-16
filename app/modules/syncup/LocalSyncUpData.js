@@ -1,3 +1,4 @@
+import { Constants, FieldPathConstants } from 'amp-ui';
 import * as ActivityHelper from '../helpers/ActivityHelper';
 import * as UserHelper from '../helpers/UserHelper';
 import ActivitiesPushToAMPManager from './syncupManagers/ActivitiesPushToAMPManager';
@@ -5,13 +6,7 @@ import ContactHelper from '../helpers/ContactHelper';
 import ResourceHelper from '../helpers/ResourceHelper';
 import TranslationSyncupManager from './syncupManagers/TranslationSyncUpManager';
 import * as FieldsHelper from '../helpers/FieldsHelper';
-import {
-  SYNCUP_TYPE_ACTIVITY_FIELDS,
-  SYNCUP_TYPE_CONTACT_FIELDS,
-  SYNCUP_TYPE_RESOURCE_FIELDS
-} from '../../utils/Constants';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
-import * as FPC from '../../utils/constants/FieldPathConstants';
 
 /**
  * This class is to store local information needed during sync up diff or decisions while running the sync up
@@ -28,13 +23,13 @@ export default class LocalSyncUpData {
     return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
       ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
       ResourceHelper.countAllResourcesModifiedOnClient(), TranslationSyncupManager.getNewTranslationsDifference(),
-      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_ACTIVITY_FIELDS),
-      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_CONTACT_FIELDS),
-      FieldsHelper.getSingleFieldsDef(SYNCUP_TYPE_RESOURCE_FIELDS),
+      FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
+      FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_CONTACT_FIELDS),
+      FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_RESOURCE_FIELDS),
       PossibleValuesHelper.findActivityPossibleValuesPaths(),
-      PossibleValuesHelper.findPossibleValuesPathsFor(FPC.PREFIX_CONTACT),
-      PossibleValuesHelper.findPossibleValuesPathsFor(FPC.PREFIX_RESOURCE),
-      PossibleValuesHelper.findPossibleValuesPathsFor(FPC.PREFIX_COMMON)])
+      PossibleValuesHelper.findPossibleValuesPathsFor(FieldPathConstants.PREFIX_CONTACT),
+      PossibleValuesHelper.findPossibleValuesPathsFor(FieldPathConstants.PREFIX_RESOURCE),
+      PossibleValuesHelper.findPossibleValuesPathsFor(FieldPathConstants.PREFIX_COMMON)])
       .then(([
                ampIds, userIds, activitiesToPush, contactsToPush, resourcesToPushCount, newTranslations,
                activityFields, contactFields, resourceFields, activitiesPVsPaths, contactPVsPaths, resourcePVsPaths,

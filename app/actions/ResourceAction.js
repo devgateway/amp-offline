@@ -1,3 +1,5 @@
+import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants,
+  FieldsManager } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -13,25 +15,19 @@ import {
   WEB_LINK,
   RESOURCE_TYPE
 } from '../utils/constants/ResourceConstants';
-import * as AC from '../utils/constants/ActivityConstants';
 import * as Utils from '../utils/Utils';
 import ResourceManager from '../modules/resource/ResourceManager';
-import Logger from '../modules/util/LoggerManager';
+import LoggerManager from '../modules/util/LoggerManager';
 import ResourceHydrator from '../modules/helpers/ResourceHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
-import { SYNCUP_TYPE_RESOURCE_FIELDS } from '../utils/Constants';
-import { PREFIX_RESOURCE } from '../utils/constants/FieldPathConstants';
-import FieldsManager from '../modules/field/FieldsManager';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import EntityValidator from '../modules/field/EntityValidator';
 import ResourceHelper from '../modules/helpers/ResourceHelper';
-import { RELATED_DOCUMENTS, TMP_ENTITY_VALIDATOR } from '../utils/constants/ValueConstants';
 import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
 import DateUtils from '../utils/DateUtils';
 import FileManager from '../modules/util/FileManager';
 import FileDialog from '../modules/util/FileDialog';
 import Notification from '../modules/helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_RESOURCE } from '../utils/constants/ErrorConstants';
 import { addMessage } from './NotificationAction';
 import RepositoryManager from '../modules/repository/RepositoryManager';
 import translate from '../utils/translate';
@@ -61,7 +57,7 @@ export const RESOURCE_FILE_UPLOAD_FULFILLED = 'RESOURCE_FILE_UPLOAD_FULFILLED';
 export const RESOURCE_FILE_UPLOAD_REJECTED = 'RESOURCE_FILE_UPLOAD_REJECTED';
 
 
-const logger = new Logger('ResourceAction');
+const logger = new LoggerManager('ResourceAction');
 
 /* eslint-disable import/prefer-default-export */
 /**
@@ -105,11 +101,11 @@ export const dehydrateAndSaveActivityResources = (activity) => (dispatch, ownPro
 
 export const addNewActivityResource = (activity, resource, isDoc) => (dispatch, ownProps) => {
   logger.info('addNewActivityResource');
-  if (!activity[AC.ACTIVITY_DOCUMENTS]) {
-    activity[AC.ACTIVITY_DOCUMENTS] = [];
+  if (!activity[ActivityConstants.ACTIVITY_DOCUMENTS]) {
+    activity[ActivityConstants.ACTIVITY_DOCUMENTS] = [];
   }
-  activity[AC.ACTIVITY_DOCUMENTS].push({
-    [AC.DOCUMENT_TYPE]: RELATED_DOCUMENTS,
+  activity[ActivityConstants.ACTIVITY_DOCUMENTS].push({
+    [ActivityConstants.DOCUMENT_TYPE]: ValueConstants.RELATED_DOCUMENTS,
     [UUID]: resource,
   });
   loadNewResource(resource)(dispatch, ownProps);
@@ -165,7 +161,7 @@ export const prepareNewResourceForSave = (resource, isDoc) => (dispatch, ownProp
   resource[TEAM] = ownProps().userReducer.teamMember[WORKSPACE_ID];
   resource[PRIVATE] = true;
   resource[PUBLIC] = false;
-  resource[TMP_ENTITY_VALIDATOR].entity = resource;
+  resource[ValueConstants.TMP_ENTITY_VALIDATOR].entity = resource;
   if (!isDoc && resource[WEB_LINK]) {
     resource[WEB_LINK] = URLUtils.normalizeUrl(resource[WEB_LINK], 'http');
   }
@@ -174,7 +170,7 @@ export const prepareNewResourceForSave = (resource, isDoc) => (dispatch, ownProp
 
 export const validate = (resource, isDoc) => {
   logger.debug('validate');
-  const errors = resource[TMP_ENTITY_VALIDATOR].areAllConstraintsMet(resource);
+  const errors = resource[ValueConstants.TMP_ENTITY_VALIDATOR].areAllConstraintsMet(resource);
   const docError = isDoc && errors.length && errors.find((ve: ValidationError) => ve.path === FILE_NAME);
   if (docError) {
     docError.errorMessage = translate('FileNotAvailable');
@@ -206,17 +202,17 @@ export const configureResourceManagers = () => (dispatch, ownProps) => dispatch(
 });
 
 const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
-    .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS]),
-  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_RESOURCE)
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
+    .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS]),
+  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_RESOURCE)
 ]).then(([rFields, possibleValuesCollection]) => ({
-  resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage)
+  resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage, LoggerManager)
 }));
 
 const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([
   ResourceManager.findResourcesByUuidsWithContent(uuids),
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_RESOURCE_FIELDS)
-    .then(fields => fields[SYNCUP_TYPE_RESOURCE_FIELDS])
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
+    .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
   if (resources && resources.length) {
     const rh = new ResourceHydrator(rFields);
@@ -228,14 +224,14 @@ const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity)
 const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
   if (resources && resources.length) {
     const rMap = Utils.toMapByKey(resources, UUID);
-    const ars = activity[AC.ACTIVITY_DOCUMENTS];
+    const ars = activity[ActivityConstants.ACTIVITY_DOCUMENTS];
     ars.forEach(ar => {
       const r = rMap.get(ar[UUID]);
       if (r) {
-        r[TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
+        r[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
         r[VALIDATE_ON_CHANGE_ONLY] = true;
         ar[UUID] = r;
-        ar[TMP_ENTITY_VALIDATOR] = r[TMP_ENTITY_VALIDATOR];
+        ar[ValueConstants.TMP_ENTITY_VALIDATOR] = r[ValueConstants.TMP_ENTITY_VALIDATOR];
       }
     });
   }
@@ -269,7 +265,7 @@ const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
 
 const _cleanupTmpFields = (resources) => {
   resources.forEach(r => {
-    delete r[TMP_ENTITY_VALIDATOR];
+    delete r[ValueConstants.TMP_ENTITY_VALIDATOR];
     const content = r[CONTENT_ID];
     if (content) {
       r[CONTENT_ID] = r[CONTENT_ID].id;
@@ -292,7 +288,7 @@ export const getActivityResourceUuids = (activity) => _getActivityResources(acti
 
 const _getActivityResources = (activity, asIds = true) => {
   const resources = new Set();
-  const docs = activity[AC.ACTIVITY_DOCUMENTS];
+  const docs = activity[ActivityConstants.ACTIVITY_DOCUMENTS];
   if (docs && docs.length) {
     docs.forEach(d => resources.add((asIds && d[UUID] && d[UUID][UUID]) || d[UUID]));
   }
@@ -302,7 +298,7 @@ const _getActivityResources = (activity, asIds = true) => {
 export const buildNewResource = (resourceFieldsManager, resourceType) => {
   const resource = {};
   ResourceHelper.stampClientChange(resource);
-  resource[TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  resource[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
   resource[RESOURCE_TYPE] = { id: resourceType, value: resourceType };
   return resource;
 };
@@ -318,4 +314,5 @@ export const saveFileDialog = (srcFile, fileName) => (dispatch) => {
   }
 };
 
-const toNotif = (message) => new Notification({ message, origin: NOTIFICATION_ORIGIN_RESOURCE, translateMsg: true });
+const toNotif = (message) => new Notification(
+  { message, origin: ErrorConstants.NOTIFICATION_ORIGIN_RESOURCE, translateMsg: true });

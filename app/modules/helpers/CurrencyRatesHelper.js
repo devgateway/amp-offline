@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_CURRENCY_RATES } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('Currency rates helper');
@@ -19,7 +19,7 @@ const CurrencyRatesHelper = {
     logger.log('findByFromAndTo');
     const filter = { 'currency-pair': { to: currencyTo, from: currencyFrom } };
 
-    return DatabaseManager.findOne(filter, COLLECTION_CURRENCY_RATES);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_CURRENCY_RATES);
   },
 
   /**
@@ -29,7 +29,7 @@ const CurrencyRatesHelper = {
    */
   findAll(filter) {
     logger.log('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_CURRENCY_RATES);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_CURRENCY_RATES);
   },
 
   /**
@@ -47,12 +47,12 @@ const CurrencyRatesHelper = {
    */
   replaceAllCurrencyRates(currencyRatesCollection) {
     logger.log('replaceAllCurrencyRates');
-    return DatabaseManager.replaceCollection(currencyRatesCollection, COLLECTION_CURRENCY_RATES);
+    return DatabaseManager.replaceCollection(currencyRatesCollection, Constants.COLLECTION_CURRENCY_RATES);
   },
 
   saveCurrencyRate(currencyRate) {
     logger.log('saveCurrencyRate');
-    return DatabaseManager.saveOrUpdate(currencyRate.id, currencyRate, COLLECTION_CURRENCY_RATES);
+    return DatabaseManager.saveOrUpdate(currencyRate.id, currencyRate, Constants.COLLECTION_CURRENCY_RATES);
   }
 };
 

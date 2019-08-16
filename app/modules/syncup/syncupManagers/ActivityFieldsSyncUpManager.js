@@ -1,4 +1,4 @@
-import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../../utils/Constants';
+import { Constants } from 'amp-ui';
 import {
   ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL,
   ACTIVITY_SINGLE_FIELDS_TREE_URL
@@ -11,6 +11,7 @@ import FieldsSyncUpManager from './FieldsSyncUpManager';
  */
 export default class ActivityFieldsSyncUpManager extends FieldsSyncUpManager {
   constructor() {
-    super(SYNCUP_TYPE_ACTIVITY_FIELDS, ACTIVITY_SINGLE_FIELDS_TREE_URL, ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL);
+    super(Constants.SYNCUP_TYPE_ACTIVITY_FIELDS, ACTIVITY_SINGLE_FIELDS_TREE_URL,
+      ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL);
   }
 }

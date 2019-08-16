@@ -1,3 +1,4 @@
+import { ErrorConstants } from 'amp-ui';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import { RESPONSE_CHECK_INTERVAL_MS } from '../modules/connectivity/AmpApiConstants';
 import store from '../index';
@@ -7,7 +8,6 @@ import * as CSC from '../utils/constants/ClientSettingsConstants';
 import { configureOnLoad } from './SetupAction';
 import * as Utils from '../utils/Utils';
 import Notification from '../modules/helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_API_GENERAL, NOTIFICATION_SEVERITY_ERROR, } from '../utils/constants/ErrorConstants';
 import translate from '../utils/translate';
 import { addFullscreenAlert } from './NotificationAction';
 import ConnectionInformation from '../modules/connectivity/ConnectionInformation';
@@ -135,8 +135,8 @@ function reportCompatibilityError(lastConnectivityStatus: ConnectivityStatus, cu
     if (notUpgradable) {
       const incompatibilityNotification = new Notification({
         message: translate('ampServerIncompatibleContinueToUse'),
-        origin: NOTIFICATION_ORIGIN_API_GENERAL,
-        severity: NOTIFICATION_SEVERITY_ERROR
+        origin: ErrorConstants.NOTIFICATION_ORIGIN_API_GENERAL,
+        severity: ErrorConstants.NOTIFICATION_SEVERITY_ERROR
       });
       store.dispatch(addFullscreenAlert(incompatibilityNotification));
     }

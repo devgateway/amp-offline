@@ -2,17 +2,10 @@ import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
 import os from 'os';
+import { Constants, ErrorConstants } from 'amp-ui';
 import AmpClientSecurity from 'amp-client-security';
-import {
-  DB_AUTOCOMPACT_INTERVAL_MILISECONDS,
-  DB_COMMON_DATASTORE_OPTIONS,
-  DB_DEFAULT_QUERY_LIMIT,
-  DB_FILE_EXTENSION,
-  DB_FILE_PREFIX
-} from '../../utils/Constants';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
 import * as Utils from '../../utils/Utils';
@@ -54,8 +47,8 @@ const DatabaseManager = {
     const useEncryption = Utils.isReleaseBranch();
     const keyInitPromise = (useEncryption && !secureKey) ? this._initSecureKey() : Promise.resolve();
     return keyInitPromise.then(() => new Promise((resolve, reject) => {
-      const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
-        filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
+      const newOptions = Object.assign({}, Constants.DB_COMMON_DATASTORE_OPTIONS, {
+        filename: FileManager.getFullPath(Constants.DB_FILE_PREFIX, `${name}${Constants.DB_FILE_EXTENSION}`)
       });
       // Encrypt the DB only when built from a release branch
       if (useEncryption) {
@@ -80,7 +73,7 @@ const DatabaseManager = {
         resolve(auxDBCollection.nedbDatastore);
       } else {
         const db = new Datastore(options);
-        db.persistence.setAutocompactionInterval(DB_AUTOCOMPACT_INTERVAL_MILISECONDS);
+        db.persistence.setAutocompactionInterval(Constants.DB_AUTOCOMPACT_INTERVAL_MILISECONDS);
         DatabaseCollection.getInstance().insertCollection(name, db);
         db.loadDatabase((err) => {
           if (err !== null) {
@@ -495,7 +488,7 @@ const DatabaseManager = {
   },
 
   findAllWithProjectionsAndOtherCriteria(example, collectionName, projections
-    , sort = { id: 1 }, skip = 0, limit = DB_DEFAULT_QUERY_LIMIT) {
+    , sort = { id: 1 }, skip = 0, limit = Constants.DB_DEFAULT_QUERY_LIMIT) {
     logger.debug('findAllWithProjectionsAndOtherCriteria');
     return new Promise((resolve, reject) => {
       const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(
@@ -573,7 +566,7 @@ const DatabaseManager = {
     DatabaseCollection.getInstance().addPromiseAndProcess(task);
   },
 
-  _createNotification(err, origin = NOTIFICATION_ORIGIN_DATABASE) {
+  _createNotification(err, origin = ErrorConstants.NOTIFICATION_ORIGIN_DATABASE) {
     return new Notification({ message: `${translate('Database Error')}: ${err.toString()}`, origin });
   }
 };

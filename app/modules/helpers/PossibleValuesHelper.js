@@ -1,13 +1,10 @@
 import { Validator } from 'jsonschema';
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
-import { CONTACT } from '../../utils/constants/ActivityConstants';
 import ContactHelper from './ContactHelper';
 import translate from '../../utils/translate';
-import * as FPC from '../../utils/constants/FieldPathConstants';
 import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Possible values helper');
@@ -46,13 +43,13 @@ const possibleValuesSchema = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    [FPC.FIELD_PATH]: {
+    [FieldPathConstants.FIELD_PATH]: {
       type: 'array',
       items: { type: 'string' }
     },
-    [FPC.FIELD_OPTIONS]: { $ref: '/OptionSchema' }
+    [FieldPathConstants.FIELD_OPTIONS]: { $ref: '/OptionSchema' }
   },
-  required: ['id', FPC.FIELD_PATH, FPC.FIELD_OPTIONS]
+  required: ['id', FieldPathConstants.FIELD_PATH, FieldPathConstants.FIELD_OPTIONS]
 };
 
 const validator = new Validator();
@@ -77,7 +74,7 @@ const PossibleValuesHelper = {
 
   findOne(filter) {
     logger.debug('findOne');
-    return DatabaseManager.findOne(filter, COLLECTION_POSSIBLE_VALUES);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   /**
@@ -98,7 +95,7 @@ const PossibleValuesHelper = {
         idsFilter = { $regex: new RegExp(`^${root}~.*`) };
       }
     } else if (!idsFilter) {
-      const excludePrefixes = FPC.PREFIX_LIST.filter(p => p).map(p => `${p}~.*`).join('|');
+      const excludePrefixes = FieldPathConstants.PREFIX_LIST.filter(p => p).map(p => `${p}~.*`).join('|');
       idsFilter = { $regex: new RegExp(`^(?!${excludePrefixes})`) };
     }
     if (idsFilter) {
@@ -115,7 +112,7 @@ const PossibleValuesHelper = {
       if (root && root.length) {
         pvs.forEach(pv => {
           pv.id = pv.id.substring(root.length + 1);
-          pv[FPC.FIELD_PATH] = pv[FPC.FIELD_PATH].slice(1);
+          pv[FieldPathConstants.FIELD_PATH] = pv[FieldPathConstants.FIELD_PATH].slice(1);
         });
       }
       return pvs;
@@ -127,20 +124,21 @@ const PossibleValuesHelper = {
   },
 
   findActivityPossibleValuesPaths() {
-    const prefixToExclude = FPC.PREFIX_LIST.filter(p => p !== FPC.PREFIX_ACTIVITY).map(p => `${p}~.*`).join('|');
+    const prefixToExclude = FieldPathConstants.PREFIX_LIST.filter(p => p !== FieldPathConstants.PREFIX_ACTIVITY)
+      .map(p => `${p}~.*`).join('|');
     const regex = new RegExp(`^(?!(?:${prefixToExclude})).*$`);
     const filter = { id: { $regex: regex } };
-    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, { id: 1 })
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_POSSIBLE_VALUES, { id: 1 })
       .then(r => Utils.flattenToListByKey(r, 'id'));
   },
 
   findAllByExactIds(ids) {
-    return DatabaseManager.findAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
+    return DatabaseManager.findAll({ id: { $in: ids } }, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   findAll(filter, projections) {
     logger.debug('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections).then(this._preProcess);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_POSSIBLE_VALUES, projections).then(this._preProcess);
   },
 
   _preProcess(pvc) {
@@ -152,7 +150,8 @@ const PossibleValuesHelper = {
     if (contactOptionsPVC && contactOptionsPVC.length) {
       return ContactHelper.findAllContactsAsPossibleOptions().then(contactOptions => {
         // extend / update contact options with local new/update contact info
-        contactOptionsPVC.forEach(pv => (pv[FPC.FIELD_OPTIONS] = { ...pv[FPC.FIELD_OPTIONS], ...contactOptions }));
+        contactOptionsPVC.forEach(pv =>
+          (pv[FieldPathConstants.FIELD_OPTIONS] = { ...pv[FieldPathConstants.FIELD_OPTIONS], ...contactOptions }));
         return pvc;
       });
     }
@@ -167,7 +166,7 @@ const PossibleValuesHelper = {
     logger.log('saveOrUpdate');
     const validationResult = this._validate(fieldValues);
     if (validationResult.valid) {
-      return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, COLLECTION_POSSIBLE_VALUES);
+      return DatabaseManager.saveOrUpdate(fieldValues.id, fieldValues, Constants.COLLECTION_POSSIBLE_VALUES);
     }
     return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
@@ -181,7 +180,7 @@ const PossibleValuesHelper = {
     logger.log('saveOrUpdateCollection');
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
-      return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
+      return DatabaseManager.saveOrUpdateCollection(fieldValuesCollection, Constants.COLLECTION_POSSIBLE_VALUES);
     }
     return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
@@ -196,7 +195,7 @@ const PossibleValuesHelper = {
     // if we are replacing existing collection, then let's just reject the new set if some of its data is invalid
     const validationResult = this._validateCollection(fieldValuesCollection);
     if (validationResult.valid) {
-      return DatabaseManager.replaceCollection(fieldValuesCollection, COLLECTION_POSSIBLE_VALUES);
+      return DatabaseManager.replaceCollection(fieldValuesCollection, Constants.COLLECTION_POSSIBLE_VALUES);
     }
     return Promise.reject(this._getInvalidFormatError(validationResult.errors));
   },
@@ -228,7 +227,7 @@ const PossibleValuesHelper = {
    */
   deleteById(id) {
     logger.log('deleteById');
-    return DatabaseManager.removeById(id, COLLECTION_POSSIBLE_VALUES);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   /**
@@ -238,7 +237,7 @@ const PossibleValuesHelper = {
    */
   deleteByIds(ids) {
     logger.log('deleteByIds');
-    return DatabaseManager.removeAll({ id: { $in: ids } }, COLLECTION_POSSIBLE_VALUES);
+    return DatabaseManager.removeAll({ id: { $in: ids } }, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   /**
@@ -252,8 +251,8 @@ const PossibleValuesHelper = {
     const possibleOptions = this._transformOptions(possibleOptionsFromAMP);
     const possibleValuesForLocalUsage = {
       id: fieldPath,
-      [FPC.FIELD_PATH]: fieldPathParts,
-      [FPC.FIELD_OPTIONS]: possibleOptions
+      [FieldPathConstants.FIELD_PATH]: fieldPathParts,
+      [FieldPathConstants.FIELD_OPTIONS]: possibleOptions
     };
     return possibleValuesForLocalUsage;
   },
@@ -297,12 +296,13 @@ const PossibleValuesHelper = {
     const jsonError = JSON.stringify(errors).substring(0, 1000);
     const errorMessage = `${translate('Database Error')}: ${jsonError}`;
     logger.error(jsonError);
-    return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
+    return new Notification({ message: errorMessage, origin: ErrorConstants.NOTIFICATION_ORIGIN_DATABASE });
   },
 
   isActivityContactPV(pv) {
-    return pv[FPC.FIELD_PATH].length === 2
-      && FPC.ACTIVITY_CONTACT_PATHS.includes(pv[FPC.FIELD_PATH][0]) && pv[FPC.FIELD_PATH][1] === CONTACT;
+    return pv[FieldPathConstants.FIELD_PATH].length === 2
+      && FieldPathConstants.ACTIVITY_CONTACT_PATHS.includes(pv[FieldPathConstants.FIELD_PATH][0])
+      && pv[FieldPathConstants.FIELD_PATH][1] === ActivityConstants.CONTACT;
   }
 };
 

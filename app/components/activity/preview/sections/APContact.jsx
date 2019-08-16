@@ -1,11 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Section from './Section';
 import Tablify from '../components/Tablify';
-import { ACTIVITY_CONTACT_PATHS } from '../../../../utils/constants/FieldPathConstants';
-import { ACTIVITY_CONTACT_COLS, CONTACT } from '../../../../utils/constants/ActivityConstants';
 import styles from '../ActivityPreview.css';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 import { getActivityContactIds } from '../../../../actions/ContactAction';
 import * as CC from '../../../../utils/constants/ContactConstants';
 import translate from '../../../../utils/translate';
@@ -62,12 +60,12 @@ class APContact extends Component {
   render() {
     const { activity, activityFieldsManager } = this.props;
     const hydratedContactsByIds = this.getHydratedContacts();
-    const contactGroups = ACTIVITY_CONTACT_PATHS
+    const contactGroups = FieldPathConstants.ACTIVITY_CONTACT_PATHS
       .filter(acp => activityFieldsManager.isFieldPathEnabled(acp))
       .map(acp => {
         const title = activityFieldsManager.getFieldLabelTranslation(acp);
         const contacts = (activity[acp] || []).map(c => {
-          const hydratedC = hydratedContactsByIds[c[CONTACT].id];
+          const hydratedC = hydratedContactsByIds[c[ActivityConstants.CONTACT].id];
           return hydratedC ? this.renderContact(hydratedC) : null;
         });
         const content = contacts.length ? contacts : this.renderNoContacts();
@@ -81,7 +79,7 @@ class APContact extends Component {
       })
       // TODO tablify must not reverses the order
       .reverse();
-    return <Tablify key="contact-info" content={contactGroups} columns={ACTIVITY_CONTACT_COLS} />;
+    return <Tablify key="contact-info" content={contactGroups} columns={ActivityConstants.ACTIVITY_CONTACT_COLS} />;
   }
 }
 

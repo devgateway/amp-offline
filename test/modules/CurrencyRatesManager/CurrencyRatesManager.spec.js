@@ -1,5 +1,9 @@
 import { describe, it } from 'mocha';
-import CurrencyRatesManager from '../../../app/modules/util/CurrencyRatesManager';
+import { CurrencyRatesManager } from 'amp-ui';
+import translate from '../../../app/utils/translate';
+import DateUtils from '../../../app/utils/DateUtils';
+import * as ErrorNotificationHelper from '../../../app/modules/helpers/ErrorNotificationHelper';
+
 import * as GSC from '../../../app/utils/constants/GlobalSettingsConstants';
 
 const chai = require('chai');
@@ -9,7 +13,9 @@ const currencies = require('./currencies.json');
 
 const expect = chai.expect;
 
-const currencyRatesManager = new CurrencyRatesManager(currencies, 'XOF');
+const currencyRatesManager = new CurrencyRatesManager(currencies, 'XOF', translate, DateUtils,
+  ErrorNotificationHelper);
+
 const gs1 = {};
 gs1[GSC.BASE_CURRENCY_KEY] = 'XOF';
 chai.use(chaiAsPromised);

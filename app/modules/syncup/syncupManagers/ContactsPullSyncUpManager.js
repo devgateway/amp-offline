@@ -1,13 +1,8 @@
+import { ActivityConstants, Constants, FieldPathConstants } from 'amp-ui';
 import ContactHelper from '../../helpers/ContactHelper';
-import {
-  SYNCUP_CONTACTS_PULL_BATCH_SIZE,
-  SYNCUP_TYPE_CONTACTS_PULL
-} from '../../../utils/Constants';
 import { CONTACT_BATCHES_PULL_URL } from '../../connectivity/AmpApiConstants';
 import BatchPullSavedAndRemovedSyncUpManager from './BatchPullSavedAndRemovedSyncUpManager';
 import Logger from '../../util/LoggerManager';
-import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
-import { CONTACT } from '../../../utils/constants/ActivityConstants';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 
@@ -22,7 +17,7 @@ const logger = new Logger('Contacts pull syncup manager');
 export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_CONTACTS_PULL);
+    super(Constants.SYNCUP_TYPE_CONTACTS_PULL);
     this.unlinkRemovedContactsFromActivities = this.unlinkRemovedContactsFromActivities.bind(this);
     this.unlinkRemovedContactsFromActivity = this.unlinkRemovedContactsFromActivity.bind(this);
   }
@@ -40,8 +35,9 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
     if (!removedContactIds || !removedContactIds.length) {
       return removedContactIds;
     }
-    const matchContact = Utils.toMap(CONTACT, { $in: removedContactIds });
-    const queries = ACTIVITY_CONTACT_PATHS.map(type => Utils.toMap(type, { $elemMatch: matchContact }));
+    const matchContact = Utils.toMap(ActivityConstants.CONTACT, { $in: removedContactIds });
+    const queries = FieldPathConstants.ACTIVITY_CONTACT_PATHS.map(type =>
+      Utils.toMap(type, { $elemMatch: matchContact }));
     const filter = { $or: queries };
     // When a contact is deleted from Address Book in AMP, it is automatically removed from activities.
     // The activity itself is not reported as modified on the server.
@@ -53,10 +49,10 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
   }
 
   unlinkRemovedContactsFromActivity(activity, removedContactIds) {
-    ACTIVITY_CONTACT_PATHS.forEach(contactType => {
+    FieldPathConstants.ACTIVITY_CONTACT_PATHS.forEach(contactType => {
       let contacts = activity[contactType];
       if (contacts && contacts.length) {
-        contacts = contacts.filter(contact => !removedContactIds.includes(contact[CONTACT]));
+        contacts = contacts.filter(contact => !removedContactIds.includes(contact[ActivityConstants.CONTACT]));
         activity[contactType] = contacts;
       }
     });
@@ -65,8 +61,8 @@ export default class ContactsPullSyncUpManager extends BatchPullSavedAndRemovedS
   pullNewEntries() {
     const requestConfigurations = [];
     const { saved } = this.diff;
-    for (let idx = 0; idx < saved.length; idx += SYNCUP_CONTACTS_PULL_BATCH_SIZE) {
-      const batchIds = saved.slice(idx, idx + SYNCUP_CONTACTS_PULL_BATCH_SIZE);
+    for (let idx = 0; idx < saved.length; idx += Constants.SYNCUP_CONTACTS_PULL_BATCH_SIZE) {
+      const batchIds = saved.slice(idx, idx + Constants.SYNCUP_CONTACTS_PULL_BATCH_SIZE);
       requestConfigurations.push({
         postConfig: {
           shouldRetry: true,
