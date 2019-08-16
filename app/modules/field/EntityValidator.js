@@ -326,7 +326,7 @@ export default class EntityValidator {
 
   _wasValidatedSeparately(obj, fieldPath, fieldDef: FieldDefinition, asDraft) {
     const hValue = obj[fieldDef.name];
-    const entityValidator = hValue && hValue[ValueConstants.VC_TMP_ENTITY_VALIDATOR];
+    const entityValidator = hValue && hValue[ValueConstants.TMP_ENTITY_VALIDATOR];
     if (entityValidator) {
       if (entityValidator._entity[VALIDATE_ON_CHANGE_ONLY] && !entityValidator._entity[CLIENT_CHANGE_ID]) {
         return true;
