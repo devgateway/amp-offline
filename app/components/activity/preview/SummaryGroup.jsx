@@ -1,10 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { FundingSummary } from 'amp-ui';
+import { FundingSummary, AdditionalInfo } from 'amp-ui';
 import styles from './ActivityPreview.css';
-import AdditionalInfo from './sections/AdditionalInfo';
 import Logger from '../../../modules/util/LoggerManager';
-import translate from '../../../utils/translate';
-import DateUtils from '../../../utils/DateUtils';
 
 const logger = new Logger('Summary group');
 
