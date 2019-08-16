@@ -265,7 +265,7 @@ const _dehydrateAndSaveResources = (resources, teamId, email, fieldsDef) => {
 
 const _cleanupTmpFields = (resources) => {
   resources.forEach(r => {
-    delete r[FieldPathConstants.TMP_ENTITY_VALIDATOR];
+    delete r[ValueConstants.TMP_ENTITY_VALIDATOR];
     const content = r[CONTENT_ID];
     if (content) {
       r[CONTENT_ID] = r[CONTENT_ID].id;
@@ -298,7 +298,7 @@ const _getActivityResources = (activity, asIds = true) => {
 export const buildNewResource = (resourceFieldsManager, resourceType) => {
   const resource = {};
   ResourceHelper.stampClientChange(resource);
-  resource[FieldPathConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  resource[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
   resource[RESOURCE_TYPE] = { id: resourceType, value: resourceType };
   return resource;
 };
