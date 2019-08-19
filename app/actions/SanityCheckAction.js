@@ -7,10 +7,10 @@ import { initLanguage, loadAllLanguages } from './TranslationAction';
 import Logger from '../modules/util/LoggerManager';
 import {
   CLOSE_SANITY_APP,
-  FORCE_CLOSE_APP,
   SHOW_SANITY_APP,
   START_MAIN_APP
 } from '../utils/constants/ElectronAppMessages';
+import { forceCloseApp } from '../modules/util/ElectronApp';
 
 
 const STATE_SANITY_CHECK = 'STATE_SANITY_CHECK';
@@ -85,6 +85,6 @@ export const flagCleanupComplete = (isStartMainApp) => {
   if (isStartMainApp) {
     ipcRenderer.send(START_MAIN_APP);
   } else {
-    ipcRenderer.send(FORCE_CLOSE_APP);
+    forceCloseApp();
   }
 };

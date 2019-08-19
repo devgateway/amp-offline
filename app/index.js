@@ -27,7 +27,7 @@ import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './uti
 import { doSanityCheck } from './actions/SanityCheckAction';
 import * as URLUtils from './utils/URLUtils';
 import translate from './utils/translate';
-import { FORCE_CLOSE_APP_MSG, INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
+import { INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
 import * as ElectronApp from './modules/util/ElectronApp';
 
 const logger = new Logger('index');
@@ -60,7 +60,7 @@ function handleUnexpectedError(err) {
   // For some reason after window becomes active and an error occurs, it still closes the app, which prevents from
   // getting the error from the console. => Do not close in dev mode (use CTRL^C if needed).
   if (!global.MAIN_WINDOW_ACTIVE && !ElectronApp.IS_DEV_MODE) {
-    ipcRenderer.send(FORCE_CLOSE_APP_MSG);
+    ElectronApp.forceCloseApp();
   }
 }
 
@@ -71,7 +71,7 @@ const normalStartup = () => ampOfflinePreStartUp().then(result => {
     // Until AMPOFFLINE-253, it will be always in EN, like any other notifications shown before user can switch language
     // eslint-disable-next-line no-alert
     if (!confirm(msg)) {
-      ipcRenderer.send(FORCE_CLOSE_APP_MSG);
+      ElectronApp.forceCloseApp();
       return false;
     }
   }
