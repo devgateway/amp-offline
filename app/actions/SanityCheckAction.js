@@ -31,25 +31,27 @@ export const doSanityCheck = () => _doSanityCheck(false);
 
 const _doSanityCheck = (isRestarted) => {
   logger.log('doSanityCheck');
-  const sanityPromise = DatabaseSanityManager.sanityCheck().then(DatabaseSanityManager.attemptTransition);
+  const sanityPromise = DatabaseSanityManager.sanityCheck()
+    .then(DatabaseSanityManager.attemptTransition)
+    .then((status: DatabaseSanityStatus) => {
+      if (status.isDBIncompatibilityDetected && !status.isHealedSuccessfully) {
+        logger.error('Database cleanup needed');
+        if (isRestarted) {
+          return status;
+        }
+        ipcRenderer.send(SHOW_SANITY_APP);
+        return beforeSelfHealing().then(() => status);
+      } else {
+        logger.log('Cleanup not needed');
+        flagCleanupComplete(true);
+      }
+      return status;
+    });
   store.dispatch({
     type: STATE_SANITY_CHECK,
     payload: sanityPromise
   });
-  return sanityPromise.then((status: DatabaseSanityStatus) => {
-    if (status.isDBIncompatibilityDetected && !status.isHealedSuccessfully) {
-      logger.error('Database cleanup needed');
-      if (isRestarted) {
-        return status;
-      }
-      ipcRenderer.send(SHOW_SANITY_APP);
-      return beforeSelfHealing().then(() => status);
-    } else {
-      logger.log('Cleanup not needed');
-      flagCleanupComplete(true);
-    }
-    return status;
-  });
+  return sanityPromise;
 };
 
 const beforeSelfHealing = () => {

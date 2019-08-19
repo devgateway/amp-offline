@@ -75,7 +75,7 @@ class Sanity extends Component {
         logger.warn('Starting DB cleanup');
         doDBCleanup(sanityStatus);
       }
-    } else {
+    } else if (sanityStatus.isDBIncompatibilityDetected && !sanityStatus.isHealedSuccessfully) {
       logger.log('Notifying user about DB corruption');
       onDBHealingConfirmationAlert(sanityStatus);
     }
