@@ -10,7 +10,6 @@ import {
 import {
   CLOSE_HELP_WINDOW_MSG,
   CREATE_PDF_WINDOW_MSG,
-  FORCE_CLOSE_APP_MSG,
   INITIALIZATION_COMPLETE_MSG
 } from './utils/constants/MainDevelopmentConstants';
 
@@ -18,6 +17,7 @@ const PDFWindow = require('electron-pdf-window');
 
 let mainWindow = null;
 let sanityCheckWindow = null;
+let splash = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -73,7 +73,7 @@ app.on('ready', async () => {
   });
 
   // create a new `splash`-Window
-  let splash = new BrowserWindow({
+  splash = new BrowserWindow({
     width: 425,
     height: 285,
     transparent: false,
@@ -144,18 +144,6 @@ app.on('ready', async () => {
     }
   });
 
-  ipcMain.on(FORCE_CLOSE_APP_MSG, () => {
-    app.quit();
-    if (splash) {
-      splash.hide();
-      splash.destroy();
-    }
-    if (mainWindow) {
-      mainWindow.hide();
-      mainWindow.destroy();
-    }
-  });
-
   if (process.env.NODE_ENV === 'development') {
     if (SHOW_SANITY_APP_DEBUG_WINDOW) {
       sanityCheckWindow.maximize();
@@ -208,7 +196,7 @@ ipcMain.on(CREATE_PDF_WINDOW_MSG, (event, url) => {
 });
 
 const closeApp = () => {
-  [sanityCheckWindow, mainWindow].forEach(closeWindow);
+  [sanityCheckWindow, mainWindow, splash].forEach(closeWindow);
   app.quit();
 };
 
