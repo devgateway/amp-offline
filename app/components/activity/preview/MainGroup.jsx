@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { ActivityConstants, FeatureManagerConstants, APIdentification } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds } from 'amp-ui';
 import styles from './ActivityPreview.css';
-import { APInternalIds } from './sections/APInternalIds';
 import APPlanning from './sections/APPlanning';
 import APLocation from './sections/APLocation';
 import APProgram from './sections/APProgram';
