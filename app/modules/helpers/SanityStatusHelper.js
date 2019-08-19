@@ -56,9 +56,10 @@ const SanityStatusHelper = {
    */
   findCurrentVersionPendingStandardStatus() {
     logger.debug('findCurrentVersionPendingStandardStatus');
-    const filter = Utils.toUndefinedOrNullRule(SCC.DB_HEALED_AT);
+    const filter = {};
     filter[SCC.TYPE] = SCC.TYPE_STANDARD;
     filter[SCC.VERSION] = VERSION;
+    filter[SCC.DB_HEAL_STATUS] = { $ne: SCC.STATUS_SUCCESS };
     return DatabaseManager.findOne(filter, COLLECTION_SANITY_CHECK);
   },
 
