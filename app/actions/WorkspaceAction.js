@@ -12,6 +12,8 @@ import { isForceSyncUp } from './SyncUpAction';
 import { SYNCUP_REDIRECT_URL } from '../utils/Constants';
 import * as URLUtils from '../utils/URLUtils';
 import { NOTIFICATION_ORIGIN_WORKSPACE } from '../utils/constants/ErrorConstants';
+import { FIELD_OPTIONS, PREFIX_COMMON } from '../utils/constants/FieldPathConstants';
+import PossibleValuesManager from '../modules/field/PossibleValuesManager';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_SELECT_WORKSPACE_ERROR = 'STATE_SELECT_WORKSPACE_ERROR';
@@ -44,7 +46,7 @@ function loadWorkspaceData(wsId) {
     WorkspaceHelper.findById(wsId),
     TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId, true),
     WSSettingsHelper.findByWorkspaceId(wsId),
-    PossibleValuesHelper.findById(`${AC.PPC_AMOUNT}~${AC.CURRENCY_CODE}`)
+    PossibleValuesHelper.findById(`${PREFIX_COMMON}~${AC.CURRENCY}`)
   ])
     .then(([workspace, teamMember, workspaceSettings, possibleValue]) => {
       if (!teamMember) {
@@ -55,8 +57,11 @@ function loadWorkspaceData(wsId) {
       }
       const currency = {};
       currency.code = workspaceSettings.currency;
-      currency['translated-value'] =
-        possibleValue['possible-options'][workspaceSettings.currency]['translated-value'];
+      let currencyOption = {};
+      if (possibleValue && possibleValue[FIELD_OPTIONS]) {
+        currencyOption = PossibleValuesManager.findOptionByValue(possibleValue[FIELD_OPTIONS], currency.code) || {};
+      }
+      currency['translated-value'] = currencyOption['translated-value'];
       workspaceSettings.currency = currency;
       const actionData = { teamMember, workspace, workspaceSettings };
       store.dispatch({ type: STATE_SELECT_WORKSPACE, actionData });

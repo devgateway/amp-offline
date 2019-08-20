@@ -18,12 +18,13 @@ export default class AFLabel extends Component {
     value: PropTypes.string.isRequired,
     tooltip: PropTypes.string,
     required: PropTypes.bool,
-    className: PropTypes.string
+    className: PropTypes.string,
+    extraParams: PropTypes.object
   };
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   _renderTooltip() {
@@ -51,7 +52,12 @@ export default class AFLabel extends Component {
   }
 
   render() {
-    return <span>{this._renderRequired()} {this._renderValue()} {this._renderTooltip()}</span>;
+    const extraParams = this.props.extraParams || {};
+    let label = <span>{this._renderRequired()} {this._renderValue()} {this._renderTooltip()}</span>;
+    if (extraParams.suffix && this.props.value) {
+      label = <span>{label}{extraParams.suffix}</span>;
+    }
+    return label;
   }
 
 }

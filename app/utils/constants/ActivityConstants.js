@@ -14,11 +14,14 @@ export const ACTIVITY_STATUS = 'activity_status';
 export const STATUS_REASON = 'status_reason';
 export const TYPE_OF_IMPLEMENTATION = 'type_of_implementation';
 export const OBJECTIVE = 'objective';
+export const RESULTS = 'results';
+export const BUDGET_CODE_PROJECT_ID = 'budget_code_project_id';
 export const ACTUAL_APPROVAL_DATE = 'actual_approval_date';
 export const FUNDINGS = 'fundings';
 export const FUNDING_DONOR_ORG_ID = 'donor_organization_id';
 export const IS_DRAFT = 'is_draft';
 export const ORG_ROLE_ORG_ID = 'organization';
+export const ADDITIONAL_INFO = 'additional_info';
 export const PRIMARY_SECTORS = 'primary_sectors';
 export const SECONDARY_SECTORS = 'secondary_sectors';
 export const TERTIARY_SECTORS = 'tertiary_sectors';
@@ -28,6 +31,7 @@ export const SECTOR_PERCENTAGE = 'sector_percentage';
 export const FINANCING_INSTRUMENT = 'financing_instrument';
 export const MODALITIES = 'modalities';
 export const LINE_MINISTRY_RANK = 'line_ministry_rank';
+export const GOVERNMENT_AGREEMENT_NUMBER = 'government_agreement_number';
 export const FUNDING_STATUS = 'funding_status';
 export const LOCATIONS = 'locations';
 export const LOCATION = 'location';
@@ -43,6 +47,8 @@ export const FUNDING_DETAILS = 'funding_details';
 export const MODE_OF_PAYMENT = 'mode_of_payment';
 export const FUNDING_CLASSIFICATION_DATE = 'funding_classification_date';
 export const AGREEMENT = 'agreement';
+export const DONOR_OBJECTIVE = 'donor_objective';
+export const CONDITIONS = 'conditions';
 export const AGREEMENT_CODE = 'code';
 export const AGREEMENT_TITLE = 'title';
 export const PROJECT_CATEGORY = 'project_category';
@@ -57,6 +63,10 @@ export const BENEFICIARY_AGENCY = 'beneficiary_agency';
 export const IMPLEMENTING_AGENCY = 'implementing_agency';
 export const RESPONSIBLE_ORGANIZATION = 'responsible_organization';
 export const DONOR_ORGANIZATION = 'donor_organization';
+export const REGIONAL_GROUP = 'regional_group';
+export const SECTOR_GROUP = 'sector_group';
+export const BUDGETS = 'budgets';
+export const BUDGET_CODE = 'budget_code';
 export const ARCHIVED = 'archived';
 export const TRANSACTION_DATE = 'transaction_date';
 export const TRANSACTION_TYPE = 'transaction_type';
@@ -106,6 +116,7 @@ export const ACTIVITY_SUMMARY = 'activity_summary';
 export const CONDITIONALITIES = 'conditionalities';
 export const PROJECT_MANAGEMENT = 'project_management';
 export const A_C_CHAPTER = 'a_c_chapter';
+export const CRIS_NUMBER = 'cris_number';
 export const ACTIVITY_INTERNAL_IDS = 'activity_internal_ids';
 export const HIERARCHICAL_VALUE = 'hierarchical_value';
 export const HIERARCHICAL_VALUE_PARTS = 'hierarchical_value_parts';
@@ -123,9 +134,25 @@ export const SOURCE_ROLE = 'source_role';
 export const AMP_FUNDING_ID = 'amp_funding_id';
 export const ISSUES = 'issues';
 export const ISSUE_DATE = 'issue_date';
+export const ISSUE_NAME = 'name';
 export const MEASURES = 'measures';
+export const MEASURE_NAME = 'name';
 export const MEASURE_DATE = 'measure_date';
 export const ACTORS = 'actors';
+export const ACTOR_NAME = 'name';
+export const STRUCTURES = 'structures';
+export const STRUCTURES_TITLE = 'title';
+export const STRUCTURES_DESCRIPTION = 'description';
+export const STRUCTURES_LATITUDE = 'latitude';
+export const STRUCTURES_LONGITUDE = 'longitude';
+export const STRUCTURES_COLOR = 'structure_color';
+export const STRUCTURES_LAT = 'lat';
+export const STRUCTURES_LNG = 'lng';
+export const STRUCTURES_SHAPE = 'shape';
+export const STRUCTURES_POINT = 'Point';
+export const STRUCTURES_POLYGON = 'Polygon';
+export const STRUCTURES_POLYLINE = 'Polyline';
+export const STRUCTURES_COORDINATES = 'coordinates';
 export const COMPONENT_TYPE = 'component_type';
 export const COMPONENT_TITLE = 'component_title';
 export const COMPONENT_FUNDING = 'funding';
@@ -133,6 +160,7 @@ export const COMPONENT_DESCRIPTION = 'description';
 export const COMPONENT_ORGANIZATION = 'component_organization';
 export const FUNDING_AMOUNT_ID = 'amp_funding_amount_id';
 export const EXTRA_INFO = 'extra_info';
+export const VALUE = 'value';
 export const ACRONYM = 'acronym';
 export const TYPE_OF_COOPERATION = 'type_of_cooperation';
 export const ANNUAL_PROJECT_BUDGET_ID = 'annual_project_budget_id';
@@ -149,10 +177,28 @@ export const PLEDGE = 'pledge';
 export const CAPITAL_SPENDING_PERCENTAGE = 'capital_spending_percentage';
 export const REPORTING_DATE = 'reporting_date';
 export const RECIPIENT_ROLE = 'recipient_role';
+export const RECIPIENT_ORGANIZATION = 'recipient_organization';
 export const TEMPORAL_ID = '_temporal_id';
 export const MINISTRY_CODE = 'ministry_code';
+export const FY = 'fy';
 export const IMPLEMENTATION_LEVELS_EXTRA_INFO = 'implementation-levels';
 export const IMPLEMENTATION_LOCATION_EXTRA_INFO = 'implementation_location_name';
+export const DONOR_CONTACT = 'donor_contact_information';
+export const PROJECT_COORDINATOR_CONTACT = 'project_coordinator_contact_information';
+export const SECTOR_MINISTRY_CONTACT = 'sector_ministry_contact_information';
+export const MOFED_CONTACT = 'mofed_contact_information';
+export const IMPLEMENTING_EXECUTING_AGENCY_CONTACT = 'implementing/executing_agency_contact_information';
+export const CONTACT = 'contact';
+export const ORGANIZATION_GROUP = 'organization_group';
+export const FIXED_EXCHANGE_RATE = 'fixed_exchange_rate';
+export const PRIMARY_CONTACT = 'mark_as_primary';
+export const ACTIVITY_DOCUMENTS = 'activity_documents';
+export const DOCUMENT_TYPE = 'document_type';
+export const ISO2 = 'iso2';
+export const MTEF_PROJECTIONS = 'mtef_projections';
+export const PROJECTION = 'projection';
+export const PIPELINE = 'pipeline';
+export const PROJECTION_DATE = 'projection_date';
 
 // Activity labels (usually those that don't come as part of Fields Def EP)
 export const SAME_AS_PROPOSED_START_DATE_LABEL = 'Same as Proposed Start Date';
@@ -167,6 +213,8 @@ export const DEPENDENCY_PROJECT_CODE_ON_BUDGET = 'project_code_on_budget';
 export const DEPENDENCY_ON_BUDGET = 'on_budget';
 export const DEPENDENCY_TRANSACTION_PRESENT = 'transaction_present';
 export const DEPENDENCY_COMPONENT_FUNDING_ORG_VALID = 'organization_present';
+export const DEPENDENCY_DISBURSEMENT_DISASTER_RESPONSE_REQUIRED = 'disbursements_disaster_response_required';
+export const DEPENDENCY_COMMITMENTS_DISASTER_RESPONSE_REQUIRED = 'commitments_disaster_response_required';
 
 /** IDs for AP sections **/
 export const AP_SECTION_IDS =
@@ -174,7 +222,6 @@ export const AP_SECTION_IDS =
     { key: 'APInternalIds', hash: '#APInternalIds', value: 'Agency Internal IDs', sectionPath: ACTIVITY_INTERNAL_IDS },
     { key: 'APPlanning', hash: '#APPlanning', value: 'Planning', fmPath: FMC.ACTIVITY_PLANNING },
     { key: 'APLocation', hash: '#APLocation', value: 'Location', sectionPath: LOCATIONS },
-    { key: 'APNationalPlan', hash: '#APNationalPlan', value: 'National Plan', sectionPath: NATIONAL_PLAN_OBJECTIVE },
     { key: 'APProgram', hash: '#APProgram', value: 'Program', fmPath: FMC.ACTIVITY_PROGRAM },
     { key: 'APSector', hash: '#APSector', value: 'Sectors', fmPath: FMC.ACTIVITY_SECTORS },
     {
@@ -190,13 +237,22 @@ export const AP_SECTION_IDS =
       value: 'Related Organizations',
       fmPath: FMC.ACTIVITY_ORGANIZATIONS
     },
-    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES }];
+    { key: 'APIssues', hash: '#APIssues', value: 'Issues', sectionPath: ISSUES },
+    { key: 'APContact', hash: '#APContact', value: 'Contact Information', fmPath: FMC.ACTIVITY_CONTACT },
+    { key: 'APStructures', hash: '#APStructures', value: 'Structures', sectionPath: STRUCTURES },
+    { key: 'APDocument', hash: '#APDocument', value: 'Related Documents', sectionPath: ACTIVITY_DOCUMENTS },
+  ];
 
 /** Column counts for each section **/
 export const ACTIVITY_INTERNAL_IDS_COLS = 3;
-export const ACTIVITY_PLANNING_COLS = 3;
+export const ACTIVITY_PLANNING_COLS = 2;
 export const ACTIVITY_LOCATION_COLS = 3;
 export const ACTIVITY_FUNDING_COLS = 2;
+export const ACTIVITY_CONTACT_COLS = 2;
+export const AP_FUNDINGS_TABLE_COLS = 4;
+
+export const MULTI_SELECT_MIN_SIZE = 8;
+export const MULTI_SELECT_MAX_SIZE = 8;
 
 export function toFieldNames(listOfNames) {
   return listOfNames.map(name => toFieldName(name));

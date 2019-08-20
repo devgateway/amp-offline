@@ -12,9 +12,10 @@ import {
   IMPLEMENTATION_LEVELS_EXTRA_INFO,
   IMPLEMENTATION_LOCATION,
   IMPLEMENTATION_LOCATION_EXTRA_INFO,
-  LOCATIONS
+  LOCATIONS,
+  ISO2,
+  VALUE
 } from '../../../../utils/constants/ActivityConstants';
-import { COUNTRY_BY_ISO2 } from '../../../../utils/constants/CountryByIso';
 import { DEFAULT_COUNTRY } from '../../../../utils/constants/GlobalSettingsConstants';
 import { addMessage } from '../../../../actions/NotificationAction';
 import { createNotification } from '../../../../modules/helpers/ErrorNotificationHelper';
@@ -22,6 +23,7 @@ import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorC
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
 import { COUNTRY, INTERNATIONAL } from '../../../../utils/constants/ValueConstants';
+import { LOCATION_PATH } from '../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AF location');
 
@@ -33,7 +35,8 @@ class AFLocation extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
     globalSettings: PropTypes.object.isRequired,
-    onAddMessage: PropTypes.func.isRequired
+    onAddMessage: PropTypes.func.isRequired,
+    activityFieldsManager: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -48,11 +51,12 @@ class AFLocation extends Component {
   }
 
   componentWillMount() {
-    const { globalSettings } = this.props;
+    const { globalSettings, activityFieldsManager } = this.props;
     if (globalSettings) {
       const iso2 = globalSettings[DEFAULT_COUNTRY] ? globalSettings[DEFAULT_COUNTRY].toUpperCase() : null;
-      // TODO prioritize AMPOFFLINE-593 other than Niger or Chad country starts using AMP Offline
-      this.defaultCountry = COUNTRY_BY_ISO2[iso2] ? COUNTRY_BY_ISO2[iso2] : null;
+      const defaultCountry = Object.values(activityFieldsManager.possibleValuesMap[LOCATION_PATH])
+        .find(l => (l[EXTRA_INFO] && l[EXTRA_INFO][ISO2] && l[EXTRA_INFO][ISO2].toUpperCase() === iso2));
+      this.defaultCountry = defaultCountry ? defaultCountry[VALUE] : null;
     }
     if (this.defaultCountry === null) {
       const message = translate('defaultCountryError');

@@ -1,0 +1,76 @@
+.noMargin {
+  margin-left: 0;
+}
+.contactHeader {
+  font-weight: bold;
+}
+
+.headerLink {
+  color: #4A687A;
+}
+
+.headerLink:hover {
+  text-decoration: underline;
+}
+
+.primaryCol {
+  padding-right: 0;
+  width: 21%;
+}
+
+.primaryField {
+  margin-bottom: 0;
+  height: 20px;
+  font-size: inherit;
+}
+
+.primaryField > span:first-child {
+  display: inline-flex;
+  flex-direction: row-reverse;
+}
+
+.primaryField > span:first-child > span {
+  cursor: default;
+  height: 100%;
+}
+
+.primaryField > span > div {
+  margin: 0;
+}
+
+.primaryLabel {
+  vertical-align: top;
+}
+
+.deleteCol {
+  padding: 0;
+  width: auto;
+}
+
+.delete {
+  background-image: url('../../../../../assets/images/ico_del.gif');
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 1em;
+}
+
+.subSection {
+  font-size: inherit;
+}
+
+.subSection > span > span {
+  display: inline-block;
+  width: 100%;
+  padding: 2px 2px 2px 10px;
+  margin-bottom: 10px;
+  background-color: #F5F5F5;
+  border: 1px solid #DADAD6;
+}
+
+.subSection > span > div > div:first-child {
+  border: 1px dotted #DADAD6;
+}
+
+.addButton {
+  padding: 10px 0 10px 15px;
+}

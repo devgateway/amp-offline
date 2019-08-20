@@ -1,4 +1,6 @@
 .measures {
-  font-weight: bold;
+  font-weight: normal;
   margin-left: 15px;
+  display: list-item;
+  list-style-position: inside;
 }

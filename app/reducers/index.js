@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { routerReducer as routing } from 'react-router-redux';
+import appReducer from './AppReducer';
 import loginReducer from './LoginReducer';
 import workspaceReducer from './WorkspaceReducer';
 import translationReducer from './TranslationReducer';
@@ -7,6 +8,8 @@ import syncUpReducer from './SyncUpReducer';
 import userReducer from './UserReducer';
 import desktopReducer from './DesktopReducer';
 import activityReducer from './ActivityReducer';
+import contactReducer from './ContactReducer';
+import resourceReducer from './ResourceReducer';
 import ampConnectionStatusReducer from './AmpConnectionStatusReducer';
 import startUpReducer from './StartUpReducer';
 import notificationReducer from './NotificationReducer';
@@ -19,6 +22,7 @@ import sanityCheckReducer from './SanityCheckReducer';
 import { STATE_LOGOUT } from '../actions/LoginAction';
 
 const combinedReducers = combineReducers({
+  appReducer,
   loginReducer,
   workspaceReducer,
   routing,
@@ -27,6 +31,8 @@ const combinedReducers = combineReducers({
   userReducer,
   desktopReducer,
   activityReducer,
+  contactReducer,
+  resourceReducer,
   ampConnectionStatusReducer,
   startUpReducer,
   notificationReducer,

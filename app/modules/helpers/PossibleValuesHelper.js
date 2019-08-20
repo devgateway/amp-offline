@@ -4,6 +4,10 @@ import { COLLECTION_POSSIBLE_VALUES } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
+import { ACTIVITY_CONTACT_PATHS, FIELD_OPTIONS, FIELD_PATH } from '../../utils/constants/FieldPathConstants';
+import { CONTACT } from '../../utils/constants/ActivityConstants';
+import ContactHelper from './ContactHelper';
+import translate from '../../utils/translate';
 
 const logger = new Logger('Possible values helper');
 
@@ -12,8 +16,8 @@ const optionSchema = {
   $schema: 'http://json-schema.org/draft-04/schema#',
   type: 'object',
   patternProperties: {
-    // TODO update based on AMP-25785 if we actually should not limit to numbers
-    '^(0|[1-9]+[0-9]*)|[A-Z]{3}$': {
+    // since we need an artificial "resource_type" options, then we may not be able to limit to numbers (AMP-25785)
+    '^(0|[1-9]+[0-9]*)|[A-Za-z]{2,4}$': {
       type: 'object',
       properties: {
         // TODO some ids are strings while they are actually integers. Update once AMP-25785 is clarified
@@ -43,13 +47,13 @@ const possibleValuesSchema = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    'field-path': {
+    [FIELD_PATH]: {
       type: 'array',
       items: { type: 'string' }
     },
-    'possible-options': { $ref: '/OptionSchema' }
+    [FIELD_OPTIONS]: { $ref: '/OptionSchema' }
   },
-  required: ['id', 'field-path', 'possible-options']
+  required: ['id', FIELD_PATH, FIELD_OPTIONS]
 };
 
 const validator = new Validator();
@@ -67,18 +71,74 @@ const PossibleValuesHelper = {
    * @returns {Promise}
    */
   findById(id) {
-    logger.log('findById');
+    logger.debug('findById');
     const filter = { id };
     return this.findOne(filter);
   },
 
   findOne(filter) {
+    logger.debug('findOne');
     return DatabaseManager.findOne(filter, COLLECTION_POSSIBLE_VALUES);
   },
 
+  /**
+   * Finds all possible values that start with the prefix, optionaly with specific ids and a filter
+   * @param root (optional) the root of the path to add to the listed ids
+   * @param idsWithoutRoot (optional) the ids without root
+   * @param filter (optional) filter to apply
+   * @return {Array}
+   */
+  findAllByIdsWithoutPrefixAndCleanupPrefix(root, idsWithoutRoot, filter = {}) {
+    logger.debug('findAllByIdsWithoutPrefixAndCleanupPrefix');
+    const hasIdsWithoutRoot = !!(idsWithoutRoot && idsWithoutRoot.length);
+    let idsFilter = hasIdsWithoutRoot && { $in: idsWithoutRoot };
+    if (root && root.length) {
+      if (hasIdsWithoutRoot) {
+        idsFilter = { $in: idsWithoutRoot.map(id => `${root}~${id}`) };
+      } else {
+        idsFilter = { $regex: new RegExp(`^${root}~.*`) };
+      }
+    }
+    if (idsFilter) {
+      if (filter.id) {
+        filter.$and = filter.$and || [];
+        filter.$and.push({ id: filter.id });
+        filter.$and.push({ id: idsFilter });
+        delete filter.id;
+      } else {
+        filter.id = idsFilter;
+      }
+    }
+    return this.findAll(filter).then(pvs => {
+      if (root && root.length) {
+        pvs.forEach(pv => {
+          pv.id = pv.id.substring(root.length + 1);
+          pv[FIELD_PATH] = pv[FIELD_PATH].slice(1);
+        });
+      }
+      return pvs;
+    });
+  },
+
   findAll(filter, projections) {
-    logger.log('findById');
-    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections);
+    logger.debug('findAll');
+    return DatabaseManager.findAll(filter, COLLECTION_POSSIBLE_VALUES, projections).then(this._preProcess);
+  },
+
+  _preProcess(pvc) {
+    return PossibleValuesHelper._refreshContactOptionsWithLocalChanges(pvc).then(() => pvc);
+  },
+
+  _refreshContactOptionsWithLocalChanges(pvc) {
+    const contactOptionsPVC = pvc.filter(PossibleValuesHelper.isActivityContactPV);
+    if (contactOptionsPVC && contactOptionsPVC.length) {
+      return ContactHelper.findAllContactsAsPossibleOptions().then(contactOptions => {
+        // extend / update contact options with local new/update contact info
+        contactOptionsPVC.forEach(pv => (pv[FIELD_OPTIONS] = { ...pv[FIELD_OPTIONS], ...contactOptions }));
+        return pvc;
+      });
+    }
+    return Promise.resolve(pvc);
   },
 
   /**
@@ -164,8 +224,8 @@ const PossibleValuesHelper = {
     const possibleOptions = this._transformOptions(possibleOptionsFromAMP);
     const possibleValuesForLocalUsage = {
       id: fieldPath,
-      'field-path': fieldPathParts,
-      'possible-options': possibleOptions
+      [FIELD_PATH]: fieldPathParts,
+      [FIELD_OPTIONS]: possibleOptions
     };
     return possibleValuesForLocalUsage;
   },
@@ -206,9 +266,15 @@ const PossibleValuesHelper = {
   },
 
   _getInvalidFormatError(errors) {
-    const errorMessage = JSON.stringify(errors).substring(0, 1000);
-    logger.error(errorMessage);
+    const jsonError = JSON.stringify(errors).substring(0, 1000);
+    const errorMessage = `${translate('Database Error')}: ${jsonError}`;
+    logger.error(jsonError);
     return new Notification({ message: errorMessage, origin: NOTIFICATION_ORIGIN_DATABASE });
+  },
+
+  isActivityContactPV(pv) {
+    return pv[FIELD_PATH].length === 2
+      && ACTIVITY_CONTACT_PATHS.includes(pv[FIELD_PATH][0]) && pv[FIELD_PATH][1] === CONTACT;
   }
 };
 

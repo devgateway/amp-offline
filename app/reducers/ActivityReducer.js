@@ -13,7 +13,7 @@ import {
 } from '../actions/ActivityAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
 import Logger from '../modules/util/LoggerManager';
-import ActivityFieldsManager from '../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../modules/field/FieldsManager';
 
 const logger = new Logger('Activity reducer');
 
@@ -65,7 +65,7 @@ const activityReducer = (state = defaultState, action: Object) => {
       let activityFieldsManager = state.activityFieldsManager;
       if (activityFieldsManager) {
         // we no longer will use the previous activityFieldsManager, thus shallow clone is acceptable
-        activityFieldsManager = ActivityFieldsManager.clone(activityFieldsManager);
+        activityFieldsManager = FieldsManager.clone(activityFieldsManager);
         activityFieldsManager.currentLanguageCode = action.actionData;
       }
       return { ...state, activityFieldsManager };

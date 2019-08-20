@@ -8,6 +8,7 @@ import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import Notification from '../helpers/NotificationHelper';
 import { ERRORS_NO_AMP_SERVER, ERRORS_TO_RETRY, MAX_RETRY_ATEMPTS } from '../../utils/Constants';
 import {
+  ERROR_CODE_ACCESS_DENIED,
   ERROR_CODE_NO_CONNECTIVITY,
   NOTIFICATION_ORIGIN_API_NETWORK,
   NOTIFICATION_ORIGIN_API_SECURITY
@@ -17,6 +18,7 @@ import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginActio
 import translate from '../../utils/translate';
 import Logger from '../../modules/util/LoggerManager';
 import * as URLUtils from '../../utils/URLUtils';
+import ApiErrorConverter from './ApiErrorConverter';
 
 const logger = new Logger('Connection helper');
 
@@ -26,7 +28,7 @@ const ConnectionHelper = {
     logger.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    return this._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
   },
 
   /**
@@ -139,13 +141,13 @@ const ConnectionHelper = {
       } else {
         // Being here means the server might not be accessible.
         const isAMPunreachable = error && ERRORS_NO_AMP_SERVER.includes(error.code);
-        const errorCode = isAMPunreachable ? ERROR_CODE_NO_CONNECTIVITY : undefined;
+        const isAccessDenied = response && response.statusCode === 403;
+        const errorCode = isAMPunreachable ? ERROR_CODE_NO_CONNECTIVITY :
+          (isAccessDenied ? ERROR_CODE_ACCESS_DENIED : undefined);
         const message = isAMPunreachable ? translate('AMPUnreachableError') :
-          error || (body && body.error) || translate('unknownNetworkError');
+          error || (ApiErrorConverter.toLocalError(body && body.error)) || translate('unknownNetworkError');
         // We need to detect statusCode 403 to throw a security error.
-        const origin = (response && response.statusCode === 403)
-          ? NOTIFICATION_ORIGIN_API_SECURITY
-          : NOTIFICATION_ORIGIN_API_NETWORK;
+        const origin = isAccessDenied ? NOTIFICATION_ORIGIN_API_SECURITY : NOTIFICATION_ORIGIN_API_NETWORK;
         return this._reportError(message, origin, errorCode);
       }
     } else if (response && !response.complete) {

@@ -30,7 +30,7 @@ export default class DatabaseCleanup {
       this.allDBNames.forEach(dbName => {
         logger.log(`deleting ${dbName}`);
         const fullFileName = DatabaseManager.getDBFullPath(dbName);
-        FileManager.deleteFile(fullFileName);
+        FileManager.deleteFileSync(fullFileName);
         if (FileManager.existsSync(fullFileName)) {
           throw new Error(`File is in use and could not be deleted: ${fullFileName}`);
         }

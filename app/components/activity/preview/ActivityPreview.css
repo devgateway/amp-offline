@@ -49,14 +49,16 @@
   background-color: #f5faff;
 }
 
+.inline_flex {
+  display: inline-flex;
+}
+
 .preview_status_title {
-  display: inline-block !important;
   margin-left: 10px;
   margin-right: 5px;
 }
 
 .preview_status_detail {
-  display: inline-block !important;
   font-family: 'open_sansextrabold', sans-serif;
   margin-right: 20px;
 }
@@ -183,6 +185,14 @@
   margin-bottom: 20px;
 }
 
+.section_subtitle_class {
+  font-size: 1.1em;
+  font-weight: bold;
+  padding-bottom: 15px;
+  padding-top: 15px;
+  width: 100%;
+}
+
 .section_field_name {
   font-size: 0.85em;
   color: #767676;
@@ -244,6 +254,10 @@
 .box_field_value {
   font-weight: bold;
   padding-bottom: 10px;
+}
+
+.box_field_value_tight {
+  font-weight: bold;
 }
 
 .percent_field_name {
@@ -331,8 +345,25 @@
   display: block;
 }
 
+.flex {
+  display: flex;
+}
+
+.hidden {
+  display: none;
+}
+
+.table_raw {
+  display: table-row;
+}
+
+
 .alignRight {
   text-align: right;
+}
+
+.tableCell {
+  padding-left: 10px;
 }
 
 .tableValue {
@@ -343,6 +374,10 @@
 
 .paddingBottom {
   padding-bottom: 10px;
+}
+
+.paddingBottomLarge {
+  padding-bottom: 20px;
 }
 
 .box_table2 {
@@ -379,10 +414,35 @@
   font-weight: bold;
 }
 
+.noborder {
+  border: 0;
+}
+
 .top_warning_text {
   color: red;
   margin-left: 10px;
   padding: 5px;
   display: inline-block;
   width: 100%;
+}
+
+.structure_title {
+  background-color: #f4f4f4;
+  color: #3a84b3;
+  border: 1px solid #ebebeb;
+  padding: 8px;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+  font-weight: bold;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.structures_coordinates_table {
+  width: 50%;
+}
+
+.structures_coordinates_value {
+  border: none;
+  font-weight: bold;
 }

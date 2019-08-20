@@ -10,9 +10,9 @@ import AFSaveDialog from './AFSaveDialog';
 import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
 import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
 import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
-import ActivityFieldsManager from '../../../modules/activity/ActivityFieldsManager';
+import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
-import ActivityValidator from '../../../modules/activity/ActivityValidator';
+import ActivityValidator from '../../../modules/field/EntityValidator';
 import translate from '../../../utils/translate';
 import Logger from '../../../modules/util/LoggerManager';
 import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
@@ -35,7 +35,7 @@ export default class ActivityForm extends Component {
       isActivitySaving: PropTypes.bool,
       activity: PropTypes.object,
       savedActivity: PropTypes.object,
-      activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+      activityFieldsManager: PropTypes.instanceOf(FieldsManager),
       activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
       errorMessage: PropTypes.object,
       validationResult: PropTypes.array,
@@ -45,10 +45,10 @@ export default class ActivityForm extends Component {
       currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
       currentWorkspaceSettings: PropTypes.object
     }).isRequired,
-    userReducer: PropTypes.object.isRequired,
     loadActivityForActivityForm: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     saveActivity: PropTypes.func.isRequired,
+    unableToSave: PropTypes.func.isRequired,
     reportActivityValidation: PropTypes.func.isRequired,
     params: PropTypes.shape({
       activityId: PropTypes.string
@@ -58,10 +58,9 @@ export default class ActivityForm extends Component {
 
   static childContextTypes = {
     activity: PropTypes.object,
-    activityFieldsManager: PropTypes.instanceOf(ActivityFieldsManager),
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
-    isSaveAndSubmit: PropTypes.bool,
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     currentWorkspaceSettings: PropTypes.object
   };
@@ -69,7 +68,6 @@ export default class ActivityForm extends Component {
   constructor(props) {
     super(props);
     logger.log('constructor');
-    this.showSaveDialog = false;
     this._toggleQuickLinks = this._toggleQuickLinks.bind(this);
   }
 
@@ -79,7 +77,6 @@ export default class ActivityForm extends Component {
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       activityValidator: this.activityValidator,
-      isSaveAndSubmit: this.state.isSaveAndSubmit,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
       currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings
     };
@@ -100,12 +97,24 @@ export default class ActivityForm extends Component {
       content: undefined,
       sectionsWithErrors: [],
       validationError: null,
-      isSaveAndSubmit: false
+      showSaveDialog: false,
+      isSaving: false,
+      isGoToDesktop: false,
     });
   }
 
   componentWillReceiveProps(nextProps) {
     const { activityFieldsManager, otherProjectTitles, activity, savedActivity } = nextProps.activityReducer;
+    const { isSaving, isGoToDesktop } = this.state;
+    if (isSaving && savedActivity) {
+      if (isGoToDesktop) {
+        this.activity = null;
+        this.props.router.push('/desktop/current');
+        return;
+      } else {
+        this.setState({ isSaving: false });
+      }
+    }
     const activityId = nextProps.params && nextProps.params.activityId;
     // normally it means "Add Activity" was called from within AF, otherwise activityId must not change
     if (this.state.activityId !== undefined && activityId !== undefined && this.state.activityId !== activityId) {
@@ -131,7 +140,7 @@ export default class ActivityForm extends Component {
         this.props.loadActivityForActivityForm(savedActivity.id);
       } else {
         this.activity = activity;
-        this.activityValidator.activity = activity;
+        this.activityValidator.entity = activity;
         this._selectSection(IDENTIFICATION);
       }
     }
@@ -195,9 +204,27 @@ export default class ActivityForm extends Component {
     );
   }
 
-  _saveActivity(asDraft) {
+  _validateAndSubmit() {
+    const validationError = this._validateActivity(false);
+    if (!validationError) {
+      this._saveActivity(false, true);
+    } else {
+      this.props.unableToSave('validationErrorOnSave');
+    }
+  }
+
+  _validateAndShowSaveAsDraftDialog() {
+    const validationError = this._validateActivity(true);
+    if (!validationError) {
+      this.setState({ showSaveDialog: true });
+    } else {
+      this.props.unableToSave('validationErrorOnSave');
+    }
+  }
+
+  _validateActivity(asDraft) {
     let validationError;
-    // TODO to adjust oonce AMP-XXX is fixed to properly define activive
+    // TODO to adjust this list once is fixed to properly define activity
     const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID, FUNDING_ACTIVE_LIST]);
     this.activity[IS_DRAFT] = asDraft;
     const errors = this.activityValidator.areAllConstraintsMet(this.activity, asDraft, fieldPathsToSkipSet);
@@ -205,12 +232,13 @@ export default class ActivityForm extends Component {
       validationError = this._handleSaveErrors(errors);
     }
     this.props.reportActivityValidation(errors);
-    this.showSaveDialog = asDraft && !validationError;
-    this.setState({ isSaveAndSubmit: !asDraft, validationError });
-    if (!asDraft && !validationError) {
-      this.props.saveActivity(this.activity);
-      this.props.router.push(`/desktop/${this.props.userReducer.teamMember.id}`);
-    }
+    this.setState({ validationError });
+    return validationError;
+  }
+
+  _saveActivity(asDraft, isGoToDesktop) {
+    this.setState({ showSaveDialog: false, isSaving: true, isGoToDesktop });
+    this.props.saveActivity(this.activity);
   }
 
   _handleSaveErrors(errors) {
@@ -237,16 +265,14 @@ export default class ActivityForm extends Component {
   }
 
   _renderSaveDialog() {
-    if (!this.showSaveDialog) {
+    if (!this.state.showSaveDialog) {
       return null;
     }
-    this.showSaveDialog = false;
     return (
       <AFSaveDialog
-        activity={this.activity}
         actionTitle={translate('Save as draft')}
-        saveActivity={this.props.saveActivity}
-        teamMemberId={this.props.userReducer.teamMember.id}
+        saveActivity={this._saveActivity.bind(this, true)}
+        onClose={() => this.setState({ showSaveDialog: false })}
       />
     );
   }
@@ -258,26 +284,24 @@ export default class ActivityForm extends Component {
     const previewUrl = `/activity/preview/${this.props.params.activityId}`;
     return (
       <div>
-        <div className={styles.general_header} >{translate('Actions')}</div>
+        <div className={styles.general_header}>{translate('Actions')}</div>
         <div>
           <Button
             bsClass={styles.action_button} key="submit"
-            onClick={this._saveActivity.bind(this, false)} block >{translate('Save and Submit')}
+            onClick={this._validateAndSubmit.bind(this)} block>{translate('Save and Submit')}
           </Button>
           <Button
             bsClass={styles.action_button} key="saveAsDraft"
-            onClick={this._saveActivity.bind(this, true)} block >{translate('Save as draft')}
+            onClick={this._validateAndShowSaveAsDraftDialog.bind(this)} block>{translate('Save as draft')}
           </Button>
-          <Button
-            key="preview"
-            bsClass={styles.action_button}
-            disabled={disablePreview}
-            block
-          >
-            <Link to={previewUrl} title={translate('Preview')} >
-              {translate('Preview')}
-            </Link>
-          </Button>
+          <Link to={previewUrl} title={translate('Preview')}>
+            <Button
+              key="preview"
+              bsClass={styles.action_button}
+              disabled={disablePreview}
+              block
+            >{translate('Preview')}</Button>
+          </Link>
         </div>
       </div>
     );

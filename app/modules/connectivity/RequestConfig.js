@@ -3,7 +3,7 @@ import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
-import { PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
+import { LANGUAGE_PARAM, PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
 
@@ -14,7 +14,7 @@ const RequestConfig = {
    * A simple api connection builder
    * @param method
    * @param url
-   * @param paramsMap
+   * @param paramsMap can be a Map, Object or an Array of [key, value] pairs
    * @param body
    */
   /* adding {} to destructure method body so we can or can not send paramsMap
@@ -28,7 +28,7 @@ const RequestConfig = {
     if (!routeConfiguration.isBinary) {
       // If it is not binary we assume its JSON if we need to handle
       // more types we can adjust accordingly
-      headers['content-type'] = 'application/json';
+      headers['content-type'] = routeConfiguration.isForm ? 'multipart/form-data' : 'application/json';
       headers.Accept = routeConfiguration.accept || 'application/json';
     }
     const requestConfig = {
@@ -56,7 +56,11 @@ const RequestConfig = {
     }
 
     if (body !== undefined) {
-      requestConfig.body = body;
+      if (routeConfiguration.isForm) {
+        requestConfig.multipart = body;
+      } else {
+        requestConfig.body = body;
+      }
     }
     return requestConfig;
   },
@@ -73,17 +77,26 @@ const RequestConfig = {
     return `(${platform}; ${arch}) ${userAgent}`;
   },
 
+  _addLanguage(paramsMap) {
+    const { lang } = store.getState().translationReducer;
+    return this._addParam(paramsMap, LANGUAGE_PARAM, lang);
+  },
+
   _addTranslations(paramsMap) {
     let translations = store.getState().translationReducer.languageList;
     if (translations && translations.length > 0) {
       translations = translations.join('|');
-      if (paramsMap instanceof Map) {
-        paramsMap.set(TRANSLATIONS_PARAM, translations);
-      } else if (!paramsMap) {
-        paramsMap = Utils.toMap(TRANSLATIONS_PARAM, translations);
-      } else {
-        paramsMap[TRANSLATIONS_PARAM] = translations;
-      }
+      return this._addParam(paramsMap, TRANSLATIONS_PARAM, translations);
+    }
+  },
+
+  _addParam(paramsMap, name, value) {
+    if (paramsMap instanceof Map) {
+      paramsMap.set(name, value);
+    } else if (!paramsMap) {
+      paramsMap = Utils.toMap(name, value);
+    } else {
+      paramsMap[name] = value;
     }
     return paramsMap;
   },
@@ -94,10 +107,13 @@ const RequestConfig = {
     if (addTranslations) {
       paramsMap = this._addTranslations(paramsMap);
     }
+    paramsMap = this._addLanguage(paramsMap);
     const kv = [];
     if (paramsMap) {
       if (paramsMap instanceof Map) {
         paramsMap.forEach((key, value) => kv.push(`${key}=${encodeURIComponent(value)}`));
+      } else if (paramsMap instanceof Array) {
+        paramsMap.forEach(([key, value]) => kv.push(`${key}=${encodeURIComponent(value)}`));
       } else {
         Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
       }

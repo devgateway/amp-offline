@@ -16,6 +16,8 @@
   "setupFor": "Configurer pour",
   "wrongSetup": "Paramètres de configuration du pays incorrects. Veuillez réessayer.",
   "urlNotWorking": "Serveur PGA inaccessible ou URL erronée.",
+  "ampServerIncompatible": "MGAE Hors Ligne n'est pas compatible avec le MGAE. Veuillez contacter l'administrateur.",
+  "ampServerIncompatibleContinueToUse": "MGAE Hors Ligne n'est pas compatible avec le MGAE. Veuillez contacter l'administrateur. Vous pouvez continuer à utiliser MGAE Hors Ligne sans demande de données ni synchronisation avec le MGAE.",
   "noConnectionToRegistry": "L'application Répertoire PGA est inacessible. Veuillez choisir l'option 'Autre' pour définir l'URL directement ou essayer de recharger la liste des options des pays.",
   "customHint": "Veuillez saisir l'URL de l'application PGA. Vous pouvez le copier à partir de la page de téléchargement du client PGA. Veuillez vous reporter au manuel de l'utilisateur pour plus d'aide.",
   "timeoutError": "Délai de connection dépassé. Vérifiez votre connexion Internet.",
@@ -30,5 +32,8 @@
   "dbCorrupted": "La base de données est corrompue. Veuillez noter vos actions et envoyer %report d'erreur% à l'administrateur.",
   "dbCorruptedFallback": "La base de données est corrompue. Veuillez noter vos actions et envoyer %les journaux% et %base de données% à l'administrateur.",
   "dbCleanupFailed": "Le nettoyage de la base de données a échoué. Veuillez envoyer %rapport d'erreur% à l'administrateur. Vous pouvez supprimer le dossier %database% manuellement.",
-  "dbCleanupFailedFallback": "Le nettoyage de la base de données a échoué. Veuillez envoyer %les journaux% et %base de données% à l'administrateur. Vous pouvez supprimer le dossier %database% manuellement."
+  "dbCleanupFailedFallback": "Le nettoyage de la base de données a échoué. Veuillez envoyer %les journaux% et %base de données% à l'administrateur. Vous pouvez supprimer le dossier %database% manuellement.",
+  "serverIdentityMissing": "L'identité du serveur PGA est manquante",
+  "aboutIdentity": "L'application PGA stocke un identifiant unique qui ne change pas avec le temps. PGA Hors Ligne enregistre l'identifiant PGA lors de la configuration initiale pour garantir la synchronisation des données avec la même application PGA afin d'éviter toute corruption. Les URL PGA qui pointent vers un serveur PGA sans identifiant ou identifiant différent ne peuvent pas être utilisées.",
+  "loadingMessage":"Chargement en cours...."
 }
