@@ -2,10 +2,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { FieldPathConstants, FieldsManager, UIUtils } from 'amp-ui';
+import { FieldPathConstants, FieldsManager, UIUtils, ContactConstants } from 'amp-ui';
 import * as styles from './ContactForm.css';
 import * as afStyles from '../../activity/edit/ActivityForm.css';
-import * as CC from '../../../utils/constants/ContactConstants';
 import EntityValidator from '../../../modules/field/EntityValidator';
 import AFField from '../../activity/edit/components/AFField';
 import { CUSTOM, INPUT_TYPE, TEXT_AREA } from '../../activity/edit/components/AFComponentTypes';
@@ -58,7 +57,7 @@ class ContactForm extends Component {
     return {
       ...this.context,
       activityFieldsManager: this.context.contactReducer.contactFieldsManager,
-      activityValidator: contact && contact[CC.TMP_ENTITY_VALIDATOR],
+      activityValidator: contact && contact[ContactConstants.TMP_ENTITY_VALIDATOR],
     };
   }
 
@@ -76,8 +75,8 @@ class ContactForm extends Component {
    * @param contact
    */
   onUpdate(contact) {
-    contact[CC.TMP_FORM_ID] = this._formId;
-    contact[CC.TMP_ENTITY_VALIDATOR].entity = contact;
+    contact[ContactConstants.TMP_FORM_ID] = this._formId;
+    contact[ContactConstants.TMP_ENTITY_VALIDATOR].entity = contact;
     this.setState({ contact });
   }
 
@@ -86,7 +85,7 @@ class ContactForm extends Component {
    */
   checkForUpdates() {
     const { contact } = this.state;
-    if (contact[CC.TMP_FORM_ID] !== this._formId) {
+    if (contact[ContactConstants.TMP_FORM_ID] !== this._formId) {
       this.onUpdate(contact);
       this.setState({ reloading: true });
       this.context.updateContact(contact);
@@ -96,7 +95,7 @@ class ContactForm extends Component {
   init(context) {
     const { contactsByIds } = context.contactReducer;
     const contact = contactsByIds[this.props.contactId];
-    const hydratedContact = contact && contact[CC.TMP_HYDRATED] ? contact : null;
+    const hydratedContact = contact && contact[ContactConstants.TMP_HYDRATED] ? contact : null;
     if (hydratedContact) {
       this._initLists(hydratedContact, context);
       this.setState({ reloading: false, isAF: !!context.activity });
@@ -107,14 +106,14 @@ class ContactForm extends Component {
   _initLists(contact, context) {
     const { contactFieldsManager } = context.contactReducer;
     const { maxSizeValidation } = this.state;
-    [CC.EMAIL, CC.FAX, CC.PHONE].forEach(l => {
+    [ContactConstants.EMAIL, ContactConstants.FAX, ContactConstants.PHONE].forEach(l => {
       contact[l] = contact[l] || [];
       maxSizeValidation[l] = {
         fieldDef: contactFieldsManager.getFieldDef(l),
         error: null
       };
     });
-    contact[CC.ORGANISATION_CONTACTS] = contact[CC.ORGANISATION_CONTACTS] || [];
+    contact[ContactConstants.ORGANISATION_CONTACTS] = contact[ContactConstants.ORGANISATION_CONTACTS] || [];
   }
 
   handleEntriesChange(fieldName, newItems) {
@@ -157,82 +156,91 @@ class ContactForm extends Component {
         </div>
         <FormGroup disabled={reloading}>
           <Grid onClick={this.checkForUpdates.bind(this)} onFocus={this.checkForUpdates.bind(this)} >
-            <Row key={CC.TITLE}>
+            <Row key={ContactConstants.TITLE}>
               <Col lg={3} md={3}>
                 <AFField
-                  parent={contact} fieldPath={CC.TITLE} customLabel={isAF ? 'Contact Title' : null}
+                  parent={contact} fieldPath={ContactConstants.TITLE} customLabel={isAF ? 'Contact Title' : null}
                   onAfterUpdate={onUpdate} />
               </Col>
             </Row>
             <Row key="full-name">
-              <Col lg={6} md={6} key={CC.NAME}>
+              <Col lg={6} md={6} key={ContactConstants.NAME}>
                 <AFField
-                  parent={contact} fieldPath={CC.NAME} type={INPUT_TYPE}
+                  parent={contact} fieldPath={ContactConstants.NAME} type={INPUT_TYPE}
                   customLabel={isAF ? 'contact first name' : null}
                   onAfterUpdate={onUpdate} />
               </Col>
-              <Col lg={6} md={6} key={CC.LAST_NAME}>
+              <Col lg={6} md={6} key={ContactConstants.LAST_NAME}>
                 <AFField
-                  parent={contact} fieldPath={CC.LAST_NAME} type={INPUT_TYPE}
+                  parent={contact} fieldPath={ContactConstants.LAST_NAME} type={INPUT_TYPE}
                   customLabel={isAF ? 'contact lastname' : null}
                   onAfterUpdate={onUpdate} />
               </Col>
             </Row>
-            <Row key={CC.EMAIL}>
+            <Row key={ContactConstants.EMAIL}>
               <Col lg={9} md={9} className={styles.entryList}>
                 <AFField
-                  parent={contact} fieldPath={CC.EMAIL} showLabel={false} type={CUSTOM} className={styles.keepFontSize}>
+                  parent={contact} fieldPath={ContactConstants.EMAIL} showLabel={false}
+                  type={CUSTOM} className={styles.keepFontSize}>
                   <ContactEmail
-                    items={contact[CC.EMAIL]} onEntriesChange={this.handleEntriesChange.bind(this, CC.EMAIL)} />
+                    items={contact[ContactConstants.EMAIL]}
+                    onEntriesChange={this.handleEntriesChange.bind(this, ContactConstants.EMAIL)} />
                 </AFField>
-                <div className={errorStyle}><HelpBlock>{maxSizeValidation[CC.EMAIL].error}</HelpBlock></div>
+                <div className={errorStyle}>
+                  <HelpBlock>{maxSizeValidation[ContactConstants.EMAIL].error}</HelpBlock></div>
               </Col>
             </Row>
             <Row key="function">
-              <Col lg={6} md={6} key={CC.FUNCTION}>
+              <Col lg={6} md={6} key={ContactConstants.FUNCTION}>
                 <AFField
-                  parent={contact} fieldPath={CC.FUNCTION} type={INPUT_TYPE}
+                  parent={contact} fieldPath={ContactConstants.FUNCTION} type={INPUT_TYPE}
                   customLabel={isAF ? 'contact function' : null}
                   onAfterUpdate={onUpdate} />
               </Col>
-              <Col lg={6} md={6} key={CC.ORGANIZATION_NAME}>
+              <Col lg={6} md={6} key={ContactConstants.ORGANIZATION_NAME}>
                 <AFField
-                  parent={contact} fieldPath={CC.ORGANIZATION_NAME} type={INPUT_TYPE}
+                  parent={contact} fieldPath={ContactConstants.ORGANIZATION_NAME} type={INPUT_TYPE}
                   customLabel={isAF ? 'organisationName' : null}
                   onAfterUpdate={onUpdate} />
               </Col>
             </Row>
-            <Row key={CC.ORGANISATION_CONTACTS}>
+            <Row key={ContactConstants.ORGANISATION_CONTACTS}>
               <Col lg={9} md={9} className={styles.orgsList}>
                 <AFField
-                  parent={contact} fieldPath={CC.ORGANISATION_CONTACTS}
+                  parent={contact} fieldPath={ContactConstants.ORGANISATION_CONTACTS}
                   customLabel={isAF ? 'Contact Organizations' : null}
                   onAfterUpdate={onUpdate} />
               </Col>
             </Row>
-            <Row key={CC.PHONE}>
+            <Row key={ContactConstants.PHONE}>
               <Col lg={9} md={9} className={styles.entryList}>
                 <AFField
-                  parent={contact} fieldPath={CC.PHONE} showLabel={false} type={CUSTOM} className={styles.keepFontSize}>
+                  parent={contact} fieldPath={ContactConstants.PHONE} showLabel={false}
+                  type={CUSTOM} className={styles.keepFontSize}>
                   <ContactPhone
-                    items={contact[CC.PHONE]} onEntriesChange={this.handleEntriesChange.bind(this, CC.PHONE)} />
+                    items={contact[ContactConstants.PHONE]}
+                    onEntriesChange={this.handleEntriesChange.bind(this, ContactConstants.PHONE)} />
                 </AFField>
-                <div className={errorStyle}><HelpBlock>{maxSizeValidation[CC.PHONE].error}</HelpBlock></div>
+                <div className={errorStyle}><HelpBlock>{maxSizeValidation[ContactConstants.PHONE].error}</HelpBlock>
+                </div>
               </Col>
             </Row>
-            <Row key={CC.FAX}>
+            <Row key={ContactConstants.FAX}>
               <Col lg={6} md={6} className={styles.entryList}>
                 <AFField
-                  parent={contact} fieldPath={CC.FAX} showLabel={false} type={CUSTOM} className={styles.keepFontSize}>
-                  <ContactFax items={contact[CC.FAX]} onEntriesChange={this.handleEntriesChange.bind(this, CC.FAX)} />
+                  parent={contact} fieldPath={ContactConstants.FAX} showLabel={false}
+                  type={CUSTOM} className={styles.keepFontSize}>
+                  <ContactFax
+                    items={contact[ContactConstants.FAX]}
+                    onEntriesChange={this.handleEntriesChange.bind(this, ContactConstants.FAX)} />
                 </AFField>
-                <div className={errorStyle}><HelpBlock>{maxSizeValidation[CC.FAX].error}</HelpBlock></div>
+                <div className={errorStyle}><HelpBlock>{maxSizeValidation[ContactConstants.FAX].error}</HelpBlock></div>
               </Col>
             </Row>
-            <Row key={CC.OFFICE_ADDRESS}>
+            <Row key={ContactConstants.OFFICE_ADDRESS}>
               <Col lg={6} md={6}>
                 <AFField
-                  parent={contact} fieldPath={CC.OFFICE_ADDRESS} type={TEXT_AREA}
+                  parent={contact} fieldPath={ContactConstants.OFFICE_ADDRESS} type={TEXT_AREA}
                   customLabel={isAF ? 'contact office address' : null}
                   onAfterUpdate={onUpdate} />
               </Col>
