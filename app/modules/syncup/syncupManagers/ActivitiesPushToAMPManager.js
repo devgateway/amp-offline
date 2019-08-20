@@ -1,10 +1,9 @@
-import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, ContactConstants } from 'amp-ui';
 import * as UserHelper from '../../helpers/UserHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
 import store from '../../../index';
 import Notification from '../../helpers/NotificationHelper';
-import * as CC from '../../../utils/constants/ContactConstants';
 import * as RC from '../../../utils/constants/ResourceConstants';
 import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
@@ -182,7 +181,8 @@ export default class ActivitiesPushToAMPManager extends SyncUpManagerInterface {
       .then(([unsyncedContacts, unsyncedResources]) => {
         const errors = [];
         if (unsyncedContacts.length) {
-          const cNames = unsyncedContacts.map(c => `"${c[CC.NAME] || ''} ${c[CC.LAST_NAME] || ''}"`).join(', ');
+          const cNames = unsyncedContacts.map(c => `"${c[ContactConstants.NAME] || ''} 
+          ${c[ContactConstants.LAST_NAME] || ''}"`).join(', ');
           const replacePairs = [['%contacts%', cNames]];
           errors.push(new Notification({ message: 'rejectActivityWhenContactUnsynced2', replacePairs }));
         }
