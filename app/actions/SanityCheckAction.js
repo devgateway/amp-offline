@@ -83,8 +83,8 @@ export const cancelDBCleanup = (sanityStatus) => {
 
 export const flagCleanupComplete = (isStartMainApp) => {
   logger.log(`flagCleanupComplete: isStartMainApp = ${isStartMainApp}`);
-  ipcRenderer.send(CLOSE_SANITY_APP);
   if (isStartMainApp) {
+    ipcRenderer.send(CLOSE_SANITY_APP);
     ipcRenderer.send(START_MAIN_APP);
   } else {
     forceCloseApp();
