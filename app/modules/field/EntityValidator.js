@@ -1,11 +1,11 @@
 /* eslint-disable class-methods-use-this */
-import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager, PossibleValuesManager } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager, PossibleValuesManager,
+  ContactConstants } from 'amp-ui';
 import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
 import translate from '../../utils/translate';
 import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
 import DateUtils from '../../utils/DateUtils';
-import { CLIENT_CHANGE_ID_PREFIX, FAX, PHONE } from '../../utils/constants/ContactConstants';
 import ValidationErrorsCollector from './ValidationErrorsCollector';
 import ValidationError from './ValidationError';
 import * as Utils from '../../utils/Utils';
@@ -318,7 +318,7 @@ export default class EntityValidator {
     const isContactId = (parts.length === 2 && FieldPathConstants.ACTIVITY_CONTACT_PATHS.includes(parts[0]) &&
       ActivityConstants.CONTACT === parts[1])
       || (parts.length === 1 && this.excludedFields.includes(parts[0]));
-    if (isContactId && `${value}`.startsWith(CLIENT_CHANGE_ID_PREFIX)) {
+    if (isContactId && `${value}`.startsWith(ContactConstants.CLIENT_CHANGE_ID_PREFIX)) {
       return true;
     }
     return false;
@@ -343,9 +343,9 @@ export default class EntityValidator {
     if (regexPattern) {
       let errorLabel = `invalidFormat-${fieldPath}`;
       let error = translate(errorLabel);
-      if (error === errorLabel && fieldPath.startsWith(`${FAX}~`)) {
+      if (error === errorLabel && fieldPath.startsWith(`${ContactConstants.FAX}~`)) {
         // workaround for duplicate trn message that we avoid defining in master-translations
-        errorLabel = `invalidFormat-${fieldPath.replace(FAX, PHONE)}`;
+        errorLabel = `invalidFormat-${fieldPath.replace(ContactConstants.FAX, ContactConstants.PHONE)}`;
         error = translate(errorLabel);
       }
       if (error === errorLabel) {

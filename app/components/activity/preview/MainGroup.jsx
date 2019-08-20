@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
-import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact,
+  APFundingSources } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import APPlanning from './sections/APPlanning';
 import APLocation from './sections/APLocation';
 import APProgram from './sections/APProgram';
 import APSector from './sections/APSector';
-import APFundingSources from './sections/APFundingSources';
 import Logger from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
 import APRelatedOrganizations from './sections/APRelatedOrganizations';
 import APIssues from './sections/issues/APIssues';
-import APContact from './sections/APContact';
 import APStructures from './sections/APStructures';
 import { APDocumentPage } from '../../../containers/ResourcePage';
+// we need to send getActivityContactIds by props since
+// each client should define how to hydrate and de-hydrate a contact
+import { getActivityContactIds } from '../../../actions/ContactAction';
+
 
 const logger = new Logger('AP Main group');
 
@@ -58,7 +61,9 @@ export default class MainGroup extends Component {
       <APIssues sectionPath={ActivityConstants.ISSUES} />
       <APContact
         fieldNameClass={styles.hidden} fieldValueClass={styles.box_field_value_tight}
-        columns={ActivityConstants.ACTIVITY_CONTACT_COLS} fmPath={FeatureManagerConstants.ACTIVITY_CONTACT} />
+        columns={ActivityConstants.ACTIVITY_CONTACT_COLS} fmPath={FeatureManagerConstants.ACTIVITY_CONTACT}
+        getActivityContactIds={getActivityContactIds}
+      />
       <APStructures sectionPath={ActivityConstants.STRUCTURES} />
       <APDocumentPage
         sectionPath={ActivityConstants.ACTIVITY_DOCUMENTS}
