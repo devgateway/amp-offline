@@ -54,7 +54,7 @@ export default class DatabaseCleanup {
 
   static cleanupEnded(status, remainingDBs, resultStatus, endedBy, reason) {
     status.healStatus = resultStatus;
-    status.healedAt = DateUtils.getISODateForAPI();
+    status.healedAt = DateUtils.getTimestampForAPI();
     status.healedBy = endedBy;
     status.healReason = reason;
     status.details.remainingCorruptedDBNames = Array.from(remainingDBs);

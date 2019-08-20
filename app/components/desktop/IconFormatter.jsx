@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import {
   ACTIVITY_PREVIEW_URL,
@@ -12,7 +13,7 @@ import styles from './IconFormatter.css';
 export default class IconFormatter extends Component {
 
   static propTypes = {
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     edit: PropTypes.bool.isRequired,
     status: PropTypes.string.isRequired,
     view: PropTypes.bool.isRequired,

@@ -1,8 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import * as AC from '../../../../../utils/constants/ActivityConstants';
 import * as VC from '../../../../../utils/constants/ValueConstants';
+import * as FPC from '../../../../../utils/constants/FieldPathConstants';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import NumberUtils from '../../../../../utils/NumberUtils';
@@ -27,7 +29,7 @@ export default class AFOverallFundingTotals extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.options = {
       withoutNoDataText: true
     };
@@ -36,11 +38,11 @@ export default class AFOverallFundingTotals extends Component {
   _compareFundings(f1, f2) {
     let f1String = '';
     let f2String = '';
-    switch (f1.trnType.value) {
-      case VC.COMMITMENTS:
+    switch (f1.trnType) {
+      case AC.COMMITMENTS:
         f1String += 'a';
         break;
-      case VC.DISBURSEMENTS:
+      case AC.DISBURSEMENTS:
         f1String += 'b';
         break;
       default:
@@ -58,11 +60,11 @@ export default class AFOverallFundingTotals extends Component {
         f1String += 'c';
         break;
     }
-    switch (f2.trnType.value) {
-      case VC.COMMITMENTS:
+    switch (f2.trnType) {
+      case AC.COMMITMENTS:
         f2String += 'a';
         break;
-      case VC.DISBURSEMENTS:
+      case AC.DISBURSEMENTS:
         f2String += 'b';
         break;
       default:
@@ -87,24 +89,27 @@ export default class AFOverallFundingTotals extends Component {
     const groups = [];
     if (fundings) {
       fundings.forEach((item) => {
-        item[AC.FUNDING_DETAILS].forEach(item2 => {
-          if (item2[AC.ADJUSTMENT_TYPE] && item2[AC.TRANSACTION_TYPE]) {
-            const amount = this.context.currencyRatesManager
-              .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
-            const auxFd = {
-              adjType: item2[AC.ADJUSTMENT_TYPE],
-              trnType: item2[AC.TRANSACTION_TYPE],
-              key: item2.id,
-              currency: this.context.currentWorkspaceSettings.currency.code,
-              amount
-            };
-            const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id);
-            if (!group) {
-              groups.push(auxFd);
-            } else {
-              group.amount += auxFd.amount;
+        FPC.TRANSACTION_TYPES.forEach(trnType => {
+          const details = item[trnType] || [];
+          details.forEach(item2 => {
+            if (item2[AC.ADJUSTMENT_TYPE]) {
+              const amount = this.context.currencyRatesManager
+                .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
+              const auxFd = {
+                adjType: item2[AC.ADJUSTMENT_TYPE],
+                trnType,
+                key: item2.id,
+                currency: this.context.currentWorkspaceSettings.currency.code,
+                amount
+              };
+              const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType === auxFd.trnType);
+              if (!group) {
+                groups.push(auxFd);
+              } else {
+                group.amount += auxFd.amount;
+              }
             }
-          }
+          });
         });
       });
     }
@@ -123,7 +128,7 @@ export default class AFOverallFundingTotals extends Component {
         key: item.key,
         currency: item.currency,
         amount: NumberUtils.rawNumberToFormattedString(item.amount),
-        type: translate(`Total ${item.adjType.value} ${item.trnType.value}`)
+        type: translate(`Total ${item.adjType.value} ${item.trnType}`)
       })
     ));
     return (<div>

@@ -1,6 +1,6 @@
 import * as DatabaseManager from '../database/DatabaseManager';
 import { COLLECTION_TEAMMEMBERS } from '../../utils/Constants';
-import { flattenToListByKey } from '../../utils/Utils';
+import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('Team member helper');
@@ -24,7 +24,7 @@ const TeamMemberHelper = {
       filter = { ...filter, ...this.getExcludeDeletedTeamMembersFilter() };
     }
     return DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS, projections)
-      .then((teamMembers) => flattenToListByKey(teamMembers, 'workspace-id'));
+      .then((teamMembers) => Utils.flattenToListByKey(teamMembers, 'workspace-id'));
   },
 
   /**
@@ -61,6 +61,11 @@ const TeamMemberHelper = {
   findAll(filter) {
     logger.debug('findAll');
     return DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS);
+  },
+
+  findByTeamMemberId(id) {
+    logger.debug('findByTeamMemberId');
+    return this.findTeamMember({ id });
   },
 
   /**

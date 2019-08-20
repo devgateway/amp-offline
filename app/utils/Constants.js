@@ -46,6 +46,7 @@ export const COLLECTION_RESOURCES = 'resources';
 export const COLLECTION_REPOSITORY = 'repository';
 export const COLLECTION_GAZETTEER = 'gazetteer';
 export const COLLECTION_CALENDARS = 'calendars';
+export const COLLECTION_CHANGESETS = 'changesets';
 
 export const GAZETTEER_DISTANCE_DIVIDE = 3;
 
@@ -65,9 +66,12 @@ export const LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC = 'must_sync_translation.json';
 
 export const ASAR_DIR = 'app.asar';
 export const APP_DIRECTORY = 'app';
+export const TEST_DIRECTORY = 'test';
 export const STATIC_DIR = 'static';
 export const IMAGES_DIR = 'images';
 export const DOC_ICONS = 'doc-icons';
+export const DB_STATIC_DIR = 'db';
+export const MIGRATIONS_DIR = 'changelog';
 
 export const HASH_ITERATIONS = 100;
 export const DIGEST_ALGORITHM_SHA1 = 'SHA-1';
@@ -87,17 +91,21 @@ export const SYNCUP_TYPE_GS = 'global-settings';
 export const SYNCUP_TYPE_EXCHANGE_RATES = 'exchange-rates';
 export const SYNCUP_TYPE_FEATURE_MANAGER = 'feature-manager';
 export const SYNCUP_TYPE_WORKSPACE_MEMBERS = 'workspace-members';
+export const SYNCUP_TYPE_ALL_FIELDS = 'fields';
 export const SYNCUP_TYPE_ACTIVITIES_PULL = 'activities';
 export const SYNCUP_TYPE_ACTIVITIES_PUSH = 'activities-push';
 export const SYNCUP_TYPE_ACTIVITY_FIELDS = 'activity-fields';
+export const SYNCUP_TYPE_ACTIVITY_FIELDS_STRUCTURAL_CHANGES = 'activity-fields-structural-changes';
 export const SYNCUP_TYPE_CONTACTS_PULL = 'contacts';
 export const SYNCUP_TYPE_CONTACTS_PUSH = 'contacts-push';
 export const SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES = 'activity-possible-values-fields';
 export const SYNCUP_TYPE_CONTACT_FIELDS = 'contact-fields';
+export const SYNCUP_TYPE_CONTACT_FIELDS_STRUCTURAL_CHANGES = 'contact-fields-structural-changes';
 export const SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES = 'contact-possible-values-fields';
 export const SYNCUP_TYPE_RESOURCES_PULL = 'resources';
 export const SYNCUP_TYPE_RESOURCES_PUSH = 'resources-push';
 export const SYNCUP_TYPE_RESOURCE_FIELDS = 'resource-fields';
+export const SYNCUP_TYPE_RESOURCE_FIELDS_STRUCTURAL_CHANGES = 'resource-fields-structural-changes';
 export const SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES = 'resource-possible-values-fields';
 export const SYNCUP_TYPE_COMMON_POSSIBLE_VALUES = 'common-possible-values-fields';
 export const SYNCUP_TYPE_WORKSPACE_SETTINGS = 'workspace-settings';
@@ -117,6 +125,8 @@ export const SYNCUP_DEPENDENCY_CHECK_INTERVAL = 10;
 export const SYNCUP_DETAILS_SYNCED = 'synced';
 export const SYNCUP_DETAILS_UNSYNCED = 'unsynced';
 export const SYNCUP_RESOURCE_PULL_BATCH_SIZE = 100;
+export const SYNCUP_ACTIVITIES_PULL_BATCH_SIZE = 100;
+export const SYNCUP_CONTACTS_PULL_BATCH_SIZE = 100;
 
 export const ACTIVITY_STATUS_DRAFT = 'ACTIVITY_STATUS_DRAFT';
 export const ACTIVITY_STATUS_UNVALIDATED = 'ACTIVITY_STATUS_UNVALIDATED';
@@ -191,3 +201,5 @@ export const MASTER_BRANCH = 'master';
 export const DEVELOP_BRANCH = 'develop';
 export const RELEASE_BRANCH_REGEX = /release\//;
 export const RELEASE_BRANCHES = [MASTER_BRANCH, RELEASE_BRANCH_REGEX];
+
+export const DISABLE_CHANGELOGS = 'DISABLE_CHANGELOGS';

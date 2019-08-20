@@ -1,4 +1,3 @@
-// TODO: this action is not going to be called from a component, its an initialization action
 import store from '../index';
 import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
@@ -14,6 +13,7 @@ import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
 import {
   ampRegistryCheckComplete,
+  canCurrentVersionStartOrConfirmationNeeded,
   checkAmpRegistryForUpdates,
   checkIfSetupComplete,
   configureDefaults
@@ -23,6 +23,8 @@ import { deleteOrphanResources } from './ResourceAction';
 import SetupManager from '../modules/setup/SetupManager';
 import { GS_DEFAULT_CALENDAR } from '../utils/constants/GlobalSettingsConstants';
 import CalendarHelper from '../modules/helpers/CalendarHelper';
+import { dbMigrationsManager } from './DBMigrationsAction';
+import * as MC from '../utils/constants/MigrationsConstants';
 
 export const TIMER_START = 'TIMER_START';
 // this will be used if we decide to have an action stopping
@@ -30,6 +32,10 @@ export const TIMER_STOP = 'TIMER_STOP';
 // we keep the timer as a variable in case we want to be able to stop it
 let timer;
 
+const STATE_INITIALIZATION = 'STATE_INITIALIZATION';
+export const STATE_INITIALIZATION_PENDING = 'STATE_INITIALIZATION_PENDING';
+export const STATE_INITIALIZATION_FULFILLED = 'STATE_INITIALIZATION_FULFILLED';
+export const STATE_INITIALIZATION_REJECTED = 'STATE_INITIALIZATION_REJECTED';
 export const STATE_PARAMETERS_FAILED = 'STATE_PARAMETERS_FAILED';
 export const STATE_GS_NUMBERS_LOADED = 'STATE_GS_NUMBERS_LOADED';
 export const STATE_GS_DATE_LOADED = 'STATE_GS_DATE_LOADED';
@@ -48,7 +54,11 @@ const STATE_CALENDAR = 'STATE_CALENDAR';
 
 const logger = new Logger('Startup action');
 
-export function ampOfflineStartUp() {
+/**
+ * Prepares the minimum startup related data and provides the newest version used so far
+ * @return {true|NotificationHelper} continue or ask for user confirmation to continue
+ */
+export function ampOfflinePreStartUp() {
   return ClientSettingsManager.initDBWithDefaults()
     .then(SetupManager.auditStartup)
     .then(checkIfSetupComplete)
@@ -56,14 +66,25 @@ export function ampOfflineStartUp() {
       TranslationManager.initializeTranslations(isSetupComplete)
         .then(() => configureDefaults(isSetupComplete))
     )
+    .then(canCurrentVersionStartOrConfirmationNeeded);
+}
+
+/**
+ * Regular startup routines
+ * @return {Promise}
+ */
+export function ampOfflineStartUp() {
+  return Promise.resolve()
+    .then(() => dbMigrationsManager.run(MC.CONTEXT_STARTUP))
     .then(ampOfflineInit)
+    .then(runDbMigrationsPostInit)
     .then(initLanguage)
     .then(() => nonCriticalRoutinesStartup());
 }
 
 export function ampOfflineInit(isPostLogout = false) {
   store.dispatch(loadAllLanguages());
-  return checkIfSetupComplete()
+  const initPromise = checkIfSetupComplete()
     .then(loadConnectionInformation)
     .then(scheduleConnectivityCheck)
     .then(loadGlobalSettings)
@@ -71,6 +92,15 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
     .then(() => (isPostLogout ? postLogoutInit() : null));
+  store.dispatch({
+    type: STATE_INITIALIZATION,
+    payload: initPromise
+  });
+  return initPromise;
+}
+
+function runDbMigrationsPostInit() {
+  return dbMigrationsManager.run(MC.CONTEXT_INIT).then(execNr => (execNr ? ampOfflineInit() : execNr));
 }
 
 function nonCriticalRoutinesStartup() {

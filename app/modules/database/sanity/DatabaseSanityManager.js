@@ -24,7 +24,8 @@ const logger = new Logger('DatabaseSanityManager');
 
 const VERSIONS_WITH_POSSIBLE_DB_INCOMPATIBILITY_POST_UPGRADE = [
   '1.0.1',
-  '1.3.1'
+  '1.3.1',
+  '1.4.0',
 ];
 
 /**
@@ -67,7 +68,7 @@ const DatabaseSanityManager = {
 
   _initOrUpdateStatus(status: DatabaseSanityStatus, invalidDBs, totalDBFilesValidated, nonSanityDBsWithDataCount) {
     logger.log('_initOrUpdateStatus');
-    const currentDateTime = DateUtils.getISODateForAPI();
+    const currentDateTime = DateUtils.getTimestampForAPI();
     const isDBCurrentlyInvalid = !!invalidDBs.length;
 
     if (isDBCurrentlyInvalid) {

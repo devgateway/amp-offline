@@ -20,6 +20,7 @@ const rejectedActivity1 = Object.assign({}, updatedOfflineActivity,
   { id: Utils.stringToUniqueId(title2) }, Utils.toMap(AC.REJECTED_ID, 1));
 const rejectedActivity2 = Object.assign({}, updatedOfflineActivity,
   { id: Utils.stringToUniqueId(title2) }, Utils.toMap(AC.REJECTED_ID, 2));
+const onlyRejected = [rejectedActivity1, rejectedActivity2];
 const activities = [newOfflineActivity, updatedOfflineActivity, rejectedActivity1, rejectedActivity2];
 
 describe('@@ ActivityHelper @@', () => {
@@ -129,7 +130,19 @@ describe('@@ ActivityHelper @@', () => {
 
   describe('removeAll', () =>
     it('should be able to remove all activities', () =>
-      expect(actions.replaceAll(activities).then(actions.removeAll({}))).to.eventually.have.lengthOf(activities.length)
+      expect(actions.replaceAll(activities).then(() => actions.removeAll({}))).to.eventually.equal(activities.length)
     )
   );
+
+  describe('removeAllNonRejectedByIds', () => {
+    it('should be able to remove all non-rejected activities only', () =>
+      expect(actions.replaceAll(activities).then(dbActs => actions.removeAllNonRejectedByIds(dbActs.map(a => a.id))))
+        .to.eventually.equal(activities.length - onlyRejected.length)
+    );
+    it('should be able to find all rejected activities after removal of non-rejected activities', () =>
+      expect(actions.findAll({}))
+        .to.eventually.have.lengthOf(onlyRejected.length)
+        .to.eventually.satisfy(acts => acts.every(a => onlyRejected.find(r => r.id === a.id)))
+    );
+  });
 });

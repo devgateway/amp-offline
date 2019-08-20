@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import translate from '../../utils/translate';
 import style from './Navbar.css';
@@ -57,7 +58,7 @@ export default class Navbar extends Component {
               src={AssetsUtils.loadImage(AMP_COUNTRY_LOGO)}
               className={[style.countryFlag, style.navbar_left_side].join(' ')}
             />
-            <a className={style.navbar_left_side}>{translate('amp-title')}</a>
+            <span className={style.navbar_left_side}>{translate('amp-title')}</span>
           </Link>
           <div className={style.userInfo}>
             <Logout loggedIn={this.props.loginReducer.loggedIn} {...this.props} />

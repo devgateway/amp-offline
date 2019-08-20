@@ -20,38 +20,52 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
   doAtomicSyncUp() {
     return new Promise((resolve, reject) => {
       // Just in case something fails when dealing with file/dir operations.
+      let writeStream;
       try {
         MapTilesSyncUpManager.cleanup(true);
+        logger.log('creating map-tiles directory');
         FileManager.createDataDir(ASSETS_DIRECTORY, MAP_TILES_DIR);
         const start = new Date();
-        const writeStream = FileManager.createWriteStream(ASSETS_DIRECTORY, TILES_ZIP_FILE);
+        logger.log('creating map-tiles.zip write stream for download');
+        writeStream = FileManager.createWriteStream(ASSETS_DIRECTORY, TILES_ZIP_FILE);
+        logger.log('starting map-tiles.zip download');
         return ConnectionHelper.doGet({ url: MAP_TILES_URL, shouldRetry: true, writeStream }).then(() => {
-          logger.info(`Tiles downloaded in: ${new Date() - start}ms`);
+          logger.log(`Tiles downloaded in: ${new Date() - start} ms`);
           // Extract .zip file using absolute paths.
           const zipFile = FileManager.getAbsolutePath(ASSETS_DIRECTORY, TILES_ZIP_FILE);
           const dir = FileManager.getAbsolutePath(ASSETS_DIRECTORY);
           return extract(zipFile, { dir }, MapTilesSyncUpManager.afterExtract.bind(null, resolve, reject));
         }).catch((error) => {
-          logger.error(error);
+          MapTilesSyncUpManager.onError(writeStream, error);
           return reject(error);
         });
       } catch (e) {
-        logger.error(e);
+        MapTilesSyncUpManager.onError(writeStream, e);
         return reject(e);
       }
     });
   }
 
+  static onError(writeStream, error) {
+    logger.log('onError');
+    logger.error(error);
+    if (writeStream) {
+      writeStream.destroy();
+    }
+  }
+
   static afterExtract(resolve, reject, e) {
+    logger.log('afterExtract');
     MapTilesSyncUpManager.cleanup(false);
     if (e) {
-      logger.error(e);
-      return reject();
+      logger.error(`An error occurred during extraction ${e}`);
+      return reject(e);
     }
     return resolve();
   }
 
   static cleanup(dirToo) {
+    logger.log(`cleanup, ${dirToo ? 'including' : 'excluding'} map tiles directory`);
     FileManager.deleteFileSync(FileManager.getFullPath(ASSETS_DIRECTORY, TILES_ZIP_FILE));
     if (dirToo) {
       FileManager.rmNotEmptyDirSync(ASSETS_DIRECTORY, MAP_TILES_DIR);

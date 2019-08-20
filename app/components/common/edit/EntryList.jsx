@@ -50,7 +50,11 @@ export default class EntryList extends Component {
   getAddSection() {
     const { label, onAdd, titleAsAddButton } = this.props;
     if (titleAsAddButton) {
-      return <Button bsStyle="success" onClick={onAdd}>{translate(label)}</Button>;
+      return (
+        <div className={styles.addButtonWithText}>
+          <Button bsStyle="success" onClick={onAdd}>{translate(label)}</Button>
+        </div>
+      );
     }
     return (
       <span>

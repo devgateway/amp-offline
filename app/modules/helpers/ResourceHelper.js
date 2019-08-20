@@ -12,7 +12,8 @@ import {
   CLIENT_ADDING_DATE,
   CLIENT_YEAR_OF_PUBLICATION,
   CONTENT_ID,
-  CONTENT_TYPE
+  CONTENT_TYPE,
+  UUID
 } from '../../utils/constants/ResourceConstants';
 
 const logger = new Logger('ResourceHelper');
@@ -45,6 +46,11 @@ const ResourceHelper = {
     logger.debug('findResourcesByUuids');
     const filterRule = { uuid: { $in: uuids } };
     return ResourceHelper.findAllResources(filterRule);
+  },
+
+  findResourcesByUuidsWithLocalContent(uuids) {
+    const filter = { $and: [Utils.toMap(UUID, { $in: uuids }), Utils.toDefinedNotNullRule(CONTENT_ID)] };
+    return ResourceHelper.findAllResources(filter);
   },
 
   /**
@@ -141,8 +147,8 @@ const ResourceHelper = {
    * @param dst the destination resource
    */
   copyLocalData(src, dst) {
-    dst[CONTENT_ID] = src[dst];
-    dst[CONTENT_TYPE] = src[dst];
+    dst[CONTENT_ID] = src[CONTENT_ID];
+    dst[CONTENT_TYPE] = src[CONTENT_TYPE];
   },
 
   /**

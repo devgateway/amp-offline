@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Section from './Section';
 import APPercentageList from '../components/APPercentageList';
 import {
@@ -27,16 +28,15 @@ class APLocation extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   render() {
     let content = [<APLocationsList
       key="locations-list" {...this.props}
       percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} tablify={false} />];
-    const topContent = [];
-    topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LEVEL, true, new Set([0]))} </td>);
-    topContent.push(<td>{this.props.buildSimpleField(IMPLEMENTATION_LOCATION, true, new Set([0]))} </td>);
+    const topContent = [IMPLEMENTATION_LEVEL, IMPLEMENTATION_LOCATION]
+      .map(fp => <td key={fp}>{this.props.buildSimpleField(fp, true, new Set([0]))}</td>);
     content = content.filter(el => el !== undefined);
     let table = null;
     if ((this.props.activity[IMPLEMENTATION_LEVEL]

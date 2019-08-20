@@ -35,7 +35,7 @@ export default class AFMapPopup extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.handleSaveBtnClick = this.handleSaveBtnClick.bind(this);
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -86,7 +86,7 @@ export default class AFMapPopup extends Component {
     const { onSubmit, structureData, layer } = this.props;
     const title = this.state[AC.STRUCTURES_TITLE].trim();
     if (title) {
-      onSubmit((layer.layer || layer), structureData.id, title,
+      onSubmit((layer.layer || layer), structureData.id, structureData[AC.TEMPORAL_ID], title,
         this.state[AC.STRUCTURES_COLOR], this.state[AC.STRUCTURES_DESCRIPTION], this.state[AC.STRUCTURES_SHAPE],
         this.state.isGazetteer);
     } else {

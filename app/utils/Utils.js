@@ -1,3 +1,4 @@
+import md5 from 'js-md5';
 import os from 'os';
 import {
   ARCH32,
@@ -9,7 +10,7 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
-import { RELEASE_BRANCHES, ENDS_WITH_PUNCTUATION_REGEX, VERSION } from './Constants';
+import { ENDS_WITH_PUNCTUATION_REGEX, RELEASE_BRANCHES, VERSION } from './Constants';
 
 const Utils = {
 
@@ -61,10 +62,26 @@ const Utils = {
     return result;
   },
 
+  /**
+   * Push a value to an array stored in an object by specified key. If no array exists, it will be initialized.
+   * @param obj
+   * @param key
+   * @param value
+   */
+  pushByKey(obj, key, value) {
+    const list = obj[key] || [];
+    list.push(value);
+    obj[key] = list;
+  },
+
   toDefinedOrNullRule(key) {
     const result = {};
     result[key] = { $exists: true };
     return result;
+  },
+
+  toDefinedOrNullArrayRule(key) {
+    return { $or: [this.toMap(key, { $exists: true }), this.toMap(key, { $size: 0 })] };
   },
 
   toDefinedNotNullRule(key) {
@@ -78,6 +95,7 @@ const Utils = {
   /**
    * Expects a list of map elements that contain ids and extracts those ids into a flatten list
    * @param listOfMap a list of map elements, each having id field e.g. [ { id: 1, ...}, { id: 2,... }, ...]
+   * @param key the key to use to convert each map to the value of this key
    * @return flatten list of ids, e.g. [1, 2, ...]
    */
   flattenToListByKey(listOfMap, key) {
@@ -162,7 +180,7 @@ const Utils = {
 
   joinMessages(messages: Array, endPunctuationIfMissing = '.') {
     return messages && messages.map(m => {
-      const msg = `${m}`;
+      const msg = `${m.message || m}`;
       if (!msg.match(ENDS_WITH_PUNCTUATION_REGEX)) {
         return `${msg}${endPunctuationIfMissing}`;
       }
@@ -256,8 +274,25 @@ const Utils = {
     return array.reduce((result, elem) => result.concat(elem), []);
   },
 
-  versionAsFieldName() {
+  versionToKey() {
     return VERSION.replace(/\./g, '_');
+  },
+
+  versionFromKey(key) {
+    return key.replace(/_/g, '.');
+  },
+
+  getCurrentVersion() {
+    return VERSION;
+  },
+
+  cloneDeep(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  },
+
+  md5(obj) {
+    const json = JSON.stringify(obj);
+    return md5(json);
   },
 
   selfBindMethods(obj) {

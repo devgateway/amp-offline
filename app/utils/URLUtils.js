@@ -44,9 +44,14 @@ const urlUtils = {
       while (url.startsWith('/')) {
         url = url.substr(1, url.length);
       }
-      const uri = new URI(url);
-      if (!uri.protocol()) {
-        url = uri.protocol(fallbackProtocol).toString();
+      try {
+        const uri = new URI(url);
+        if (!uri.protocol()) {
+          url = uri.protocol(fallbackProtocol)
+            .toString();
+        }
+      } catch (error) {
+        logger.warn(error);
       }
     }
     return url;

@@ -34,7 +34,7 @@ export default class ResourceForm extends Component {
   static propTypes = {
     resourceReducer: PropTypes.object.isRequired,
     resource: PropTypes.object.isRequired,
-    type: PropTypes.string.isRequired,
+    type: PropTypes.number.isRequired,
     onAdd: PropTypes.func,
     onCancel: PropTypes.func,
     updatePendingWebResource: PropTypes.func.isRequired,
@@ -105,6 +105,7 @@ export default class ResourceForm extends Component {
       const maxSizeMB = getMaxSizeMB();
       const { size } = FileManager.statSyncFullPath(srcPath);
       if ((maxSizeMB * 1024 * 1024) < size) {
+        // eslint-disable-next-line no-alert
         return alert(translate('FileSizeLimitExceeded').replace('{size}', maxSizeMB));
       }
       this.setState({ uploadingSize: size });

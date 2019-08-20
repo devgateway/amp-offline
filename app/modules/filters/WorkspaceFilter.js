@@ -1,9 +1,15 @@
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
 import * as AC from '../../utils/constants/ActivityConstants';
+import * as VC from '../../utils/constants/ValueConstants';
 import ActivityFilter from './ActivityFilter';
 import { IS_COMPUTED, IS_PRIVATE } from '../../utils/constants/WorkspaceConstants';
 import Logger from '../util/LoggerManager';
+import * as FieldsHelper from '../helpers/FieldsHelper';
+import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../../utils/Constants';
+import FieldsManager from '../field/FieldsManager';
+import * as FPC from '../../utils/constants/FieldPathConstants';
+import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 
 const logger = new Logger('Workspace filter');
 
@@ -13,12 +19,13 @@ const logger = new Logger('Workspace filter');
  * @author Nadejda Mandrescu
  */
 export default class WorkspaceFilterBuilder {
-  static getDBFilter(workspace) {
-    return (new WorkspaceFilterBuilder(workspace)).getDBFilter();
+  static getDBFilter(workspace, teamMemberId) {
+    return (new WorkspaceFilterBuilder(workspace, teamMemberId)).getDBFilter();
   }
 
-  constructor(workspace) {
+  constructor(workspace, teamMemberId) {
     this._workspace = workspace;
+    this._teamMemberId = teamMemberId;
     this._isComputed = this._workspace && this._workspace[IS_COMPUTED] === true;
     this._isPrivate = this._workspace && this._workspace[IS_PRIVATE] === true;
     this._wsFilters = this._workspace ? this._workspace['workspace-filters'] : undefined;
@@ -48,7 +55,13 @@ export default class WorkspaceFilterBuilder {
 
   _getActivityFiltersPromise() {
     if (this._isComputed && this._wsFilters && this._workspace['use-filter'] === true) {
-      return (new ActivityFilter(this._wsFilters)).getDBFilter();
+      return Promise.all([
+        FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
+        PossibleValuesHelper.findAll(FPC.ADJUSTMENT_TYPE_PATHS),
+      ]).then(([fieldsDef, pvs]) => {
+        const fieldsManager = new FieldsManager(fieldsDef, pvs);
+        return (new ActivityFilter(this._wsFilters, fieldsManager)).getDBFilter();
+      });
     }
     return Promise.resolve();
   }
@@ -95,7 +108,7 @@ export default class WorkspaceFilterBuilder {
     if (orgIds && orgIds.length > 0) {
       // build activity orgs filter
       const activityOrgs = [];
-      AC.ORG_ROLE_FIELDS.forEach(orgField => {
+      AC.toFieldNames(VC.ORG_ROLE_NAMES).forEach(orgField => {
         const orgFilter = Utils.toMap(AC.ORG_ROLE_ORG_ID, { $in: orgIds });
         const orgRoleFilter = Utils.toMap(orgField, { $elemMatch: orgFilter });
         activityOrgs.push(orgRoleFilter);

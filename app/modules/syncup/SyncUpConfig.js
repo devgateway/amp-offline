@@ -89,6 +89,8 @@ export default class SyncUpConfig {
     // we need to pull resources before activities push, to unlink deleted resources from activities
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_RESOURCES_PULL] = SS.STATES_FINISH;
     dependencies[SYNCUP_TYPE_ACTIVITIES_PUSH][SYNCUP_TYPE_RESOURCES_PUSH] = SS.STATES_FINISH;
+    // push activities before pull to avoid double pull on structural fields changes on non-conflicting activities
+    dependencies[SYNCUP_TYPE_ACTIVITIES_PULL] = Utils.toMap(SYNCUP_TYPE_ACTIVITIES_PUSH, SS.STATES_FINISH);
     // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
     dependencies[SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] =
@@ -96,8 +98,6 @@ export default class SyncUpConfig {
     dependencies[SYNCUP_TYPE_CONTACT_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES] =
       Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
-    // pull resources once activities were pulled, so that we remove any resource only from non-conflicting activities
-    dependencies[SYNCUP_TYPE_RESOURCES_PULL] = Utils.toMap(SYNCUP_TYPE_ACTIVITIES_PULL, SS.STATES_FINISH);
     dependencies[SYNCUP_TYPE_RESOURCE_FIELDS] = Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
     dependencies[SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES] =
       Utils.toMap(SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);
@@ -108,6 +108,7 @@ export default class SyncUpConfig {
 
   constructor() {
     this._initDependencies();
+    this._initCollections();
   }
 
   _initDependencies() {
@@ -124,6 +125,11 @@ export default class SyncUpConfig {
         this._syncUpDependency.setState(syncUpManager.type, SS.PENDING);
       }
     });
+  }
+
+  _initCollections() {
+    const activitiesPushToAMPManager = this._syncUpCollection.get(SYNCUP_TYPE_ACTIVITIES_PUSH);
+    this._syncUpCollection.get(SYNCUP_TYPE_ACTIVITIES_PULL).activitiesPushToAMPManager = activitiesPushToAMPManager;
   }
 
   /**

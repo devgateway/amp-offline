@@ -233,7 +233,7 @@
       {
         "amp_funding_amount_id": 422,
         "amount": 370000000,
-        "currency_code": "XOF",
+        "currency": 55,
         "funding_date": "2013-01-01T00:00:00.000+0200",
         "funding_type": "PROPOSED"
       }
@@ -255,7 +255,7 @@
     "iati_last_update_date": null,
     "approved_by": 177,
     "approval_date": "2014-11-03T09:26:24.000+0200",
-    "approval_status": "approved",
+    "approval_status": 1,
     "line_ministry_rank": 1,
     "archived": null,
     "activity_status": 169,
@@ -963,7 +963,7 @@
       {
         "amp_funding_amount_id": 705,
         "amount": 1050000,
-        "currency_code": "KWD",
+        "currency": 55,
         "funding_date": "2015-07-28T00:00:00.000+0300",
         "funding_type": "PROPOSED"
       }
@@ -985,7 +985,7 @@
     "iati_last_update_date": null,
     "approved_by": 177,
     "approval_date": "2015-02-24T16:58:16.000+0200",
-    "approval_status": "edited",
+    "approval_status": 2,
     "line_ministry_rank": 1,
     "archived": null,
     "activity_status": 169,
@@ -1142,7 +1142,7 @@
     "ppc_amount": [
       {
         "amount": 12736588705,
-        "currency_code": "XAF",
+        "currency": 55,
         "funding_date": "2014-01-01T00:00:00.000+0200"
       }
     ],
@@ -1161,7 +1161,7 @@
     "iati_last_update_date": null,
     "approved_by": 12,
     "approval_date": "2015-04-20T04:36:28.230+0300",
-    "approval_status": "approved",
+    "approval_status": 1,
     "archived": null,
     "activity_status": 2124,
     "activity_budget": 262,
@@ -1366,7 +1366,7 @@
     "ppc_amount": [
       {
         "amount": null,
-        "currency_code": null,
+        "currency": null,
         "funding_date": null
       }
     ],
@@ -1385,7 +1385,7 @@
     "iati_last_update_date": null,
     "approved_by": null,
     "approval_date": null,
-    "approval_status": "started",
+    "approval_status": 4,
     "archived": null,
     "activity_status": 2124,
     "activity_budget": null,

@@ -71,7 +71,8 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 728
+    height: 728,
+    alwaysOnTop: true
   });
 
   // create a new `splash`-Window
@@ -132,6 +133,7 @@ app.on('ready', async () => {
         splash.destroy();
         splash = null;
       }
+      mainWindow.setAlwaysOnTop(false);
       mainWindow.show();
       mainWindow.focus();
       global.MAIN_WINDOW_ACTIVE = true;

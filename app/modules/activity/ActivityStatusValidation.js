@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-lonely-if */
 import * as AC from '../../utils/constants/ActivityConstants';
-import * as VC from '../../utils/constants/ValueConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
 import * as GSC from '../../utils/constants/GlobalSettingsConstants';
 import Logger from '../../modules/util/LoggerManager';
@@ -9,6 +8,7 @@ import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
 import WSSettingsHelpers from '../../modules/helpers/WSSettingsHelper';
 import WorkspaceHelper from '../../modules/helpers/WorkspaceHelper';
 import DateUtils from '../../utils/DateUtils';
+import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 
 const logger = new Logger('Activity status validation');
 
@@ -40,54 +40,54 @@ export default class ActivityStatusValidation {
           if (teamLeadFlag) {
             if (dehydratedActivity[AC.IS_DRAFT]) {
               if (rejected) {
-                dehydratedActivity[AC.APPROVAL_STATUS] = VC.REJECTED_STATUS;
+                dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.REJECTED.id;
               } else {
                 if (isNew) {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 } else {
-                  if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
-                    dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  if (dehydratedActivity[AC.APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
+                    dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                   } else {
-                    dehydratedActivity[AC.APPROVAL_STATUS] = VC.EDITED_STATUS;
+                    dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.EDITED.id;
                   }
                 }
               }
             } else {
               // If activity belongs to the same workspace where TL/AP is logged set it validated.
               if (isSameWorkspace) {
-                dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
+                dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                 dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-                dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
+                dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getTimestampForAPI();
               } else {
                 if (isCrossTeamValidation) {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                   dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-                  dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
+                  dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getTimestampForAPI();
                 } else {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 }
               }
             }
           } else {
             if (wsValidationType === WC.WS_VALIDATION_NEW_ONLY) {
               if (isNew) {
-                dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
               } else {
-                if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                if (dehydratedActivity[AC.APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 } else {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
                 }
               }
             } else {
               if (wsValidationType === WC.WS_VALIDATION_ALL_EDIT) {
                 if (isNew) {
-                  dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                 } else {
-                  if (dehydratedActivity[AC.APPROVAL_STATUS] === VC.STARTED_STATUS) {
-                    dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_STATUS;
+                  if (dehydratedActivity[AC.APPROVAL_STATUS] === ApprovalStatus.STARTED.id) {
+                    dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED.id;
                   } else {
-                    dehydratedActivity[AC.APPROVAL_STATUS] = VC.EDITED_STATUS;
+                    dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.EDITED.id;
                   }
                 }
               }
@@ -96,12 +96,12 @@ export default class ActivityStatusValidation {
         } else {
           // Validation is OFF in GS activity approved.
           if (isNew) {
-            dehydratedActivity[AC.APPROVAL_STATUS] = VC.STARTED_APPROVED_STATUS;
+            dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.STARTED_APPROVED.id;
           } else {
-            dehydratedActivity[AC.APPROVAL_STATUS] = VC.APPROVED_STATUS;
+            dehydratedActivity[AC.APPROVAL_STATUS] = ApprovalStatus.APPROVED.id;
           }
           dehydratedActivity[AC.APPROVED_BY] = teamMember.id;
-          dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getISODateForAPI();
+          dehydratedActivity[AC.APPROVAL_DATE] = DateUtils.getTimestampForAPI();
         }
         return dehydratedActivity[AC.APPROVAL_STATUS];
       })

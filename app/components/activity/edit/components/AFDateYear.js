@@ -22,7 +22,7 @@ export default class AFDateYear extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = { value: props.value };
   }
 
@@ -32,8 +32,7 @@ export default class AFDateYear extends Component {
     if (control.target.value !== '-1') {
       const day = calendar[START_DAY_NUMBER];
       const month = calendar[START_MONTH_NUMBER];
-      // ISO8601 format for Moment library.
-      value = DateUtils.getISODateForAPI(Moment(`${control.target.value}-${month}-${day}`));
+      value = DateUtils.formatDateForAPI(Moment(`${control.target.value}-${month}-${day}`));
     }
     if (onChange) {
       onChange(value);
