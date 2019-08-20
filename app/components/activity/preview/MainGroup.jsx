@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact,
-  APFundingSources } from 'amp-ui';
+  APFundingSources, APLocation } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import APPlanning from './sections/APPlanning';
-import APLocation from './sections/APLocation';
 import APProgram from './sections/APProgram';
 import APSector from './sections/APSector';
 import Logger from '../../../modules/util/LoggerManager';
@@ -12,6 +11,7 @@ import APRelatedOrganizations from './sections/APRelatedOrganizations';
 import APIssues from './sections/issues/APIssues';
 import APStructures from './sections/APStructures';
 import { APDocumentPage } from '../../../containers/ResourcePage';
+import { rawNumberToFormattedString } from '../../../utils/NumberUtils';
 // we need to send getActivityContactIds by props since
 // each client should define how to hydrate and de-hydrate a contact
 import { getActivityContactIds } from '../../../actions/ContactAction';
@@ -42,7 +42,8 @@ export default class MainGroup extends Component {
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
       <APLocation
         sectionPath={ActivityConstants.LOCATIONS} tablify columns={ActivityConstants.ACTIVITY_LOCATION_COLS}
-        fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value} />
+        fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value}
+        rawNumberToFormattedString={rawNumberToFormattedString} />
       <APProgram
         fieldNameClass={styles.sector_title} fmPath={FeatureManagerConstants.ACTIVITY_PROGRAM}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
