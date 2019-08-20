@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact,
+  APFundingSources } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import APPlanning from './sections/APPlanning';
 import APLocation from './sections/APLocation';
 import APProgram from './sections/APProgram';
 import APSector from './sections/APSector';
-import APFundingSources from './sections/APFundingSources';
 import Logger from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
 import APRelatedOrganizations from './sections/APRelatedOrganizations';
