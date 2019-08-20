@@ -1,6 +1,6 @@
+import { UIUtils } from 'amp-ui';
 import FileManager from '../util/FileManager';
 import { PATH, REPOSITORY_DIR } from '../../utils/constants/ResourceConstants';
-import * as Utils from '../../utils/Utils';
 import Logger from '../util/LoggerManager';
 
 const logger = new Logger('RepositoryManager');
@@ -94,10 +94,10 @@ const RepositoryManager = {
   },
 
   _buildContent(srcFilePath) {
-    const fileNameHashBase16 = Utils.stringToId(srcFilePath).toString(16);
+    const fileNameHashBase16 = UIUtils.stringToId(srcFilePath).toString(16);
     const level1Dir = fileNameHashBase16.substring(0, 2);
     const level2Dir = fileNameHashBase16.substring(2, 4);
-    const id = Utils.stringToUniqueId(srcFilePath);
+    const id = UIUtils.stringToUniqueId(srcFilePath);
     return {
       id,
       [PATH]: FileManager.joinPath(level1Dir, level2Dir, id),

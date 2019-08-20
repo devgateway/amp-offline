@@ -13,6 +13,7 @@ import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
 import * as WC from '../../../utils/constants/WorkspaceConstants';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
+import DateUtils from '../../../utils/DateUtils';
 
 const logger = new Logger('Activity preview');
 
@@ -62,6 +63,9 @@ export default class ActivityPreview extends Component {
     contactFieldsManager: PropTypes.instanceOf(FieldsManager),
     contactsByIds: PropTypes.object,
     resourceReducer: PropTypes.object,
+    Logger: PropTypes.func,
+    translate: PropTypes.func,
+    DateUtils: PropTypes.func
   };
 
   constructor(props) {
@@ -81,6 +85,9 @@ export default class ActivityPreview extends Component {
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
       resourceReducer: this.props.resourceReducer,
+      Logger,
+      translate,
+      DateUtils
     };
   }
 

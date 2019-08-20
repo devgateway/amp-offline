@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
-import Section from './Section';
-import Tablify from '../components/Tablify';
+import { ActivityConstants, Tablify, Section } from 'amp-ui';
+import translate from '../../../../utils/translate';
+import DateUtils from '../../../../utils/DateUtils';
 import styles from '../ActivityPreview.css';
 import Logger from '../../../../modules/util/LoggerManager';
 
@@ -41,5 +41,10 @@ class APPlanning extends Component {
   }
 
 }
-
-export default Section(APPlanning, 'Planning', true, 'APPlanning');
+export default Section(APPlanning, { SectionTitle: 'Planning',
+  useEncapsulateHeader: true,
+  sID: 'APPlanning',
+  Logger,
+  translate,
+  DateUtils
+});

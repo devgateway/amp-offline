@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import { FundingSummary, AdditionalInfo } from 'amp-ui';
 import styles from './ActivityPreview.css';
-import FundingSummary from './sections/FundingSummary';
-import AdditionalInfo from './sections/AdditionalInfo';
 import Logger from '../../../modules/util/LoggerManager';
 
 const logger = new Logger('Summary group');
@@ -29,7 +28,8 @@ export default class SummaryGroup extends Component {
         titleClass={styles.summary_section_title}
         groupClass={styles.summary_section_group}
         fieldNameClass={styles.summary_field_name}
-        fieldValueClass={styles.summary_field_value} />
+        fieldValueClass={styles.summary_field_value}
+      />
       <AdditionalInfo
         titleClass={styles.summary_section_title}
         groupClass={styles.summary_section_group}

@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
-import Section from '../Section';
+import { ActivityConstants, FieldsManager, Section, UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import { createFormattedDate } from '../../../../../utils/DateUtils';
 import styles from './APIssues.css';
 import APMeasure from './APMeasure';
 import translate from '../../../../../utils/translate';
-import * as Utils from '../../../../../utils/Utils';
+import DateUtils from '../../../../../utils/DateUtils';
 
 const logger = new Logger('AP issues');
 
@@ -34,14 +32,14 @@ class APIssues extends Component {
         let date = '';
         if (this.props.activityFieldsManager
           .isFieldPathEnabled(`${ActivityConstants.ISSUES}~${ActivityConstants.ISSUE_DATE}`)) {
-          date = ` ${createFormattedDate(issue[ActivityConstants.ISSUE_DATE])}`;
+          date = ` ${DateUtils.createFormattedDate(issue[ActivityConstants.ISSUE_DATE])}`;
         }
         content.push(
-          <div className={styles.issues} key={Utils.stringToUniqueId()}>{`${issue.name || ''}${date}`}</div>);
+          <div className={styles.issues} key={UIUtils.stringToUniqueId()}>{`${issue.name || ''}${date}`}</div>);
         issue[ActivityConstants.MEASURES].forEach((measure) => {
           content.push(
             <APMeasure
-              key={Utils.stringToUniqueId()} activityFieldsManager={this.props.activityFieldsManager}
+              key={UIUtils.stringToUniqueId()} activityFieldsManager={this.props.activityFieldsManager}
               measure={measure} />);
         });
       });
@@ -61,4 +59,10 @@ class APIssues extends Component {
   }
 }
 
-export default Section(APIssues, 'Issues', true, 'APIssues');
+export default Section(APIssues, { SectionTitle: 'Issues',
+  useEncapsulateHeader: true,
+  sID: 'APIssues',
+  Logger,
+  translate,
+  DateUtils
+});

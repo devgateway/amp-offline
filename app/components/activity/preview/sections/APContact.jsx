@@ -1,13 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
-import Section from './Section';
-import Tablify from '../components/Tablify';
+import { ActivityConstants, APField, FieldPathConstants, FieldsManager, Tablify, Section } from 'amp-ui';
 import styles from '../ActivityPreview.css';
 import { getActivityContactIds } from '../../../../actions/ContactAction';
 import * as CC from '../../../../utils/constants/ContactConstants';
 import translate from '../../../../utils/translate';
-import APField from '../components/APField';
+import Logger from '../../../../modules/util/LoggerManager';
+import DateUtils from '../../../../utils/DateUtils';
 
 /**
  * Activity Preview Contact section
@@ -53,7 +52,7 @@ class APContact extends Component {
     return (
       <APField
         fieldNameClass={styles.hidden} fieldValueClass={styles.nodata} fieldClass={styles.flex} separator={false}
-        value={translate('No Data')} />
+        value={translate('No Data')} translate={translate} Logger={Logger} />
     );
   }
 
@@ -79,8 +78,16 @@ class APContact extends Component {
       })
       // TODO tablify must not reverses the order
       .reverse();
-    return <Tablify key="contact-info" content={contactGroups} columns={ActivityConstants.ACTIVITY_CONTACT_COLS} />;
+    return (<Tablify
+      key="contact-info" content={contactGroups} columns={ActivityConstants.ACTIVITY_CONTACT_COLS}
+      Logger={Logger} />);
   }
 }
 
-export default Section(APContact, 'Contact Information', true, 'APContact');
+export default Section(APContact, { SectionTitle: 'Contact Information',
+  useEncapsulateHeader: true,
+  sID: 'APContact',
+  Logger,
+  translate,
+  DateUtils
+});

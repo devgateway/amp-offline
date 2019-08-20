@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Glyphicon } from 'react-bootstrap';
+import { UIUtils } from 'amp-ui';
 import Logger from '../../modules/util/LoggerManager';
-import * as Utils from '../../utils/Utils';
 import translate from '../../utils/translate';
 import tabStyle from '../desktop/ProjectList.css';
 import appStyle from '../layout/App.css';
@@ -77,7 +77,7 @@ class URLSettings extends Component {
     const urls = (setting && setting.value.urls) || [];
     this.state = {
       dataSource: urls.map(url => ({
-        id: Utils.stringToUniqueId(url),
+        id: UIUtils.stringToUniqueId(url),
         url,
         availability: {
           isAvailable: undefined,

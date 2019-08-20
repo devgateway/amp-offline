@@ -1,6 +1,7 @@
 import { describe, it } from 'mocha';
+import { UIUtils } from 'amp-ui';
 import * as helper from '../../app/modules/helpers/GlobalSettingsHelper';
-import { stringToId, removeIdFromCollection } from '../../app/utils/Utils';
+import { removeIdFromCollection } from '../../app/utils/Utils';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -9,14 +10,14 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 
-const id1 = stringToId('AMP_GLOBAL_SETTING_12');
+const id1 = UIUtils.stringToId('AMP_GLOBAL_SETTING_12');
 const gs1 = { AMP_GLOBAL_SETTING_12: 'AMP_GLOBAL_SETTING_12' };
 const gs1Output = { key: 'AMP_GLOBAL_SETTING_12', value: 'AMP_GLOBAL_SETTING_12', id: id1 };
 
 const gsArrayInput = [{ AMP_GLOBAL_SETTING_1: 'AMP_GLOBAL_SETTING_1' },
   { AMP_GLOBAL_SETTING_2: 'AMP_GLOBAL_SETTING_2' }];
-const gsArrayOut = [{ key: '0', value: { AMP_GLOBAL_SETTING_1: 'AMP_GLOBAL_SETTING_1' }, id: stringToId('0') },
-  { key: '1', value: { AMP_GLOBAL_SETTING_2: 'AMP_GLOBAL_SETTING_2' }, id: stringToId('1') }];
+const gsArrayOut = [{ key: '0', value: { AMP_GLOBAL_SETTING_1: 'AMP_GLOBAL_SETTING_1' }, id: UIUtils.stringToId('0') },
+  { key: '1', value: { AMP_GLOBAL_SETTING_2: 'AMP_GLOBAL_SETTING_2' }, id: UIUtils.stringToId('1') }];
 
 
 describe('@@ GlobalSettingsHelper @@', () => {

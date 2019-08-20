@@ -1,11 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
-import * as Utils from '../../../../../utils/Utils';
 import fundingStyles from './AFFundingContainer.css';
 
 const logger = new Logger('AF funding detail container');
@@ -108,7 +107,7 @@ export default class AFFundingDetailContainer extends Component {
           {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
             if (!fd[ActivityConstants.TEMPORAL_ID]) {
-              fd[ActivityConstants.TEMPORAL_ID] = Utils.numberRandom();
+              fd[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
             }
             /* Lesson learned: DO NOT use an array index as component key if later we will remove elements from
             that array because that will confuse React. */

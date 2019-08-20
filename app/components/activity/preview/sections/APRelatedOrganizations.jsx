@@ -1,9 +1,11 @@
 /* eslint-disable react/no-unused-prop-types,class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants, FieldsManager } from 'amp-ui';
-import Section from './Section';
-import APPercentageList from '../components/APPercentageList';
+import { ActivityConstants, FeatureManagerConstants, FieldsManager, APPercentageList, Section } from 'amp-ui';
+import DateUtils from '../../../../utils/DateUtils';
+import translate from '../../../../utils/translate';
+import Logger from '../../../../modules/util/LoggerManager';
+import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const DO = APPercentageList(ActivityConstants.DONOR_ORGANIZATION, ActivityConstants.ORGANIZATION,
   ActivityConstants.PERCENTAGE, 'Donor Organization');
@@ -42,18 +44,27 @@ class APRelatedOrganizations extends Component {
   }
 
   render() {
-    const porps = { ...this.props, getItemTitle: this.getItemTitle };
+    const props = { ...this.props,
+      getItemTitle: this.getItemTitle,
+      Logger,
+      translate,
+      rawNumberToFormattedString };
     return (<div>
-      <DO key="do-org-list" {...porps} fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
-      <RO key="ro-org-list" {...porps} />
-      <EA key="ea-org-list" {...porps} />
-      <IA key="ie-org-list" {...porps} />
-      <BA key="be-org-list" {...porps} />
-      <CA key="ca-org-list" {...porps} />
-      <RG key="rg-org-list" {...porps} />
-      <SG key="sg-org-list" {...porps} />
+      <DO key="do-org-list" {...props} fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION} />
+      <RO key="ro-org-list" {...props} />
+      <EA key="ea-org-list" {...props} />
+      <IA key="ie-org-list" {...props} />
+      <BA key="be-org-list" {...props} />
+      <CA key="ca-org-list" {...props} />
+      <RG key="rg-org-list" {...props} />
+      <SG key="sg-org-list" {...props} />
     </div>);
   }
 }
-
-export default Section(APRelatedOrganizations, 'Related Organizations', true, 'APRelatedOrganizations');
+export default Section(APRelatedOrganizations, { SectionTitle: 'Related Organizations',
+  useEncapsulateHeader: true,
+  sID: 'APRelatedOrganizations',
+  Logger,
+  translate,
+  DateUtils
+});

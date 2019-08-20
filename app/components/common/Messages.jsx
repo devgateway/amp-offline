@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import * as Utils from '../../utils/Utils';
+import { UIUtils } from 'amp-ui';
 import * as styles from './CommonStyles.css';
 
 /**
@@ -16,8 +16,8 @@ export default class Messages extends Component {
     if (!messages || !messages.length) {
       return null;
     }
-    const error = messages.map(m => <div key={Utils.stringToUniqueId()}>{m}</div>);
-    return <div className={styles.rows} key={Utils.stringToUniqueId()}>{error}</div>;
+    const error = messages.map(m => <div key={UIUtils.stringToUniqueId()}>{m}</div>);
+    return <div className={styles.rows} key={UIUtils.stringToUniqueId()}>{error}</div>;
   }
 
 }

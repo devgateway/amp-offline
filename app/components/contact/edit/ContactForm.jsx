@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { FieldPathConstants, FieldsManager } from 'amp-ui';
+import { FieldPathConstants, FieldsManager, UIUtils } from 'amp-ui';
 import * as styles from './ContactForm.css';
 import * as afStyles from '../../activity/edit/ActivityForm.css';
 import * as CC from '../../../utils/constants/ContactConstants';
@@ -12,7 +12,6 @@ import { CUSTOM, INPUT_TYPE, TEXT_AREA } from '../../activity/edit/components/AF
 import ContactPhone from './ContactPhone';
 import ContactEmail from './ContactEmail';
 import ContactFax from './ContactFax';
-import * as Utils from '../../../utils/Utils';
 import translate from '../../../utils/translate';
 
 /**
@@ -50,7 +49,7 @@ class ContactForm extends Component {
       // and some old contacts have more entries than currently allowed.
       maxSizeValidation: {}, // { <list_field> : { error } }
     };
-    this._formId = Utils.stringToUniqueId();
+    this._formId = UIUtils.stringToUniqueId();
     this.handleEntriesChange = this.handleEntriesChange.bind(this);
   }
 

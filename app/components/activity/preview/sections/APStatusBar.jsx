@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants } from 'amp-ui';
-import Section from './Section';
+import { ActivityConstants, Section } from 'amp-ui';
 import Logger from '../../../../modules/util/LoggerManager';
+import translate from '../../../../utils/translate';
+import DateUtils from '../../../../utils/DateUtils';
 
 const logger = new Logger('AP status bar');
 
@@ -30,4 +31,8 @@ class APStatusBar extends Component {
   }
 }
 
-export default Section(APStatusBar);
+export default Section(APStatusBar, {
+  Logger,
+  translate,
+  DateUtils
+});

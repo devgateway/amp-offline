@@ -1,12 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FeatureManager } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FeatureManager, APLabel,
+  UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import APLabel from '../../components/APLabel';
 import styles from './APFundingTransactionTypeItem.css';
 import stylesMTEF from './APFundingMTEF.css';
 import APFundingMTEFItem from './APFundingMTEFItem';
-import Utils from '../../../../../utils/Utils';
 import APFundingTotalItem from './APFundingTotalItem';
 
 const logger = new Logger('AP Funding MTEF section');
@@ -24,7 +23,7 @@ class APFundingMTEFSection extends Component {
 
   static drawTable(mtef, currency) {
     return (<table className={styles.funding_table}>
-      {<APFundingMTEFItem item={mtef} key={Utils.numberRandom()} wsCurrency={currency} />}
+      {<APFundingMTEFItem item={mtef} key={UIUtils.numberRandom()} wsCurrency={currency} />}
     </table>);
   }
 
@@ -69,7 +68,9 @@ class APFundingMTEFSection extends Component {
       });
       return (<div>
         <div className={stylesMTEF.header}>
-          <APLabel label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()} />
+          <APLabel
+            label={translate('MTEF Projections')} labelClass={styles.header} key={Math.random()}
+            translate={translate} Logger={Logger} />
         </div>
         {content}
       </div>);

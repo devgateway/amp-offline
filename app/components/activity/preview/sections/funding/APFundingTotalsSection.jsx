@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager,
+  UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import APFundingTotalItem from './APFundingTotalItem';
 import ActivityFundingTotals from '../../../../../modules/activity/ActivityFundingTotals';
-import Utils from '../../../../../utils/Utils';
 
 const logger = new Logger('AP funding totals section');
 
@@ -50,7 +50,7 @@ class APFundingTotalsSection extends Component {
     options.forEach(g => {
       if (g.value > 0) {
         content.push(<APFundingTotalItem
-          key={Utils.numberRandom()}
+          key={UIUtils.numberRandom()}
           currency={translate(this._wsCurrency)}
           value={g.value}
           label={g.label} />);
@@ -59,11 +59,11 @@ class APFundingTotalsSection extends Component {
     if (actualDisbursements && actualCommitments) {
       content.push(<APFundingTotalItem
         label={translate('Undisbursed Balance')} value={actualCommitments - actualDisbursements}
-        currency={translate(this._wsCurrency)} key={Utils.numberRandom()} />);
+        currency={translate(this._wsCurrency)} key={UIUtils.numberRandom()} />);
     }
     if (actualDisbursements && actualCommitments) {
       content.push(<APFundingTotalItem
-        currency={translate(this._wsCurrency)} key={Utils.numberRandom()}
+        currency={translate(this._wsCurrency)} key={UIUtils.numberRandom()}
         value={Math.round((actualDisbursements / actualCommitments) * 100)}
         label={translate('Delivery rate')} isPercentage />);
     }

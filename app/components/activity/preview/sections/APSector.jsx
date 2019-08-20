@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
-import Section from './Section';
-import APPercentageList from '../components/APPercentageList';
+import { ActivityConstants, FieldsManager, APPercentageList, Section } from 'amp-ui';
 import styles from './APSector.css';
 import Logger from '../../../../modules/util/LoggerManager';
+import translate from '../../../../utils/translate';
+import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
+import DateUtils from '../../../../utils/DateUtils';
 
 const PrimarySectorList = APPercentageList(ActivityConstants.PRIMARY_SECTORS, ActivityConstants.SECTOR,
   ActivityConstants.SECTOR_PERCENTAGE, 'Primary Sector');
@@ -32,13 +33,23 @@ class APSector extends Component {
   render() {
     return (<div className={styles.sector_container}>
       <div className={styles.primary_sector}>
-        <PrimarySectorList key="primary-programs-list" {...this.props} />
+        <PrimarySectorList
+          key="primary-programs-list" {...this.props} translate={translate} Logger={Logger}
+          rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
       <div className={styles.secondary_sector}>
-        <SecondarySectorList key="secondary-programs-list" {...this.props} />
+        <SecondarySectorList
+          key="secondary-programs-list" {...this.props} translate={translate} Logger={Logger}
+          rawNumberToFormattedString={rawNumberToFormattedString} />
       </div>
     </div>);
   }
 }
+export default Section(APSector, { SectionTitle: 'Sectors',
+  useEncapsulateHeader: true,
+  sID: 'APSector',
+  Logger,
+  translate,
+  DateUtils
+});
 
-export default Section(APSector, 'Sectors', true, 'APSector');

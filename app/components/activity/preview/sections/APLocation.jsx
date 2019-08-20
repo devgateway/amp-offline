@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants } from 'amp-ui';
-import Section from './Section';
-import APPercentageList from '../components/APPercentageList';
+import { ActivityConstants, APPercentageList, Section } from 'amp-ui';
+import DateUtils from '../../../../utils/DateUtils';
 import Logger from '../../../../modules/util/LoggerManager';
 import styles from '../ActivityPreview.css';
+import translate from '../../../../utils/translate';
+import { rawNumberToFormattedString } from '../../../../utils/NumberUtils';
 
 const APLocationsList = APPercentageList(ActivityConstants.LOCATIONS, ActivityConstants.LOCATION,
   ActivityConstants.LOCATION_PERCENTAGE);
@@ -29,7 +30,8 @@ class APLocation extends Component {
   render() {
     let content = [<APLocationsList
       key="locations-list" {...this.props}
-      percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} tablify={false} />];
+      percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} tablify={false}
+      translate={translate} Logger={Logger} rawNumberToFormattedString={rawNumberToFormattedString} />];
     const topContent = [ActivityConstants.IMPLEMENTATION_LEVEL, ActivityConstants.IMPLEMENTATION_LOCATION]
       .map(fp => <td key={fp}>{this.props.buildSimpleField(fp, true, new Set([0]))}</td>);
     content = content.filter(el => el !== undefined);
@@ -54,5 +56,10 @@ class APLocation extends Component {
     </div>);
   }
 }
-
-export default Section(APLocation, 'Location', true, 'APLocation');
+export default Section(APLocation, { SectionTitle: 'Location',
+  useEncapsulateHeader: true,
+  sID: 'APLocation',
+  Logger,
+  translate,
+  DateUtils
+});
