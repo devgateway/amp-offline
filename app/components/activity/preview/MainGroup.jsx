@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact,
-  APFundingSources, APLocation, APPlanning } from 'amp-ui';
+  APFundingSources, APLocation, APProgram, APPlanning } from 'amp-ui';
 import styles from './ActivityPreview.css';
-import APProgram from './sections/APProgram';
+import APPlanning from './sections/APPlanning';
+import styles from './ActivityPreview.css';
 import APSector from './sections/APSector';
 import Logger from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
