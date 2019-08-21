@@ -46,7 +46,8 @@ export default class MainGroup extends Component {
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
       <APSector
         fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FeatureManagerConstants.ACTIVITY_SECTORS}
-        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
+        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value}
+        rawNumberToFormattedString={rawNumberToFormattedString} />
       <APFundingSources
         sectionPath={ActivityConstants.TOTAL_NUMBER_OF_FUNDING_SOURCES} fieldValueClass={styles.box_field_value} />
       <APFundingSection
