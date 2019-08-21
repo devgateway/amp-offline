@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Constants, ErrorConstants } from 'amp-ui';
+import { Constants, ErrorConstants, Loading } from 'amp-ui';
 import styles from './SyncUp.css';
 import ErrorMessage from '../common/ErrorMessage';
 import InfoMessage from '../common/InfoMessage';
-import Loading from '../common/Loading';
 import Button from '../i18n/Button';
 import Logger from '../../modules/util/LoggerManager';
 import SyncUpProgressDialogModal from './SyncUpProgressDialogModal';
@@ -92,7 +91,7 @@ class SyncUp extends Component {
     logger.log('selectContentElementToDraw');
     const { syncUpReducer } = this.props;
     if (this.props.syncUpReducer.loadingSyncHistory === true || this.props.syncUpReducer.syncUpInProgress === true) {
-      return <Loading />;
+      return <Loading Logger={Logger} translate={translate} />;
     } else {
       const { errorMessage, didUserSuccessfulSyncUp, lastSuccessfulSyncUp } = syncUpReducer;
       if (errorMessage) {

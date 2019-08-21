@@ -1,7 +1,7 @@
 /* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
+import { Loading } from 'amp-ui';
 import styles from './Workspace.css';
-import Loading from '../common/Loading';
 import WorkspaceList from './WorkspaceList';
 import ErrorMessage from '../common/ErrorMessage';
 import Span from '../i18n/Span';
@@ -59,7 +59,7 @@ export default class WorkspacePage extends Component {
     logger.log('selectContentElementToDraw');
     if (this.props.workspaceReducer.workspacesLoading !== false || this.state.showWorkspaces === false
       || this.props.workspaceReducer.workspaceProcessing) {
-      return <Loading />;
+      return <Loading Logger={Logger} translate={translate} />;
     }
     if (this.props.workspaceReducer.errorMessage && this.props.workspaceReducer.errorMessage !== '') {
       return <ErrorMessage message={this.props.workspaceReducer.errorMessage} />;
