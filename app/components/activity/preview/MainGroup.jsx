@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact,
-  APFundingSources, APLocation, APPlanning, APProgram, APSector } from 'amp-ui';
+  APFundingSources, APLocation, APPlanning, APProgram, APSector, APRelatedOrganizations } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import Logger from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
-import APRelatedOrganizations from './sections/APRelatedOrganizations';
 import APIssues from './sections/issues/APIssues';
 import APStructures from './sections/APStructures';
 import { APDocumentPage } from '../../../containers/ResourcePage';
@@ -56,7 +55,8 @@ export default class MainGroup extends Component {
       <APRelatedOrganizations
         fieldNameClass={styles.sector_title} fieldValueClass={''}
         fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS}
-        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
+        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value}
+        rawNumberToFormattedString={rawNumberToFormattedString} />
       <APIssues sectionPath={ActivityConstants.ISSUES} />
       <APContact
         fieldNameClass={styles.hidden} fieldValueClass={styles.box_field_value_tight}
