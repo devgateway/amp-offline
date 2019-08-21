@@ -4,13 +4,12 @@ import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Panel } from 'react-bootstrap';
 import { ActivityConstants, FeatureManagerConstants, FieldPathConstants, FieldsManager, FeatureManager,
-  PossibleValuesManager, APLabel } from 'amp-ui';
+  PossibleValuesManager, APLabel, Loading, ActionIcon } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
-import Loading from '../../../common/Loading';
 import {
   ACTION,
   ADDING_DATE,
@@ -32,7 +31,6 @@ import * as docStyles from './document/AFDocument.css';
 import * as listStyles from '../components/AFList.css';
 import translate from '../../../../utils/translate';
 import DateUtils from '../../../../utils/DateUtils';
-import ActionIcon from '../../../common/ActionIcon';
 import RepositoryManager from '../../../../modules/repository/RepositoryManager';
 import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
@@ -265,7 +263,7 @@ class AFDocument extends Component {
     }
     const { isResourcesLoading, isContentsLoading, isResourceManagersLoading } = this.props.resourceReducer;
     if (isResourcesLoading || isContentsLoading || isResourceManagersLoading) {
-      return <Loading />;
+      return <Loading Logger={Logger} translate={translate} />;
     }
 
     return (

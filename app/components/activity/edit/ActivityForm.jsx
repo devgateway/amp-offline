@@ -3,8 +3,7 @@ import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager, FeatureManager,
-  PossibleValuesManager } from 'amp-ui';
-import Loading from '../../common/Loading';
+  PossibleValuesManager, Loading } from 'amp-ui';
 import * as styles from './ActivityForm.css';
 import { FIELDS_PER_SECTIONS, IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
@@ -350,6 +349,6 @@ export default class ActivityForm extends Component {
       return this._renderActivity();
     }
     // TODO report errors if not loading and not loaded
-    return <Loading />;
+    return <Loading Logger={Logger} translate={translate} />;
   }
 }
