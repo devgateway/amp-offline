@@ -47,7 +47,8 @@ export default class ActivityPreview extends Component {
       activityId: PropTypes.string.isRequired
     }).isRequired,
     workspaceReducer: PropTypes.object,
-    userReducer: PropTypes.object
+    userReducer: PropTypes.object,
+    startUpReducer: PropTypes.object
   };
 
   static childContextTypes = {
@@ -63,9 +64,11 @@ export default class ActivityPreview extends Component {
     contactFieldsManager: PropTypes.instanceOf(FieldsManager),
     contactsByIds: PropTypes.object,
     resourceReducer: PropTypes.object,
+    calendar: PropTypes.object,
     Logger: PropTypes.func,
     translate: PropTypes.func,
     DateUtils: PropTypes.func
+
   };
 
   constructor(props) {
@@ -85,6 +88,7 @@ export default class ActivityPreview extends Component {
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
       resourceReducer: this.props.resourceReducer,
+      calendar: this.props.startUpReducer.calendar,
       Logger,
       translate,
       DateUtils
