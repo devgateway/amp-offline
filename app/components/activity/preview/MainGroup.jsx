@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact,
-  APFundingSources, APLocation, APPlanning, APProgram, APSector, APRelatedOrganizations, APFundingSection } from 'amp-ui';
+  APFundingSources, APLocation, APPlanning, APProgram, APSector, APRelatedOrganizations, APStructures,
+  APIssues, APFundingSection } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import Logger from '../../../modules/util/LoggerManager';
-import APIssues from './sections/issues/APIssues';
-import APStructures from './sections/APStructures';
 import { APDocumentPage } from '../../../containers/ResourcePage';
 import { rawNumberToFormattedString, getAmountsInThousandsMessage } from '../../../utils/NumberUtils';
-
 // we need to send getActivityContactIds by props since
 // each client should define how to hydrate and de-hydrate a contact
 import { getActivityContactIds } from '../../../actions/ContactAction';
