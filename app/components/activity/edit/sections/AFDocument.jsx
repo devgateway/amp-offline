@@ -36,6 +36,7 @@ import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
 import { buildNewResource } from '../../../../actions/ResourceAction';
 import Logger from '../../../../modules/util/LoggerManager';
+import { SHELL } from '../../../../modules/util/ElectronApp';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,
@@ -218,7 +219,8 @@ class AFDocument extends Component {
       const iconFile = (extension && `${extension}.gif`) || (cell.href && 'ico_attachment.png');
       const srcIcon = StaticAssetsUtils.getStaticImagePath('doc-icons', iconFile);
       const iconElement = <img src={srcIcon} alt="" onError={this.handleIconError} />;
-      return <ActionIcon iconElement={iconElement} href={cell.href} onClick={cell.action} />;
+      return (<ActionIcon
+        iconElement={iconElement} href={cell.href} onClick={cell.action} openExternal={SHELL.openExternal} />);
     }
     return null;
   }
