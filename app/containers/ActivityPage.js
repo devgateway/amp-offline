@@ -14,7 +14,8 @@ const mapStateToProps = (state) => {
     contactReducer: state.contactReducer,
     resourceReducer: state.resourceReducer,
     userReducer: state.userReducer,
-    workspaceReducer: state.workspaceReducer
+    workspaceReducer: state.workspaceReducer,
+    startUpReducer: state.startUpReducer
   };
 };
 

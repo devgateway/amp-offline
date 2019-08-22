@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact,
   APFundingSources, APLocation, APPlanning, APProgram, APSector, APRelatedOrganizations, APStructures,
-  APIssues } from 'amp-ui';
+  APIssues, APFundingSection } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import Logger from '../../../modules/util/LoggerManager';
-import APFundingSection from './sections/funding/APFundingSection';
 import { APDocumentPage } from '../../../containers/ResourcePage';
-import { rawNumberToFormattedString } from '../../../utils/NumberUtils';
+import { rawNumberToFormattedString, getAmountsInThousandsMessage } from '../../../utils/NumberUtils';
 // we need to send getActivityContactIds by props since
 // each client should define how to hydrate and de-hydrate a contact
 import { getActivityContactIds } from '../../../actions/ContactAction';
@@ -41,7 +40,9 @@ export default class MainGroup extends Component {
         rawNumberToFormattedString={rawNumberToFormattedString} />
       <APProgram
         fieldNameClass={styles.sector_title} fmPath={FeatureManagerConstants.ACTIVITY_PROGRAM}
-        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value} />
+        percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value}
+        rawNumberToFormattedString={rawNumberToFormattedString}
+      />
       <APSector
         fieldNameClass={styles.sector_title} fieldValueClass={''} fmPath={FeatureManagerConstants.ACTIVITY_SECTORS}
         percentTitleClass={styles.percent_field_name} percentValueClass={styles.percent_field_value}
@@ -50,7 +51,10 @@ export default class MainGroup extends Component {
         sectionPath={ActivityConstants.TOTAL_NUMBER_OF_FUNDING_SOURCES} fieldValueClass={styles.box_field_value} />
       <APFundingSection
         fieldNameClass={styles.box_field_name} fieldValueClass={styles.box_field_value}
-        sectionPath={ActivityConstants.FUNDINGS} />
+        sectionPath={ActivityConstants.FUNDINGS}
+        rawNumberToFormattedString={rawNumberToFormattedString}
+        getAmountsInThousandsMessage={getAmountsInThousandsMessage}
+      />
       <APRelatedOrganizations
         fieldNameClass={styles.sector_title} fieldValueClass={''}
         fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS}
