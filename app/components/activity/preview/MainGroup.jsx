@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { ActivityConstants, FeatureManagerConstants, APIdentification, APInternalIds, APContact,
-  APFundingSources, APLocation, APPlanning, APProgram, APSector, APRelatedOrganizations, APStructures } from 'amp-ui';
+  APFundingSources, APLocation, APPlanning, APProgram, APSector, APRelatedOrganizations, APStructures,
+  APIssues } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import Logger from '../../../modules/util/LoggerManager';
 import APFundingSection from './sections/funding/APFundingSection';
-import APIssues from './sections/issues/APIssues';
 import { APDocumentPage } from '../../../containers/ResourcePage';
 import { rawNumberToFormattedString } from '../../../utils/NumberUtils';
 // we need to send getActivityContactIds by props since
