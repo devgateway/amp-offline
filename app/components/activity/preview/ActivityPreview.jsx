@@ -2,18 +2,26 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
-import { ActivityConstants, CurrencyRatesManager, FieldsManager, FeatureManager } from 'amp-ui';
+import {
+  ActivityConstants,
+  APStatusBar,
+  CurrencyRatesManager,
+  FeatureManager,
+  FieldsManager,
+  MainGroup,
+  SummaryGroup
+} from 'amp-ui';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
-import SummaryGroup from './SummaryGroup';
-import MainGroup from './MainGroup';
-import APStatusBar from './sections/APStatusBar';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
 import * as WC from '../../../utils/constants/WorkspaceConstants';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
+import { APDocumentPage } from '../../../containers/ResourcePage';
+import { getAmountsInThousandsMessage, rawNumberToFormattedString } from '../../../../app/utils/NumberUtils';
+import { getActivityContactIds } from '../../../actions/ContactAction';
 
 const logger = new Logger('Activity preview');
 
@@ -67,8 +75,9 @@ export default class ActivityPreview extends Component {
     calendar: PropTypes.object,
     Logger: PropTypes.func,
     translate: PropTypes.func,
-    DateUtils: PropTypes.func
-
+    DateUtils: PropTypes.func,
+    rawNumberToFormattedString: PropTypes.func,
+    getActivityContactIds: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -91,7 +100,9 @@ export default class ActivityPreview extends Component {
       calendar: this.props.startUpReducer.calendar,
       Logger,
       translate,
-      DateUtils
+      DateUtils,
+      rawNumberToFormattedString,
+      getActivityContactIds,
     };
   }
 
@@ -127,10 +138,10 @@ export default class ActivityPreview extends Component {
 
     return (
       <div className={styles.preview_container}>
-        <div className={styles.preview_header} >
+        <div className={styles.preview_header}>
           <span className={styles.top_warning_text}>{privateWSWarning}</span>
-          <span className={styles.preview_title} >{activity[ActivityConstants.PROJECT_TITLE]}</span>
-          <span className={styles.preview_icons} >
+          <span className={styles.preview_title}>{activity[ActivityConstants.PROJECT_TITLE]}</span>
+          <span className={styles.preview_icons}>
             <ul>
               <IconFormatter
                 id={activity.id} edit={!activity[ActivityConstants.REJECTED_ID]} view={false}
@@ -143,13 +154,13 @@ export default class ActivityPreview extends Component {
             </ul>
           </span>
 
-          <div className={styles.preview_status_container} >
+          <div className={styles.preview_status_container}>
             <APStatusBar
               fieldClass={styles.inline_flex}
               fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail}
-              titleClass={styles.status_title_class} groupClass={styles.status_group_class} />
+              titleClass={styles.status_title_class} groupClass={styles.status_group_class} Logger={Logger} />
           </div>
-          <div className={styles.preview_categories} >
+          <div className={styles.preview_categories}>
             <Scrollspy items={categoryKeys} currentClassName={styles.preview_category_selected}>
               {categories}
             </Scrollspy>
@@ -158,11 +169,15 @@ export default class ActivityPreview extends Component {
         <div className={styles.preview_content}>
           <Grid fluid>
             <Row>
-              <Col md={9} >
-                <MainGroup />
+              <Col md={9}>
+                <MainGroup
+                  Logger={Logger} APDocumentPage={APDocumentPage}
+                  rawNumberToFormattedString={rawNumberToFormattedString}
+                  getAmountsInThousandsMessage={getAmountsInThousandsMessage}
+                  getActivityContactIds={getActivityContactIds} />
               </Col>
-              <Col mdOffset={9} className={styles.preview_summary} >
-                <SummaryGroup />
+              <Col mdOffset={9} className={styles.preview_summary}>
+                <SummaryGroup Logger={Logger} />
               </Col>
             </Row>
           </Grid>
