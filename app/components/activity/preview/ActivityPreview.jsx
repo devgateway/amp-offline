@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
-import { ActivityConstants, CurrencyRatesManager, FieldsManager, FeatureManager, APStatusBar } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FieldsManager, FeatureManager, APStatusBar,
+  SummaryGroup } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
-import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import Logger from '../../../modules/util/LoggerManager';
@@ -161,7 +161,7 @@ export default class ActivityPreview extends Component {
                 <MainGroup />
               </Col>
               <Col mdOffset={9} className={styles.preview_summary} >
-                <SummaryGroup />
+                <SummaryGroup Logger={Logger} />
               </Col>
             </Row>
           </Grid>
