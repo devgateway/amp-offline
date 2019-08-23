@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 import Scrollspy from 'react-scrollspy';
-import { ActivityConstants, CurrencyRatesManager, FieldsManager, FeatureManager } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, FieldsManager, FeatureManager, APStatusBar } from 'amp-ui';
 import styles from './ActivityPreview.css';
 import translate from '../../../utils/translate';
 import SummaryGroup from './SummaryGroup';
 import MainGroup from './MainGroup';
-import APStatusBar from './sections/APStatusBar';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
@@ -147,7 +146,7 @@ export default class ActivityPreview extends Component {
             <APStatusBar
               fieldClass={styles.inline_flex}
               fieldNameClass={styles.preview_status_title} fieldValueClass={styles.preview_status_detail}
-              titleClass={styles.status_title_class} groupClass={styles.status_group_class} />
+              titleClass={styles.status_title_class} groupClass={styles.status_group_class} Logger={Logger} />
           </div>
           <div className={styles.preview_categories} >
             <Scrollspy items={categoryKeys} currentClassName={styles.preview_category_selected}>
