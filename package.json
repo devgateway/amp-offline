@@ -54,6 +54,7 @@
           "lang/**/*",
           "static/**/*",
           "app.html",
+          "splash-screen.html",
           "main.js",
           "master-translations.en.json",
           "amp-help.pdf"

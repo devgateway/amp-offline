@@ -7,11 +7,17 @@ import {
   SHOW_SANITY_APP,
   START_MAIN_APP
 } from './utils/constants/ElectronAppMessages';
+import {
+  CLOSE_HELP_WINDOW_MSG,
+  CREATE_PDF_WINDOW_MSG,
+  INITIALIZATION_COMPLETE_MSG
+} from './utils/constants/MainDevelopmentConstants';
 
 const PDFWindow = require('electron-pdf-window');
 
 let mainWindow = null;
 let sanityCheckWindow = null;
+let splash = null;
 const isMacOS = process.platform === 'darwin';
 let willQuitApp = !isMacOS;
 
@@ -68,6 +74,26 @@ app.on('ready', async () => {
     height: 728
   });
 
+  // create a new `splash`-Window
+  splash = new BrowserWindow({
+    width: 425,
+    height: 285,
+    transparent: false,
+    frame: false,
+    titleBarStyle: 'hidden',
+    alwaysOnTop: false,
+    resizable: false,
+    show: false,
+    delay: 100,
+    backgroundColor: '#2b669a',
+    movable: false,
+    closable: false
+  });
+  splash.loadURL(`file://${__dirname}/splash-screen.html`);
+  splash.once('ready-to-show', () => {
+    splash.show();
+  });
+
   await installExtensions();
 
   sanityCheckWindow.loadURL(`file://${__dirname}/app.html?sanity=true`);
@@ -99,8 +125,17 @@ app.on('ready', async () => {
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.show();
-    mainWindow.focus();
+    // Delay showing the main window (blank) until ampOfflineStartUp() is complete.
+    ipcMain.on(INITIALIZATION_COMPLETE_MSG, () => {
+      if (splash) {
+        splash.hide();
+        splash.destroy();
+        splash = null;
+      }
+      mainWindow.show();
+      mainWindow.focus();
+      global.MAIN_WINDOW_ACTIVE = true;
+    });
   });
 
   mainWindow.on('close', (event) => {
@@ -214,7 +249,7 @@ app.on('before-quit', () => {
 });
 
 // Listen to message from renderer process.
-ipcMain.on('createPDFWindow', (event, url) => {
+ipcMain.on(CREATE_PDF_WINDOW_MSG, (event, url) => {
   if (!global.HELP_PDF_WINDOW) {
     // Define a window capable of showing a pdf file in main process because it doesnt work on render process.
     let pdfWindow = new PDFWindow({
@@ -230,7 +265,7 @@ ipcMain.on('createPDFWindow', (event, url) => {
       global.HELP_PDF_WINDOW = null;
       // Use IPC to communicate with renderer process.
       if (mainWindow) {
-        mainWindow.webContents.send('closeHelpWindow');
+        mainWindow.webContents.send(CLOSE_HELP_WINDOW_MSG);
       }
     });
 
@@ -241,7 +276,7 @@ ipcMain.on('createPDFWindow', (event, url) => {
 });
 
 const closeApp = () => {
-  [sanityCheckWindow, mainWindow].forEach(closeWindow);
+  [sanityCheckWindow, mainWindow, splash].forEach(closeWindow);
   app.quit();
 };
 
