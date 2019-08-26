@@ -26,9 +26,9 @@ import NotificationHelper from './modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
 import { doSanityCheck } from './actions/SanityCheckAction';
 import * as URLUtils from './utils/URLUtils';
-import translate from './utils/translate';
 import { INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
 import * as ElectronApp from './modules/util/ElectronApp';
+import translate from './utils/translate';
 
 const logger = new Logger('index');
 

@@ -97,8 +97,6 @@ app.on('ready', async () => {
 
   await installExtensions();
 
-  await installExtensions();
-
   sanityCheckWindow.loadURL(`file://${__dirname}/app.html?sanity=true`);
 
   sanityCheckWindow.webContents.on('did-finish-load', () => {
