@@ -7,7 +7,7 @@ import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
-import { rawNumberToFormattedString, getAmountsInThousandsMessage } from '../../../../app/utils/NumberUtils';
+import { getAmountsInThousandsMessage, rawNumberToFormattedString } from '../../../../app/utils/NumberUtils';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { APDocumentPage } from '../../../containers/ResourcePage';
 
@@ -88,7 +88,10 @@ export default class ActivityPreview extends Component {
     DateUtils: PropTypes.func.isRequired,
     rawNumberToFormattedString: PropTypes.func.isRequired,
     getActivityContactIds: PropTypes.func.isRequired,
-    getAmountsInThousandsMessage: PropTypes.func.isRequired
+    getAmountsInThousandsMessage: PropTypes.func.isRequired,
+    IconFormatter: PropTypes.func.isRequired,
+    DesktopManager: PropTypes.object.isRequired,
+    APDocumentPage: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -123,6 +126,9 @@ export default class ActivityPreview extends Component {
       rawNumberToFormattedString,
       getActivityContactIds,
       getAmountsInThousandsMessage,
+      IconFormatter,
+      DesktopManager,
+      APDocumentPage,
     };
   }
 
@@ -135,8 +141,6 @@ export default class ActivityPreview extends Component {
   }
 
   render() {
-    return (<ActivityPreviewUI
-      IconFormatter={IconFormatter}
-      DesktopManager={DesktopManager} APDocumentPage={APDocumentPage} />);
+    return (<ActivityPreviewUI />);
   }
 }
