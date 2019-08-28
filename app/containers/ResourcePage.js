@@ -15,7 +15,7 @@ const mapStateToProps = (state) => {
   return {
     resourceReducer: state.resourceReducer,
     openExternal: SHELL.openExternal,
-    getFullContentFilePath: RepositoryManager.getFullContentFilePath,
+    RepositoryManager,
     getActivityResourceUuids: ResourceAction.getActivityResourceUuids
   };
 };
