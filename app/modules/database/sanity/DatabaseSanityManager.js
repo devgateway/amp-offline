@@ -42,6 +42,7 @@ const DatabaseSanityManager = {
 
   validateDatabase(status: DatabaseSanityStatus) {
     logger.log('validateDatabase');
+    const start = new Date();
     const dbNames = DatabaseSanityManager.findAllDBNames();
     const totalDBFilesValidated = dbNames.length;
     let nonSanityDBsWithDataCount = 0;
@@ -60,8 +61,11 @@ const DatabaseSanityManager = {
 
     return Promise.all(flagInvalidDBPromises)
       .then(result => result.filter(name => name))
-      .then(invalidDBs => DatabaseSanityManager._initOrUpdateStatus(
-        status, invalidDBs, totalDBFilesValidated, nonSanityDBsWithDataCount));
+      .then((invalidDBs) => {
+        logger.log(`validateDatabase duration = ${DateUtils.duration(start, new Date())}`);
+        return DatabaseSanityManager._initOrUpdateStatus(
+          status, invalidDBs, totalDBFilesValidated, nonSanityDBsWithDataCount);
+      });
   },
 
   _initOrUpdateStatus(status: DatabaseSanityStatus, invalidDBs, totalDBFilesValidated, nonSanityDBsWithDataCount) {

@@ -11,6 +11,7 @@ import {
   START_MAIN_APP
 } from '../utils/constants/ElectronAppMessages';
 import { forceCloseApp } from '../modules/util/ElectronApp';
+import DateUtils from '../utils/DateUtils';
 
 
 const STATE_SANITY_CHECK = 'STATE_SANITY_CHECK';
@@ -28,9 +29,11 @@ const logger = new Logger('SanityCheckAction');
 
 export const restartSanityCheck = () => _doSanityCheck(true);
 export const doSanityCheck = () => _doSanityCheck(false);
+let start;
 
 const _doSanityCheck = (isRestarted) => {
   logger.log('doSanityCheck');
+  start = new Date();
   const sanityPromise = DatabaseSanityManager.sanityCheck()
     .then(DatabaseSanityManager.attemptTransition)
     .then((status: DatabaseSanityStatus) => {
@@ -83,6 +86,7 @@ export const cancelDBCleanup = (sanityStatus) => {
 
 export const flagCleanupComplete = (isStartMainApp) => {
   logger.log(`flagCleanupComplete: isStartMainApp = ${isStartMainApp}`);
+  logger.log(`Sanity check duration (possibly with alerts): ${DateUtils.duration(start, new Date())}`);
   if (isStartMainApp) {
     ipcRenderer.send(CLOSE_SANITY_APP);
     ipcRenderer.send(START_MAIN_APP);
