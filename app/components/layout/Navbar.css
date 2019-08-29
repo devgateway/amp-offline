@@ -52,6 +52,10 @@
   margin-right: 80px;
 }
 
+.logout_link {
+
+}
+
 .main_menu {
   float: left;
   position: relative;
@@ -72,4 +76,21 @@
 
 .userInfo {
   float: right;
+}
+
+@media print {
+  .rc_menu {
+    visibility: hidden !important;
+    display: none !important;
+  }
+
+  .main_menu {
+    visibility: hidden !important;
+    display: none !important;
+  }
+
+  .logout_link {
+    visibility: hidden !important;
+    display: none !important;
+  }
 }
