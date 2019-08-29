@@ -11,6 +11,8 @@ export const IS_RENDERER_PROCESS = process && process.type === 'renderer';
 export const IS_DEV_MODE = process.env.NODE_ENV === 'development';
 /** Show debug window for sanity app */
 export const SHOW_SANITY_APP_DEBUG_WINDOW = +process.env.SANITY_APP_DEBUG_WINDOW === 1;
+/** Show debug window for sanity app */
+export const SKIP_SANITY_CHECK = +process.env.SKIP_SANITY_CHECK === 1;
 /** Tells if to enable the URL checks trigger */
 export const IS_CHECK_URL_CHANGES = !IS_DEV_MODE || +process.env.CHECK_URL_CHANGES;
 /** electron "shell" that provides functions related to desktop integration */

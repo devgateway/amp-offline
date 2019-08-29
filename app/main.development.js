@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
-import { IS_DEV_MODE, SHOW_SANITY_APP_DEBUG_WINDOW } from './modules/util/ElectronApp';
+import { IS_DEV_MODE, SHOW_SANITY_APP_DEBUG_WINDOW, SKIP_SANITY_CHECK } from './modules/util/ElectronApp';
 import {
   CLOSE_SANITY_APP,
   FORCE_CLOSE_APP,
@@ -14,6 +14,8 @@ import {
 } from './utils/constants/MainDevelopmentConstants';
 
 const PDFWindow = require('electron-pdf-window');
+
+const skipSanityCheck = IS_DEV_MODE && SKIP_SANITY_CHECK;
 
 let mainWindow = null;
 let sanityCheckWindow = null;
@@ -57,7 +59,7 @@ const installExtensions = async () => {
 };
 
 app.on('ready', async () => {
-  sanityCheckWindow = new BrowserWindow({
+  sanityCheckWindow = skipSanityCheck ? null : new BrowserWindow({
     show: false,
     width: 640,
     height: 200,
@@ -89,6 +91,7 @@ app.on('ready', async () => {
     movable: false,
     closable: false
   });
+
   splash.loadURL(`file://${__dirname}/splash-screen.html`);
   splash.once('ready-to-show', () => {
     splash.show();
@@ -96,29 +99,37 @@ app.on('ready', async () => {
 
   await installExtensions();
 
-  sanityCheckWindow.loadURL(`file://${__dirname}/app.html?sanity=true`);
-
-  sanityCheckWindow.webContents.on('did-finish-load', () => {
-    ipcMain.on(SHOW_SANITY_APP, () => {
-      sanityCheckWindow.show();
-      sanityCheckWindow.focus();
-    });
-  });
-
-  ipcMain.on(CLOSE_SANITY_APP, () => {
-    closeWindow(sanityCheckWindow);
-    sanityCheckWindow = null;
-  });
-
-  ipcMain.on(START_MAIN_APP, () => {
+  const loadMainApp = () => {
     mainWindow.loadURL(`file://${__dirname}/app.html`);
     if (IS_DEV_MODE) {
       mainWindow.openDevTools();
     }
-  });
+  };
 
-  // if sanity app is closed normally, we .destroy() it that won't trigger a 'close' event
-  sanityCheckWindow.on('close', () => closeApp());
+  if (skipSanityCheck) {
+    loadMainApp();
+  } else {
+    sanityCheckWindow.loadURL(`file://${__dirname}/app.html?sanity=true`);
+
+    sanityCheckWindow.webContents.on('did-finish-load', () => {
+      ipcMain.on(SHOW_SANITY_APP, () => {
+        sanityCheckWindow.show();
+        sanityCheckWindow.focus();
+      });
+    });
+
+    ipcMain.on(CLOSE_SANITY_APP, () => {
+      closeWindow(sanityCheckWindow);
+      sanityCheckWindow = null;
+    });
+
+    // if sanity app is closed normally, we .destroy() it that won't trigger a 'close' event
+    sanityCheckWindow.on('close', () => closeApp());
+
+    sanityCheckWindow.setMenu(null);
+  }
+
+  ipcMain.on(START_MAIN_APP, () => loadMainApp());
 
   ipcMain.on(FORCE_CLOSE_APP, () => {
     closeApp();
@@ -215,7 +226,7 @@ app.on('ready', async () => {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    if (SHOW_SANITY_APP_DEBUG_WINDOW) {
+    if (!skipSanityCheck && SHOW_SANITY_APP_DEBUG_WINDOW) {
       sanityCheckWindow.maximize();
       sanityCheckWindow.openDevTools();
     }
@@ -235,7 +246,6 @@ app.on('ready', async () => {
   ElectronUpdater.getElectronUpdater();
 
   mainWindow.setMenu(null);
-  sanityCheckWindow.setMenu(null);
 });
 
 app.on('activate', () => {
