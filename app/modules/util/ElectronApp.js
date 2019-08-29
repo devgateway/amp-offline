@@ -17,6 +17,8 @@ export const IS_LOG_TO_CONSOLE = +process.env.LOG_TO_CONSOLE;
 export const IS_FORCE_LOGGER = process.env.FORCE_LOGGER === 'true';
 /** Show debug window for sanity app */
 export const SHOW_SANITY_APP_DEBUG_WINDOW = +process.env.SANITY_APP_DEBUG_WINDOW === 1;
+/** Show debug window for sanity app */
+export const SKIP_SANITY_CHECK = +process.env.SKIP_SANITY_CHECK === 1;
 /** Tells if to enable the URL checks trigger */
 export const IS_CHECK_URL_CHANGES = !IS_DEV_MODE || +process.env.CHECK_URL_CHANGES;
 /** Controls whether to run changelogs or not */
