@@ -23,6 +23,8 @@
 @media print {
   @page {
     size: A3;
+    margin-left: 0.1cm;
+    margin-right: 0.1cm;
   }
 
   .content {
