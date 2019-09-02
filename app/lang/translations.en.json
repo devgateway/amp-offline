@@ -18,5 +18,17 @@
   "urlNotWorking": "AMP Server is unreachable or wrong URL.",
   "noConnectionToRegistry": "AMP Registry app is unreachable. You can chose 'Other' option to set the URL directly or try to reload the countries options list.",
   "customHint": "Please enter AMP application URL. You can copy it from the AMP Client download page. Please refer to User Manual for more help.",
-  "timeoutError": "Connection timeout. Please check your internet connection."
+  "timeoutError": "Connection timeout. Please check your internet connection.",
+  "AMP Offline Message": "AMP Offline Message",
+  "Confirmation required": "Confirmation required",
+  "OK": "OK",
+  "Cancel": "Cancel",
+  "cleanup": "Cleanup",
+  "tryAgain": "Try Again",
+  "noDiskSpace": "No space left on your device. Free up some space, then try again.",
+  "dbCompatibilityError": "Database is no longer compatible and will be cleaned up. Any changes that have not been synced will be lost.",
+  "dbCorrupted": "Database is corrupted. Please note your actions and send %error report% to the administrator.",
+  "dbCorruptedFallback": "Database is corrupted. Please note your actions and send %logs% and %database% to the administrator.",
+  "dbCleanupFailed": "Database cleanup failed. Please send %error report% to the administrator. You can delete the %database% folder manually.",
+  "dbCleanupFailedFallback": "Database cleanup failed. Please send %logs% and %database% to the administrator. You can delete the %database% folder manually."
 }

@@ -1,7 +1,7 @@
 {
   "name": "amp-offline",
   "productName": "AMP Offline",
-  "version": "1.0.0",
+  "version": "1.0.1-SNAPSHOT",
   "description": "Offline desktop version of the AMP portal.",
   "main": "main.js",
   "scripts": {
@@ -54,6 +54,7 @@
           "lang/**/*",
           "static/**/*",
           "app.html",
+          "splash-screen.html",
           "main.js",
           "master-translations.en.json",
           "amp-help.pdf"
@@ -169,6 +170,7 @@
     "electron-mocha": "^3.4.0",
     "electron-updater": "^2.12.1",
     "env-cmd": "^7.0.0",
+    "file-url": "^2.0.2",
     "font-awesome": "^4.7.0",
     "fs-extra": "^2.0.0",
     "i18next": "^4.1.1",
@@ -196,7 +198,9 @@
     "stack-trace": "0.0.9",
     "stringify-object": "^3.1.0",
     "text-encoding": "^0.6.4",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "urijs": "^1.19.1",
+    "yazl": "^2.5.1"
   },
   "devEngines": {
     "node": ">=6.x",

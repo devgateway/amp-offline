@@ -3,8 +3,10 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { hashHistory, IndexRoute, Route, Router } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
+import { ipcRenderer } from 'electron';
 import configureStore from './store/configureStore';
 import './app.global.css';
+import Sanity from './components/setup/Sanity';
 import AppPage from './containers/AppPage';
 import LoginPage from './containers/LoginPage';
 import DesktopPage from './containers/DesktopPage';
@@ -18,10 +20,14 @@ import auth from './modules/security/Auth';
 import { ampOfflineStartUp } from './actions/StartUpAction';
 import { isForceSyncUp } from './actions/SyncUpAction';
 import Logger from './modules/util/LoggerManager';
-import { LOGIN_URL, SYNCUP_SUMMARY_URL, SYNCUP_REDIRECT_URL } from './utils/Constants';
+import { LOGIN_URL, SYNCUP_REDIRECT_URL, SYNCUP_SUMMARY_URL } from './utils/Constants';
 import SetupPage from './containers/SetupPage';
 import NotificationHelper from './modules/helpers/NotificationHelper';
 import { NOTIFICATION_ORIGIN_DATABASE, NOTIFICATION_SEVERITY_ERROR } from './utils/constants/ErrorConstants';
+import { doSanityCheck } from './actions/SanityCheckAction';
+import * as URLUtils from './utils/URLUtils';
+import { INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
+import * as ElectronApp from './modules/util/ElectronApp';
 
 const logger = new Logger('index');
 
@@ -48,10 +54,17 @@ function handleUnexpectedError(err) {
   const toString = err.toString();
   const json = JSON.stringify(err);
   alert(`${msg}\n\nDetails:\n${toString}\n\n${json}`);
+  // If this error occurs before we show the main window we need to close the app for the user.
+  // For some reason after window becomes active and an error occurs, it still closes the app, which prevents from
+  // getting the error from the console. => Do not close in dev mode (use CTRL^C if needed).
+  if (!global.MAIN_WINDOW_ACTIVE && !ElectronApp.IS_DEV_MODE) {
+    ElectronApp.forceCloseApp();
+  }
 }
 
-ampOfflineStartUp().then(() =>
-  render(
+const normalStartup = () => ampOfflineStartUp().then(() => {
+  ipcRenderer.send(INITIALIZATION_COMPLETE_MSG);
+  return render(
     <Provider store={store}>
       <Router history={history} store={store}>
         <Route path="/" component={AppPage}>
@@ -73,8 +86,29 @@ ampOfflineStartUp().then(() =>
       </Router>
     </Provider>,
     document.getElementById('root')
+  );
+}).catch(handleUnexpectedError);
+
+const sanityApp = () => doSanityCheck().then(() =>
+  render(
+    <Provider store={store}>
+      <Router history={history} store={store}>
+        <Route path="/" component={Sanity} />
+      </Router>
+    </Provider>,
+    document.getElementById('root')
   )
 ).catch(handleUnexpectedError);
+
+const params = URLUtils.parseQuery(window.location.search);
+if (params.sanity === 'true') {
+  logger.log('Starting sanity check app');
+  sanityApp();
+} else {
+  logger.log('Starting the main app');
+  document.getElementById('root').className = 'outerContainer';
+  normalStartup();
+}
 
 window.addEventListener('error', ({ filename, message }) => {
   handleUnexpectedError(`Uncaught error: ${message} IN ${filename}`);

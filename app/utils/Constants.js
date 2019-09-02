@@ -40,9 +40,12 @@ export const COLLECTION_WS_SETTINGS = 'workspace-settings';
 export const COLLECTION_CURRENCY_RATES = 'currency-rates';
 export const COLLECTION_FEATURE_MANAGER = 'feature-manager';
 export const COLLECTION_CONTACTS = 'contacts';
+export const COLLECTION_SANITY_CHECK = 'sanity-check';
 
 export const DB_FILE_PREFIX = 'database';
 export const DB_FILE_EXTENSION = '.db';
+export const TMP_FILE_EXTENSION = '.tmp';
+export const BACKUP_FILE_EXTENSION = '.bkp';
 export const DB_COMMON_DATASTORE_OPTIONS = { autoload: false, corruptAlertThreshold: 0 };
 export const DB_AUTOCOMPACT_INTERVAL_MILISECONDS = 60000;
 export const DB_DEFAULT_QUERY_LIMIT = 999999999;
@@ -106,6 +109,8 @@ export const RATE_SAME_CURRENCY = 1;
 export const RATE_CURRENCY_NOT_FOUND = 1;
 export const CURRENCY_PAIR = 'currency-pair';
 export const VERSION = pkg.version;
+export const VERSION_PATTERN = /(\d+)\.(\d+)(\.(\d+))?(-\w+)?/;
+export const VERSION_PATTERN_GROUPS_TO_EXTRACT = [1, 2, 4, 5];
 export const AMP_COUNTRY_LOGO = 'ampCountryFlag.png';
 export const ASSETS_DIRECTORY = 'assets';
 export const BASE_64_PNG_PREFIX = 'data:image/png;base64,';
@@ -146,7 +151,7 @@ export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
 
 export const OTHER_ID = 999999999;
 export const NR_SYNC_HISTORY_ENTRIES = 20;
-export const NR_LOG_FILES = 100;
+export const NR_LOG_FILES = 150;
 // https://en.wikipedia.org/wiki/ISO_8601#Durations, example: "P1Y2M10DT2H30M"
 export const OLD_SYNC_LOGS_DURATION_ISO_8601 = 'P6M';
 export const NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM = NR_SYNC_HISTORY_ENTRIES;

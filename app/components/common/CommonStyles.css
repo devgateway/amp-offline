@@ -1,0 +1,21 @@
+.url {
+  color: #90C845;
+}
+.action {
+  cursor: pointer;
+  color: #90C845;
+}
+.noAction {
+  color: #767676;
+}
+.blue {
+  color: #3a84b3;
+}
+.justify {
+  text-align: justify;
+  text-justify: inter-word;
+  display: flex;
+}
+.rows > div:not(:last-child) {
+  padding-bottom: 10px;
+}

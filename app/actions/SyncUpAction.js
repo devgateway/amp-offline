@@ -103,7 +103,7 @@ export function dismissSyncAndChooseWorkspace() {
 }
 
 function syncUpSearchHistoryOk(data) {
-  logger.log(`syncUpSearchHistoryOk: ${JSON.stringify(data)}`);
+  logger.log('syncUpSearchHistoryOk');
   return {
     type: STATE_SYNCUP_SHOW_HISTORY,
     actionData: data
