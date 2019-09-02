@@ -41,6 +41,7 @@ export const COLLECTION_WS_SETTINGS = 'workspace-settings';
 export const COLLECTION_CURRENCY_RATES = 'currency-rates';
 export const COLLECTION_FEATURE_MANAGER = 'feature-manager';
 export const COLLECTION_CONTACTS = 'contacts';
+export const COLLECTION_SANITY_CHECK = 'sanity-check';
 export const COLLECTION_RESOURCES = 'resources';
 export const COLLECTION_REPOSITORY = 'repository';
 export const COLLECTION_GAZETTEER = 'gazetteer';
@@ -50,6 +51,8 @@ export const GAZETTEER_DISTANCE_DIVIDE = 3;
 
 export const DB_FILE_PREFIX = 'database';
 export const DB_FILE_EXTENSION = '.db';
+export const TMP_FILE_EXTENSION = '.tmp';
+export const BACKUP_FILE_EXTENSION = '.bkp';
 export const DB_COMMON_DATASTORE_OPTIONS = { autoload: false, corruptAlertThreshold: 0 };
 export const DB_AUTOCOMPACT_INTERVAL_MILISECONDS = 60000;
 export const DB_DEFAULT_QUERY_LIMIT = 999999999;
@@ -179,7 +182,7 @@ export const UPDATE_TMP_FILE = 'amp-offline-installer.tmp';
 
 export const OTHER_ID = 999999999;
 export const NR_SYNC_HISTORY_ENTRIES = 20;
-export const NR_LOG_FILES = 100;
+export const NR_LOG_FILES = 150;
 // https://en.wikipedia.org/wiki/ISO_8601#Durations, example: "P1Y2M10DT2H30M"
 export const OLD_SYNC_LOGS_DURATION_ISO_8601 = 'P6M';
 export const NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM = NR_SYNC_HISTORY_ENTRIES;

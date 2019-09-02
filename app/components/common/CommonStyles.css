@@ -16,3 +16,6 @@
   text-justify: inter-word;
   display: flex;
 }
+.rows > div:not(:last-child) {
+  padding-bottom: 10px;
+}
