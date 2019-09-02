@@ -1,27 +1,30 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setLanguage } from '../../actions/TranslationAction';
 import styles from './i18n.css';
 import Logger from '../../modules/util/LoggerManager';
+import translate from '../../utils/translate';
+import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Switcher component');
 
 class Switcher extends React.Component {
 
   static propTypes = {
-    onChangeLanguage: PropTypes.func,
-    translationReducer: PropTypes.object
-  }
-
-  changeLanguage(lang) {
-    logger.log('changeLanguage');
-    this.props.onChangeLanguage(lang);
-  }
+    onChangeLanguage: PropTypes.func.isRequired,
+    translationReducer: PropTypes.object.isRequired
+  };
 
   renderListOfLanguages() {
-    return this.props.translationReducer.languageList.map((lang) =>
-      <span role="link" key={lang} onClick={this.changeLanguage.bind(this, lang)}> {lang} |</span>
-    );
+    const { translationReducer, onChangeLanguage } = this.props;
+    const options = translationReducer.languageList.reduce((content, lang) => {
+      content.push(<span role="link" key={lang} onClick={() => onChangeLanguage(lang)}>{translate(lang, lang)}</span>);
+      content.push(<span key={Utils.stringToUniqueId('separator')}> | </span>);
+      return content;
+    }, []);
+    options.pop();
+    return options;
   }
 
   render() {
@@ -33,15 +36,15 @@ class Switcher extends React.Component {
   }
 }
 
-/* TODO: Check if is possible to move this section with Redux code to a new TranslationContainer. We did it this way
- because we dont have a router on index.js, then we cant load this container automatically. */
 const mapStateToProps = (state) => {
-  logger.log('mapStateToProps');
-  return state;
+  logger.debug('mapStateToProps');
+  return {
+    translationReducer: state.translationReducer
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
-  logger.log('mapDispatchToProps');
+  logger.debug('mapDispatchToProps');
   return {
     onChangeLanguage: (lan) => {
       dispatch(setLanguage(lan));

@@ -1,15 +1,25 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
+import { IS_DEV_MODE, SHOW_SANITY_APP_DEBUG_WINDOW, SKIP_SANITY_CHECK } from './modules/util/ElectronApp';
+import {
+  CLOSE_SANITY_APP,
+  FORCE_CLOSE_APP,
+  SHOW_SANITY_APP,
+  START_MAIN_APP
+} from './utils/constants/ElectronAppMessages';
 import {
   CLOSE_HELP_WINDOW_MSG,
   CREATE_PDF_WINDOW_MSG,
-  FORCE_CLOSE_APP_MSG,
   INITIALIZATION_COMPLETE_MSG
 } from './utils/constants/MainDevelopmentConstants';
 
 const PDFWindow = require('electron-pdf-window');
 
+const skipSanityCheck = IS_DEV_MODE && SKIP_SANITY_CHECK;
+
 let mainWindow = null;
+let sanityCheckWindow = null;
+let splash = null;
 const isMacOS = process.platform === 'darwin';
 let willQuitApp = !isMacOS;
 
@@ -49,6 +59,17 @@ const installExtensions = async () => {
 };
 
 app.on('ready', async () => {
+  sanityCheckWindow = skipSanityCheck ? null : new BrowserWindow({
+    show: false,
+    width: 640,
+    height: 200,
+    center: true,
+    useContentSize: true,
+    closable: false,
+    resizable: SHOW_SANITY_APP_DEBUG_WINDOW,
+    frame: SHOW_SANITY_APP_DEBUG_WINDOW
+  });
+
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
@@ -57,7 +78,7 @@ app.on('ready', async () => {
   });
 
   // create a new `splash`-Window
-  let splash = new BrowserWindow({
+  splash = new BrowserWindow({
     width: 425,
     height: 285,
     transparent: false,
@@ -71,6 +92,7 @@ app.on('ready', async () => {
     movable: false,
     closable: false
   });
+
   splash.loadURL(`file://${__dirname}/splash-screen.html`);
   splash.once('ready-to-show', () => {
     splash.show();
@@ -78,7 +100,41 @@ app.on('ready', async () => {
 
   await installExtensions();
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  const loadMainApp = () => {
+    mainWindow.loadURL(`file://${__dirname}/app.html`);
+    if (IS_DEV_MODE) {
+      mainWindow.openDevTools();
+    }
+  };
+
+  if (skipSanityCheck) {
+    loadMainApp();
+  } else {
+    sanityCheckWindow.loadURL(`file://${__dirname}/app.html?sanity=true`);
+
+    sanityCheckWindow.webContents.on('did-finish-load', () => {
+      ipcMain.on(SHOW_SANITY_APP, () => {
+        sanityCheckWindow.show();
+        sanityCheckWindow.focus();
+      });
+    });
+
+    ipcMain.on(CLOSE_SANITY_APP, () => {
+      closeWindow(sanityCheckWindow);
+      sanityCheckWindow = null;
+    });
+
+    // if sanity app is closed normally, we .destroy() it that won't trigger a 'close' event
+    sanityCheckWindow.on('close', () => closeApp());
+
+    sanityCheckWindow.setMenu(null);
+  }
+
+  ipcMain.on(START_MAIN_APP, () => loadMainApp());
+
+  ipcMain.on(FORCE_CLOSE_APP, () => {
+    closeApp();
+  });
 
   mainWindow.webContents.on('did-finish-load', () => {
     // Delay showing the main window (blank) until ampOfflineStartUp() is complete.
@@ -107,18 +163,6 @@ app.on('ready', async () => {
     // Close help window if needed.
     if (global.HELP_PDF_WINDOW) {
       global.HELP_PDF_WINDOW.close();
-    }
-  });
-
-  ipcMain.on(FORCE_CLOSE_APP_MSG, () => {
-    app.quit();
-    if (splash) {
-      splash.hide();
-      splash.destroy();
-    }
-    if (mainWindow) {
-      mainWindow.hide();
-      mainWindow.destroy();
     }
   });
 
@@ -184,7 +228,11 @@ app.on('ready', async () => {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.openDevTools();
+    if (!skipSanityCheck && SHOW_SANITY_APP_DEBUG_WINDOW) {
+      sanityCheckWindow.maximize();
+      sanityCheckWindow.openDevTools();
+    }
+
     mainWindow.webContents.on('context-menu', (e, props) => {
       const { x, y } = props;
 
@@ -238,3 +286,15 @@ ipcMain.on(CREATE_PDF_WINDOW_MSG, (event, url) => {
   global.HELP_PDF_WINDOW.loadURL(url);
   return global.HELP_PDF_WINDOW;
 });
+
+const closeApp = () => {
+  [sanityCheckWindow, mainWindow, splash].forEach(closeWindow);
+  app.quit();
+};
+
+const closeWindow = (window) => {
+  if (window) {
+    window.hide();
+    window.destroy();
+  }
+};

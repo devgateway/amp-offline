@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { FORCE_CLOSE_APP_MSG } from '../../utils/constants/MainDevelopmentConstants';
+import { FORCE_CLOSE_APP } from '../../utils/constants/ElectronAppMessages';
 
 const { app, remote, shell, dialog } = require('electron');
 
@@ -15,6 +15,10 @@ export const IS_TEST_MODE = process.env.NODE_ENV === 'test';
 export const IS_LOG_TO_CONSOLE = +process.env.LOG_TO_CONSOLE;
 /** Tells if actually to force the logging to the file even if in dev mode */
 export const IS_FORCE_LOGGER = process.env.FORCE_LOGGER === 'true';
+/** Show debug window for sanity app */
+export const SHOW_SANITY_APP_DEBUG_WINDOW = +process.env.SANITY_APP_DEBUG_WINDOW === 1;
+/** Show debug window for sanity app */
+export const SKIP_SANITY_CHECK = +process.env.SKIP_SANITY_CHECK === 1;
 /** Tells if to enable the URL checks trigger */
 export const IS_CHECK_URL_CHANGES = !IS_DEV_MODE || +process.env.CHECK_URL_CHANGES;
 /** Controls whether to run changelogs or not */
@@ -24,4 +28,4 @@ export const SHELL = shell || (remote && remote.shell);
 /** electron dialog to display OS specific open/save files dialog */
 export const DIALOG = dialog || (remote && remote.dialog);
 
-export const forceCloseApp = () => ipcRenderer.send(FORCE_CLOSE_APP_MSG);
+export const forceCloseApp = () => ipcRenderer.send(FORCE_CLOSE_APP);

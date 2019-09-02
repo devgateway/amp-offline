@@ -31,3 +31,19 @@
   pointer-events: none;
 }
 
+.no_modal {
+}
+
+.no_modal.body {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.no_modal.footer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}

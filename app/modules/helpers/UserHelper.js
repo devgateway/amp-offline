@@ -63,9 +63,10 @@ const UserHelper = {
     return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS);
   },
 
-  generateAMPOfflineHashFromPassword(username, password) {
+  generateAMPOfflineHashFromPassword(username, password, legacyKey) {
     logger.log('generateAMPOfflineHashFromPassword');
-    return AmpClientSecurity.getSecurityKey(username).then(key =>
+    const keyPromise = legacyKey ? Promise.resolve(legacyKey) : AmpClientSecurity.getSecurityKey(username);
+    return keyPromise.then(key =>
       Auth.secureHash(password, key, HASH_ITERATIONS));
   },
 
