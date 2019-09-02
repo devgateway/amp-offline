@@ -37,7 +37,7 @@ class AFMTEFProjectionItem extends Component {
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
     if (!mtefItem[ActivityConstants.CURRENCY].id) {
-      const currencies = activityFieldsManager.getPossibleValuesOptions(FieldPathConstants.FUNDING_CURRENCY_PATH);
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FieldPathConstants.MTEF_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
       mtefItem[ActivityConstants.CURRENCY] = currency;
