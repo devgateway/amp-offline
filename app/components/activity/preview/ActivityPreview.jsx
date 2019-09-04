@@ -92,6 +92,7 @@ export default class ActivityPreview extends Component {
     IconFormatter: PropTypes.func.isRequired,
     DesktopManager: PropTypes.object.isRequired,
     APDocumentPage: PropTypes.func.isRequired,
+    globalSettings: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -120,6 +121,7 @@ export default class ActivityPreview extends Component {
       calendar: this.props.startUpReducer.calendar,
       workspaceReducer: this.props.workspaceReducer,
       userReducer: this.props.userReducer,
+      globalSettings: this.props.startUpReducer.globalSettings,
       Logger,
       translate,
       DateUtils,
