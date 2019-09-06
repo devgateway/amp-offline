@@ -48,12 +48,6 @@ export default class ActivityPreview extends Component {
   };
 
   static childContextTypes = {
-    contactReducer: PropTypes.shape({
-      contactFieldsManager: PropTypes.instanceOf(FieldsManager),
-      contactsByIds: PropTypes.object,
-    }).isRequired,
-    loadActivityForActivityPreview: PropTypes.func.isRequired,
-    unloadActivity: PropTypes.func.isRequired,
     params: PropTypes.shape({
       activityId: PropTypes.string.isRequired
     }).isRequired,
@@ -89,7 +83,6 @@ export default class ActivityPreview extends Component {
 
   getChildContext() {
     return {
-      contactReducer: this.props.contactReducer,
       params: this.props.params,
       startUpReducer: this.props.startUpReducer,
       activityWorkspace: this.props.activityReducer.activityWorkspace,
