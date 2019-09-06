@@ -48,18 +48,6 @@ export default class ActivityPreview extends Component {
   };
 
   static childContextTypes = {
-    activityReducer: PropTypes.shape({
-      isActivityLoading: PropTypes.bool,
-      isActivityLoaded: PropTypes.bool,
-      activity: PropTypes.object,
-      activityWorkspace: PropTypes.object,
-      activityWSManager: PropTypes.object,
-      activityFieldsManager: PropTypes.instanceOf(FieldsManager),
-      activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
-      currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
-      currentWorkspaceSettings: PropTypes.object,
-      errorMessage: PropTypes.object
-    }).isRequired,
     contactReducer: PropTypes.shape({
       contactFieldsManager: PropTypes.instanceOf(FieldsManager),
       contactsByIds: PropTypes.object,
@@ -101,13 +89,9 @@ export default class ActivityPreview extends Component {
 
   getChildContext() {
     return {
-      activityReducer: this.props.activityReducer,
       contactReducer: this.props.contactReducer,
-      loadActivityForActivityPreview: this.props.loadActivityForActivityPreview,
-      unloadActivity: this.props.unloadActivity,
       params: this.props.params,
       startUpReducer: this.props.startUpReducer,
-      activity: this.props.activityReducer.activity,
       activityWorkspace: this.props.activityReducer.activityWorkspace,
       activityWSManager: this.props.activityReducer.activityWSManager,
       activityFieldsManager: this.props.activityReducer.activityFieldsManager,
@@ -139,8 +123,30 @@ export default class ActivityPreview extends Component {
   componentWillUnmount() {
     this.props.unloadActivity();
   }
+  _getMessage() {
+    const { activityReducer } = this.props;
+    let message = null;
+    if (activityReducer.isActivityLoading === true) {
+      message = translate('activityLoading');
+    } else if (activityReducer.isActivityLoaded === true) {
+      if (!activityReducer.activity) {
+        message = translate('activityUnexpectedError');
+      }
+    } else if (activityReducer.errorMessage) {
+      message = `${activityReducer.errorMessage}`;
+    }
+    if (message !== null) {
+      message = <h1>{message}</h1>;
+    }
+    return message;
+  }
 
   render() {
-    return (<ActivityPreviewUI />);
+    const message = this._getMessage();
+    if (message) {
+      return (<div >{message} </div>);
+    } else {
+      return (<ActivityPreviewUI activity={this.props.activityReducer.activity} />);
+    }
   }
 }
