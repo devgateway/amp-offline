@@ -18,6 +18,7 @@ import updateReducer from './UpdateReducer';
 import setupReducer from './SetupReducer';
 import settingReducer from './SettingReducer';
 import helpReducer from './HelpReducer';
+import sanityCheckReducer from './SanityCheckReducer';
 import { STATE_LOGOUT } from '../actions/LoginAction';
 
 const combinedReducers = combineReducers({
@@ -39,7 +40,8 @@ const combinedReducers = combineReducers({
   updateReducer,
   setupReducer,
   settingReducer,
-  helpReducer
+  helpReducer,
+  sanityCheckReducer
 });
 
 const rootReducer = (state, action) => {

@@ -10,11 +10,13 @@ import translate from '../../utils/translate';
  */
 export default class ConfirmationAlert {
   constructor(notification: Notification, actions: Array<FollowUp>, explicitCancel: boolean = true,
-    title: string = translate('Action required')) {
+    // TODO AMPOFFLINE-1480 remove isTranslated; so far all alerts but one come translated => defaults to true
+    title: string, isTranslated: boolean = true) {
+    this._title = title || (isTranslated ? translate('Confirmation required') : 'Confirmation required');
     this._notification = notification;
-    this._title = title;
     this._actions = actions;
     this._explicitCancel = explicitCancel;
+    this._isTranslated = isTranslated;
   }
 
   /**
@@ -43,5 +45,12 @@ export default class ConfirmationAlert {
    */
   get explicitCancel() {
     return this._explicitCancel;
+  }
+
+  /**
+   * @returns {boolean} if the alert comes with all text translated or not
+   */
+  get isTranslated() {
+    return this._isTranslated;
   }
 }
