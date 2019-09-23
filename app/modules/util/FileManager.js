@@ -1,7 +1,7 @@
 import { Constants, UIUtils } from 'amp-ui';
 import fs from 'fs-extra';
 import os from 'os';
-import path from 'path';
+import * as path from 'path';
 import mimeTypes from 'mime-types';
 import readChunk from 'read-chunk';
 import rimraf from 'rimraf';
@@ -32,7 +32,7 @@ const FileManager = {
       if (process.env.NODE_ENV === 'production') {
         dataPath = app.getPath('userData');
       } else {
-        dataPath = '.';
+        dataPath = path.resolve('.');
       }
     }
     return dataPath;
@@ -241,7 +241,16 @@ const FileManager = {
    */
   renameSync(fromPath, ...toPathParts) {
     const fullPath = this.getFullPath(...toPathParts);
-    fs.renameSync(fromPath, fullPath);
+    return this.renameSyncAllFullPaths(fromPath, fullPath);
+  },
+
+  /**
+   * Renames synchronously
+   * @param fromPath full source path
+   * @param toPath full destination path
+   */
+  renameSyncAllFullPaths(fromPath, toPath) {
+    fs.renameSync(fromPath, toPath);
   },
 
   /**

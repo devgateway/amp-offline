@@ -33,7 +33,7 @@ def targetsMap = [
         'Windows and Linux deb 32 & 64 bits': ['win32', 'win64', 'deb32', 'deb64']
     ]
 // TODO exclude develop?
-def isReleaseBranch = branch != null && branch.matches(/master|develop|release.*/)
+def isReleaseBranch = branch != null && branch.matches(/master|develop|pre-release.*|release.*/)
 def defaultTarget = isReleaseBranch ? 'Package All' : 'Windows 64 bits'
 // By default options are listed and sorted ascending and there is no way to configure defaultValue for choices.
 // To ensure that the right default option is selected on automatic build, it must be renamed to be sorted first

@@ -2,6 +2,7 @@ import { ErrorConstants } from 'amp-ui';
 import stringifyObject from 'stringify-object';
 import translate from '../../utils/translate';
 import Logger from '../../modules/util/LoggerManager';
+import ActionDef from '../util/ActionDef';
 
 const logger = new Logger('Notification helper');
 
@@ -69,17 +70,20 @@ export default class NotificationHelper {
    * @param errorObject
    * @param translateMsg translate the message or not (default true for now, since was used this since AMPOFFLINE-122)
    * @param translateDetails if to translate the details or not
+   * @param tagLinks an array of links to use to replace each %tag%
    * @param replacePairs a list of [[src1, dst2], ...] pairs to replace within original message
    * @param severity
    */
   constructor({
                 message, prefix, details, origin, errorCode, errorObject, translateMsg = true, translateDetails = true,
-                replacePairs, severity = ErrorConstants.NOTIFICATION_SEVERITY_ERROR
+                tagActions, replacePairs,
+                severity = ErrorConstants.NOTIFICATION_SEVERITY_ERROR
               }) {
     logger.log('constructor');
     this._prefix = prefix || '';
     this.translateMsg = translateMsg;
     this.translateDetails = translateDetails;
+    this.tagActions = tagActions;
     this._replacePairs = replacePairs;
     if (errorObject) {
       this.message = errorObject.message;
@@ -168,6 +172,14 @@ export default class NotificationHelper {
 
   get severity() {
     return this._severity;
+  }
+
+  get tagActions() {
+    return this._tagActions;
+  }
+
+  set tagActions(tagActions: Array<ActionDef>) {
+    this._tagActions = tagActions;
   }
 
   set message(message) {
