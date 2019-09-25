@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Glyphicon } from 'react-bootstrap';
-import { UIUtils } from 'amp-ui';
+import { UIUtils, ajaxLoader } from 'amp-ui';
 import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
 import tabStyle from '../desktop/ProjectList.css';
@@ -56,7 +56,7 @@ class URLSettings extends Component {
     let content;
     if (availability.isAvailable === undefined) {
       tooltip = translate('testingConnectivity');
-      content = <img className={appStyle.loading_icon} alt="connectivity" />;
+      content = <img className={appStyle.loading_icon} src={ajaxLoader} alt="connectivity" />;
     } else if (availability.isAvailable) {
       tooltip = translate('connectionUp');
       content = <Glyphicon glyph="glyphicon glyphicon-ok-circle text-success" />;

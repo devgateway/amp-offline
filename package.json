@@ -194,7 +194,6 @@
     "react-redux": "^4.4.5",
     "react-router": "^3.0.0",
     "react-router-redux": "^4.0.6",
-    "react-scrollspy": "^3.1.1",
     "read-chunk": "^2.1.0",
     "redux": "^3.6.0",
     "redux-promise-middleware": "^4.2.1",
@@ -218,7 +217,7 @@
   },
   "dependencies": {
     "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#v1.0.0",
-    "amp-ui": "git+ssh://github.com/devgateway/amp-ui#feature/AMPUI-22/migrate-componentes-phaseII",
+    "amp-ui": "git+ssh://github.com/devgateway/amp-ui#feature/AMPUI-39/migrate-final-components-phase-III",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
     "extract-zip": "^1.6.7",

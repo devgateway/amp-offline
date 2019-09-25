@@ -110,4 +110,8 @@ export default class DateUtils {
     // We'll revise, if needed, once we implement the timing synchronization between AMP and AMP Offline client.
     return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);
   }
+
+  static getYearFromDate(date) {
+    return Moment(date).year();
+  }
 }

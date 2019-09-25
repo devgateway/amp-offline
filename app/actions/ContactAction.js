@@ -1,10 +1,9 @@
 import equal from 'fast-deep-equal';
-import { ActivityConstants, Constants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, Constants, FieldPathConstants, FieldsManager, ContactConstants } from 'amp-ui';
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 
-import * as CC from '../utils/constants/ContactConstants';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as Utils from '../utils/Utils';
 import EntityValidator from '../modules/field/EntityValidator';
@@ -67,7 +66,8 @@ export const configureContactManagers = () => (dispatch, ownProps) => dispatch({
 
 export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => {
   const { contactsByIds } = ownProps().contactReducer;
-  return contactIds.map(id => ([id, contactsByIds[id]])).filter(([, c]) => !c || !c[CC.TMP_HYDRATED]).map(([id]) => id);
+  return contactIds.map(id => ([id, contactsByIds[id]])).filter(([, c]) => !c ||
+    !c[ContactConstants.TMP_HYDRATED]).map(([id]) => id);
 };
 
 const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
@@ -91,11 +91,11 @@ const _flagAsFullyHydrated = (contacts, contactFieldsManager, activity) => {
   const aCsMap = activity && Utils.toMapByKey(_getActivityContacts(activity, false));
   contacts.forEach(c => {
     const skipValidationFor = ContactHelper.isNewContact(c) ? ['id'] : null;
-    c[CC.TMP_HYDRATED] = true;
-    c[CC.TMP_ENTITY_VALIDATOR] = new EntityValidator(c, contactFieldsManager, null, skipValidationFor);
+    c[ContactConstants.TMP_HYDRATED] = true;
+    c[ContactConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(c, contactFieldsManager, null, skipValidationFor);
     if (aCsMap) {
       const aCs = aCsMap.get(c.id);
-      aCs[CC.TMP_ENTITY_VALIDATOR] = c[CC.TMP_ENTITY_VALIDATOR];
+      aCs[ContactConstants.TMP_ENTITY_VALIDATOR] = c[ContactConstants.TMP_ENTITY_VALIDATOR];
     }
   });
   return contacts;
@@ -108,8 +108,8 @@ const _findContactsAsSummary = (contactIdsToExclude = []) => {
   });
   const filter = contactIdsToExclude.length ? Utils.toMap('id', { $nin: contactIdsToExclude }) : {};
   const projections = { id: 1 };
-  projections[CC.NAME] = 1;
-  projections[CC.LAST_NAME] = 1;
+  projections[ContactConstants.NAME] = 1;
+  projections[ContactConstants.LAST_NAME] = 1;
   return ContactHelper.findAllContacts(filter, projections).then(_mapById);
 };
 
@@ -132,8 +132,8 @@ const _dehydrateAndSaveContacts = (contacts, teamMemberId, fieldsDef) => {
 // TODO AMP-27748 until contacts API rejects extra fields (contrary to activity API), we are cleaning them up
 const _cleanupLocalFields = (contacts) => {
   contacts.forEach(c => {
-    CC.TMP_FIELDS.forEach(tmpProp => delete c[tmpProp]);
-    (c[CC.ORGANISATION_CONTACTS] || []).forEach(o => delete o[CC.TMP_UNIQUE_ID]);
+    ContactConstants.TMP_FIELDS.forEach(tmpProp => delete c[tmpProp]);
+    (c[ContactConstants.ORGANISATION_CONTACTS] || []).forEach(o => delete o[ContactConstants.TMP_UNIQUE_ID]);
   });
   return contacts;
 };
@@ -142,8 +142,8 @@ const _getOnlyModifiedContacts = (contacts, dbContactsMapById, teamMemberId) => 
   const dbC = dbContactsMapById.get(c.id);
   const toUpdate = !dbC || !equal(c, dbC);
   if (toUpdate) {
-    if (ContactHelper.isNewContact(c) && !c[CC.CREATOR]) {
-      c[CC.CREATOR] = teamMemberId;
+    if (ContactHelper.isNewContact(c) && !c[ContactConstants.CREATOR]) {
+      c[ContactConstants.CREATOR] = teamMemberId;
     }
     ContactHelper.stampClientChange(c);
   }
@@ -170,8 +170,8 @@ const _getActivityContacts = (activity, asIds = true) => {
 export const buildNewActivityContact = (contactFieldsManager) => {
   const contact = {};
   ContactHelper.stampClientChange(contact);
-  contact[CC.TMP_HYDRATED] = true;
-  contact[CC.TMP_ENTITY_VALIDATOR] = new EntityValidator(contact, contactFieldsManager, null, ['id']);
+  contact[ContactConstants.TMP_HYDRATED] = true;
+  contact[ContactConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(contact, contactFieldsManager, null, ['id']);
   return {
     [ActivityConstants.CONTACT]: contact,
     [ActivityConstants.PRIMARY_CONTACT]: false,

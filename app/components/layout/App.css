@@ -16,6 +16,6 @@
 
 .loading_icon {
   width: 20px;
-  content: url('../../assets/images/ajax-loader.gif');
+  /*content: url('../../assets/images/ajax-loader.gif');*/
   margin-left: 3px;
 }

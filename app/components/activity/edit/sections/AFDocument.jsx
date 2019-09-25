@@ -3,14 +3,22 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Panel } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants, FieldPathConstants, FieldsManager, FeatureManager,
-  PossibleValuesManager, APLabel } from 'amp-ui';
+import {
+  ActionIcon,
+  ActivityConstants,
+  APLabel,
+  FeatureManager,
+  FeatureManagerConstants,
+  FieldPathConstants,
+  FieldsManager,
+  Loading,
+  PossibleValuesManager
+} from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
 import { RELATED_DOCUMENTS } from './AFSectionConstants';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import ErrorMessage from '../../../common/ErrorMessage';
-import Loading from '../../../common/Loading';
 import {
   ACTION,
   ADDING_DATE,
@@ -32,12 +40,12 @@ import * as docStyles from './document/AFDocument.css';
 import * as listStyles from '../components/AFList.css';
 import translate from '../../../../utils/translate';
 import DateUtils from '../../../../utils/DateUtils';
-import ActionIcon from '../../../common/ActionIcon';
 import RepositoryManager from '../../../../modules/repository/RepositoryManager';
 import StaticAssetsUtils from '../../../../utils/StaticAssetsUtils';
 import FileManager from '../../../../modules/util/FileManager';
 import { buildNewResource } from '../../../../actions/ResourceAction';
 import Logger from '../../../../modules/util/LoggerManager';
+import { SHELL } from '../../../../modules/util/ElectronApp';
 
 const AF_FIELDS = [TITLE, ADDING_DATE, YEAR_OF_PUBLICATION, FILE_SIZE, TYPE];
 /* following the preferance confirmed by Vanessa G. to keep contacts API fields translations related to Contact Manager,
@@ -67,6 +75,8 @@ class AFDocument extends Component {
     activity: PropTypes.object,
     activityFieldsManager: PropTypes.instanceOf(FieldsManager),
     activityValidator: PropTypes.instanceOf(ActivityValidator),
+    Logger: PropTypes.func.isRequired,
+    translate: PropTypes.func.isRequired,
   };
 
   static propTypes = {
@@ -97,6 +107,8 @@ class AFDocument extends Component {
       activityFieldsManager: this.props.resourceReducer.resourceFieldsManager,
       activityValidator: this.context.activityValidator,
       resourceReducer: this.props.resourceReducer,
+      Logger,
+      translate,
     };
   }
 
@@ -201,8 +213,7 @@ class AFDocument extends Component {
     }
     value = `${value || ''}`;
     return (<APLabel
-      label={value} tooltip={value} dontTranslate labelClass={docStyles.cell}
-      translate={translate} Logger={Logger} />);
+      label={value} tooltip={value} dontTranslate labelClass={docStyles.cell} />);
   }
 
   toDelete(cell) {
@@ -216,11 +227,13 @@ class AFDocument extends Component {
 
   toAction(cell) {
     if (cell.href || cell.action) {
-      const extension = cell.fileName && FileManager.extname(cell.fileName).substring(1);
+      const extension = cell.fileName && FileManager.extname(cell.fileName)
+        .substring(1);
       const iconFile = (extension && `${extension}.gif`) || (cell.href && 'ico_attachment.png');
       const srcIcon = StaticAssetsUtils.getStaticImagePath('doc-icons', iconFile);
       const iconElement = <img src={srcIcon} alt="" onError={this.handleIconError} />;
-      return <ActionIcon iconElement={iconElement} href={cell.href} onClick={cell.action} />;
+      return (<ActionIcon
+        iconElement={iconElement} href={cell.href} onClick={cell.action} openExternal={SHELL.openExternal} />);
     }
     return null;
   }
@@ -234,7 +247,7 @@ class AFDocument extends Component {
     return (
       <BootstrapTable
         data={this.state.docs} options={options} hover
-        headerContainerClass={docStyles.headerContainer} tableContainerClass={docStyles.listContainer} >
+        headerContainerClass={docStyles.headerContainer} tableContainerClass={docStyles.listContainer}>
         {headers}
       </BootstrapTable>
     );
@@ -265,7 +278,7 @@ class AFDocument extends Component {
     }
     const { isResourcesLoading, isContentsLoading, isResourceManagersLoading } = this.props.resourceReducer;
     if (isResourcesLoading || isContentsLoading || isResourceManagersLoading) {
-      return <Loading />;
+      return <Loading Logger={Logger} translate={translate} />;
     }
 
     return (
