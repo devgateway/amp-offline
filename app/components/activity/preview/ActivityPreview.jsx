@@ -4,7 +4,6 @@ import { ActivityPreviewUI, CurrencyRatesManager, FieldsManager, WorkspaceConsta
 import translate from '../../../utils/translate';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import Logger from '../../../modules/util/LoggerManager';
-import IconFormatter from '../../desktop/IconFormatter';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
 import { getAmountsInThousandsMessage, rawNumberToFormattedString } from '../../../../app/utils/NumberUtils';
@@ -62,7 +61,6 @@ export default class ActivityPreview extends Component {
     rawNumberToFormattedString: PropTypes.func.isRequired,
     getActivityContactIds: PropTypes.func.isRequired,
     getAmountsInThousandsMessage: PropTypes.func.isRequired,
-    IconFormatter: PropTypes.func.isRequired,
     APDocumentPage: PropTypes.func.isRequired
   };
 
@@ -85,7 +83,6 @@ export default class ActivityPreview extends Component {
       rawNumberToFormattedString,
       getActivityContactIds,
       getAmountsInThousandsMessage,
-      IconFormatter,
       APDocumentPage
     };
   }
