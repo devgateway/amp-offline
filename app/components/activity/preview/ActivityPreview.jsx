@@ -116,6 +116,7 @@ export default class ActivityPreview extends Component {
     const message = this._getMessage();
     const { activity, activityWSManager, currentWorkspaceSettings } = this.props.activityReducer;
     const { userReducer, workspaceReducer } = this.props;
+
     if (message) {
       return (<div >{message} </div>);
     } else {
