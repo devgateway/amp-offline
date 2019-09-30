@@ -1,4 +1,4 @@
-import { Constants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
+import { Constants, FeatureManagerConstants, FeatureManager, FmManagerHelper } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import { FEATURE_MANAGER_URL } from '../../connectivity/AmpApiConstants';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
@@ -22,7 +22,7 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
 
   doAtomicSyncUp() {
     logger.log('doAtomicSyncUp');
-    const body = this._getRequestBody();
+    const body = FmManagerHelper.getRequestFmSyncUpBody(this.fmPaths);
     return ConnectionHelper.doPost({ url: FEATURE_MANAGER_URL, body, shouldRetry: true })
       .then((fmTree) => {
         fmTree = fmTree && fmTree['fm-settings'];
@@ -41,21 +41,6 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
 
   _hasNewLocalSettingsToPull() {
     return this.fmPaths.some(fmPath => !FeatureManager.hasFMSetting(fmPath));
-  }
-
-  _getRequestBody() {
-    const fmModules = this._getModules(this.fmPaths);
-    return {
-      'reporting-fields': false,
-      'enabled-modules': false,
-      'full-enabled-paths': false,
-      'detail-modules': fmModules,
-      'fm-paths': this.fmPaths
-    };
-  }
-
-  _getModules(fmPaths) {
-    return Array.from(new Set(fmPaths.map((path: String) => path.substring(1, path.indexOf('/', 1)).toUpperCase())));
   }
 
   _setUndetectedFMSettingsAsDisabled(newFmTree) {
