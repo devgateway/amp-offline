@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-lonely-if */
-import { ActivityConstants } from 'amp-ui';
+import { ActivityConstants, ApprovalStatus } from 'amp-ui';
 import * as WC from '../../utils/constants/WorkspaceConstants';
 import * as GSC from '../../utils/constants/GlobalSettingsConstants';
 import Logger from '../../modules/util/LoggerManager';
@@ -8,7 +8,6 @@ import GlobalSettingsManager from '../../modules/util/GlobalSettingsManager';
 import WSSettingsHelpers from '../../modules/helpers/WSSettingsHelper';
 import WorkspaceHelper from '../../modules/helpers/WorkspaceHelper';
 import DateUtils from '../../utils/DateUtils';
-import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 
 const logger = new Logger('Activity status validation');
 
