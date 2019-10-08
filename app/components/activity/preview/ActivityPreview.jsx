@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityPreviewUI, CurrencyRatesManager, FieldsManager, WorkspaceConstants, UserConstants } from 'amp-ui';
+import {
+  ActivityPreviewUI,
+  CurrencyRatesManager,
+  FieldsManager,
+  WorkspaceConstants,
+  UserConstants,
+} from 'amp-ui';
 import translate from '../../../utils/translate';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import Logger from '../../../modules/util/LoggerManager';
@@ -124,18 +130,22 @@ export default class ActivityPreview extends Component {
     } else {
       const activityContext = {
         activityStatus: activity ? DesktopManager.getActivityStatus(activity) : null,
-        userTeamMember: userReducer.teamMember[WorkspaceConstants.WORKSPACE_ID],
-        [WorkspaceConstants.ACCESS_TYPE]: workspaceReducer.currentWorkspace[WorkspaceConstants.ACCESS_TYPE],
-        [WorkspaceConstants.IS_COMPUTED]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_COMPUTED],
-        [WorkspaceConstants.CROSS_TEAM_VALIDATION]:
-          workspaceReducer.currentWorkspace[WorkspaceConstants.CROSS_TEAM_VALIDATION],
-        teamMemberRole: userReducer.teamMember[WorkspaceConstants.ROLE_ID],
-        [WorkspaceConstants.IS_PRIVATE]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_PRIVATE],
+        teamMember: {
+          teamMemberRole: userReducer.teamMember[WorkspaceConstants.ROLE_ID],
+          workspace: {
+            [WorkspaceConstants.ACCESS_TYPE]: workspaceReducer.currentWorkspace[WorkspaceConstants.ACCESS_TYPE],
+            [WorkspaceConstants.IS_COMPUTED]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_COMPUTED],
+            // eslint-disable-next-line max-len
+            [WorkspaceConstants.CROSS_TEAM_VALIDATION]: workspaceReducer.currentWorkspace[WorkspaceConstants.CROSS_TEAM_VALIDATION],
+            [WorkspaceConstants.IS_PRIVATE]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_PRIVATE],
+            id: workspaceReducer.currentWorkspace.id,
+          },
+        },
         calendar: this.props.startUpReducer.calendar,
         activityWorkspace: this.props.activityReducer.activityWorkspace,
         // eslint-disable-next-line max-len
         workspaceLeadData: activityWSManager ? `${activityWSManager[UserConstants.FIRST_NAME]} ${activityWSManager[UserConstants.LAST_NAME]} ${activityWSManager[UserConstants.EMAIL]}` : null,
-        workspaceCurrency: currentWorkspaceSettings ? currentWorkspaceSettings.currency.code : null
+        effectiveCurrency: currentWorkspaceSettings ? currentWorkspaceSettings.currency.code : null
       };
       return (<ActivityPreviewUI activity={activity} activityContext={activityContext} />);
     }

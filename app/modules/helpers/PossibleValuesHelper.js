@@ -252,8 +252,7 @@ const PossibleValuesHelper = {
 
   reverseSortOptions(o1, o2) {
     return CommonPossibleValuesHelper.reverseSortOptions(o1, o2);
-  }
-    ,
+  },
 
   _getInvalidFormatError(errors) {
     const jsonError = JSON.stringify(errors).substring(0, 1000);
