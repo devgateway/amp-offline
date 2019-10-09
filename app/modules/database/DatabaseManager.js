@@ -26,6 +26,27 @@ const logger = new Logger('Database manager');
  * ((object, callback, options)), find: ((object, callback, options))}}
  */
 const DatabaseManager = {
+  getDBPathParts(dbName) {
+    return [Constants.DB_FILE_PREFIX, `${dbName}${Constants.DB_FILE_EXTENSION}`];
+  },
+
+  getDBFullPath(dbName) {
+    return FileManager.getFullPath(...DatabaseManager.getDBPathParts(dbName));
+  },
+
+  getSecureKey() {
+    return secureKey;
+  },
+
+  getLegacyKey() {
+    return AmpClientSecurity.getLegacyKey();
+  },
+
+  setKey(key) {
+    secureKey = key;
+  },
+
+
   _initSecureKey() {
     logger.debug('_initSecureKey');
     const { username } = os.userInfo();
@@ -44,11 +65,11 @@ const DatabaseManager = {
 
   _getCollection(name) {
     logger.debug('_getCollection');
-    const useEncryption = Utils.isReleaseBranch();
+    const useEncryption = Utils.isReleaseBranch() && name !== Constants.COLLECTION_SANITY_CHECK;
     const keyInitPromise = (useEncryption && !secureKey) ? this._initSecureKey() : Promise.resolve();
     return keyInitPromise.then(() => new Promise((resolve, reject) => {
       const newOptions = Object.assign({}, Constants.DB_COMMON_DATASTORE_OPTIONS, {
-        filename: FileManager.getFullPath(Constants.DB_FILE_PREFIX, `${name}${Constants.DB_FILE_EXTENSION}`)
+        filename: DatabaseManager.getDBFullPath(name)
       });
       // Encrypt the DB only when built from a release branch
       if (useEncryption) {

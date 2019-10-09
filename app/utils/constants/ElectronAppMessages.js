@@ -1,0 +1,4 @@
+export const SHOW_SANITY_APP = 'SHOW_SANITY_APP';
+export const CLOSE_SANITY_APP = 'CLOSE_SANITY_APP';
+export const START_MAIN_APP = 'START_MAIN_APP';
+export const FORCE_CLOSE_APP = 'FORCE_CLOSE_APP';

@@ -164,7 +164,7 @@
     "webpack-validator": "^2.2.9",
     "antd": "2.12.1",
     "babel-plugin-webpack-alias": "^2.1.2",
-    "bluebird": "^3.4.6",
+    "bluebird": "3.5.5",
     "bluebird-queue": "0.0.8",
     "bunyan": "^1.8.10",
     "crypto-js": "^3.1.8",
@@ -174,6 +174,7 @@
     "env-cmd": "^7.0.0",
     "fast-deep-equal": "^2.0.1",
     "file-type": "^8.1.0",
+    "file-url": "^2.0.2",
     "font-awesome": "^4.7.0",
     "fs-extra": "^2.0.0",
     "i18next": "^4.1.1",
@@ -204,7 +205,8 @@
     "stringify-object": "^3.1.0",
     "text-encoding": "^0.6.4",
     "underscore": "^1.8.3",
-    "urijs": "^1.19.1"
+    "urijs": "^1.19.1",
+    "yazl": "^2.5.1"
   },
   "devEngines": {
     "node": ">=6.x",
@@ -217,7 +219,7 @@
   },
   "dependencies": {
     "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#v1.0.0",
-    "amp-ui": "git+ssh://github.com/devgateway/amp-ui#feature/AMPUI-39/migrate-final-components-phase-III",
+    "amp-ui": "../amp-ui",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
     "extract-zip": "^1.6.7",

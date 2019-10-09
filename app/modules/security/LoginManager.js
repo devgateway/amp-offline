@@ -4,6 +4,7 @@ import Auth from '../security/Auth';
 import UserHelper from '../helpers/UserHelper';
 import Notification from '../helpers/NotificationHelper';
 import Logger from '../util/LoggerManager';
+import { LEGACY_KEY } from '../../utils/constants/UserConstants';
 
 const logger = new Logger('Login manager');
 
@@ -19,9 +20,9 @@ const LoginManager = {
         return UserHelper.findByEmail(email).then((dbUser) => {
           if (dbUser !== null && dbUser.ampOfflinePassword && dbUser.ampOfflinePassword.toString() !== '') {
             // 3) Check if secureHash(entered password) === <saved user>.ampOfflinePassword.
-            return UserHelper.generateAMPOfflineHashFromPassword(email, password).then((hash) => {
+            return UserHelper.generateAMPOfflineHashFromPassword(email, password, dbUser[LEGACY_KEY]).then((hash) => {
               if (hash === dbUser.ampOfflinePassword) {
-                return resolve({ dbUser });
+                return LoginManager._clearLegacyKey(dbUser, email, password).then(dbU => resolve({ dbUser: dbU }));
               } else {
                 return reject(new Notification({
                   message: 'wrongPassword',
@@ -45,6 +46,17 @@ const LoginManager = {
         }));
       }
     });
+  },
+
+  _clearLegacyKey(dbUser, email, password) {
+    if (dbUser[LEGACY_KEY]) {
+      return UserHelper.generateAMPOfflineHashFromPassword(email, password).then(hash => {
+        dbUser.ampOfflinePassword = hash;
+        delete dbUser[LEGACY_KEY];
+        return UserHelper.saveOrUpdateUser(dbUser);
+      });
+    }
+    return Promise.resolve(dbUser);
   },
 
   clearCredentialsInDB(email) {

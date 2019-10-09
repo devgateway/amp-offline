@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import {
   dismissFullscreenAlert,
   dismissFullscreenAlertWithFollowup,
@@ -18,9 +18,14 @@ import styles from './style.css';
 import Message from './message';
 import FollowUp from './followup';
 import ConfirmationAlert from './confirmationAlert';
+import Switcher from '../i18n/Switcher';
+import MessageWithActions from './MessageWithActions';
 
 class Notifications extends PureComponent {
   static propTypes = {
+    asModal: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
+    language: PropTypes.string.isRequired,
     fullscreenAlerts: PropTypes.arrayOf(PropTypes.instanceOf(Notification)).isRequired,
     fullscreenAlertsWithFollowup: PropTypes.arrayOf(PropTypes.shape({
       notification: PropTypes.instanceOf(Notification).isRequired,
@@ -32,6 +37,10 @@ class Notifications extends PureComponent {
     onDismissFullscreenAlertWithFollowup: PropTypes.func.isRequired,
     onDismissConfirmationAlert: PropTypes.func.isRequired,
     onDismissMessage: PropTypes.func.isRequired,
+  };
+
+  static defaultProps = {
+    asModal: true,
   };
 
   maybeGetFullscreenAlert() {
@@ -79,38 +88,44 @@ class Notifications extends PureComponent {
   }
 
   maybeGetConfirmationAlerts() {
-    const { confirmationAlerts, onDismissConfirmationAlert } = this.props;
+    const { confirmationAlerts, onDismissConfirmationAlert, asModal } = this.props;
 
     if (!confirmationAlerts[0]) return null;
 
     const alert: ConfirmationAlert = confirmationAlerts[0];
+    const isTranslated = alert.isTranslated;
+    const message = isTranslated ? alert.notification.message : translate(alert.notification.message);
 
-    return (
-      <Modal show>
-        <Modal.Header>
-          <Modal.Title>
-            {alert.title}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {alert.notification.message}
-        </Modal.Body>
-        <Modal.Footer>
-          {alert.actions.map((followUp: FollowUp) => (
-            <Button
-              key={followUp.actionButtonTitle} onClick={onDismissConfirmationAlert.bind(null, alert, followUp.action)} >
-              {followUp.actionButtonTitle}
-            </Button>
-            )
-          )}
-          {alert.explicitCancel && (
-            <Button onClick={onDismissConfirmationAlert.bind(null, alert, null)} >
-              {translate('Cancel')}
-            </Button>
-          )}
-        </Modal.Footer>
-      </Modal>
-    );
+    const content = [
+      <Modal.Header key="notification-header">
+        <Modal.Title>
+          <span>{isTranslated ? alert.title : translate(alert.title)}</span>
+          {!isTranslated && <Switcher />}
+        </Modal.Title>
+      </Modal.Header>,
+      <Modal.Body key="notification-body" className={styles.body}>
+        <MessageWithActions message={message} actions={alert.notification.tagActions} />
+      </Modal.Body>,
+      <Modal.Footer key="notification-footer" className={styles.footer}>
+        {alert.actions.map((followUp: FollowUp) => (
+          <Button
+            key={followUp.actionButtonTitle} onClick={onDismissConfirmationAlert.bind(null, alert, followUp.action)}>
+            {isTranslated ? followUp.actionButtonTitle : translate(followUp.actionButtonTitle)}
+          </Button>
+          )
+        )}
+        {alert.explicitCancel && (
+          <Button onClick={onDismissConfirmationAlert.bind(null, alert, null)}>
+            {translate('Cancel')}
+          </Button>
+        )}
+      </Modal.Footer>
+    ];
+
+    if (asModal) {
+      return <Modal show>{content}</Modal>;
+    }
+    return <div className={styles.no_modal}>{content}</div>;
   }
 
   maybeGetMessages() {
@@ -146,7 +161,8 @@ export default connect(
     fullscreenAlerts: state.notificationReducer.fullscreenAlerts,
     fullscreenAlertsWithFollowup: state.notificationReducer.fullscreenAlertsWithFollowup,
     confirmationAlerts: state.notificationReducer.confirmationAlerts,
-    messages: state.notificationReducer.messages
+    messages: state.notificationReducer.messages,
+    language: state.translationReducer.lang
   }),
 
   dispatch => ({
