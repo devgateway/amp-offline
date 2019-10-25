@@ -7,6 +7,7 @@ import { ipcRenderer } from 'electron';
 import { Constants, ErrorConstants } from 'amp-ui';
 import configureStore from './store/configureStore';
 import './app.global.css';
+import Sanity from './components/setup/Sanity';
 import AppPage from './containers/AppPage';
 import LoginPage from './containers/LoginPage';
 import DesktopPage from './containers/DesktopPage';
@@ -22,9 +23,11 @@ import { isForceSyncUp } from './actions/SyncUpAction';
 import Logger from './modules/util/LoggerManager';
 import SetupPage from './containers/SetupPage';
 import NotificationHelper from './modules/helpers/NotificationHelper';
-import translate from './utils/translate';
-import { FORCE_CLOSE_APP_MSG, INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
+import { doSanityCheck } from './actions/SanityCheckAction';
+import * as URLUtils from './utils/URLUtils';
+import { INITIALIZATION_COMPLETE_MSG } from './utils/constants/MainDevelopmentConstants';
 import * as ElectronApp from './modules/util/ElectronApp';
+import translate from './utils/translate';
 
 const logger = new Logger('index');
 
@@ -57,18 +60,18 @@ function handleUnexpectedError(err) {
   // For some reason after window becomes active and an error occurs, it still closes the app, which prevents from
   // getting the error from the console. => Do not close in dev mode (use CTRL^C if needed).
   if (!global.MAIN_WINDOW_ACTIVE && !ElectronApp.IS_DEV_MODE) {
-    ipcRenderer.send(FORCE_CLOSE_APP_MSG);
+    ElectronApp.forceCloseApp();
   }
 }
 
-ampOfflinePreStartUp().then(result => {
+const normalStartup = () => ampOfflinePreStartUp().then(result => {
   if (result !== true) {
     const msg = (result && (result.message || result)) || translate('unexpectedError');
     // at this point we cannot use our app specific notification system
     // Until AMPOFFLINE-253, it will be always in EN, like any other notifications shown before user can switch language
     // eslint-disable-next-line no-alert
     if (!confirm(msg)) {
-      ipcRenderer.send(FORCE_CLOSE_APP_MSG);
+      ElectronApp.forceCloseApp();
       return false;
     }
   }
@@ -104,6 +107,27 @@ ampOfflinePreStartUp().then(result => {
     }
     return isContinue;
   }).catch(handleUnexpectedError);
+
+const sanityApp = () => doSanityCheck().then(() =>
+  render(
+    <Provider store={store}>
+      <Router history={history} store={store}>
+        <Route path="/" component={Sanity} />
+      </Router>
+    </Provider>,
+    document.getElementById('root')
+  )
+).catch(handleUnexpectedError);
+
+const params = URLUtils.parseQuery(window.location.search);
+if (params.sanity === 'true') {
+  logger.log('Starting sanity check app');
+  sanityApp();
+} else {
+  logger.log('Starting the main app');
+  document.getElementById('root').className = 'outerContainer';
+  normalStartup();
+}
 
 window.addEventListener('error', ({ filename, message }) => {
   logger.error(message, filename);
