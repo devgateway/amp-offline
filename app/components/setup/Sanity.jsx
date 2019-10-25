@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unused-prop-types,class-methods-use-this */
 import React, { Component } from 'react';
+import { ErrorConstants } from 'amp-ui';
 import { connect } from 'react-redux';
 import * as PropTypes from 'prop-types';
-import { ErrorConstants } from 'amp-ui';
 import DatabaseSanityStatus from '../../modules/database/sanity/DatabaseSanityStatus';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import NotificationsContainer from '../notifications';

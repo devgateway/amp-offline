@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import { ActionUrl } from 'amp-ui';
 import PropTypes from 'prop-types';
 import ActionDef from '../../modules/util/ActionDef';
-import ActionUrl from '../common/ActionUrl';
 import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
 

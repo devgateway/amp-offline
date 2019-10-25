@@ -1,7 +1,7 @@
+import { Constants } from 'amp-ui';
 import * as path from 'path';
 import * as ERC from '../../utils/constants/ErrorReportConstants';
 import DateUtils from '../../utils/DateUtils';
-import { COLLECTION_SANITY_CHECK, DB_FILE_PREFIX, LOG_DIR, TMP_FILE_EXTENSION } from '../../utils/Constants';
 import * as DatabaseManager from '../database/DatabaseManager';
 import Logger from '../util/LoggerManager';
 import Archiver from '../archiver/Archiver';
@@ -53,11 +53,11 @@ export default class ErrorReportManager {
     const currentLogName = currentLog ? path.basename(currentLog) : null;
     if (currentLogName) {
       const snapshotLogName = `${currentLogName}.snapshot`;
-      FileManager.copyDataFileSync(currentLog, LOG_DIR, snapshotLogName);
-      this._snapshots.push(FileManager.getFullPath(LOG_DIR, snapshotLogName));
+      FileManager.copyDataFileSync(currentLog, Constants.LOG_DIR, snapshotLogName);
+      this._snapshots.push(FileManager.getFullPath(Constants.LOG_DIR, snapshotLogName));
     }
     const testFunc = (file) => file !== currentLogName;
-    this._arch.addFolder(testFunc, LOG_DIR);
+    this._arch.addFolder(testFunc, Constants.LOG_DIR);
   }
 
   _addDB() {
@@ -65,10 +65,10 @@ export default class ErrorReportManager {
     if (this._isEntireDB) {
       logger.log('adding entire DB');
       // TODO for other than sanity use case: take snapshot of all/other DB files that can be "changing"
-      this._takeDBSnapshot(COLLECTION_SANITY_CHECK);
-      const excludeDB = DatabaseManager.getDBPathParts(COLLECTION_SANITY_CHECK).pop();
+      this._takeDBSnapshot(Constants.COLLECTION_SANITY_CHECK);
+      const excludeDB = DatabaseManager.getDBPathParts(Constants.COLLECTION_SANITY_CHECK).pop();
       const filterFunc = (file) => file !== excludeDB;
-      this._arch.addFolder(filterFunc, DB_FILE_PREFIX);
+      this._arch.addFolder(filterFunc, Constants.DB_FILE_PREFIX);
     } else if (this._specificDBNames.length) {
       logger.log(`adding specific DB files: ${this._specificDBNames}`);
       this._specificDBNames.forEach(dbName => this._arch.addFile(...this._takeDBSnapshot(dbName)));
@@ -79,7 +79,7 @@ export default class ErrorReportManager {
 
   _takeDBSnapshot(dbName) {
     logger.log(`_takeDBSnapshot: ${dbName}`);
-    const tmpDBParts = DatabaseManager.getDBPathParts(`${dbName}${TMP_FILE_EXTENSION}`);
+    const tmpDBParts = DatabaseManager.getDBPathParts(`${dbName}${Constants.TMP_FILE_EXTENSION}`);
     FileManager.copyDataFileSync(DatabaseManager.getDBFullPath(dbName), ...tmpDBParts);
     this._snapshots.push(FileManager.getFullPath(...tmpDBParts));
     return tmpDBParts;

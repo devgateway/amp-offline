@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../DatabaseManager';
 import Logger from '../../util/LoggerManager';
-import { BACKUP_FILE_EXTENSION, COLLECTION_USERS, TMP_FILE_EXTENSION } from '../../../utils/Constants';
 import FileManager from '../../util/FileManager';
 import * as Utils from '../../../utils/Utils';
 import DatabaseSanityStatus from './DatabaseSanityStatus';
@@ -51,7 +51,7 @@ export default class DatabaseTransition {
    */
   _transitDB(dbName:string) {
     logger.log(`_transitDB: ${dbName}`);
-    const tmpDBName = `${dbName}${TMP_FILE_EXTENSION}`;
+    const tmpDBName = `${dbName}${Constants.TMP_FILE_EXTENSION}`;
     const tmpPath = DatabaseManager.getDBFullPath(tmpDBName);
     FileManager.deleteFileSync(tmpPath);
     DatabaseManager.setKey(this._legacyKey);
@@ -64,7 +64,7 @@ export default class DatabaseTransition {
   _transitData(dbName: string, tmpDBName: string, data: Array) {
     logger.log('_transitData');
     DatabaseManager.setKey(this._actualKey);
-    if (dbName === COLLECTION_USERS) {
+    if (dbName === Constants.COLLECTION_USERS) {
       data.forEach(u => {
         if (u.ampOfflinePassword && u.ampOfflinePassword.toString().trim() !== '') {
           u[LEGACY_KEY] = this._legacyKey;
@@ -77,7 +77,7 @@ export default class DatabaseTransition {
   _replaceDB(dbName, tmpPath) {
     logger.log('_replaceDB');
     const dbPath = DatabaseManager.getDBFullPath(dbName);
-    const backupPath = DatabaseManager.getDBFullPath(`${dbName}${BACKUP_FILE_EXTENSION}`);
+    const backupPath = DatabaseManager.getDBFullPath(`${dbName}${Constants.BACKUP_FILE_EXTENSION}`);
     try {
       FileManager.deleteFileSync(backupPath);
       FileManager.renameSyncAllFullPaths(dbPath, backupPath);
