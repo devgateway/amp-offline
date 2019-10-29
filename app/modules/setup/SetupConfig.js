@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import FileManager from '../util/FileManager';
-import { DB_FILE_PREFIX, LOG_DIR } from '../../utils/Constants';
 
 /**
  * Application setup utility
@@ -7,11 +7,11 @@ import { DB_FILE_PREFIX, LOG_DIR } from '../../utils/Constants';
  */
 const SetupConfig = {
   getLogsDir() {
-    return FileManager.getFullPath(LOG_DIR);
+    return FileManager.getFullPath(Constants.LOG_DIR);
   },
 
   getDatabaseDir() {
-    return FileManager.getFullPath(DB_FILE_PREFIX);
+    return FileManager.getFullPath(Constants.DB_FILE_PREFIX);
   }
 };
 

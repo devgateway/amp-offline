@@ -69,7 +69,8 @@ export default class ActivityPreview extends Component {
     getActivityContactIds: PropTypes.func.isRequired,
     getAmountsInThousandsMessage: PropTypes.func.isRequired,
     IconFormatter: PropTypes.func.isRequired,
-    APDocumentPage: PropTypes.func.isRequired
+    APDocumentPage: PropTypes.func.isRequired,
+    globalSettings: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -85,6 +86,7 @@ export default class ActivityPreview extends Component {
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
       resourceReducer: this.props.resourceReducer,
+      globalSettings: this.props.startUpReducer.globalSettings,
       Logger,
       translate,
       DateUtils,
