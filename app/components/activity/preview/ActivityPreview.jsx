@@ -5,7 +5,7 @@ import {
   CurrencyRatesManager,
   FieldsManager,
   WorkspaceConstants,
-  UserConstants,
+  UserConstants
 } from 'amp-ui';
 import translate from '../../../utils/translate';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
@@ -13,7 +13,6 @@ import Logger from '../../../modules/util/LoggerManager';
 import IconFormatter from '../../desktop/IconFormatter';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
-import { getAmountsInThousandsMessage, rawNumberToFormattedString } from '../../../../app/utils/NumberUtils';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { APDocumentPage } from '../../../containers/ResourcePage';
 
@@ -65,9 +64,7 @@ export default class ActivityPreview extends Component {
     Logger: PropTypes.func.isRequired,
     translate: PropTypes.func.isRequired,
     DateUtils: PropTypes.func.isRequired,
-    rawNumberToFormattedString: PropTypes.func.isRequired,
     getActivityContactIds: PropTypes.func.isRequired,
-    getAmountsInThousandsMessage: PropTypes.func.isRequired,
     IconFormatter: PropTypes.func.isRequired,
     APDocumentPage: PropTypes.func.isRequired,
     globalSettings: PropTypes.object.isRequired
@@ -90,9 +87,7 @@ export default class ActivityPreview extends Component {
       Logger,
       translate,
       DateUtils,
-      rawNumberToFormattedString,
       getActivityContactIds,
-      getAmountsInThousandsMessage,
       IconFormatter,
       APDocumentPage
     };

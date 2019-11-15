@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager, PossibleValuesManager,
-  ContactConstants } from 'amp-ui';
-import { DEFAULT_DATE_FORMAT } from '../../utils/constants/GlobalSettingsConstants';
+  ContactConstants, GlobalSettingsConstants } from 'amp-ui';
 import translate from '../../utils/translate';
 import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
@@ -185,7 +184,7 @@ export default class EntityValidator {
   }
 
   _initGenericErrors() {
-    const gsDateFormat = GlobalSettingsManager.getSettingByKey(DEFAULT_DATE_FORMAT);
+    const gsDateFormat = GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.DEFAULT_DATE_FORMAT);
     this.invalidValueError = translate('invalidValue');
     this.invalidString = translate('invalidString');
     this.invalidNumber = translate('invalidNumber2');

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel, Tab, Tabs } from 'react-bootstrap';
-import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager, GlobalSettingsConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import { FUNDING } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -15,7 +15,6 @@ import AFFundingOrganizationSelect from './funding/components/AFFundingOrganizat
 import styles from './funding/AFFunding.css';
 import AFUtils from './../util/AFUtils';
 import GlobalSettingsManager from '../../../../modules/util/GlobalSettingsManager';
-import * as GSC from '../../../../utils/constants/GlobalSettingsConstants';
 
 const logger = new Logger('AF funding');
 
@@ -187,7 +186,7 @@ class AFFunding extends Component {
             });
           }
 
-          if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
+          if (GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
             return (<Tab
               eventKey={tabIndex} key={Math.random()}
               title={`${funding[ActivityConstants.FUNDING_DONOR_ORG_ID][ActivityConstants.EXTRA_INFO][ActivityConstants.ACRONYM]} (${funding.acronym})`}
@@ -286,7 +285,7 @@ class AFFunding extends Component {
   render() {
     const ppc = this.context.activity[ActivityConstants.PPC_AMOUNT];
     const overviewTabHasErrors = ppc && ppc.errors && ppc.errors.length;
-    if (GlobalSettingsManager.getSettingByKey(GSC.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
+    if (GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_FUNDING_SECTION_TAB_VIEW) === 'true') {
       return (<div>
         <Tabs
           defaultActiveKey={0} onSelect={this._tabSelect} id="funding-tabs-container-tabs"

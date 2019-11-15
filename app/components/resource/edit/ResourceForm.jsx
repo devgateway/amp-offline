@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonToolbar, Col, FormGroup, Grid, Row } from 'react-bootstrap';
-import { ValueConstants, FieldsManager } from 'amp-ui';
+import { ValueConstants, FieldsManager, GlobalSettingsConstants } from 'amp-ui';
 import Logger from '../../../modules/util/LoggerManager';
 import * as RC from '../../../utils/constants/ResourceConstants';
 import AFField from '../../activity/edit/components/AFField';
@@ -11,14 +11,13 @@ import translate from '../../../utils/translate';
 import FileDialog from '../../../modules/util/FileDialog';
 import FileManager from '../../../modules/util/FileManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
-import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
 import * as resStyles from './ResourceForm.css';
 import { validate } from '../../../actions/ResourceAction';
 
 const logger = new Logger('ResourceForm');
 // columns size
 const CS = 6;
-const getMaxSizeMB = () => GlobalSettingsManager.getSettingByKey(GS_MAXIMUM_FILE_SIZE_MB);
+const getMaxSizeMB = () => GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_MAXIMUM_FILE_SIZE_MB);
 
 /**
  * Resource Form

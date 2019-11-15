@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn, SizePerPageDropDown } from 'react-bootstrap-table';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, NumberUtils } from 'amp-ui';
 import classNames from 'classnames';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
@@ -14,7 +14,6 @@ import LinkFormatter from './LinkFormatter';
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
 import * as WC from '../../utils/constants/WorkspaceConstants';
 import Logger from '../../modules/util/LoggerManager';
-import NumberUtils from '../../utils/NumberUtils';
 import { stripTags } from '../../utils/Utils';
 
 const logger = new Logger('Project list');
