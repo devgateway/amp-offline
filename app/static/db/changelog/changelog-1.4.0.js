@@ -1,10 +1,9 @@
 /* eslint-disable max-len */
-import { ActivityConstants, Constants, FieldPathConstants, AllApprovalStatuses } from 'amp-ui';
+import { ActivityConstants, Constants, FieldPathConstants, AllApprovalStatuses, GlobalSettingsConstants } from 'amp-ui';
 import * as RC from '../../../utils/constants/ResourceConstants';
 import * as Utils from '../../../utils/Utils';
 import * as CurrencyRatesHelper from '../../../modules/helpers/CurrencyRatesHelper';
 import * as MC from '../../../utils/constants/MigrationsConstants';
-import * as GSC from '../../../utils/constants/GlobalSettingsConstants';
 import * as GlobalSettingsHelper from '../../../modules/helpers/GlobalSettingsHelper';
 import * as CSC from '../../../utils/constants/ClientSettingsConstants';
 import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
@@ -192,7 +191,7 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }, {
-          func: () => GlobalSettingsHelper.findByKey(GSC.DEFAULT_COUNTRY).then(dc =>
+          func: () => GlobalSettingsHelper.findByKey(GlobalSettingsConstants.DEFAULT_COUNTRY).then(dc =>
             !dc || !dc.value || ['ht', 'td'].includes(dc.value.toLowerCase())),
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE

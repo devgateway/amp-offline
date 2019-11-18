@@ -2,10 +2,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, NumberUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
 
 const logger = new Logger('AF overall funding totals');

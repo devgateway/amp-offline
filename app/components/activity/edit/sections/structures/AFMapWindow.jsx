@@ -7,12 +7,11 @@ import { Button, Modal } from 'react-bootstrap';
 import L from 'leaflet';
 import LD from 'leaflet-draw';
 import path from 'path';
-import { ActivityConstants, Constants } from 'amp-ui';
+import { ActivityConstants, Constants, GlobalSettingsConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import styles from './AFMapWindow.css';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
-import * as GSC from '../../../../../utils/constants/GlobalSettingsConstants';
 import FileManager from '../../../../../modules/util/FileManager';
 import AFMapPopup from './AFMapPopup';
 import GazetteerHelper from '../../../../../modules/helpers/GazetteerHelper';
@@ -223,8 +222,8 @@ export default class AFMapWindow extends Component {
   generateMap() {
     // TODO: make these customizable or automatic from available tiles?
     const zoom = MapTilesUtils.getMaxMinZoom();
-    const lat = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LATITUDE));
-    const lng = Number(GlobalSettingsManager.getSettingByKey(GSC.GS_LONGITUDE));
+    const lat = Number(GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_LATITUDE));
+    const lng = Number(GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_LONGITUDE));
     const cp = translate('mapCR')
       .replace('%basemap%', '<a href=\'http://openstreetmap.org/copyright\' target=\'_blank\'>OpenStreetMap</a>');
     const node = L.DomUtil.create('div', styles.map, document.getElementById('map'));
