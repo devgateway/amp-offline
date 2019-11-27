@@ -1,5 +1,6 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { VERSION, COLLECTION_SANITY_CHECK } from '../../utils/Constants';
+import { VERSION } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import * as SCC from '../../utils/constants/SanityCheckConstants';
@@ -26,7 +27,7 @@ const SanityStatusHelper = {
     logger.debug('findCurrentVersionTransitionStatus');
     const filter = Utils.toMap(SCC.VERSION, VERSION);
     filter[SCC.TYPE] = SCC.TYPE_TRANSITION;
-    return DatabaseManager.findOne(filter, COLLECTION_SANITY_CHECK);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_SANITY_CHECK);
   },
 
   /**
@@ -37,7 +38,7 @@ const SanityStatusHelper = {
     logger.debug('findCurrentVersionPostUpgradeStatus');
     const filter = Utils.toMap(SCC.VERSION, VERSION);
     filter[SCC.TYPE] = SCC.TYPE_POST_UPGRADE;
-    return DatabaseManager.findOne(filter, COLLECTION_SANITY_CHECK);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_SANITY_CHECK);
   },
 
   /**
@@ -60,7 +61,7 @@ const SanityStatusHelper = {
     filter[SCC.TYPE] = SCC.TYPE_STANDARD;
     filter[SCC.VERSION] = VERSION;
     filter[SCC.DB_HEAL_STATUS] = { $ne: SCC.STATUS_SUCCESS };
-    return DatabaseManager.findOne(filter, COLLECTION_SANITY_CHECK);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_SANITY_CHECK);
   },
 
   /**
@@ -70,7 +71,7 @@ const SanityStatusHelper = {
     logger.debug('hasCurrentVersionStandardStatus');
     const filter = Utils.toMap(SCC.VERSION, VERSION);
     filter[SCC.TYPE] = SCC.TYPE_STANDARD;
-    return DatabaseManager.count(filter, COLLECTION_SANITY_CHECK).then(count => count > 0);
+    return DatabaseManager.count(filter, Constants.COLLECTION_SANITY_CHECK).then(count => count > 0);
   },
 
   /**
@@ -80,7 +81,7 @@ const SanityStatusHelper = {
    */
   findAll(filter) {
     logger.debug('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_SANITY_CHECK);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_SANITY_CHECK);
   },
 
   /**
@@ -93,7 +94,7 @@ const SanityStatusHelper = {
     if (!sanityStatus.id) {
       sanityStatus.id = Utils.stringToUniqueId('');
     }
-    return DatabaseManager.saveOrUpdate(sanityStatus.id, sanityStatus, COLLECTION_SANITY_CHECK);
+    return DatabaseManager.saveOrUpdate(sanityStatus.id, sanityStatus, Constants.COLLECTION_SANITY_CHECK);
   },
 
 
@@ -104,7 +105,7 @@ const SanityStatusHelper = {
    */
   removeById(id) {
     logger.log('removeById');
-    return DatabaseManager.removeById(id, COLLECTION_SANITY_CHECK);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_SANITY_CHECK);
   }
 
 };

@@ -1,9 +1,9 @@
 import { describe, it, before } from 'mocha';
+import { GlobalSettingsConstants } from 'amp-ui';
 import * as ActivityHelper from '../../../app/modules/helpers/ActivityHelper';
 import * as WorkspaceHelper from '../../../app/modules/helpers/WorkspaceHelper';
 import * as GlobalSettingsHelper from '../../../app/modules/helpers/GlobalSettingsHelper';
 import * as WorkspaceManager from '../../../app/modules/workspace/WorkspaceManager';
-import * as GSC from '../../../app/utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../../app/utils/Utils';
 
 const chai = require('chai');
@@ -17,8 +17,8 @@ const activities = require('./activities.json');
 const workspaces = require('./workspaces.json');
 
 const gs1 = {};
-gs1[GSC.SHOW_WORKSPACE_FILTER_KEY] = 'true';
-gs1[GSC.FILTER_BY_DATE_HIDE_PROJECTS] = 'false';
+gs1[GlobalSettingsConstants.SHOW_WORKSPACE_FILTER_KEY] = 'true';
+gs1[GlobalSettingsConstants.FILTER_BY_DATE_HIDE_PROJECTS] = 'false';
 
 const NO_WORKSPACE_FILTERS_WS_ID = 1;
 const WORKSPACE_FILTERS_AS_FILTERS_WS_ID = 16;

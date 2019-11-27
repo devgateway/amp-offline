@@ -1,5 +1,4 @@
-import { ActivityConstants } from 'amp-ui';
-import NumberUtils from '../../utils/NumberUtils';
+import { ActivityConstants, NumberUtils } from 'amp-ui';
 
 /**
  * Activity funding totals helper

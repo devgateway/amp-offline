@@ -1,5 +1,5 @@
 import { Validator } from 'jsonschema';
-import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants, CommonPossibleValuesHelper } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import Notification from './NotificationHelper';
 import Logger from '../../modules/util/LoggerManager';
@@ -247,49 +247,11 @@ const PossibleValuesHelper = {
    * @return {{id: String, field-path: (Array|*), possible-options: { id: (String|Integer) }}}
    */
   transformToClientUsage([fieldPath, possibleOptionsFromAMP]) {
-    const fieldPathParts = !fieldPath ? [] : fieldPath.split('~');
-    const possibleOptions = this._transformOptions(possibleOptionsFromAMP);
-    const possibleValuesForLocalUsage = {
-      id: fieldPath,
-      [FieldPathConstants.FIELD_PATH]: fieldPathParts,
-      [FieldPathConstants.FIELD_OPTIONS]: possibleOptions
-    };
-    return possibleValuesForLocalUsage;
-  },
-
-  _transformOptions(possibleOptionsFromAMP, parentId, possibleOptions = { }) {
-    if (Array.isArray(possibleOptionsFromAMP)) {
-      possibleOptionsFromAMP.forEach(option => {
-        possibleOptions[option.id] = option;
-        option.parentId = parentId;
-        if (option.children) {
-          this._transformOptions(option.children, option.id, possibleOptions);
-          // sort once at sync up
-          option.reverseSortedChildren = option.children.sort(this.reverseSortOptions).map(o => o.id);
-          delete option.children;
-        }
-      });
-    } else {
-      // delegating data structure validation to the point it will be saved to DB, now keeping options as is
-      possibleOptions = possibleOptionsFromAMP;
-    }
-    return possibleOptions;
+    return CommonPossibleValuesHelper.transformToClientUsage([fieldPath, possibleOptionsFromAMP]);
   },
 
   reverseSortOptions(o1, o2) {
-    if (o1 === o2) {
-      return 0;
-    }
-    if (o1 === null || (o2 && o1.value === null)) {
-      return 1;
-    }
-    if (o2 === null || o2.value === null) {
-      return -1;
-    }
-    if (o1.extra_info && o1.extra_info.index !== undefined) {
-      return o2.extra_info.index - o1.extra_info.index;
-    }
-    return o1.value.localeCompare(o2.value) * (-1);
+    return CommonPossibleValuesHelper.reverseSortOptions(o1, o2);
   },
 
   _getInvalidFormatError(errors) {

@@ -1,16 +1,14 @@
 /* eslint-disable max-len */
-import { ActivityConstants, Constants, FieldPathConstants } from 'amp-ui';
+import { ActivityConstants, Constants, FieldPathConstants, AllApprovalStatuses, GlobalSettingsConstants } from 'amp-ui';
 import * as RC from '../../../utils/constants/ResourceConstants';
 import * as Utils from '../../../utils/Utils';
 import * as CurrencyRatesHelper from '../../../modules/helpers/CurrencyRatesHelper';
 import * as MC from '../../../utils/constants/MigrationsConstants';
-import * as GSC from '../../../utils/constants/GlobalSettingsConstants';
 import * as GlobalSettingsHelper from '../../../modules/helpers/GlobalSettingsHelper';
 import * as CSC from '../../../utils/constants/ClientSettingsConstants';
 import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
 import * as ActivityHelper from '../../../modules/helpers/ActivityHelper';
 import logger from '../ChangelogLogger';
-import { ALL_APPROVAL_STATUSES } from '../../../utils/constants/ApprovalStatus';
 import DateUtils from '../../../utils/DateUtils';
 
 // AMPOFFLINE-1312-configure-web-link-resource_type
@@ -193,7 +191,7 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }, {
-          func: () => GlobalSettingsHelper.findByKey(GSC.DEFAULT_COUNTRY).then(dc =>
+          func: () => GlobalSettingsHelper.findByKey(GlobalSettingsConstants.DEFAULT_COUNTRY).then(dc =>
             !dc || !dc.value || ['ht', 'td'].includes(dc.value.toLowerCase())),
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
@@ -257,7 +255,7 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: [...ALL_APPROVAL_STATUSES.map(as => ({
+        changes: [...AllApprovalStatuses.map(as => ({
           update: {
             table: Constants.COLLECTION_ACTIVITIES,
             field: ActivityConstants.APPROVAL_STATUS,

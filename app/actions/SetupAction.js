@@ -1,8 +1,7 @@
-import { Constants, ErrorConstants } from 'amp-ui';
+import { Constants, ErrorConstants, GlobalSettingsConstants } from 'amp-ui';
 import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
 import * as CSC from '../utils/constants/ClientSettingsConstants';
-import * as GSC from '../utils/constants/GlobalSettingsConstants';
 import * as URLUtils from '../utils/URLUtils';
 import Logger from '../modules/util/LoggerManager';
 import {
@@ -289,7 +288,7 @@ export function checkAmpRegistryForUpdates() {
 
 function getAmpRegistrySetting(setupConfigSetting) {
   const serverId = getRegisteredServerId();
-  const countryGS = GlobalSettingsManager.getSettingByKey(GSC.DEFAULT_COUNTRY);
+  const countryGS = GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.DEFAULT_COUNTRY);
   let iso2 = setupConfigSetting.value.iso2 || countryGS;
   iso2 = iso2 && iso2.toLowerCase();
   return SetupManager.getSetupOptions()

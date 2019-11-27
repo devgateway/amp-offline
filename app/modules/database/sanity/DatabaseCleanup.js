@@ -1,6 +1,6 @@
+import { Constants } from 'amp-ui';
 import DatabaseSanityStatus from './DatabaseSanityStatus';
 import * as SCC from '../../../utils/constants/SanityCheckConstants';
-import { COLLECTION_SANITY_CHECK } from '../../../utils/Constants';
 import FileManager from '../../util/FileManager';
 import DateUtils from '../../../utils/DateUtils';
 import Logger from '../../util/LoggerManager';
@@ -16,8 +16,8 @@ export default class DatabaseCleanup {
     logger.log('constructor');
     this.status = status;
     this.remainingDBs = new Set(status.details.remainingCorruptedDBNames);
-    if (!this.remainingDBs.has(COLLECTION_SANITY_CHECK)) {
-      this.allDBNames = allDBNames.filter(n => n !== COLLECTION_SANITY_CHECK);
+    if (!this.remainingDBs.has(Constants.COLLECTION_SANITY_CHECK)) {
+      this.allDBNames = allDBNames.filter(n => n !== Constants.COLLECTION_SANITY_CHECK);
     } else {
       this.allDBNames = allDBNames;
     }
@@ -35,7 +35,7 @@ export default class DatabaseCleanup {
           throw new Error(`File is in use and could not be deleted: ${fullFileName}`);
         }
         this.remainingDBs.delete(dbName);
-        if (COLLECTION_SANITY_CHECK === dbName) {
+        if (Constants.COLLECTION_SANITY_CHECK === dbName) {
           this.status.isSanityDBCorrupted = false;
         }
       });

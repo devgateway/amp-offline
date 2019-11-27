@@ -5,14 +5,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ActivityConstants, FeatureManagerConstants, CurrencyRatesManager, FieldPathConstants,
-  FieldsManager, CalendarConstants } from 'amp-ui';
+  FieldsManager, CalendarConstants, GlobalSettingsConstants } from 'amp-ui';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
 import styles from './AFFundingDetailItem.css';
 import translate from '../../../../../utils/translate';
 import * as Types from '../../components/AFComponentTypes';
 import GlobalSettingsManager from '../../../../../modules/util/GlobalSettingsManager';
-import { GS_YEAR_RANGE_START, GS_YEARS_IN_RANGE } from '../../../../../utils/constants/GlobalSettingsConstants';
 import * as AFUtils from '../../util/AFUtils';
 
 /**
@@ -37,14 +36,14 @@ class AFMTEFProjectionItem extends Component {
     const { activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     // When adding a new item we select the default currency like in AMP.
     if (!mtefItem[ActivityConstants.CURRENCY].id) {
-      const currencies = activityFieldsManager.getPossibleValuesOptions(FieldPathConstants.FUNDING_CURRENCY_PATH);
+      const currencies = activityFieldsManager.getPossibleValuesOptions(FieldPathConstants.MTEF_CURRENCY_PATH);
       const wsCurrencyCode = currentWorkspaceSettings.currency.code;
       const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
       mtefItem[ActivityConstants.CURRENCY] = currency;
     }
     const isFiscalCalendar = calendar[CalendarConstants.IS_FISCAL];
-    const range = Number(GlobalSettingsManager.getSettingByKey(GS_YEARS_IN_RANGE));
-    const startYear = Number(GlobalSettingsManager.getSettingByKey(GS_YEAR_RANGE_START));
+    const range = Number(GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_YEARS_IN_RANGE));
+    const startYear = Number(GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_YEAR_RANGE_START));
     return (<div className={afStyles.full_width}>
       <table>
         <tbody>

@@ -2,10 +2,9 @@
  * Created by Anya on 24/04/2017.
  */
 import Moment from 'moment';
-import { ErrorConstants } from 'amp-ui';
+import { ErrorConstants, GlobalSettingsConstants } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
 import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../modules/connectivity/AmpApiConstants';
-import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import * as ErrorNotificationHelper from '../modules/helpers/ErrorNotificationHelper';
 import translate from '../utils/translate';
@@ -56,7 +55,7 @@ export default class DateUtils {
   }
 
   static getGSDateFormat() {
-    return GlobalSettingsManager.getSettingByKey(DEFAULT_DATE_FORMAT).toUpperCase();
+    return GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase();
   }
 
   static getDateTimeFormat() {

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import { NumberUtils } from 'amp-ui';
 import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
-import NumberUtils from '../../../../utils/NumberUtils';
 
 const logger = new Logger('AF number');
 
