@@ -27,7 +27,7 @@ export default class ProjectList extends Component {
 
   static linkFormatter(cell, row) {
     return (
-      <LinkFormatter cell={cell} row={row} translate={translate}/>
+      <LinkFormatter cell={cell} row={row} translate={translate} />
     );
   }
 

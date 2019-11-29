@@ -5,8 +5,7 @@ import {
   CurrencyRatesManager,
   FieldsManager,
   WorkspaceConstants,
-  UserConstants,
-  IconFormatter
+  UserConstants
 } from 'amp-ui';
 import translate from '../../../utils/translate';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
@@ -88,7 +87,6 @@ export default class ActivityPreview extends Component {
       translate,
       DateUtils,
       getActivityContactIds,
-      IconFormatter,
       APDocumentPage
     };
   }
