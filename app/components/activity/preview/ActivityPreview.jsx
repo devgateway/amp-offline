@@ -10,7 +10,6 @@ import {
 import translate from '../../../utils/translate';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import Logger from '../../../modules/util/LoggerManager';
-import IconFormatter from '../../desktop/IconFormatter';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
 import { getActivityContactIds } from '../../../actions/ContactAction';
@@ -88,7 +87,6 @@ export default class ActivityPreview extends Component {
       translate,
       DateUtils,
       getActivityContactIds,
-      IconFormatter,
       APDocumentPage
     };
   }
@@ -122,6 +120,7 @@ export default class ActivityPreview extends Component {
     const message = this._getMessage();
     const { activity, activityWSManager, currentWorkspaceSettings } = this.props.activityReducer;
     const { userReducer, workspaceReducer } = this.props;
+
     if (message) {
       return (<div >{message} </div>);
     } else {
