@@ -14,7 +14,8 @@ import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { APDocumentPage } from '../../../containers/ResourcePage';
-
+import FileManager from '../../../modules/util/FileManager';
+import CircularJSON from 'circular-json';
 const logger = new Logger('Activity preview');
 
 /**
@@ -40,7 +41,7 @@ export default class ActivityPreview extends Component {
       contactFieldsManager: PropTypes.instanceOf(FieldsManager),
       contactsByIds: PropTypes.object,
     }).isRequired,
-    resourceReducer: PropTypes.object.isRequired,
+    //resourceReducer: PropTypes.object.isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     params: PropTypes.shape({
@@ -58,13 +59,12 @@ export default class ActivityPreview extends Component {
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     contactFieldsManager: PropTypes.instanceOf(FieldsManager),
     contactsByIds: PropTypes.object,
-    resourceReducer: PropTypes.object,
+    //resourceReducer: PropTypes.object,
     calendar: PropTypes.object,
     Logger: PropTypes.func.isRequired,
     translate: PropTypes.func.isRequired,
     DateUtils: PropTypes.func.isRequired,
     getActivityContactIds: PropTypes.func.isRequired,
-    IconFormatter: PropTypes.func.isRequired,
     APDocumentPage: PropTypes.func.isRequired,
     globalSettings: PropTypes.object.isRequired
   };
@@ -81,7 +81,7 @@ export default class ActivityPreview extends Component {
       contactsByIds: this.props.contactReducer.contactsByIds,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
-      resourceReducer: this.props.resourceReducer,
+      //globalSettings: this.props.resourceReducer,
       globalSettings: this.props.startUpReducer.globalSettings,
       Logger,
       translate,
@@ -143,6 +143,13 @@ export default class ActivityPreview extends Component {
         workspaceLeadData: activityWSManager ? `${activityWSManager[UserConstants.FIRST_NAME]} ${activityWSManager[UserConstants.LAST_NAME]} ${activityWSManager[UserConstants.EMAIL]}` : null,
         effectiveCurrency: currentWorkspaceSettings ? currentWorkspaceSettings.currency.code : null
       };
+      if(activity !== undefined){
+        FileManager.writeDataFile(CircularJSON.stringify(activity), 'jsons', 'activity.json');
+      }
+      if(this.props.activityReducer.activityFieldsManager !== undefined){
+        FileManager.writeDataFile(CircularJSON.stringify(this.props.activityReducer.activityFieldsManager.fieldsDef), 'jsons', 'fieldsDef.json');
+      }
+      FileManager.writeDataFile(CircularJSON.stringify(this.props.contactReducer.contactsByIds) ,'jsons', 'contactsByIds.json');
       return (<ActivityPreviewUI activity={activity} activityContext={activityContext} />);
     }
   }
