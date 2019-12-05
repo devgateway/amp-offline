@@ -14,8 +14,6 @@ import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { APDocumentPage } from '../../../containers/ResourcePage';
-import FileManager from '../../../modules/util/FileManager';
-import CircularJSON from 'circular-json';
 const logger = new Logger('Activity preview');
 
 /**
@@ -143,13 +141,6 @@ export default class ActivityPreview extends Component {
         workspaceLeadData: activityWSManager ? `${activityWSManager[UserConstants.FIRST_NAME]} ${activityWSManager[UserConstants.LAST_NAME]} ${activityWSManager[UserConstants.EMAIL]}` : null,
         effectiveCurrency: currentWorkspaceSettings ? currentWorkspaceSettings.currency.code : null
       };
-      if(activity !== undefined){
-        FileManager.writeDataFile(CircularJSON.stringify(activity), 'jsons', 'activity.json');
-      }
-      if(this.props.activityReducer.activityFieldsManager !== undefined){
-        FileManager.writeDataFile(CircularJSON.stringify(this.props.activityReducer.activityFieldsManager.fieldsDef), 'jsons', 'fieldsDef.json');
-      }
-      FileManager.writeDataFile(CircularJSON.stringify(this.props.contactReducer.contactsByIds) ,'jsons', 'contactsByIds.json');
       return (<ActivityPreviewUI activity={activity} activityContext={activityContext} />);
     }
   }
