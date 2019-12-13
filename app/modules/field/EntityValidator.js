@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { ActivityConstants, ValueConstants, FieldPathConstants, FieldsManager, PossibleValuesManager,
-  ContactConstants, GlobalSettingsConstants } from 'amp-ui';
+  ContactConstants, GlobalSettingsConstants, DateConstants } from 'amp-ui';
 import translate from '../../utils/translate';
 import Logger from '../util/LoggerManager';
 import GlobalSettingsManager from '../util/GlobalSettingsManager';
@@ -11,7 +11,6 @@ import * as Utils from '../../utils/Utils';
 import { CLIENT_CHANGE_ID, VALIDATE_ON_CHANGE_ONLY } from '../../utils/constants/EntityConstants';
 import * as RC from '../../utils/constants/ResourceConstants';
 import FieldDefinition from './FieldDefinition';
-import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../connectivity/AmpApiConstants';
 
 const logger = new Logger('EntityValidator');
 
@@ -191,7 +190,7 @@ export default class EntityValidator {
     this.invalidBoolean = translate('invalidBoolean');
     this.invalidTitle = translate('duplicateTitle');
     this.invalidDate = translate('invalidDate').replace('%gs-format%', gsDateFormat);
-    this.invalidTimestamp = translate('invalidDate').replace('%gs-format%', API_LONG_DATE_FORMAT);
+    this.invalidTimestamp = translate('invalidDate').replace('%gs-format%', DateConstants.API_LONG_DATE_FORMAT);
   }
 
   _validateValue(objects, asDraft, fieldDef: FieldDefinition, fieldPath) {
@@ -274,12 +273,12 @@ export default class EntityValidator {
         }
       } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_DATE) {
         if (!(typeof value === 'string' || value instanceof String)
-          || !(value !== '' && DateUtils.isValidDateFormat(value, API_SHORT_DATE_FORMAT))) {
+          || !(value !== '' && DateUtils.isValidDateFormat(value, DateConstants.API_SHORT_DATE_FORMAT))) {
           this.processValidationResult(obj, fieldPath, this.invalidDate.replace('%value%', value));
         }
       } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_TIMESTAMP) {
         if (!(typeof value === 'string' || value instanceof String)
-          || !(value !== '' && DateUtils.isValidDateFormat(value, API_LONG_DATE_FORMAT))) {
+          || !(value !== '' && DateUtils.isValidDateFormat(value, DateConstants.API_LONG_DATE_FORMAT))) {
           this.processValidationResult(obj, fieldPath, this.invalidTimestamp.replace('%value%', value));
         }
       }

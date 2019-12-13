@@ -6,6 +6,7 @@ import Logger from '../modules/util/LoggerManager';
 import translate from '../utils/translate';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
+import DateUtils from '../utils/DateUtils';
 import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
@@ -157,6 +158,8 @@ export function loadGlobalSettings() {
       Logger
     });
     NumberUtils.createLanguage();
+    DateUtils.setGSDateFormat(
+      GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     return gsData;
   });
   store.dispatch({
