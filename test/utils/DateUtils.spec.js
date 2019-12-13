@@ -27,35 +27,35 @@ describe('@@ DateUtils @@', () => {
   it('should convert a timestamp to the config DD/MM/YYYY', () => {
     GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(defaultDateConfig));
     DateUtils.setGSDateFormat(GlobalSettingsManager.getSettingByKey(
-      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase())
+      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('04/02/2015');
   });
 
   it('should convert a timestamp to the config DD/MMM/YYYY', () => {
     GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(altDateConfig1));
     DateUtils.setGSDateFormat(GlobalSettingsManager.getSettingByKey(
-      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase())
+      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('04/Feb/2015');
   });
 
   it('should convert a timestamp to the config MM/DD/YYYY', () => {
     GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(altDateConfig2));
     DateUtils.setGSDateFormat(GlobalSettingsManager.getSettingByKey(
-      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase())
+      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('02/04/2015');
   });
 
   it('should convert a timestamp to the  config MMM/DD/YYYY', () => {
     GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(altDateConfig3));
     DateUtils.setGSDateFormat(GlobalSettingsManager.getSettingByKey(
-      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase())
+      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     expect(DateUtils.createFormattedDate('2015-02-04T12:06:32.000+0000')).to.equal('Feb/04/2015');
   });
 
   it('should throw an error for an invalid date', () => {
     GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(defaultDateConfig));
     DateUtils.setGSDateFormat(GlobalSettingsManager.getSettingByKey(
-      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase())
+      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     expect(DateUtils.createFormattedDate.bind(null, 'not a date')).to.throw(NotificationHelper);
   });
 });
