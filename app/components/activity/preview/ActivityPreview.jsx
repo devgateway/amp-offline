@@ -14,6 +14,7 @@ import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { APDocumentPage } from '../../../containers/ResourcePage';
+
 const logger = new Logger('Activity preview');
 
 /**
@@ -39,7 +40,7 @@ export default class ActivityPreview extends Component {
       contactFieldsManager: PropTypes.instanceOf(FieldsManager),
       contactsByIds: PropTypes.object,
     }).isRequired,
-    //resourceReducer: PropTypes.object.isRequired,
+    // resourceReducer: PropTypes.object.isRequired,
     loadActivityForActivityPreview: PropTypes.func.isRequired,
     unloadActivity: PropTypes.func.isRequired,
     params: PropTypes.shape({
@@ -57,7 +58,7 @@ export default class ActivityPreview extends Component {
     activityFundingTotals: PropTypes.instanceOf(ActivityFundingTotals),
     contactFieldsManager: PropTypes.instanceOf(FieldsManager),
     contactsByIds: PropTypes.object,
-    //resourceReducer: PropTypes.object,
+    // resourceReducer: PropTypes.object,
     calendar: PropTypes.object,
     Logger: PropTypes.func.isRequired,
     translate: PropTypes.func.isRequired,
@@ -79,7 +80,7 @@ export default class ActivityPreview extends Component {
       contactsByIds: this.props.contactReducer.contactsByIds,
       activityFundingTotals: this.props.activityReducer.activityFundingTotals,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
-      //globalSettings: this.props.resourceReducer,
+      // globalSettings: this.props.resourceReducer,
       globalSettings: this.props.startUpReducer.globalSettings,
       Logger,
       translate,
