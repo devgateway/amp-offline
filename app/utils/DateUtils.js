@@ -21,6 +21,10 @@ export default class DateUtils {
     gSDateFormat = pGSDateFormat;
   }
 
+  static getGSDateFormat() {
+    return gSDateFormat;
+  }
+
   /**
    * This method simply extracts the short date part of a timestamp, assuming timestamp format includes date format
    * @param timestamp
