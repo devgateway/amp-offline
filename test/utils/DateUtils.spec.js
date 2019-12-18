@@ -58,4 +58,12 @@ describe('@@ DateUtils @@', () => {
       GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     expect(DateUtils.createFormattedDate.bind(null, 'not a date')).to.throw(NotificationHelper);
   });
+
+  it('should return same date format', () => {
+    GlobalSettingsManager.setGlobalSettings(GlobalSettingsManager.buildGS(defaultDateConfig));
+    DateUtils.setGSDateFormat(GlobalSettingsManager.getSettingByKey(
+      GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
+    expect(DateUtils.getGSDateFormat()).to.equal(defaultDateConfig.dateFormat.toUpperCase());
+
+  });
 });
