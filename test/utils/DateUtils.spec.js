@@ -64,6 +64,5 @@ describe('@@ DateUtils @@', () => {
     DateUtils.setGSDateFormat(GlobalSettingsManager.getSettingByKey(
       GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     expect(DateUtils.getGSDateFormat()).to.equal(defaultDateConfig.dateFormat.toUpperCase());
-
   });
 });
