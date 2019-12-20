@@ -5,7 +5,8 @@ import {
   CurrencyRatesManager,
   FieldsManager,
   WorkspaceConstants,
-  UserConstants
+  UserConstants,
+  GlobalSettingsConstants
 } from 'amp-ui';
 import translate from '../../../utils/translate';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
@@ -115,33 +116,40 @@ export default class ActivityPreview extends Component {
     return message;
   }
 
+  generateActivityContext() {
+    const { activity, activityWSManager, currentWorkspaceSettings } = this.props.activityReducer;
+    const { startUpReducer, userReducer, workspaceReducer, activityReducer } = this.props;
+    const activityContext = {
+      activityStatus: activity ? DesktopManager.getActivityStatus(activity) : null,
+      teamMember: {
+        teamMemberRole: userReducer.teamMember[WorkspaceConstants.ROLE_ID],
+        workspace: {
+          [WorkspaceConstants.ACCESS_TYPE]: workspaceReducer.currentWorkspace[WorkspaceConstants.ACCESS_TYPE],
+          [WorkspaceConstants.IS_COMPUTED]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_COMPUTED],
+          // eslint-disable-next-line max-len
+          [WorkspaceConstants.CROSS_TEAM_VALIDATION]: workspaceReducer.currentWorkspace[WorkspaceConstants.CROSS_TEAM_VALIDATION],
+          [WorkspaceConstants.IS_PRIVATE]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_PRIVATE],
+          id: workspaceReducer.currentWorkspace.id,
+        },
+      },
+      calendar: startUpReducer.calendar,
+      activityWorkspace: activityReducer.activityWorkspace,
+      // eslint-disable-next-line max-len
+      workspaceLeadData: activityWSManager ? `${activityWSManager[UserConstants.FIRST_NAME]} ${activityWSManager[UserConstants.LAST_NAME]} ${activityWSManager[UserConstants.EMAIL]}` : null,
+      effectiveCurrency: currentWorkspaceSettings ? currentWorkspaceSettings.currency.code : null,
+      reorderFundingItemId: startUpReducer.globalSettings[GlobalSettingsConstants.REORDER_FUNDING_ITEMS]
+    };
+    return activityContext;
+  }
+
   render() {
     const message = this._getMessage();
-    const { activity, activityWSManager, currentWorkspaceSettings } = this.props.activityReducer;
-    const { userReducer, workspaceReducer } = this.props;
+    const { activity } = this.props.activityReducer;
 
     if (message) {
       return (<div >{message} </div>);
     } else {
-      const activityContext = {
-        activityStatus: activity ? DesktopManager.getActivityStatus(activity) : null,
-        teamMember: {
-          teamMemberRole: userReducer.teamMember[WorkspaceConstants.ROLE_ID],
-          workspace: {
-            [WorkspaceConstants.ACCESS_TYPE]: workspaceReducer.currentWorkspace[WorkspaceConstants.ACCESS_TYPE],
-            [WorkspaceConstants.IS_COMPUTED]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_COMPUTED],
-            // eslint-disable-next-line max-len
-            [WorkspaceConstants.CROSS_TEAM_VALIDATION]: workspaceReducer.currentWorkspace[WorkspaceConstants.CROSS_TEAM_VALIDATION],
-            [WorkspaceConstants.IS_PRIVATE]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_PRIVATE],
-            id: workspaceReducer.currentWorkspace.id,
-          },
-        },
-        calendar: this.props.startUpReducer.calendar,
-        activityWorkspace: this.props.activityReducer.activityWorkspace,
-        // eslint-disable-next-line max-len
-        workspaceLeadData: activityWSManager ? `${activityWSManager[UserConstants.FIRST_NAME]} ${activityWSManager[UserConstants.LAST_NAME]} ${activityWSManager[UserConstants.EMAIL]}` : null,
-        effectiveCurrency: currentWorkspaceSettings ? currentWorkspaceSettings.currency.code : null
-      };
+      const activityContext = this.generateActivityContext();
       return (<ActivityPreviewUI activity={activity} activityContext={activityContext} />);
     }
   }
