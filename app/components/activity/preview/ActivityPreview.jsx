@@ -136,11 +136,10 @@ export default class ActivityPreview extends Component {
       // eslint-disable-next-line max-len
       workspaceLeadData: activityWSManager ? `${activityWSManager[UserConstants.FIRST_NAME]} ${activityWSManager[UserConstants.LAST_NAME]} ${activityWSManager[UserConstants.EMAIL]}` : null,
       effectiveCurrency: currentWorkspaceSettings ? currentWorkspaceSettings.currency.code : null,
-      reorderFundingItemId: startUpReducer.globalSettings[GlobalSettingsConstants.REORDER_FUNDING_ITEMS],
+      reorderFundingItemId: Number(startUpReducer.globalSettings[GlobalSettingsConstants.REORDER_FUNDING_ITEMS]),
       versionHistoryInformation: {
         showVersionHistory: false
-      },
-      showActivityWorkspaces: false
+      }
     };
     return activityContext;
   }
