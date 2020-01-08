@@ -139,7 +139,8 @@ export default class ActivityPreview extends Component {
       reorderFundingItemId: startUpReducer.globalSettings[GlobalSettingsConstants.REORDER_FUNDING_ITEMS],
       versionHistoryInformation: {
         showVersionHistory: false
-      }
+      },
+      showActivityWorkspaces: false
     };
     return activityContext;
   }
