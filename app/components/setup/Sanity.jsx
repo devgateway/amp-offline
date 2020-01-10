@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unused-prop-types,class-methods-use-this */
 import React, { Component } from 'react';
-import { ErrorConstants } from 'amp-ui'
+import { ErrorConstants } from 'amp-ui';
 import { connect } from 'react-redux';
 import * as PropTypes from 'prop-types';
 import DatabaseSanityStatus from '../../modules/database/sanity/DatabaseSanityStatus';

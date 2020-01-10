@@ -51,7 +51,7 @@ class Logout extends React.Component {
       // DO NOT add href since it can cause AMPOFFLINE-878
       return (
         <a
-          className={style.navbar_right_side}
+          className={[style.navbar_right_side, style.logout_link].join(' ')}
           onClick={this.onLogout.bind(this)}>{translate('logout')}
         </a>
       );

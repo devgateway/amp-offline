@@ -146,6 +146,7 @@
     "minimist": "^1.2.0",
     "mocha": "^3.1.2",
     "react-bootstrap-table": "^3.4.1",
+    "react-scrollspy": "3.1.1",
     "require-context": "^1.1.0",
     "redux-logger": "^2.7.4",
     "redux-mock-store": "^1.2.1",
@@ -219,7 +220,7 @@
   },
   "dependencies": {
     "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#v1.0.0",
-    "amp-ui": "../amp-ui",
+    "amp-ui": "git+ssh://github.com/devgateway/amp-ui#feature/AMPUI-61/new-functionality",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
     "extract-zip": "^1.6.7",

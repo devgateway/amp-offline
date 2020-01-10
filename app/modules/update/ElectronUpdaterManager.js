@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import Moment from 'moment';
-import { Constants, ErrorConstants } from 'amp-ui';
+import { Constants, ErrorConstants, NumberUtils } from 'amp-ui';
 import ElectronUpdater from './ElectronUpdater';
 import RequestConfig from '../connectivity/RequestConfig';
 import Logger from '../util/LoggerManager';
@@ -8,7 +8,6 @@ import { ELECTRON_UPDATER_CHECK_URL } from '../connectivity/AmpApiConstants';
 import * as Notification from '../helpers/NotificationHelper';
 import translate from '../../utils/translate';
 import * as Utils from '../../utils/Utils';
-import NumberUtils from '../../utils/NumberUtils';
 
 const autoUpdater = ElectronUpdater.getElectronUpdater();
 

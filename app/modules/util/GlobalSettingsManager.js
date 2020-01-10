@@ -1,9 +1,5 @@
+import { GlobalSettingsConstants } from 'amp-ui';
 import Logger from './LoggerManager';
-import {
-  DEFAULT_DATE_FORMAT,
-  GS_AMOUNT_OPTION_IN_UNITS, GS_AMOUNTS_IN_THOUSANDS, GS_DEFAULT_DECIMAL_SEPARATOR, GS_DEFAULT_GROUPING_SEPARATOR,
-  GS_DEFAULT_NUMBER_FORMAT
-} from '../../utils/constants/GlobalSettingsConstants';
 import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Global settings manager');
@@ -12,7 +8,7 @@ const DEFAULT_GLOBAL_SETTINGS = {
   decimalSeparator: '.',
   groupSeparator: ',',
   format: '###.###',
-  amountsInThousands: GS_AMOUNT_OPTION_IN_UNITS,
+  amountsInThousands: GlobalSettingsConstants.GS_AMOUNT_OPTION_IN_UNITS,
   dateFormat: 'DD/MM/YYYY'
 };
 
@@ -24,11 +20,11 @@ export default class GlobalSettingsManager {
   static _current = new GlobalSettingsManager(GlobalSettingsManager.buildGS(DEFAULT_GLOBAL_SETTINGS));
 
   static buildGS({ decimalSeparator, groupSeparator, format, amountsInThousands, dateFormat }) {
-    const gsData = Utils.toMap(GS_DEFAULT_DECIMAL_SEPARATOR, decimalSeparator);
-    gsData[GS_DEFAULT_GROUPING_SEPARATOR] = groupSeparator;
-    gsData[GS_DEFAULT_NUMBER_FORMAT] = format;
-    gsData[GS_AMOUNTS_IN_THOUSANDS] = amountsInThousands;
-    gsData[DEFAULT_DATE_FORMAT] = dateFormat;
+    const gsData = Utils.toMap(GlobalSettingsConstants.GS_DEFAULT_DECIMAL_SEPARATOR, decimalSeparator);
+    gsData[GlobalSettingsConstants.GS_DEFAULT_GROUPING_SEPARATOR] = groupSeparator;
+    gsData[GlobalSettingsConstants.GS_DEFAULT_NUMBER_FORMAT] = format;
+    gsData[GlobalSettingsConstants.GS_AMOUNTS_IN_THOUSANDS] = amountsInThousands;
+    gsData[GlobalSettingsConstants.DEFAULT_DATE_FORMAT] = dateFormat;
     return gsData;
   }
 

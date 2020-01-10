@@ -4,8 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Moment from 'moment';
 import { Col, FormGroup, Grid, Row } from 'react-bootstrap';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
-import * as GS from '../../../../../utils/constants/GlobalSettingsConstants';
+import { ActivityConstants, FieldsManager, GlobalSettingsConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import AFFundingClassificationPanel from './AFFundingClassificationPanel';
 import AFFundingDetailContainer from './AFFundingDetailContainer';
@@ -45,7 +44,7 @@ export default class AFFundingContainer extends Component {
     logger.debug('_addMTEFProjectionItem');
     const mtefItem = {};
     // Get default year from GS and auto-increment each new item.
-    let year = GlobalSettingsManager.getSettingByKey(GS.GS_CURRENT_FISCAL_YEAR);
+    let year = GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_CURRENT_FISCAL_YEAR);
     if (this.props.funding[ActivityConstants.MTEF_PROJECTIONS] &&
       this.props.funding[ActivityConstants.MTEF_PROJECTIONS].length > 0) {
       year = Math.max(...this.props.funding[ActivityConstants.MTEF_PROJECTIONS]

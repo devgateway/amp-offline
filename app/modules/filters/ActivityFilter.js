@@ -1,11 +1,10 @@
-import { ActivityConstants, ErrorConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
-import { SHOW_WORKSPACE_FILTER_KEY, FILTER_BY_DATE_HIDE_PROJECTS } from '../../utils/constants/GlobalSettingsConstants';
+import { ActivityConstants, ErrorConstants, FieldPathConstants, FieldsManager, ApprovalStatus,
+  GlobalSettingsConstants } from 'amp-ui';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
 import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
 import PossibleValuesHelper from '../helpers/PossibleValuesHelper';
 import Logger from '../../modules/util/LoggerManager';
-import ApprovalStatus from '../../utils/constants/ApprovalStatus';
 
 const logger = new Logger('Activity filter');
 
@@ -44,7 +43,7 @@ export default class ActivityFilter {
     logger.log('_prepareFilter');
     return Promise.all([
       this._getWorkspaces(),
-      GlobalSettingsHelper.findByKey(FILTER_BY_DATE_HIDE_PROJECTS),
+      GlobalSettingsHelper.findByKey(GlobalSettingsConstants.FILTER_BY_DATE_HIDE_PROJECTS),
       PossibleValuesHelper.findById(FieldPathConstants.LOCATION_PATH)
     ])
       .then(([workspaces, dateFilterHidesProjects, locationOptions]) => {
@@ -61,12 +60,13 @@ export default class ActivityFilter {
 
   _getWorkspaces() {
     logger.log('_getWorkspaces');
-    return GlobalSettingsHelper.findByKey(SHOW_WORKSPACE_FILTER_KEY).then((showWSFilterInTeamWS) => {
-      if ((showWSFilterInTeamWS && showWSFilterInTeamWS.value === 'true') || this._isComputed) {
-        return this._filters.workspaces;
-      }
-      return null;
-    });
+    return GlobalSettingsHelper.findByKey(GlobalSettingsConstants.SHOW_WORKSPACE_FILTER_KEY).then(
+      (showWSFilterInTeamWS) => {
+        if ((showWSFilterInTeamWS && showWSFilterInTeamWS.value === 'true') || this._isComputed) {
+          return this._filters.workspaces;
+        }
+        return null;
+      });
   }
 
   /**

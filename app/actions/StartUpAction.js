@@ -1,11 +1,12 @@
-import { Constants, PossibleValuesManager, FeatureManager } from 'amp-ui';
+import { Constants, PossibleValuesManager, FeatureManager, GlobalSettingsConstants, NumberUtils } from 'amp-ui';
 import store from '../index';
 import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
 import Logger from '../modules/util/LoggerManager';
-import NumberUtils from '../utils/NumberUtils';
+import translate from '../utils/translate';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
+import DateUtils from '../utils/DateUtils';
 import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
@@ -20,7 +21,6 @@ import {
 import RepositoryManager from '../modules/repository/RepositoryManager';
 import { deleteOrphanResources } from './ResourceAction';
 import SetupManager from '../modules/setup/SetupManager';
-import { GS_DEFAULT_CALENDAR } from '../utils/constants/GlobalSettingsConstants';
 import CalendarHelper from '../modules/helpers/CalendarHelper';
 import { dbMigrationsManager } from './DBMigrationsAction';
 import * as MC from '../utils/constants/MigrationsConstants';
@@ -145,7 +145,21 @@ export function loadGlobalSettings() {
       });
       GlobalSettingsManager.setGlobalSettings(gsData);
     }
+    NumberUtils.registerSettings({
+      gsDefaultGroupSeparator: GlobalSettingsManager.getSettingByKey(
+        GlobalSettingsConstants.GS_DEFAULT_GROUPING_SEPARATOR),
+      gsDefaultDecimalSeparator: GlobalSettingsManager.getSettingByKey(
+        GlobalSettingsConstants.GS_DEFAULT_DECIMAL_SEPARATOR),
+      gsDefaultNumberFormat: GlobalSettingsManager.getSettingByKey(
+        GlobalSettingsConstants.GS_DEFAULT_NUMBER_FORMAT),
+      gsAmountInThousands: GlobalSettingsManager.getSettingByKey(
+        GlobalSettingsConstants.GS_AMOUNTS_IN_THOUSANDS),
+      Translate: translate,
+      Logger
+    });
     NumberUtils.createLanguage();
+    DateUtils.setGSDateFormat(
+      GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     return gsData;
   });
   store.dispatch({
@@ -157,7 +171,7 @@ export function loadGlobalSettings() {
 
 export function loadCalendar() {
   logger.log('loadCalendar');
-  const id = GlobalSettingsManager.getSettingByKey(GS_DEFAULT_CALENDAR);
+  const id = GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_DEFAULT_CALENDAR);
   const calendarPromise = CalendarHelper.findCalendarById(Number(id)).then(calendar => (calendar));
   store.dispatch({
     type: STATE_CALENDAR,

@@ -1,5 +1,5 @@
 .wrap {
-  min-height:84%;
+  min-height: 84%;
   background-color: #ffffff;
 }
 
@@ -18,4 +18,19 @@
   width: 20px;
   /*content: url('../../assets/images/ajax-loader.gif');*/
   margin-left: 3px;
+}
+
+@media print {
+  @page {
+    size: A3;
+    margin-left: 0.1cm;
+    margin-right: 0.1cm;
+  }
+
+  .content {
+    margin-top: 80px !important;
+    margin-left: 0 !important;
+    padding-bottom: 5px !important;
+    background-color: #ffffff !important;
+  }
 }

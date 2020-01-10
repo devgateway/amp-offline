@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { hashHistory, IndexRoute, Route, Router } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { ipcRenderer } from 'electron';
-import { Constants, ErrorConstants } from 'amp-ui';
+import { Constants, ErrorConstants, ActivityLinks } from 'amp-ui';
 import configureStore from './store/configureStore';
 import './app.global.css';
 import Sanity from './components/setup/Sanity';
@@ -64,7 +64,14 @@ function handleUnexpectedError(err) {
   }
 }
 
+function _registerActivityLinks() {
+  const editLink = { isExternal: false, url: Constants.ACTIVITY_EDIT_URL };
+  const viewLink = { isExternal: false, url: Constants.ACTIVITY_PREVIEW_URL };
+  ActivityLinks.registerLinks({ editLink, viewLink });
+}
+
 const normalStartup = () => ampOfflinePreStartUp().then(result => {
+  _registerActivityLinks();
   if (result !== true) {
     const msg = (result && (result.message || result)) || translate('unexpectedError');
     // at this point we cannot use our app specific notification system
