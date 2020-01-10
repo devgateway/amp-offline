@@ -1,8 +1,13 @@
+import { Constants } from 'amp-ui';
 import store from '../index';
 import * as UrlUtils from '../utils/URLUtils';
-import { UPDATE_URL } from '../utils/Constants';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
-import { connectivityCheck, getStatusNotification, isAmpAccessible, MANDATORY_UPDATE } from './ConnectivityAction';
+import {
+  connectivityCheck,
+  getStatusNotification,
+  isAmpSuitableForSetupOrUpdate,
+  MANDATORY_UPDATE
+} from './ConnectivityAction';
 import UpdateManager from '../modules/update/UpdateManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import { UPDATE_INSTALLER_PATH } from '../utils/constants/ClientSettingsConstants';
@@ -29,7 +34,7 @@ export const STATE_UPDATE_FAILED = 'STATE_UPDATE_FAILED';
 
 export function goToDownloadPage() {
   store.dispatch({ type: STATE_UPDATE_PENDING });
-  UrlUtils.forwardTo(UPDATE_URL);
+  UrlUtils.forwardTo(Constants.UPDATE_URL);
 }
 
 export function dismissUpdate() {
@@ -90,7 +95,7 @@ export function downloadUpdate(/* id */) {
   // const downloadPromise = UpdateManager.downloadInstaller(id);
   const updater: ElectronUpdaterManager = ElectronUpdaterManager.getUpdater(updateProgress);
   const downloadPromise = connectivityCheck().then(status => {
-    if (isAmpAccessible(status, true)) {
+    if (isAmpSuitableForSetupOrUpdate(status)) {
       return updater.downloadUpdate().catch(errorMsg => {
         if (errorMsg instanceof String) {
           return new NotificationHelper({ message: errorMsg, translateMsg: false });

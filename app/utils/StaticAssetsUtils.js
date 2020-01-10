@@ -1,4 +1,4 @@
-import { DOC_ICONS, IMAGES_DIR, STATIC_DIR } from './Constants';
+import { Constants } from 'amp-ui';
 import FileManager from '../modules/util/FileManager';
 
 /**
@@ -8,11 +8,16 @@ import FileManager from '../modules/util/FileManager';
  */
 const StaticAssetsUtils = {
   getStaticImagePath(...imgPathParts) {
-    return FileManager.getFullPathForBuiltInResources(STATIC_DIR, IMAGES_DIR, ...imgPathParts);
+    return FileManager.getFullPathForBuiltInResources(Constants.STATIC_DIR, Constants.IMAGES_DIR, ...imgPathParts);
   },
 
   getDocIconPath(iconFileName) {
-    return this.getStaticImagePath(DOC_ICONS, iconFileName);
+    return this.getStaticImagePath(Constants.DOC_ICONS, iconFileName);
+  },
+
+  getMigrationsPath() {
+    return FileManager.getFullPathForBuiltInResources(Constants.STATIC_DIR, Constants.DB_STATIC_DIR,
+      Constants.MIGRATIONS_DIR);
   },
 };
 

@@ -1,13 +1,13 @@
 import { validate } from 'jsonschema';
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('Client settings helper');
 
-const INVALID_FORMAT_ERROR = new Notification({ message: 'INVALID_FORMAT' });
+const getInvalidFormatError = () => new Notification({ message: 'INVALID_FORMAT' });
 
 /**
  * A simplified helper for 'Client Settings' storage for loading, searching /
@@ -65,13 +65,22 @@ const ClientSettingsHelper = {
   },
 
   /**
+   * Get setting value or null if no setting
+   * @param name
+   * @return {Promise<T | null>}
+   */
+  getSettingValueByName(name) {
+    return this.findSettingByName(name).then(cs => cs && cs.value);
+  },
+
+  /**
    * Find a setting by a set of filters
    * @param filter filters to apply
    * @returns {Promise}
    */
   findSetting(filter) {
     logger.debug('findSetting');
-    return DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_CLIENT_SETTINGS);
   },
 
   /**
@@ -95,7 +104,7 @@ const ClientSettingsHelper = {
   },
 
   findAll(filter) {
-    return DatabaseManager.findAll(filter, COLLECTION_CLIENT_SETTINGS);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_CLIENT_SETTINGS);
   },
 
   /**
@@ -109,9 +118,9 @@ const ClientSettingsHelper = {
     if (validate(setting, settingsSchema).valid) {
       logger.debug(`Valid setting.id = ${setting.id}`);
       setting['updated-at'] = (new Date()).toISOString();
-      return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
+      return DatabaseManager.saveOrUpdate(setting.id, setting, Constants.COLLECTION_CLIENT_SETTINGS);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(getInvalidFormatError());
   },
 
   saveOrUpdateCollection(settings) {
@@ -120,9 +129,21 @@ const ClientSettingsHelper = {
       settings.forEach(setting => {
         setting['updated-at'] = (new Date()).toISOString();
       });
-      return DatabaseManager.saveOrUpdateCollection(settings, COLLECTION_CLIENT_SETTINGS);
+      return DatabaseManager.saveOrUpdateCollection(settings, Constants.COLLECTION_CLIENT_SETTINGS);
     }
-    return Promise.reject(INVALID_FORMAT_ERROR);
+    return Promise.reject(getInvalidFormatError());
+  },
+
+  /**
+   * Updates an existing setting to the specified value
+   * @param name
+   * @param value
+   */
+  updateSettingValue(name, value) {
+    return this.findSettingByName(name).then(setting => {
+      setting.value = value;
+      return this.saveOrUpdateSetting(setting);
+    });
   },
 
   /**
@@ -132,7 +153,7 @@ const ClientSettingsHelper = {
    */
   deleteById(id) {
     logger.debug('deleteById');
-    return DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_CLIENT_SETTINGS);
   }
 
 };

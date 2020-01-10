@@ -1,25 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonToolbar, Col, FormGroup, Grid, Row } from 'react-bootstrap';
+import { ValueConstants, FieldsManager, GlobalSettingsConstants } from 'amp-ui';
 import Logger from '../../../modules/util/LoggerManager';
 import * as RC from '../../../utils/constants/ResourceConstants';
 import AFField from '../../activity/edit/components/AFField';
-import FieldsManager from '../../../modules/field/FieldsManager';
 import EntityValidator from '../../../modules/field/EntityValidator';
-import { TMP_ENTITY_VALIDATOR } from '../../../utils/constants/ValueConstants';
 import * as Types from '../../activity/edit/components/AFComponentTypes';
 import translate from '../../../utils/translate';
 import FileDialog from '../../../modules/util/FileDialog';
 import FileManager from '../../../modules/util/FileManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
-import { GS_MAXIMUM_FILE_SIZE_MB } from '../../../utils/constants/GlobalSettingsConstants';
 import * as resStyles from './ResourceForm.css';
 import { validate } from '../../../actions/ResourceAction';
 
 const logger = new Logger('ResourceForm');
 // columns size
 const CS = 6;
-const getMaxSizeMB = () => GlobalSettingsManager.getSettingByKey(GS_MAXIMUM_FILE_SIZE_MB);
+const getMaxSizeMB = () => GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_MAXIMUM_FILE_SIZE_MB);
 
 /**
  * Resource Form
@@ -34,7 +32,7 @@ export default class ResourceForm extends Component {
   static propTypes = {
     resourceReducer: PropTypes.object.isRequired,
     resource: PropTypes.object.isRequired,
-    type: PropTypes.string.isRequired,
+    type: PropTypes.number.isRequired,
     onAdd: PropTypes.func,
     onCancel: PropTypes.func,
     updatePendingWebResource: PropTypes.func.isRequired,
@@ -66,7 +64,7 @@ export default class ResourceForm extends Component {
       activity: this.context.activity,
       validationResult: resource.errors,
       activityFieldsManager: resourceReducer.resourceFieldsManager,
-      activityValidator: resource && resource[TMP_ENTITY_VALIDATOR],
+      activityValidator: resource && resource[ValueConstants.TMP_ENTITY_VALIDATOR],
     };
   }
 
@@ -105,6 +103,7 @@ export default class ResourceForm extends Component {
       const maxSizeMB = getMaxSizeMB();
       const { size } = FileManager.statSyncFullPath(srcPath);
       if ((maxSizeMB * 1024 * 1024) < size) {
+        // eslint-disable-next-line no-alert
         return alert(translate('FileSizeLimitExceeded').replace('{size}', maxSizeMB));
       }
       this.setState({ uploadingSize: size });

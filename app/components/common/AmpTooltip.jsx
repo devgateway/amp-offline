@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { UIUtils } from 'amp-ui';
 import Logger from '../../modules/util/LoggerManager';
-import * as Utils from '../../utils/Utils';
 import * as styles from './CommonStyles.css';
 
 const logger = new Logger('AmpTooltip');
@@ -22,7 +22,7 @@ export default class AmpTooltip extends Component {
   };
 
   static defaultProps = {
-    id: Utils.stringToUniqueId(''),
+    id: UIUtils.stringToUniqueId(''),
     placement: 'left'
   };
 

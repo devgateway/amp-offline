@@ -1,11 +1,10 @@
 /**
  * Created by Julian de Anquin
  */
+import { Constants, GlobalSettingsConstants } from 'amp-ui';
 import CurrencyRatesHelper from '../modules/helpers/CurrencyRatesHelper';
 import GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import Logger from '../modules/util/LoggerManager';
-import { DEFAULT_CURRENCY } from '../utils/Constants';
-import { BASE_CURRENCY_KEY } from '../utils/constants/GlobalSettingsConstants';
 
 export const STATE_LOADING_CURRENCY_RATES = 'STATE_LOADING_CURRENCY_RATES';
 export const STATE_CURRENCY_RATES_LOADED = 'STATE_CURRENCY_RATES_LOADED';
@@ -24,14 +23,14 @@ export function loadCurrencyRates() {
   return dispatch => new Promise((resolve, reject) => {
     dispatch(sendingRequest());
     return CurrencyRatesHelper.findAll({}).then((rates) =>
-      GlobalSettingsHelper.findByKey(BASE_CURRENCY_KEY).then((gsBaseCurrency) => {
+      GlobalSettingsHelper.findByKey(GlobalSettingsConstants.BASE_CURRENCY_KEY).then((gsBaseCurrency) => {
         // gsBaseCurrency is undefined it means that its the first time we run the app
         // we will use the default currency USD
         let baseCurrency;
         if (gsBaseCurrency) {
           baseCurrency = gsBaseCurrency.value;
         } else {
-          baseCurrency = DEFAULT_CURRENCY;
+          baseCurrency = Constants.DEFAULT_CURRENCY;
         }
         return dispatch(ratesLoaded(rates, baseCurrency));
       })

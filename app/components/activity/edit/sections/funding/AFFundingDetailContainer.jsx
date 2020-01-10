@@ -1,13 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { Button, Panel } from 'react-bootstrap';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
+import { ActivityConstants, FieldsManager, UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
-import * as Utils from '../../../../../utils/Utils';
 import fundingStyles from './AFFundingContainer.css';
 
 const logger = new Logger('AF funding detail container');
@@ -22,8 +19,7 @@ export default class AFFundingDetailContainer extends Component {
   };
 
   static propTypes = {
-    fundingDetail: PropTypes.array.isRequired,
-    type: PropTypes.string.isRequired,
+    trnType: PropTypes.string.isRequired,
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     hasErrors: PropTypes.func.isRequired,
@@ -32,63 +28,91 @@ export default class AFFundingDetailContainer extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
+    const errors = this.hasErrors(props.funding, props.trnType);
     this.state = {
-      openFDC: this.hasErrors(props.fundingDetail, props.type)
+      errors,
+      refresh: 0
     };
+    if (errors) {
+      this._setOpenStatus(props.trnType, true);
+    }
+    this._setOpenStatus = this._setOpenStatus.bind(this);
   }
 
-  hasErrors(fundingDetail, type) {
-    const fundingDetails = fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
-      && fd[AC.TRANSACTION_TYPE].value === type));
-    return this.props.hasErrors(fundingDetails);
+  componentWillReceiveProps(nextProps) {
+    const errors = this.hasErrors(nextProps.funding, nextProps.trnType);
+    this.setState({ errors });
+  }
+
+  hasErrors(funding, trnType) {
+    return this.props.hasErrors(funding[trnType]);
+  }
+
+  _setOpenStatus(trnType, value) {
+    switch (trnType) {
+      case ActivityConstants.COMMITMENTS:
+        this.props.funding.commitmentsStatusOpen = value;
+        break;
+      case ActivityConstants.DISBURSEMENTS:
+        this.props.funding.disbursementsStatusOpen = value;
+        break;
+      case ActivityConstants.EXPENDITURES:
+        this.props.funding.expendituresStatusOpen = value;
+        break;
+      default:
+        break;
+    }
   }
 
   _addTransactionItem() {
-    this.props.handleNewTransaction(this.props.type);
+    this.props.handleNewTransaction(this.props.trnType);
   }
 
   render() {
-    const transactionTypes = Object.values(this.context.activityFieldsManager
-      .possibleValuesMap[`${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${AC.TRANSACTION_TYPE}`]);
-    if (transactionTypes.find(item => (item.value === this.props.type))) {
-      const fundingDetails = this.props.fundingDetail.filter(fd => (fd[AC.TRANSACTION_TYPE]
-        && fd[AC.TRANSACTION_TYPE].value === this.props.type));
+    const { trnType } = this.props;
+    if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(ActivityConstants.FUNDINGS, trnType)) {
+      const fundingDetails = this.props.funding[trnType] || [];
       // TODO: Add the extra data in header (when there are funding details).
       let header = '';
       let button = '';
-      switch (this.props.type) {
-        case VC.COMMITMENTS:
+      let open = false;
+      switch (this.props.trnType) {
+        case ActivityConstants.COMMITMENTS:
           header = translate('Commitments');
           button = translate('Add Commitments');
+          open = this.props.funding.commitmentsStatusOpen;
           break;
-        case VC.DISBURSEMENTS:
+        case ActivityConstants.DISBURSEMENTS:
           header = translate('Disbursements');
           button = translate('Add Disbursements');
+          open = this.props.funding.disbursementsStatusOpen;
           break;
-        case VC.EXPENDITURES:
+        case ActivityConstants.EXPENDITURES:
           header = translate('Expenditures');
           button = translate('Add Expenditures');
+          open = this.props.funding.expendituresStatusOpen;
           break;
         default:
           break;
       }
-      const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
+      // const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
       return (<div>
         <Panel
-          header={header} collapsible expanded={this.state.openFDC}
+          header={header} collapsible expanded={open}
           onSelect={() => {
-            this.setState({ openFDC: !this.state.openFDC });
-          }} className={hasErrors ? fundingStyles.error : ''}>
+            this._setOpenStatus(this.props.trnType, !open);
+            this.setState({ refresh: Math.random() });
+          }} className={this.state.errors ? fundingStyles.error : ''}>
           {fundingDetails.map((fd) => {
             // Add a temporal_id field so we can delete items.
-            if (!fd[AC.TEMPORAL_ID]) {
-              fd[AC.TEMPORAL_ID] = Utils.numberRandom();
+            if (!fd[ActivityConstants.TEMPORAL_ID]) {
+              fd[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
             }
             /* Lesson learned: DO NOT use an array index as component key if later we will remove elements from
             that array because that will confuse React. */
             return (<AFFundingDetailItem
-              fundingDetail={fd} type={this.props.type} key={`${header}_${fd[AC.TEMPORAL_ID]}`}
+              fundingDetail={fd} trnType={trnType} key={`${header}_${fd[ActivityConstants.TEMPORAL_ID]}`}
               removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
           })}
           <Button

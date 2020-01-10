@@ -1,4 +1,6 @@
+import md5 from 'js-md5';
 import os from 'os';
+import { Constants } from 'amp-ui';
 import {
   ARCH32,
   ARCH64,
@@ -9,33 +11,9 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
-import { RELEASE_BRANCHES, ENDS_WITH_PUNCTUATION_REGEX, VERSION } from './Constants';
+import { VERSION } from './Constants';
 
 const Utils = {
-
-  stringToId(string: string) {
-    string = string || '';
-    let hash = 5381;
-    for (let i = string.length - 1; i >= 0; i--) {
-      /* eslint-disable no-bitwise */
-      hash = (hash * 33) ^ string.charCodeAt(i);
-    }
-    return hash >>> 0;
-    /* eslint-enable no-bitwise */
-  },
-
-  /**
-   * Generates a unique id for each call, over the same string
-   * @param string
-   * @return {string}
-   */
-  stringToUniqueId(string: string) {
-    return `${this.stringToId(string)}-${Date.now()}-${Math.random().toString().substring(2)}`;
-  },
-
-  numberRandom() {
-    return Math.trunc((Math.random() * 1000000));
-  },
 
   hexBufferToString(buffer) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
@@ -61,19 +39,40 @@ const Utils = {
     return result;
   },
 
+  /**
+   * Push a value to an array stored in an object by specified key. If no array exists, it will be initialized.
+   * @param obj
+   * @param key
+   * @param value
+   */
+  pushByKey(obj, key, value) {
+    const list = obj[key] || [];
+    list.push(value);
+    obj[key] = list;
+  },
+
   toDefinedOrNullRule(key) {
     const result = {};
     result[key] = { $exists: true };
     return result;
   },
 
+  toDefinedOrNullArrayRule(key) {
+    return { $or: [this.toMap(key, { $exists: true }), this.toMap(key, { $size: 0 })] };
+  },
+
   toDefinedNotNullRule(key) {
     return { $and: [this.toMap(key, { $exists: true }), this.toMap(key, { $ne: null })] };
+  },
+
+  toUndefinedOrNullRule(key) {
+    return { $or: [this.toMap(key, { $exists: false }), this.toMap(key, null)] };
   },
 
   /**
    * Expects a list of map elements that contain ids and extracts those ids into a flatten list
    * @param listOfMap a list of map elements, each having id field e.g. [ { id: 1, ...}, { id: 2,... }, ...]
+   * @param key the key to use to convert each map to the value of this key
    * @return flatten list of ids, e.g. [1, 2, ...]
    */
   flattenToListByKey(listOfMap, key) {
@@ -143,10 +142,6 @@ const Utils = {
     return item;
   },
 
-  capitalize(text: string) {
-    return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
-  },
-
   stripTags(tagString) {
     if (tagString) {
       const htmlTags = /<[^>]*>/g;
@@ -158,8 +153,8 @@ const Utils = {
 
   joinMessages(messages: Array, endPunctuationIfMissing = '.') {
     return messages && messages.map(m => {
-      const msg = `${m}`;
-      if (!msg.match(ENDS_WITH_PUNCTUATION_REGEX)) {
+      const msg = `${m.message || m}`;
+      if (!msg.match(Constants.ENDS_WITH_PUNCTUATION_REGEX)) {
         return `${msg}${endPunctuationIfMissing}`;
       }
       return msg;
@@ -240,7 +235,7 @@ const Utils = {
 
   isReleaseBranch() {
     const branch = this.getBranch();
-    return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
+    return Constants.RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
   },
 
   compareWithCollate(text1, text2, collator) {
@@ -252,8 +247,28 @@ const Utils = {
     return array.reduce((result, elem) => result.concat(elem), []);
   },
 
-  versionAsFieldName() {
+  versionToKey() {
     return VERSION.replace(/\./g, '_');
+  },
+
+  versionFromKey(key) {
+    return key.replace(/_/g, '.');
+  },
+
+  getCurrentVersion() {
+    return VERSION;
+  },
+
+  md5(obj) {
+    const json = JSON.stringify(obj);
+    return md5(json);
+  },
+
+  selfBindMethods(obj) {
+    Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).filter(prop => typeof obj[prop] === 'function')
+      .forEach(methodName => {
+        obj[methodName] = obj[methodName].bind(obj);
+      });
   },
 };
 

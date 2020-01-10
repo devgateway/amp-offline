@@ -1,40 +1,26 @@
+import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants
+  , FieldsManager } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as WorkspaceHelper from '../modules/helpers/WorkspaceHelper';
+import * as TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
+import * as UserHelper from '../modules/helpers/UserHelper';
 import ActivityHydrator from '../modules/helpers/ActivityHydrator';
-import FieldsManager from '../modules/field/FieldsManager';
 import ActivityFundingTotals from '../modules/activity/ActivityFundingTotals';
 import Notification from '../modules/helpers/NotificationHelper';
-import {
-  CLIENT_CREATED_ON,
-  CLIENT_UPDATED_ON,
-  CREATED_BY,
-  CREATED_ON,
-  IS_PUSHED,
-  MODIFIED_BY,
-  PROJECT_TITLE,
-  TEAM
-} from '../utils/constants/ActivityConstants';
-import { WORKSPACE_ID } from '../utils/constants/WorkspaceConstants';
-import { NEW_ACTIVITY_ID } from '../utils/constants/ValueConstants';
-import {
-  NOTIFICATION_ORIGIN_ACTIVITY,
-  NOTIFICATION_SEVERITY_ERROR,
-  NOTIFICATION_SEVERITY_INFO
-} from '../utils/constants/ErrorConstants';
-import { ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH } from '../utils/constants/FieldPathConstants';
+import { WORKSPACE_ID, WORKSPACE_LEAD_ID } from '../utils/constants/WorkspaceConstants';
 import { resetDesktop } from '../actions/DesktopAction';
 import { addMessage } from './NotificationAction';
 import { checkIfShouldSyncBeforeLogout } from './LoginAction';
 import translate from '../utils/translate';
 import * as Utils from '../utils/Utils';
-import { SYNCUP_TYPE_ACTIVITY_FIELDS } from '../utils/Constants';
 import ActivityStatusValidation from '../modules/activity/ActivityStatusValidation';
 import DateUtils from '../utils/DateUtils';
 import LoggerManager from '../modules/util/LoggerManager';
 import * as ContactAction from './ContactAction';
 import * as ResourceAction from './ResourceAction';
+import { TEAM_MEMBER_USER_ID } from '../utils/constants/UserConstants';
 
 export const ACTIVITY_LOAD_PENDING = 'ACTIVITY_LOAD_PENDING';
 export const ACTIVITY_LOAD_FULFILLED = 'ACTIVITY_LOAD_FULFILLED';
@@ -53,7 +39,8 @@ const ACTIVITY_SAVE = 'ACTIVITY_SAVE';
 const logger = new LoggerManager('ActivityAction.js');
 
 export function loadActivityForActivityPreview(activityId) {
-  const paths = [ADJUSTMENT_TYPE_PATH, TRANSACTION_TYPE_PATH, CREATED_BY, TEAM, MODIFIED_BY];
+  const paths = [...FieldPathConstants.ADJUSTMENT_TYPE_PATHS, ActivityConstants.CREATED_BY, ActivityConstants.TEAM,
+    ActivityConstants.MODIFIED_BY];
   return (dispatch, ownProps) =>
     dispatch({
       type: ACTIVITY_LOAD,
@@ -141,41 +128,53 @@ function _loadActivity({
                          activityId, teamMemberId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
                          isAF, currentLanguage
                        }) {
-  return new Promise((resolve, reject) => {
-    const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
-    return Promise.all([
-      _getActivity(activityId, teamMemberId),
-      FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_ACTIVITY_FIELDS),
-      PossibleValuesHelper.findAll(pvFilter),
-      isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } }, Utils.toMap(PROJECT_TITLE, 1)) : []
-    ])
-      .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
-        fieldsDef = fieldsDef[SYNCUP_TYPE_ACTIVITY_FIELDS];
-        const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage);
-        const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
-          currentWorkspaceSettings, currencyRatesManager);
-        const activityWsId = activity[TEAM] && activity[TEAM].id;
-        otherProjectTitles = Utils.flattenToListByKey(otherProjectTitles, PROJECT_TITLE);
-        return WorkspaceHelper.findById(activityWsId).then(activityWorkspace =>
-          resolve({
+  const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
+  return Promise.all([
+    _getActivity(activityId, teamMemberId),
+    FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
+    PossibleValuesHelper.findAll(pvFilter),
+    isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } },
+      Utils.toMap(ActivityConstants.PROJECT_TITLE, 1)) : []
+  ])
+    .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
+      fieldsDef = fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS];
+      const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage,
+        LoggerManager);
+      const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
+        currentWorkspaceSettings, currencyRatesManager);
+      const activityWsId = activity[ActivityConstants.TEAM] && activity[ActivityConstants.TEAM].id;
+      otherProjectTitles = Utils.flattenToListByKey(otherProjectTitles, ActivityConstants.PROJECT_TITLE);
+      return WorkspaceHelper.findById(activityWsId)
+        .then(activityWorkspace => _getActivityWsManager(activityWorkspace)
+          .then(activityWSManager => ({
             activity,
             activityWorkspace,
+            activityWSManager,
             activityFieldsManager,
             activityFundingTotals,
             currentWorkspaceSettings,
             currencyRatesManager,
             otherProjectTitles
-          })
-        ).catch(error => reject(_toNotification(error)));
-      }).catch(error => reject(_toNotification(error)));
-  });
+          })));
+    })
+    .catch(error => Promise.reject(_toNotification(error)));
 }
 
-const _toNotification = (error) => new Notification({ message: error, origin: NOTIFICATION_ORIGIN_ACTIVITY });
+const _getActivityWsManager = (activityWorkspace) => {
+  if (activityWorkspace) {
+    return TeamMemberHelper.findByTeamMemberId(activityWorkspace[WORKSPACE_LEAD_ID])
+      .then(teamMember => UserHelper.findById(teamMember[TEAM_MEMBER_USER_ID]));
+  }
+  return Promise.resolve(null);
+};
+
+const _toNotification = (error) => new Notification(
+
+  { message: error, origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY });
 
 const _getActivity = (activityId, teamMemberId) => {
   // special case for the new activity
-  if (activityId === NEW_ACTIVITY_ID) {
+  if (activityId === ValueConstants.NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
   return ActivityHelper.findAll({ id: activityId }).then(activity =>
@@ -185,26 +184,26 @@ const _getActivity = (activityId, teamMemberId) => {
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {
   const dehydrator = new ActivityHydrator(fieldDefs);
   return dehydrator.dehydrateActivity(activity).then(dehydratedActivity => {
-    const modifiedOn = DateUtils.getISODateForAPI();
-    if (!dehydratedActivity[TEAM]) {
-      dehydratedActivity[TEAM] = teamMember[WORKSPACE_ID];
+    const modifiedOn = DateUtils.getTimestampForAPI();
+    if (!dehydratedActivity[ActivityConstants.TEAM]) {
+      dehydratedActivity[ActivityConstants.TEAM] = teamMember[WORKSPACE_ID];
     }
-    if (!dehydratedActivity[CREATED_BY]) {
-      dehydratedActivity[CREATED_BY] = teamMember.id;
+    if (!dehydratedActivity[ActivityConstants.CREATED_BY]) {
+      dehydratedActivity[ActivityConstants.CREATED_BY] = teamMember.id;
     }
-    if (!dehydratedActivity[CREATED_ON] && !dehydratedActivity[CLIENT_CREATED_ON]) {
-      dehydratedActivity[CLIENT_CREATED_ON] = modifiedOn;
+    if (!dehydratedActivity[ActivityConstants.CREATED_ON] && !dehydratedActivity[ActivityConstants.CLIENT_CREATED_ON]) {
+      dehydratedActivity[ActivityConstants.CLIENT_CREATED_ON] = modifiedOn;
     }
-    dehydratedActivity[MODIFIED_BY] = teamMember.id;
-    dehydratedActivity[CLIENT_UPDATED_ON] = modifiedOn;
-    delete dehydratedActivity[IS_PUSHED];
+    dehydratedActivity[ActivityConstants.MODIFIED_BY] = teamMember.id;
+    dehydratedActivity[ActivityConstants.CLIENT_UPDATED_ON] = modifiedOn;
+    delete dehydratedActivity[ActivityConstants.IS_PUSHED];
 
     return ActivityStatusValidation.statusValidation(dehydratedActivity, teamMember, false).then(() => (
       ActivityHelper.saveOrUpdate(dehydratedActivity, true).then((savedActivity) => {
         dispatch(addMessage(new Notification({
           message: translate('activitySavedMsg'),
-          origin: NOTIFICATION_ORIGIN_ACTIVITY,
-          severity: NOTIFICATION_SEVERITY_INFO
+          origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY,
+          severity: ErrorConstants.NOTIFICATION_SEVERITY_INFO
         })));
         // TODO this reset is useless if we choose to stay within AF when activity is saved
         dispatch(resetDesktop());
@@ -223,8 +222,8 @@ export function unableToSave(error) {
   logger.info('unableToSave');
   return dispatch => dispatch(addMessage(new Notification({
     message: error,
-    origin: NOTIFICATION_ORIGIN_ACTIVITY,
-    severity: NOTIFICATION_SEVERITY_ERROR
+    origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY,
+    severity: ErrorConstants.NOTIFICATION_SEVERITY_ERROR
   })));
 }
 

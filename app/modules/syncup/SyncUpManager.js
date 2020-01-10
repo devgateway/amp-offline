@@ -1,4 +1,5 @@
 /* eslint "no-nested-ternary": 0 */
+import { Constants, ErrorConstants } from 'amp-ui';
 import SyncUpDiff from './SyncUpDiff';
 import SyncUpRunner from './SyncUpRunner';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
@@ -8,20 +9,6 @@ import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
 import { loadAllLanguages } from '../../actions/TranslationAction';
 import { loadWorkspaces, reloadSelectedWorkspace } from '../../actions/WorkspaceAction';
 import store from '../../index';
-import {
-  NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM,
-  NR_SYNC_HISTORY_ENTRIES,
-  OLD_SYNC_LOGS_DURATION_ISO_8601,
-  SYNCUP_BEST_BEFORE_DAYS,
-  SYNCUP_DATETIME_FIELD,
-  SYNCUP_DIFF_LEFTOVER,
-  SYNCUP_FORCE_DAYS,
-  SYNCUP_NO_DATE,
-  SYNCUP_STATUS_FAIL,
-  SYNCUP_STATUS_SUCCESS,
-  SYNCUP_SYNC_REQUESTED_AT,
-  SYNCUP_SYNC_REQUESTED_BY
-} from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 import { loadCalendar, loadCurrencyRatesOnStartup, loadFMTree, loadGlobalSettings } from '../../actions/StartUpAction';
 import { checkIfShouldSyncBeforeLogout } from '../../actions/LoginAction';
@@ -29,10 +16,10 @@ import translate from '../../utils/translate';
 import DateUtils from '../../utils/DateUtils';
 import * as Utils from '../../utils/Utils';
 import * as UserHelper from '../helpers/UserHelper';
-import { NOTIFICATION_ORIGIN_SYNCUP_PROCESS } from '../../utils/constants/ErrorConstants';
 import { addMessage } from '../../actions/NotificationAction';
 import * as CSC from '../../utils/constants/ClientSettingsConstants';
 import SetupManager from '../setup/SetupManager';
+import * as ClientSettingsHelper from '../helpers/ClientSettingsHelper';
 
 const logger = new Logger('Syncup manager');
 
@@ -48,10 +35,10 @@ export default class SyncUpManager {
    */
   static sortByLastSyncDateDesc(a, b) {
     logger.debug('_sortByLastSyncDateDesc');
-    if (a[SYNCUP_DATETIME_FIELD] === b[SYNCUP_DATETIME_FIELD]) {
-      return a[SYNCUP_SYNC_REQUESTED_AT] > b[SYNCUP_SYNC_REQUESTED_AT] ? -1 : 1;
+    if (a[Constants.SYNCUP_DATETIME_FIELD] === b[Constants.SYNCUP_DATETIME_FIELD]) {
+      return a[Constants.SYNCUP_SYNC_REQUESTED_AT] > b[Constants.SYNCUP_SYNC_REQUESTED_AT] ? -1 : 1;
     }
-    return a[SYNCUP_DATETIME_FIELD] > b[SYNCUP_DATETIME_FIELD] ? -1 : 1;
+    return a[Constants.SYNCUP_DATETIME_FIELD] > b[Constants.SYNCUP_DATETIME_FIELD] ? -1 : 1;
   }
 
   /**
@@ -62,14 +49,14 @@ export default class SyncUpManager {
     logger.log('getLastSuccessfulSyncUp');
     return new Promise((resolve, reject) => (
       SyncUpHelper.findAllSyncUpByExample({
-        status: SYNCUP_STATUS_SUCCESS
+        status: Constants.SYNCUP_STATUS_SUCCESS
       }).then(data => {
         const sortedData = data.sort(SyncUpManager.sortByLastSyncDateDesc);
         if (sortedData.length > 0) {
           return resolve(sortedData[0]);
         }
         const emptyDateItem = {};
-        emptyDateItem[SYNCUP_DATETIME_FIELD] = SYNCUP_NO_DATE; // just not to leave it undefined.
+        emptyDateItem[Constants.SYNCUP_DATETIME_FIELD] = Constants.SYNCUP_NO_DATE; // just not to leave it undefined.
         return resolve(emptyDateItem);
       }).catch(reject)
     ));
@@ -91,7 +78,7 @@ export default class SyncUpManager {
   static getLastSyncUpIdForCurrentUser() {
     logger.log('getLastSyncUpLog');
     const user = store.getState().userReducer.userData;
-    return SyncUpHelper.getLatestId(Utils.toMap(SYNCUP_SYNC_REQUESTED_BY, user.id));
+    return SyncUpHelper.getLatestId(Utils.toMap(Constants.SYNCUP_SYNC_REQUESTED_BY, user.id));
   }
 
   /**
@@ -104,9 +91,10 @@ export default class SyncUpManager {
     const startDate = new Date();
     return this._startSyncUp()
       .then(result => {
-        if (result && result.status === SYNCUP_STATUS_FAIL && !result.units) {
+        if (result && result.status === Constants.SYNCUP_STATUS_FAIL && !result.units) {
           // if cannot start, there would be one reason only
-          const error = result.errors && result.errors.length ? result.errors[0] : translate('unexpectedError');
+          const error = result.errors && result.errors.length ? result.errors[0] :
+            ErrorNotificationHelper.createNotification({ message: 'unexpectedError' });
           logger.error(JSON.stringify(error));
           return Promise.reject(error);
         }
@@ -114,6 +102,7 @@ export default class SyncUpManager {
         syncResult.dateStarted = startDate.toISOString();
         return this._saveMainSyncUpLog(result);
       })
+      .then(() => this._updateForceSyncUpClientSetting(syncResult))
       .then(this._postSyncUp)
       .then(() => syncResult);
   }
@@ -136,8 +125,8 @@ export default class SyncUpManager {
     let syncUpRunner: SyncUpRunner;
     return Promise.all([this.prepareNetworkForSyncUp(TEST_URL), SyncUpHelper.getLastSyncUpLogWithSyncDiffTimestamp()])
       .then(([, lastSyncUpLog]) => {
-        const oldTimestamp = lastSyncUpLog[SYNCUP_DATETIME_FIELD];
-        const syncUpDiffLeftOver = new SyncUpDiff(lastSyncUpLog[SYNCUP_DIFF_LEFTOVER]);
+        const oldTimestamp = lastSyncUpLog[Constants.SYNCUP_DATETIME_FIELD];
+        const syncUpDiffLeftOver = new SyncUpDiff(lastSyncUpLog[Constants.SYNCUP_DIFF_LEFTOVER]);
         syncUpRunner = new SyncUpRunner(userId, oldTimestamp, syncUpDiffLeftOver);
         return syncUpRunner.run();
       }).catch(error => {
@@ -146,7 +135,7 @@ export default class SyncUpManager {
         const errorType = syncUpRunner ? 'bug / unexpected' : 'normal / expected';
         logger.error(`A ${errorType} error occurred: error = "${error}", stack = "${error.stack}"`);
         const result = syncUpRunner ? syncUpRunner.buildResult([error])
-          : SyncUpRunner.buildResult({ status: SYNCUP_STATUS_FAIL, userId, errors: [error] });
+          : SyncUpRunner.buildResult({ status: Constants.SYNCUP_STATUS_FAIL, userId, errors: [error] });
         return result;
       });
   }
@@ -203,15 +192,19 @@ export default class SyncUpManager {
   static checkIfToForceSyncUp() {
     logger.log('checkIfToForceSyncUp');
     return Promise.all([SyncUpManager.getLastSyncInDays(), SyncUpManager.getLastSuccessfulSyncUp(),
-      SyncUpManager.getLastSyncUpIdForCurrentUser(), SetupManager.getCurrentVersionAuditLog()])
-      .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser, currVerAudit]) => {
+      SyncUpManager.getLastSyncUpIdForCurrentUser(), SetupManager.getCurrentVersionAuditLog(),
+      ClientSettingsHelper.getSettingValueByName(CSC.FORCE_SYNC_UP)
+    ])
+      .then(([days, lastSuccessful, lastSyncUpIdForCurrentUser, currVerAudit, isForce]) => {
         const didSyncUp = !!lastSyncUpIdForCurrentUser;
-        const forceBecauseDays = days === undefined || days > SYNCUP_FORCE_DAYS;
+        const forceBecauseDays = days === undefined || days > Constants.SYNCUP_FORCE_DAYS;
         const user = store.getState().userReducer.userData; // No need to to go the DB in this stage.
-        const hasUserData = lastSuccessful && lastSuccessful[SYNCUP_SYNC_REQUESTED_AT] > user.registeredOnClient;
+        const hasUserData = lastSuccessful && lastSuccessful[Constants.SYNCUP_SYNC_REQUESTED_AT] >
+          user.registeredOnClient;
         const currVerFirstStartedAt = currVerAudit[CSC.FIRST_STARTED_AT];
-        const syncedForCurrVer = lastSuccessful && lastSuccessful[SYNCUP_SYNC_REQUESTED_AT] > currVerFirstStartedAt;
-        const forceSyncUp = forceBecauseDays || !hasUserData || !syncedForCurrVer;
+        const syncedForCurrVer = lastSuccessful && lastSuccessful[Constants.SYNCUP_SYNC_REQUESTED_AT] >
+          currVerFirstStartedAt;
+        const forceSyncUp = forceBecauseDays || !hasUserData || !syncedForCurrVer || !!isForce;
         return {
           forceSyncUp,
           didUserSuccessfulSyncUp: hasUserData,
@@ -225,7 +218,7 @@ export default class SyncUpManager {
   static isWarnSyncUp() {
     logger.log('isWarnSyncUp');
     return SyncUpManager.getLastSyncInDays().then((days) =>
-      (days === undefined || days > SYNCUP_BEST_BEFORE_DAYS)
+      (days === undefined || days > Constants.SYNCUP_BEST_BEFORE_DAYS)
     );
   }
 
@@ -235,10 +228,10 @@ export default class SyncUpManager {
     // detect message & build notification
     let message = null;
     if (didUserSuccessfulSyncUp) {
-      if (daysFromLastSuccessfulSyncUp > SYNCUP_FORCE_DAYS) {
+      if (daysFromLastSuccessfulSyncUp > Constants.SYNCUP_FORCE_DAYS) {
         message = translate('tooOldSyncWarning');
       } else {
-        const successAt = DateUtils.createFormattedDate(lastSuccessfulSyncUp[SYNCUP_SYNC_REQUESTED_AT]);
+        const successAt = DateUtils.createFormattedDate(lastSuccessfulSyncUp[Constants.SYNCUP_SYNC_REQUESTED_AT]);
         message = `${translate('syncWarning')} ${translate('lastSuccessfulSyncupDate').replace('%date%', successAt)}`;
       }
     } else if (didSyncUp) {
@@ -256,7 +249,8 @@ export default class SyncUpManager {
       .catch(errorObject => {
         // no need to reject and interrupt other actions, just log and notify
         logger.error(`Could not properly cleanup old sync up logs: ${errorObject}`);
-        const notification = new ErrorNotificationHelper({ errorObject, origin: NOTIFICATION_ORIGIN_SYNCUP_PROCESS });
+        const notification = new ErrorNotificationHelper(
+          { errorObject, origin: ErrorConstants.NOTIFICATION_ORIGIN_SYNCUP_PROCESS });
         store.dispatch(addMessage(notification));
       });
   }
@@ -264,7 +258,7 @@ export default class SyncUpManager {
   static _deleteOldSyncUpLogs() {
     logger.log('_deleteOldSyncUpLogs');
     return SyncUpManager._getMustKeepSyncUpLogsIds().then(syncUpLogIdsToKeep => {
-      const dateStr = DateUtils.getDateFromNow(OLD_SYNC_LOGS_DURATION_ISO_8601).toISOString();
+      const dateStr = DateUtils.getDateFromNow(Constants.OLD_SYNC_LOGS_DURATION_ISO_8601).toISOString();
       const filter = { $and: [{ id: { $nin: syncUpLogIdsToKeep } }, { dateStarted: { $lt: dateStr } }] };
       return SyncUpHelper.deleteSyncUpLogs(filter);
     });
@@ -272,7 +266,7 @@ export default class SyncUpManager {
 
   static _getMustKeepSyncUpLogsIds() {
     return Promise.all([
-      SyncUpHelper.getLastSyncUpLogs(NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM, { id: 1 })
+      SyncUpHelper.getLastSyncUpLogs(Constants.NR_OLD_SYNC_LOGS_TO_KEEP_MINIMUM, { id: 1 })
         .then(logs => Utils.flattenToListByKey(logs, 'id')),
       SyncUpManager._getUserMustKeepSyncUpLogIds()
     ]).then(([logsToKeepIds, mustKeepLogIds]) => logsToKeepIds.concat(mustKeepLogIds));
@@ -282,8 +276,8 @@ export default class SyncUpManager {
     return UserHelper.findAllClientRegisteredUsersByExample({}, { id: 1 })
       .then(registeredUsers =>
         Promise.all(Utils.flattenToListByKey(registeredUsers, 'id').map(userId => {
-          const filter = Utils.toMap(SYNCUP_SYNC_REQUESTED_BY, userId);
-          filter.status = SYNCUP_STATUS_SUCCESS;
+          const filter = Utils.toMap(Constants.SYNCUP_SYNC_REQUESTED_BY, userId);
+          filter.status = Constants.SYNCUP_STATUS_SUCCESS;
           return SyncUpHelper.getLatestId(filter);
         })));
   }
@@ -291,7 +285,7 @@ export default class SyncUpManager {
   static _deleteOldDetails() {
     logger.log('_deleteOldDetails');
     // We cannot user .updateCollectionFields since our details are within units collection
-    return SyncUpHelper.getLastSyncUpLogs(NR_SYNC_HISTORY_ENTRIES, { id: 1 })
+    return SyncUpHelper.getLastSyncUpLogs(Constants.NR_SYNC_HISTORY_ENTRIES, { id: 1 })
       .then(logs => Utils.flattenToListByKey(logs, 'id'))
       .then(lastSyncUpLogIds => SyncUpHelper.findAllSyncUpByExample({ id: { $nin: lastSyncUpLogIds } }))
       .then(oldLogs => {
@@ -301,5 +295,12 @@ export default class SyncUpManager {
         }
         return Promise.resolve();
       });
+  }
+
+  static _updateForceSyncUpClientSetting(syncResult) {
+    if (syncResult.status === Constants.SYNCUP_STATUS_SUCCESS) {
+      return ClientSettingsHelper.updateSettingValue(CSC.FORCE_SYNC_UP, false);
+    }
+    return syncResult;
   }
 }

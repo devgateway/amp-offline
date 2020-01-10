@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_CALENDARS } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('CalendarHelper');
@@ -25,12 +25,12 @@ const CalendarHelper = {
 
   findCalendar(filterRule) {
     logger.debug('findCalendar');
-    return DatabaseManager.findOne(filterRule, COLLECTION_CALENDARS);
+    return DatabaseManager.findOne(filterRule, Constants.COLLECTION_CALENDARS);
   },
 
   findAllCalendars(filterRule, projections) {
     logger.debug('findAllCalendars');
-    return DatabaseManager.findAll(filterRule, COLLECTION_CALENDARS, projections);
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_CALENDARS, projections);
   },
 
   /**
@@ -40,17 +40,17 @@ const CalendarHelper = {
    */
   saveOrUpdateCalendar(calendar) {
     logger.log('saveOrUpdateCalendar');
-    return DatabaseManager.saveOrUpdate(calendar.id, calendar, COLLECTION_CALENDARS);
+    return DatabaseManager.saveOrUpdate(calendar.id, calendar, Constants.COLLECTION_CALENDARS);
   },
 
   saveOrUpdateCalendarCollection(calendars) {
     logger.log('saveOrUpdateCalendarCollection');
-    return DatabaseManager.saveOrUpdateCollection(calendars, COLLECTION_CALENDARS);
+    return DatabaseManager.saveOrUpdateCollection(calendars, Constants.COLLECTION_CALENDARS);
   },
 
   replaceCalendars(calendars) {
     logger.log('replaceCalendars');
-    return DatabaseManager.replaceCollection(calendars, COLLECTION_CALENDARS);
+    return DatabaseManager.replaceCollection(calendars, Constants.COLLECTION_CALENDARS);
   },
 
   /**
@@ -60,13 +60,13 @@ const CalendarHelper = {
    */
   deleteCalendarById(id) {
     logger.log('deleteCalendarById');
-    return DatabaseManager.removeById(id, COLLECTION_CALENDARS);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_CALENDARS);
   },
 
   removeAllByIds(ids) {
     logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
-    return DatabaseManager.removeAll(idsFilter, COLLECTION_CALENDARS);
+    return DatabaseManager.removeAll(idsFilter, Constants.COLLECTION_CALENDARS);
   }
 };
 

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import translate from '../../utils/translate';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -7,15 +8,19 @@ const logger = new Logger('error message component');
 export default class ErrorMessage extends Component {
 
   static propTypes = {
-    message: PropTypes.object.isRequired
+    message: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
   };
 
   render() {
     logger.log('render');
-    // TODO AMPOFFLINE-192: expect simple string message or format as needed if some error message object is provided
+    const error = this.props.message;
+    const actualMessage = error ? (error.message || error) : null;
+    if (!actualMessage) {
+      return null;
+    }
     return (
-      <div className={`alert alert-danger ${(this.props.message === '' ? 'hidden' : '')}`}>
-        <strong>{translate('Error')}: </strong>{this.props.message.message || this.props.message}
+      <div className="alert alert-danger">
+        <strong>{translate('Error')}: </strong>{actualMessage}
       </div>
     );
   }

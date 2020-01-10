@@ -1,28 +1,52 @@
-AMP Offline
+<img src="resources/icon.ico" alt="AMP Offline" width="40" height="40"/>AMP Offline
 ==============
-This project is a standalone [Electron](http://electron.atom.io/) application for users of the AMP platform, when you have a slow/unreliable connection this app will allow you to work on existent AMP workspaces and edit or create Activities:
+Desktop​​ Application​ based on [Electron](http://electron.atom.io/) that​ provides​ ​the ability​ ​to​ ​contribute​ ​to​ ​[AMP](https://github.com/devgateway/amp)​ ​even​​ if​​ you​ ​have​ ​weak​ ​connection​ ​or connection​ ​issues​ ​are​ ​a ​common​ ​thing​ ​for​ ​you.​ ​The​ ​connection​ ​is​ ​necessary​​ for the initial setup and periodic data sync.
 
-1. You need a valid user name and password for AMP.
-2. The first time you login the app will download all necessary data to work offline.
-3. Periodically the app will check if you have Internet connection and sync your local data with AMP.
+Find out more in [AMP Offline User Manuals](app/static/help).
 
-Requisites
+Development
 -------
-node 6.x or above.
-npm 3.x or above.
 
-Install
--------    
+### Requisites
+* node >= 6.x
+* npm >= 3.x
+
+### Install
     npm install
     npm run build-dll
     
-Run
------
-	npm run dev
+### Run
+    npm run dev
 
-Test
------
-  	npm run test
-Build for windows 10
+### Test
+    npm run test
+
+
+Installer Build
 ----
-There is a .bat file named generate-installer.bat in the root directory that you can use to checkout code and build the client. you can check https://wiki.dgfoundation.org/display/AMPDOC/How+to+generate+a+windows10+installar+for+amp-offline for mor details
+For local OS and architecture:
+
+`npm run package`
+
+For Windows 10 you can use a helper [generate-installer.bat](generate-installer.bat)
+
+Reporting Issues
+----
+* Before reporting an issue, please do the following:
+  * Check the [AMP Offline User Manuals](app/static/help) to make sure the behavior you are reporting is not a feature.
+  * Check if the issue was not already reported in the [existing issues](https://github.com/devgateway/amp-client/issues). You are very welcome to provide more details to existing issues.
+* Provide steps to reproduce
+* Provide actual and expected result  
+
+Contributing
+----
+* Fork the repository
+* Make the fix
+* Validate code compliance:
+   * `npm run lint`
+   * `npm run test-mocha`	
+* Submit a pull request to amp-client repository
+
+Contact information
+------
+For any comments, please [conctact us](info@developmentgateway.org).

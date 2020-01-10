@@ -1,20 +1,18 @@
 /* eslint react/jsx-space-before-closing: 0 */
 /* eslint react/forbid-prop-types: 0 */
 /* eslint react/no-string-refs: 0 */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn, SizePerPageDropDown } from 'react-bootstrap-table';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { ActivityConstants, Constants, NumberUtils, IconFormatter } from 'amp-ui';
 import classNames from 'classnames';
 import style from './ProjectList.css';
 import translate from '../../utils/translate';
-import IconFormatter from './IconFormatter';
 import LinkFormatter from './LinkFormatter';
-import { ACTIVITY_STATUS_DRAFT, ACTIVITY_STATUS_UNVALIDATED, ACTIVITY_STATUS_VALIDATED } from '../../utils/Constants';
 import { getGeneralPaginationOptions } from '../../modules/desktop/DesktopManager'; // TODO: receive as props.
-import * as AC from '../../utils/constants/ActivityConstants';
 import * as WC from '../../utils/constants/WorkspaceConstants';
 import Logger from '../../modules/util/LoggerManager';
-import NumberUtils from '../../utils/NumberUtils';
 import { stripTags } from '../../utils/Utils';
 
 const logger = new Logger('Project list');
@@ -29,7 +27,7 @@ export default class ProjectList extends Component {
 
   static linkFormatter(cell, row) {
     return (
-      <LinkFormatter cell={cell} row={row} />
+      <LinkFormatter cell={cell} row={row} translate={translate} />
     );
   }
 
@@ -40,11 +38,12 @@ export default class ProjectList extends Component {
       <IconFormatter
         cell={cell}
         id={row.id} edit={row.edit} view={row.view} status={row.status}
-        activityTeamId={row[AC.TEAM]}
+        activityTeamId={row[ActivityConstants.TEAM]}
         teamId={this.props.userReducer.teamMember[WC.WORKSPACE_ID]}
         teamLeadFlag={teamLeadFlag}
         wsAccessType={this.props.workspaceReducer.currentWorkspace[WC.ACCESS_TYPE]}
-        crossTeamWS={this.props.workspaceReducer.currentWorkspace[WC.CROSS_TEAM_VALIDATION]} />
+        crossTeamWS={this.props.workspaceReducer.currentWorkspace[WC.CROSS_TEAM_VALIDATION]}
+        translate={translate} />
     );
   }
 
@@ -65,19 +64,19 @@ export default class ProjectList extends Component {
   static projectNameFormatter(cell, row, extraData) {
     const nameStyles = [];
     switch (row.status) {
-      case ACTIVITY_STATUS_DRAFT:
+      case Constants.ACTIVITY_STATUS_DRAFT:
         nameStyles.push(style.status_draft);
         break;
-      case ACTIVITY_STATUS_UNVALIDATED:
+      case Constants.ACTIVITY_STATUS_UNVALIDATED:
         nameStyles.push(style.status_unvalidated);
         break;
-      case ACTIVITY_STATUS_VALIDATED:
+      case Constants.ACTIVITY_STATUS_VALIDATED:
         nameStyles.push(style.status_validated);
         break;
       default:
         break;
     }
-    if (row['client-change-id'] && !row.rejectedId) {
+    if (row[ActivityConstants.CLIENT_CHANGE_ID] && !row[ActivityConstants.IS_PUSHED] && !row.rejectedId) {
       nameStyles.push(style.unsynced);
     } else if (row.rejectedId) {
       nameStyles.push(style.rejected);
@@ -135,8 +134,8 @@ export default class ProjectList extends Component {
 
 
   handlerClickCleanFiltered() {
-    this.refs[AC.AMP_ID].cleanFiltered();
-    this.refs[AC.PROJECT_TITLE].cleanFiltered();
+    this.refs[ActivityConstants.AMP_ID].cleanFiltered();
+    this.refs[ActivityConstants.PROJECT_TITLE].cleanFiltered();
   }
 
   render() {
@@ -161,14 +160,15 @@ export default class ProjectList extends Component {
             dataField="icon" dataFormat={ProjectList.iconFormatter.bind(this)} columnClassName={style.width_7}
             className={style.thClassName} />
           <TableHeaderColumn
-            dataField={AC.AMP_ID} isKey dataAlign="center" dataSort columnClassName={style.width_8}
+            dataField={ActivityConstants.AMP_ID} isKey dataAlign="center" dataSort columnClassName={style.width_8}
             filter={{ type: 'TextFilter', placeholder: translate('enter AMP ID#') }} className={style.thClassName}
-            dataFormat={ProjectList.textFormatter} ref={AC.AMP_ID}
+            dataFormat={ProjectList.textFormatter} ref={ActivityConstants.AMP_ID}
             formatExtraData={{ label: 'id' }}>
             {translate('AMP ID')}
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataField={AC.PROJECT_TITLE} dataFormat={ProjectList.projectNameFormatter} dataSort ref={AC.PROJECT_TITLE}
+            dataField={ActivityConstants.PROJECT_TITLE}
+            dataFormat={ProjectList.projectNameFormatter} dataSort ref={ActivityConstants.PROJECT_TITLE}
             columnClassName={style.width_40} formatExtraData={{ label: 'title' }}
             filter={{ type: 'TextFilter', placeholder: translate('enter project title') }}
             className={style.thClassName}>

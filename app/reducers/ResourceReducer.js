@@ -1,3 +1,4 @@
+import { FieldsManager } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
 import {
   PENDING_RESOURCE_DOC_UPDATED,
@@ -18,7 +19,6 @@ import {
   RESOURCES_UNLOADED,
 } from '../actions/ResourceAction';
 import { STATE_CHANGE_LANGUAGE } from '../actions/TranslationAction';
-import FieldsManager from '../modules/field/FieldsManager';
 import { UUID } from '../utils/constants/ResourceConstants';
 
 const logger = new Logger('ResourceReducer');
@@ -100,7 +100,7 @@ const resourceReducer = (state = defaultState, action: Object) => {
       let resourceFieldsManager = state.resourceFieldsManager;
       if (resourceFieldsManager) {
         // we no longer will use the previous resourceFieldsManager, thus shallow clone is acceptable
-        resourceFieldsManager = FieldsManager.clone(resourceFieldsManager);
+        resourceFieldsManager = FieldsManager.clone(resourceFieldsManager, Logger);
         resourceFieldsManager.currentLanguageCode = action.actionData;
       }
       return { ...state };

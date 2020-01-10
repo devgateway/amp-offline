@@ -1,11 +1,12 @@
 /* eslint react/jsx-space-before-closing: 0 */
 /* eslint react/forbid-prop-types: 0 */
 import React, { Component, PropTypes } from 'react';
+import { Loading } from 'amp-ui';
 import TopArea from '../desktop/TopArea';
 import TabsContainer from './TabsContainer';
 import UrlUtils from '../../utils/URLUtils';
 import Logger from '../../modules/util/LoggerManager';
-import Loading from '../common/Loading';
+import translate from '../../utils/translate';
 
 const logger = new Logger('Desktop');
 
@@ -39,7 +40,7 @@ export default class Desktop extends Component {
   render() {
     logger.debug('render');
     if (!this.props.desktopReducer.loaded || this.props.desktopReducer.isLoadingDesktop) {
-      return <Loading />;
+      return <Loading Logger={Logger} translate={translate} />;
     } else {
       return (
         <div>

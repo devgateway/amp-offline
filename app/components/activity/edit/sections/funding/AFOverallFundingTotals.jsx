@@ -1,13 +1,11 @@
 /* eslint-disable class-methods-use-this */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, NumberUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 
 const logger = new Logger('AF overall funding totals');
 
@@ -27,7 +25,7 @@ export default class AFOverallFundingTotals extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.options = {
       withoutNoDataText: true
     };
@@ -36,11 +34,11 @@ export default class AFOverallFundingTotals extends Component {
   _compareFundings(f1, f2) {
     let f1String = '';
     let f2String = '';
-    switch (f1.trnType.value) {
-      case VC.COMMITMENTS:
+    switch (f1.trnType) {
+      case ActivityConstants.COMMITMENTS:
         f1String += 'a';
         break;
-      case VC.DISBURSEMENTS:
+      case ActivityConstants.DISBURSEMENTS:
         f1String += 'b';
         break;
       default:
@@ -48,21 +46,21 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f1.adjType.value) {
-      case VC.PLANNED:
+      case ValueConstants.PLANNED:
         f1String += 'b';
         break;
-      case VC.ACTUAL:
+      case ValueConstants.ACTUAL:
         f1String += 'a';
         break;
       default:
         f1String += 'c';
         break;
     }
-    switch (f2.trnType.value) {
-      case VC.COMMITMENTS:
+    switch (f2.trnType) {
+      case ActivityConstants.COMMITMENTS:
         f2String += 'a';
         break;
-      case VC.DISBURSEMENTS:
+      case ActivityConstants.DISBURSEMENTS:
         f2String += 'b';
         break;
       default:
@@ -70,10 +68,10 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f2.adjType.value) {
-      case VC.PLANNED:
+      case ValueConstants.PLANNED:
         f2String += 'b';
         break;
-      case VC.ACTUAL:
+      case ValueConstants.ACTUAL:
         f2String += 'a';
         break;
       default:
@@ -87,24 +85,27 @@ export default class AFOverallFundingTotals extends Component {
     const groups = [];
     if (fundings) {
       fundings.forEach((item) => {
-        item[AC.FUNDING_DETAILS].forEach(item2 => {
-          if (item2[AC.ADJUSTMENT_TYPE] && item2[AC.TRANSACTION_TYPE]) {
-            const amount = this.context.currencyRatesManager
-              .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
-            const auxFd = {
-              adjType: item2[AC.ADJUSTMENT_TYPE],
-              trnType: item2[AC.TRANSACTION_TYPE],
-              key: item2.id,
-              currency: this.context.currentWorkspaceSettings.currency.code,
-              amount
-            };
-            const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType.id === auxFd.trnType.id);
-            if (!group) {
-              groups.push(auxFd);
-            } else {
-              group.amount += auxFd.amount;
+        FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
+          const details = item[trnType] || [];
+          details.forEach(item2 => {
+            if (item2[ActivityConstants.ADJUSTMENT_TYPE]) {
+              const amount = this.context.currencyRatesManager
+                .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
+              const auxFd = {
+                adjType: item2[ActivityConstants.ADJUSTMENT_TYPE],
+                trnType,
+                key: item2.id,
+                currency: this.context.currentWorkspaceSettings.currency.code,
+                amount
+              };
+              const group = groups.find(o => o.adjType.id === auxFd.adjType.id && o.trnType === auxFd.trnType);
+              if (!group) {
+                groups.push(auxFd);
+              } else {
+                group.amount += auxFd.amount;
+              }
             }
-          }
+          });
         });
       });
     }
@@ -115,15 +116,19 @@ export default class AFOverallFundingTotals extends Component {
     const data = [];
     const groups = this._buildGroups(this.props.activity.fundings);
     const columns = [<TableHeaderColumn dataField="key" isKey hidden key={0} />,
-      <TableHeaderColumn dataField={AC.TYPE} key={AC.TYPE}>{translate('Transaction')}</TableHeaderColumn>,
-      <TableHeaderColumn dataField={AC.AMOUNT} key={AC.AMOUNT}>{translate('Amount')}</TableHeaderColumn>,
-      <TableHeaderColumn dataField={AC.CURRENCY} key={AC.CURRENCY}>{translate('Currency')}</TableHeaderColumn>];
+      <TableHeaderColumn
+        dataField={ActivityConstants.TYPE} key={ActivityConstants.TYPE}>{translate('Transaction')}</TableHeaderColumn>,
+      <TableHeaderColumn
+        dataField={ActivityConstants.AMOUNT} key={ActivityConstants.AMOUNT}>{translate('Amount')}</TableHeaderColumn>,
+      <TableHeaderColumn
+        dataField={ActivityConstants.CURRENCY}
+        key={ActivityConstants.CURRENCY}>{translate('Currency')}</TableHeaderColumn>];
     groups.sort(this._compareFundings).forEach((item) => (
       data.push({
         key: item.key,
         currency: item.currency,
         amount: NumberUtils.rawNumberToFormattedString(item.amount),
-        type: translate(`Total ${item.adjType.value} ${item.trnType.value}`)
+        type: translate(`Total ${item.adjType.value} ${item.trnType}`)
       })
     ));
     return (<div>

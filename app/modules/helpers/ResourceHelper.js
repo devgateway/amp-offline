@@ -1,5 +1,5 @@
+import { Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_RESOURCES } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import {
@@ -12,7 +12,8 @@ import {
   CLIENT_ADDING_DATE,
   CLIENT_YEAR_OF_PUBLICATION,
   CONTENT_ID,
-  CONTENT_TYPE
+  CONTENT_TYPE,
+  UUID
 } from '../../utils/constants/ResourceConstants';
 
 const logger = new Logger('ResourceHelper');
@@ -38,13 +39,18 @@ const ResourceHelper = {
 
   findResource(filterRule) {
     logger.debug('findResource');
-    return DatabaseManager.findOne(filterRule, COLLECTION_RESOURCES);
+    return DatabaseManager.findOne(filterRule, Constants.COLLECTION_RESOURCES);
   },
 
   findResourcesByUuids(uuids) {
     logger.debug('findResourcesByUuids');
     const filterRule = { uuid: { $in: uuids } };
     return ResourceHelper.findAllResources(filterRule);
+  },
+
+  findResourcesByUuidsWithLocalContent(uuids) {
+    const filter = { $and: [Utils.toMap(UUID, { $in: uuids }), Utils.toDefinedNotNullRule(CONTENT_ID)] };
+    return ResourceHelper.findAllResources(filter);
   },
 
   /**
@@ -71,7 +77,7 @@ const ResourceHelper = {
 
   findAllResources(filterRule, projections) {
     logger.debug('findAllResources');
-    return DatabaseManager.findAll(filterRule, COLLECTION_RESOURCES, projections);
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_RESOURCES, projections);
   },
 
   countAllResourcesModifiedOnClient(filterRule = {}) {
@@ -82,12 +88,12 @@ const ResourceHelper = {
 
   countAllResources(filterRule = {}) {
     logger.debug('countAllResources');
-    return DatabaseManager.count(filterRule, COLLECTION_RESOURCES);
+    return DatabaseManager.count(filterRule, Constants.COLLECTION_RESOURCES);
   },
 
   stampClientChange(resource) {
     if (!resource[CLIENT_CHANGE_ID]) {
-      resource[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${Utils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
+      resource[CLIENT_CHANGE_ID] = `${CLIENT_CHANGE_ID_PREFIX}-${UIUtils.stringToUniqueId(CLIENT_CHANGE_ID_PREFIX)}`;
     }
     if (!resource.id) {
       resource.id = resource[CLIENT_CHANGE_ID];
@@ -141,8 +147,8 @@ const ResourceHelper = {
    * @param dst the destination resource
    */
   copyLocalData(src, dst) {
-    dst[CONTENT_ID] = src[dst];
-    dst[CONTENT_TYPE] = src[dst];
+    dst[CONTENT_ID] = src[CONTENT_ID];
+    dst[CONTENT_TYPE] = src[CONTENT_TYPE];
   },
 
   /**
@@ -153,17 +159,17 @@ const ResourceHelper = {
   saveOrUpdateResource(resource) {
     logger.log('saveOrUpdateResource');
     ResourceHelper._setOrUpdateIds(resource);
-    return DatabaseManager.saveOrUpdate(resource.id, resource, COLLECTION_RESOURCES);
+    return DatabaseManager.saveOrUpdate(resource.id, resource, Constants.COLLECTION_RESOURCES);
   },
 
   saveOrUpdateResourceCollection(resources) {
     logger.log('saveOrUpdateResourceCollection');
     resources.forEach(resource => { ResourceHelper._setOrUpdateIds(resource); });
-    return DatabaseManager.saveOrUpdateCollection(resources, COLLECTION_RESOURCES);
+    return DatabaseManager.saveOrUpdateCollection(resources, Constants.COLLECTION_RESOURCES);
   },
 
   _setOrUpdateIds(resource) {
-    resource.uuid = resource.uuid || resource[INTERNAL_ID] || Utils.stringToId(resource);
+    resource.uuid = resource.uuid || resource[INTERNAL_ID] || UIUtils.stringToId(resource);
     resource.id = resource.id || resource.uuid;
     return resource;
   },
@@ -171,7 +177,7 @@ const ResourceHelper = {
   replaceResources(resources) {
     logger.log('replaceResources');
     resources.forEach(resource => { ResourceHelper._setOrUpdateIds(resource); });
-    return DatabaseManager.replaceCollection(resources, COLLECTION_RESOURCES);
+    return DatabaseManager.replaceCollection(resources, Constants.COLLECTION_RESOURCES);
   },
 
   /**
@@ -181,19 +187,19 @@ const ResourceHelper = {
    */
   deleteResourceById(id) {
     logger.log('deleteResourceById');
-    return DatabaseManager.removeById(id, COLLECTION_RESOURCES);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_RESOURCES);
   },
 
   deleteResourceByInternalId(internalId) {
     logger.log('deleteResourceByInternalId');
     const filterRule = Utils.toMap(INTERNAL_ID, internalId);
-    return DatabaseManager.removeAll(filterRule, COLLECTION_RESOURCES);
+    return DatabaseManager.removeAll(filterRule, Constants.COLLECTION_RESOURCES);
   },
 
   removeAllByIds(ids) {
     logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
-    return DatabaseManager.removeAll(idsFilter, COLLECTION_RESOURCES);
+    return DatabaseManager.removeAll(idsFilter, Constants.COLLECTION_RESOURCES);
   }
 };
 

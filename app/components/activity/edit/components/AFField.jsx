@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
+import { CurrencyRatesManager, FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager } from 'amp-ui';
 import AFLabel from './AFLabel';
 import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
@@ -10,9 +11,6 @@ import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
 import styles from '../ActivityForm.css';
-import FieldsManager from '../../../../modules/field/FieldsManager';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
-import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import { reportFieldValidation } from '../../../../actions/ActivityAction';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -20,12 +18,14 @@ import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
 import AFCheckbox from './AFCheckbox';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 import AFMultiSelect from './AFMultiSelect';
 import translate from '../../../../utils/translate';
 import AFRadioBoolean from './AFRadioBoolean';
 import AFDateYear from './AFDateYear';
-import CurrencyRatesManager from '../../../../modules/util/CurrencyRatesManager';
+import AFRadioList from './AFRadioList';
+import FieldDefinition from '../../../../modules/field/FieldDefinition';
+import Messages from '../../../common/Messages';
+import PossibleValuesHelper from '../../../../modules/helpers/PossibleValuesHelper';
 
 const logger = new Logger('AF field');
 
@@ -86,15 +86,14 @@ class AFField extends Component {
     const fieldPathParts = this.props.fieldPath.split('~');
     this.fieldName = fieldPathParts[fieldPathParts.length - 1];
     this.fieldDef = this.context.activityFieldsManager.getFieldDef(this.props.fieldPath);
-
-    // Check for fields that have to be enabled on FM too.
-    if (this.fieldDef && this.props.fmPath) {
-      this.fieldDef = FeatureManager.isFMSettingEnabled(this.props.fmPath) ? this.fieldDef : undefined;
-    }
-
     this.fieldExists = !!this.fieldDef;
-    this.requiredND = this.fieldExists ? this.fieldDef.required === 'ND' : undefined;
-    this.alwaysRequired = this.fieldExists ? this.fieldDef.required === 'Y' : undefined;
+    // Some fields may need a special FM path to check if enabled
+    if (this.fieldExists && this.props.fmPath) {
+      this.fieldExists = FeatureManager.isFMSettingEnabled(this.props.fmPath);
+    }
+    this.fieldDef = new FieldDefinition(this.fieldDef);
+    this.requiredND = this.fieldExists ? this.fieldDef.isRequiredND() : undefined;
+    this.alwaysRequired = this.fieldExists ? this.fieldDef.isAlwaysRequired() : undefined;
     this.onChange = this.onChange.bind(this);
     this.componentType = this.props.type || this.getComponentTypeByFieldType();
     this.setState({
@@ -123,14 +122,18 @@ class AFField extends Component {
   }
 
   onChange(value, asDraft, innerComponentValidationError) {
-    this.props.parent[this.fieldName] = value;
+    if (!this.fieldDef.isImportable()) {
+      innerComponentValidationError = innerComponentValidationError || translate('editNotAllowed');
+      value = this.props.parent[this.fieldName];
+    } else {
+      this.props.parent[this.fieldName] = value;
+    }
     const errors = this.context.activityValidator.validateField(
       this.props.parent, asDraft, this.fieldDef, this.props.fieldPath);
-    // TODO check if its still needed to have innerComponentValidationError, additionally to API rules
     this.context.activityValidator.processValidationResult(
       this.props.parent, this.props.fieldPath, innerComponentValidationError);
     this.setState({ value });
-    this._processValidation(errors);
+    this._processValidation(errors, true);
   }
 
   getLabel() {
@@ -154,13 +157,13 @@ class AFField extends Component {
     if (!this.fieldDef) {
       return null;
     }
-    if (this.fieldDef.id_only === true) {
+    if (this.fieldDef.isIdOnly()) {
       return Types.DROPDOWN;
     }
-    switch (this.fieldDef.field_type) {
+    switch (this.fieldDef.type) {
       case 'string':
         // TODO known limitation AMP-25950, until then limiting to text area to allow imports, unless type is explicit
-        if (this.fieldDef.field_length) {
+        if (this.fieldDef.length) {
           return Types.TEXT_AREA;
         }
         return Types.RICH_TEXT_AREA;
@@ -198,6 +201,8 @@ class AFField extends Component {
         return this._getCheckbox();
       case Types.RADIO_BOOLEAN:
         return this._getRadioBoolean();
+      case Types.RADIO_LIST:
+        return this._getRadioList();
       case Types.INPUT_TYPE:
         return this._getInput();
       case Types.MULTI_SELECT:
@@ -230,7 +235,7 @@ class AFField extends Component {
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
     const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
     let options = this._getOptions(optionsFieldPath);
-    if (PATHS_WITH_HIERARCHICAL_VALUES.has(optionsFieldPath)) {
+    if (FieldPathConstants.PATHS_WITH_HIERARCHICAL_VALUES.has(optionsFieldPath)) {
       options = PossibleValuesManager.buildFormattedHierarchicalValues(options);
       options = PossibleValuesManager.fillHierarchicalDepth(options);
     }
@@ -238,7 +243,7 @@ class AFField extends Component {
     const selectedOptions = this.state.value;
     return (<AFListSelector
       options={afOptions} selectedOptions={selectedOptions} listPath={this.props.fieldPath}
-      onChange={this.onChange} validationError={this.state.validationError} extraParams={this.props.extraParams}
+      onChange={this.onChange} validationErrors={this.state.validationErrors} extraParams={this.props.extraParams}
       onBeforeDelete={this.props.onBeforeDelete} />);
   }
 
@@ -256,7 +261,8 @@ class AFField extends Component {
 
   _toAFOptions(options) {
     const { afOptionFormatter, sortByDisplayValue } = this.props.extraParams || {};
-    const afOptions = PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
+    const afOptions = PossibleValuesManager.getTreeSortedOptionsList(options, PossibleValuesHelper.reverseSortOptions)
+      .map(option =>
       (option.visible ? this._toAFOption(option, afOptionFormatter) : null)).filter(afOption => afOption !== null);
     if (sortByDisplayValue) {
       AFOption.sortByDisplayValue(afOptions);
@@ -277,12 +283,19 @@ class AFField extends Component {
   }
 
   _getTextArea() {
-    return (<AFTextArea
-      value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />);
+    return (
+      <AFTextArea
+        value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange}
+        readonly={!this.fieldDef.isImportable()} />
+    );
   }
 
   _getInput() {
-    return <AFInput value={this.state.value} maxLength={this.fieldDef.field_length} onChange={this.onChange} />;
+    return (
+      <AFInput
+        value={this.state.value} maxLength={this.fieldDef.length} onChange={this.onChange}
+        readonly={!this.fieldDef.isImportable()} />
+    );
   }
 
   _getNumber() {
@@ -312,18 +325,29 @@ class AFField extends Component {
     return <AFRadioBoolean value={this.state.value} onChange={this.onChange} />;
   }
 
+  _getRadioList() {
+    const selectedId = this.state.value ? this.state.value.id : null;
+    const afOptions = this._toAFOptions(this._getOptions(this.props.fieldPath, selectedId));
+    return <AFRadioList value={this.state.value} onChange={this.onChange} options={afOptions} />;
+  }
+
   _getMultiSelect() {
-    const selectFieldDef = this.fieldDef.children.length === 1 ?
-      this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
-    if (!selectFieldDef) {
-      logger.error('Could not automatically detect multi-select field.');
-      return null;
+    let selectFieldDef = this.fieldDef;
+    let optionsPath = this.props.fieldPath;
+    if (this.fieldDef.hasChildren()) {
+      selectFieldDef = this.fieldDef.children.length === 1 ?
+        this.fieldDef.children[0] : this.fieldDef.children.find(f => f.id_only === true);
+      selectFieldDef = selectFieldDef && new FieldDefinition(selectFieldDef);
+      if (!selectFieldDef) {
+        logger.error('Could not automatically detect multi-select field.');
+        return null;
+      }
+      optionsPath = `${this.props.fieldPath}~${selectFieldDef.name}`;
     }
-    const optionsPath = `${this.props.fieldPath}~${selectFieldDef.field_name}`;
     const afOptions = this._toAFOptions(this._getOptions(optionsPath));
     return (<AFMultiSelect
       options={afOptions} values={this.state.value} listPath={this.props.fieldPath}
-      selectField={selectFieldDef.field_name} onChange={this.onChange} />);
+      selectField={selectFieldDef.name} onChange={this.onChange} />);
   }
 
   _getCustom() {
@@ -347,17 +371,19 @@ class AFField extends Component {
   }
 
   _getValidationState() {
-    if (this.state.validationError) {
+    if (this.state.validationErrors) {
       return 'error';
     }
     return null;
   }
 
-  _processValidation(errors) {
-    const fieldErrors = errors && errors.filter(e => e.path === this.props.fieldPath);
-    const validationError = fieldErrors ? fieldErrors.map(e => e.errorMessage).join(' ') : null;
-    // this.props.onFieldValidation(this.props.fieldPath, errors);
-    this.setState({ validationError });
+  _processValidation(errors, isNotifyFieldValidation) {
+    const errorMessages = errors && errors.filter(e => e.path === this.props.fieldPath).map(e => e.errorMessage);
+    const validationErrors = errorMessages && errorMessages.length ? errorMessages : null;
+    if (isNotifyFieldValidation) {
+      this.props.onFieldValidation(this.props.fieldPath, errors);
+    }
+    this.setState({ validationErrors });
   }
 
   render() {
@@ -375,7 +401,9 @@ class AFField extends Component {
           {this.getFieldContent()}
         </span>
         <FormControl.Feedback />
-        <HelpBlock className={styles.help_block}>{showValidationError && this.state.validationError}</HelpBlock>
+        <HelpBlock className={styles.help_block}>
+          {showValidationError && <Messages messages={this.state.validationErrors} />}
+        </HelpBlock>
       </FormGroup>
     );
   }

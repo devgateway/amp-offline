@@ -1,13 +1,20 @@
 import request from 'request';
+import { ErrorConstants } from 'amp-ui';
 import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_API_NETWORK, NOTIFICATION_SEVERITY_ERROR } from '../../utils/constants/ErrorConstants';
 import { LANGUAGE_PARAM, PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
 
 let cookiesStore = request.jar();
+
+/*
+As of now we have 5 parallel pull activities requests and 5 contacts requests that run at the same time. Until
+contacts are pulled in batches, it takes about the same time to pull both, though I saw a few other requests come
+in between. According to stats, 11 brings optimal result, plus it's best to avoid running too many keep-alive requests.
+ */
+const pool = { maxSockets: 11 };
 
 const RequestConfig = {
   /**
@@ -37,8 +44,11 @@ const RequestConfig = {
       headers,
       method,
       simple: false,
+      strictSSL: true,
       resolveWithFullResponse: true,
       gzip: true,
+      forever: true,
+      pool,
       jar: cookiesStore // enables cookies to be saved
     };
     if (routeConfiguration.isBinary) {
@@ -138,8 +148,8 @@ const RequestConfig = {
     if (!routesConfigurationFiltered || routesConfigurationFiltered.length !== 1) {
       throw new Notification({
         message: `Route ${url} for method ${method} is not configured`,
-        origin: NOTIFICATION_ORIGIN_API_NETWORK,
-        severity: NOTIFICATION_SEVERITY_ERROR
+        origin: ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK,
+        severity: ErrorConstants.NOTIFICATION_SEVERITY_ERROR
       });
     }
     // above we ensure we have only one route

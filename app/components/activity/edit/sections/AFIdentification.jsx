@@ -1,24 +1,25 @@
-import React, { Component, PropTypes } from 'react';
-import { Col, Grid, Row } from 'react-bootstrap';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Clearfix, Col, Grid, Row } from 'react-bootstrap';
+import { ActivityConstants, ValueConstants, FieldsManager } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import * as Types from '../components/AFComponentTypes';
 import { IDENTIFICATION } from './AFSectionConstants';
-import * as AC from '../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../utils/constants/ValueConstants';
 import Logger from '../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../modules/field/FieldsManager';
 
 const logger = new Logger('AF identification');
 
 const CUSTOM_TYPE = {
-  [AC.BUDGET_CODE_PROJECT_ID]: Types.INPUT_TYPE,
-  [AC.CRIS_NUMBER]: Types.INPUT_TYPE,
-  [AC.GOVERNMENT_APPROVAL_PROCEDURES]: Types.RADIO_BOOLEAN,
-  [AC.GOVERNMENT_AGREEMENT_NUMBER]: Types.INPUT_TYPE,
-  [AC.JOINT_CRITERIA]: Types.RADIO_BOOLEAN,
-  [AC.HUMANITARIAN_AID]: Types.RADIO_BOOLEAN
+  [ActivityConstants.BUDGET_CODE_PROJECT_ID]: Types.INPUT_TYPE,
+  [ActivityConstants.CRIS_NUMBER]: Types.INPUT_TYPE,
+  [ActivityConstants.GOVERNMENT_APPROVAL_PROCEDURES]: Types.RADIO_BOOLEAN,
+  [ActivityConstants.GOVERNMENT_AGREEMENT_NUMBER]: Types.INPUT_TYPE,
+  [ActivityConstants.JOINT_CRITERIA]: Types.RADIO_BOOLEAN,
+  [ActivityConstants.HUMANITARIAN_AID]: Types.RADIO_BOOLEAN,
+  [ActivityConstants.FINANCIAL_INSTRUMENT]: Types.RADIO_LIST,
+  [ActivityConstants.IATI_IDENTIFIER]: Types.INPUT_TYPE,
 };
 
 /**
@@ -34,9 +35,9 @@ class AFIdentification extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     // Show "Budget Extras" fields like ministry_code only when activity_budget is enabled and has value 'On Budget'.
-    const showBudgetExtras = this.props.activityFieldsManager.isFieldPathEnabled(AC.ACTIVITY_BUDGET)
+    const showBudgetExtras = this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.ACTIVITY_BUDGET)
       && this.isActivityOnBudget();
     this.state = {
       showBudgetExtras
@@ -52,7 +53,8 @@ class AFIdentification extends Component {
   }
 
   isActivityOnBudget() {
-    return this.props.activity[AC.ACTIVITY_BUDGET] && this.props.activity[AC.ACTIVITY_BUDGET].value === VC.ON_BUDGET;
+    return this.props.activity[ActivityConstants.ACTIVITY_BUDGET] &&
+      this.props.activity[ActivityConstants.ACTIVITY_BUDGET].value === ValueConstants.ON_BUDGET;
   }
 
   mapSimpleFieldDef(fieldName) {
@@ -62,40 +64,62 @@ class AFIdentification extends Component {
 
   render() {
     // TODO update the layout per Llanoc design. If not available, adjust to work. For now grouping fields as in AMP.
-    const leftColumn = [AC.ACTIVITY_STATUS, AC.STATUS_REASON, AC.PROJECT_COMMENTS, AC.OBJECTIVE, AC.LESSONS_LEARNED,
-      AC.PROJECT_IMPACT, AC.ACTIVITY_SUMMARY, AC.DESCRIPTION, AC.RESULTS].map(this.mapSimpleFieldDef);
-    const rightColumn = [AC.BUDGET_CODE_PROJECT_ID, AC.A_C_CHAPTER].map(this.mapSimpleFieldDef);
+    const leftColumn = [ActivityConstants.ACTIVITY_STATUS, ActivityConstants.STATUS_REASON,
+      ActivityConstants.PROJECT_COMMENTS, ActivityConstants.OBJECTIVE, ActivityConstants.LESSONS_LEARNED,
+      ActivityConstants.PROJECT_IMPACT, ActivityConstants.ACTIVITY_SUMMARY, ActivityConstants.DESCRIPTION,
+      ActivityConstants.RESULTS].map(this.mapSimpleFieldDef);
+    const rightColumn = [ActivityConstants.BUDGET_CODE_PROJECT_ID, ActivityConstants.A_C_CHAPTER]
+      .map(this.mapSimpleFieldDef);
     rightColumn.push(
       (<AFField
-        key={AC.ACTIVITY_BUDGET}
-        parent={this.props.activity} fieldPath={AC.ACTIVITY_BUDGET} onAfterUpdate={this.onActivityBudgetUpdate} />));
-    rightColumn.push(...[AC.GOVERNMENT_APPROVAL_PROCEDURES, AC.JOINT_CRITERIA, AC.HUMANITARIAN_AID]
+        key={ActivityConstants.ACTIVITY_BUDGET}
+        parent={this.props.activity} fieldPath={ActivityConstants.ACTIVITY_BUDGET}
+        onAfterUpdate={this.onActivityBudgetUpdate} />));
+    rightColumn.push(...[ActivityConstants.GOVERNMENT_APPROVAL_PROCEDURES, ActivityConstants.JOINT_CRITERIA,
+      ActivityConstants.HUMANITARIAN_AID]
       .map(this.mapSimpleFieldDef));
     if (this.state.showBudgetExtras) {
       const budgetExtras = [
-        <AFField key={AC.FY} parent={this.props.activity} fieldPath={AC.FY} type={Types.MULTI_SELECT} />,
-        <AFField key={AC.MINISTRY_CODE} parent={this.props.activity} fieldPath={AC.MINISTRY_CODE} forceRequired />
+        <AFField
+          key={ActivityConstants.INDIRECT_ON_BUDGET} parent={this.props.activity}
+          fieldPath={ActivityConstants.INDIRECT_ON_BUDGET}
+          type={Types.CHECKBOX} />,
+        <AFField
+          key={ActivityConstants.FY} parent={this.props.activity} fieldPath={ActivityConstants.FY}
+          type={Types.MULTI_SELECT} />,
+        <AFField
+          key={ActivityConstants.MINISTRY_CODE} parent={this.props.activity}
+          fieldPath={ActivityConstants.MINISTRY_CODE} showRequired />,
+        <AFField
+          key={ActivityConstants.PROJECT_CODE} parent={this.props.activity} fieldPath={ActivityConstants.PROJECT_CODE}
+          type={Types.INPUT_TYPE}
+          showRequired />
       ];
       rightColumn.push(<div key="budgetExtras" className={afStyles.budget_extras}>
         {budgetExtras}
       </div>);
     }
-    rightColumn.push(...[AC.CRIS_NUMBER, AC.PROJECT_MANAGEMENT, AC.GOVERNMENT_AGREEMENT_NUMBER]
+    rightColumn.push(...[ActivityConstants.FINANCIAL_INSTRUMENT, ActivityConstants.CRIS_NUMBER,
+      ActivityConstants.PROJECT_MANAGEMENT, ActivityConstants.GOVERNMENT_AGREEMENT_NUMBER,
+      ActivityConstants.IATI_IDENTIFIER]
       .map(this.mapSimpleFieldDef));
 
     return (
       <div className={afStyles.full_width}>
         <Grid className={afStyles.full_width}>
           <Row key="title-full-row">
-            <Col md={12} lg={12}>
-              <AFField key={AC.PROJECT_TITLE} parent={this.props.activity} fieldPath={AC.PROJECT_TITLE} />
+            <Col xs={12}>
+              <AFField
+                key={ActivityConstants.PROJECT_TITLE} parent={this.props.activity}
+                fieldPath={ActivityConstants.PROJECT_TITLE} />
             </Col>
           </Row>
           <Row key="col-split-data">
-            <Col key="left-col" md={6} lg={6}>
+            <Col key="left-col" md={6} sm={12}>
               {leftColumn}
             </Col>
-            <Col key="right-col" md={6} lg={6}>
+            <Clearfix visibleSmBlock />
+            <Col key="right-col" md={6} sm={12}>
               {rightColumn}
             </Col>
           </Row>

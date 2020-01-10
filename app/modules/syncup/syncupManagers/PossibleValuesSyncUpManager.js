@@ -1,29 +1,18 @@
+import { Constants, FieldPathConstants } from 'amp-ui';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import PossibleValuesHelper from '../../helpers/PossibleValuesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import Logger from '../../util/LoggerManager';
-import {
-  PREFIX_ACTIVITY,
-  PREFIX_COMMON,
-  PREFIX_CONTACT,
-  PREFIX_RESOURCE
-} from '../../../utils/constants/FieldPathConstants';
-import {
-  SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
-  SYNCUP_TYPE_COMMON_POSSIBLE_VALUES,
-  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
-  SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES
-} from '../../../utils/Constants';
 
 const logger = new Logger('Possible values syncup manager');
 
 /* eslint-disable class-methods-use-this */
 
 const SYNCUP_TYPE_TO_PREFIX = {
-  [SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES]: PREFIX_ACTIVITY,
-  [SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES]: PREFIX_CONTACT,
-  [SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES]: PREFIX_RESOURCE,
-  [SYNCUP_TYPE_COMMON_POSSIBLE_VALUES]: PREFIX_COMMON,
+  [Constants.SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES]: FieldPathConstants.PREFIX_ACTIVITY,
+  [Constants.SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES]: FieldPathConstants.PREFIX_CONTACT,
+  [Constants.SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES]: FieldPathConstants.PREFIX_RESOURCE,
+  [Constants.SYNCUP_TYPE_COMMON_POSSIBLE_VALUES]: FieldPathConstants.PREFIX_COMMON,
 };
 
 /**

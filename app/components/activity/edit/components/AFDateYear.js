@@ -1,12 +1,12 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
+import { CalendarConstants } from 'amp-ui';
 import * as PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
 import Moment from 'moment';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
 import DateUtils from '../../../../utils/DateUtils';
-import { START_DAY_NUMBER, START_MONTH_NUMBER } from '../../../../utils/constants/CalendarConstants';
 
 const logger = new Logger('AF date year');
 
@@ -22,7 +22,7 @@ export default class AFDateYear extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = { value: props.value };
   }
 
@@ -30,10 +30,9 @@ export default class AFDateYear extends Component {
     let value = null;
     const { calendar, onChange } = this.props;
     if (control.target.value !== '-1') {
-      const day = calendar[START_DAY_NUMBER];
-      const month = calendar[START_MONTH_NUMBER];
-      // ISO8601 format for Moment library.
-      value = DateUtils.getISODateForAPI(Moment(`${control.target.value}-${month}-${day}`));
+      const day = calendar[CalendarConstants.START_DAY_NUMBER];
+      const month = calendar[CalendarConstants.START_MONTH_NUMBER];
+      value = DateUtils.formatDateForAPI(Moment(`${control.target.value}-${month}-${day}`));
     }
     if (onChange) {
       onChange(value);

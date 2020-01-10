@@ -2,12 +2,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Grid } from 'react-bootstrap';
+import { FieldsManager, UIUtils } from 'amp-ui';
 import Logger from '../../../modules/util/LoggerManager';
 import translate from '../../../utils/translate';
 import * as styles from './EntryList.css';
-import * as Utils from '../../../utils/Utils';
 import EntryList from './EntryList';
-import FieldsManager from '../../../modules/field/FieldsManager';
 
 const logger = new Logger('EntryListWrapper');
 
@@ -76,7 +75,7 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
   }
 
   toUniqueItemIds(items) {
-    return items.map(item => ([Utils.stringToUniqueId('item'), item]));
+    return items.map(item => ([UIUtils.stringToUniqueId('item'), item]));
   }
 
   getItems(uniqueIdItemPairs = this.state.uniqueIdItemPairs) {
@@ -97,7 +96,7 @@ const EntryListWrapper = (Title, getEntryFunc, listPath) => class extends Compon
           label={translate(Title)} className={wrapperContainerStyle} titleAsAddButton={titleAsAddButton}
           entryListStyle={entryListStyle}
           onRemove={this.onRemove.bind(this)} onAdd={this.onAdd.bind(this)} childrenIds={ids}>
-          {uniqueIdItemPairs.map(([uid, item]) => getEntryFunc(uid, item))}
+          {uniqueIdItemPairs.map(([uid, item]) => getEntryFunc(uid, item, this.props, this.context))}
         </EntryList>
       </Grid>
     );

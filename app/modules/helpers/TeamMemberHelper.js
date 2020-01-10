@@ -1,6 +1,6 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_TEAMMEMBERS } from '../../utils/Constants';
-import { flattenToListByKey } from '../../utils/Utils';
+import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('Team member helper');
@@ -23,8 +23,8 @@ const TeamMemberHelper = {
     if (excludeDelete) {
       filter = { ...filter, ...this.getExcludeDeletedTeamMembersFilter() };
     }
-    return DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS, projections)
-      .then((teamMembers) => flattenToListByKey(teamMembers, 'workspace-id'));
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_TEAMMEMBERS, projections)
+      .then((teamMembers) => Utils.flattenToListByKey(teamMembers, 'workspace-id'));
   },
 
   /**
@@ -60,7 +60,12 @@ const TeamMemberHelper = {
 
   findAll(filter) {
     logger.debug('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_TEAMMEMBERS);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_TEAMMEMBERS);
+  },
+
+  findByTeamMemberId(id) {
+    logger.debug('findByTeamMemberId');
+    return this.findTeamMember({ id });
   },
 
   /**
@@ -70,7 +75,7 @@ const TeamMemberHelper = {
    */
   findTeamMember(filter) {
     logger.debug('findTeamMember');
-    return DatabaseManager.findOne(filter, COLLECTION_TEAMMEMBERS);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_TEAMMEMBERS);
   },
 
   getExcludeDeletedTeamMembersFilter() {
@@ -84,12 +89,12 @@ const TeamMemberHelper = {
    */
   saveOrUpdateTeamMember(teamMember) {
     logger.log('saveOrUpdateWorkspace');
-    return DatabaseManager.saveOrUpdate(teamMember.id, teamMember, COLLECTION_TEAMMEMBERS, {});
+    return DatabaseManager.saveOrUpdate(teamMember.id, teamMember, Constants.COLLECTION_TEAMMEMBERS, {});
   },
 
   saveOrUpdateTeamMembers(data) {
     logger.log('saveOrUpdateTeamMembers');
-    return DatabaseManager.saveOrUpdateCollection(data, COLLECTION_TEAMMEMBERS);
+    return DatabaseManager.saveOrUpdateCollection(data, Constants.COLLECTION_TEAMMEMBERS);
   },
 
   /**
@@ -99,13 +104,13 @@ const TeamMemberHelper = {
    */
   deleteById(id) {
     logger.log('deleteById');
-    return DatabaseManager.removeById(id, COLLECTION_TEAMMEMBERS, {});
+    return DatabaseManager.removeById(id, Constants.COLLECTION_TEAMMEMBERS, {});
   },
 
   deleteByIds(ids) {
     logger.log('deleteByIds');
     const filter = { id: { $in: ids } };
-    return DatabaseManager.removeAll(filter, COLLECTION_TEAMMEMBERS, {});
+    return DatabaseManager.removeAll(filter, Constants.COLLECTION_TEAMMEMBERS, {});
   }
 
 };

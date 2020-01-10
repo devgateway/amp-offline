@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { SHELL } from '../../modules/util/ElectronApp';
-import * as styles from './CommonStyles.css';
-
+import styles from './CommonStyles.css';
 /**
  * Action Url
  *
@@ -17,28 +15,24 @@ export default class ActionUrl extends Component {
     navUrl: PropTypes.string, // navigation link
     onClick: PropTypes.func, // a custom onClick action
     tooltip: PropTypes.string,
+    openExternal: PropTypes.func.isRequired
   };
-
   renderExternalLink() {
-    const { href, urlContent } = this.props;
-    return <a className={styles.url} onClick={() => SHELL.openExternal(href)}>{urlContent}</a>;
+    const { href, urlContent, openExternal } = this.props;
+    return <a className={styles.url} onClick={() => openExternal(href)}>{urlContent}</a>;
   }
-
   renderCustomAction() {
     const { onClick, urlContent } = this.props;
     return <span className={styles.action} onClick={onClick}>{urlContent}</span>;
   }
-
   renderNavigationLink() {
     const { navUrl, urlContent } = this.props;
     return <Link to={navUrl}>{urlContent}</Link>;
   }
-
   renderNoAction() {
     const { urlContent } = this.props;
     return <span className={styles.noAction}>{urlContent}</span>;
   }
-
   render() {
     const { href, onClick, navUrl, tooltip } = this.props;
     let content;
@@ -51,7 +45,7 @@ export default class ActionUrl extends Component {
     }
     if (content) {
       if (tooltip) {
-        const tooltipElement = <Tooltip id="tooltipId" >{tooltip}</Tooltip>;
+        const tooltipElement = <Tooltip id="tooltipId">{tooltip}</Tooltip>;
         content = (
           <OverlayTrigger placement="right" overlay={tooltipElement}>
             {content}

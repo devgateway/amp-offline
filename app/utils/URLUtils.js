@@ -1,5 +1,6 @@
 import { shell } from 'electron';
 import URI from 'urijs';
+import fileUrl from 'file-url';
 import { history } from '../index';
 import Logger from '../modules/util/LoggerManager';
 import * as RequestConfig from '../modules/connectivity/RequestConfig';
@@ -43,9 +44,14 @@ const urlUtils = {
       while (url.startsWith('/')) {
         url = url.substr(1, url.length);
       }
-      const uri = new URI(url);
-      if (!uri.protocol()) {
-        url = uri.protocol(fallbackProtocol).toString();
+      try {
+        const uri = new URI(url);
+        if (!uri.protocol()) {
+          url = uri.protocol(fallbackProtocol)
+            .toString();
+        }
+      } catch (error) {
+        logger.warn(error);
       }
     }
     return url;
@@ -80,6 +86,19 @@ const urlUtils = {
       options.forEach(alternative => options.push(`${otherProtocol}${alternative.substr(oldProtocolEnd)}`));
     }
     return options;
+  },
+
+  /**
+   * Parses the passed query string into an object
+   * @param url
+   * @returns {{}} {propertyName: propertyValue}
+   */
+  parseQuery(url) {
+    return URI.parseQuery(url);
+  },
+
+  toFileUrl(filePath) {
+    return fileUrl(filePath);
   }
 
 };

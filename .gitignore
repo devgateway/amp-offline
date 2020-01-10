@@ -46,7 +46,11 @@ app/locales/translations.??.json
 lang/*
 app/lang/master-translations.en.json
 ampoffline-log.txt
-assets/ampCountryFlag.png
+assets/*
 app/libs/dll/manifest.json
 app/libs/dll/lib.js
 updates/
+
+# local only
+rundev.*
+runqa.*

@@ -1,9 +1,10 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
+import { FieldPathConstants } from 'amp-ui';
 import AFOption from './AFOption';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import * as FPC from '../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AF Dropdown');
 
@@ -76,14 +77,17 @@ export default class AFDropDown extends Component {
     }
     const defaultOption = <option key={-1} value={-1}>{translate('Choose One')}</option>;
     const options = this.props.options.map(option => {
-      const isDisabled = option[FPC.FIELD_OPTION_USABLE] !== undefined && !option[FPC.FIELD_OPTION_USABLE];
+      const isDisabled = option[FieldPathConstants.FIELD_OPTION_USABLE] !== undefined &&
+        !option[FieldPathConstants.FIELD_OPTION_USABLE];
       const displayValue = extraParams.showOrigValue ? option.value : option.translatedValue;
       return <option key={option.id} value={option.id} disabled={isDisabled}>{displayValue}</option>;
     });
 
+    const value = this.state.value || '';
+
     return (
       <FormControl
-        componentClass="select" value={this.state.value} onChange={this.handleChange.bind(this)}
+        componentClass="select" value={value} onChange={this.handleChange.bind(this)}
         placeholder={-1}>
         {extraParams.noChooseOneOption ? options : [defaultOption].concat(options)}
       </FormControl>

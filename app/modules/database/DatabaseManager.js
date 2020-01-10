@@ -1,21 +1,17 @@
 import Datastore from 'nedb';
 import Promise from 'bluebird';
 import Crypto from 'crypto-js';
-import {
-  DB_AUTOCOMPACT_INTERVAL_MILISECONDS,
-  DB_COMMON_DATASTORE_OPTIONS,
-  DB_DEFAULT_QUERY_LIMIT,
-  DB_FILE_EXTENSION,
-  DB_FILE_PREFIX,
-  AKEY
-} from '../../utils/Constants';
+import os from 'os';
+import { Constants, ErrorConstants } from 'amp-ui';
+import AmpClientSecurity from 'amp-client-security';
 import DatabaseCollection from './DatabaseCollection';
 import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from '../util/FileManager';
 import * as Utils from '../../utils/Utils';
 import translate from '../../utils/translate';
+
+let secureKey;
 
 const logger = new Logger('Database manager');
 
@@ -30,6 +26,34 @@ const logger = new Logger('Database manager');
  * ((object, callback, options)), find: ((object, callback, options))}}
  */
 const DatabaseManager = {
+  getDBPathParts(dbName) {
+    return [Constants.DB_FILE_PREFIX, `${dbName}${Constants.DB_FILE_EXTENSION}`];
+  },
+
+  getDBFullPath(dbName) {
+    return FileManager.getFullPath(...DatabaseManager.getDBPathParts(dbName));
+  },
+
+  getSecureKey() {
+    return secureKey;
+  },
+
+  getLegacyKey() {
+    return AmpClientSecurity.getLegacyKey();
+  },
+
+  setKey(key) {
+    secureKey = key;
+  },
+
+
+  _initSecureKey() {
+    logger.debug('_initSecureKey');
+    const { username } = os.userInfo();
+    return AmpClientSecurity.getSecurityKey(`${username}@amp-client`).then(key => {
+      secureKey = key;
+    });
+  },
 
   // VERY IMPORTANT: NeDB can execute 1 operation at the same time and the rest is queued, so we always work async.
   // VERY IMPORTANT 2: Loading the same datastore more than once didnt throw an error but drastically increased the MEM
@@ -41,17 +65,19 @@ const DatabaseManager = {
 
   _getCollection(name) {
     logger.debug('_getCollection');
-    return new Promise((resolve, reject) => {
-      const newOptions = Object.assign({}, DB_COMMON_DATASTORE_OPTIONS, {
-        filename: FileManager.getFullPath(DB_FILE_PREFIX, `${name}${DB_FILE_EXTENSION}`)
+    const useEncryption = Utils.isReleaseBranch() && name !== Constants.COLLECTION_SANITY_CHECK;
+    const keyInitPromise = (useEncryption && !secureKey) ? this._initSecureKey() : Promise.resolve();
+    return keyInitPromise.then(() => new Promise((resolve, reject) => {
+      const newOptions = Object.assign({}, Constants.DB_COMMON_DATASTORE_OPTIONS, {
+        filename: DatabaseManager.getDBFullPath(name)
       });
       // Encrypt the DB only when built from a release branch
-      if (Utils.isReleaseBranch()) {
+      if (useEncryption) {
         newOptions.afterSerialization = this.encryptData;
         newOptions.beforeDeserialization = this.decryptData;
       }
       DatabaseManager._openOrGetDatastore(name, newOptions).then(resolve).catch(reject);
-    });
+    }));
   },
 
   getCollection(name, options) {
@@ -68,7 +94,7 @@ const DatabaseManager = {
         resolve(auxDBCollection.nedbDatastore);
       } else {
         const db = new Datastore(options);
-        db.persistence.setAutocompactionInterval(DB_AUTOCOMPACT_INTERVAL_MILISECONDS);
+        db.persistence.setAutocompactionInterval(Constants.DB_AUTOCOMPACT_INTERVAL_MILISECONDS);
         DatabaseCollection.getInstance().insertCollection(name, db);
         db.loadDatabase((err) => {
           if (err !== null) {
@@ -270,7 +296,7 @@ const DatabaseManager = {
    * @param fieldsModifier the fields modifier rule
    * @param collectionName
    */
-  updateCollectionFields(filter, fieldsModifier, collectionName) {
+  updateCollectionFields(filter = {}, fieldsModifier, collectionName) {
     logger.log('updateCollectionFields');
     return new Promise((resolve, reject) => {
       const updateCollectionFieldsFunc = DatabaseManager._updateCollectionFields
@@ -483,7 +509,7 @@ const DatabaseManager = {
   },
 
   findAllWithProjectionsAndOtherCriteria(example, collectionName, projections
-    , sort = { id: 1 }, skip = 0, limit = DB_DEFAULT_QUERY_LIMIT) {
+    , sort = { id: 1 }, skip = 0, limit = Constants.DB_DEFAULT_QUERY_LIMIT) {
     logger.debug('findAllWithProjectionsAndOtherCriteria');
     return new Promise((resolve, reject) => {
       const findAllWithOtherCriteriaFunc = this._findAllWithProjectionsAndOtherCriteria.bind(
@@ -517,7 +543,7 @@ const DatabaseManager = {
     });
   },
 
-  _count(example, collectionName, resolve, reject) {
+  _count(example = {}, collectionName, resolve, reject) {
     logger.debug('_count');
     DatabaseManager._getCollection(collectionName, null).then((collection) => {
       collection.count(example, (err, count) => {
@@ -531,12 +557,12 @@ const DatabaseManager = {
 
   encryptData(dataString) {
     // logger.log('encryptData');
-    return Crypto.AES.encrypt(dataString, AKEY);
+    return Crypto.AES.encrypt(dataString, secureKey);
   },
 
   decryptData(dataString) {
     // logger.log('decryptData');
-    const bytes = Crypto.AES.decrypt(dataString, AKEY);
+    const bytes = Crypto.AES.decrypt(dataString, secureKey);
     return bytes.toString(Crypto.enc.Utf8);
   },
 
@@ -561,7 +587,7 @@ const DatabaseManager = {
     DatabaseCollection.getInstance().addPromiseAndProcess(task);
   },
 
-  _createNotification(err, origin = NOTIFICATION_ORIGIN_DATABASE) {
+  _createNotification(err, origin = ErrorConstants.NOTIFICATION_ORIGIN_DATABASE) {
     return new Notification({ message: `${translate('Database Error')}: ${err.toString()}`, origin });
   }
 };

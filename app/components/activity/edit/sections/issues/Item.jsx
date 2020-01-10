@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
-import React, { Component, PropTypes } from 'react';
+/* eslint-disable max-len */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as FMC from '../../../../../utils/constants/FeatureManagerConstants';
 import AFField from './../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
-import FeatureManager from '../../../../../modules/util/FeatureManager';
 import styles from './Item.css';
 
 const logger = new Logger('AF Issues Item');
@@ -36,7 +36,7 @@ export default class Item extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
   }
 
   _generateIssueRow() {
@@ -45,15 +45,17 @@ export default class Item extends Component {
         <tr>
           <td>
             <AFField
-              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_NAME}`} type={Types.TEXT_AREA} />
+              parent={this.props.issue} fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.ISSUE_NAME}`}
+              type={Types.TEXT_AREA} />
           </td>
           <td>
             <AFField
-              parent={this.props.issue} fieldPath={`${AC.ISSUES}~${AC.ISSUE_DATE}`} type={Types.DATE}
+              parent={this.props.issue} fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.ISSUE_DATE}`}
+              type={Types.DATE}
               showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_MEASURE) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Measure')}:</span>
                 <a
@@ -62,7 +64,7 @@ export default class Item extends Component {
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ISSUE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ISSUE) ?
               <a
                 title={translate('Delete Issue')}
                 className={styles.delete}
@@ -72,8 +74,8 @@ export default class Item extends Component {
         </tr>
       </table>
 
-      {(this.props.issue[AC.MEASURES])
-        ? this.props.issue[AC.MEASURES].map((m, i) => (
+      {(this.props.issue[ActivityConstants.MEASURES])
+        ? this.props.issue[ActivityConstants.MEASURES].map((m, i) => (
           <Item
             measure={m} issue={this.props.issue} key={Math.random()} removeActor={this.props.removeActor}
             removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
@@ -91,16 +93,18 @@ export default class Item extends Component {
           <td>
             <img role={'presentation'} className={styles.tree} />
             <AFField
-              parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_NAME}`}
+              parent={this.props.measure}
+              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_NAME}`}
               type={Types.TEXT_AREA} />
           </td>
           <td>
             <AFField
-              parent={this.props.measure} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.MEASURE_DATE}`}
+              parent={this.props.measure}
+              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_DATE}`}
               type={Types.DATE} showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_ADD_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_ACTOR) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Actor')}:</span>
                 <a
@@ -109,7 +113,7 @@ export default class Item extends Component {
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_MEASURE) ?
               <a
                 title={translate('Delete Measure')}
                 className={styles.delete}
@@ -120,8 +124,8 @@ export default class Item extends Component {
         </tr>
       </table>
 
-      {(this.props.measure[AC.ACTORS])
-        ? this.props.measure[AC.ACTORS].map((a, i) => (
+      {(this.props.measure[ActivityConstants.ACTORS])
+        ? this.props.measure[ActivityConstants.ACTORS].map((a, i) => (
           <Item
             actor={a} measure={this.props.measure} issue={this.props.issue} key={Math.random()}
             removeActor={this.props.removeActor}
@@ -140,11 +144,12 @@ export default class Item extends Component {
           <td>
             <img role={'presentation'} className={[styles.tree, styles.actor].join(' ')} />
             <AFField
-              parent={this.props.actor} fieldPath={`${AC.ISSUES}~${AC.MEASURES}~${AC.ACTORS}~${AC.ACTOR_NAME}`}
+              parent={this.props.actor}
+              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.ACTORS}~${ActivityConstants.ACTOR_NAME}`}
               type={Types.TEXT_AREA} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FMC.ACTIVITY_ISSUES_DELETE_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ACTOR) ?
               <a
                 title={translate('Delete Actor')}
                 className={[styles.delete, styles.delete_actor].join(' ')}

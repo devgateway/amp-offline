@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import SyncUpManagerInterface, { throwSyncUpError } from './SyncUpManagerInterface';
-import { CONNECTION_FORCED_TIMEOUT } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import Logger from '../../util/LoggerManager';
@@ -18,8 +18,8 @@ const PULL_END = 'PULL_END';
  taking more than requests and sometime pull wait was aborted over the current 5sec timeout.
  */
 const CHECK_INTERVAL = 100;
-const QUEUE_LIMIT = 4;
-const ABORT_INTERVAL = (CONNECTION_FORCED_TIMEOUT + CHECK_INTERVAL) * (QUEUE_LIMIT + 1); // milliseconds
+const QUEUE_LIMIT = 5;
+const ABORT_INTERVAL = (Constants.CONNECTION_FORCED_TIMEOUT + CHECK_INTERVAL) * (QUEUE_LIMIT + 1); // milliseconds
 
 /**
  * Abstract Pull Sync Up Manager that sends pull requests in batches
@@ -66,7 +66,7 @@ export default class BatchPullSyncUpManagerInterface extends SyncUpManagerInterf
     const pFactories = requestConfigurations.map(pullConfig => {
       const requestFunc = pullConfig.getConfig ? ConnectionHelper.doGet : ConnectionHelper.doPost;
       const config = pullConfig.getConfig || pullConfig.postConfig;
-      return this._doRequest.bind(this, requestFunc, config, ...(pullConfig.onPullError || []));
+      return this._doRequest.bind(this, requestFunc, config, pullConfig.onPullError || []);
     });
     // this is a sequential execution of promises through reduce (e.g. https://goo.gl/g44HvG)
     const pullPromise = pFactories.reduce((currentPromise, pFactory) => currentPromise
@@ -78,7 +78,7 @@ export default class BatchPullSyncUpManagerInterface extends SyncUpManagerInterf
     return Promise.all([pullPromise, this._processResult()]);
   }
 
-  _doRequest(requestFunc, config, ...onPullErrorData) {
+  _doRequest(requestFunc, config, onPullErrorData) {
     return this._waitWhile(this._isPullDenied).then(() => {
       requestFunc(config).then((data, error) => {
         this.resultStack.push([data, error]);
@@ -124,7 +124,7 @@ export default class BatchPullSyncUpManagerInterface extends SyncUpManagerInterf
   }
 
   _isPullDenied() {
-    return this.requestsToProcess > QUEUE_LIMIT;
+    return this.requestsToProcess >= QUEUE_LIMIT;
   }
 
   _incRequestsToProcess() {

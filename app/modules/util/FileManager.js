@@ -1,12 +1,11 @@
+import { Constants, UIUtils } from 'amp-ui';
 import fs from 'fs-extra';
 import os from 'os';
-import path from 'path';
+import * as path from 'path';
 import mimeTypes from 'mime-types';
 import readChunk from 'read-chunk';
 import rimraf from 'rimraf';
 import { ELECTRON_APP } from './ElectronApp';
-import { APP_DIRECTORY, ASAR_DIR } from '../../utils/Constants';
-import Utils from '../../utils/Utils';
 
 const fileType = require('file-type');
 
@@ -15,6 +14,7 @@ const app = ELECTRON_APP;
 let dataPath;
 let resourcesPath;
 let downloadPath;
+let testPath;
 
 /**
  * System File Manager that is intended to handle proper root directory detection in dev & prod mode. It servers as a
@@ -32,7 +32,7 @@ const FileManager = {
       if (process.env.NODE_ENV === 'production') {
         dataPath = app.getPath('userData');
       } else {
-        dataPath = '.';
+        dataPath = path.resolve('.');
       }
     }
     return dataPath;
@@ -45,9 +45,9 @@ const FileManager = {
   getResourcesPath() {
     if (!resourcesPath) {
       if (process.env.NODE_ENV === 'production') {
-        resourcesPath = path.join(process.resourcesPath, ASAR_DIR);
+        resourcesPath = path.join(process.resourcesPath, Constants.ASAR_DIR);
       } else {
-        resourcesPath = path.resolve(APP_DIRECTORY);
+        resourcesPath = path.resolve(Constants.APP_DIRECTORY);
       }
     }
     return resourcesPath;
@@ -62,6 +62,13 @@ const FileManager = {
       downloadPath = app.getPath('downloads');
     }
     return downloadPath;
+  },
+
+  getTestsPath(...pathParts) {
+    if (!testPath) {
+      testPath = path.resolve(Constants.TEST_DIRECTORY);
+    }
+    return this.joinPath(testPath, ...pathParts);
   },
 
   /**
@@ -234,7 +241,16 @@ const FileManager = {
    */
   renameSync(fromPath, ...toPathParts) {
     const fullPath = this.getFullPath(...toPathParts);
-    fs.renameSync(fromPath, fullPath);
+    return this.renameSyncAllFullPaths(fromPath, fullPath);
+  },
+
+  /**
+   * Renames synchronously
+   * @param fromPath full source path
+   * @param toPath full destination path
+   */
+  renameSyncAllFullPaths(fromPath, toPath) {
+    fs.renameSync(fromPath, toPath);
   },
 
   /**
@@ -338,7 +354,7 @@ const FileManager = {
    */
   copyDataFileToTmpSync(file, fullPath) {
     const from = path.join(fullPath, file);
-    const to = path.join(os.tmpdir(), `${Utils.numberRandom()}-${file}`);
+    const to = path.join(os.tmpdir(), `${UIUtils.numberRandom()}-${file}`);
     fs.writeFileSync(to, fs.readFileSync(from));
     return to;
   },

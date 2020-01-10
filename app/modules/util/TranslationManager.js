@@ -1,15 +1,8 @@
 import Backend from 'i18next-sync-fs-backend';
 import i18next from 'i18next';
-import {
-  FS_LOCALES_DIRECTORY,
-  LANGUAGE_ENGLISH,
-  LANGUAGE_MASTER_TRANSLATIONS_FILE,
-  LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC,
-  LANGUAGE_TRANSLATIONS_FILE
-} from '../../utils/Constants';
+import { Constants, ErrorConstants } from 'amp-ui';
 import TranslationSyncUpManager from '../syncup/syncupManagers/TranslationSyncUpManager';
 import Notification from '../helpers/NotificationHelper';
-import { NOTIFICATION_ORIGIN_I18NEXT } from '../../utils/constants/ErrorConstants';
 import LocalizationSettings from '../../utils/LocalizationSettings';
 import Logger from '../../modules/util/LoggerManager';
 import FileManager from './FileManager';
@@ -35,30 +28,31 @@ const TranslationManager = {
    */
   initializeLanguageDirectory(isSetupComplete) {
     console.log('initializeLanguageDirectory');
-    FileManager.createDataDir(FS_LOCALES_DIRECTORY);
+    FileManager.createDataDir(Constants.FS_LOCALES_DIRECTORY);
     // Copy master translations file.
-    const masterFileName = `${LANGUAGE_MASTER_TRANSLATIONS_FILE}.${LANGUAGE_ENGLISH}.json`;
+    const masterFileName = `${Constants.LANGUAGE_MASTER_TRANSLATIONS_FILE}.${Constants.LANGUAGE_ENGLISH}.json`;
     const masterTranslationsFileName = FileManager.getFullPathForBuiltInResources(masterFileName);
-    const tempTranslationFilePath = FileManager.getFullPathForBuiltInResources(FS_LOCALES_DIRECTORY);
-    FileManager.copyDataFileSync(masterTranslationsFileName, FS_LOCALES_DIRECTORY, masterFileName);
+    const tempTranslationFilePath = FileManager.getFullPathForBuiltInResources(Constants.FS_LOCALES_DIRECTORY);
+    FileManager.copyDataFileSync(masterTranslationsFileName, Constants.FS_LOCALES_DIRECTORY, masterFileName);
     if (!isSetupComplete) {
       FileManager.readdirSyncFullPath(tempTranslationFilePath).forEach(tmpTrnFileName => {
         const matches = tmpTrnFileName.match(/^((translations\.)([a-z]{2})(.json))/);
         if (matches) {
           const fullFileName = `${tempTranslationFilePath}/${tmpTrnFileName}`;
-          FileManager.copyDataFileSync(fullFileName, FS_LOCALES_DIRECTORY, matches[0]);
+          FileManager.copyDataFileSync(fullFileName, Constants.FS_LOCALES_DIRECTORY, matches[0]);
         }
       });
     } else {
       /* To fix AMPOFFLINE-1195 we need to add any new {key|text} pair from master-translations.en.json
-      to the files in FS_LOCALES_DIRECTORY */
+      to the files in Constants.FS_LOCALES_DIRECTORY */
       const options = { encoding: 'utf-8' };
       const masterContent = JSON.parse(FileManager.readFileInPathSync(options, masterTranslationsFileName));
       const mustSyncTranslations = {};
-      FileManager.readdirSync(FS_LOCALES_DIRECTORY).forEach(tmpTrnFileName => {
+      FileManager.readdirSync(Constants.FS_LOCALES_DIRECTORY).forEach(tmpTrnFileName => {
         const matches = tmpTrnFileName.match(/^((translations\.)([a-z]{2})(.json))/);
         if (matches) {
-          const localContent = JSON.parse(FileManager.readTextDataFileSync(FS_LOCALES_DIRECTORY, tmpTrnFileName));
+          const localContent = JSON.parse(FileManager.readTextDataFileSync(Constants.FS_LOCALES_DIRECTORY,
+            tmpTrnFileName));
           Object.keys(masterContent).forEach(k => {
             // Only add new messages.
             if (!localContent[k]) {
@@ -72,11 +66,11 @@ const TranslationManager = {
               }
             }
           });
-          FileManager.writeDataFileSync(JSON.stringify(localContent), FS_LOCALES_DIRECTORY, tmpTrnFileName);
+          FileManager.writeDataFileSync(JSON.stringify(localContent), Constants.FS_LOCALES_DIRECTORY, tmpTrnFileName);
           // To fix AMPOFFLINE-1240.
           if (Object.keys(mustSyncTranslations).length > 0 && tmpTrnFileName.indexOf('.en.') > -1) {
-            FileManager.writeDataFileSync(JSON.stringify(mustSyncTranslations), FS_LOCALES_DIRECTORY,
-              LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC);
+            FileManager.writeDataFileSync(JSON.stringify(mustSyncTranslations), Constants.FS_LOCALES_DIRECTORY,
+              Constants.LANGUAGE_NEW_TRANSLATIONS_MUST_SYNC);
           }
         }
       });
@@ -96,7 +90,7 @@ const TranslationManager = {
   },
 
   getListOfLocales() {
-    const files = FileManager.readdirSync(FS_LOCALES_DIRECTORY);
+    const files = FileManager.readdirSync(Constants.FS_LOCALES_DIRECTORY);
     return Array.from(new Set(files.map(item => item.match(/^(.*(translations.)([a-z]{2})(.json))/))
       .filter(item => item)
       .map(item => item[3])).values());
@@ -108,20 +102,21 @@ const TranslationManager = {
       const settingsFile = LocalizationSettings.getDefaultConfig();
       // Load i18n config file.
       const i18nOptions = settingsFile.I18N.OPTIONS[process.env.NODE_ENV];
-      const loadPath = Utils.toMap('loadPath', FileManager.getFullPath(FS_LOCALES_DIRECTORY, '{{ns}}.{{lng}}.json'));
+      const loadPath = Utils.toMap('loadPath', FileManager.getFullPath(Constants.FS_LOCALES_DIRECTORY,
+        '{{ns}}.{{lng}}.json'));
       i18nOptions.backend = loadPath;
       i18nOptions.preload = TranslationManager.getListOfLocales();
       // Check if we have to use the master config file or we have sync files for translations.
-      if (!TranslationSyncUpManager.detectSynchronizedTranslationFile(LANGUAGE_ENGLISH)) {
-        i18nOptions.ns = [LANGUAGE_MASTER_TRANSLATIONS_FILE];
-        i18nOptions.defaultNS = [LANGUAGE_MASTER_TRANSLATIONS_FILE];
+      if (!TranslationSyncUpManager.detectSynchronizedTranslationFile(Constants.LANGUAGE_ENGLISH)) {
+        i18nOptions.ns = [Constants.LANGUAGE_MASTER_TRANSLATIONS_FILE];
+        i18nOptions.defaultNS = [Constants.LANGUAGE_MASTER_TRANSLATIONS_FILE];
       } else {
-        i18nOptions.ns = [LANGUAGE_TRANSLATIONS_FILE];
-        i18nOptions.defaultNS = [LANGUAGE_TRANSLATIONS_FILE];
+        i18nOptions.ns = [Constants.LANGUAGE_TRANSLATIONS_FILE];
+        i18nOptions.defaultNS = [Constants.LANGUAGE_TRANSLATIONS_FILE];
       }
       return i18next.use(Backend).init(i18nOptions, (err) => {
         if (err) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_I18NEXT }));
+          reject(new Notification({ message: err.toString(), origin: ErrorConstants.NOTIFICATION_ORIGIN_I18NEXT }));
         } else {
           resolve();
         }
@@ -134,7 +129,7 @@ const TranslationManager = {
     return new Promise((resolve, reject) => {
       i18next.changeLanguage(lang, (err) => {
         if (err) {
-          reject(new Notification({ message: err.toString(), origin: NOTIFICATION_ORIGIN_I18NEXT }));
+          reject(new Notification({ message: err.toString(), origin: ErrorConstants.NOTIFICATION_ORIGIN_I18NEXT }));
         } else {
           resolve(lang);
         }
@@ -148,8 +143,8 @@ const TranslationManager = {
 
   removeLanguageFile(lang) {
     logger.log('removeLanguageFile');
-    FileManager.deleteFileSync(FileManager.getFullPath(FS_LOCALES_DIRECTORY,
-      `${LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
+    FileManager.deleteFileSync(FileManager.getFullPath(Constants.FS_LOCALES_DIRECTORY,
+      `${Constants.LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
   }
 };
 

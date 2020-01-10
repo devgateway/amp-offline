@@ -1,4 +1,4 @@
-import { SYNCUP_TYPE_CONTACT_FIELDS } from '../../../utils/Constants';
+import { Constants } from 'amp-ui';
 import {
   CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL,
   CONTACT_SINGLE_FIELDS_TREE_URL
@@ -11,6 +11,7 @@ import FieldsSyncUpManager from './FieldsSyncUpManager';
  */
 export default class ContactFieldsSyncUpManager extends FieldsSyncUpManager {
   constructor() {
-    super(SYNCUP_TYPE_CONTACT_FIELDS, CONTACT_SINGLE_FIELDS_TREE_URL, CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL);
+    super(Constants.SYNCUP_TYPE_CONTACT_FIELDS, CONTACT_SINGLE_FIELDS_TREE_URL,
+      CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL);
   }
 }

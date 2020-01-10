@@ -1,7 +1,7 @@
 /* eslint flowtype-errors/show-errors: 0 */
+import { Constants } from 'amp-ui';
 import store from '../index';
 import UrlUtils from '../utils/URLUtils';
-import { LOGIN_URL, SYNCUP_REDIRECT_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import ActivitiesPushToAMPManager from '../modules/syncup/syncupManagers/ActivitiesPushToAMPManager';
 import { checkIfToForceSyncUp } from './SyncUpAction';
@@ -10,6 +10,7 @@ import * as RequestConfig from '../modules/connectivity/RequestConfig';
 import Logger from '../modules/util/LoggerManager';
 import { isMandatoryUpdate, STATE_CHECK_FOR_UPDATES } from './UpdateAction';
 import * as AAC from '../modules/connectivity/AmpApiConstants';
+import { loadWorkspaces } from './WorkspaceAction';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -38,7 +39,8 @@ export function loginAction(email: string, password: string) {
         const token = data.token;
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
-        return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(SYNCUP_REDIRECT_URL));
+        dispatch(loadWorkspaces());
+        return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
@@ -112,7 +114,7 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
     type: STATE_LOGOUT,
     actionData: { isInactivityTimeout }
   });
-  UrlUtils.forwardTo(LOGIN_URL);
+  UrlUtils.forwardTo(Constants.LOGIN_URL);
   return ampOfflineInit(true);
 }
 

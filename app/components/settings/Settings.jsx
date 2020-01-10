@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
+import { Loading } from 'amp-ui';
 import Logger from '../../modules/util/LoggerManager';
 import * as CSC from '../../utils/constants/ClientSettingsConstants';
 import URLSettings from './URLSettings';
-import Loading from '../common/Loading';
 import ErrorMessage from '../common/ErrorMessage';
 import translate from '../../utils/translate';
 import styles from './Settings.css';
@@ -128,11 +128,12 @@ export default class Settings extends Component {
   }
 
   saveSettings() {
-    const { hasNewUrls, settings } = this.state;
+    const { hasNewUrls, settings, urlAvailable } = this.state;
     this.props.saveSettings(settings, hasNewUrls);
     if (hasNewUrls) {
       this.setState({ hasNewUrls: false });
     }
+    this.initialUrls = new Set(urlAvailable.keys());
   }
 
   renderSettings() {
@@ -163,7 +164,7 @@ export default class Settings extends Component {
   render() {
     const { isSettingsLoading, isSettingsLoaded, errorMessage } = this.props;
     if (isSettingsLoading || (isSettingsLoaded && !this.state.settings)) {
-      return <Loading />;
+      return <Loading Logger={Logger} translate={translate} />;
     }
     if (!isSettingsLoading && !isSettingsLoaded) {
       if (errorMessage) {

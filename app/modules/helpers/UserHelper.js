@@ -1,5 +1,6 @@
+import AmpClientSecurity from 'amp-client-security';
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_USERS, AKEY, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
@@ -13,6 +14,12 @@ const logger = new Logger('User helper');
  */
 const UserHelper = {
 
+  findById(id) {
+    logger.debug('findById');
+    const filter = { id };
+    return this.findUserByExample(filter);
+  },
+
   /**
    * Find a user in the db by its email.
    * Provide an abstraction so the class calling this function doesnt have to know how the email field was implemented.
@@ -20,25 +27,25 @@ const UserHelper = {
    * @returns {Promise}
    */
   findByEmail(email) {
-    logger.log('findByEmail');
+    logger.debug('findByEmail');
     const example = { email };
     return this.findUserByExample(example);
   },
 
   findUserByExample(example) {
-    logger.log('findUserByExample');
-    return DatabaseManager.findOne(example, COLLECTION_USERS);
+    logger.debug('findUserByExample');
+    return DatabaseManager.findOne(example, Constants.COLLECTION_USERS);
   },
 
   findAllUsersByExample(example, projections) {
-    logger.log('findUserByExample');
-    return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
+    logger.debug('findUserByExample');
+    return DatabaseManager.findAll(example, Constants.COLLECTION_USERS, projections);
   },
 
   findAllClientRegisteredUsersByExample(example, projections) {
-    logger.log('findAllClientRegisteredUsersByExample');
+    logger.debug('findAllClientRegisteredUsersByExample');
     example.registeredOnClient = { $exists: true };
-    return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
+    return DatabaseManager.findAll(example, Constants.COLLECTION_USERS, projections);
   },
 
   getNonBannedRegisteredUserIds() {
@@ -53,22 +60,24 @@ const UserHelper = {
    */
   saveOrUpdateUser(userData) {
     logger.log('saveOrUpdateUser');
-    return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS);
+    return DatabaseManager.saveOrUpdate(userData.id, userData, Constants.COLLECTION_USERS);
   },
 
-  generateAMPOfflineHashFromPassword(password) {
+  generateAMPOfflineHashFromPassword(username, password, legacyKey) {
     logger.log('generateAMPOfflineHashFromPassword');
-    return Auth.secureHash(password, AKEY, HASH_ITERATIONS);
+    const keyPromise = legacyKey ? Promise.resolve(legacyKey) : AmpClientSecurity.getSecurityKey(username);
+    return keyPromise.then(key =>
+      Auth.secureHash(password, key, Constants.HASH_ITERATIONS));
   },
 
   saveOrUpdateUserCollection(usersData) {
     logger.log('saveOrUpdateUserCollection');
-    return DatabaseManager.saveOrUpdateCollection(usersData, COLLECTION_USERS);
+    return DatabaseManager.saveOrUpdateCollection(usersData, Constants.COLLECTION_USERS);
   },
 
   replaceUsers(users) {
     logger.log('replaceUsers');
-    return DatabaseManager.replaceCollection(users, COLLECTION_USERS);
+    return DatabaseManager.replaceCollection(users, Constants.COLLECTION_USERS);
   },
 
   /**
@@ -78,7 +87,7 @@ const UserHelper = {
    */
   deleteUserById(userId) {
     logger.log('deleteUserById');
-    return DatabaseManager.removeById(userId, COLLECTION_USERS);
+    return DatabaseManager.removeById(userId, Constants.COLLECTION_USERS);
   }
 };
 

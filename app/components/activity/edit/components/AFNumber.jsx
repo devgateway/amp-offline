@@ -1,8 +1,9 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import { NumberUtils } from 'amp-ui';
+import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
-import NumberUtils from '../../../../utils/NumberUtils';
 
 const logger = new Logger('AF number');
 
@@ -20,19 +21,26 @@ export default class AFNumber extends Component {
 
   constructor(props) {
     super(props);
-    logger.log('constructor');
+    logger.debug('constructor');
     this.state = {
       value: undefined
     };
   }
 
   componentWillMount() {
-    const { value } = this.props;
+    let { value } = this.props;
     // in case it was an invalid value configured, we'll try to parse it or set as NaN
     const valueAsNumber = typeof value === 'string' ? NumberUtils.formattedStringToRawNumberOrNaN(value) : value;
+    if (!Number.isNaN(valueAsNumber)) {
+      if (value || value === 0) {
+        value = NumberUtils.rawNumberToFormattedString(valueAsNumber);
+      } else {
+        value = '';
+      }
+    }
     this.setState({
       valueAsNumber,
-      value: (Number.isNaN(valueAsNumber) || !value) ? value : NumberUtils.rawNumberToFormattedString(valueAsNumber),
+      value
     });
   }
 

@@ -1,5 +1,4 @@
-import NumberUtils from '../../utils/NumberUtils';
-import * as AC from '../../utils/constants/ActivityConstants';
+import { ActivityConstants, NumberUtils } from 'amp-ui';
 
 /**
  * Activity funding totals helper
@@ -19,7 +18,7 @@ export default class ActivityFundingTotals {
     return this._getTotals(filter, [measureName]);
   }
 
-  getTotals(adjType, trnType, filter) {
+  getTotals(adjType, trnType, filter = {}) {
     return this._getTotals(filter, [adjType, trnType]);
   }
 
@@ -27,15 +26,16 @@ export default class ActivityFundingTotals {
     let total = 0;
     if (this._activity.fundings) {
       this._activity.fundings.forEach(f => {
-        if (f[AC.MTEF_PROJECTIONS]) {
-          f[AC.MTEF_PROJECTIONS].forEach(mtef => {
-            total += this._currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT], mtef[AC.CURRENCY].value,
-              mtef[AC.PROJECTION_DATE], 0, this._currentWorkspaceSettings.currency.code);
+        if (f[ActivityConstants.MTEF_PROJECTIONS]) {
+          f[ActivityConstants.MTEF_PROJECTIONS].forEach(mtef => {
+            total += this._currencyRatesManager.convertAmountToCurrency(mtef[ActivityConstants.AMOUNT],
+              mtef[ActivityConstants.CURRENCY].value,
+              mtef[ActivityConstants.PROJECTION_DATE], 0, this._currentWorkspaceSettings.currency.code);
           });
         }
       });
     }
-    total = this._formatTotal(total);
+    total = this.formatAmount(total);
     return total;
   }
 
@@ -69,7 +69,6 @@ export default class ActivityFundingTotals {
     if (path.length === 2) {
       value = this._buildStandardMeasureTotal(filter, path[0], path[1]);
     }
-    value = this._formatTotal(value);
     cache[filter] = value;
     return value;
   }
@@ -87,13 +86,10 @@ export default class ActivityFundingTotals {
     const fundingDetails = [];
     if (this._activity.fundings) {
       this._activity.fundings.forEach(funding => {
-        if (funding.funding_details) {
-          funding.funding_details.forEach(fd => {
-            if (fd[AC.ADJUSTMENT_TYPE].value === adjType
-              && fd[AC.TRANSACTION_TYPE] && fd[AC.TRANSACTION_TYPE].value === trnType) {
-              fundingDetails.push(fd);
-            }
-          });
+        const fds = funding[trnType] && funding[trnType]
+          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE].id === adjType);
+        if (fds && fds.length) {
+          fundingDetails.push(...fds);
         }
       });
     }
@@ -106,8 +102,11 @@ export default class ActivityFundingTotals {
     return total;
   }
 
-  _formatTotal(total) {
-    let value = NumberUtils.rawNumberToFormattedString(total);
+  formatAmount(amount, isPercentage = false) {
+    let value = NumberUtils.rawNumberToFormattedString(amount);
+    if (isPercentage) {
+      return `${value}%`;
+    }
     value = value.toLocaleString('en-EN', {
       currency: this._currentWorkspaceSettings.currency.code,
       currencyDisplay: 'code'

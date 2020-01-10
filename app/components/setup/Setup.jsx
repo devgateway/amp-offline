@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Button, FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
+import { Constants } from 'amp-ui';
 import * as styles from './Setup.css';
-import { LOGIN_URL, OTHER_ID } from '../../utils/Constants';
 import * as URLUtils from '../../utils/URLUtils';
 import AFOption from '../activity/edit/components/AFOption';
 import AFDropDown from '../activity/edit/components/AFDropDown';
@@ -15,6 +15,7 @@ import SetupManager from '../../modules/setup/SetupManager';
 import Notification from '../../modules/helpers/NotificationHelper';
 import SimpleNotification from '../common/SimpleNotification';
 import ErrorMessage from '../common/ErrorMessage';
+import AmpServer from '../../modules/setup/AmpServer';
 
 /**
  * First time application setup
@@ -23,6 +24,7 @@ import ErrorMessage from '../common/ErrorMessage';
 export default class Setup extends Component {
   static propTypes = {
     /* eslint-disable react/no-unused-prop-types */
+    isAppInitialized: PropTypes.bool.isRequired,
     loadSetupOptions: PropTypes.func.isRequired,
     isSetupComplete: PropTypes.bool.isRequired,
     isSetupOptionsLoading: PropTypes.bool.isRequired,
@@ -63,19 +65,21 @@ export default class Setup extends Component {
     const { isSetupOptionsLoaded, isSetupOptionsLoading, isSetupOptionsLoadFailed, loadSetupOptions } = props;
     const optionsCount = this.state.countryOptions.length;
     if (props.isSetupComplete) {
-      URLUtils.forwardTo(LOGIN_URL);
-    } else if (!(isSetupOptionsLoaded || isSetupOptionsLoading || isSetupOptionsLoadFailed)) {
-      loadSetupOptions();
-    } else if ((isSetupOptionsLoaded && optionsCount < 2) || (isSetupOptionsLoadFailed && optionsCount < 1)) {
-      const { lang, defaultLang, languageList, setupOptions } = props;
-      let rawOptions = [SetupManager.getCustomOption(languageList)];
-      if (isSetupOptionsLoaded) {
-        rawOptions = setupOptions.concat(rawOptions);
+      URLUtils.forwardTo(Constants.LOGIN_URL);
+    } else if (props.isAppInitialized) {
+      if (!(isSetupOptionsLoaded || isSetupOptionsLoading || isSetupOptionsLoadFailed)) {
+        loadSetupOptions();
+      } else if ((isSetupOptionsLoaded && optionsCount < 2) || (isSetupOptionsLoadFailed && optionsCount < 1)) {
+        const { lang, defaultLang, languageList, setupOptions } = props;
+        let rawOptions = [SetupManager.getCustomOption(languageList)];
+        if (isSetupOptionsLoaded) {
+          rawOptions = setupOptions.map(o => new AmpServer(o)).concat(rawOptions);
+        }
+        const countryOptions = this.toAFOptions(rawOptions, defaultLang, lang);
+        this.setState({ countryOptions, rawOptions });
+      } else if (props.errorMessage) {
+        this.setState({ isTestingConnectivity: false });
       }
-      const countryOptions = this.toAFOptions(rawOptions, defaultLang, lang);
-      this.setState({ countryOptions, rawOptions });
-    } else if (props.errorMessage) {
-      this.setState({ isTestingConnectivity: false });
     }
   }
 
@@ -89,7 +93,7 @@ export default class Setup extends Component {
 
   onOptionChange(option) {
     const selectedOptionId = option && option.id > 0 ? option.id : undefined;
-    const isCustom = selectedOptionId === OTHER_ID;
+    const isCustom = selectedOptionId === Constants.OTHER_ID;
     const isValid = (isCustom && this.isCustomValueValid(this.state.customValue)) || (!isCustom && selectedOptionId);
     this.setState({ selectedOptionId, isCustom, isValid });
   }
@@ -148,14 +152,15 @@ export default class Setup extends Component {
   render() {
     const { errorMessage, isSetupOptionsLoading, isSetupOptionsLoadFailed, isSetupComplete, loadSetupOptions } =
       this.props;
-    const { isCustom, isValid, isTestingConnectivity } = this.state;
+    const { isCustom, isValid, isTestingConnectivity, selectedOptionId } = this.state;
     const inProgress = isSetupOptionsLoading || isSetupComplete || isTestingConnectivity;
     const hideProgress = !(isSetupOptionsLoading || isTestingConnectivity);
     const displayError = isSetupOptionsLoadFailed && !isCustom ? translate('noConnectionToRegistry') : errorMessage;
     return (<div className={styles.centered}>
       <div>
         <AFLabel value={translate('setupFor')} required className={styles.label} />
-        <AFDropDown options={this.state.countryOptions} onChange={this.onOptionChange.bind(this)} />
+        <AFDropDown
+          selectedId={selectedOptionId} options={this.state.countryOptions} onChange={this.onOptionChange.bind(this)} />
       </div>
       {isCustom && this.renderCustomOption()}
       <div className={styles.row}>

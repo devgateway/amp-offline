@@ -1,6 +1,5 @@
+import { ActivityConstants, Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_ACTIVITIES } from '../../utils/Constants';
-import * as AC from '../../utils/constants/ActivityConstants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
@@ -19,9 +18,9 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedById(id) {
-    logger.log('findNonRejectedById');
+    logger.debug('findNonRejectedById');
     const filter = { $and: [this._getNonRejectedRule(), { id }] };
-    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -30,9 +29,9 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByInternalId(internalId) {
-    logger.log('findNonRejectedByInternalId');
-    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.INTERNAL_ID, internalId)] };
-    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+    logger.debug('findNonRejectedByInternalId');
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.INTERNAL_ID, internalId)] };
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -41,9 +40,9 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByAmpId(ampId) {
-    logger.log('findNonRejectedByAmpId');
-    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.AMP_ID, ampId)] };
-    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+    logger.debug('findNonRejectedByAmpId');
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.AMP_ID, ampId)] };
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -52,9 +51,13 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findNonRejectedByProjectTitle(projectTitle) {
-    logger.log('findNonRejectedByProjectTitle');
-    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(AC.PROJECT_TITLE, projectTitle)] };
-    return DatabaseManager.findOne(filter, COLLECTION_ACTIVITIES);
+    logger.debug('findNonRejectedByProjectTitle');
+    const filter = { $and: [this._getNonRejectedRule(), Utils.toMap(ActivityConstants.PROJECT_TITLE, projectTitle)] };
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_ACTIVITIES);
+  },
+
+  findAllNonRejectedByAmpIds(ampIds) {
+    return this.findAllNonRejected(Utils.toMap(ActivityConstants.AMP_ID, { $in: ampIds }));
   },
 
   /**
@@ -65,12 +68,14 @@ const ActivityHelper = {
    */
   findAllNonRejected(filterRule, projections) {
     const filter = { $and: [this._getNonRejectedRule(), filterRule] };
-    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   findAllNonRejectedModifiedOnClient(filterRule, projections) {
-    const filter = { $and: [this._getNonRejectedRule(), this._getModifiedOnClientSide(), filterRule] };
-    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+    const filter = {
+      $and: [this._getNonRejectedRule(), this._getModifiedOnClientSide(), this._getNotPushed(), filterRule]
+    };
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   /**
@@ -80,9 +85,9 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAllRejectedByAmpId(ampId, projections) {
-    logger.log('findAllRejectedByAmpId');
-    const filter = { $and: [this._getRejectedRule(), Utils.toMap(AC.AMP_ID, ampId)] };
-    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+    logger.debug('findAllRejectedByAmpId');
+    const filter = { $and: [this._getRejectedRule(), Utils.toMap(ActivityConstants.AMP_ID, ampId)] };
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   /**
@@ -92,9 +97,9 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAllRejected(filterRule, projections) {
-    logger.log('findAllRejected');
+    logger.debug('findAllRejected');
     const filter = { $and: [this._getRejectedRule(), filterRule] };
-    return DatabaseManager.findAll(filter, COLLECTION_ACTIVITIES, projections);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_ACTIVITIES, projections);
   },
 
   /**
@@ -104,8 +109,13 @@ const ActivityHelper = {
    * @return {Promise}
    */
   findAll(filterRule, projections) {
-    logger.log('findAll');
-    return DatabaseManager.findAll(filterRule, COLLECTION_ACTIVITIES, projections);
+    logger.debug('findAll');
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_ACTIVITIES, projections);
+  },
+
+  count(filterRule) {
+    logger.debug('findAll');
+    return DatabaseManager.count(filterRule, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -113,8 +123,9 @@ const ActivityHelper = {
    * @return {Promise.<Set>|*}
    */
   getUniqueAmpIdsList() {
-    return ActivityHelper.findAllNonRejected(Utils.toDefinedNotNullRule(AC.AMP_ID), Utils.toMap(AC.AMP_ID, 1)).then(
-      ampIds => new Set(Utils.flattenToListByKey(ampIds, AC.AMP_ID)));
+    return ActivityHelper.findAllNonRejected(Utils.toDefinedNotNullRule(ActivityConstants.AMP_ID),
+      Utils.toMap(ActivityConstants.AMP_ID, 1)).then(
+      ampIds => new Set(Utils.flattenToListByKey(ampIds, ActivityConstants.AMP_ID)));
   },
 
   /**
@@ -126,28 +137,29 @@ const ActivityHelper = {
   saveOrUpdate(activity, isDiffChange) {
     logger.log('saveOrUpdate');
     this._setOrUpdateIds(activity, isDiffChange);
-    return DatabaseManager.saveOrUpdate(activity.id, activity, COLLECTION_ACTIVITIES);
+    return DatabaseManager.saveOrUpdate(activity.id, activity, Constants.COLLECTION_ACTIVITIES);
   },
 
   _setOrUpdateIds(activity, isDiffChange = false) {
-    logger.log('_setOrUpdateIds');
+    logger.debug('_setOrUpdateIds');
     // if this activity version is not yet available offline
     if (activity.id === undefined) {
       // set id to internal_id (== activity comes from sync) or generate a new local id (== activity created offline)
-      if (activity[AC.INTERNAL_ID]) {
+      if (activity[ActivityConstants.INTERNAL_ID]) {
         // set the id as string for consistency with other use cases
-        activity.id = `${activity[AC.INTERNAL_ID]}`;
+        activity.id = `${activity[ActivityConstants.INTERNAL_ID]}`;
       } else {
-        activity.id = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
+        activity.id = UIUtils.stringToUniqueId(activity[ActivityConstants.PROJECT_TITLE]);
         // also flag activity changed on the client side
-        activity[AC.CLIENT_CHANGE_ID] = activity.id;
+        activity[ActivityConstants.CLIENT_CHANGE_ID] = activity.id;
       }
     } else {
       if (isDiffChange) {
-        activity[AC.CLIENT_CHANGE_ID] = Utils.stringToUniqueId(activity[AC.PROJECT_TITLE]);
+        activity[ActivityConstants.CLIENT_CHANGE_ID] =
+          UIUtils.stringToUniqueId(activity[ActivityConstants.PROJECT_TITLE]);
       }
-      if (activity[AC.REJECTED_ID]) {
-        activity.id = `${activity.id}-${activity[AC.CLIENT_CHANGE_ID]}`;
+      if (activity[ActivityConstants.REJECTED_ID]) {
+        activity.id = `${activity.id}-${activity[ActivityConstants.CLIENT_CHANGE_ID]}`;
       }
     }
     // any other logic like cleanup of existing activity during sync up must be done by the calling module
@@ -161,8 +173,8 @@ const ActivityHelper = {
    */
   saveOrUpdateCollection(activities, isDiffChange) {
     logger.log('saveOrUpdateCollection');
-    activities.forEach(this._setOrUpdateIds, isDiffChange);
-    return DatabaseManager.saveOrUpdateCollection(activities, COLLECTION_ACTIVITIES);
+    activities.forEach(a => this._setOrUpdateIds(a, isDiffChange));
+    return DatabaseManager.saveOrUpdateCollection(activities, Constants.COLLECTION_ACTIVITIES);
   },
 
   /**
@@ -173,47 +185,66 @@ const ActivityHelper = {
   replaceAll(activities) {
     logger.log('replaceAll');
     activities.forEach(this._setOrUpdateIds);
-    return DatabaseManager.replaceCollection(activities, COLLECTION_ACTIVITIES);
+    return DatabaseManager.replaceCollection(activities, Constants.COLLECTION_ACTIVITIES);
   },
 
   removeNonRejectedById(id) {
     logger.log('removeNonRejectedById');
-    return DatabaseManager.removeById(id, COLLECTION_ACTIVITIES, this._getNonRejectedRule());
+    return DatabaseManager.removeById(id, Constants.COLLECTION_ACTIVITIES, this._getNonRejectedRule());
   },
 
   removeNonRejectedByAmpId(ampId) {
     logger.log('removeNonRejectedByAmpId');
-    return new Promise((resolve, reject) =>
-      this.findNonRejectedByAmpId(ampId).then(result => {
-        if (result === null) {
-          return resolve(null);
-        }
-        return DatabaseManager.removeById(result.id, COLLECTION_ACTIVITIES, this._getNonRejectedRule())
-          .then(resolve).catch(reject);
-      }).catch(reject)
-    );
+    return this.findNonRejectedByAmpId(ampId).then(result => {
+      if (result === null) {
+        return null;
+      }
+      return DatabaseManager.removeById(result.id, Constants.COLLECTION_ACTIVITIES, this._getNonRejectedRule());
+    });
   },
 
   removeRejected(id) {
     logger.log('removeRejected');
-    return DatabaseManager.removeById(id, COLLECTION_ACTIVITIES, this._getRejectedRule());
+    return DatabaseManager.removeById(id, Constants.COLLECTION_ACTIVITIES, this._getRejectedRule());
+  },
+
+  removeAllNonRejectedByIds(ids) {
+    logger.log('removeAllNonRejectedByIds');
+    const filter = { $and: [this._getNonRejectedRule(), { id: { $in: ids } }] };
+    return this.removeAll(filter);
   },
 
   removeAll(filter) {
     logger.log('removeAll');
-    return DatabaseManager.removeAll(filter, COLLECTION_ACTIVITIES);
+    return DatabaseManager.removeAll(filter, Constants.COLLECTION_ACTIVITIES);
+  },
+
+  getVersion(activity) {
+    if (activity && activity[ActivityConstants.ACTIVITY_GROUP]) {
+      return activity[ActivityConstants.ACTIVITY_GROUP][ActivityConstants.VERSION];
+    }
+    return null;
+  },
+
+  isModifiedOnClient(activity) {
+    return activity && activity[ActivityConstants.CLIENT_CHANGE_ID] && !activity[ActivityConstants.IS_PUSHED];
   },
 
   _getModifiedOnClientSide() {
-    return Utils.toMap(AC.CLIENT_CHANGE_ID, { $exists: true });
+    return Utils.toMap(ActivityConstants.CLIENT_CHANGE_ID, { $exists: true });
+  },
+
+  _getNotPushed() {
+    // search where IS_PUSHED is set to see why
+    return Utils.toMap(ActivityConstants.IS_PUSHED, { $ne: true });
   },
 
   _getNonRejectedRule() {
-    return Utils.toMap(AC.REJECTED_ID, { $exists: false });
+    return Utils.toMap(ActivityConstants.REJECTED_ID, { $exists: false });
   },
 
   _getRejectedRule() {
-    return Utils.toMap(AC.REJECTED_ID, { $exists: true });
+    return Utils.toMap(ActivityConstants.REJECTED_ID, { $exists: true });
   }
 };
 

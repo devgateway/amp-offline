@@ -1,13 +1,11 @@
+/* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import AFOption from './AFOption';
-import FieldsManager from '../../../../modules/field/FieldsManager';
-import {
-  MULTI_SELECT_MAX_SIZE,
-  MULTI_SELECT_MIN_SIZE,
-} from '../../../../utils/constants/ActivityConstants';
 import * as styles from './AFMultiSelect.css';
+import FieldDefinition from '../../../../modules/field/FieldDefinition';
 
 /**
  * MultiSelect component
@@ -22,26 +20,46 @@ export default class AFMultiSelect extends Component {
 
   static propTypes = {
     options: PropTypes.arrayOf(PropTypes.instanceOf(AFOption)).isRequired,
-    values: PropTypes.array.isRequired,
+    values: PropTypes.array,
     listPath: PropTypes.string.isRequired,
     selectField: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
-    this.listDef = this.context.activityFieldsManager.getFieldDef(this.props.listPath);
-    this.selectFieldDef = this.listDef.children.find(f => f.field_name === this.props.selectField);
-    this.isIdNumber = this.selectFieldDef && this.selectFieldDef.field_type === 'long';
+    this.listDef = new FieldDefinition(this.context.activityFieldsManager.getFieldDef(this.props.listPath));
+    if (this.listDef.isSimpleTypeList()) {
+      this.selectFieldDef = this.listDef;
+    } else {
+      this.selectFieldDef = this.listDef.children.find(f => f.field_name === this.props.selectField);
+    }
+    this.selectFieldDef = new FieldDefinition(this.selectFieldDef);
+    this.isIdNumber = this.getIdAsNumber(this.selectFieldDef);
+  }
+
+  getIdAsNumber(fieldDef: FieldDefinition) {
+    if (fieldDef) {
+      const entryType = fieldDef.isSimpleTypeList() ? fieldDef.itemType : fieldDef.type;
+      return entryType === 'long';
+    }
+    return false;
   }
 
   getSelectedIds() {
-    return (this.props.values || []).map(v => v[this.props.selectField].id);
+    const values = (this.props.values || []);
+    if (this.selectFieldDef.isSimpleTypeList()) {
+      return values.map(v => v.id);
+    }
+    return values.map(v => v[this.props.selectField].id);
   }
 
   handleChange(e) {
     const selectedIds = new Set(
       Array.from(e.target.selectedOptions || []).map(so => (this.isIdNumber ? +so.value : so.value)));
-    const values = this.props.options.filter(o => selectedIds.has(o.id)).map(o => ({ [this.props.selectField]: o }));
+    let values = this.props.options.filter(o => selectedIds.has(o.id));
+    if (!this.selectFieldDef.isSimpleTypeList()) {
+      values = values.map(o => ({ [this.props.selectField]: o }));
+    }
     this.props.onChange(values);
   }
 
@@ -51,7 +69,8 @@ export default class AFMultiSelect extends Component {
     }
     const { options } = this.props;
     const selectedIds = this.getSelectedIds();
-    const size = Math.max(MULTI_SELECT_MIN_SIZE, Math.min(options.length, MULTI_SELECT_MAX_SIZE));
+    const size = Math.max(ActivityConstants.MULTI_SELECT_MIN_SIZE,
+      Math.min(options.length, ActivityConstants.MULTI_SELECT_MAX_SIZE));
     return (
       <div>
         <FormControl
@@ -59,7 +78,7 @@ export default class AFMultiSelect extends Component {
           value={selectedIds}
           className={styles.fitContent}>
           {options.map(option =>
-            <option key={option.id} value={option.id} >
+            <option key={option.id} value={option.id}>
               {option.translatedValue}
             </option>
           )}

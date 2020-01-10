@@ -1,14 +1,14 @@
 /* eslint-disable class-methods-use-this */
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants } from 'amp-ui';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
-import { SYNCUP_TYPE_CONTACTS_PUSH } from '../../../utils/Constants';
+
 import ContactHelper from '../../helpers/ContactHelper';
 import Logger from '../../util/LoggerManager';
 import { CONTACT_PUSH_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
-import { ACTIVITY_CONTACT_PATHS } from '../../../utils/constants/FieldPathConstants';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
-import { CONTACT } from '../../../utils/constants/ActivityConstants';
+import Notification from '../../helpers/NotificationHelper';
 
 const logger = new Logger('Contacts push sync up manager');
 
@@ -18,10 +18,10 @@ const logger = new Logger('Contacts push sync up manager');
  */
 export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   constructor() {
-    super(SYNCUP_TYPE_CONTACTS_PUSH);
+    super(Constants.SYNCUP_TYPE_CONTACTS_PUSH);
     this._cancel = false;
     this.diff = [];
-    this.pushed = new Set();
+    this._processed = new Set();
   }
 
   cancel() {
@@ -29,7 +29,7 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   getDiffLeftover() {
-    this.diff = this.diff.filter(id => !this.pushed.has(id));
+    this.diff = this.diff.filter(id => !this._processed.has(id));
     return this.diff;
   }
 
@@ -75,8 +75,10 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _processResult({ contact, pushResult, error, isNewContact }) {
-    if (pushResult) {
-      this.pushed.add(contact.id);
+    const isConnectivityError = error instanceof Notification && error.errorCode ===
+      ErrorConstants.ERROR_CODE_NO_CONNECTIVITY;
+    if (pushResult || !isConnectivityError) {
+      this._processed.add(contact.id);
     }
     const errorData = (error && error.message) || error || (pushResult && pushResult.error) || undefined;
     if (errorData) {
@@ -98,15 +100,15 @@ export default class ContactsPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _updateNewContactToActualIdsInActivities(tmpContactId, newContactId) {
-    const queries = ACTIVITY_CONTACT_PATHS.map(cType =>
-      Utils.toMap(cType, { $elemMatch: { [CONTACT]: tmpContactId } }));
+    const queries = FieldPathConstants.ACTIVITY_CONTACT_PATHS.map(cType =>
+      Utils.toMap(cType, { $elemMatch: { [ActivityConstants.CONTACT]: tmpContactId } }));
     const filter = { $or: queries };
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
       activities.forEach(activity => {
-        ACTIVITY_CONTACT_PATHS.forEach(cType => {
+        FieldPathConstants.ACTIVITY_CONTACT_PATHS.forEach(cType => {
           (activity[cType] || []).forEach(ac => {
-            if (ac[CONTACT] === tmpContactId) {
-              ac[CONTACT] = newContactId;
+            if (ac[ActivityConstants.CONTACT] === tmpContactId) {
+              ac[ActivityConstants.CONTACT] = newContactId;
             }
           });
         });
