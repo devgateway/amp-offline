@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha';
+import { ActivityConstants, UIUtils } from 'amp-ui';
 import * as actions from '../../app/modules/helpers/ActivityHelper';
-import * as AC from '../../app/utils/constants/ActivityConstants';
 import * as Utils from '../../app/utils/Utils';
 
 const chai = require('chai');
@@ -10,16 +10,16 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 const title1 = 'New Local Activity';
-const newOfflineActivity = Utils.toMap(AC.PROJECT_TITLE, 'New Local Activity');
+const newOfflineActivity = Utils.toMap(ActivityConstants.PROJECT_TITLE, 'New Local Activity');
 const title2 = 'Updated Activity';
 const updatedOfflineActivity = Object.assign({ id: '100' },
-  Utils.toMap(AC.AMP_ID, 'amp1'),
-  Utils.toMap(AC.INTERNAL_ID, '123'),
-  Utils.toMap(AC.PROJECT_TITLE, title2));
+  Utils.toMap(ActivityConstants.AMP_ID, 'amp1'),
+  Utils.toMap(ActivityConstants.INTERNAL_ID, '123'),
+  Utils.toMap(ActivityConstants.PROJECT_TITLE, title2));
 const rejectedActivity1 = Object.assign({}, updatedOfflineActivity,
-  { id: Utils.stringToUniqueId(title2) }, Utils.toMap(AC.REJECTED_ID, 1));
+  { id: UIUtils.stringToUniqueId(title2) }, Utils.toMap(ActivityConstants.REJECTED_ID, 1));
 const rejectedActivity2 = Object.assign({}, updatedOfflineActivity,
-  { id: Utils.stringToUniqueId(title2) }, Utils.toMap(AC.REJECTED_ID, 2));
+  { id: UIUtils.stringToUniqueId(title2) }, Utils.toMap(ActivityConstants.REJECTED_ID, 2));
 const onlyRejected = [rejectedActivity1, rejectedActivity2];
 const activities = [newOfflineActivity, updatedOfflineActivity, rejectedActivity1, rejectedActivity2];
 
@@ -57,19 +57,21 @@ describe('@@ ActivityHelper @@', () => {
 
   describe('findNonRejectedById', () =>
     it('should find non rejected activity with id "100"', () =>
-      expect(actions.findNonRejectedById('100')).to.eventually.have.property(AC.PROJECT_TITLE, title2)
+      expect(actions.findNonRejectedById('100')).to.eventually.have.property(ActivityConstants.PROJECT_TITLE, title2)
     )
   );
 
   describe('findNonRejectedByInternalId', () =>
     it('should find non rejected activity with internalId "123"', () =>
-      expect(actions.findNonRejectedByInternalId('123')).to.eventually.have.property(AC.PROJECT_TITLE, title2)
+      expect(actions.findNonRejectedByInternalId('123'))
+        .to.eventually.have.property(ActivityConstants.PROJECT_TITLE, title2)
     )
   );
 
   describe('findNonRejectedByAmpId', () =>
     it('should find non rejected activity with amp_id "amp1"', () =>
-      expect(actions.findNonRejectedByAmpId('amp1')).to.eventually.have.property(AC.PROJECT_TITLE, title2)
+      expect(actions.findNonRejectedByAmpId('amp1'))
+        .to.eventually.have.property(ActivityConstants.PROJECT_TITLE, title2)
     )
   );
 
@@ -81,14 +83,14 @@ describe('@@ ActivityHelper @@', () => {
 
   describe('findAllNonRejected', () =>
     it(`should a filtered collection with only activity named ${title1}`, () =>
-      expect(actions.findAllNonRejected({ id: { $ne: '100' } }, Utils.toMap(AC.PROJECT_TITLE, 1)))
-        .to.eventually.deep.equal([Utils.toMap(AC.PROJECT_TITLE, title1)])
+      expect(actions.findAllNonRejected({ id: { $ne: '100' } }, Utils.toMap(ActivityConstants.PROJECT_TITLE, 1)))
+        .to.eventually.deep.equal([Utils.toMap(ActivityConstants.PROJECT_TITLE, title1)])
     )
   );
 
   describe('findAllRejected', () =>
     it('should find 2 rejected activity with amp_id "amp1"', () =>
-      expect(actions.findAllRejected(Utils.toMap(AC.AMP_ID, 'amp1'))).to.eventually.have.lengthOf(2)
+      expect(actions.findAllRejected(Utils.toMap(ActivityConstants.AMP_ID, 'amp1'))).to.eventually.have.lengthOf(2)
     )
   );
 
@@ -100,7 +102,8 @@ describe('@@ ActivityHelper @@', () => {
 
   describe('findAllRejected', () =>
     it('should find one rejected activity with rejectedId=2', () =>
-      expect(actions.findAllRejected(Utils.toMap(AC.REJECTED_ID, 2))).to.eventually.deep.equal([rejectedActivity2])
+      expect(actions.findAllRejected(Utils.toMap(ActivityConstants.REJECTED_ID, 2)))
+        .to.eventually.deep.equal([rejectedActivity2])
     )
   );
 
@@ -118,7 +121,7 @@ describe('@@ ActivityHelper @@', () => {
 
   describe('removeNonRejectedByAmpId', () =>
     it('should not be able to remove any rejected activity when calling removal for non rejected activity', () =>
-      expect(actions.removeNonRejectedById(updatedOfflineActivity[AC.AMP_ID])).to.eventually.equal(null)
+      expect(actions.removeNonRejectedById(updatedOfflineActivity[ActivityConstants.AMP_ID])).to.eventually.equal(null)
     )
   );
 

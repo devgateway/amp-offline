@@ -1,8 +1,8 @@
+import { Constants } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import { WORKSPACE_SETTINGS_URL } from '../../connectivity/AmpApiConstants';
 import WSSettingsHelper from '../../helpers/WSSettingsHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
-import { SYNCUP_TYPE_WORKSPACE_SETTINGS } from '../../../utils/Constants';
 import Logger from '../../util/LoggerManager';
 import WorkspaceHelper from '../../helpers/WorkspaceHelper';
 import * as Utils from '../../../utils/Utils';
@@ -14,7 +14,7 @@ const logger = new Logger('Workspace settings syncup manager');
 export default class WorkspaceSettingsSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_WORKSPACE_SETTINGS);
+    super(Constants.SYNCUP_TYPE_WORKSPACE_SETTINGS);
   }
 
   doAtomicSyncUp() {

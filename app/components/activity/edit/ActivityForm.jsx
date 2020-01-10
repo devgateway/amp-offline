@@ -2,21 +2,16 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
-import Loading from '../../common/Loading';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager, FeatureManager,
+  PossibleValuesManager, Loading } from 'amp-ui';
 import * as styles from './ActivityForm.css';
-import { IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH, FIELDS_PER_SECTIONS } from './sections/AFSectionConstants';
+import { FIELDS_PER_SECTIONS, IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
 import AFSaveDialog from './AFSaveDialog';
-import { AMP_ID, INTERNAL_ID, IS_DRAFT, PROJECT_TITLE } from '../../../utils/constants/ActivityConstants';
-import { NEW_ACTIVITY_ID } from '../../../utils/constants/ValueConstants';
-import { FUNDING_ACTIVE_LIST } from '../../../utils/constants/FieldPathConstants';
-import FieldsManager from '../../../modules/field/FieldsManager';
 import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTotals';
 import ActivityValidator from '../../../modules/field/EntityValidator';
 import translate from '../../../utils/translate';
 import Logger from '../../../modules/util/LoggerManager';
-import CurrencyRatesManager from '../../../modules/util/CurrencyRatesManager';
-import FeatureManager from '../../../modules/util/FeatureManager';
 
 const logger = new Logger('Activity form');
 
@@ -94,7 +89,7 @@ export default class ActivityForm extends Component {
     this.props.loadActivityForActivityForm(activityId);
     this.setState({
       activityId,
-      isNewActivity: activityId === NEW_ACTIVITY_ID,
+      isNewActivity: activityId === ValueConstants.NEW_ACTIVITY_ID,
       quickLinksExpanded: true,
       currentSection: undefined,
       content: undefined,
@@ -189,17 +184,17 @@ export default class ActivityForm extends Component {
       ${sectionsWithErrors.includes(sectionName) && currentSection !== sectionName ? styles.quick_links_required : ''}`;
       return (<Button
         key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block
-        className={linkStyle} >
-        <div className={textStyle} >{translate(sectionName)}</div>
+        className={linkStyle}>
+        <div className={textStyle}>{translate(sectionName)}</div>
       </Button>);
     });
     return (
       <div>
-        <Button bsClass={styles.quick_links_toggle} onClick={this._toggleQuickLinks} block >
-          <div className={styles.general_header} >{this._getQuickLinksHeader()}</div>
+        <Button bsClass={styles.quick_links_toggle} onClick={this._toggleQuickLinks} block>
+          <div className={styles.general_header}>{this._getQuickLinksHeader()}</div>
         </Button>
-        <Panel collapsible defaultExpanded expanded={this.state.quickLinksExpanded} >
-          <div >
+        <Panel collapsible defaultExpanded expanded={this.state.quickLinksExpanded}>
+          <div>
             {sectionLinks}
           </div>
         </Panel>
@@ -228,8 +223,9 @@ export default class ActivityForm extends Component {
   _validateActivity(asDraft) {
     let validationError;
     // TODO to adjust this list once is fixed to properly define activity
-    const fieldPathsToSkipSet = new Set([AMP_ID, INTERNAL_ID, FUNDING_ACTIVE_LIST]);
-    this.activity[IS_DRAFT] = asDraft;
+    const fieldPathsToSkipSet = new Set([ActivityConstants.AMP_ID,
+      ActivityConstants.INTERNAL_ID, FieldPathConstants.FUNDING_ACTIVE_LIST]);
+    this.activity[ActivityConstants.IS_DRAFT] = asDraft;
     const errors = this.activityValidator.areAllConstraintsMet(this.activity, asDraft, fieldPathsToSkipSet);
     if (errors.length) {
       validationError = this._handleSaveErrors(errors);
@@ -312,28 +308,32 @@ export default class ActivityForm extends Component {
 
   _renderActivity() {
     const { activityFieldsManager } = this.props.activityReducer;
-    const projectTitle = activityFieldsManager.getValue(this.activity, PROJECT_TITLE);
+    const projectTitle = activityFieldsManager.getValue(this.activity, ActivityConstants.PROJECT_TITLE,
+      PossibleValuesManager.getOptionTranslation);
 
     return (
-      <div className={styles.form_content} >
-        <Grid fluid >
-          <Row >
+      <div className={styles.form_content}>
+        <Grid fluid>
+          <Row>
             <Col>{this._renderSaveDialog()}</Col>
           </Row>
           <Row>
-            <Col xs={8} sm={8} >
-              <div className={styles.form_main_content} >
-                <div className={styles.general_header} >
+            <Col xs={8} sm={8}>
+              <div className={styles.form_main_content}>
+                <div className={styles.general_header}>
                   {translate('Edit Activity Form')}
                   {projectTitle && `(${projectTitle})`}
                 </div>
-                <div ref={(mainContent => { this.mainContent = mainContent; })}>
+                <div
+                  ref={(mainContent => {
+                    this.mainContent = mainContent;
+                  })}>
                   {AFSectionLoader(this.state.currentSection)}
                 </div>
               </div>
             </Col>
             <Col xs={2} sm={2}>
-              <div className={styles.actions} >
+              <div className={styles.actions}>
                 {this._renderQuickLinks()}
                 {this._renderActions()}
               </div>
@@ -349,6 +349,6 @@ export default class ActivityForm extends Component {
       return this._renderActivity();
     }
     // TODO report errors if not loading and not loaded
-    return <Loading />;
+    return <Loading Logger={Logger} translate={translate} />;
   }
 }

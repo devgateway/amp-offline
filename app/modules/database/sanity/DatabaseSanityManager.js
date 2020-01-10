@@ -1,14 +1,8 @@
+import { Constants } from 'amp-ui';
 import DatabaseSanityStatus from './DatabaseSanityStatus';
 import Logger from '../../util/LoggerManager';
 import FileManager from '../../util/FileManager';
-import {
-  BACKUP_FILE_EXTENSION,
-  COLLECTION_SANITY_CHECK,
-  DB_FILE_EXTENSION,
-  DB_FILE_PREFIX,
-  TMP_FILE_EXTENSION,
-  VERSION
-} from '../../../utils/Constants';
+import { VERSION } from '../../../utils/Constants';
 import * as DatabaseManager from '../DatabaseManager';
 import DatabaseSanityStatusDetails from './DatabaseSanityStatusDetails';
 import SanityStatusHelper from '../../helpers/SanityStatusHelper';
@@ -51,7 +45,7 @@ const DatabaseSanityManager = {
     const flagInvalidDBPromises = dbNames.map(
       dbName => DatabaseManager.count({}, dbName)
         .then((entriesCount) => {
-          if (dbName !== COLLECTION_SANITY_CHECK && entriesCount) {
+          if (dbName !== Constants.COLLECTION_SANITY_CHECK && entriesCount) {
             // at this moment no .db is anyhow changed, hence this _may_ mean a cleanup leftover
             nonSanityDBsWithDataCount += 1;
           }
@@ -118,9 +112,9 @@ const DatabaseSanityManager = {
    */
   findAllDatabaseFiles() {
     logger.log('findAllDatabaseFiles');
-    return FileManager.readdirSync(DB_FILE_PREFIX)
-      .filter(f => f.endsWith(DB_FILE_EXTENSION) &&
-        [TMP_FILE_EXTENSION, BACKUP_FILE_EXTENSION].every(ext => !f.includes(ext)));
+    return FileManager.readdirSync(Constants.DB_FILE_PREFIX)
+      .filter(f => f.endsWith(Constants.DB_FILE_EXTENSION) &&
+        [Constants.TMP_FILE_EXTENSION, Constants.BACKUP_FILE_EXTENSION].every(ext => !f.includes(ext)));
   },
 
   /**
@@ -129,7 +123,7 @@ const DatabaseSanityManager = {
   findAllDBNames() {
     logger.log('findAllDBNames');
     return DatabaseSanityManager.findAllDatabaseFiles()
-      .map(f => f.substring(0, f.length - DB_FILE_EXTENSION.length));
+      .map(f => f.substring(0, f.length - Constants.DB_FILE_EXTENSION.length));
   },
 
   _findOrCreateSanityStatus() {
@@ -252,7 +246,8 @@ const DatabaseSanityManager = {
         const dbCleanup = new DatabaseCleanup(status, DatabaseSanityManager.findAllDBNames());
         dbCleanup.run();
         if (status.isHealFailed) {
-          const errorReport = new ErrorReportManager(false, [COLLECTION_SANITY_CHECK]);
+          const errorReport = new ErrorReportManager(false,
+            [Constants.COLLECTION_SANITY_CHECK]);
           return errorReport.generate().then(errorReportPath => {
             status.details.failureErrorReportPath = errorReportPath;
             return DatabaseSanityManager._saveOrUpdate(status);

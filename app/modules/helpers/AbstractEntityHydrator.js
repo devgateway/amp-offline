@@ -1,11 +1,6 @@
 /* eslint-disable class-methods-use-this */
+import { FieldPathConstants, PossibleValuesManager } from 'amp-ui';
 import Logger from '../util/LoggerManager';
-import {
-  DO_NOT_HYDRATE_FIELDS_LIST, FIELD_OPTIONS, FIELD_PATH,
-  LOCATION_PATH,
-  PATHS_WITH_TREE_STRUCTURE
-} from '../../utils/constants/FieldPathConstants';
-import PossibleValuesManager from '../field/PossibleValuesManager';
 import PossibleValuesHelper from './PossibleValuesHelper';
 
 const logger = new Logger('AbstractEntityHydrator');
@@ -100,17 +95,18 @@ export default class AbstractEntityHydrator {
 
 
   _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs, hydrate = true) {
-    const fieldName = possibleValues[FIELD_PATH][pathIndex];
+    const fieldName = possibleValues[FieldPathConstants.FIELD_PATH][pathIndex];
     const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
     if (fieldDef === undefined) {
-      const warn = `Field definition not found for: ${possibleValues[FIELD_PATH].slice(0, pathIndex + 1).join('~')}`;
+      const warn = `Field definition not found for: ${possibleValues[FieldPathConstants.FIELD_PATH]
+        .slice(0, pathIndex + 1).join('~')}`;
       logger.warn(warn);
       return;
     }
     const isList = fieldDef.field_type === 'list';
 
-    if (possibleValues[FIELD_PATH].length === pathIndex + 1) {
-      const options = possibleValues[FIELD_OPTIONS];
+    if (possibleValues[FieldPathConstants.FIELD_PATH].length === pathIndex + 1) {
+      const options = possibleValues[FieldPathConstants.FIELD_OPTIONS];
       if (!options || !Object.keys(options).length) {
         // there may be invalid "possible-options" paths like donor_contact~contact (TDB ticket) => skipping
         logger.error(`No options available for ${possibleValues.id}. Won't hydrate / dehydrate this path.`);
@@ -149,8 +145,9 @@ export default class AbstractEntityHydrator {
   }
 
   _fillSelectedOption(possibleValues, selectedId) {
-    const options = possibleValues[FIELD_OPTIONS];
-    if (LOCATION_PATH === possibleValues.id || PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
+    const options = possibleValues[FieldPathConstants.FIELD_OPTIONS];
+    if (FieldPathConstants.LOCATION_PATH === possibleValues.id ||
+      FieldPathConstants.PATHS_WITH_TREE_STRUCTURE.has(possibleValues.id)) {
       return PossibleValuesManager.buildHierarchicalData(options, selectedId);
     }
     const selectedOption = options[selectedId];
@@ -169,9 +166,9 @@ export default class AbstractEntityHydrator {
     // id-only field => if it will be needed, be careful when adding back to include custom validation, etc
     // TODO rather filter possible options result by non-id fields
     if (fieldPaths && fieldPaths.length > 0) {
-      fieldPaths = fieldPaths.filter(path => !DO_NOT_HYDRATE_FIELDS_LIST.includes(path));
+      fieldPaths = fieldPaths.filter(path => !FieldPathConstants.DO_NOT_HYDRATE_FIELDS_LIST.includes(path));
     } else {
-      filter.id = { $nin: DO_NOT_HYDRATE_FIELDS_LIST };
+      filter.id = { $nin: FieldPathConstants.DO_NOT_HYDRATE_FIELDS_LIST };
     }
 
     return PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(this._entityPrefix, fieldPaths, filter)

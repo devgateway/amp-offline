@@ -16,8 +16,8 @@
     ]
   }
  */
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_SYNCUP_LOG, SYNCUP_DATETIME_FIELD } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
 
@@ -27,28 +27,28 @@ const SyncUpHelper = {
 
   findSyncUpByExample(example) {
     logger.debug('findSyncUpByExample');
-    return DatabaseManager.findOne(example, COLLECTION_SYNCUP_LOG);
+    return DatabaseManager.findOne(example, Constants.COLLECTION_SYNCUP_LOG);
   },
 
   findAllSyncUpByExample(example) {
     logger.debug('findSyncUpByExample');
-    return DatabaseManager.findAll(example, COLLECTION_SYNCUP_LOG);
+    return DatabaseManager.findAll(example, Constants.COLLECTION_SYNCUP_LOG);
   },
 
   saveOrUpdateSyncUp(syncupData) {
     logger.log('saveOrUpdateSyncUp');
-    return DatabaseManager.saveOrUpdate(syncupData.id, syncupData, COLLECTION_SYNCUP_LOG, {});
+    return DatabaseManager.saveOrUpdate(syncupData.id, syncupData, Constants.COLLECTION_SYNCUP_LOG, {});
   },
 
   getLatestId(example = {}) {
     logger.debug('getLatestId');
-    return DatabaseManager.findAll(example, COLLECTION_SYNCUP_LOG, { id: 1 }).then(ids =>
+    return DatabaseManager.findAll(example, Constants.COLLECTION_SYNCUP_LOG, { id: 1 }).then(ids =>
       Math.max(...[0].concat(ids.map(idObj => idObj.id))));
   },
 
   saveOrUpdateSyncUpCollection(syncupData) {
     logger.log('saveOrUpdateSyncUpCollection');
-    return DatabaseManager.saveOrUpdateCollection(syncupData, COLLECTION_SYNCUP_LOG);
+    return DatabaseManager.saveOrUpdateCollection(syncupData, Constants.COLLECTION_SYNCUP_LOG);
   },
 
   /**
@@ -59,7 +59,7 @@ const SyncUpHelper = {
    */
   updateCollectionFields(filter, fieldsModifier) {
     logger.log('updateCollectionFields');
-    return DatabaseManager.updateCollectionFields(filter, fieldsModifier, COLLECTION_SYNCUP_LOG);
+    return DatabaseManager.updateCollectionFields(filter, fieldsModifier, Constants.COLLECTION_SYNCUP_LOG);
   },
 
   /**
@@ -80,8 +80,8 @@ const SyncUpHelper = {
    * @return {Promise}
    */
   getLastSyncUpLogWithSyncDiffTimestamp() {
-    const filter = Utils.toDefinedNotNullRule(SYNCUP_DATETIME_FIELD);
-    return DatabaseManager.findTheFirstOne(filter, { id: -1 }, COLLECTION_SYNCUP_LOG).then((log) => {
+    const filter = Utils.toDefinedNotNullRule(Constants.SYNCUP_DATETIME_FIELD);
+    return DatabaseManager.findTheFirstOne(filter, { id: -1 }, Constants.COLLECTION_SYNCUP_LOG).then((log) => {
       if (log === null) {
         return {};
       }
@@ -98,7 +98,7 @@ const SyncUpHelper = {
   getLastSyncUpLogs(count, projections) {
     logger.debug('getLastSyncUpLogs');
     return DatabaseManager.findAllWithProjectionsAndOtherCriteria(
-      {}, COLLECTION_SYNCUP_LOG, projections, { id: -1 }, 0, count);
+      {}, Constants.COLLECTION_SYNCUP_LOG, projections, { id: -1 }, 0, count);
   },
 
   /**
@@ -108,7 +108,7 @@ const SyncUpHelper = {
    */
   deleteSyncUpLogs(filter) {
     logger.log('deleteSyncUpLogs');
-    return DatabaseManager.removeAll(filter, COLLECTION_SYNCUP_LOG);
+    return DatabaseManager.removeAll(filter, Constants.COLLECTION_SYNCUP_LOG);
   }
 };
 

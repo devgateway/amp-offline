@@ -1,19 +1,17 @@
 /* eslint-disable class-methods-use-this */
+import { ActivityConstants, Constants, ErrorConstants } from 'amp-ui';
 import SyncUpManagerInterface from './SyncUpManagerInterface';
-import { SYNCUP_TYPE_RESOURCES_PUSH } from '../../../utils/Constants';
 import ResourceHelper from '../../helpers/ResourceHelper';
 import Logger from '../../util/LoggerManager';
 import { RESOURCE_PUSH_URL } from '../../connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import * as Utils from '../../../utils/Utils';
 import * as ActivityHelper from '../../helpers/ActivityHelper';
-import * as AC from '../../../utils/constants/ActivityConstants';
 import { CONTENT_ID, CONTENT_TYPE, FILE_NAME, UUID } from '../../../utils/constants/ResourceConstants';
 import RepositoryHelper from '../../helpers/RepositoryHelper';
 import RepositoryManager from '../../repository/RepositoryManager';
 import MultipartFormBuilder from '../../connectivity/MultipartFormBuilder';
 import Notification from '../../helpers/NotificationHelper';
-import * as EC from '../../../utils/constants/ErrorConstants';
 
 const logger = new Logger('ResourcesPushSyncUpManager');
 
@@ -25,7 +23,7 @@ const logger = new Logger('ResourcesPushSyncUpManager');
  */
 export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   constructor() {
-    super(SYNCUP_TYPE_RESOURCES_PUSH);
+    super(Constants.SYNCUP_TYPE_RESOURCES_PUSH);
     this._cancel = false;
     this.diff = [];
     this._processed = new Set();
@@ -65,9 +63,10 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   _ignoreUnreferencedResources(resources) {
     const resByUuid = Utils.toMapByKey(resources, UUID);
     const uuids = Array.from(resByUuid.keys());
-    const filter = Utils.toMap(AC.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: uuids }) });
-    return ActivityHelper.findAllNonRejected(filter, Utils.toMap(AC.ACTIVITY_DOCUMENTS, 1))
-      .then(activities => Utils.arrayFlatMap(activities.map(a => a[AC.ACTIVITY_DOCUMENTS].map(ad => ad[UUID]))))
+    const filter = Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, { $in: uuids }) });
+    return ActivityHelper.findAllNonRejected(filter, Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS, 1))
+      .then(activities => Utils.arrayFlatMap(activities.map(a => a[ActivityConstants.ACTIVITY_DOCUMENTS]
+        .map(ad => ad[UUID]))))
       .then(usedUuids => usedUuids.map(uuid => resByUuid.get(uuid)).filter(r => r));
   }
 
@@ -121,7 +120,8 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _processResult({ resource, pushResult, error }) {
-    const isConnectivityError = error instanceof Notification && error.errorCode === EC.ERROR_CODE_NO_CONNECTIVITY;
+    const isConnectivityError = error instanceof Notification &&
+      error.errorCode === ErrorConstants.ERROR_CODE_NO_CONNECTIVITY;
     if (pushResult || !isConnectivityError) {
       this._processed.add(resource.id);
     }
@@ -143,10 +143,11 @@ export default class ResourcesPushSyncUpManager extends SyncUpManagerInterface {
   }
 
   _updateResourceToActualIdInActivities(tmpResourceUuid, newResourceUuid) {
-    const filter = Utils.toMap(AC.ACTIVITY_DOCUMENTS, { $elemMatch: Utils.toMap(UUID, tmpResourceUuid) });
+    const filter = Utils.toMap(ActivityConstants.ACTIVITY_DOCUMENTS,
+      { $elemMatch: Utils.toMap(UUID, tmpResourceUuid) });
     return ActivityHelper.findAllNonRejected(filter).then(activities => {
       activities.forEach(activity => {
-        activity[AC.ACTIVITY_DOCUMENTS].forEach(ad => {
+        activity[ActivityConstants.ACTIVITY_DOCUMENTS].forEach(ad => {
           if (ad[UUID] === tmpResourceUuid) {
             ad[UUID] = newResourceUuid;
           }

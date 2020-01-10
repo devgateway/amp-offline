@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha';
+import { CalendarConstants } from 'amp-ui';
 import CalendarHelper from '../../app/modules/helpers/CalendarHelper';
-import * as CC from '../../app/utils/constants/CalendarConstants';
 import * as Utils from '../../app/utils/Utils';
 
 const chai = require('chai');
@@ -11,24 +11,24 @@ chai.use(chaiAsPromised);
 
 const gregCalendar = {
   id: 54,
-  [CC.NAME]: 'Gregorian Calendar',
-  [CC.DESCRIPTION]: 'Non fiscal',
-  [CC.START_MONTH_NUMBER]: 1,
-  [CC.YEAR_OFFSET]: 0,
-  [CC.START_DAY_NUMBER]: 1,
-  [CC.BASE_CALENDAR]: CC.BASE_CALENDAR_GREGORIAN,
-  [CC.IS_FISCAL]: false
+  [CalendarConstants.NAME]: 'Gregorian Calendar',
+  [CalendarConstants.DESCRIPTION]: 'Non fiscal',
+  [CalendarConstants.START_MONTH_NUMBER]: 1,
+  [CalendarConstants.YEAR_OFFSET]: 0,
+  [CalendarConstants.START_DAY_NUMBER]: 1,
+  [CalendarConstants.BASE_CALENDAR]: CalendarConstants.BASE_CALENDAR_GREGORIAN,
+  [CalendarConstants.IS_FISCAL]: false
 };
 
 const fiscalCalendar = {
   id: 4,
-  [CC.NAME]: 'Gregorian Calendar Janvier',
-  [CC.DESCRIPTION]: 'Fiscal',
-  [CC.START_MONTH_NUMBER]: 2,
-  [CC.YEAR_OFFSET]: 0,
-  [CC.START_DAY_NUMBER]: 1,
-  [CC.BASE_CALENDAR]: CC.BASE_CALENDAR_GREGORIAN,
-  [CC.IS_FISCAL]: true
+  [CalendarConstants.NAME]: 'Gregorian Calendar Janvier',
+  [CalendarConstants.DESCRIPTION]: 'Fiscal',
+  [CalendarConstants.START_MONTH_NUMBER]: 2,
+  [CalendarConstants.YEAR_OFFSET]: 0,
+  [CalendarConstants.START_DAY_NUMBER]: 1,
+  [CalendarConstants.BASE_CALENDAR]: CalendarConstants.BASE_CALENDAR_GREGORIAN,
+  [CalendarConstants.IS_FISCAL]: true
 };
 
 const calendars = [gregCalendar, fiscalCalendar];

@@ -2,28 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Col, Grid, Row } from 'react-bootstrap';
+import { ActivityConstants, ErrorConstants, ValueConstants, FieldPathConstants, GlobalSettingsConstants } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { LOCATION } from './AFSectionConstants';
-import {
-  EXTRA_INFO,
-  IMPLEMENTATION_LEVEL,
-  IMPLEMENTATION_LEVELS_EXTRA_INFO,
-  IMPLEMENTATION_LOCATION,
-  IMPLEMENTATION_LOCATION_EXTRA_INFO,
-  LOCATIONS,
-  ISO2,
-  VALUE
-} from '../../../../utils/constants/ActivityConstants';
-import { DEFAULT_COUNTRY } from '../../../../utils/constants/GlobalSettingsConstants';
 import { addMessage } from '../../../../actions/NotificationAction';
 import { createNotification } from '../../../../modules/helpers/ErrorNotificationHelper';
-import { NOTIFICATION_ORIGIN_ACTIVITY } from '../../../../utils/constants/ErrorConstants';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
-import { COUNTRY, INTERNATIONAL } from '../../../../utils/constants/ValueConstants';
-import { LOCATION_PATH } from '../../../../utils/constants/FieldPathConstants';
 
 const logger = new Logger('AF location');
 
@@ -53,47 +40,50 @@ class AFLocation extends Component {
   componentWillMount() {
     const { globalSettings, activityFieldsManager } = this.props;
     if (globalSettings) {
-      const iso2 = globalSettings[DEFAULT_COUNTRY] ? globalSettings[DEFAULT_COUNTRY].toUpperCase() : null;
-      const defaultCountry = Object.values(activityFieldsManager.possibleValuesMap[LOCATION_PATH])
-        .find(l => (l[EXTRA_INFO] && l[EXTRA_INFO][ISO2] && l[EXTRA_INFO][ISO2].toUpperCase() === iso2));
-      this.defaultCountry = defaultCountry ? defaultCountry[VALUE] : null;
+      const iso2 = globalSettings[GlobalSettingsConstants.DEFAULT_COUNTRY]
+        ? globalSettings[GlobalSettingsConstants.DEFAULT_COUNTRY].toUpperCase() : null;
+      const defaultCountry = Object.values(activityFieldsManager.possibleValuesMap[FieldPathConstants.LOCATION_PATH])
+        .find(l => (l[ActivityConstants.EXTRA_INFO] &&
+          l[ActivityConstants.EXTRA_INFO][ActivityConstants.ISO2] &&
+          l[ActivityConstants.EXTRA_INFO][ActivityConstants.ISO2].toUpperCase() === iso2));
+      this.defaultCountry = defaultCountry ? defaultCountry[ActivityConstants.VALUE] : null;
     }
     if (this.defaultCountry === null) {
       const message = translate('defaultCountryError');
-      this.props.onAddMessage(createNotification({ message, origin: NOTIFICATION_ORIGIN_ACTIVITY }));
+      this.props.onAddMessage(createNotification({ message, origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY }));
       logger.error(message);
     }
     this.setState({
-      implementationLevel: this.props.activity[IMPLEMENTATION_LEVEL],
-      implementationLocation: this.props.activity[IMPLEMENTATION_LOCATION],
+      implementationLevel: this.props.activity[ActivityConstants.IMPLEMENTATION_LEVEL],
+      implementationLocation: this.props.activity[ActivityConstants.IMPLEMENTATION_LOCATION],
     });
   }
 
   onImplLevelOrImplLocChange() {
-    const implementationLocation = this.props.activity[IMPLEMENTATION_LOCATION];
+    const implementationLocation = this.props.activity[ActivityConstants.IMPLEMENTATION_LOCATION];
     if (implementationLocation !== this.state.implementationLocation) {
-      this.props.activity[LOCATIONS] = undefined;
+      this.props.activity[ActivityConstants.LOCATIONS] = undefined;
     }
     this.setState({
-      implementationLevel: this.props.activity[IMPLEMENTATION_LEVEL],
+      implementationLevel: this.props.activity[ActivityConstants.IMPLEMENTATION_LEVEL],
       implementationLocation
     });
   }
 
   _getImplLocFilter() {
     return [{
-      path: `${EXTRA_INFO}~${IMPLEMENTATION_LEVELS_EXTRA_INFO}`,
+      path: `${ActivityConstants.EXTRA_INFO}~${ActivityConstants.IMPLEMENTATION_LEVELS_EXTRA_INFO}`,
       value: this.state.implementationLevel ? this.state.implementationLevel.id : null
     }];
   }
 
   _getLocationFilter() {
     const locFilter = [{
-      path: `${EXTRA_INFO}~${IMPLEMENTATION_LOCATION_EXTRA_INFO}`,
+      path: `${ActivityConstants.EXTRA_INFO}~${ActivityConstants.IMPLEMENTATION_LOCATION_EXTRA_INFO}`,
       value: this.state.implementationLocation ? this.state.implementationLocation.value : null
     }];
-    if (this.state.implementationLevel && this.state.implementationLevel.value !== INTERNATIONAL
-      && this.state.implementationLocation && this.state.implementationLocation.value === COUNTRY) {
+    if (this.state.implementationLevel && this.state.implementationLevel.value !== ValueConstants.INTERNATIONAL
+      && this.state.implementationLocation && this.state.implementationLocation.value === ValueConstants.COUNTRY) {
       locFilter.push({
         path: 'value',
         value: this.defaultCountry
@@ -108,18 +98,21 @@ class AFLocation extends Component {
         <Row>
           <Col md={6} lg={6}>
             <AFField
-              parent={this.props.activity} fieldPath={IMPLEMENTATION_LEVEL}
+              parent={this.props.activity} fieldPath={ActivityConstants.IMPLEMENTATION_LEVEL}
               onAfterUpdate={this.onImplLevelOrImplLocChange} />
           </Col>
           <Col md={6} lg={6}>
             <AFField
-              parent={this.props.activity} fieldPath={IMPLEMENTATION_LOCATION} filter={this._getImplLocFilter()}
+              parent={this.props.activity} fieldPath={ActivityConstants.IMPLEMENTATION_LOCATION}
+              filter={this._getImplLocFilter()}
               onAfterUpdate={this.onImplLevelOrImplLocChange} />
           </Col>
         </Row>
         <Row>
           <Col md={12} lg={12}>
-            <AFField parent={this.props.activity} fieldPath={LOCATIONS} filter={this._getLocationFilter()} />
+            <AFField
+              parent={this.props.activity} fieldPath={ActivityConstants.LOCATIONS}
+              filter={this._getLocationFilter()} />
           </Col>
         </Row>
         <Row />

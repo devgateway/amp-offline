@@ -1,9 +1,8 @@
+import { Constants, ErrorConstants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_FIELDS } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import Notification from './NotificationHelper';
-import { NOTIFICATION_ORIGIN_DATABASE } from '../../utils/constants/ErrorConstants';
 
 const logger = new Logger('Fields helper');
 
@@ -20,7 +19,7 @@ const FieldsHelper = {
   findById(id) {
     logger.debug('findById');
     const filter = { id };
-    return DatabaseManager.findOne(filter, COLLECTION_FIELDS);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_FIELDS);
   },
 
   /**
@@ -33,7 +32,7 @@ const FieldsHelper = {
     logger.debug('findByWorkspaceMemberIdAndType');
     const filter = { 'ws-member-ids': { $elemMatch: wsMemberId } };
     filter[fieldsType] = { $exists: true };
-    return DatabaseManager.findOne(filter, COLLECTION_FIELDS);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_FIELDS);
   },
 
   /**
@@ -67,7 +66,7 @@ const FieldsHelper = {
       // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
       return Promise.reject(new Notification({
         message: 'noUniqueFieldsTree',
-        origin: NOTIFICATION_ORIGIN_DATABASE
+        origin: ErrorConstants.NOTIFICATION_ORIGIN_DATABASE
       }));
     });
   },
@@ -80,7 +79,7 @@ const FieldsHelper = {
    */
   findAll(filter, projections) {
     logger.debug('findAll');
-    return DatabaseManager.findAll(filter, COLLECTION_FIELDS, projections);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_FIELDS, projections);
   },
 
   /**
@@ -94,7 +93,7 @@ const FieldsHelper = {
     if (this._isValid(fieldsTrees)) {
       fieldsTrees.forEach(this._setIdIfUndefined);
       const filter = Utils.toMap(fieldsType, { $exists: true });
-      return DatabaseManager.replaceCollection(fieldsTrees, COLLECTION_FIELDS, filter);
+      return DatabaseManager.replaceCollection(fieldsTrees, Constants.COLLECTION_FIELDS, filter);
     }
     return Promise.reject('Invalid Fields Tree structure. A workspace member must be linked to only one fields tree');
   },
@@ -116,7 +115,7 @@ const FieldsHelper = {
   _setIdIfUndefined(fields) {
     logger.debug('_setIdIfUndefined');
     if (fields.id === undefined) {
-      fields.id = Utils.stringToUniqueId('');
+      fields.id = UIUtils.stringToUniqueId('');
     }
   },
 
@@ -127,7 +126,7 @@ const FieldsHelper = {
    */
   deleteById(id) {
     logger.log('deleteById');
-    return DatabaseManager.removeById(id, COLLECTION_FIELDS);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_FIELDS);
   }
 };
 

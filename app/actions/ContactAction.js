@@ -1,15 +1,13 @@
 import equal from 'fast-deep-equal';
+import { ActivityConstants, Constants, FieldPathConstants, FieldsManager, ContactConstants } from 'amp-ui';
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
-import { SYNCUP_TYPE_CONTACT_FIELDS } from '../utils/Constants';
-import * as CC from '../utils/constants/ContactConstants';
-import * as AC from '../utils/constants/ActivityConstants';
-import { ACTIVITY_CONTACT_PATHS, PREFIX_CONTACT } from '../utils/constants/FieldPathConstants';
-import FieldsManager from '../modules/field/FieldsManager';
+
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as Utils from '../utils/Utils';
 import EntityValidator from '../modules/field/EntityValidator';
+import LoggerManager from '../modules/util/LoggerManager';
 
 export const CONTACTS_LOAD = 'CONTACTS_LOAD';
 export const CONTACTS_LOAD_PENDING = 'CONTACTS_LOAD_PENDING';
@@ -68,21 +66,22 @@ export const configureContactManagers = () => (dispatch, ownProps) => dispatch({
 
 export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => {
   const { contactsByIds } = ownProps().contactReducer;
-  return contactIds.map(id => ([id, contactsByIds[id]])).filter(([, c]) => !c || !c[CC.TMP_HYDRATED]).map(([id]) => id);
+  return contactIds.map(id => ([id, contactsByIds[id]])).filter(([, c]) => !c ||
+    !c[ContactConstants.TMP_HYDRATED]).map(([id]) => id);
 };
 
 const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_CONTACT_FIELDS)
-    .then(fields => fields[SYNCUP_TYPE_CONTACT_FIELDS]),
-  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(PREFIX_CONTACT)
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
+    .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS]),
+  PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_CONTACT)
 ]).then(([cFields, possibleValuesCollection]) => ({
-  contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage)
+  contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage, LoggerManager)
 }));
 
 const _hydrateContacts = (ids, teamMemberId, contactFieldsManager, activity) => Promise.all([
   ContactHelper.findContactsByIds(ids),
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, SYNCUP_TYPE_CONTACT_FIELDS)
-    .then(fields => fields[SYNCUP_TYPE_CONTACT_FIELDS])
+  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
+    .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS])
 ]).then(([contacts, cFields]) => {
   const ch = new ContactHydrator(cFields);
   return ch.hydrateEntities(contacts);
@@ -92,11 +91,11 @@ const _flagAsFullyHydrated = (contacts, contactFieldsManager, activity) => {
   const aCsMap = activity && Utils.toMapByKey(_getActivityContacts(activity, false));
   contacts.forEach(c => {
     const skipValidationFor = ContactHelper.isNewContact(c) ? ['id'] : null;
-    c[CC.TMP_HYDRATED] = true;
-    c[CC.TMP_ENTITY_VALIDATOR] = new EntityValidator(c, contactFieldsManager, null, skipValidationFor);
+    c[ContactConstants.TMP_HYDRATED] = true;
+    c[ContactConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(c, contactFieldsManager, null, skipValidationFor);
     if (aCsMap) {
       const aCs = aCsMap.get(c.id);
-      aCs[CC.TMP_ENTITY_VALIDATOR] = c[CC.TMP_ENTITY_VALIDATOR];
+      aCs[ContactConstants.TMP_ENTITY_VALIDATOR] = c[ContactConstants.TMP_ENTITY_VALIDATOR];
     }
   });
   return contacts;
@@ -109,8 +108,8 @@ const _findContactsAsSummary = (contactIdsToExclude = []) => {
   });
   const filter = contactIdsToExclude.length ? Utils.toMap('id', { $nin: contactIdsToExclude }) : {};
   const projections = { id: 1 };
-  projections[CC.NAME] = 1;
-  projections[CC.LAST_NAME] = 1;
+  projections[ContactConstants.NAME] = 1;
+  projections[ContactConstants.LAST_NAME] = 1;
   return ContactHelper.findAllContacts(filter, projections).then(_mapById);
 };
 
@@ -133,8 +132,8 @@ const _dehydrateAndSaveContacts = (contacts, teamMemberId, fieldsDef) => {
 // TODO AMP-27748 until contacts API rejects extra fields (contrary to activity API), we are cleaning them up
 const _cleanupLocalFields = (contacts) => {
   contacts.forEach(c => {
-    CC.TMP_FIELDS.forEach(tmpProp => delete c[tmpProp]);
-    (c[CC.ORGANISATION_CONTACTS] || []).forEach(o => delete o[CC.TMP_UNIQUE_ID]);
+    ContactConstants.TMP_FIELDS.forEach(tmpProp => delete c[tmpProp]);
+    (c[ContactConstants.ORGANISATION_CONTACTS] || []).forEach(o => delete o[ContactConstants.TMP_UNIQUE_ID]);
   });
   return contacts;
 };
@@ -143,8 +142,8 @@ const _getOnlyModifiedContacts = (contacts, dbContactsMapById, teamMemberId) => 
   const dbC = dbContactsMapById.get(c.id);
   const toUpdate = !dbC || !equal(c, dbC);
   if (toUpdate) {
-    if (ContactHelper.isNewContact(c) && !c[CC.CREATOR]) {
-      c[CC.CREATOR] = teamMemberId;
+    if (ContactHelper.isNewContact(c) && !c[ContactConstants.CREATOR]) {
+      c[ContactConstants.CREATOR] = teamMemberId;
     }
     ContactHelper.stampClientChange(c);
   }
@@ -158,11 +157,11 @@ export const getActivityContactIds = (activity) => _getActivityContacts(activity
 
 const _getActivityContacts = (activity, asIds = true) => {
   const contactsIds = new Set();
-  ACTIVITY_CONTACT_PATHS.forEach(cType => {
+  FieldPathConstants.ACTIVITY_CONTACT_PATHS.forEach(cType => {
     const cs = activity[cType];
     if (cs && cs.length) {
       // contact may be eventually hydrated
-      cs.forEach(c => contactsIds.add((asIds && c[AC.CONTACT].id) || c[AC.CONTACT]));
+      cs.forEach(c => contactsIds.add((asIds && c[ActivityConstants.CONTACT].id) || c[ActivityConstants.CONTACT]));
     }
   });
   return Array.from(contactsIds);
@@ -171,10 +170,10 @@ const _getActivityContacts = (activity, asIds = true) => {
 export const buildNewActivityContact = (contactFieldsManager) => {
   const contact = {};
   ContactHelper.stampClientChange(contact);
-  contact[CC.TMP_HYDRATED] = true;
-  contact[CC.TMP_ENTITY_VALIDATOR] = new EntityValidator(contact, contactFieldsManager, null, ['id']);
+  contact[ContactConstants.TMP_HYDRATED] = true;
+  contact[ContactConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(contact, contactFieldsManager, null, ['id']);
   return {
-    [AC.CONTACT]: contact,
-    [AC.PRIMARY_CONTACT]: false,
+    [ActivityConstants.CONTACT]: contact,
+    [ActivityConstants.PRIMARY_CONTACT]: false,
   };
 };

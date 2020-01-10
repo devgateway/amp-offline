@@ -1,17 +1,14 @@
+/* eslint-disable max-len */
+import { ActivityConstants, Constants, FieldPathConstants, AllApprovalStatuses, GlobalSettingsConstants } from 'amp-ui';
 import * as RC from '../../../utils/constants/ResourceConstants';
-import { COLLECTION_ACTIVITIES, COLLECTION_CLIENT_SETTINGS, COLLECTION_RESOURCES } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import * as CurrencyRatesHelper from '../../../modules/helpers/CurrencyRatesHelper';
 import * as MC from '../../../utils/constants/MigrationsConstants';
-import * as GSC from '../../../utils/constants/GlobalSettingsConstants';
 import * as GlobalSettingsHelper from '../../../modules/helpers/GlobalSettingsHelper';
 import * as CSC from '../../../utils/constants/ClientSettingsConstants';
 import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
-import * as FPC from '../../../utils/constants/FieldPathConstants';
 import * as ActivityHelper from '../../../modules/helpers/ActivityHelper';
-import * as AC from '../../../utils/constants/ActivityConstants';
 import logger from '../ChangelogLogger';
-import { ALL_APPROVAL_STATUSES } from '../../../utils/constants/ApprovalStatus';
 import DateUtils from '../../../utils/DateUtils';
 
 // AMPOFFLINE-1312-configure-web-link-resource_type
@@ -55,7 +52,7 @@ export default ({
         comment: 'Default value for the new "resource_type" field for web links',
         changes: [{
           update: {
-            table: COLLECTION_RESOURCES,
+            table: Constants.COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_WEB_RESOURCE,
             filter: linkFilter
@@ -68,7 +65,7 @@ export default ({
         comment: 'Default value for the new "resource_type" field for documents',
         changes: [{
           update: {
-            table: COLLECTION_RESOURCES,
+            table: Constants.COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_DOC_RESOURCE,
             filter: docFilter
@@ -81,7 +78,7 @@ export default ({
         comment: 'Switch PPC currency reference from code to id',
         preConditions: [{
           func: () => ActivityHelper.findAll(
-            Utils.toMap(AC.PPC_AMOUNT, { $elemMatch: Utils.toDefinedOrNullRule(CURRENCY_CODE) }))
+            Utils.toMap(ActivityConstants.PPC_AMOUNT, { $elemMatch: Utils.toDefinedOrNullRule(CURRENCY_CODE) }))
             .then(activities => {
               activitiesWithPPCasCode = activities;
               return activitiesWithPPCasCode.length > 0;
@@ -91,12 +88,12 @@ export default ({
         }, {
           func: () => PossibleValuesHelper.findAllByExactIds(
             // locate at least one list of synced currencies
-            [FPC.FUNDING_CURRENCY_PATH, FPC.MTEF_CURRENCY_PATH, FPC.COMPONENT_CURRENCY_PATH]
+            [FieldPathConstants.FUNDING_CURRENCY_PATH, FieldPathConstants.MTEF_CURRENCY_PATH, FieldPathConstants.COMPONENT_CURRENCY_PATH]
           ).then(pvs => {
-            pvs = pvs && pvs.length && pvs.find(p => p && p[FPC.FIELD_OPTIONS]);
+            pvs = pvs && pvs.length && pvs.find(p => p && p[FieldPathConstants.FIELD_OPTIONS]);
             if (pvs) {
               codeToId = {};
-              Object.values(pvs[FPC.FIELD_OPTIONS]).forEach(c => {
+              Object.values(pvs[FieldPathConstants.FIELD_OPTIONS]).forEach(c => {
                 codeToId[c.value] = c.id;
               });
             }
@@ -111,14 +108,14 @@ export default ({
             const couldNotRemapToLeaveForReject = [];
             const couldNotRemapCodes = new Set();
             activitiesWithPPCasCode = activitiesWithPPCasCode.filter(a => {
-              const ppc = a[AC.PPC_AMOUNT][0];
+              const ppc = a[ActivityConstants.PPC_AMOUNT][0];
               if (ppc[CURRENCY_CODE]) {
                 const id = codeToId[ppc[CURRENCY_CODE]];
                 if (id) {
-                  ppc[AC.CURRENCY] = id;
+                  ppc[ActivityConstants.CURRENCY] = id;
                 } else {
-                  if (a[AC.CLIENT_CHANGE_ID]) {
-                    couldNotRemapToLeaveForReject.push(`${a[AC.AMP_ID] || ''}(${a[AC.PROJECT_TITLE]})`);
+                  if (a[ActivityConstants.CLIENT_CHANGE_ID]) {
+                    couldNotRemapToLeaveForReject.push(`${a[ActivityConstants.AMP_ID] || ''}(${a[ActivityConstants.PROJECT_TITLE]})`);
                   } else {
                     couldNotRemapToDelete.push(a);
                   }
@@ -134,7 +131,7 @@ export default ({
               const codes = Array.from(couldNotRemapCodes.keys()).join(', ');
               const msgs = [`AMPOFFLINE-1318: could not remap currency codes to ids: ${codes}.`];
               if (couldNotRemapToDelete.length) {
-                const toDeleteS = couldNotRemapToDelete.map(a => `${a[AC.AMP_ID]}(${a[AC.PROJECT_TITLE]})`).join(', ');
+                const toDeleteS = couldNotRemapToDelete.map(a => `${a[ActivityConstants.AMP_ID]}(${a[ActivityConstants.PROJECT_TITLE]})`).join(', ');
                 msgs.push(`These activities will be deleted to be resynced: ${toDeleteS}.`);
               }
               if (couldNotRemapToLeaveForReject.length) {
@@ -174,7 +171,7 @@ export default ({
         }],
         changes: [{
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -194,7 +191,7 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }, {
-          func: () => GlobalSettingsHelper.findByKey(GSC.DEFAULT_COUNTRY).then(dc =>
+          func: () => GlobalSettingsHelper.findByKey(GlobalSettingsConstants.DEFAULT_COUNTRY).then(dc =>
             !dc || !dc.value || ['ht', 'td'].includes(dc.value.toLowerCase())),
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
@@ -206,11 +203,11 @@ export default ({
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
         changes: [{
-          func: () => PossibleValuesHelper.findAllByExactIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY).then(cpvs => {
+          func: () => PossibleValuesHelper.findAllByExactIds(FieldPathConstants.PATHS_FOR_ACTIVITY_CURRENCY).then(cpvs => {
             currencyPVs = cpvs;
             return Promise.all([
               CurrencyRatesHelper.replaceAllCurrencyRates([]),
-              PossibleValuesHelper.deleteByIds(FPC.PATHS_FOR_ACTIVITY_CURRENCY)
+              PossibleValuesHelper.deleteByIds(FieldPathConstants.PATHS_FOR_ACTIVITY_CURRENCY)
             ]);
           })
         }],
@@ -242,7 +239,7 @@ export default ({
         }],
         changes: [{
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -258,16 +255,16 @@ export default ({
           onFail: MC.ON_FAIL_ERROR_MARK_RAN,
           onError: MC.ON_FAIL_ERROR_CONTINUE
         }],
-        changes: [...ALL_APPROVAL_STATUSES.map(as => ({
+        changes: [...AllApprovalStatuses.map(as => ({
           update: {
-            table: COLLECTION_ACTIVITIES,
-            field: AC.APPROVAL_STATUS,
+            table: Constants.COLLECTION_ACTIVITIES,
+            field: ActivityConstants.APPROVAL_STATUS,
             value: as.id,
-            filter: Utils.toMap(AC.APPROVAL_STATUS, as.value)
+            filter: Utils.toMap(ActivityConstants.APPROVAL_STATUS, as.value)
           }
         })), {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -280,7 +277,7 @@ export default ({
         comment: 'Switch FY from a list of year-value pairs to simple list of years',
         preConditions: [{
           func: () => ActivityHelper.findAll(
-            Utils.toMap(AC.FY, { $elemMatch: Utils.toDefinedOrNullRule(AC.YEAR) }))
+            Utils.toMap(ActivityConstants.FY, { $elemMatch: Utils.toDefinedOrNullRule(ActivityConstants.YEAR) }))
             .then(activities => {
               activitiesWithFY = activities;
               return activitiesWithFY.length > 0;
@@ -291,10 +288,10 @@ export default ({
         changes: [{
           func: () => {
             activitiesWithFY.forEach(a => {
-              a[AC.FY] = a[AC.FY].map(entry => entry[AC.YEAR]);
+              a[ActivityConstants.FY] = a[ActivityConstants.FY].map(entry => entry[ActivityConstants.YEAR]);
             });
             return Promise.all([
-              PossibleValuesHelper.deleteById(`${AC.FY}~${AC.YEAR}`),
+              PossibleValuesHelper.deleteById(`${ActivityConstants.FY}~${ActivityConstants.YEAR}`),
               ActivityHelper.saveOrUpdateCollection(activitiesWithFY)
             ]).then(result => {
               activitiesWithFY = null;
@@ -303,7 +300,7 @@ export default ({
           }
         }, {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -319,21 +316,21 @@ export default ({
         comment: 'Migrate "resource_type" from string to long',
         changes: [{
           update: {
-            table: COLLECTION_RESOURCES,
+            table: Constants.COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_WEB_RESOURCE,
             filter: Utils.toMap(RC.RESOURCE_TYPE, 'link')
           }
         }, {
           update: {
-            table: COLLECTION_RESOURCES,
+            table: Constants.COLLECTION_RESOURCES,
             field: RC.RESOURCE_TYPE,
             value: RC.TYPE_DOC_RESOURCE,
             filter: Utils.toMap(RC.RESOURCE_TYPE, 'file')
           }
         }, {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -348,9 +345,9 @@ export default ({
         failOnError: true,
         preConditions: [{
           func: () => ActivityHelper.findAll(
-            Utils.toMap(AC.FUNDINGS, {
-              $elemMatch: Utils.toMap(AC.FUNDING_DETAILS, {
-                $elemMatch: Utils.toDefinedOrNullRule(AC.TRANSACTION_TYPE)
+            Utils.toMap(ActivityConstants.FUNDINGS, {
+              $elemMatch: Utils.toMap(ActivityConstants.FUNDING_DETAILS, {
+                $elemMatch: Utils.toDefinedOrNullRule(ActivityConstants.TRANSACTION_TYPE)
               })
             })).then(activities => {
               activitiesWithFundingDetails = activities;
@@ -374,19 +371,19 @@ export default ({
         changes: [{
           func: () => {
             const legacyTrnTypeCodeToTrnGroupName = new Map([
-              [0, AC.COMMITMENTS],
-              [1, AC.DISBURSEMENTS],
-              [2, AC.EXPENDITURES]
+              [0, ActivityConstants.COMMITMENTS],
+              [1, ActivityConstants.DISBURSEMENTS],
+              [2, ActivityConstants.EXPENDITURES]
             ]);
             const trnTypeEntriesCount = new Map([[0, 0], [1, 0], [2, 0]]);
             activitiesWithFundingDetails.forEach(a => {
-              a[AC.FUNDINGS].forEach(funding => {
-                funding[AC.FUNDING_DETAILS].forEach(fd => {
-                  const trnTypeCode = fd[AC.TRANSACTION_TYPE];
+              a[ActivityConstants.FUNDINGS].forEach(funding => {
+                funding[ActivityConstants.FUNDING_DETAILS].forEach(fd => {
+                  const trnTypeCode = fd[ActivityConstants.TRANSACTION_TYPE];
                   const trnTypeName = legacyTrnTypeCodeToTrnGroupName.get(trnTypeCode);
                   if (!trnTypeName) {
                     logger.warn(`Unsupported trnTypeId=${trnTypeCode}. Skipping funding item: 
-                    ${AC.AMP_FUNDING_ID}=${fd[AC.AMP_FUNDING_ID]} for ${AC.AMP_ID}=${a[AC.AMP_ID]}`);
+                    ${ActivityConstants.AMP_FUNDING_ID}=${fd[ActivityConstants.AMP_FUNDING_ID]} for ${ActivityConstants.AMP_ID}=${a[ActivityConstants.AMP_ID]}`);
                   } else {
                     trnTypeEntriesCount.set(trnTypeCode, trnTypeEntriesCount.get(trnTypeCode) + 1);
                     let fundingItems = funding[trnTypeName];
@@ -394,15 +391,15 @@ export default ({
                       fundingItems = [];
                       funding[trnTypeName] = fundingItems;
                     }
-                    delete fd[AC.TRANSACTION_TYPE];
+                    delete fd[ActivityConstants.TRANSACTION_TYPE];
                     fundingItems.push(fd);
                   }
                 });
-                delete funding[AC.FUNDING_DETAILS];
+                delete funding[ActivityConstants.FUNDING_DETAILS];
               });
             });
-            const obsoletePVsIds = [AC.TRANSACTION_TYPE, AC.ADJUSTMENT_TYPE, AC.PLEDGE, AC.CURRENCY,
-              AC.EXPENDITURE_CLASS].map(fdField => `${AC.FUNDINGS}~${AC.FUNDING_DETAILS}~${fdField}`);
+            const obsoletePVsIds = [ActivityConstants.TRANSACTION_TYPE, ActivityConstants.ADJUSTMENT_TYPE, ActivityConstants.PLEDGE, ActivityConstants.CURRENCY,
+              ActivityConstants.EXPENDITURE_CLASS].map(fdField => `${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_DETAILS}~${fdField}`);
             legacyTrnTypeCodeToTrnGroupName.forEach((value, key) => {
               logger.info(`Migrating ${trnTypeEntriesCount.get(key)} ${value} to the new fundings data format`);
             });
@@ -416,7 +413,7 @@ export default ({
           }
         }, {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -448,29 +445,29 @@ export default ({
           func: () => {
             allActivities.forEach(a => {
               const dateFieldsObj = {};
-              [AC.ORIGINAL_COMPLETION_DATE, AC.CONTRACTING_DATE, AC.DISBURSEMENT_DATE, AC.PROPOSED_START_DATE,
-                AC.ACTUAL_START_DATE, AC.PROPOSED_APPROVAL_DATE, AC.ACTUAL_APPROVAL_DATE, AC.ACTUAL_COMPLETION_DATE,
-                AC.PROPOSED_COMPLETION_DATE].forEach(datePath => Utils.pushByKey(dateFieldsObj, datePath, a));
-              const ppc = a[AC.PPC_AMOUNT] && a[AC.PPC_AMOUNT].length ? a[AC.PPC_AMOUNT][0] : null;
-              Utils.pushByKey(dateFieldsObj, AC.FUNDING_DATE, ppc);
-              (a[AC.FUNDINGS] || []).forEach(funding => {
-                [AC.ACTUAL_START_DATE, AC.ACTUAL_COMPLETION_DATE, AC.ORIGINAL_COMPLETION_DATE, AC.REPORTING_DATE,
-                  AC.FUNDING_CLASSIFICATION_DATE, AC.EFFECTIVE_FUNDING_DATE, AC.FUNDING_CLOSING_DATE,
-                  AC.RATIFICATION_DATE, AC.MATURITY]
+              [ActivityConstants.ORIGINAL_COMPLETION_DATE, ActivityConstants.CONTRACTING_DATE, ActivityConstants.DISBURSEMENT_DATE, ActivityConstants.PROPOSED_START_DATE,
+                ActivityConstants.ACTUAL_START_DATE, ActivityConstants.PROPOSED_APPROVAL_DATE, ActivityConstants.ACTUAL_APPROVAL_DATE, ActivityConstants.ACTUAL_COMPLETION_DATE,
+                ActivityConstants.PROPOSED_COMPLETION_DATE].forEach(datePath => Utils.pushByKey(dateFieldsObj, datePath, a));
+              const ppc = a[ActivityConstants.PPC_AMOUNT] && a[ActivityConstants.PPC_AMOUNT].length ? a[ActivityConstants.PPC_AMOUNT][0] : null;
+              Utils.pushByKey(dateFieldsObj, ActivityConstants.FUNDING_DATE, ppc);
+              (a[ActivityConstants.FUNDINGS] || []).forEach(funding => {
+                [ActivityConstants.ACTUAL_START_DATE, ActivityConstants.ACTUAL_COMPLETION_DATE, ActivityConstants.ORIGINAL_COMPLETION_DATE, ActivityConstants.REPORTING_DATE,
+                  ActivityConstants.FUNDING_CLASSIFICATION_DATE, ActivityConstants.EFFECTIVE_FUNDING_DATE, ActivityConstants.FUNDING_CLOSING_DATE,
+                  ActivityConstants.RATIFICATION_DATE, ActivityConstants.MATURITY]
                   .forEach(datePath => Utils.pushByKey(dateFieldsObj, datePath, funding));
-                FPC.TRANSACTION_TYPES.forEach(trnType => {
-                  (funding[trnType] || []).forEach(fd => Utils.pushByKey(dateFieldsObj, AC.TRANSACTION_DATE, fd));
+                FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
+                  (funding[trnType] || []).forEach(fd => Utils.pushByKey(dateFieldsObj, ActivityConstants.TRANSACTION_DATE, fd));
                 });
-                Utils.pushByKey(dateFieldsObj, AC.TRANSACTION_DATE, funding[AC.MTEF_PROJECTIONS]);
+                Utils.pushByKey(dateFieldsObj, ActivityConstants.TRANSACTION_DATE, funding[ActivityConstants.MTEF_PROJECTIONS]);
               });
-              (a[AC.COMPONENTS] || []).forEach(component => {
-                FPC.TRANSACTION_TYPES.forEach(trnType => {
-                  (component[trnType] || []).forEach(fd => Utils.pushByKey(dateFieldsObj, AC.TRANSACTION_DATE, fd));
+              (a[ActivityConstants.COMPONENTS] || []).forEach(component => {
+                FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
+                  (component[trnType] || []).forEach(fd => Utils.pushByKey(dateFieldsObj, ActivityConstants.TRANSACTION_DATE, fd));
                 });
               });
-              (a[AC.ISSUES] || []).forEach(issue => {
-                Utils.pushByKey(dateFieldsObj, AC.ISSUE_DATE, issue);
-                (issue[AC.MEASURES] || []).forEach(measure => Utils.pushByKey(dateFieldsObj, AC.MEASURE_DATE, measure));
+              (a[ActivityConstants.ISSUES] || []).forEach(issue => {
+                Utils.pushByKey(dateFieldsObj, ActivityConstants.ISSUE_DATE, issue);
+                (issue[ActivityConstants.MEASURES] || []).forEach(measure => Utils.pushByKey(dateFieldsObj, ActivityConstants.MEASURE_DATE, measure));
               });
               Object.keys(dateFieldsObj)
                 .forEach(datePath => dateFieldsObj[datePath].forEach(obj => {
@@ -479,7 +476,7 @@ export default ({
                     // No matter in which timezone the date is picked, the date part reflects the date user selected
                     obj[datePath] = DateUtils.substractShortDateForAPI(timestamp);
                     if (!obj[datePath]) {
-                      logger.error(`Could not convert ${datePath}=${datePath} to date for amp_id=${a[AC.AMP_ID]}`);
+                      logger.error(`Could not convert ${datePath}=${datePath} to date for amp_id=${a[ActivityConstants.AMP_ID]}`);
                     }
                   }
                 }));
@@ -491,7 +488,7 @@ export default ({
           }
         }, {
           update: {
-            table: COLLECTION_CLIENT_SETTINGS,
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
             field: 'value',
             value: true,
             filter: { name: CSC.FORCE_SYNC_UP }
@@ -506,7 +503,7 @@ export default ({
         author: 'nmandrescu',
         comment: 'Migrate PPC from list to object type',
         preConditions: [{
-          func: () => ActivityHelper.findAll(Utils.toDefinedOrNullArrayRule(AC.PPC_AMOUNT))
+          func: () => ActivityHelper.findAll(Utils.toDefinedOrNullArrayRule(ActivityConstants.PPC_AMOUNT))
             .then(activities => {
               activitiesWithPPC = activities;
               return activitiesWithPPC.length > 0;
@@ -529,11 +526,11 @@ export default ({
         changes: [{
           func: () => {
             activitiesWithPPC.forEach(a => {
-              const ppc = a[AC.PPC_AMOUNT];
+              const ppc = a[ActivityConstants.PPC_AMOUNT];
               if (ppc && ppc.length) {
-                a[AC.PPC_AMOUNT] = ppc[0];
+                a[ActivityConstants.PPC_AMOUNT] = ppc[0];
               } else {
-                delete a[AC.PPC_AMOUNT];
+                delete a[ActivityConstants.PPC_AMOUNT];
               }
             });
             return ActivityHelper.saveOrUpdateCollection(activitiesWithPPC).then(r => {

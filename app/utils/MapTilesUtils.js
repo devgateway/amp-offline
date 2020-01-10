@@ -1,11 +1,11 @@
+import { Constants } from 'amp-ui';
 import FileManager from '../../app/modules/util/FileManager';
-import { ASSETS_DIRECTORY, MAP_TILES_DIR } from './Constants';
 
 const MapTilesUtils = {
 
   detectContent() {
-    if (FileManager.existsSync(ASSETS_DIRECTORY, MAP_TILES_DIR)) {
-      const dir = FileManager.readdirSync(ASSETS_DIRECTORY, MAP_TILES_DIR);
+    if (FileManager.existsSync(Constants.ASSETS_DIRECTORY, Constants.MAP_TILES_DIR)) {
+      const dir = FileManager.readdirSync(Constants.ASSETS_DIRECTORY, Constants.MAP_TILES_DIR);
       return (dir && dir.length > 0);
     }
     return false;
@@ -15,7 +15,7 @@ const MapTilesUtils = {
     let min = 999;
     let max = 0;
     if (this.detectContent()) {
-      FileManager.readdirSync(ASSETS_DIRECTORY, MAP_TILES_DIR).forEach(name => {
+      FileManager.readdirSync(Constants.ASSETS_DIRECTORY, Constants.MAP_TILES_DIR).forEach(name => {
         const numberMatch = name.match(/([0-9]+)/);
         if (numberMatch) {
           const auxNumberFileName = Number(name);

@@ -2,16 +2,13 @@
  * Created by Anya on 24/04/2017.
  */
 import Moment from 'moment';
+import { ErrorConstants, DateUtilsHelper, DateConstants } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
-import { API_LONG_DATE_FORMAT, API_SHORT_DATE_FORMAT } from '../modules/connectivity/AmpApiConstants';
-import { DEFAULT_DATE_FORMAT } from './constants/GlobalSettingsConstants';
-import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import * as ErrorNotificationHelper from '../modules/helpers/ErrorNotificationHelper';
-import { NOTIFICATION_ORIGIN_DATES } from './constants/ErrorConstants';
 import translate from '../utils/translate';
 
 const logger = new Logger('Date utils');
-
+let gSDateFormat;
 export default class DateUtils {
   /**
    * Configures the global locale to be used by the Moment library, e.g. in the Date Picker
@@ -20,6 +17,13 @@ export default class DateUtils {
   static setCurrentLang(lang) {
     Moment.locale(lang);
   }
+  static setGSDateFormat(pGSDateFormat) {
+    gSDateFormat = pGSDateFormat;
+  }
+
+  static getGSDateFormat() {
+    return gSDateFormat;
+  }
 
   /**
    * This method simply extracts the short date part of a timestamp, assuming timestamp format includes date format
@@ -27,14 +31,14 @@ export default class DateUtils {
    * @returns date in the short API format
    */
   static substractShortDateForAPI(timestamp: String) {
-    if (timestamp && timestamp.length >= API_SHORT_DATE_FORMAT.length) {
-      return timestamp.substr(0, API_SHORT_DATE_FORMAT.length);
+    if (timestamp && timestamp.length >= DateConstants.API_SHORT_DATE_FORMAT.length) {
+      return timestamp.substr(0, DateConstants.API_SHORT_DATE_FORMAT.length);
     }
     return null;
   }
 
   static formatDateForAPI(date) {
-    return DateUtils.formatDate(date, API_SHORT_DATE_FORMAT);
+    return DateUtils.formatDate(date, DateConstants.API_SHORT_DATE_FORMAT);
   }
 
   static isValidDateFormat(date, format) {
@@ -44,33 +48,24 @@ export default class DateUtils {
 
   static formatDate(date, format) {
     if (date) {
-      const dateAsMoment = Moment(date);
-      if (dateAsMoment.isValid()) {
-        return dateAsMoment.format(format);
+      const formattedDate = DateUtilsHelper.formatDate(date, format);
+      if (formattedDate !== '') {
+        return formattedDate;
+      } else {
+        const message = `${translate('Invalid date provided')}: ${date}`;
+        logger.error(message);
+        throw ErrorNotificationHelper.createNotification({ message, origin: ErrorConstants.NOTIFICATION_ORIGIN_DATES });
       }
-      const message = `${translate('Invalid date provided')}: ${date}`;
-      logger.error(message);
-      throw ErrorNotificationHelper.createNotification({ message, origin: NOTIFICATION_ORIGIN_DATES });
     }
-    return '';
-  }
-
-  static getGSDateFormat() {
-    return GlobalSettingsManager.getSettingByKey(DEFAULT_DATE_FORMAT).toUpperCase();
-  }
-
-  static getDateTimeFormat() {
-    const dateFormat = this.getGSDateFormat();
-    return `${dateFormat} H:mm:ss`;
   }
 
   static createFormattedDate(date) {
     logger.debug('createFormattedDate');
-    return DateUtils.formatDate(date, DateUtils.getGSDateFormat());
+    return DateUtils.formatDate(date, gSDateFormat);
   }
 
   static createFormattedDateTime(date) {
-    return DateUtils.formatDate(date, DateUtils.getDateTimeFormat());
+    return DateUtils.formatDate(date, DateUtilsHelper.getDateTimeFormat(gSDateFormat));
   }
 
   /**
@@ -108,6 +103,10 @@ export default class DateUtils {
   static getTimestampForAPI(date = new Date()) {
     // DO NOT remove the timezone, since AMP also stores it.
     // We'll revise, if needed, once we implement the timing synchronization between AMP and AMP Offline client.
-    return DateUtils.formatDate(date, API_LONG_DATE_FORMAT);
+    return DateUtils.formatDate(date, DateConstants.API_LONG_DATE_FORMAT);
+  }
+
+  static getYearFromDate(date) {
+    return Moment(date).year();
   }
 }

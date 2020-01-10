@@ -1,13 +1,13 @@
+import { Constants, PossibleValuesManager, FeatureManager, GlobalSettingsConstants, NumberUtils } from 'amp-ui';
 import store from '../index';
 import { connectivityCheck, loadConnectionInformation } from './ConnectivityAction';
 import { loadCurrencyRates } from './CurrencyRatesAction';
-import { CONNECTIVITY_CHECK_INTERVAL } from '../utils/Constants';
 import Logger from '../modules/util/LoggerManager';
-import NumberUtils from '../utils/NumberUtils';
+import translate from '../utils/translate';
 import * as GlobalSettingsHelper from '../modules/helpers/GlobalSettingsHelper';
 import * as FMHelper from '../modules/helpers/FMHelper';
+import DateUtils from '../utils/DateUtils';
 import { initLanguage, loadAllLanguages } from '../actions/TranslationAction';
-import FeatureManager from '../modules/util/FeatureManager';
 import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import TranslationManager from '../modules/util/TranslationManager';
@@ -21,7 +21,6 @@ import {
 import RepositoryManager from '../modules/repository/RepositoryManager';
 import { deleteOrphanResources } from './ResourceAction';
 import SetupManager from '../modules/setup/SetupManager';
-import { GS_DEFAULT_CALENDAR } from '../utils/constants/GlobalSettingsConstants';
 import CalendarHelper from '../modules/helpers/CalendarHelper';
 import { dbMigrationsManager } from './DBMigrationsAction';
 import * as MC from '../utils/constants/MigrationsConstants';
@@ -91,6 +90,7 @@ export function ampOfflineInit(isPostLogout = false) {
     .then(() => loadFMTree())
     .then(loadCurrencyRatesOnStartup)
     .then(loadCalendar)
+    .then(loadPossibleValuesManager)
     .then(() => (isPostLogout ? postLogoutInit() : null));
   store.dispatch({
     type: STATE_INITIALIZATION,
@@ -124,7 +124,7 @@ export function getTimer() {
 function scheduleConnectivityCheck() {
   return connectivityCheck().then(() => {
     clearInterval(timer);
-    timer = setInterval(() => connectivityCheck(), CONNECTIVITY_CHECK_INTERVAL);
+    timer = setInterval(() => connectivityCheck(), Constants.CONNECTIVITY_CHECK_INTERVAL);
     store.dispatch({ type: TIMER_START });
     return Promise.resolve();
   });
@@ -145,7 +145,21 @@ export function loadGlobalSettings() {
       });
       GlobalSettingsManager.setGlobalSettings(gsData);
     }
+    NumberUtils.registerSettings({
+      gsDefaultGroupSeparator: GlobalSettingsManager.getSettingByKey(
+        GlobalSettingsConstants.GS_DEFAULT_GROUPING_SEPARATOR),
+      gsDefaultDecimalSeparator: GlobalSettingsManager.getSettingByKey(
+        GlobalSettingsConstants.GS_DEFAULT_DECIMAL_SEPARATOR),
+      gsDefaultNumberFormat: GlobalSettingsManager.getSettingByKey(
+        GlobalSettingsConstants.GS_DEFAULT_NUMBER_FORMAT),
+      gsAmountInThousands: GlobalSettingsManager.getSettingByKey(
+        GlobalSettingsConstants.GS_AMOUNTS_IN_THOUSANDS),
+      Translate: translate,
+      Logger
+    });
     NumberUtils.createLanguage();
+    DateUtils.setGSDateFormat(
+      GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.DEFAULT_DATE_FORMAT).toUpperCase());
     return gsData;
   });
   store.dispatch({
@@ -157,7 +171,7 @@ export function loadGlobalSettings() {
 
 export function loadCalendar() {
   logger.log('loadCalendar');
-  const id = GlobalSettingsManager.getSettingByKey(GS_DEFAULT_CALENDAR);
+  const id = GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.GS_DEFAULT_CALENDAR);
   const calendarPromise = CalendarHelper.findCalendarById(Number(id)).then(calendar => (calendar));
   store.dispatch({
     type: STATE_CALENDAR,
@@ -166,12 +180,19 @@ export function loadCalendar() {
   return calendarPromise;
 }
 
+export function loadPossibleValuesManager() {
+  logger.log('loadPossibleValuesManager');
+  PossibleValuesManager.setLogger(Logger);
+  return Promise.resolve();
+}
+
 /**
  * Loads FM tree, since it's a very small structure and is handy to check synchronously
  * @param id FM tree ID. If not specified, the first one will be used (Iteration 1 countries)
  */
 export function loadFMTree(id = undefined) {
   logger.log('loadFMTree');
+  FeatureManager.setLoggerManager(Logger);
   const dbFilter = id ? { id } : {};
   const fmPromise = FMHelper.findAll(dbFilter)
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))

@@ -1,7 +1,6 @@
 import { describe, it } from 'mocha';
+import { ActivityConstants, FieldPathConstants } from 'amp-ui';
 import ActivityHydrator from '../../app/modules/helpers/ActivityHydrator';
-import { HIERARCHICAL_VALUE, HIERARCHICAL_VALUE_DEPTH } from '../../app/utils/constants/ActivityConstants';
-import { DONOR_ORGANIZATIONS_PATH, FIELD_OPTIONS, FIELD_PATH } from '../../app/utils/constants/FieldPathConstants';
 
 const chai = require('chai');
 // const chaiAsPromised = require('chai-as-promised');
@@ -31,30 +30,30 @@ const fieldsDef = [
 
 // due to HIERARCHICAL_VALUE, the content may vary
 const org1 = Object.assign({}, { id: 1, value: 'UNDP' });
-org1[HIERARCHICAL_VALUE] = null;
-org1[HIERARCHICAL_VALUE_DEPTH] = 0;
+org1[ActivityConstants.HIERARCHICAL_VALUE] = null;
+org1[ActivityConstants.HIERARCHICAL_VALUE_DEPTH] = 0;
 const org2 = Object.assign({}, { id: 2, value: 'AfDB' });
-org2[HIERARCHICAL_VALUE] = null;
-org2[HIERARCHICAL_VALUE_DEPTH] = 0;
+org2[ActivityConstants.HIERARCHICAL_VALUE] = null;
+org2[ActivityConstants.HIERARCHICAL_VALUE_DEPTH] = 0;
 // TODO add full name unit tests once a more definite solution for extra info is available
 
 const possibleValuesCollection = [
   {
-    id: DONOR_ORGANIZATIONS_PATH,
-    [FIELD_PATH]: ['donor_organization', 'organization'],
-    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
+    id: FieldPathConstants.DONOR_ORGANIZATIONS_PATH,
+    [FieldPathConstants.FIELD_PATH]: ['donor_organization', 'organization'],
+    [FieldPathConstants.FIELD_OPTIONS]: { 1: org1, 2: org2 }
   },
   {
     id: 'final_list',
-    [FIELD_PATH]: ['final_list'],
-    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
+    [FieldPathConstants.FIELD_PATH]: ['final_list'],
+    [FieldPathConstants.FIELD_OPTIONS]: { 1: org1, 2: org2 }
   }
 ];
 const invalidPossibleValues = [
   {
     id: 'invalid_field',
-    [FIELD_PATH]: ['invalid_field'],
-    [FIELD_OPTIONS]: { 1: org1, 2: org2 }
+    [FieldPathConstants.FIELD_PATH]: ['invalid_field'],
+    [FieldPathConstants.FIELD_OPTIONS]: { 1: org1, 2: org2 }
   }
 ];
 

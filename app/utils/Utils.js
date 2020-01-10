@@ -1,5 +1,6 @@
 import md5 from 'js-md5';
 import os from 'os';
+import { Constants } from 'amp-ui';
 import {
   ARCH32,
   ARCH64,
@@ -10,33 +11,9 @@ import {
   PLATFORM_REDHAT,
   PLATFORM_WINDOWS
 } from '../modules/connectivity/AmpApiConstants';
-import { ENDS_WITH_PUNCTUATION_REGEX, RELEASE_BRANCHES, VERSION } from './Constants';
+import { VERSION } from './Constants';
 
 const Utils = {
-
-  stringToId(string: string) {
-    string = string || '';
-    let hash = 5381;
-    for (let i = string.length - 1; i >= 0; i--) {
-      /* eslint-disable no-bitwise */
-      hash = (hash * 33) ^ string.charCodeAt(i);
-    }
-    return hash >>> 0;
-    /* eslint-enable no-bitwise */
-  },
-
-  /**
-   * Generates a unique id for each call, over the same string
-   * @param string
-   * @return {string}
-   */
-  stringToUniqueId(string: string) {
-    return `${this.stringToId(string)}-${Date.now()}-${Math.random().toString().substring(2)}`;
-  },
-
-  numberRandom() {
-    return Math.trunc((Math.random() * 1000000));
-  },
 
   hexBufferToString(buffer) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
@@ -165,10 +142,6 @@ const Utils = {
     return item;
   },
 
-  capitalize(text: string) {
-    return text.replace(/(?:^|\s)\S/g, char => char.toUpperCase());
-  },
-
   stripTags(tagString) {
     if (tagString) {
       const htmlTags = /<[^>]*>/g;
@@ -181,7 +154,7 @@ const Utils = {
   joinMessages(messages: Array, endPunctuationIfMissing = '.') {
     return messages && messages.map(m => {
       const msg = `${m.message || m}`;
-      if (!msg.match(ENDS_WITH_PUNCTUATION_REGEX)) {
+      if (!msg.match(Constants.ENDS_WITH_PUNCTUATION_REGEX)) {
         return `${msg}${endPunctuationIfMissing}`;
       }
       return msg;
@@ -262,7 +235,7 @@ const Utils = {
 
   isReleaseBranch() {
     const branch = this.getBranch();
-    return RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
+    return Constants.RELEASE_BRANCHES.some(relBranch => branch.match(relBranch));
   },
 
   compareWithCollate(text1, text2, collator) {
@@ -284,10 +257,6 @@ const Utils = {
 
   getCurrentVersion() {
     return VERSION;
-  },
-
-  cloneDeep(obj) {
-    return JSON.parse(JSON.stringify(obj));
   },
 
   md5(obj) {

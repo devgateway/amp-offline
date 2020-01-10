@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import SyncUpManagerInterface, { throwSyncUpError } from './SyncUpManagerInterface';
-import { CONNECTION_FORCED_TIMEOUT } from '../../../utils/Constants';
 import * as Utils from '../../../utils/Utils';
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import Logger from '../../util/LoggerManager';
@@ -19,7 +19,7 @@ const PULL_END = 'PULL_END';
  */
 const CHECK_INTERVAL = 100;
 const QUEUE_LIMIT = 5;
-const ABORT_INTERVAL = (CONNECTION_FORCED_TIMEOUT + CHECK_INTERVAL) * (QUEUE_LIMIT + 1); // milliseconds
+const ABORT_INTERVAL = (Constants.CONNECTION_FORCED_TIMEOUT + CHECK_INTERVAL) * (QUEUE_LIMIT + 1); // milliseconds
 
 /**
  * Abstract Pull Sync Up Manager that sends pull requests in batches

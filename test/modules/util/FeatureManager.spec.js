@@ -1,5 +1,6 @@
 import { describe, it } from 'mocha';
-import actions from '../../../app/modules/util/FeatureManager';
+import { FeatureManager } from 'amp-ui';
+import LoggerManager from '../../../app/modules/util/LoggerManager';
 
 const chai = require('chai');
 
@@ -19,19 +20,19 @@ const fmTree = {
     }
   }
 };
-
+FeatureManager.setFMTree(fmTree);
+FeatureManager.setLoggerManager(LoggerManager);
 const FM_PATH = '/PROJECT MANAGEMENT/Funding/Funding Information/Delivery rate';
 
 describe('@@ FeatureManager @@', () => {
-  describe('_isFMSettingEnabled', () =>
+  describe('isFMSettingEnabled', () =>
     it('should report "Delivery rate" is disabled when full path is checked', () =>
-      expect(actions._isFMSettingEnabled(FM_PATH, false, fmTree)).to.be.false
+      expect(FeatureManager.isFMSettingEnabled(FM_PATH, false, fmTree)).to.be.false
     )
   );
-
-  describe('_isFMSettingEnabled', () =>
+  describe('isFMSettingEnabled', () =>
     it('should report "Delivery rate" is enabled when only last segment must be checked', () =>
-      expect(actions._isFMSettingEnabled(FM_PATH, true, fmTree)).to.be.true
+      expect(FeatureManager.isFMSettingEnabled(FM_PATH, true, fmTree)).to.be.true
     )
   );
 });

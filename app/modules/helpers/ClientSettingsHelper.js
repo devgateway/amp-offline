@@ -1,6 +1,6 @@
 import { validate } from 'jsonschema';
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_CLIENT_SETTINGS } from '../../utils/Constants';
 import Notification from './NotificationHelper';
 import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
@@ -80,7 +80,7 @@ const ClientSettingsHelper = {
    */
   findSetting(filter) {
     logger.debug('findSetting');
-    return DatabaseManager.findOne(filter, COLLECTION_CLIENT_SETTINGS);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_CLIENT_SETTINGS);
   },
 
   /**
@@ -104,7 +104,7 @@ const ClientSettingsHelper = {
   },
 
   findAll(filter) {
-    return DatabaseManager.findAll(filter, COLLECTION_CLIENT_SETTINGS);
+    return DatabaseManager.findAll(filter, Constants.COLLECTION_CLIENT_SETTINGS);
   },
 
   /**
@@ -118,7 +118,7 @@ const ClientSettingsHelper = {
     if (validate(setting, settingsSchema).valid) {
       logger.debug(`Valid setting.id = ${setting.id}`);
       setting['updated-at'] = (new Date()).toISOString();
-      return DatabaseManager.saveOrUpdate(setting.id, setting, COLLECTION_CLIENT_SETTINGS);
+      return DatabaseManager.saveOrUpdate(setting.id, setting, Constants.COLLECTION_CLIENT_SETTINGS);
     }
     return Promise.reject(getInvalidFormatError());
   },
@@ -129,7 +129,7 @@ const ClientSettingsHelper = {
       settings.forEach(setting => {
         setting['updated-at'] = (new Date()).toISOString();
       });
-      return DatabaseManager.saveOrUpdateCollection(settings, COLLECTION_CLIENT_SETTINGS);
+      return DatabaseManager.saveOrUpdateCollection(settings, Constants.COLLECTION_CLIENT_SETTINGS);
     }
     return Promise.reject(getInvalidFormatError());
   },
@@ -153,7 +153,7 @@ const ClientSettingsHelper = {
    */
   deleteById(id) {
     logger.debug('deleteById');
-    return DatabaseManager.removeById(id, COLLECTION_CLIENT_SETTINGS);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_CLIENT_SETTINGS);
   }
 
 };

@@ -2,12 +2,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormControl } from 'react-bootstrap';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import AFOption from './AFOption';
-import FieldsManager from '../../../../modules/field/FieldsManager';
-import {
-  MULTI_SELECT_MAX_SIZE,
-  MULTI_SELECT_MIN_SIZE,
-} from '../../../../utils/constants/ActivityConstants';
 import * as styles from './AFMultiSelect.css';
 import FieldDefinition from '../../../../modules/field/FieldDefinition';
 
@@ -73,7 +69,8 @@ export default class AFMultiSelect extends Component {
     }
     const { options } = this.props;
     const selectedIds = this.getSelectedIds();
-    const size = Math.max(MULTI_SELECT_MIN_SIZE, Math.min(options.length, MULTI_SELECT_MAX_SIZE));
+    const size = Math.max(ActivityConstants.MULTI_SELECT_MIN_SIZE,
+      Math.min(options.length, ActivityConstants.MULTI_SELECT_MAX_SIZE));
     return (
       <div>
         <FormControl
@@ -81,7 +78,7 @@ export default class AFMultiSelect extends Component {
           value={selectedIds}
           className={styles.fitContent}>
           {options.map(option =>
-            <option key={option.id} value={option.id} >
+            <option key={option.id} value={option.id}>
               {option.translatedValue}
             </option>
           )}

@@ -1,8 +1,7 @@
+import { Constants, PossibleValuesManager } from 'amp-ui';
 import TranslationManager from '../modules/util/TranslationManager';
 import Logger from '../modules/util/LoggerManager';
 import DateUtils from '../utils/DateUtils';
-import PossibleValuesManager from '../modules/field/PossibleValuesManager';
-import { LANGUAGE_ENGLISH } from '../utils/Constants';
 import store from '../index';
 
 export const STATE_CHANGE_LANGUAGE = 'STATE_CHANGE_LANGUAGE';
@@ -13,7 +12,7 @@ const logger = new Logger('Translation action');
 
 export function initLanguage() {
   // TODO proper initial language selection should come in AMPOFFLINE-253
-  return setLanguage(LANGUAGE_ENGLISH);
+  return setLanguage(Constants.LANGUAGE_ENGLISH);
 }
 
 export function setLanguage(lang: string) {

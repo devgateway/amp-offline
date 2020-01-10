@@ -1,3 +1,4 @@
+import { Constants, UIUtils } from 'amp-ui';
 import fs from 'fs-extra';
 import os from 'os';
 import * as path from 'path';
@@ -5,8 +6,6 @@ import mimeTypes from 'mime-types';
 import readChunk from 'read-chunk';
 import rimraf from 'rimraf';
 import { ELECTRON_APP } from './ElectronApp';
-import { APP_DIRECTORY, ASAR_DIR, TEST_DIRECTORY } from '../../utils/Constants';
-import Utils from '../../utils/Utils';
 
 const fileType = require('file-type');
 
@@ -46,9 +45,9 @@ const FileManager = {
   getResourcesPath() {
     if (!resourcesPath) {
       if (process.env.NODE_ENV === 'production') {
-        resourcesPath = path.join(process.resourcesPath, ASAR_DIR);
+        resourcesPath = path.join(process.resourcesPath, Constants.ASAR_DIR);
       } else {
-        resourcesPath = path.resolve(APP_DIRECTORY);
+        resourcesPath = path.resolve(Constants.APP_DIRECTORY);
       }
     }
     return resourcesPath;
@@ -67,7 +66,7 @@ const FileManager = {
 
   getTestsPath(...pathParts) {
     if (!testPath) {
-      testPath = path.resolve(TEST_DIRECTORY);
+      testPath = path.resolve(Constants.TEST_DIRECTORY);
     }
     return this.joinPath(testPath, ...pathParts);
   },
@@ -355,7 +354,7 @@ const FileManager = {
    */
   copyDataFileToTmpSync(file, fullPath) {
     const from = path.join(fullPath, file);
-    const to = path.join(os.tmpdir(), `${Utils.numberRandom()}-${file}`);
+    const to = path.join(os.tmpdir(), `${UIUtils.numberRandom()}-${file}`);
     fs.writeFileSync(to, fs.readFileSync(from));
     return to;
   },

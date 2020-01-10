@@ -3,10 +3,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, Panel, Row } from 'react-bootstrap';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import { ActivityConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
@@ -61,7 +59,7 @@ export default class AFFundingClassificationPanel extends Component {
     // TODO: Add 'agreement' with the same component than locations + a restriction to have only 1 value at the time,
     // this field is not yet implemented on possible-values (and is not used in Chad).
     const { funding } = this.props;
-    const hasFundingDetails = FPC.TRANSACTION_TYPES.some(tt => funding[tt] && funding[tt].length);
+    const hasFundingDetails = FieldPathConstants.TRANSACTION_TYPES.some(tt => funding[tt] && funding[tt].length);
     const hasErrors = this.props.hasErrors(funding);
     return (<div className={afStyles.full_width}>
       <Panel
@@ -76,36 +74,38 @@ export default class AFFundingClassificationPanel extends Component {
             <Row>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.TYPE_OF_ASSISTANCE}`}
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.TYPE_OF_ASSISTANCE}`}
                   forceRequired={hasFundingDetails} onAfterUpdate={this._refreshAfterChanges}
                 />
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_INSTRUMENT}`}
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FINANCING_INSTRUMENT}`}
                   forceRequired={hasFundingDetails} onAfterUpdate={this._refreshAfterChanges}
                 />
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FINANCING_ID}`} type={INPUT_TYPE}
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FINANCING_ID}`}
+                  type={INPUT_TYPE}
                   onAfterUpdate={this._refreshAfterChanges} />
               </Col>
             </Row>
             <Row>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_STATUS}`}
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_STATUS}`}
                   onAfterUpdate={this._refreshAfterChanges} />
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.MODE_OF_PAYMENT}`}
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MODE_OF_PAYMENT}`}
                   onAfterUpdate={this._refreshAfterChanges} />
               </Col>
               <Col md={4} lg={4}>
                 <AFField
-                  parent={funding} fieldPath={`${AC.FUNDINGS}~${AC.FUNDING_CLASSIFICATION_DATE}`}
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_CLASSIFICATION_DATE}`}
                   onAfterUpdate={this._refreshAfterChanges} />
               </Col>
             </Row>

@@ -1,9 +1,9 @@
 /* eslint-disable class-methods-use-this */
+import { Constants } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
 import { GET_WORKSPACES_URL } from '../../connectivity/AmpApiConstants';
 import WorkspaceHelper from '../../helpers/WorkspaceHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
-import { SYNCUP_TYPE_WORKSPACES } from '../../../utils/Constants';
 import Logger from '../../util/LoggerManager';
 
 const logger = new Logger('Workspace syncup manager');
@@ -14,7 +14,7 @@ const logger = new Logger('Workspace syncup manager');
 export default class WorkspaceSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_WORKSPACES);
+    super(Constants.SYNCUP_TYPE_WORKSPACES);
   }
 
   doAtomicSyncUp() {

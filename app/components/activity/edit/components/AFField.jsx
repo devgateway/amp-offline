@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
+import { CurrencyRatesManager, FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager } from 'amp-ui';
 import AFLabel from './AFLabel';
 import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
@@ -10,9 +11,6 @@ import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
 import styles from '../ActivityForm.css';
-import FieldsManager from '../../../../modules/field/FieldsManager';
-import PossibleValuesManager from '../../../../modules/field/PossibleValuesManager';
-import { PATHS_WITH_HIERARCHICAL_VALUES } from '../../../../utils/constants/FieldPathConstants';
 import ActivityValidator from '../../../../modules/field/EntityValidator';
 import { reportFieldValidation } from '../../../../actions/ActivityAction';
 import Logger from '../../../../modules/util/LoggerManager';
@@ -20,15 +18,14 @@ import AFListSelector from './AFListSelector';
 import AFNumber from './AFNumber';
 import AFDate from './AFDate-AntDesign';
 import AFCheckbox from './AFCheckbox';
-import FeatureManager from '../../../../modules/util/FeatureManager';
 import AFMultiSelect from './AFMultiSelect';
 import translate from '../../../../utils/translate';
 import AFRadioBoolean from './AFRadioBoolean';
 import AFDateYear from './AFDateYear';
-import CurrencyRatesManager from '../../../../modules/util/CurrencyRatesManager';
 import AFRadioList from './AFRadioList';
 import FieldDefinition from '../../../../modules/field/FieldDefinition';
 import Messages from '../../../common/Messages';
+import PossibleValuesHelper from '../../../../modules/helpers/PossibleValuesHelper';
 
 const logger = new Logger('AF field');
 
@@ -238,7 +235,7 @@ class AFField extends Component {
     const optionsFieldName = this.fieldDef.children.find(item => item.id_only === true).field_name;
     const optionsFieldPath = `${this.props.fieldPath}~${optionsFieldName}`;
     let options = this._getOptions(optionsFieldPath);
-    if (PATHS_WITH_HIERARCHICAL_VALUES.has(optionsFieldPath)) {
+    if (FieldPathConstants.PATHS_WITH_HIERARCHICAL_VALUES.has(optionsFieldPath)) {
       options = PossibleValuesManager.buildFormattedHierarchicalValues(options);
       options = PossibleValuesManager.fillHierarchicalDepth(options);
     }
@@ -264,7 +261,8 @@ class AFField extends Component {
 
   _toAFOptions(options) {
     const { afOptionFormatter, sortByDisplayValue } = this.props.extraParams || {};
-    const afOptions = PossibleValuesManager.getTreeSortedOptionsList(options).map(option =>
+    const afOptions = PossibleValuesManager.getTreeSortedOptionsList(options, PossibleValuesHelper.reverseSortOptions)
+      .map(option =>
       (option.visible ? this._toAFOption(option, afOptionFormatter) : null)).filter(afOption => afOption !== null);
     if (sortByDisplayValue) {
       AFOption.sortByDisplayValue(afOptions);

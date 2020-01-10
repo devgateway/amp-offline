@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_REPOSITORY } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 import { HASH } from '../../utils/constants/ResourceConstants';
@@ -27,7 +27,7 @@ const RepositoryHelper = {
 
   findContent(filterRule) {
     logger.debug('findContent');
-    return DatabaseManager.findOne(filterRule, COLLECTION_REPOSITORY);
+    return DatabaseManager.findOne(filterRule, Constants.COLLECTION_REPOSITORY);
   },
 
   findContentsByIds(ids) {
@@ -38,7 +38,7 @@ const RepositoryHelper = {
 
   findAllContents(filterRule, projections) {
     logger.debug('findAllContents');
-    return DatabaseManager.findAll(filterRule, COLLECTION_REPOSITORY, projections);
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_REPOSITORY, projections);
   },
 
   /**
@@ -48,17 +48,17 @@ const RepositoryHelper = {
    */
   saveOrUpdateContent(content) {
     logger.log('saveOrUpdateContent');
-    return DatabaseManager.saveOrUpdate(content.id, content, COLLECTION_REPOSITORY);
+    return DatabaseManager.saveOrUpdate(content.id, content, Constants.COLLECTION_REPOSITORY);
   },
 
   saveOrUpdateContentCollection(contents) {
     logger.log('saveOrUpdateContentCollection');
-    return DatabaseManager.saveOrUpdateCollection(contents, COLLECTION_REPOSITORY);
+    return DatabaseManager.saveOrUpdateCollection(contents, Constants.COLLECTION_REPOSITORY);
   },
 
   replaceContents(contents) {
     logger.log('replaceContents');
-    return DatabaseManager.replaceCollection(contents, COLLECTION_REPOSITORY);
+    return DatabaseManager.replaceCollection(contents, Constants.COLLECTION_REPOSITORY);
   },
 
   /**
@@ -68,13 +68,13 @@ const RepositoryHelper = {
    */
   deleteContentById(id) {
     logger.log('deleteContentById');
-    return DatabaseManager.removeById(id, COLLECTION_REPOSITORY);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_REPOSITORY);
   },
 
   removeAllByIds(ids) {
     logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
-    return DatabaseManager.removeAll(idsFilter, COLLECTION_REPOSITORY);
+    return DatabaseManager.removeAll(idsFilter, Constants.COLLECTION_REPOSITORY);
   }
 };
 

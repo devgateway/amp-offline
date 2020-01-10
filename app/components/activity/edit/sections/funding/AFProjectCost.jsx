@@ -1,12 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import React, { Component, PropTypes } from 'react';
 import { Col, Grid, Row } from 'react-bootstrap';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
+import { ActivityConstants, FieldsManager } from 'amp-ui';
 import * as AF from '../../components/AFComponentTypes';
 import Logger from '../../../../../modules/util/LoggerManager';
 import AFField from '../../components/AFField';
 import AFOverallFundingTotals from './AFOverallFundingTotals';
-import FieldsManager from '../../../../../modules/field/FieldsManager';
 import AFProposedProjectCostTable from './AFProposedProjectCostTable';
 import afStyles from '../../ActivityForm.css';
 
@@ -41,17 +40,18 @@ export default class AFProjectCost extends Component {
         <Row>
           <Col md={5} lg={5} >
             <AFField
-              parent={this.props.activity} fieldPath={AC.TOTAL_NUMBER_OF_FUNDING_SOURCES} type={AF.NUMBER}
+              parent={this.props.activity} fieldPath={ActivityConstants.TOTAL_NUMBER_OF_FUNDING_SOURCES}
+              type={AF.NUMBER}
               extraParams={{ bigger: 0 }} />
           </Col>
           <Col md={5} lg={5} >
-            <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_COOPERATION} />
+            <AFField parent={this.props.activity} fieldPath={ActivityConstants.TYPE_OF_COOPERATION} />
           </Col>
           <Col md={5} lg={5} >
-            <AFField parent={this.props.activity} fieldPath={AC.TYPE_OF_IMPLEMENTATION} />
+            <AFField parent={this.props.activity} fieldPath={ActivityConstants.TYPE_OF_IMPLEMENTATION} />
           </Col>
           <Col md={5} lg={5} >
-            <AFField parent={this.props.activity} fieldPath={AC.MODALITIES} />
+            <AFField parent={this.props.activity} fieldPath={ActivityConstants.MODALITIES} />
           </Col>
         </Row>
         <Row>

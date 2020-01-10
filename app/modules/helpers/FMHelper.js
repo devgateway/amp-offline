@@ -1,6 +1,5 @@
+import { Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_FEATURE_MANAGER } from '../../utils/Constants';
-import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('FM Helper');
@@ -19,7 +18,7 @@ const FMHelper = {
   findById(id) {
     logger.log('findById');
     const filter = { id };
-    return DatabaseManager.findOne(filter, COLLECTION_FEATURE_MANAGER);
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_FEATURE_MANAGER);
   },
 
   /**
@@ -30,7 +29,7 @@ const FMHelper = {
    */
   findAll(filterRule, projections) {
     logger.log('findAll');
-    return DatabaseManager.findAll(filterRule, COLLECTION_FEATURE_MANAGER, projections);
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_FEATURE_MANAGER, projections);
   },
 
   /**
@@ -41,7 +40,7 @@ const FMHelper = {
   saveOrUpdate(fmTree) {
     logger.log('saveOrUpdate');
     this._setIdIfNotDefined([fmTree]);
-    return DatabaseManager.saveOrUpdate(fmTree.id, fmTree, COLLECTION_FEATURE_MANAGER);
+    return DatabaseManager.saveOrUpdate(fmTree.id, fmTree, Constants.COLLECTION_FEATURE_MANAGER);
   },
 
   /**
@@ -52,14 +51,14 @@ const FMHelper = {
   saveOrUpdateCollection(fmTrees) {
     logger.log('saveOrUpdateCollection');
     this._setIdIfNotDefined(fmTrees);
-    return DatabaseManager.saveOrUpdateCollection(fmTrees, COLLECTION_FEATURE_MANAGER);
+    return DatabaseManager.saveOrUpdateCollection(fmTrees, Constants.COLLECTION_FEATURE_MANAGER);
   },
 
   _setIdIfNotDefined(fmTrees) {
     // when we'll be using multiple trees, we'll likely change EP to provide the id as well
     fmTrees.forEach(fm => {
       if (!fm.id) {
-        fm.id = Utils.stringToUniqueId('');
+        fm.id = UIUtils.stringToUniqueId('');
       }
     });
   },
@@ -71,7 +70,7 @@ const FMHelper = {
    */
   replaceAll(fmTrees) {
     logger.log('replaceAll');
-    return DatabaseManager.replaceCollection(fmTrees, COLLECTION_FEATURE_MANAGER);
+    return DatabaseManager.replaceCollection(fmTrees, Constants.COLLECTION_FEATURE_MANAGER);
   },
 
   /**
@@ -81,7 +80,7 @@ const FMHelper = {
    */
   removeById(id) {
     logger.log('removeById');
-    return DatabaseManager.removeById(id, COLLECTION_FEATURE_MANAGER);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_FEATURE_MANAGER);
   },
 
   /**
@@ -91,7 +90,7 @@ const FMHelper = {
    */
   removeAll(filter) {
     logger.log('removeAll');
-    return DatabaseManager.removeAll(filter, COLLECTION_FEATURE_MANAGER);
+    return DatabaseManager.removeAll(filter, Constants.COLLECTION_FEATURE_MANAGER);
   }
 };
 

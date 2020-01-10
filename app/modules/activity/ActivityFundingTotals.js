@@ -1,5 +1,4 @@
-import NumberUtils from '../../utils/NumberUtils';
-import * as AC from '../../utils/constants/ActivityConstants';
+import { ActivityConstants, NumberUtils } from 'amp-ui';
 
 /**
  * Activity funding totals helper
@@ -27,10 +26,11 @@ export default class ActivityFundingTotals {
     let total = 0;
     if (this._activity.fundings) {
       this._activity.fundings.forEach(f => {
-        if (f[AC.MTEF_PROJECTIONS]) {
-          f[AC.MTEF_PROJECTIONS].forEach(mtef => {
-            total += this._currencyRatesManager.convertAmountToCurrency(mtef[AC.AMOUNT], mtef[AC.CURRENCY].value,
-              mtef[AC.PROJECTION_DATE], 0, this._currentWorkspaceSettings.currency.code);
+        if (f[ActivityConstants.MTEF_PROJECTIONS]) {
+          f[ActivityConstants.MTEF_PROJECTIONS].forEach(mtef => {
+            total += this._currencyRatesManager.convertAmountToCurrency(mtef[ActivityConstants.AMOUNT],
+              mtef[ActivityConstants.CURRENCY].value,
+              mtef[ActivityConstants.PROJECTION_DATE], 0, this._currentWorkspaceSettings.currency.code);
           });
         }
       });
@@ -86,7 +86,8 @@ export default class ActivityFundingTotals {
     const fundingDetails = [];
     if (this._activity.fundings) {
       this._activity.fundings.forEach(funding => {
-        const fds = funding[trnType] && funding[trnType].filter(fd => fd[AC.ADJUSTMENT_TYPE].id === adjType);
+        const fds = funding[trnType] && funding[trnType]
+          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE].id === adjType);
         if (fds && fds.length) {
           fundingDetails.push(...fds);
         }

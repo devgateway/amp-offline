@@ -2,14 +2,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import * as AC from '../../../../../utils/constants/ActivityConstants';
-import * as VC from '../../../../../utils/constants/ValueConstants';
-import * as FPC from '../../../../../utils/constants/FieldPathConstants';
+import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, NumberUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
-import NumberUtils from '../../../../../utils/NumberUtils';
 import styles from '../../components/AFList.css';
-import CurrencyRatesManager from '../../../../../modules/util/CurrencyRatesManager';
 
 const logger = new Logger('AF overall funding totals');
 
@@ -39,10 +35,10 @@ export default class AFOverallFundingTotals extends Component {
     let f1String = '';
     let f2String = '';
     switch (f1.trnType) {
-      case AC.COMMITMENTS:
+      case ActivityConstants.COMMITMENTS:
         f1String += 'a';
         break;
-      case AC.DISBURSEMENTS:
+      case ActivityConstants.DISBURSEMENTS:
         f1String += 'b';
         break;
       default:
@@ -50,10 +46,10 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f1.adjType.value) {
-      case VC.PLANNED:
+      case ValueConstants.PLANNED:
         f1String += 'b';
         break;
-      case VC.ACTUAL:
+      case ValueConstants.ACTUAL:
         f1String += 'a';
         break;
       default:
@@ -61,10 +57,10 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f2.trnType) {
-      case AC.COMMITMENTS:
+      case ActivityConstants.COMMITMENTS:
         f2String += 'a';
         break;
-      case AC.DISBURSEMENTS:
+      case ActivityConstants.DISBURSEMENTS:
         f2String += 'b';
         break;
       default:
@@ -72,10 +68,10 @@ export default class AFOverallFundingTotals extends Component {
         break;
     }
     switch (f2.adjType.value) {
-      case VC.PLANNED:
+      case ValueConstants.PLANNED:
         f2String += 'b';
         break;
-      case VC.ACTUAL:
+      case ValueConstants.ACTUAL:
         f2String += 'a';
         break;
       default:
@@ -89,14 +85,14 @@ export default class AFOverallFundingTotals extends Component {
     const groups = [];
     if (fundings) {
       fundings.forEach((item) => {
-        FPC.TRANSACTION_TYPES.forEach(trnType => {
+        FieldPathConstants.TRANSACTION_TYPES.forEach(trnType => {
           const details = item[trnType] || [];
           details.forEach(item2 => {
-            if (item2[AC.ADJUSTMENT_TYPE]) {
+            if (item2[ActivityConstants.ADJUSTMENT_TYPE]) {
               const amount = this.context.currencyRatesManager
                 .convertTransactionAmountToCurrency(item2, this.context.currentWorkspaceSettings.currency.code);
               const auxFd = {
-                adjType: item2[AC.ADJUSTMENT_TYPE],
+                adjType: item2[ActivityConstants.ADJUSTMENT_TYPE],
                 trnType,
                 key: item2.id,
                 currency: this.context.currentWorkspaceSettings.currency.code,
@@ -120,9 +116,13 @@ export default class AFOverallFundingTotals extends Component {
     const data = [];
     const groups = this._buildGroups(this.props.activity.fundings);
     const columns = [<TableHeaderColumn dataField="key" isKey hidden key={0} />,
-      <TableHeaderColumn dataField={AC.TYPE} key={AC.TYPE}>{translate('Transaction')}</TableHeaderColumn>,
-      <TableHeaderColumn dataField={AC.AMOUNT} key={AC.AMOUNT}>{translate('Amount')}</TableHeaderColumn>,
-      <TableHeaderColumn dataField={AC.CURRENCY} key={AC.CURRENCY}>{translate('Currency')}</TableHeaderColumn>];
+      <TableHeaderColumn
+        dataField={ActivityConstants.TYPE} key={ActivityConstants.TYPE}>{translate('Transaction')}</TableHeaderColumn>,
+      <TableHeaderColumn
+        dataField={ActivityConstants.AMOUNT} key={ActivityConstants.AMOUNT}>{translate('Amount')}</TableHeaderColumn>,
+      <TableHeaderColumn
+        dataField={ActivityConstants.CURRENCY}
+        key={ActivityConstants.CURRENCY}>{translate('Currency')}</TableHeaderColumn>];
     groups.sort(this._compareFundings).forEach((item) => (
       data.push({
         key: item.key,

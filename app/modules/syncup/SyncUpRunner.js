@@ -1,3 +1,4 @@
+import { Constants } from 'amp-ui';
 import SyncUpConfig from './SyncUpConfig';
 import SyncUpUnits from './SyncUpUnits';
 import SyncUpDiff from './SyncUpDiff';
@@ -5,37 +6,6 @@ import * as SS from './SyncUpUnitState';
 import SyncUpManagerInterface from './syncupManagers/SyncUpManagerInterface';
 import { SYNC_URL } from '../connectivity/AmpApiConstants';
 import ConnectionHelper from '../connectivity/ConnectionHelper';
-import {
-  SYNCUP_DATETIME_FIELD,
-  SYNCUP_DEPENDENCY_CHECK_INTERVAL,
-  SYNCUP_DETAILS_SYNCED,
-  SYNCUP_DETAILS_UNSYNCED,
-  SYNCUP_DIFF_LEFTOVER,
-  SYNCUP_NO_DATE,
-  SYNCUP_STATUS_CANCELED,
-  SYNCUP_STATUS_FAIL,
-  SYNCUP_STATUS_PARTIAL,
-  SYNCUP_STATUS_SUCCESS,
-  SYNCUP_TYPE_ACTIVITIES_PULL,
-  SYNCUP_TYPE_ACTIVITIES_PUSH,
-  SYNCUP_TYPE_ACTIVITY_FIELDS,
-  SYNCUP_TYPE_ACTIVITY_FIELDS_STRUCTURAL_CHANGES,
-  SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES,
-  SYNCUP_TYPE_ALL_FIELDS,
-  SYNCUP_TYPE_ASSETS,
-  SYNCUP_TYPE_COMMON_POSSIBLE_VALUES,
-  SYNCUP_TYPE_CONTACT_FIELDS,
-  SYNCUP_TYPE_CONTACT_FIELDS_STRUCTURAL_CHANGES,
-  SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES,
-  SYNCUP_TYPE_CONTACTS_PUSH,
-  SYNCUP_TYPE_EXCHANGE_RATES,
-  SYNCUP_TYPE_RESOURCE_FIELDS,
-  SYNCUP_TYPE_RESOURCE_FIELDS_STRUCTURAL_CHANGES,
-  SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES,
-  SYNCUP_TYPE_RESOURCES_PUSH,
-  SYNCUP_TYPE_TRANSLATIONS,
-  SYNCUP_TYPE_WORKSPACE_MEMBERS
-} from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 import * as Utils from '../../utils/Utils';
 import ActivitiesPullFromAMPManager from './syncupManagers/ActivitiesPullFromAMPManager';
@@ -85,8 +55,8 @@ export default class SyncUpRunner {
   /** Sync up run no 2 */
   static _SYNC_RUN_2 = 2;
 
-  static _SECOND_RUN_SKIP = new Set([SYNCUP_TYPE_ACTIVITIES_PUSH, SYNCUP_TYPE_CONTACTS_PUSH,
-    SYNCUP_TYPE_RESOURCES_PUSH]);
+  static _SECOND_RUN_SKIP = new Set([Constants.SYNCUP_TYPE_ACTIVITIES_PUSH, Constants.SYNCUP_TYPE_CONTACTS_PUSH,
+    Constants.SYNCUP_TYPE_RESOURCES_PUSH]);
 
   /**
    * Generates a new instance of the Sync Up Runner. This must be only instance per user request.
@@ -132,7 +102,8 @@ export default class SyncUpRunner {
       this._aborted = true;
       if (syncRunNo === SyncUpRunner._SYNC_RUN_1) {
         // on 1st Run return generic result
-        return SyncUpRunner.buildResult({ status: SYNCUP_STATUS_FAIL, userId: this._userId, errors: [error] });
+        return SyncUpRunner.buildResult(
+          { status: Constants.SYNCUP_STATUS_FAIL, userId: this._userId, errors: [error] });
       }
       // on 2nd Run flag "main" 2nd run units as failed (activities pull as of now)
       this._updateResultFor2ndRunDiffFailure(prevResult, error);
@@ -176,27 +147,28 @@ export default class SyncUpRunner {
     logger.log('_getWhatChangedInAMP');
     const body = { 'user-ids': this._localData.registeredUserIds };
     // Don't send the date param at all on first-sync.
-    if (this._lastTimestamp && this._lastTimestamp !== SYNCUP_NO_DATE) {
+    if (this._lastTimestamp && this._lastTimestamp !== Constants.SYNCUP_NO_DATE) {
       body['last-sync-time'] = this._lastTimestamp;
     }
     // normally we would add amp-ids only if this is not a firs time sync, but due to AMP-26054 we are doing it always
     body['amp-ids'] = this._localData.ampIds;
-    body[SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] = this._localData.activitiesPVsPaths;
-    body[SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES] = this._localData.contactPVsPaths;
-    body[SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES] = this._localData.resourcePVsPaths;
-    body[SYNCUP_TYPE_COMMON_POSSIBLE_VALUES] = this._localData.commonPVsPaths;
-    body[SYNCUP_TYPE_ACTIVITY_FIELDS] = this._localData.activityFields;
-    body[SYNCUP_TYPE_CONTACT_FIELDS] = this._localData.contactFields;
-    body[SYNCUP_TYPE_RESOURCE_FIELDS] = this._localData.resourceFields;
+    body[Constants.SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] = this._localData.activitiesPVsPaths;
+    body[Constants.SYNCUP_TYPE_CONTACT_POSSIBLE_VALUES] = this._localData.contactPVsPaths;
+    body[Constants.SYNCUP_TYPE_RESOURCE_POSSIBLE_VALUES] = this._localData.resourcePVsPaths;
+    body[Constants.SYNCUP_TYPE_COMMON_POSSIBLE_VALUES] = this._localData.commonPVsPaths;
+    body[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS] = this._localData.activityFields;
+    body[Constants.SYNCUP_TYPE_CONTACT_FIELDS] = this._localData.contactFields;
+    body[Constants.SYNCUP_TYPE_RESOURCE_FIELDS] = this._localData.resourceFields;
     return ConnectionHelper.doPost({ url: SYNC_URL, body, shouldRetry: true }).then((changes) => {
-      this._currentTimestamp = changes[SYNCUP_DATETIME_FIELD];
+      this._currentTimestamp = changes[Constants.SYNCUP_DATETIME_FIELD];
       return changes;
     });
   }
 
   _forceSyncUpIfNeeded(changes) {
-    const sc = [SYNCUP_TYPE_ACTIVITY_FIELDS_STRUCTURAL_CHANGES, SYNCUP_TYPE_CONTACT_FIELDS_STRUCTURAL_CHANGES,
-      SYNCUP_TYPE_RESOURCE_FIELDS_STRUCTURAL_CHANGES].filter(type => changes[type]);
+    const sc = [Constants.SYNCUP_TYPE_ACTIVITY_FIELDS_STRUCTURAL_CHANGES,
+      Constants.SYNCUP_TYPE_CONTACT_FIELDS_STRUCTURAL_CHANGES,
+      Constants.SYNCUP_TYPE_RESOURCE_FIELDS_STRUCTURAL_CHANGES].filter(type => changes[type]);
     if (sc.length) {
       logger.log(`Forcing syncup: detected ${sc}`);
       return ClientSettingsHelper.updateSettingValue(CSC.FORCE_SYNC_UP, true).then(() => changes);
@@ -207,19 +179,21 @@ export default class SyncUpRunner {
   _mergeToLeftOverAndUpdateNoChanges(changes) {
     logger.log('_mergeToLeftOverAndUpdateNoChanges');
     const isFirstRun = this._syncRunNo === SyncUpRunner._SYNC_RUN_1;
-    changes[SYNCUP_TYPE_ACTIVITY_FIELDS] = changes[SYNCUP_TYPE_ALL_FIELDS];
-    changes[SYNCUP_TYPE_CONTACT_FIELDS] = changes[SYNCUP_TYPE_ALL_FIELDS];
-    changes[SYNCUP_TYPE_RESOURCE_FIELDS] = changes[SYNCUP_TYPE_ALL_FIELDS];
+    changes[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS] = changes[Constants.SYNCUP_TYPE_ALL_FIELDS];
+    changes[Constants.SYNCUP_TYPE_CONTACT_FIELDS] = changes[Constants.SYNCUP_TYPE_ALL_FIELDS];
+    changes[Constants.SYNCUP_TYPE_RESOURCE_FIELDS] = changes[Constants.SYNCUP_TYPE_ALL_FIELDS];
     // TODO query only if changed
-    changes[SYNCUP_TYPE_ASSETS] = true;
+    changes[Constants.SYNCUP_TYPE_ASSETS] = true;
     // not sure if still needed, but once removed, make sure to double check with CurrencyRatesHelper.hasExchangeRates
-    changes[SYNCUP_TYPE_EXCHANGE_RATES] = true;
+    changes[Constants.SYNCUP_TYPE_EXCHANGE_RATES] = true;
     // TODO workaround until AMPOFFLINE-908 with a more accurate activities to push detection will come
-    const hasWsMembersChanges = SyncUpDiff.hasChanges(changes[SYNCUP_TYPE_WORKSPACE_MEMBERS]);
-    changes[SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && (this._localData.hasActivitiesToPush || hasWsMembersChanges);
-    changes[SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._localData.hasContactsToPush;
-    changes[SYNCUP_TYPE_RESOURCES_PUSH] = isFirstRun && this._localData.hasResourcesToPush;
-    changes[SYNCUP_TYPE_TRANSLATIONS] = changes[SYNCUP_TYPE_TRANSLATIONS] || this._localData.hasTranslationsToPush;
+    const hasWsMembersChanges = SyncUpDiff.hasChanges(changes[Constants.SYNCUP_TYPE_WORKSPACE_MEMBERS]);
+    changes[Constants.SYNCUP_TYPE_ACTIVITIES_PUSH] = isFirstRun && (this._localData.hasActivitiesToPush ||
+      hasWsMembersChanges);
+    changes[Constants.SYNCUP_TYPE_CONTACTS_PUSH] = isFirstRun && this._localData.hasContactsToPush;
+    changes[Constants.SYNCUP_TYPE_RESOURCES_PUSH] = isFirstRun && this._localData.hasResourcesToPush;
+    changes[Constants.SYNCUP_TYPE_TRANSLATIONS] = changes[Constants.SYNCUP_TYPE_TRANSLATIONS] ||
+      this._localData.hasTranslationsToPush;
     for (const type of this._syncUpCollection.keys()) { // eslint-disable-line no-restricted-syntax
       this._syncUpDiffLeftOver.merge(type, changes[type]);
       if (this._syncUpDiffLeftOver.getSyncUpDiff(type) === undefined
@@ -236,7 +210,7 @@ export default class SyncUpRunner {
     }
     const syncUpPromise = this._startNextPending();
     if (syncUpPromise === null) {
-      return Utils.delay(SYNCUP_DEPENDENCY_CHECK_INTERVAL).then(this._runSyncUp);
+      return Utils.delay(Constants.SYNCUP_DEPENDENCY_CHECK_INTERVAL).then(this._runSyncUp);
     }
     this._syncUpUnitPromises.add(syncUpPromise);
     // using a promise to avoid recursive call and risking a stack overflow on slow connections
@@ -281,7 +255,7 @@ export default class SyncUpRunner {
     this._syncUpDiffLeftOver.setDiff(type, latestDiff);
     const unitLeftOver = this._syncUpDiffLeftOver.getSyncUpDiff(type);
     const state = this._getStateOrSetBasedOnLeftOver(type, originalDiff, unitLeftOver, syncUpManager.done);
-    const status = SS.STATE_TO_STATUS[state] || SYNCUP_STATUS_FAIL;
+    const status = SS.STATE_TO_STATUS[state] || Constants.SYNCUP_STATUS_FAIL;
     const errors = error ? [error] : syncUpManager.errors;
     let unitResult = { type, status, state, errors, warnings: syncUpManager.warnings };
     // if no changes in the second run, keep run 1 result
@@ -297,10 +271,10 @@ export default class SyncUpRunner {
 
   _addStats(syncUpManager: SyncUpManagerInterface, unitResult, prevUnitResult) {
     switch (syncUpManager.type) {
-      case SYNCUP_TYPE_ACTIVITIES_PUSH:
+      case Constants.SYNCUP_TYPE_ACTIVITIES_PUSH:
         unitResult.details = syncUpManager.details;
         break;
-      case SYNCUP_TYPE_ACTIVITIES_PULL:
+      case Constants.SYNCUP_TYPE_ACTIVITIES_PULL:
         unitResult.details = syncUpManager.mergeDetails(prevUnitResult && prevUnitResult.details);
         break;
       default:
@@ -341,16 +315,17 @@ export default class SyncUpRunner {
    */
   _updateResultFor2ndRunDiffFailure(syncUp1Result, error) {
     syncUp1Result.units.forEach(unit => {
-      if (unit.type === SYNCUP_TYPE_ACTIVITIES_PUSH) {
+      if (unit.type === Constants.SYNCUP_TYPE_ACTIVITIES_PUSH) {
         const pullNeeded = {};
-        pullNeeded[SYNCUP_DETAILS_UNSYNCED] = (unit.details && unit.details[SYNCUP_DETAILS_SYNCED]) || [];
-        if (pullNeeded[SYNCUP_DETAILS_UNSYNCED].length) {
-          const activitiesPull = syncUp1Result.units.find(u => u.type === SYNCUP_TYPE_ACTIVITIES_PULL);
+        pullNeeded[Constants.SYNCUP_DETAILS_UNSYNCED] =
+          (unit.details && unit.details[Constants.SYNCUP_DETAILS_SYNCED]) || [];
+        if (pullNeeded[Constants.SYNCUP_DETAILS_UNSYNCED].length) {
+          const activitiesPull = syncUp1Result.units.find(u => u.type === Constants.SYNCUP_TYPE_ACTIVITIES_PULL);
           activitiesPull.state = this._getStateIf2ndRunChangesWereExpected(unit.state);
           activitiesPull.status = SS.STATE_TO_STATUS[activitiesPull.state];
           activitiesPull.details = ActivitiesPullFromAMPManager.mergeDetails(activitiesPull.details, pullNeeded);
         }
-      } else if (unit.type === SYNCUP_TYPE_CONTACTS_PUSH && this._localData.hasContactsToPush) {
+      } else if (unit.type === Constants.SYNCUP_TYPE_CONTACTS_PUSH && this._localData.hasContactsToPush) {
         // TODO AMPOFFLINE-758 detect if new contacts were pushed and changes were expected
       }
     });
@@ -377,7 +352,7 @@ export default class SyncUpRunner {
     const unitsResult = Array.from(this._unitsResult.values());
     const status = this._getStatus(unitsResult);
     logger.log(`SyncUp ${status}`);
-    const syncUpDiff = status === SYNCUP_STATUS_SUCCESS ? null : this._syncUpDiffLeftOver.syncUpDiff;
+    const syncUpDiff = status === Constants.SYNCUP_STATUS_SUCCESS ? null : this._syncUpDiffLeftOver.syncUpDiff;
     let warnings;
     if (unitsResult.length) {
       const messages = this._collectMessages(unitsResult, errors);
@@ -399,21 +374,21 @@ export default class SyncUpRunner {
     unitsResult = unitsResult.filter(unitResult => unitResult.state !== SS.NO_CHANGES);
     // if all are reported with NO_CHANGES, then all are mapped to SUCCESS
     if (unitsResult.length === 0) {
-      return SYNCUP_STATUS_SUCCESS;
+      return Constants.SYNCUP_STATUS_SUCCESS;
     }
     // now check the statuses for available changes
     const unitsStatuses: Set =
       unitsResult.reduce((statuses: Set, unitResult) => statuses.add(unitResult.state), new Set());
-    if (unitsStatuses.has(SYNCUP_STATUS_CANCELED)) {
-      return SYNCUP_STATUS_CANCELED;
+    if (unitsStatuses.has(Constants.SYNCUP_STATUS_CANCELED)) {
+      return Constants.SYNCUP_STATUS_CANCELED;
     }
-    if (unitsStatuses.has(SYNCUP_STATUS_FAIL) && unitsStatuses.size === 1) {
-      return SYNCUP_STATUS_FAIL;
+    if (unitsStatuses.has(Constants.SYNCUP_STATUS_FAIL) && unitsStatuses.size === 1) {
+      return Constants.SYNCUP_STATUS_FAIL;
     }
-    if (unitsStatuses.has(SYNCUP_STATUS_SUCCESS) && unitsStatuses.size === 1) {
-      return SYNCUP_STATUS_SUCCESS;
+    if (unitsStatuses.has(Constants.SYNCUP_STATUS_SUCCESS) && unitsStatuses.size === 1) {
+      return Constants.SYNCUP_STATUS_SUCCESS;
     }
-    return SYNCUP_STATUS_PARTIAL;
+    return Constants.SYNCUP_STATUS_PARTIAL;
   }
 
   static buildResult({ status, userId, units, errors, warnings, syncUpDiff, syncTimestamp }) {
@@ -426,9 +401,9 @@ export default class SyncUpRunner {
       warnings,
       'sync-date': syncDate.toISOString()
     };
-    syncUpGlobalResult[SYNCUP_DATETIME_FIELD] = syncTimestamp;
+    syncUpGlobalResult[Constants.SYNCUP_DATETIME_FIELD] = syncTimestamp;
     if (syncUpDiff) {
-      syncUpGlobalResult[SYNCUP_DIFF_LEFTOVER] = syncUpDiff;
+      syncUpGlobalResult[Constants.SYNCUP_DIFF_LEFTOVER] = syncUpDiff;
     }
     return syncUpGlobalResult;
   }

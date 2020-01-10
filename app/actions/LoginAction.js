@@ -1,7 +1,7 @@
 /* eslint flowtype-errors/show-errors: 0 */
+import { Constants } from 'amp-ui';
 import store from '../index';
 import UrlUtils from '../utils/URLUtils';
-import { LOGIN_URL, SYNCUP_REDIRECT_URL } from '../utils/Constants';
 import LoginManager from '../modules/security/LoginManager';
 import ActivitiesPushToAMPManager from '../modules/syncup/syncupManagers/ActivitiesPushToAMPManager';
 import { checkIfToForceSyncUp } from './SyncUpAction';
@@ -40,7 +40,7 @@ export function loginAction(email: string, password: string) {
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
         dispatch(loadWorkspaces());
-        return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(SYNCUP_REDIRECT_URL));
+        return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
@@ -114,7 +114,7 @@ export function logoutAction(isInactivityTimeout = false, dispatch = store.dispa
     type: STATE_LOGOUT,
     actionData: { isInactivityTimeout }
   });
-  UrlUtils.forwardTo(LOGIN_URL);
+  UrlUtils.forwardTo(Constants.LOGIN_URL);
   return ampOfflineInit(true);
 }
 

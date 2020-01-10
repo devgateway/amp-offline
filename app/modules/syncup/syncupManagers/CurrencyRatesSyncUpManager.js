@@ -1,20 +1,19 @@
+import { Constants, UIUtils } from 'amp-ui';
 import CurrencyRatesHelper from '../../helpers/CurrencyRatesHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
-import Utils from '../../../utils/Utils';
 import {
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
   LAST_SYNC_TIME_PARAM
 } from '../../connectivity/AmpApiConstants';
-import { SYNCUP_TYPE_EXCHANGE_RATES } from '../../../utils/Constants';
 
 /* eslint-disable class-methods-use-this */
 
 export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpManager {
 
   constructor() {
-    super(SYNCUP_TYPE_EXCHANGE_RATES);
+    super(Constants.SYNCUP_TYPE_EXCHANGE_RATES);
   }
 
   /**
@@ -115,6 +114,6 @@ export default class CurrencyRatesSyncUpManager extends AbstractAtomicSyncUpMana
   }
 
   _fromToToId(currencyPair) {
-    return Utils.stringToUniqueId(currencyPair.from + currencyPair.to);
+    return UIUtils.stringToUniqueId(currencyPair.from + currencyPair.to);
   }
 }

@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_LANGS } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 
 const logger = new Logger('Language helper');
@@ -18,27 +18,27 @@ const LanguageHelper = {
 
   findByExample(example) {
     logger.log('findByExample');
-    return DatabaseManager.findOne(example, COLLECTION_LANGS);
+    return DatabaseManager.findOne(example, Constants.COLLECTION_LANGS);
   },
 
   findAllByExample(example) {
     logger.log('findAllByExample');
-    return DatabaseManager.findAll(example, COLLECTION_LANGS);
+    return DatabaseManager.findAll(example, Constants.COLLECTION_LANGS);
   },
 
   saveOrUpdate(data) {
     logger.log('saveOrUpdate');
-    return DatabaseManager.saveOrUpdate(data.id, data, COLLECTION_LANGS, {});
+    return DatabaseManager.saveOrUpdate(data.id, data, Constants.COLLECTION_LANGS, {});
   },
 
   saveOrUpdateCollection(data) {
     logger.log('saveOrUpdateCollection');
-    return DatabaseManager.saveOrUpdateCollection(data, COLLECTION_LANGS);
+    return DatabaseManager.saveOrUpdateCollection(data, Constants.COLLECTION_LANGS);
   },
 
   replaceCollection(langs) {
     logger.log('replaceCollection');
-    return DatabaseManager.replaceCollection(langs, COLLECTION_LANGS);
+    return DatabaseManager.replaceCollection(langs, Constants.COLLECTION_LANGS);
   }
 };
 

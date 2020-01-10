@@ -1,6 +1,6 @@
 import AmpClientSecurity from 'amp-client-security';
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_USERS, HASH_ITERATIONS } from '../../utils/Constants';
 import Auth from '../security/Auth';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
@@ -34,18 +34,18 @@ const UserHelper = {
 
   findUserByExample(example) {
     logger.debug('findUserByExample');
-    return DatabaseManager.findOne(example, COLLECTION_USERS);
+    return DatabaseManager.findOne(example, Constants.COLLECTION_USERS);
   },
 
   findAllUsersByExample(example, projections) {
     logger.debug('findUserByExample');
-    return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
+    return DatabaseManager.findAll(example, Constants.COLLECTION_USERS, projections);
   },
 
   findAllClientRegisteredUsersByExample(example, projections) {
     logger.debug('findAllClientRegisteredUsersByExample');
     example.registeredOnClient = { $exists: true };
-    return DatabaseManager.findAll(example, COLLECTION_USERS, projections);
+    return DatabaseManager.findAll(example, Constants.COLLECTION_USERS, projections);
   },
 
   getNonBannedRegisteredUserIds() {
@@ -60,24 +60,24 @@ const UserHelper = {
    */
   saveOrUpdateUser(userData) {
     logger.log('saveOrUpdateUser');
-    return DatabaseManager.saveOrUpdate(userData.id, userData, COLLECTION_USERS);
+    return DatabaseManager.saveOrUpdate(userData.id, userData, Constants.COLLECTION_USERS);
   },
 
   generateAMPOfflineHashFromPassword(username, password, legacyKey) {
     logger.log('generateAMPOfflineHashFromPassword');
     const keyPromise = legacyKey ? Promise.resolve(legacyKey) : AmpClientSecurity.getSecurityKey(username);
     return keyPromise.then(key =>
-      Auth.secureHash(password, key, HASH_ITERATIONS));
+      Auth.secureHash(password, key, Constants.HASH_ITERATIONS));
   },
 
   saveOrUpdateUserCollection(usersData) {
     logger.log('saveOrUpdateUserCollection');
-    return DatabaseManager.saveOrUpdateCollection(usersData, COLLECTION_USERS);
+    return DatabaseManager.saveOrUpdateCollection(usersData, Constants.COLLECTION_USERS);
   },
 
   replaceUsers(users) {
     logger.log('replaceUsers');
-    return DatabaseManager.replaceCollection(users, COLLECTION_USERS);
+    return DatabaseManager.replaceCollection(users, Constants.COLLECTION_USERS);
   },
 
   /**
@@ -87,7 +87,7 @@ const UserHelper = {
    */
   deleteUserById(userId) {
     logger.log('deleteUserById');
-    return DatabaseManager.removeById(userId, COLLECTION_USERS);
+    return DatabaseManager.removeById(userId, Constants.COLLECTION_USERS);
   }
 };
 

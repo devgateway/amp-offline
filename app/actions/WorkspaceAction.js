@@ -1,3 +1,4 @@
+import { ActivityConstants, Constants, ErrorConstants, FieldPathConstants, PossibleValuesManager } from 'amp-ui';
 import WorkspaceManager from '../modules/workspace/WorkspaceManager';
 import { loadDesktop } from './DesktopAction';
 import TeamMemberHelper from '../modules/helpers/TeamMemberHelper';
@@ -7,13 +8,9 @@ import store from '../index';
 import Logger from '../modules/util/LoggerManager';
 import WSSettingsHelper from '../modules/helpers/WSSettingsHelper';
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
-import * as AC from '../utils/constants/ActivityConstants';
 import { isForceSyncUp } from './SyncUpAction';
-import { SYNCUP_REDIRECT_URL } from '../utils/Constants';
+
 import * as URLUtils from '../utils/URLUtils';
-import { NOTIFICATION_ORIGIN_WORKSPACE } from '../utils/constants/ErrorConstants';
-import { FIELD_OPTIONS, PREFIX_COMMON } from '../utils/constants/FieldPathConstants';
-import PossibleValuesManager from '../modules/field/PossibleValuesManager';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_SELECT_WORKSPACE_ERROR = 'STATE_SELECT_WORKSPACE_ERROR';
@@ -33,7 +30,7 @@ export function selectWorkspace(wsId) {
   // adding this check here to avoid doing significant changes in the ws selection workflow just before the release
   // TODO prepare ws load from the desktop component
   if (isForceSyncUp()) {
-    URLUtils.forwardTo(SYNCUP_REDIRECT_URL);
+    URLUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL);
     return dispatch => dispatch({ type: STATE_WORKSPACE_LOAD_DENIED });
   }
   return (dispatch) => loadWorkspaceData(wsId).then(({ workspace, teamMember }) =>
@@ -46,20 +43,21 @@ function loadWorkspaceData(wsId) {
     WorkspaceHelper.findById(wsId),
     TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId, true),
     WSSettingsHelper.findByWorkspaceId(wsId),
-    PossibleValuesHelper.findById(`${PREFIX_COMMON}~${AC.CURRENCY}`)
+    PossibleValuesHelper.findById(`${FieldPathConstants.PREFIX_COMMON}~${ActivityConstants.CURRENCY}`)
   ])
     .then(([workspace, teamMember, workspaceSettings, possibleValue]) => {
       if (!teamMember) {
         throw ErrorNotificationHelper.createNotification({
           message: 'Access Denied',
-          origin: NOTIFICATION_ORIGIN_WORKSPACE
+          origin: ErrorConstants.NOTIFICATION_ORIGIN_WORKSPACE
         });
       }
       const currency = {};
       currency.code = workspaceSettings.currency;
       let currencyOption = {};
-      if (possibleValue && possibleValue[FIELD_OPTIONS]) {
-        currencyOption = PossibleValuesManager.findOptionByValue(possibleValue[FIELD_OPTIONS], currency.code) || {};
+      if (possibleValue && possibleValue[FieldPathConstants.FIELD_OPTIONS]) {
+        currencyOption = PossibleValuesManager.findOptionByValue(possibleValue[FieldPathConstants.FIELD_OPTIONS],
+          currency.code) || {};
       }
       currency['translated-value'] = currencyOption['translated-value'];
       workspaceSettings.currency = currency;

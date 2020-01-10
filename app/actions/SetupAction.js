@@ -1,8 +1,7 @@
+import { Constants, ErrorConstants, GlobalSettingsConstants } from 'amp-ui';
 import store from '../index';
 import SetupManager from '../modules/setup/SetupManager';
-import { LANGUAGE_ENGLISH, SETUP_URL } from '../utils/Constants';
 import * as CSC from '../utils/constants/ClientSettingsConstants';
-import * as GSC from '../utils/constants/GlobalSettingsConstants';
 import * as URLUtils from '../utils/URLUtils';
 import Logger from '../modules/util/LoggerManager';
 import {
@@ -22,7 +21,6 @@ import GlobalSettingsManager from '../modules/util/GlobalSettingsManager';
 import { newUrlsDetected } from './SettingAction';
 import { IS_CHECK_URL_CHANGES } from '../modules/util/ElectronApp';
 import NotificationHelper from '../modules/helpers/NotificationHelper';
-import * as constants from '../utils/constants/ErrorConstants';
 import ConnectivityStatus from '../modules/connectivity/ConnectivityStatus';
 import AmpServer from '../modules/setup/AmpServer';
 
@@ -63,7 +61,7 @@ export function canCurrentVersionStartOrConfirmationNeeded() {
     const replacePairs = [['%current-version%', currentVersion], ['%newest-used%', newestUsed]];
     return new NotificationHelper({
       message: 'oldVersionWarning',
-      origin: constants.NOTIFICATION_ORIGIN_SETUP,
+      origin: ErrorConstants.NOTIFICATION_ORIGIN_SETUP,
       replacePairs
     });
   });
@@ -81,7 +79,7 @@ export function checkIfSetupComplete() {
 
 export function doSetupFirst() {
   logger.log('doSetupFirst');
-  URLUtils.forwardTo(SETUP_URL);
+  URLUtils.forwardTo(Constants.SETUP_URL);
 }
 
 export function didSetupComplete() {
@@ -105,7 +103,7 @@ export function configureOnLoad() {
   return SetupManager.getConnectionInformation().then((connectionInformation: ConnectionInformation) => {
     const isTestingEnv = +process.env.USE_TEST_AMP_URL;
     if (isTestingEnv && !didSetupComplete()) {
-      const customOption = SetupManager.getCustomOption([LANGUAGE_ENGLISH]);
+      const customOption = SetupManager.getCustomOption([Constants.LANGUAGE_ENGLISH]);
       customOption.urls = [connectionInformation.getFullUrl()];
       const setupCompletePromise = attemptToConfigureAndSaveSetup(customOption);
       store.dispatch(notifySetupComplete(setupCompletePromise));
@@ -290,7 +288,7 @@ export function checkAmpRegistryForUpdates() {
 
 function getAmpRegistrySetting(setupConfigSetting) {
   const serverId = getRegisteredServerId();
-  const countryGS = GlobalSettingsManager.getSettingByKey(GSC.DEFAULT_COUNTRY);
+  const countryGS = GlobalSettingsManager.getSettingByKey(GlobalSettingsConstants.DEFAULT_COUNTRY);
   let iso2 = setupConfigSetting.value.iso2 || countryGS;
   iso2 = iso2 && iso2.toLowerCase();
   return SetupManager.getSetupOptions()

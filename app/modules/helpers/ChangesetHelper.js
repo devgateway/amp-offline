@@ -1,5 +1,5 @@
+import { Constants } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
-import { COLLECTION_CHANGESETS } from '../../utils/Constants';
 import Logger from '../../modules/util/LoggerManager';
 import Changeset from '../database/migrations/Changeset';
 import * as MC from '../../utils/constants/MigrationsConstants';
@@ -28,12 +28,12 @@ const ChangesetHelper = {
 
   findChangeset(filterRule) {
     logger.debug('findChangeset');
-    return DatabaseManager.findOne(filterRule, COLLECTION_CHANGESETS);
+    return DatabaseManager.findOne(filterRule, Constants.COLLECTION_CHANGESETS);
   },
 
   findAllChangesets(filterRule, projections) {
     logger.debug('findAllChangesets');
-    return DatabaseManager.findAll(filterRule, COLLECTION_CHANGESETS, projections);
+    return DatabaseManager.findAll(filterRule, Constants.COLLECTION_CHANGESETS, projections);
   },
 
   /**
@@ -43,17 +43,17 @@ const ChangesetHelper = {
    */
   saveOrUpdateChangeset(changeset) {
     logger.log('saveOrUpdateChangeset');
-    return DatabaseManager.saveOrUpdate(changeset.id, changeset, COLLECTION_CHANGESETS);
+    return DatabaseManager.saveOrUpdate(changeset.id, changeset, Constants.COLLECTION_CHANGESETS);
   },
 
   saveOrUpdateChangesetCollection(changesets) {
     logger.log('saveOrUpdateChangesetCollection');
-    return DatabaseManager.saveOrUpdateCollection(changesets, COLLECTION_CHANGESETS);
+    return DatabaseManager.saveOrUpdateCollection(changesets, Constants.COLLECTION_CHANGESETS);
   },
 
   replaceChangesets(changesets) {
     logger.log('replaceChangesets');
-    return DatabaseManager.replaceCollection(changesets, COLLECTION_CHANGESETS);
+    return DatabaseManager.replaceCollection(changesets, Constants.COLLECTION_CHANGESETS);
   },
 
   /**
@@ -63,17 +63,17 @@ const ChangesetHelper = {
    */
   deleteChangesetById(id) {
     logger.log('deleteChangesetById');
-    return DatabaseManager.removeById(id, COLLECTION_CHANGESETS);
+    return DatabaseManager.removeById(id, Constants.COLLECTION_CHANGESETS);
   },
 
   removeAllByIds(ids) {
     logger.log('removeAllByIds');
     const idsFilter = { id: { $in: ids } };
-    return DatabaseManager.removeAll(idsFilter, COLLECTION_CHANGESETS);
+    return DatabaseManager.removeAll(idsFilter, Constants.COLLECTION_CHANGESETS);
   },
 
   removeAll() {
-    return DatabaseManager.removeAll({}, COLLECTION_CHANGESETS);
+    return DatabaseManager.removeAll({}, Constants.COLLECTION_CHANGESETS);
   },
 
   /**

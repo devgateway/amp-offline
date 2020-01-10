@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
+import { UIUtils } from 'amp-ui';
 import Logger from '../../modules/util/LoggerManager';
 import translate from '../../utils/translate';
 import AFInput from '../activity/edit/components/AFInput';
-import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('URL Insert Modal');
 
@@ -33,7 +33,7 @@ export default class URLInsertModal extends Component {
   handleSaveBtnClick() {
     const { onSave } = this.props;
     const { url } = this.state;
-    const newRow = { id: Utils.stringToUniqueId(url), url, availability: {} };
+    const newRow = { id: UIUtils.stringToUniqueId(url), url, availability: {} };
     onSave(newRow);
   }
 

@@ -1,11 +1,6 @@
 import bunyan from 'bunyan';
 import path from 'path';
-import {
-  LOG_DIR,
-  LOG_FILE_EXTENSION,
-  LOG_FILE_NAME,
-  NR_LOG_FILES
-} from '../../utils/Constants';
+import { Constants } from 'amp-ui';
 import LoggerSettings from '../../utils/LoggerSettings';
 import FileManager from './FileManager';
 import * as ElectronApp from './ElectronApp';
@@ -22,17 +17,17 @@ export default class LoggerManager {
     if (!this.bunyanLog) {
       console.log('initialize');
       const settings = LoggerSettings.getDefaultConfig(process.env.NODE_ENV);
-      const logDirFullPath = FileManager.createDataDir(LOG_DIR);
+      const logDirFullPath = FileManager.createDataDir(Constants.LOG_DIR);
 
-      FileManager.readdirSync(LOG_DIR)
+      FileManager.readdirSync(Constants.LOG_DIR)
         .sort()
         .reverse()
-        .slice(NR_LOG_FILES)
+        .slice(Constants.NR_LOG_FILES)
         .forEach(filename => FileManager.deleteFileSync(path.join(logDirFullPath, filename)));
 
       const date = new Date();
-      const file = `${LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${LOG_FILE_EXTENSION}`;
-      this.logPath = FileManager.getFullPath(LOG_DIR, file);
+      const file = `${Constants.LOG_FILE_NAME}.${date.toJSON().replace(/:|\./g, '-')}.${Constants.LOG_FILE_EXTENSION}`;
+      this.logPath = FileManager.getFullPath(Constants.LOG_DIR, file);
       this.bunyanLog = bunyan.createLogger({
         name: 'amp',
         streams: [{ level: settings.level, path: this.logPath }

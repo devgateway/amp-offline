@@ -1,20 +1,14 @@
+import { Constants, ErrorConstants } from 'amp-ui';
 import store from '../index';
 import ClientSettingsManager from '../modules/settings/ClientSettingsManager';
 import * as ClientSettingsHelper from '../modules/helpers/ClientSettingsHelper';
 import * as CSC from '../utils/constants/ClientSettingsConstants';
 import { configureAndTestConnectivity, newUrlsReviewed } from './SetupAction';
 import Notification from '../modules/helpers/NotificationHelper';
-import {
-  NOTIFICATION_ORIGIN_SETTINGS,
-  NOTIFICATION_SEVERITY_ERROR,
-  NOTIFICATION_SEVERITY_INFO,
-  NOTIFICATION_SEVERITY_WARNING
-} from '../utils/constants/ErrorConstants';
 import translate from '../utils/translate';
 import Logger from '../modules/util/LoggerManager';
 import { addConfirmationAlert, addMessage } from './NotificationAction';
 import * as UrlUtils from '../utils/URLUtils';
-import { SETTINGS_URL } from '../utils/Constants';
 import FollowUp from '../components/notifications/followup';
 import ConfirmationAlert from '../components/notifications/confirmationAlert';
 
@@ -66,9 +60,9 @@ export function saveSettings(settings, flagNewUrlsReviewed) {
 
 function saveConfirmation(isSuccess, error) {
   logger.log(`saveConfirmation isSuccess=${isSuccess}, error=${error}`);
-  const severity = isSuccess ? NOTIFICATION_SEVERITY_INFO : NOTIFICATION_SEVERITY_ERROR;
+  const severity = isSuccess ? ErrorConstants.NOTIFICATION_SEVERITY_INFO : ErrorConstants.NOTIFICATION_SEVERITY_ERROR;
   const message = `${translate(isSuccess ? 'settingsSaveSuccess' : 'settingsSaveError')}`;
-  const notification = new Notification({ message, severity, origin: NOTIFICATION_ORIGIN_SETTINGS });
+  const notification = new Notification({ message, severity, origin: ErrorConstants.NOTIFICATION_ORIGIN_SETTINGS });
   return (dispatch) => dispatch(addMessage(notification));
 }
 
@@ -84,7 +78,7 @@ export function newUrlsDetected(newUrls) {
 export const newUrlsProcessed = () => (dispatch) => dispatch({ type: STATE_URL_CHANGE_DETECTED, actionData: null });
 
 export function goToSettingsPage() {
-  UrlUtils.forwardTo(SETTINGS_URL);
+  UrlUtils.forwardTo(Constants.SETTINGS_URL);
 }
 
 export const confirmToLeave = (nextPath) => dispatch => dispatch(addConfirmationAlert(leaveConfirmation(nextPath)));
@@ -92,8 +86,8 @@ export const confirmToLeave = (nextPath) => dispatch => dispatch(addConfirmation
 function leaveConfirmation(nextPath) {
   const leaveNotification = new Notification({
     message: translate('leaveSettingsNotSaved'),
-    origin: NOTIFICATION_ORIGIN_SETTINGS,
-    severity: NOTIFICATION_SEVERITY_WARNING
+    origin: ErrorConstants.NOTIFICATION_ORIGIN_SETTINGS,
+    severity: ErrorConstants.NOTIFICATION_SEVERITY_WARNING
   });
   const proceed = new FollowUp({
     type: STATE_LEAVE_UNSAVED_SETTINGS,

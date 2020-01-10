@@ -1,15 +1,12 @@
 /* eslint-disable react/no-unused-prop-types,class-methods-use-this */
 import React, { Component } from 'react';
+import { ErrorConstants } from 'amp-ui';
 import { connect } from 'react-redux';
 import * as PropTypes from 'prop-types';
 import DatabaseSanityStatus from '../../modules/database/sanity/DatabaseSanityStatus';
 import { addConfirmationAlert } from '../../actions/NotificationAction';
 import NotificationsContainer from '../notifications';
 import Notification from '../../modules/helpers/NotificationHelper';
-import {
-  NOTIFICATION_ORIGIN_SANITY_CHECK,
-  NOTIFICATION_SEVERITY_ERROR
-} from '../../utils/constants/ErrorConstants';
 import FollowUp, { BUTTON_TYPE_CANCEL, BUTTON_TYPE_OK } from '../notifications/followup';
 import {
   cancelDBCleanup,
@@ -133,8 +130,8 @@ const dbHealingConfirmationAlert = (databaseSanityStatus: DatabaseSanityStatus, 
     message,
     translateMsg: false,
     tagActions,
-    origin: NOTIFICATION_ORIGIN_SANITY_CHECK,
-    severity: NOTIFICATION_SEVERITY_ERROR
+    origin: ErrorConstants.NOTIFICATION_ORIGIN_SANITY_CHECK,
+    severity: ErrorConstants.NOTIFICATION_SEVERITY_ERROR
   });
 
   const proceed = new FollowUp({ type: okState }, okMsg, BUTTON_TYPE_OK);
