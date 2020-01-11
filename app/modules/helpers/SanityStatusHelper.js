@@ -1,4 +1,4 @@
-import { Constants } from 'amp-ui';
+import { Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import { VERSION } from '../../utils/Constants';
 import * as Utils from '../../utils/Utils';
@@ -92,7 +92,7 @@ const SanityStatusHelper = {
   saveOrUpdate(sanityStatus) {
     logger.log('saveOrUpdate');
     if (!sanityStatus.id) {
-      sanityStatus.id = Utils.stringToUniqueId('');
+      sanityStatus.id = UIUtils.stringToUniqueId('');
     }
     return DatabaseManager.saveOrUpdate(sanityStatus.id, sanityStatus, Constants.COLLECTION_SANITY_CHECK);
   },
