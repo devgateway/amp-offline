@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { ActionUrl } from 'amp-ui';
+import { ActionUrl, UIUtils } from 'amp-ui';
 import PropTypes from 'prop-types';
 import ActionDef from '../../modules/util/ActionDef';
 import Logger from '../../modules/util/LoggerManager';
-import * as Utils from '../../utils/Utils';
 
 const logger = new Logger('MessageWithActions');
 
@@ -24,10 +23,10 @@ export default class MessageWithActions extends Component {
       const content = [];
       while (actions.length && messageParts.length > 1) {
         const action: ActionDef = actions.shift();
-        content.push(<span key={Utils.stringToUniqueId()}>{messageParts.shift()}</span>);
+        content.push(<span key={UIUtils.stringToUniqueId()}>{messageParts.shift()}</span>);
         content.push(
           <ActionUrl
-            key={Utils.stringToUniqueId()}
+            key={UIUtils.stringToUniqueId()}
             urlContent={messageParts.shift()}
             href={action.href}
             navUrl={action.navUrl}
@@ -36,7 +35,7 @@ export default class MessageWithActions extends Component {
       if (actions.length || messageParts.length > 1) {
         logger.error(`Malformed message with actions. The result can be unexpected. Original message: ${message}`);
       }
-      messageParts.forEach(m => content.push(<span key={Utils.stringToUniqueId()}>{m}</span>));
+      messageParts.forEach(m => content.push(<span key={UIUtils.stringToUniqueId()}>{m}</span>));
       return <span>{content}</span>;
     }
     return <span>{message}</span>;
