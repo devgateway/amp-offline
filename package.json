@@ -1,7 +1,7 @@
 {
   "name": "amp-offline",
   "productName": "AMP Offline",
-  "version": "1.5.0-SNAPSHOT",
+  "version": "1.4.1-SNAPSHOT",
   "description": "Offline desktop version of the AMP portal.",
   "main": "main.js",
   "scripts": {
