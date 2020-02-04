@@ -59,7 +59,7 @@ println "Script target: ${scriptTarget}"
 node('master') {
 	try {
 		stage('PrepareSetup') {
-			checkout scm
+	s		checkout scm
 			//we print node version
 			sh 'node -v'
 			sh returnStatus: true, script: 'tar xf ../nm_cache.tar'
@@ -68,7 +68,7 @@ node('master') {
 			//install all needed dependencies
 			sh 'npm install'
 			sh 'npm run build-dll'
-			sh returnStatus: true, script: 'tar cf ../nm_cache.tar node_modules'
+			sh returnStatus: true, script: 'tar cf ../nm_cache.tar node_modules --exclude=amp-ui'
 		}
 		stage('StyleCheck') {
 			try {
