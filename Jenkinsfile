@@ -59,7 +59,7 @@ println "Script target: ${scriptTarget}"
 node('master') {
 	try {
 		stage('PrepareSetup') {
-	s		checkout scm
+			checkout scm
 			//we print node version
 			sh 'node -v'
 			sh returnStatus: true, script: 'tar xf ../nm_cache.tar'
