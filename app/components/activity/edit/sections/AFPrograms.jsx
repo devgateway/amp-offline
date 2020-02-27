@@ -6,6 +6,7 @@ import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { PROGRAM } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
+import * as Types from '../components/AFComponentTypes';
 
 const logger = new Logger('AF programs');
 
@@ -25,21 +26,28 @@ class AFPrograms extends Component {
   }
 
   render() {
-    return (<div className={afStyles.full_width} >
-      <Grid className={afStyles.full_width} >
+    return (<div className={afStyles.full_width}>
+      <Grid className={afStyles.full_width}>
         <Row>
-          <Col md={12} lg={12} >
+          <Col md={12} lg={12}>
             <AFField parent={this.props.activity} fieldPath={ActivityConstants.NATIONAL_PLAN_OBJECTIVE} />
           </Col>
         </Row>
         <Row>
-          <Col md={12} lg={12} >
+          <Col md={12} lg={12}>
             <AFField parent={this.props.activity} fieldPath={ActivityConstants.PRIMARY_PROGRAMS} />
           </Col>
         </Row>
         <Row>
-          <Col md={12} lg={12} >
+          <Col md={12} lg={12}>
             <AFField parent={this.props.activity} fieldPath={ActivityConstants.SECONDARY_PROGRAMS} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12} lg={12}>
+            <AFField
+              key={'program_description'} parent={this.props.activity}
+              fieldPath={'program_description'} type={Types.RICH_TEXT_AREA} />
           </Col>
         </Row>
       </Grid>
