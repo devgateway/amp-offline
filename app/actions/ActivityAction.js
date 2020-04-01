@@ -163,7 +163,13 @@ function _loadActivity({
 const _getActivityWsManager = (activityWorkspace) => {
   if (activityWorkspace) {
     return TeamMemberHelper.findByTeamMemberId(activityWorkspace[WORKSPACE_LEAD_ID])
-      .then(teamMember => UserHelper.findById(teamMember[TEAM_MEMBER_USER_ID]));
+      .then(teamMember => {
+        if (teamMember) {
+          return UserHelper.findById(teamMember[TEAM_MEMBER_USER_ID]);
+        } else {
+          return Promise.resolve(null);
+        }
+      });
   }
   return Promise.resolve(null);
 };
