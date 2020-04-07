@@ -12,6 +12,7 @@ import logger from '../ChangelogLogger';
 import DateUtils from '../../../utils/DateUtils';
 import { ACTIVITY_LOCATION_FIX_OLD_IDS, AMP_COUNTRY_FLAG } from '../../../modules/connectivity/AmpApiConstants';
 import * as ConnectionHelper from '../../../modules/connectivity/ConnectionHelper';
+import * as DatabaseManager from '../../../modules/database/DatabaseManager';
 
 export default ({
   changelog: {
@@ -22,22 +23,38 @@ export default ({
         author: 'ginchauspe',
         comment: 'Go online to retrieve new ids for amp locations.',
         preConditions: [],
-        context: MC.CONTEXT_INIT,
+        context: MC.CONTEXT_AFTER_LOGIN,
         changes: [{
           func: () => {
-            logger.error("entrando");
-            console.error("entrando");
-            debugger
             return ConnectionHelper.doGet({ url: ACTIVITY_LOCATION_FIX_OLD_IDS, shouldRetry: true }).then((data) => {
-              debugger
               logger.error(data);
-              console.error(data);
-              return Promise.resolve();
+              const errors = false;
+              if (data) {
+                DatabaseManager._getCollection(Constants.COLLECTION_ACTIVITIES)
+                  .then(collection => {
+                    DatabaseManager.createIndex(collection, { fieldName: 'locations.location' });
+                    let i = -1;
+                      // TODO: Create a promise for all subqueries.
+                    data.forEach(d => {
+                      i++;
+                      console.error(d);
+                      console.info(i);
+                        // NOTE: locations: { $exists: true } makes the query slower.
+                      return ActivityHelper.findAll({ 'locations.location': d.extra_info.old_location_id }).then(activities => {
+                        if (activities.length > 0) {
+                          console.info(activities);
+                        }
+                        return activities;
+                      });
+                    });
+                  });
+              }
+              throw new Error();
             });
           }
         }],
         rollback: {
-          func: () => logger.error('muy mal')
+          func: () => logger.error('rollback')
         }
       }
     ]
