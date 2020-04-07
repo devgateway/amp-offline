@@ -41,6 +41,7 @@ import {
   MAP_TILES_URL,
   GAZETTEER_URL,
   COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  ACTIVITY_LOCATION_FIX_OLD_IDS,
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -219,6 +220,10 @@ const routesConfiguration = [{
   requiredAuth: true
 }, {
   url: CALENDAR_PULL_URL,
+  method: 'GET',
+  requiredAuth: true,
+}, {
+  url: ACTIVITY_LOCATION_FIX_OLD_IDS,
   method: 'GET',
   requiredAuth: true,
 }
