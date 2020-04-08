@@ -29,6 +29,7 @@ export default ({
         preConditions: [
           {
             // Get new and old location ids from the EP.
+            // TODO: First check if we have any data in activities to save time.
             func: () => ConnectionHelper.doGet({ url: ACTIVITY_LOCATION_FIX_OLD_IDS, shouldRetry: true })
               .then(data => {
                 logger.info(`Got data from ${ACTIVITY_LOCATION_FIX_OLD_IDS}`);
@@ -59,8 +60,12 @@ export default ({
               ActivityHelper.findAll({ 'locations.location': d.extra_info.old_location_id })
                 .then(activities => {
                   if (activities.length > 0) {
-                    // console.info(activities);
-                    activities.forEach(a => { a.location.forEach(l => { l.location = d.id; }); });
+                    activities.forEach(a => {
+                      a.locations.filter(l => l.location === d.extra_info.old_location_id).forEach(l => {
+                        l.location = d.id;
+                      });
+                    });
+                    // TODO: Compare time with single activity update AND just 1 saveOrUpdateCollection for all.
                     return ActivityHelper.saveOrUpdateCollection(activities);
                   }
                   return Promise.resolve();
