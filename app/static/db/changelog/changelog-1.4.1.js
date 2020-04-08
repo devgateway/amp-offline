@@ -56,21 +56,22 @@ export default ({
         context: MC.CONTEXT_AFTER_LOGIN,
         changes: [{
           func: () => {
-            const promise = Promise.all(newAndOldLocationIds.map(d =>
+            // TODO: Update locations in possible-values.
+            const activitiesToUpdate = [];
+            return Promise.all(newAndOldLocationIds.map(d =>
               ActivityHelper.findAll({ 'locations.location': d.extra_info.old_location_id })
                 .then(activities => {
                   if (activities.length > 0) {
                     activities.forEach(a => {
                       a.locations.filter(l => l.location === d.extra_info.old_location_id).forEach(l => {
+                        console.info(a);
                         l.location = d.id;
                       });
+                      activitiesToUpdate.push(a);
                     });
-                    // TODO: Compare time with single activity update AND just 1 saveOrUpdateCollection for all.
-                    return ActivityHelper.saveOrUpdateCollection(activities);
                   }
                   return Promise.resolve();
-                })));
-            return promise;
+                }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate));
           }
         }],
         rollback: {
