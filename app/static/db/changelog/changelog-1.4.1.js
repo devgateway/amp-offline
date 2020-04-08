@@ -31,6 +31,8 @@ export default ({
             // Get new and old location ids from the EP.
             func: () => ConnectionHelper.doGet({ url: ACTIVITY_LOCATION_FIX_OLD_IDS, shouldRetry: true })
               .then(data => {
+                logger.info(`Got data from ${ACTIVITY_LOCATION_FIX_OLD_IDS}`);
+                logger.info(data);
                 newAndOldLocationIds = data;
                 return newAndOldLocationIds.length > 0;
               }),
@@ -41,7 +43,9 @@ export default ({
             // Open "table" activities.
             func: () => DatabaseManager._getCollection(Constants.COLLECTION_ACTIVITIES)
               .then(collection => {
+                logger.info('Create index for locations.');
                 activitiesTable = collection;
+                DatabaseManager.createIndex(activitiesTable, { fieldName: 'locations.location' });
                 return activitiesTable !== undefined;
               }),
             onFail: MC.ON_FAIL_ERROR_MARK_RAN,
@@ -51,23 +55,17 @@ export default ({
         context: MC.CONTEXT_AFTER_LOGIN,
         changes: [{
           func: () => {
-            const errors = false;
-            DatabaseManager.createIndex(activitiesTable, { fieldName: 'locations.location' });
-            let i = -1;
-            newAndOldLocationIds.forEach(d => {
-              i++;
-              console.error(d);
-              console.info(i);
-              // NOTE: locations: { $exists: true } makes the query slower.
-              return ActivityHelper.findAll({ 'locations.location': d.extra_info.old_location_id })
-                          .then(activities => {
-                            if (activities.length > 0) {
-                              console.info(activities);
-                            }
-                            return activities;
-                          });
-            });
-            throw new Error();
+            const promise = Promise.all(newAndOldLocationIds.map(d =>
+              ActivityHelper.findAll({ 'locations.location': d.extra_info.old_location_id })
+                .then(activities => {
+                  if (activities.length > 0) {
+                    // console.info(activities);
+                    activities.forEach(a => { a.location.forEach(l => { l.location = d.id; }); });
+                    return ActivityHelper.saveOrUpdateCollection(activities);
+                  }
+                  return Promise.resolve();
+                })));
+            return promise;
           }
         }],
         rollback: {
