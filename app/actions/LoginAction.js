@@ -44,7 +44,8 @@ export function loginAction(email: string, password: string) {
         dispatch(loadWorkspaces());
         return Promise.resolve()
           .then(() => dbMigrationsManager.run(MC.CONTEXT_AFTER_LOGIN))
-          .then(checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL)));
+          .then(checkIfToForceSyncUp)
+          .then(() => UrlUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
