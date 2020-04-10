@@ -15,12 +15,11 @@ let newAndOldLocationIds = [];
 let activitiesTable;
 const getNewLocationIds = () => (
   ConnectionHelper.doGet({ url: ACTIVITY_LOCATION_FIX_OLD_IDS, shouldRetry: true })
-    .then(data => {
-      logger.info(`Got data from ${ACTIVITY_LOCATION_FIX_OLD_IDS}`);
-      logger.info(data); // TODO: remove this line.
-      newAndOldLocationIds = data;
-      return newAndOldLocationIds.length > 0;
-    })
+        .then(data => {
+          logger.info(`Got data from ${ACTIVITY_LOCATION_FIX_OLD_IDS}`);
+          newAndOldLocationIds = data;
+          return newAndOldLocationIds.length > 0;
+        })
 );
 
 export default ({
@@ -33,8 +32,12 @@ export default ({
         comment: 'Go online to retrieve new ids for amp locations (Part 1 of 2)',
         preConditions: [
           {
+            func: () => ActivityHelper.findAll({}).then(data => data.length > 0),
+            onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+            onError: MC.ON_FAIL_ERROR_CONTINUE
+          },
+          {
             // Get new and old location ids from the EP.
-            // TODO: First check if we have any data in activities to save time.
             func: () => getNewLocationIds(),
             onFail: MC.ON_FAIL_ERROR_MARK_RAN,
             onError: MC.ON_FAIL_ERROR_CONTINUE
@@ -80,7 +83,7 @@ export default ({
       {
         changeid: 'AMPOFFLINE-1515-update-location-ids-locations',
         author: 'ginchauspe',
-        comment: 'Go online to retrieve new ids for amp locations (Part 2 of 2)',
+        comment: 'Cleanup possible-values element and force a syncup (Part 2 of 2)',
         preConditions: [
           {
             changeid: 'AMPOFFLINE-1515-update-location-ids-activities',
