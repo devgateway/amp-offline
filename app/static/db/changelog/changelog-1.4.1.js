@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Constants, FieldPathConstants } from 'amp-ui';
+import { Constants, FieldPathConstants, ActivityConstants } from 'amp-ui';
 import * as MC from '../../../utils/constants/MigrationsConstants';
 import * as CSC from '../../../utils/constants/ClientSettingsConstants';
 import * as ActivityHelper from '../../../modules/helpers/ActivityHelper';
@@ -58,13 +58,12 @@ export default ({
             const activitiesToUpdate = [];
             return Promise.all(newAndOldLocationIds.map(d =>
               // NOTE: Filtering first by 'locations: $exists' made it slower.
-              ActivityHelper.findAll({ 'locations.location': d['extra_info'/* FieldPathConstants.EXTRA_INFO*/].old_location_id })
+              ActivityHelper.findAll({ 'locations.location': d[ActivityConstants.EXTRA_INFO].old_location_id })
                 .then(activities => {
                   if (activities.length > 0) {
                     activities.forEach(a => {
-                      a.locations.filter(l => l.location === d['extra_info'/* FieldPathConstants.EXTRA_INFO*/].old_location_id)
+                      a.locations.filter(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id)
                         .forEach(l => {
-                          console.info(a); // TODO: remove this line.
                           l.location = d.id;
                         });
                       activitiesToUpdate.push(a);
@@ -93,7 +92,7 @@ export default ({
         ],
         context: MC.CONTEXT_AFTER_LOGIN,
         changes: [{
-          func: () => Promise.all([PossibleValuesHelper.deleteById('locations~location'),
+          func: () => Promise.all([PossibleValuesHelper.deleteById(FieldPathConstants.LOCATION_PATH),
             ClientSettingsHelper.updateSettingValue(CSC.FORCE_SYNC_UP, true)])
         }],
         rollback: {
