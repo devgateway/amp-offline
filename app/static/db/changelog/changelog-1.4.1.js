@@ -13,6 +13,7 @@ import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper'
 // AMPOFFLINE-1515.
 let activitiesTable;
 const locationsField = 'locations.location';
+let newIdsData = [];
 
 export default ({
   changelog: {
@@ -22,40 +23,36 @@ export default ({
         changeid: 'AMPOFFLINE-1515-update-location-ids-activities',
         author: 'ginchauspe',
         comment: 'Go online to retrieve new ids for amp locations (Part 1 of 2)',
-        preConditions: [
-          {
-            // Open "table" activities.
-            func: () => DatabaseManager._getCollection(Constants.COLLECTION_ACTIVITIES)
-              .then(collection => {
-                logger.info('Create index for locations.');
-                activitiesTable = collection;
-                DatabaseManager.createIndex(activitiesTable, { fieldName: locationsField });
-                return activitiesTable !== undefined;
-              }),
-            onFail: MC.ON_FAIL_ERROR_MARK_RAN,
-            onError: MC.ON_FAIL_ERROR_CONTINUE
-          }
-        ],
+        preConditions: [],
         context: MC.CONTEXT_AFTER_LOGIN,
         changes: [{
           func: () => {
             const activitiesToUpdate = [];
-            return ConnectionHelper.doGet({ url: ACTIVITY_LOCATION_FIX_OLD_IDS, shouldRetry: true }).then(data =>
-              Promise.all(data.map(d =>
-              // NOTE: Filtering first by 'locations: $exists' made it slower.
-              ActivityHelper.findAll({ 'locations.location': d[ActivityConstants.EXTRA_INFO].old_location_id })
-                .then(activities => {
-                  if (activities.length > 0) {
-                    activities.forEach(a => {
-                      a.locations.filter(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id)
-                        .forEach(l => {
-                          l.location = d.id;
-                        });
-                      activitiesToUpdate.push(a);
-                    });
-                  }
-                  return Promise.resolve();
-                }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate)));
+            return Promise.all([DatabaseManager._getCollection(Constants.COLLECTION_ACTIVITIES).then(collection => {
+              logger.info('Create index for locations.');
+              DatabaseManager.createIndex(collection, { fieldName: locationsField });
+              return Promise.resolve();
+            }), ConnectionHelper.doGet({ url: ACTIVITY_LOCATION_FIX_OLD_IDS, shouldRetry: true }).then(data => {
+              logger.info('Got new ids for locations.');
+              newIdsData = data;
+              return Promise.resolve();
+            })]).then(() => (
+              Promise.all(newIdsData.map(d =>
+                // NOTE: Filtering first by 'locations: $exists' made it slower.
+                ActivityHelper.findAll({ 'locations.location': d[ActivityConstants.EXTRA_INFO].old_location_id })
+                  .then(activities => {
+                    if (activities.length > 0) {
+                      activities.forEach(a => {
+                        a.locations.filter(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id)
+                          .forEach(l => {
+                            l.location = d.id;
+                          });
+                        activitiesToUpdate.push(a);
+                      });
+                    }
+                    return Promise.resolve();
+                  }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate))
+            ));
           }
         }],
         rollback: {
