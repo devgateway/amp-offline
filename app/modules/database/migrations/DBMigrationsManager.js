@@ -449,7 +449,7 @@ export default class DBMigrationsManager {
 
   _runExternalStartFunction() {
     if (!this._externalStartFunctionWasRan && this._externalStartFunction !== undefined) {
-      logger.error('_runExternalStartFunction');
+      logger.log('_runExternalStartFunction');
       this._externalStartFunctionWasRan = true;
       this._externalStartFunction();
     }
@@ -457,7 +457,7 @@ export default class DBMigrationsManager {
 
   _runExternalEndFunction() {
     if (this._externalStartFunctionWasRan && this._externalEndFunction) {
-      logger.error('_runExternalEndFunction');
+      logger.log('_runExternalEndFunction');
       this._externalStartFunctionWasRan = false;
       this._externalEndFunction();
     }

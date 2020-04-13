@@ -11,16 +11,7 @@ import * as ClientSettingsHelper from '../../../modules/helpers/ClientSettingsHe
 import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
 
 // AMPOFFLINE-1515.
-let newAndOldLocationIds = [];
 let activitiesTable;
-const getNewLocationIds = () => (
-  ConnectionHelper.doGet({ url: ACTIVITY_LOCATION_FIX_OLD_IDS, shouldRetry: true })
-        .then(data => {
-          logger.info(`Got data from ${ACTIVITY_LOCATION_FIX_OLD_IDS}`);
-          newAndOldLocationIds = data;
-          return newAndOldLocationIds.length > 0;
-        })
-);
 const locationsField = 'locations.location';
 
 export default ({
@@ -32,17 +23,6 @@ export default ({
         author: 'ginchauspe',
         comment: 'Go online to retrieve new ids for amp locations (Part 1 of 2)',
         preConditions: [
-          {
-            func: () => ActivityHelper.findAll({}).then(data => data.length > 0),
-            onFail: MC.ON_FAIL_ERROR_MARK_RAN,
-            onError: MC.ON_FAIL_ERROR_CONTINUE
-          },
-          {
-            // Get new and old location ids from the EP.
-            func: () => getNewLocationIds(),
-            onFail: MC.ON_FAIL_ERROR_MARK_RAN,
-            onError: MC.ON_FAIL_ERROR_CONTINUE
-          },
           {
             // Open "table" activities.
             func: () => DatabaseManager._getCollection(Constants.COLLECTION_ACTIVITIES)
@@ -60,7 +40,8 @@ export default ({
         changes: [{
           func: () => {
             const activitiesToUpdate = [];
-            return Promise.all(newAndOldLocationIds.map(d =>
+            return ConnectionHelper.doGet({ url: ACTIVITY_LOCATION_FIX_OLD_IDS, shouldRetry: true }).then(data =>
+              Promise.all(data.map(d =>
               // NOTE: Filtering first by 'locations: $exists' made it slower.
               ActivityHelper.findAll({ 'locations.location': d[ActivityConstants.EXTRA_INFO].old_location_id })
                 .then(activities => {
@@ -74,7 +55,7 @@ export default ({
                     });
                   }
                   return Promise.resolve();
-                }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate));
+                }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate)));
           }
         }],
         rollback: {
