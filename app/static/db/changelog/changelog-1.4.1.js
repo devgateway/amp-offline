@@ -11,7 +11,6 @@ import * as ClientSettingsHelper from '../../../modules/helpers/ClientSettingsHe
 import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
 
 // AMPOFFLINE-1515.
-let activitiesTable;
 const locationsField = 'locations.location';
 let newIdsData = [];
 
