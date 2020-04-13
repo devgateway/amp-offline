@@ -21,6 +21,7 @@ const getNewLocationIds = () => (
           return newAndOldLocationIds.length > 0;
         })
 );
+const locationsField = 'locations.location';
 
 export default ({
   changelog: {
@@ -48,7 +49,7 @@ export default ({
               .then(collection => {
                 logger.info('Create index for locations.');
                 activitiesTable = collection;
-                DatabaseManager.createIndex(activitiesTable, { fieldName: 'locations.location' });
+                DatabaseManager.createIndex(activitiesTable, { fieldName: locationsField });
                 return activitiesTable !== undefined;
               }),
             onFail: MC.ON_FAIL_ERROR_MARK_RAN,

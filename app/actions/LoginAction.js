@@ -24,6 +24,8 @@ export const STATE_LOGOUT_DISMISS = 'STATE_LOGOUT_DISMISS';
 export const STATE_LOGOUT = 'STATE_LOGOUT';
 export const STATE_CHANGE_PASSWORD_ONLINE = 'STATE_CHANGE_PASSWORD_ONLINE';
 export const STATE_RESET_PASSWORD_ONLINE = 'STATE_RESET_PASSWORD_ONLINE';
+export const STATE_LOGIN_START_DB_MIGRATION = 'STATE_LOGIN_START_DB_MIGRATION';
+export const STATE_LOGIN_END_DB_MIGRATION = 'STATE_LOGIN_END_DB_MIGRATION';
 
 const logger = new Logger('Login action');
 
@@ -43,7 +45,8 @@ export function loginAction(email: string, password: string) {
         dispatch(loginOk({ userData, password, token }));
         dispatch(loadWorkspaces());
         return Promise.resolve()
-          .then(() => dbMigrationsManager.run(MC.CONTEXT_AFTER_LOGIN))
+          .then(() => dbMigrationsManager.runForContextAfterLogin(MC.CONTEXT_AFTER_LOGIN,
+            (() => dispatchShowDBMigrationMessage(dispatch)), (() => dispatchHideDBMigrationMessage(dispatch))))
           .then(checkIfToForceSyncUp)
           .then(() => UrlUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL));
       }).catch((err) => {
@@ -51,6 +54,16 @@ export function loginAction(email: string, password: string) {
       });
     }
   };
+}
+
+function dispatchShowDBMigrationMessage(dispatch) {
+  console.log('dispatchShowDBMigrationMessage');
+  return dispatch({ type: STATE_LOGIN_START_DB_MIGRATION });
+}
+
+function dispatchHideDBMigrationMessage(dispatch) {
+  console.log('dispatchHideDBMigrationMessage');
+  return dispatch({ type: STATE_LOGIN_END_DB_MIGRATION });
 }
 
 export function loginAutomaticallyAction() {

@@ -36,6 +36,9 @@ export default class DBMigrationsManager {
     this._orderExecutedCounter = 1;
     this._isFailOnError = false;
     this._contextWarpper = new Context();
+    this._externalStartFunctionWasRan = false;
+    this._externalStartFunction = undefined;
+    this._externalEndFunction = undefined;
     Utils.selfBindMethods(this);
   }
 
@@ -207,6 +210,18 @@ export default class DBMigrationsManager {
   }
 
   /**
+   * Wrapper for 'run' function when we receive 2 methods to execute before and after applying patches.
+   * @param context
+   * @param startFunction
+   * @param endFunction
+   */
+  runForContextAfterLogin(context: string, startFunction, endFunction) {
+    this._externalStartFunction = startFunction;
+    this._externalEndFunction = endFunction;
+    return this.run(context);
+  }
+
+  /**
    * @param context
    * @return {number} the number of executed changesets, not necessarily successfully
    */
@@ -224,6 +239,7 @@ export default class DBMigrationsManager {
     return this.detectAndValidateChangelogs()
       .then(pendingChangelogs => this._runChangelogs(pendingChangelogs, context))
       .then(() => {
+        this._runExternalEndFunction();
         logger.log('DB changelogs execution complete');
         return this._executedChangesetIds.size;
       });
@@ -327,6 +343,9 @@ export default class DBMigrationsManager {
       logger.debug(`Comment: ${changeset.comment}`);
       return this._processChangesetPreconditions(changeset).then(action => {
         if (action === null) {
+          if (changeset.execContext === MC.CONTEXT_AFTER_LOGIN) {
+            this._runExternalStartFunction();
+          }
           this._executedChangesetIds.add(changeset.id);
           return this._runChangeset(changeset);
         }
@@ -428,4 +447,19 @@ export default class DBMigrationsManager {
     return changeset;
   }
 
+  _runExternalStartFunction() {
+    if (!this._externalStartFunctionWasRan && this._externalStartFunction !== undefined) {
+      logger.error('_runExternalStartFunction');
+      this._externalStartFunctionWasRan = true;
+      this._externalStartFunction();
+    }
+  }
+
+  _runExternalEndFunction() {
+    if (this._externalStartFunctionWasRan && this._externalEndFunction) {
+      logger.error('_runExternalEndFunction');
+      this._externalStartFunctionWasRan = false;
+      this._externalEndFunction();
+    }
+  }
 }
