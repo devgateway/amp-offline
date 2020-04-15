@@ -31,10 +31,10 @@ export default ({
               logger.info('Create index for locations.');
               DatabaseManager.createIndex(collection, { fieldName: locationsField });
               return Promise.resolve();
-            }), ConnectionHelper.doPost({ url: ACTIVITY_PUBLIC_FIELD_VALUES, shouldRetry: true, body: ['locations~location'] })
+            }), ConnectionHelper.doPost({ url: ACTIVITY_PUBLIC_FIELD_VALUES, shouldRetry: true, body: [FieldPathConstants.LOCATION_PATH] })
               .then(data => {
                 logger.info('Got new ids for locations.');
-                newIdsData = data['locations~location'];
+                newIdsData = data[FieldPathConstants.LOCATION_PATH];
                 return Promise.resolve();
               })]).then(() => (
               Promise.all(newIdsData.map(d =>
