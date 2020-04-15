@@ -41,7 +41,7 @@ import {
   MAP_TILES_URL,
   GAZETTEER_URL,
   COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
-  ACTIVITY_LOCATION_FIX_OLD_IDS,
+  ACTIVITY_PUBLIC_FIELD_VALUES,
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -223,8 +223,8 @@ const routesConfiguration = [{
   method: 'GET',
   requiredAuth: true,
 }, {
-  url: ACTIVITY_LOCATION_FIX_OLD_IDS,
-  method: 'GET',
+  url: ACTIVITY_PUBLIC_FIELD_VALUES,
+  method: 'POST',
   requiredAuth: true,
 }
 ];
