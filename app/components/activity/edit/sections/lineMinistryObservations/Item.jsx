@@ -45,17 +45,19 @@ export default class Item extends Component {
         <tr>
           <td>
             <AFField
-              parent={this.props.observation} fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.ISSUE_NAME}`}
-              type={Types.TEXT_AREA} />
+              parent={this.props.observation}
+              fieldPath={`${ActivityConstants.LINE_MINISTRY_OBSERVATIONS}~${ActivityConstants.LINE_MINISTRY_OBSERVATIONS_NAME}`}
+              type={Types.TEXT_AREA} customLabel={translate('Observation')} />
           </td>
           <td>
             <AFField
-              parent={this.props.observation} fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.ISSUE_DATE}`}
+              parent={this.props.observation}
+              fieldPath={`${ActivityConstants.LINE_MINISTRY_OBSERVATIONS}~${ActivityConstants.LINE_MINISTRY_OBSERVATIONS_DATE}`}
               type={Types.DATE}
               showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_LINE_MINISTRY_OBSERVATIONS_ADD_MEASURE) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Measure')}:</span>
                 <a
@@ -64,9 +66,9 @@ export default class Item extends Component {
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ISSUE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_LINE_MINISTRY_OBSERVATIONS_DELETE_OBSERVATION) ?
               <a
-                title={translate('Delete LMO')}
+                title={translate('Delete Line Ministry Observation')}
                 className={styles.delete}
                 onClick={this.props.removeObservation.bind(null, this.props.observationIndex)} />
               : null}
@@ -94,17 +96,17 @@ export default class Item extends Component {
             <img role={'presentation'} className={styles.tree} />
             <AFField
               parent={this.props.measure}
-              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_NAME}`}
-              type={Types.TEXT_AREA} />
+              fieldPath={`${ActivityConstants.LINE_MINISTRY_OBSERVATIONS}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_NAME}`}
+              type={Types.TEXT_AREA} customLabel={translate('Measure')} />
           </td>
           <td>
             <AFField
               parent={this.props.measure}
-              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_DATE}`}
+              fieldPath={`${ActivityConstants.LINE_MINISTRY_OBSERVATIONS}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_DATE}`}
               type={Types.DATE} showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_LINE_MINISTRY_OBSERVATIONS_ADD_ACTOR) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Actor')}:</span>
                 <a
@@ -113,7 +115,7 @@ export default class Item extends Component {
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_LINE_MINISTRY_OBSERVATIONS_DELETE_MEASURE) ?
               <a
                 title={translate('Delete Measure')}
                 className={styles.delete}
@@ -145,11 +147,11 @@ export default class Item extends Component {
             <img role={'presentation'} className={[styles.tree, styles.actor].join(' ')} />
             <AFField
               parent={this.props.actor}
-              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.ACTORS}~${ActivityConstants.ACTOR_NAME}`}
-              type={Types.TEXT_AREA} />
+              fieldPath={`${ActivityConstants.LINE_MINISTRY_OBSERVATIONS}~${ActivityConstants.MEASURES}~${ActivityConstants.ACTORS}~${ActivityConstants.ACTOR_NAME}`}
+              type={Types.TEXT_AREA} customLabel={translate('Actor')} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_LINE_MINISTRY_OBSERVATIONS_DELETE_ACTOR) ?
               <a
                 title={translate('Delete Actor')}
                 className={[styles.delete, styles.delete_actor].join(' ')}
