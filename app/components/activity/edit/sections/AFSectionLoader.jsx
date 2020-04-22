@@ -12,6 +12,7 @@ import AFIssues from './AFIssues';
 import { AFContactsPage } from '../../../../containers/ContactPage';
 import AFStructures from './AFStructures';
 import { AFDocumentPage } from '../../../../containers/ResourcePage';
+import AFRegionalFunding from './AFRegionalFunding';
 
 /**
  * Loads AF section
@@ -44,6 +45,8 @@ const loadSection = (sectionName) => {
       return <AFContactsPage />;
     case SC.RELATED_DOCUMENTS:
       return <AFDocumentPage />;
+    case SC.REGIONAL_FUNDING:
+      return <AFRegionalFunding />;
     /*
     case SC.COMPONENTS:
       return <AFComponents />;
