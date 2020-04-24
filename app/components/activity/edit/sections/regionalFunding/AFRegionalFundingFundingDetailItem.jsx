@@ -17,10 +17,11 @@ export default class AFRegionalFundingFundingDetailItem extends Component {
   static propTypes = {
     type: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
+    removeFundingDetailItem: PropTypes.func.isRequired,
   };
 
   render() {
-    const { type, location } = this.props;
+    const { type, location, removeFundingDetailItem } = this.props;
     const { activity } = this.context;
     const path = `regional_${type}`;
     const items = activity[path].filter(l => l.region_location.id === location.location.id);
@@ -28,7 +29,7 @@ export default class AFRegionalFundingFundingDetailItem extends Component {
       <table className={styles.table}>
         <tbody>
           {items.map(l =>
-            (<tr className={styles.tr}>
+            (<tr key={Math.random()} className={styles.tr}>
               <td>
                 <div className={styles.row}>
                   <AFField
@@ -51,8 +52,8 @@ export default class AFRegionalFundingFundingDetailItem extends Component {
                 <div className={styles.grid}>
                   <div className={styles.cell_10}>
                     <a
-                    /*onClick={removeFundingDetailItem.bind(this, fundingDetail[ActivityConstants.TEMPORAL_ID])}*/
-                    className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
+                      onClick={removeFundingDetailItem.bind(this, l[ActivityConstants.TEMPORAL_ID])}
+                      className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
                   </div>
                 </div>
               </td>
