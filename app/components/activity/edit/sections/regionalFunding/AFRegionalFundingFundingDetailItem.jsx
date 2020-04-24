@@ -20,62 +20,44 @@ export default class AFRegionalFundingFundingDetailItem extends Component {
   };
 
   render() {
-    const { type } = this.props;
+    const { type, location } = this.props;
     const { activity } = this.context;
-    const path = 'regional_';
+    const path = `regional_${type}`;
+    const locations = activity[path].filter(l => l.region_location.id === location.location.id);
     return (<div>
       <table>
         <tbody>
-          <tr>
-            <td>
-              <div className={styles.row}>
-                <AFField
-                  parent={activity} className={styles.cell_3}
-                  fieldPath={`${path}${type}~${ActivityConstants.ADJUSTMENT_TYPE}`} />
-                <AFField
-                  parent={activity} className={styles.cell_3}
-                  fieldPath={`${path}${type}~${ActivityConstants.TRANSACTION_AMOUNT}`} />
-                <AFField
-                  parent={activity} className={styles.cell_3}
-                  fieldPath={`${path}${type}~${ActivityConstants.CURRENCY}`}
-                  defaultValueAsEmptyObject
-                  extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
-                <AFField
-                  parent={activity} className={styles.cell_3}
-                  fieldPath={`${path}${type}~${ActivityConstants.TRANSACTION_DATE}`} />
-                <AFField
-                  parent={activity} className={styles.cell_3}
-                  type={Types.RADIO_BOOLEAN}
-                  fieldPath={`${path}${type}~${ActivityConstants.DISASTER_RESPONSE}`} />
-                {(type === ActivityConstants.DISBURSEMENTS) ?
+          {locations.map(l =>
+            (<tr>
+              <td>
+                <div className={styles.row}>
                   <AFField
-                    parent={activity} className={styles.cell_3}
-                    fieldPath={`${path}${type}~${ActivityConstants.DISBURSEMENT_ORDER_ID}`} />
-                : null}
-                <AFField
-                  parent={activity} className={styles.cell_3}
-                  fieldPath={`${path}${type}~${ActivityConstants.PLEDGE}`}
-                  filter={[{
-                    value: activity,
-                    path: `${ActivityConstants.EXTRA_INFO}~${ActivityConstants.ORGANIZATION_GROUP}`
-                  }]} />
-                <AFField
-                  parent={activity} className={styles.cell_4}
-                  fieldPath={`${path}${type}~${ActivityConstants.FIXED_EXCHANGE_RATE}`}
-                  extraParams={{ bigger: 0 }} />
-                {/* this.generateRecipients(fundingDetail)*/}
-              </div>
-            </td>
-            <td className={styles.delete_col}>
-              <div className={styles.grid}>
-                <div className={styles.cell_10}>
-                  {/* <a
+                    parent={l} className={styles.cell_3}
+                    fieldPath={`${path}~${ActivityConstants.ADJUSTMENT_TYPE}`} />
+                  <AFField
+                    parent={l} className={styles.cell_3}
+                    fieldPath={`${path}~${ActivityConstants.TRANSACTION_AMOUNT}`} />
+                  <AFField
+                    parent={l} className={styles.cell_3}
+                    fieldPath={`${path}~${ActivityConstants.CURRENCY}`}
+                    defaultValueAsEmptyObject
+                    extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
+                  <AFField
+                    parent={l} className={styles.cell_3}
+                    fieldPath={`${path}~${ActivityConstants.TRANSACTION_DATE}`} />
+                </div>
+              </td>
+              <td className={styles.delete_col}>
+                <div className={styles.grid}>
+                  <div className={styles.cell_10}>
+                    {/* <a
                     onClick={removeFundingDetailItem.bind(this, fundingDetail[ActivityConstants.TEMPORAL_ID])}
                     className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>*/}
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>)
+        )}
         </tbody>
       </table>
     </div>);
