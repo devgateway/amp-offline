@@ -23,36 +23,36 @@ export default class AFRegionalFundingFundingDetailItem extends Component {
     const { type, location } = this.props;
     const { activity } = this.context;
     const path = `regional_${type}`;
-    const locations = activity[path].filter(l => l.region_location.id === location.location.id);
+    const items = activity[path].filter(l => l.region_location.id === location.location.id);
     return (<div>
-      <table>
+      <table className={styles.table}>
         <tbody>
-          {locations.map(l =>
-            (<tr>
+          {items.map(l =>
+            (<tr className={styles.tr}>
               <td>
                 <div className={styles.row}>
                   <AFField
-                    parent={l} className={styles.cell_3}
+                    parent={l} className={styles.cell_4}
                     fieldPath={`${path}~${ActivityConstants.ADJUSTMENT_TYPE}`} />
                   <AFField
-                    parent={l} className={styles.cell_3}
+                    parent={l} className={styles.cell_4}
                     fieldPath={`${path}~${ActivityConstants.TRANSACTION_AMOUNT}`} />
                   <AFField
-                    parent={l} className={styles.cell_3}
+                    parent={l} className={styles.cell_4}
                     fieldPath={`${path}~${ActivityConstants.CURRENCY}`}
                     defaultValueAsEmptyObject
                     extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
                   <AFField
-                    parent={l} className={styles.cell_3}
+                    parent={l} className={styles.cell_4}
                     fieldPath={`${path}~${ActivityConstants.TRANSACTION_DATE}`} />
                 </div>
               </td>
               <td className={styles.delete_col}>
                 <div className={styles.grid}>
                   <div className={styles.cell_10}>
-                    {/* <a
-                    onClick={removeFundingDetailItem.bind(this, fundingDetail[ActivityConstants.TEMPORAL_ID])}
-                    className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>*/}
+                    <a
+                    /*onClick={removeFundingDetailItem.bind(this, fundingDetail[ActivityConstants.TEMPORAL_ID])}*/
+                    className={styles.delete} href={null} title={translate('Delete')}>&nbsp;</a>
                   </div>
                 </div>
               </td>
