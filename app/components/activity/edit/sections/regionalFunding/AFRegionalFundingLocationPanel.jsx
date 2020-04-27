@@ -27,7 +27,7 @@ export default class AFRegionalFundingLocationPanel extends Component {
     super(props);
     const { location, activity } = this.props;
     this._handlePanelOpenClose = this._handlePanelOpenClose.bind(this);
-    this.state = { panelOpen: this.findLocation(activity, location).regionalFundingPanelOpen || false };
+    this.state = { panelOpen: this.findLocation(activity, location).regionalFundingPanelOpen };
   }
 
   _handlePanelOpenClose() {
@@ -37,31 +37,35 @@ export default class AFRegionalFundingLocationPanel extends Component {
     this.findLocation(activity, location).regionalFundingPanelOpen = open;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   findLocation(activity, location) {
     return activity[ActivityConstants.LOCATIONS].find(l => l.location.id === location.location.id);
   }
 
   render() {
     logger.log('render');
-    const { location, handleNewTransaction, removeFundingDetailItem } = this.props;
+    const { location, handleNewTransaction, removeFundingDetailItem, activity } = this.props;
     const { panelOpen } = this.state;
     const name = location.location.value;
-    return (<Panel collapsible header={name} key={name} expanded={panelOpen} onClick={this._handlePanelOpenClose}>
+    return (<Panel collapsible header={name} key={name} expanded={panelOpen} onSelect={this._handlePanelOpenClose}>
       <div>
         <AFRegionalFundingFundingTypeSection
           location={location}
+          activity={activity}
           title={translate('Commitments')}
           type={ActivityConstants.COMMITMENTS}
           removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.COMMITMENTS)}
           handleNewTransaction={handleNewTransaction} />
         <AFRegionalFundingFundingTypeSection
           location={location}
+          activity={activity}
           title={translate('Disbursements')}
           type={ActivityConstants.DISBURSEMENTS}
           removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.DISBURSEMENTS)}
           handleNewTransaction={handleNewTransaction} />
         <AFRegionalFundingFundingTypeSection
           location={location}
+          activity={activity}
           title={translate('Expenditures')}
           type={ActivityConstants.EXPENDITURES}
           removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.EXPENDITURES)}

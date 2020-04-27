@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ActivityConstants, FieldsManager } from 'amp-ui';
-import styles from './AFRegionalFundingFundingDetailItem.css';
+import styles from './AFRegionalFundingDetailItems.css';
 import AFField from '../../components/AFField';
 import translate from '../../../../../utils/translate';
 
-export default class AFRegionalFundingFundingDetailItem extends Component {
+export default class AFRegionalFundingDetailItems extends Component {
 
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,

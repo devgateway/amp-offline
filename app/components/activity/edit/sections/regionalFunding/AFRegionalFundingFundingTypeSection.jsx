@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Panel } from 'react-bootstrap';
 import { ActivityConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
-import AFRegionalFundingFundingDetailItem from './AFRegionalFundingFundingDetailItem';
+import AFRegionalFundingDetailItems from './AFRegionalFundingDetailItems';
 import fundingStyles from '../funding/AFFundingContainer.css';
 import translate from '../../../../../utils/translate';
 
@@ -23,11 +23,34 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
     title: PropTypes.string.isRequired,
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
+    activity: PropTypes.object.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+    const { location, activity, type } = this.props;
+    this._handlePanelOpenClose = this._handlePanelOpenClose.bind(this);
+    const path = `${type}_panelOpen`;
+    this.state = { path, panelOpen: this.findLocation(activity, location)[path] };
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  findLocation(activity, location) {
+    return activity[ActivityConstants.LOCATIONS].find(l => l.location.id === location.location.id);
+  }
+
+  _handlePanelOpenClose() {
+    const { activity, location } = this.props;
+    const { path } = this.state;
+    const open = !this.state.panelOpen;
+    this.setState({ panelOpen: open });
+    this.findLocation(activity, location)[path] = open;
+  }
 
   render() {
     logger.log('render');
     const { title, location, type, handleNewTransaction, removeFundingDetailItem } = this.props;
+    const { panelOpen } = this.state;
     let button = '';
     let path = '';
     switch (type) {
@@ -48,8 +71,10 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
     }
     if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(path)) {
       return (<div>
-        <Panel header={title} collapsible>
-          <AFRegionalFundingFundingDetailItem
+        <Panel
+          header={title} collapsible key={Math.random()} onSelect={this._handlePanelOpenClose}
+          expanded={panelOpen}>
+          <AFRegionalFundingDetailItems
             location={location} type={type}
             removeFundingDetailItem={removeFundingDetailItem} />
           <Button
