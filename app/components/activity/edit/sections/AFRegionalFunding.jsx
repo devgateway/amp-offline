@@ -8,6 +8,7 @@ import { REGIONAL_FUNDING } from './AFSectionConstants';
 import AFRegionalFundingFundingTypeSection from './regionalFunding/AFRegionalFundingFundingTypeSection';
 import translate from '../../../../utils/translate';
 import DateUtils from '../../../../utils/DateUtils';
+import AFRegionalFundingLocationPanel from './regionalFunding/AFRegionalFundingLocationPanel';
 
 const logger = new Logger('AF regional funding');
 
@@ -27,31 +28,6 @@ class AFRegionalFunding extends Component {
     super(props);
     this._addTransactionItem = this._addTransactionItem.bind(this);
     this._removeFundingDetailItem = this._removeFundingDetailItem.bind(this);
-  }
-
-  generateRegionContent(location) {
-    const { activity } = this.context;
-    // TODO: Check if each funding type is enabled.
-    return (<div>
-      <AFRegionalFundingFundingTypeSection
-        location={location}
-        title={translate('Commitments')}
-        type={ActivityConstants.COMMITMENTS}
-        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, ActivityConstants.COMMITMENTS)}
-        handleNewTransaction={this._addTransactionItem} />
-      <AFRegionalFundingFundingTypeSection
-        location={location}
-        title={translate('Disbursements')}
-        type={ActivityConstants.DISBURSEMENTS}
-        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, ActivityConstants.DISBURSEMENTS)}
-        handleNewTransaction={this._addTransactionItem} />
-      <AFRegionalFundingFundingTypeSection
-        location={location}
-        title={translate('Expenditures')}
-        type={ActivityConstants.EXPENDITURES}
-        removeFundingDetailItem={this._removeFundingDetailItem.bind(this, ActivityConstants.EXPENDITURES)}
-        handleNewTransaction={this._addTransactionItem} />
-    </div>);
   }
 
   _addTransactionItem(trnType, location) {
@@ -95,13 +71,10 @@ class AFRegionalFunding extends Component {
     const locations = activity.locations ? activity.locations.filter(l =>
       l.location.extra_info.implementation_location_name === 'Region') : new Set([]);
     return (<div>
-      {locations.map(l => {
-        const name = l.location.value;
-        const id = l.location.id;
-        return (<Panel collapsible header={name} key={name}>
-          {this.generateRegionContent(l)}
-        </Panel>);
-      })}
+      {locations.map(l => (<AFRegionalFundingLocationPanel
+        location={l} key={l.location.id}
+        removeFundingDetailItem={this._removeFundingDetailItem}
+        handleNewTransaction={this._addTransactionItem} />))}
     </div>);
   }
 }
