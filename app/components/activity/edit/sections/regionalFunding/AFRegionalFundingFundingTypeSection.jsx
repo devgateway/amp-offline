@@ -29,29 +29,36 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
     logger.log('render');
     const { title, location, type, handleNewTransaction, removeFundingDetailItem } = this.props;
     let button = '';
+    let path = '';
     switch (type) {
       case ActivityConstants.COMMITMENTS:
         button = translate('Add Commitments');
+        path = ActivityConstants.REGIONAL_FUNDINGS_COMMITMENTS;
         break;
       case ActivityConstants.DISBURSEMENTS:
         button = translate('Add Disbursements');
+        path = ActivityConstants.REGIONAL_FUNDINGS_DISBURSEMENTS;
         break;
       case ActivityConstants.EXPENDITURES:
         button = translate('Add Expenditures');
+        path = ActivityConstants.REGIONAL_FUNDINGS_EXPENDITURES;
         break;
       default:
         break;
     }
-    return (<div>
-      <Panel header={title} collapsible>
-        <AFRegionalFundingFundingDetailItem
-          location={location} type={type}
-          removeFundingDetailItem={removeFundingDetailItem} />
-        <Button
-          className={fundingStyles.add_button} bsStyle="primary"
-          onClick={() => handleNewTransaction(type, location)}>{button}
-        </Button>
-      </Panel>
-    </div>);
+    if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(path)) {
+      return (<div>
+        <Panel header={title} collapsible>
+          <AFRegionalFundingFundingDetailItem
+            location={location} type={type}
+            removeFundingDetailItem={removeFundingDetailItem} />
+          <Button
+            className={fundingStyles.add_button} bsStyle="primary"
+            onClick={() => handleNewTransaction(type, location)}>{button}
+          </Button>
+        </Panel>
+      </div>);
+    }
+    return null;
   }
 }

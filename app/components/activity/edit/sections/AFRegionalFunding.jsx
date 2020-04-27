@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Panel } from 'react-bootstrap';
 import { ActivityConstants, FieldsManager, UIUtils } from 'amp-ui';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFSection from './AFSection';
 import { REGIONAL_FUNDING } from './AFSectionConstants';
-import AFRegionalFundingFundingTypeSection from './regionalFunding/AFRegionalFundingFundingTypeSection';
 import translate from '../../../../utils/translate';
 import DateUtils from '../../../../utils/DateUtils';
 import AFRegionalFundingLocationPanel from './regionalFunding/AFRegionalFundingLocationPanel';
@@ -67,7 +65,6 @@ class AFRegionalFunding extends Component {
     const { activity } = this.context;
     logger.error(activity);
     // TODO: filter by implementation type Region only.
-    // TODO: create container class.
     const locations = activity.locations ? activity.locations.filter(l =>
       l.location.extra_info.implementation_location_name === 'Region') : new Set([]);
     return (<div>

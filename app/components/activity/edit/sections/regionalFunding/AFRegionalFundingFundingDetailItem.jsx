@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { ActivityConstants, FieldsManager } from 'amp-ui';
 import styles from './AFRegionalFundingFundingDetailItem.css';
 import AFField from '../../components/AFField';
-import * as Types from '../../components/AFComponentTypes';
 import translate from '../../../../../utils/translate';
 
 export default class AFRegionalFundingFundingDetailItem extends Component {
