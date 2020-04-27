@@ -20,13 +20,33 @@ export default class AFRegionalFundingLocationPanel extends Component {
     location: PropTypes.object.isRequired,
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
+    activity: PropTypes.object.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+    const { location, activity } = this.props;
+    this._handlePanelOpenClose = this._handlePanelOpenClose.bind(this);
+    this.state = { panelOpen: this.findLocation(activity, location).regionalFundingPanelOpen || false };
+  }
+
+  _handlePanelOpenClose() {
+    const { activity, location } = this.props;
+    const open = !this.state.panelOpen;
+    this.setState({ panelOpen: open });
+    this.findLocation(activity, location).regionalFundingPanelOpen = open;
+  }
+
+  findLocation(activity, location) {
+    return activity[ActivityConstants.LOCATIONS].find(l => l.location.id === location.location.id);
+  }
 
   render() {
     logger.log('render');
     const { location, handleNewTransaction, removeFundingDetailItem } = this.props;
+    const { panelOpen } = this.state;
     const name = location.location.value;
-    return (<Panel collapsible header={name} key={name}>
+    return (<Panel collapsible header={name} key={name} expanded={panelOpen} onClick={this._handlePanelOpenClose}>
       <div>
         <AFRegionalFundingFundingTypeSection
           location={location}

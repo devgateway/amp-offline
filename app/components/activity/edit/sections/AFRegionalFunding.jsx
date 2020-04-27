@@ -65,10 +65,11 @@ class AFRegionalFunding extends Component {
     const { activity } = this.context;
     logger.error(activity);
     // TODO: filter by implementation type Region only.
-    const locations = activity.locations ? activity.locations.filter(l =>
+    const locations = activity[ActivityConstants.LOCATIONS] ? activity[ActivityConstants.LOCATIONS].filter(l =>
       l.location.extra_info.implementation_location_name === 'Region') : new Set([]);
     return (<div>
       {locations.map(l => (<AFRegionalFundingLocationPanel
+        activity={activity}
         location={l} key={l.location.id}
         removeFundingDetailItem={this._removeFundingDetailItem}
         handleNewTransaction={this._addTransactionItem} />))}
