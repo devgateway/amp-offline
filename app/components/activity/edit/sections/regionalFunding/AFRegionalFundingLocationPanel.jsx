@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, FieldPathConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import AFRegionalFundingFundingTypeSection from '../regionalFunding/AFRegionalFundingFundingTypeSection';
 import translate from '../../../../../utils/translate';
 import fundingStyles from '../funding/AFFundingContainer.css';
+import { REGIONAL_SUB_PATH } from '../AFRegionalFunding';
 
 const logger = new Logger('AF regional funding location panel');
 
@@ -49,9 +50,12 @@ export default class AFRegionalFundingLocationPanel extends Component {
     const { location, handleNewTransaction, removeFundingDetailItem, activity, hasErrors } = this.props;
     const { panelOpen } = this.state;
     const name = location.location.value;
+    // Look for errors on Commitments/Disbursements/Expenditures too.
+    const errorsOnInternalSections = FieldPathConstants.TRANSACTION_TYPES
+      .some(t => hasErrors(activity[REGIONAL_SUB_PATH + t].filter(l => l.region_location.id === location.location.id)));
     return (<Panel
       collapsible header={name} key={name} expanded={panelOpen} onSelect={this._handlePanelOpenClose}
-      className={hasErrors(location) ? fundingStyles.error : ''}>
+      className={hasErrors(location) || errorsOnInternalSections ? fundingStyles.error : ''}>
       <div>
         <AFRegionalFundingFundingTypeSection
           location={location}
