@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Panel } from 'react-bootstrap';
-import { ActivityConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FieldsManager, UIUtils } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import AFRegionalFundingDetailItems from './AFRegionalFundingDetailItems';
 import fundingStyles from '../funding/AFFundingContainer.css';
@@ -72,6 +72,12 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
     }
     if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(path)) {
       const items = activity[path].filter(l => l.region_location.id === location.location.id);
+      // Add a temporal_id field so we can delete items.
+      items.forEach(i => {
+        if (!i[ActivityConstants.TEMPORAL_ID]) {
+          i[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
+        }
+      });
       return (<div>
         <Panel
           header={title} collapsible key={Math.random()} onSelect={this._handlePanelOpenClose}
