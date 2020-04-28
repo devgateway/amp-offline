@@ -24,6 +24,7 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     activity: PropTypes.object.isRequired,
+    hasErrors: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -49,7 +50,7 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
 
   render() {
     logger.log('render');
-    const { title, location, type, handleNewTransaction, removeFundingDetailItem } = this.props;
+    const { title, location, type, handleNewTransaction, removeFundingDetailItem, hasErrors, activity } = this.props;
     const { panelOpen } = this.state;
     let button = '';
     let path = '';
@@ -70,13 +71,15 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
         break;
     }
     if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(path)) {
+      const items = activity[path].filter(l => l.region_location.id === location.location.id);
       return (<div>
         <Panel
           header={title} collapsible key={Math.random()} onSelect={this._handlePanelOpenClose}
-          expanded={panelOpen}>
+          expanded={panelOpen} className={hasErrors(items) ? fundingStyles.error : ''}>
           <AFRegionalFundingDetailItems
-            location={location} type={type}
-            removeFundingDetailItem={removeFundingDetailItem} />
+            items={items} type={type}
+            removeFundingDetailItem={removeFundingDetailItem}
+            hasErrors={hasErrors} />
           <Button
             className={fundingStyles.add_button} bsStyle="primary"
             onClick={() => handleNewTransaction(type, location)}>{button}

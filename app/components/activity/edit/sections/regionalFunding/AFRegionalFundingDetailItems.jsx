@@ -4,6 +4,7 @@ import { ActivityConstants, FieldsManager } from 'amp-ui';
 import styles from './AFRegionalFundingDetailItems.css';
 import AFField from '../../components/AFField';
 import translate from '../../../../../utils/translate';
+import { REGIONAL_SUB_PATH } from '../AFRegionalFunding';
 
 export default class AFRegionalFundingDetailItems extends Component {
 
@@ -15,15 +16,13 @@ export default class AFRegionalFundingDetailItems extends Component {
 
   static propTypes = {
     type: PropTypes.string.isRequired,
-    location: PropTypes.object.isRequired,
+    items: PropTypes.array.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
   };
 
   render() {
-    const { type, location, removeFundingDetailItem } = this.props;
-    const { activity } = this.context;
-    const path = `regional_${type}`;
-    const items = activity[path].filter(l => l.region_location.id === location.location.id);
+    const { type, items, removeFundingDetailItem } = this.props;
+    const path = `${REGIONAL_SUB_PATH}${type}`;
     return (<div>
       <table className={styles.table}>
         <tbody>

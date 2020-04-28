@@ -5,6 +5,7 @@ import { ActivityConstants, FieldsManager } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import AFRegionalFundingFundingTypeSection from '../regionalFunding/AFRegionalFundingFundingTypeSection';
 import translate from '../../../../../utils/translate';
+import fundingStyles from '../funding/AFFundingContainer.css';
 
 const logger = new Logger('AF regional funding location panel');
 
@@ -21,6 +22,7 @@ export default class AFRegionalFundingLocationPanel extends Component {
     handleNewTransaction: PropTypes.func.isRequired,
     removeFundingDetailItem: PropTypes.func.isRequired,
     activity: PropTypes.object.isRequired,
+    hasErrors: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -44,15 +46,18 @@ export default class AFRegionalFundingLocationPanel extends Component {
 
   render() {
     logger.log('render');
-    const { location, handleNewTransaction, removeFundingDetailItem, activity } = this.props;
+    const { location, handleNewTransaction, removeFundingDetailItem, activity, hasErrors } = this.props;
     const { panelOpen } = this.state;
     const name = location.location.value;
-    return (<Panel collapsible header={name} key={name} expanded={panelOpen} onSelect={this._handlePanelOpenClose}>
+    return (<Panel
+      collapsible header={name} key={name} expanded={panelOpen} onSelect={this._handlePanelOpenClose}
+      className={hasErrors(location) ? fundingStyles.error : ''}>
       <div>
         <AFRegionalFundingFundingTypeSection
           location={location}
           activity={activity}
           title={translate('Commitments')}
+          hasErrors={hasErrors}
           type={ActivityConstants.COMMITMENTS}
           removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.COMMITMENTS)}
           handleNewTransaction={handleNewTransaction} />
@@ -60,6 +65,7 @@ export default class AFRegionalFundingLocationPanel extends Component {
           location={location}
           activity={activity}
           title={translate('Disbursements')}
+          hasErrors={hasErrors}
           type={ActivityConstants.DISBURSEMENTS}
           removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.DISBURSEMENTS)}
           handleNewTransaction={handleNewTransaction} />
@@ -67,6 +73,7 @@ export default class AFRegionalFundingLocationPanel extends Component {
           location={location}
           activity={activity}
           title={translate('Expenditures')}
+          hasErrors={hasErrors}
           type={ActivityConstants.EXPENDITURES}
           removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.EXPENDITURES)}
           handleNewTransaction={handleNewTransaction} />
