@@ -33,7 +33,6 @@ class AFRegionalFunding extends Component {
 
   // Evaluate if a fundings section has errors.
   hasErrors(container) {
-    console.error(container);
     if (container) {
       if (container instanceof Array) {
         let error = false;
@@ -71,7 +70,7 @@ class AFRegionalFunding extends Component {
     }
     newFunding.push(fundingDetailItem);
     activity[path] = newFunding;
-    this.forceUpdate(); // TODO: update through state change.
+    this.forceUpdate();
   }
 
   _removeFundingDetailItem(trnType, id) {
@@ -83,16 +82,15 @@ class AFRegionalFunding extends Component {
       const index = newFundingDetails.findIndex((item) => (item[ActivityConstants.TEMPORAL_ID] === id));
       newFundingDetails.splice(index, 1);
       activity[path] = newFundingDetails;
-      this.forceUpdate(); // TODO: update through state change.
+      this.forceUpdate();
     }
   }
 
   render() {
     const { activity } = this.context;
     logger.error(activity);
-    // TODO: filter by implementation type Region only.
     const locations = activity[ActivityConstants.LOCATIONS] ? activity[ActivityConstants.LOCATIONS].filter(l =>
-      l.location.extra_info.implementation_location_name === 'Region') : new Set([]);
+      l.location.extra_info.implementation_location_name === ActivityConstants.REGION) : new Set([]);
     return (<div>
       {locations.map(l => {
         logger.log('Add panel');
