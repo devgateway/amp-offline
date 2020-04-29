@@ -71,7 +71,7 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
         break;
     }
     if (this.context.activityFieldsManager.isFieldPathByPartsEnabled(path)) {
-      const items = activity[path].filter(l => l.region_location.id === location.location.id);
+      const items = activity[path].filter(l => l[ActivityConstants.REGION_LOCATION].id === location.location.id);
       // Add a temporal_id field so we can delete items.
       items.forEach(i => {
         if (!i[ActivityConstants.TEMPORAL_ID]) {

@@ -88,9 +88,9 @@ class AFRegionalFunding extends Component {
 
   render() {
     const { activity } = this.context;
-    logger.error(activity);
     const locations = activity[ActivityConstants.LOCATIONS] ? activity[ActivityConstants.LOCATIONS].filter(l =>
-      l.location.extra_info.implementation_location_name === ActivityConstants.REGION) : new Set([]);
+      l.location.extra_info[ActivityConstants.IMPLEMENTATION_LOCATION_EXTRA_INFO] === ActivityConstants.REGION)
+      : new Set([]);
     return (<div>
       {locations.map(l => {
         logger.log('Add panel');

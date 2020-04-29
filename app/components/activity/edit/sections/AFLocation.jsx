@@ -104,9 +104,10 @@ class AFLocation extends Component {
       FieldPathConstants.TRANSACTION_TYPES.forEach(tt => {
         const field = REGIONAL_SUB_PATH + tt;
         activity[field].forEach(rf => {
-          if (!locations.find(l => (l.location._id === rf.region_location.id))) {
+          if (!locations.find(l => (l.location._id === rf[ActivityConstants.REGION_LOCATION].id))) {
             const newFundingDetails = activity[field].slice();
-            const index = newFundingDetails.findIndex((item) => (item.region_location.id === rf.region_location.id));
+            const index = newFundingDetails.findIndex((item) =>
+              (item[ActivityConstants.REGION_LOCATION].id === rf.region_location.id));
             newFundingDetails.splice(index, 1);
             activity[field] = newFundingDetails;
           }

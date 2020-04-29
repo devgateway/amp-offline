@@ -52,7 +52,8 @@ export default class AFRegionalFundingLocationPanel extends Component {
     const name = location.location.value;
     // Look for errors on Commitments/Disbursements/Expenditures too.
     const errorsOnInternalSections = FieldPathConstants.TRANSACTION_TYPES
-      .some(t => hasErrors(activity[REGIONAL_SUB_PATH + t].filter(l => l.region_location.id === location.location.id)));
+      .some(t => hasErrors(activity[REGIONAL_SUB_PATH + t]
+        .filter(l => l[ActivityConstants.REGION_LOCATION].id === location.location.id)));
     return (<Panel
       collapsible header={name} key={name} expanded={panelOpen} onSelect={this._handlePanelOpenClose}
       className={hasErrors(location) || errorsOnInternalSections ? fundingStyles.error : ''}>
