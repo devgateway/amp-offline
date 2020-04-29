@@ -107,7 +107,7 @@ class AFLocation extends Component {
           if (!locations.find(l => (l.location._id === rf[ActivityConstants.REGION_LOCATION].id))) {
             const newFundingDetails = activity[field].slice();
             const index = newFundingDetails.findIndex((item) =>
-              (item[ActivityConstants.REGION_LOCATION].id === rf.region_location.id));
+              (item[ActivityConstants.REGION_LOCATION].id === rf[[ActivityConstants.REGION_LOCATION]].id));
             newFundingDetails.splice(index, 1);
             activity[field] = newFundingDetails;
           }
