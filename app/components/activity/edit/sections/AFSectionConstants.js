@@ -37,7 +37,8 @@ export const SECTIONS = [
   STRUCTURES,
   ISSUES_SECTION,
   CONTACTS,
-  RELATED_DOCUMENTS
+  RELATED_DOCUMENTS,
+  M_E,
   /*
   COMPONENTS,
   M_E,
@@ -57,7 +58,7 @@ SECTIONS_FM_PATH[COMPONENTS] = ActivityConstants.COMPONENTS;
 SECTIONS_FM_PATH[STRUCTURES] = FeatureManagerConstants.ACTIVITY_STRUCTURES;
 SECTIONS_FM_PATH[ISSUES_SECTION] = ActivityConstants.ISSUES;
 SECTIONS_FM_PATH[CONTACTS] = FeatureManagerConstants.ACTIVITY_CONTACT;
-SECTIONS_FM_PATH[M_E] = null;
+SECTIONS_FM_PATH[M_E] = FeatureManagerConstants.ME;
 SECTIONS_FM_PATH[RELATED_DOCUMENTS] = ActivityConstants.ACTIVITY_DOCUMENTS;
 
 /** stores field paths roots only to link to the section and use this mapping for validation error */
@@ -101,5 +102,5 @@ FIELDS_PER_SECTIONS[STRUCTURES] = new Set([ActivityConstants.STRUCTURES_SHAPE,
 FIELDS_PER_SECTIONS[ISSUES_SECTION] = new Set([ActivityConstants.ISSUES, ActivityConstants.MEASURES,
   ActivityConstants.ACTORS]);
 FIELDS_PER_SECTIONS[CONTACTS] = new Set(FieldPathConstants.ACTIVITY_CONTACT_PATHS);
-FIELDS_PER_SECTIONS[M_E] = new Set([]);
+FIELDS_PER_SECTIONS[M_E] = new Set([ActivityConstants.INDICATORS]);
 FIELDS_PER_SECTIONS[RELATED_DOCUMENTS] = new Set([]);

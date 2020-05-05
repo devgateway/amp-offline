@@ -12,6 +12,7 @@ import AFIssues from './AFIssues';
 import { AFContactsPage } from '../../../../containers/ContactPage';
 import AFStructures from './AFStructures';
 import { AFDocumentPage } from '../../../../containers/ResourcePage';
+import AFME from './AFM_E';
 
 /**
  * Loads AF section
@@ -44,6 +45,8 @@ const loadSection = (sectionName) => {
       return <AFContactsPage />;
     case SC.RELATED_DOCUMENTS:
       return <AFDocumentPage />;
+    case SC.M_E:
+      return <AFME />;
     /*
     case SC.COMPONENTS:
       return <AFComponents />;
