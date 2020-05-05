@@ -3,10 +3,10 @@ import * as PropTypes from 'prop-types';
 import { Col, Grid, Row, Panel } from 'react-bootstrap';
 import { ActivityConstants, FeatureManagerConstants } from 'amp-ui';
 import afStyles from '../ActivityForm.css';
+import styles from './funding/AFFundingDetailItem.css';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { M_E } from './AFSectionConstants';
-import * as Types from '../components/AFComponentTypes';
 import Logger from '../../../../modules/util/LoggerManager';
 
 const logger = new Logger('AF M&E');
@@ -39,17 +39,34 @@ class AFM_E extends Component {
                     parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.LOG_FRAME}`}
                     fmPath={FeatureManagerConstants.ME_ITEM_LOGFRAME_CATEGORY} />
                   <hr />
-                  {sections.map(s => (i[s] ? <div key={Math.random()}>
-                    <AFField
-                      parent={i[s]}
-                      fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_VALUE}`} />
-                    <AFField
-                      parent={i[s]}
-                      fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_DATE}`} />
-                    <AFField
-                      parent={i[s]}
-                      fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_COMMENT}`} />
-                  </div> : null))}
+                  {sections.map(s => (i[s] ? <table className={styles.full_width} key={Math.random()}><tbody>
+                    <tr>
+                      <td className={styles.row}>
+                        <div className={styles.row}>
+                          <AFField
+                            parent={i[s]}
+                            customLabel={`${s} value`}
+                            className={styles.cell_2}
+                            fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_VALUE}`} />
+                          <AFField
+                            parent={i[s]}
+                            customLabel={`${s} date`}
+                            className={styles.cell_2}
+                            fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_DATE}`} />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div className={styles.row}>
+                          <AFField
+                            parent={i[s]}
+                            customLabel={`${s} comment`}
+                            fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_COMMENT}`} />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody></table> : null))}
                 </div>
                 <AFField parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.RISK}`} />
               </Panel>);
