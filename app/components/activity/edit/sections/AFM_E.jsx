@@ -19,10 +19,23 @@ class AFM_E extends Component {
   constructor(props) {
     super(props);
     logger.log('constructor');
+    const { activity } = props;
+    const panels = activity[ActivityConstants.INDICATORS] ?
+      activity[ActivityConstants.INDICATORS].map(e => ({ id: e.id, panelOpen: e.panelOpen ? e.panelOpen : false }))
+      : [];
+    this.state = { panels };
+    this._handlePanelOpenClose = this._handlePanelOpenClose.bind(this);
+  }
+
+  _handlePanelOpenClose(id) {
+    const { panels } = this.state;
+    panels.find(p => p.id === id).panelOpen = !panels.find(p => p.id === id).panelOpen;
+    this.setState({ panels });
   }
 
   render() {
     const { activity } = this.props;
+    const { panels } = this.state;
     const indicators = activity[ActivityConstants.INDICATORS];
     const sections = [ActivityConstants.BASE, ActivityConstants.TARGET, ActivityConstants.REVISED,
       ActivityConstants.CURRENT];
@@ -33,7 +46,9 @@ class AFM_E extends Component {
             {indicators.map(i => {
               logger.error(i);
               return (<Panel
-                key={Math.random()} expanded collapsible header={<div>{i[ActivityConstants.INDICATOR].value}</div>}>
+                key={Math.random()} expanded={panels.find(p => p.id === i.id).panelOpen}
+                collapsible header={i[ActivityConstants.INDICATOR].value}
+                onSelect={this._handlePanelOpenClose.bind(null, i.id)}>
                 <div>
                   <AFField
                     parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.LOG_FRAME}`}
