@@ -102,5 +102,7 @@ FIELDS_PER_SECTIONS[STRUCTURES] = new Set([ActivityConstants.STRUCTURES_SHAPE,
 FIELDS_PER_SECTIONS[ISSUES_SECTION] = new Set([ActivityConstants.ISSUES, ActivityConstants.MEASURES,
   ActivityConstants.ACTORS]);
 FIELDS_PER_SECTIONS[CONTACTS] = new Set(FieldPathConstants.ACTIVITY_CONTACT_PATHS);
-FIELDS_PER_SECTIONS[M_E] = new Set([ActivityConstants.INDICATORS]);
+FIELDS_PER_SECTIONS[M_E] = new Set([ActivityConstants.INDICATORS, ActivityConstants.INDICATOR,
+  ActivityConstants.BASE, ActivityConstants.TARGET, ActivityConstants.CURRENT, ActivityConstants.INDICATOR_COMMENT,
+  ActivityConstants.INDICATOR_DATE, ActivityConstants.INDICATOR_VALUE]);
 FIELDS_PER_SECTIONS[RELATED_DOCUMENTS] = new Set([]);
