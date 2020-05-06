@@ -20,22 +20,27 @@ class AFM_E extends Component {
     super(props);
     logger.log('constructor');
     const { activity } = props;
-    const panels = activity[ActivityConstants.INDICATORS] ?
-      activity[ActivityConstants.INDICATORS].map(e => ({ id: e.id, panelOpen: e.panelOpen ? e.panelOpen : false }))
-      : [];
-    this.state = { panels };
+    if (activity[ActivityConstants.INDICATORS]) {
+      // eslint-disable-next-line no-return-assign
+      activity[ActivityConstants.INDICATORS].forEach(i => i.panelOpen = i.panelOpen ? i.panelOpen : false);
+    }
     this._handlePanelOpenClose = this._handlePanelOpenClose.bind(this);
+    this.findPanel = this.findPanel.bind(this);
   }
 
   _handlePanelOpenClose(id) {
-    const { panels } = this.state;
-    panels.find(p => p.id === id).panelOpen = !panels.find(p => p.id === id).panelOpen;
-    this.setState({ panels });
+    const open = this.findPanel(id).panelOpen;
+    this.findPanel(id).panelOpen = !open;
+    this.forceUpdate();
+  }
+
+  findPanel(id) {
+    const { activity } = this.props;
+    return activity[ActivityConstants.INDICATORS].find(p => p.id === id);
   }
 
   render() {
     const { activity } = this.props;
-    const { panels } = this.state;
     const indicators = activity[ActivityConstants.INDICATORS];
     const sections = [ActivityConstants.BASE, ActivityConstants.TARGET, ActivityConstants.REVISED,
       ActivityConstants.CURRENT];
@@ -46,7 +51,7 @@ class AFM_E extends Component {
             {indicators.map(i => {
               logger.error(i);
               return (<Panel
-                key={Math.random()} expanded={panels.find(p => p.id === i.id).panelOpen}
+                key={Math.random()} expanded={this.findPanel(i.id).panelOpen}
                 collapsible header={i[ActivityConstants.INDICATOR].value}
                 onSelect={this._handlePanelOpenClose.bind(null, i.id)}>
                 <div>
