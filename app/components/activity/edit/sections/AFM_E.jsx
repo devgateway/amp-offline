@@ -8,6 +8,7 @@ import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import { M_E } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
+import fundingStyles from './funding/AFFundingContainer.css';
 
 const logger = new Logger('AF M&E');
 
@@ -49,11 +50,12 @@ class AFM_E extends Component {
         <Row>
           <Col md={12} lg={12} >
             {indicators.map(i => {
-              logger.error(i);
+              const errors = sections.some(j => i[j] && i[j].errors && i[j].errors.length > 0);
               return (<Panel
                 key={Math.random()} expanded={this.findPanel(i.id).panelOpen}
                 collapsible header={i[ActivityConstants.INDICATOR].value}
-                onSelect={this._handlePanelOpenClose.bind(null, i.id)}>
+                onSelect={this._handlePanelOpenClose.bind(null, i.id)}
+                className={errors ? fundingStyles.error : ''}>
                 <div>
                   <AFField
                     parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.LOG_FRAME}`}
