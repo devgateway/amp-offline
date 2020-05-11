@@ -43,14 +43,12 @@ class AFM_E extends Component {
   render() {
     const { activity } = this.props;
     const indicators = activity[ActivityConstants.INDICATORS];
-    const sections = [ActivityConstants.BASE, ActivityConstants.TARGET, ActivityConstants.REVISED,
-      ActivityConstants.CURRENT];
     return (<div className={afStyles.full_width} >
       <Grid className={afStyles.full_width} >
         <Row>
           <Col md={12} lg={12} >
             {indicators.map(i => {
-              const errors = sections.some(j => i[j] && i[j].errors && i[j].errors.length > 0);
+              const errors = ActivityConstants.ME_SECTIONS.some(j => i[j] && i[j].errors && i[j].errors.length > 0);
               return (<Panel
                 key={Math.random()} expanded={this.findPanel(i.id).panelOpen}
                 collapsible header={i[ActivityConstants.INDICATOR].value}
@@ -61,34 +59,35 @@ class AFM_E extends Component {
                     parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.LOG_FRAME}`}
                     fmPath={FeatureManagerConstants.ME_ITEM_LOGFRAME_CATEGORY} />
                   <hr />
-                  {sections.map(s => (i[s] ? <table className={styles.full_width} key={Math.random()}><tbody>
-                    <tr>
-                      <td className={styles.row}>
-                        <div className={styles.row}>
-                          <AFField
-                            parent={i[s]}
-                            customLabel={`${s} value`}
-                            className={styles.cell_2}
-                            fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_VALUE}`} />
-                          <AFField
-                            parent={i[s]}
-                            customLabel={`${s} date`}
-                            className={styles.cell_2}
-                            fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_DATE}`} />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className={styles.row}>
-                          <AFField
-                            parent={i[s]}
-                            customLabel={`${s} comment`}
-                            fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_COMMENT}`} />
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody></table> : null))}
+                  {ActivityConstants.ME_SECTIONS
+                    .map(s => (i[s] ? <table className={styles.full_width} key={Math.random()}><tbody>
+                      <tr>
+                        <td className={styles.row}>
+                          <div className={styles.row}>
+                            <AFField
+                              parent={i[s]}
+                              customLabel={`${s} value`}
+                              className={styles.cell_2}
+                              fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_VALUE}`} />
+                            <AFField
+                              parent={i[s]}
+                              customLabel={`${s} date`}
+                              className={styles.cell_2}
+                              fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_DATE}`} />
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div className={styles.row}>
+                            <AFField
+                              parent={i[s]}
+                              fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_COMMENT}`}
+                              customLabel={`${s} comment`} />
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody></table> : null))}
                 </div>
                 <AFField parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.RISK}`} />
               </Panel>);
