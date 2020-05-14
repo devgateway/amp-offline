@@ -5,10 +5,16 @@ import * as CSC from '../../../utils/constants/ClientSettingsConstants';
 import * as ActivityHelper from '../../../modules/helpers/ActivityHelper';
 import logger from '../ChangelogLogger';
 import { ACTIVITY_PUBLIC_FIELD_VALUES } from '../../../modules/connectivity/AmpApiConstants';
-import * as ConnectionHelper from '../../../modules/connectivity/ConnectionHelper';
 import * as DatabaseManager from '../../../modules/database/DatabaseManager';
 import * as ClientSettingsHelper from '../../../modules/helpers/ClientSettingsHelper';
 import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
+
+
+let ConnectionHelper = {};
+if (process.env.NODE_ENV !== 'test') {
+// eslint-disable-next-line global-require
+  ConnectionHelper = require('../../../modules/connectivity/ConnectionHelper');
+}
 
 // AMPOFFLINE-1515.
 const locationsField = 'locations.location';
