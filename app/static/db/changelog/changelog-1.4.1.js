@@ -9,7 +9,7 @@ import * as DatabaseManager from '../../../modules/database/DatabaseManager';
 import * as ClientSettingsHelper from '../../../modules/helpers/ClientSettingsHelper';
 import PossibleValuesHelper from '../../../modules/helpers/PossibleValuesHelper';
 
-
+// AMPOFFLINE-1515: DO NOT LOAD ConnectionHelper WITH IMPORT BECAUSE IT WILL BREAK MOCHA-TESTS.
 let ConnectionHelper = {};
 if (process.env.NODE_ENV !== 'test') {
 // eslint-disable-next-line global-require
