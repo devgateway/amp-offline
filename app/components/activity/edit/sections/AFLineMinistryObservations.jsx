@@ -6,7 +6,7 @@ import AFSection from './AFSection';
 import { LINE_MINISTRY_OBSERVATIONS } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import translate from '../../../../utils/translate';
-import Item from './lineMinistryObservations/Item';
+import Item from './issues/Item';
 
 const logger = new Logger('AF Line Ministry Observations');
 
@@ -33,7 +33,7 @@ class AFLineMinistryObservations extends Component {
 
     this.addMeasureHandler = this.addMeasureHandler.bind(this);
     this.addActorHandler = this.addActorHandler.bind(this);
-    this.removeObservationHandler = this.removeObservationHandler.bind(this);
+    this.removeTopItemHandler = this.removeTopItemHandler.bind(this);
     this.removeMeasureHandler = this.removeMeasureHandler.bind(this);
     this.removeActorHandler = this.removeActorHandler.bind(this);
   }
@@ -53,46 +53,46 @@ class AFLineMinistryObservations extends Component {
     this.context.activity[ActivityConstants.LINE_MINISTRY_OBSERVATIONS].push(newObservation);
   }
 
-  addMeasureHandler(observationIndex) {
+  addMeasureHandler(itemIndex) {
     const measure = {
       [ActivityConstants.MEASURE_NAME]: '',
       [ActivityConstants.MEASURE_DATE]: undefined,
       [ActivityConstants.ACTORS]: []
     };
     const lineMinistryObservations = this.state.lineMinistryObservations.slice();
-    lineMinistryObservations[observationIndex][ActivityConstants.MEASURES].push(measure);
+    lineMinistryObservations[itemIndex][ActivityConstants.MEASURES].push(measure);
     this.setState({ lineMinistryObservations });
     this.context.activity[ActivityConstants.LINE_MINISTRY_OBSERVATIONS] = lineMinistryObservations;
   }
 
-  addActorHandler(observationIndex, measureIndex) {
+  addActorHandler(itemIndex, measureIndex) {
     const actor = {
       [ActivityConstants.ACTOR_NAME]: ''
     };
     const lineMinistryObservations = this.state.lineMinistryObservations.slice();
-    lineMinistryObservations[observationIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS]
+    lineMinistryObservations[itemIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS]
       .push(actor);
     this.setState({ lineMinistryObservations });
     this.context.activity[ActivityConstants.LINE_MINISTRY_OBSERVATIONS] = lineMinistryObservations;
   }
 
-  removeObservationHandler(observationIndex) {
+  removeTopItemHandler(itemIndex) {
     const lineMinistryObservations = this.state.lineMinistryObservations.slice();
-    lineMinistryObservations.splice(observationIndex, 1);
+    lineMinistryObservations.splice(itemIndex, 1);
     this.setState({ lineMinistryObservations });
     this.context.activity[ActivityConstants.LINE_MINISTRY_OBSERVATIONS] = lineMinistryObservations;
   }
 
-  removeMeasureHandler(observationIndex, measureIndex) {
+  removeMeasureHandler(itemIndex, measureIndex) {
     const lineMinistryObservations = this.state.lineMinistryObservations.slice();
-    lineMinistryObservations[observationIndex][ActivityConstants.MEASURES].splice(measureIndex, 1);
+    lineMinistryObservations[itemIndex][ActivityConstants.MEASURES].splice(measureIndex, 1);
     this.setState({ lineMinistryObservations });
     this.context.activity[ActivityConstants.LINE_MINISTRY_OBSERVATIONS] = lineMinistryObservations;
   }
 
-  removeActorHandler(observationIndex, measureIndex, actorIndex) {
+  removeActorHandler(itemIndex, measureIndex, actorIndex) {
     const lineMinistryObservations = this.state.lineMinistryObservations.slice();
-    lineMinistryObservations[observationIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS]
+    lineMinistryObservations[itemIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS]
       .splice(actorIndex, 1);
     this.setState({ lineMinistryObservations });
     this.context.activity[ActivityConstants.LINE_MINISTRY_OBSERVATIONS] = lineMinistryObservations;
@@ -111,9 +111,11 @@ class AFLineMinistryObservations extends Component {
     if (this.state.lineMinistryObservations) {
       this.state.lineMinistryObservations.forEach((observation, i) => {
         content.push(<Item
-          observation={observation} key={Math.random()} observationIndex={i} addActor={this.addActorHandler}
-          addMeasure={this.addMeasureHandler} removeObservation={this.removeObservationHandler}
-          removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler} />);
+          item={observation} key={Math.random()} itemIndex={i} addActor={this.addActorHandler}
+          addMeasure={this.addMeasureHandler} removeTopItem={this.removeTopItemHandler}
+          removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler}
+          topPath={ActivityConstants.LINE_MINISTRY_OBSERVATIONS}
+        />);
       });
     }
     return <div>{content}</div>;
