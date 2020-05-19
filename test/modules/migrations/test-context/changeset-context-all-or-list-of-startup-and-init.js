@@ -68,6 +68,8 @@ export const isValid = (dbMM: DBMigrationsManager) => {
         ].map(([id, execType]) => execTypeMatch(execType, [id])))
         .then(results => results.every(r => r === true));
     }
+  } else if (dbMM.contextWrapper.context === MC.CONTEXT_AFTER_LOGIN) {
+    return Promise.resolve(true);
   }
   return false;
 };
