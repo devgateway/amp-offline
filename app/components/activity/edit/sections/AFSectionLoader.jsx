@@ -9,6 +9,7 @@ import AFSectors from './AFSectors';
 import AFOrganizations from './AFOrganizations';
 import AFFunding from './AFFunding';
 import AFIssues from './AFIssues';
+import AFLineMinistryObservations from './AFLineMinistryObservations';
 import { AFContactsPage } from '../../../../containers/ContactPage';
 import AFStructures from './AFStructures';
 import { AFDocumentPage } from '../../../../containers/ResourcePage';
@@ -47,6 +48,8 @@ const loadSection = (sectionName) => {
       return <AFDocumentPage />;
     case SC.M_E:
       return <AFME />;
+    case SC.LINE_MINISTRY_OBSERVATIONS:
+      return <AFLineMinistryObservations />;
     /*
     case SC.COMPONENTS:
       return <AFComponents />;

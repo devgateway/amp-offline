@@ -448,6 +448,9 @@
   "Delete Measure": "Delete Measure",
   "Add Actor": "Add Actor",
   "Delete Actor": "Delete Actor",
+  "Observation": "Observation",
+  "Measure": "Measure",
+  "Actor": "Actor",
   "ClickToDownload": "Click here to download document",
   "Resource Name": "Resource Name",
   "Document Type": "Document Type",
@@ -496,5 +499,7 @@
   "awaiting_validation": "The activity is awaiting approval.",
   "editingOtherUserError": "Current activity is being edited by:",
   "editPermissionError": "You do not have permissions to edit this activity.",
-  "sameUserEditingError": "You may only edit one activity at a time."
+  "sameUserEditingError": "You may only edit one activity at a time.",
+  "dbMigrationInProgressWait": "We are currently executing a data migration process that CAN NOT BE INTERRUPTED, it will be over in a few minutes. Please wait and keep the application open.",
+  "dbMigrationModalTitle": "Database Migration Tool"
 }

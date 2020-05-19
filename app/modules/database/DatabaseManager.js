@@ -385,7 +385,8 @@ const DatabaseManager = {
               reject(DatabaseManager._createNotification(err2));
             }
           });
-        } else if (doc === null) {
+        } else {
+          console.error(`Could not find object to delete with id: ${id} in collection: ${collectionName}`);
           resolve(null);
         }
       });
