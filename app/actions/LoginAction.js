@@ -11,6 +11,8 @@ import Logger from '../modules/util/LoggerManager';
 import { isMandatoryUpdate, STATE_CHECK_FOR_UPDATES } from './UpdateAction';
 import * as AAC from '../modules/connectivity/AmpApiConstants';
 import { loadWorkspaces } from './WorkspaceAction';
+import { dbMigrationsManager } from './DBMigrationsAction';
+import * as MC from '../utils/constants/MigrationsConstants';
 
 export const STATE_LOGIN_OK = 'STATE_LOGIN_OK';
 export const STATE_LOGIN_FAIL = 'STATE_LOGIN_FAIL';
@@ -22,6 +24,8 @@ export const STATE_LOGOUT_DISMISS = 'STATE_LOGOUT_DISMISS';
 export const STATE_LOGOUT = 'STATE_LOGOUT';
 export const STATE_CHANGE_PASSWORD_ONLINE = 'STATE_CHANGE_PASSWORD_ONLINE';
 export const STATE_RESET_PASSWORD_ONLINE = 'STATE_RESET_PASSWORD_ONLINE';
+export const STATE_LOGIN_START_DB_MIGRATION = 'STATE_LOGIN_START_DB_MIGRATION';
+export const STATE_LOGIN_END_DB_MIGRATION = 'STATE_LOGIN_END_DB_MIGRATION';
 
 const logger = new Logger('Login action');
 
@@ -40,12 +44,26 @@ export function loginAction(email: string, password: string) {
         // Return the action object that will be dispatched on redux (it can be done manually with dispatch() too).
         dispatch(loginOk({ userData, password, token }));
         dispatch(loadWorkspaces());
-        return checkIfToForceSyncUp().then(() => UrlUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL));
+        return Promise.resolve()
+          .then(() => dbMigrationsManager.runForContextAfterLogin(MC.CONTEXT_AFTER_LOGIN,
+            (() => dispatchShowDBMigrationMessage(dispatch)), (() => dispatchHideDBMigrationMessage(dispatch))))
+          .then(checkIfToForceSyncUp)
+          .then(() => UrlUtils.forwardTo(Constants.SYNCUP_REDIRECT_URL));
       }).catch((err) => {
         dispatch(loginFailed(err));
       });
     }
   };
+}
+
+function dispatchShowDBMigrationMessage(dispatch) {
+  console.log('dispatchShowDBMigrationMessage');
+  return dispatch({ type: STATE_LOGIN_START_DB_MIGRATION });
+}
+
+function dispatchHideDBMigrationMessage(dispatch) {
+  console.log('dispatchHideDBMigrationMessage');
+  return dispatch({ type: STATE_LOGIN_END_DB_MIGRATION });
 }
 
 export function loginAutomaticallyAction() {

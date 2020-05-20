@@ -8,7 +8,9 @@ import {
   STATE_LOGOUT_DISMISS_TO_SYNC,
   STATE_LOGOUT_REQUESTED,
   STATE_CHANGE_PASSWORD_ONLINE,
-  STATE_RESET_PASSWORD_ONLINE
+  STATE_RESET_PASSWORD_ONLINE,
+  STATE_LOGIN_START_DB_MIGRATION,
+  STATE_LOGIN_END_DB_MIGRATION
 } from '../actions/LoginAction';
 import Logger from '../modules/util/LoggerManager';
 
@@ -21,7 +23,8 @@ const defaultState = {
   logoutConfirmed: false,
   logoutDismissedToSync: false,
   isInactivityTimeout: false,
-  errorMessage: undefined
+  errorMessage: undefined,
+  showDBMigrationMessage: false
 };
 
 /**
@@ -72,6 +75,10 @@ export default function loginReducer(state: Object = defaultState, action: Objec
       return Object.assign({}, state);
     case STATE_RESET_PASSWORD_ONLINE:
       return Object.assign({}, state);
+    case STATE_LOGIN_START_DB_MIGRATION:
+      return Object.assign({}, state, { showDBMigrationMessage: true });
+    case STATE_LOGIN_END_DB_MIGRATION:
+      return Object.assign({}, state, { showDBMigrationMessage: false });
     default:
       return state;
   }
