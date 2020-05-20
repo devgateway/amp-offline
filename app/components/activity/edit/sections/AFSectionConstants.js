@@ -34,6 +34,7 @@ export const SECTIONS = [
   ORGANIZATIONS,
   FUNDING,
   LOCATION,
+  REGIONAL_FUNDING,
   STRUCTURES,
   ISSUES_SECTION,
   CONTACTS,
@@ -61,6 +62,7 @@ SECTIONS_FM_PATH[ISSUES_SECTION] = ActivityConstants.ISSUES;
 SECTIONS_FM_PATH[CONTACTS] = FeatureManagerConstants.ACTIVITY_CONTACT;
 SECTIONS_FM_PATH[M_E] = FeatureManagerConstants.ME;
 SECTIONS_FM_PATH[RELATED_DOCUMENTS] = ActivityConstants.ACTIVITY_DOCUMENTS;
+SECTIONS_FM_PATH[REGIONAL_FUNDING] = FeatureManagerConstants.ACTIVITY_REGIONAL_FUNDING;
 SECTIONS_FM_PATH[LINE_MINISTRY_OBSERVATIONS] = ActivityConstants.LINE_MINISTRY_OBSERVATIONS;
 
 /** stores field paths roots only to link to the section and use this mapping for validation error */
@@ -108,5 +110,7 @@ FIELDS_PER_SECTIONS[M_E] = new Set([ActivityConstants.INDICATORS, ActivityConsta
   ActivityConstants.BASE, ActivityConstants.TARGET, ActivityConstants.CURRENT, ActivityConstants.INDICATOR_COMMENT,
   ActivityConstants.INDICATOR_DATE, ActivityConstants.INDICATOR_VALUE]);
 FIELDS_PER_SECTIONS[RELATED_DOCUMENTS] = new Set([]);
+FIELDS_PER_SECTIONS[REGIONAL_FUNDING] = new Set([ActivityConstants.REGIONAL_FUNDINGS_COMMITMENTS,
+  ActivityConstants.REGIONAL_FUNDINGS_DISBURSEMENTS, ActivityConstants.REGIONAL_FUNDINGS_EXPENDITURES]);
 FIELDS_PER_SECTIONS[LINE_MINISTRY_OBSERVATIONS] = new Set([ActivityConstants.LINE_MINISTRY_OBSERVATIONS,
   ActivityConstants.MEASURES, ActivityConstants.ACTORS]);
