@@ -86,6 +86,42 @@ export default ({
         rollback: {
           func: () => logger.error('rollback')
         }
+      },
+      {
+        changeid: 'AMPOFFLINE-1520-update-ids-financial-instrument',
+        author: 'ginchauspe',
+        comment: 'Change financial_instrument id type from single value to an array.',
+        preConditions: [{
+          func: () => ActivityHelper.count().then(nr => nr > 0),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
+        context: MC.CONTEXT_STARTUP,
+        changes: [{
+          func: () => ActivityHelper.findAll({}).then(activities => {
+            activities.forEach(activity => {
+              const currentId = activity[ActivityConstants.FINANCIAL_INSTRUMENT];
+              if (currentId) {
+                activity[ActivityConstants.FINANCIAL_INSTRUMENT] = [currentId];
+              } else {
+                activity[ActivityConstants.FINANCIAL_INSTRUMENT] = [];
+              }
+            });
+            return Promise.resolve(activities);
+          }).then((activities) => ActivityHelper.saveOrUpdateCollection(activities, false)
+            .then(result => result))
+        },
+        {
+          update: {
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
+            field: 'value',
+            value: true,
+            filter: { name: CSC.FORCE_SYNC_UP }
+          }
+        }],
+        rollback: {
+          func: () => logger.error('rollback')
+        }
       }
     ]
   },
