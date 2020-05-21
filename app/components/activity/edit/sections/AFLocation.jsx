@@ -97,22 +97,24 @@ class AFLocation extends Component {
 
   handleLocationsChange(locations) {
     const { activityFieldsManager } = this.props;
-    if (activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_COMMITMENTS) ||
-    activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_DISBURSEMENTS) ||
-    activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_EXPENDITURES)) {
-      const { activity } = this.props;
-      FieldPathConstants.TRANSACTION_TYPES.forEach(tt => {
-        const field = REGIONAL_SUB_PATH + tt;
-        activity[field].forEach(rf => {
-          if (!locations.find(l => (l.location._id === rf[ActivityConstants.REGION_LOCATION].id))) {
-            const newFundingDetails = activity[field].slice();
-            const index = newFundingDetails.findIndex((item) =>
-              (item[ActivityConstants.REGION_LOCATION].id === rf[[ActivityConstants.REGION_LOCATION]].id));
-            newFundingDetails.splice(index, 1);
-            activity[field] = newFundingDetails;
-          }
+    if (locations) {
+      if (activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_COMMITMENTS) ||
+        activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_DISBURSEMENTS) ||
+        activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_EXPENDITURES)) {
+        const { activity } = this.props;
+        FieldPathConstants.TRANSACTION_TYPES.forEach(tt => {
+          const field = REGIONAL_SUB_PATH + tt;
+          activity[field].forEach(rf => {
+            if (!locations.find(l => (l.location._id === rf[ActivityConstants.REGION_LOCATION].id))) {
+              const newFundingDetails = activity[field].slice();
+              const index = newFundingDetails.findIndex((item) =>
+                (item[ActivityConstants.REGION_LOCATION].id === rf[[ActivityConstants.REGION_LOCATION]].id));
+              newFundingDetails.splice(index, 1);
+              activity[field] = newFundingDetails;
+            }
+          });
         });
-      });
+      }
     }
   }
 

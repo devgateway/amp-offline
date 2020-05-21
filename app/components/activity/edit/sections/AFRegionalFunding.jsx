@@ -90,18 +90,21 @@ class AFRegionalFunding extends Component {
     const { activity } = this.context;
     const locations = activity[ActivityConstants.LOCATIONS] ? activity[ActivityConstants.LOCATIONS].filter(l =>
       l.location.extra_info[ActivityConstants.IMPLEMENTATION_LOCATION_EXTRA_INFO] === ActivityConstants.REGION)
-      : new Set([]);
-    return (<div>
-      {locations.map(l => {
-        logger.log('Add panel');
-        return (<AFRegionalFundingLocationPanel
-          activity={activity}
-          location={l} key={l.location.id}
-          removeFundingDetailItem={this._removeFundingDetailItem}
-          handleNewTransaction={this._addTransactionItem}
-          hasErrors={this.hasErrors} />);
-      })}
-    </div>);
+      : [];
+    if (locations.length > 0) {
+      return (<div>
+        {locations.map(l => {
+          logger.log('Add panel');
+          return (<AFRegionalFundingLocationPanel
+            activity={activity}
+            location={l} key={l.location.id}
+            removeFundingDetailItem={this._removeFundingDetailItem}
+            handleNewTransaction={this._addTransactionItem}
+            hasErrors={this.hasErrors} />);
+        })}
+      </div>);
+    }
+    return null;
   }
 }
 
