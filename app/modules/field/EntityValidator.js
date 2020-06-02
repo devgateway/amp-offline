@@ -56,7 +56,11 @@ export default class EntityValidator {
         // once required fields are checked, exclude objects without values from further validation
         const objectsWithFDValues = objects.filter(o => o[fd.name] !== null && o[fd.name] !== undefined);
         this._validateValue(objectsWithFDValues, asDraft, fd, fieldPath);
-        if (fd.isList() && fd.isImportable() && !this._firstLevelOnly) {
+
+        /* The 2nd condition is for structures like "indicators" where part of the tree is not defined as a list,
+        but it still has children. */
+        if ((fd.isList() && fd.isImportable() && !this._firstLevelOnly)
+          || (fd.isImportable() && fd.children)) {
           let childrenObj = objectsWithFDValues.map(o => o[fd.name]);
           // isList === either an actual list or a complex object
           if (Array.isArray(childrenObj[0])) {

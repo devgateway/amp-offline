@@ -2,14 +2,14 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
+import { ActivityConstants, FeatureManager, FeatureManagerConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import AFField from './../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import styles from './Item.css';
 
-const logger = new Logger('AF Issues Item');
+const logger = new Logger('AF Issues/Line Ministry Observation Item');
 
 /**
  * @author Gabriel Inchauspe
@@ -21,17 +21,19 @@ export default class Item extends Component {
   };
 
   static propTypes = {
-    issue: PropTypes.object,
+    item: PropTypes.object,
     measure: PropTypes.object,
     actor: PropTypes.object,
-    issueIndex: PropTypes.number,
+    itemIndex: PropTypes.number,
     measureIndex: PropTypes.number,
     actorIndex: PropTypes.number,
     addMeasure: PropTypes.func.isRequired,
     addActor: PropTypes.func.isRequired,
-    removeIssue: PropTypes.func.isRequired,
+    removeTopItem: PropTypes.func.isRequired,
     removeMeasure: PropTypes.func.isRequired,
-    removeActor: PropTypes.func.isRequired
+    removeActor: PropTypes.func.isRequired,
+    topPath: PropTypes.string.isRequired,
+    topFMPath: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -40,53 +42,55 @@ export default class Item extends Component {
   }
 
   _generateIssueRow() {
+    const { topPath, topFMPath } = this.props;
     return (<div>
       <table className={styles.table}>
         <tr>
           <td>
             <AFField
-              parent={this.props.issue} fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.ISSUE_NAME}`}
+              parent={this.props.item} fieldPath={`${topPath}~${ActivityConstants.ISSUE_NAME}`}
               type={Types.TEXT_AREA} />
           </td>
           <td>
             <AFField
-              parent={this.props.issue} fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.ISSUE_DATE}`}
+              parent={this.props.item} fieldPath={`${topPath}~${ActivityConstants.ISSUE_DATE}`}
               type={Types.DATE}
               showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_ADD_MEASURE`]) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Measure')}:</span>
                 <a
                   title={translate('Add Measure')}
-                  onClick={this.props.addMeasure.bind(null, this.props.issueIndex)}
+                  onClick={this.props.addMeasure.bind(null, this.props.itemIndex)}
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ISSUE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_DELETE_TOP`]) ?
               <a
-                title={translate('Delete Issue')}
+                title={translate('Delete')}
                 className={styles.delete}
-                onClick={this.props.removeIssue.bind(null, this.props.issueIndex)} />
+                onClick={this.props.removeTopItem.bind(null, this.props.itemIndex)} />
               : null}
           </td>
         </tr>
       </table>
 
-      {(this.props.issue[ActivityConstants.MEASURES])
-        ? this.props.issue[ActivityConstants.MEASURES].map((m, i) => (
+      {(this.props.item[ActivityConstants.MEASURES])
+        ? this.props.item[ActivityConstants.MEASURES].map((m, i) => (
           <Item
-            measure={m} issue={this.props.issue} key={Math.random()} removeActor={this.props.removeActor}
-            removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
+            measure={m} item={this.props.item} key={Math.random()} removeActor={this.props.removeActor}
+            removeMeasure={this.props.removeMeasure} removeTopItem={this.props.removeTopItem}
             addMeasure={this.props.addMeasure} addActor={this.props.addActor} measureIndex={i}
-            issueIndex={this.props.issueIndex} />
+            itemIndex={this.props.itemIndex} topPath={this.props.topPath} topFMPath={this.props.topFMPath} />
         ))
         : null}
     </div>);
   }
 
   _generateMeasureRow() {
+    const { topPath, topFMPath } = this.props;
     return (<div className={styles.measure}>
       <table className={styles.table}>
         <tr>
@@ -94,30 +98,30 @@ export default class Item extends Component {
             <img role={'presentation'} className={styles.tree} />
             <AFField
               parent={this.props.measure}
-              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_NAME}`}
+              fieldPath={`${topPath}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_NAME}`}
               type={Types.TEXT_AREA} />
           </td>
           <td>
             <AFField
               parent={this.props.measure}
-              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_DATE}`}
+              fieldPath={`${topPath}~${ActivityConstants.MEASURES}~${ActivityConstants.MEASURE_DATE}`}
               type={Types.DATE} showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_ADD_ACTOR`]) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Actor')}:</span>
                 <a
                   title={translate('Add Actor')}
-                  onClick={this.props.addActor.bind(null, this.props.issueIndex).bind(null, this.props.measureIndex)}
+                  onClick={this.props.addActor.bind(null, this.props.itemIndex).bind(null, this.props.measureIndex)}
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_DELETE_MEASURE`]) ?
               <a
                 title={translate('Delete Measure')}
                 className={styles.delete}
-                onClick={this.props.removeMeasure.bind(null, this.props.issueIndex)
+                onClick={this.props.removeMeasure.bind(null, this.props.itemIndex)
                   .bind(null, this.props.measureIndex)} />
               : null}
           </td>
@@ -127,17 +131,19 @@ export default class Item extends Component {
       {(this.props.measure[ActivityConstants.ACTORS])
         ? this.props.measure[ActivityConstants.ACTORS].map((a, i) => (
           <Item
-            actor={a} measure={this.props.measure} issue={this.props.issue} key={Math.random()}
+            actor={a} measure={this.props.measure} item={this.props.item} key={Math.random()}
             removeActor={this.props.removeActor}
-            removeMeasure={this.props.removeMeasure} removeIssue={this.props.removeIssue}
+            removeMeasure={this.props.removeMeasure} removeTopItem={this.props.removeTopItem}
             addMeasure={this.props.addMeasure} addActor={this.props.addActor}
-            measureIndex={this.props.measureIndex} issueIndex={this.props.issueIndex} actorIndex={i} />
+            measureIndex={this.props.measureIndex} itemIndex={this.props.itemIndex} actorIndex={i}
+            topPath={this.props.topPath} topFMPath={this.props.topFMPath} />
         ))
         : null}
     </div>);
   }
 
   _generateActorRow() {
+    const { topPath, topFMPath } = this.props;
     return (<div className={styles.actor}>
       <table className={styles.table}>
         <tr>
@@ -145,16 +151,16 @@ export default class Item extends Component {
             <img role={'presentation'} className={[styles.tree, styles.actor].join(' ')} />
             <AFField
               parent={this.props.actor}
-              fieldPath={`${ActivityConstants.ISSUES}~${ActivityConstants.MEASURES}~${ActivityConstants.ACTORS}~${ActivityConstants.ACTOR_NAME}`}
+              fieldPath={`${topPath}~${ActivityConstants.MEASURES}~${ActivityConstants.ACTORS}~${ActivityConstants.ACTOR_NAME}`}
               type={Types.TEXT_AREA} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_DELETE_ACTOR`]) ?
               <a
                 title={translate('Delete Actor')}
                 className={[styles.delete, styles.delete_actor].join(' ')}
                 onClick={this.props.removeActor
-                  .bind(null, this.props.issueIndex)
+                  .bind(null, this.props.itemIndex)
                   .bind(null, this.props.measureIndex)
                   .bind(null, this.props.actorIndex)} />
               : null}

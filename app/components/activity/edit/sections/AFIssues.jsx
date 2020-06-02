@@ -33,7 +33,7 @@ class AFIssues extends Component {
 
     this.addMeasureHandler = this.addMeasureHandler.bind(this);
     this.addActorHandler = this.addActorHandler.bind(this);
-    this.removeIssueHandler = this.removeIssueHandler.bind(this);
+    this.removeTopItemHandler = this.removeTopItemHandler.bind(this);
     this.removeMeasureHandler = this.removeMeasureHandler.bind(this);
     this.removeActorHandler = this.removeActorHandler.bind(this);
   }
@@ -53,52 +53,52 @@ class AFIssues extends Component {
     this.context.activity[ActivityConstants.ISSUES].push(newIssue);
   }
 
-  addMeasureHandler(issueIndex) {
+  addMeasureHandler(itemIndex) {
     const measure = {
       [ActivityConstants.MEASURE_NAME]: '',
       [ActivityConstants.MEASURE_DATE]: undefined,
       [ActivityConstants.ACTORS]: []
     };
     const issues = this.state.issues.slice();
-    issues[issueIndex][ActivityConstants.MEASURES].push(measure);
+    issues[itemIndex][ActivityConstants.MEASURES].push(measure);
     this.setState({ issues });
     this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
-  addActorHandler(issueIndex, measureIndex) {
+  addActorHandler(itemIndex, measureIndex) {
     const actor = {
       [ActivityConstants.ACTOR_NAME]: ''
     };
     const issues = this.state.issues.slice();
-    issues[issueIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS].push(actor);
+    issues[itemIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS].push(actor);
     this.setState({ issues });
     this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
-  removeIssueHandler(issueIndex) {
+  removeTopItemHandler(itemIndex) {
     const issues = this.state.issues.slice();
-    issues.splice(issueIndex, 1);
+    issues.splice(itemIndex, 1);
     this.setState({ issues });
     this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
-  removeMeasureHandler(issueIndex, measureIndex) {
+  removeMeasureHandler(itemIndex, measureIndex) {
     const issues = this.state.issues.slice();
-    issues[issueIndex][ActivityConstants.MEASURES].splice(measureIndex, 1);
+    issues[itemIndex][ActivityConstants.MEASURES].splice(measureIndex, 1);
     this.setState({ issues });
     this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
-  removeActorHandler(issueIndex, measureIndex, actorIndex) {
+  removeActorHandler(itemIndex, measureIndex, actorIndex) {
     const issues = this.state.issues.slice();
-    issues[issueIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS].splice(actorIndex, 1);
+    issues[itemIndex][ActivityConstants.MEASURES][measureIndex][ActivityConstants.ACTORS].splice(actorIndex, 1);
     this.setState({ issues });
     this.context.activity[ActivityConstants.ISSUES] = issues;
   }
 
   render() {
     const content = [];
-    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_ISSUE)) {
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_TOP)) {
       content.push(<Button
         bsStyle="primary"
         key={Math.random()}
@@ -108,9 +108,11 @@ class AFIssues extends Component {
     if (this.state.issues) {
       this.state.issues.forEach((issue, i) => {
         content.push(<Item
-          issue={issue} key={Math.random()} issueIndex={i} addActor={this.addActorHandler}
-          addMeasure={this.addMeasureHandler} removeIssue={this.removeIssueHandler}
-          removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler} />);
+          item={issue} key={Math.random()} itemIndex={i} addActor={this.addActorHandler}
+          addMeasure={this.addMeasureHandler} removeTopItem={this.removeTopItemHandler}
+          removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler}
+          topPath={ActivityConstants.ISSUES} topFMPath="ACTIVITY_ISSUES"
+        />);
       });
     }
     return <div>{content}</div>;
