@@ -107,7 +107,7 @@ const routesConfiguration = [{
   requiresAuth: true
 }, {
   url: ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL,
-  method: 'GET',
+  method: 'POST',
   requiresAuth: true
 }, {
   url: ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
