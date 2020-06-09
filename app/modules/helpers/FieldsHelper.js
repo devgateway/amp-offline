@@ -35,6 +35,13 @@ const FieldsHelper = {
     return DatabaseManager.findOne(filter, Constants.COLLECTION_FIELDS);
   },
 
+  findByWorkspaceIdAndType(workspaceId, fieldsType) {
+    logger.debug('findByWorkspaceIdAndType');
+    const filter = { 'ws-member-ids': { $elemMatch: workspaceId } };
+    filter[fieldsType] = { $exists: true };
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_FIELDS);
+  },
+
   /**
    * Find fields trees for specific fields type only
    * @param fieldsType fields type like 'activity-fields'
@@ -63,11 +70,7 @@ const FieldsHelper = {
       } else if (!fieldDefs.length) {
         return null;
       }
-      // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
-      return Promise.reject(new Notification({
-        message: 'noUniqueFieldsTree',
-        origin: ErrorConstants.NOTIFICATION_ORIGIN_DATABASE
-      }));
+      return null;
     });
   },
 

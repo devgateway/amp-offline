@@ -58,8 +58,8 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
    * @param teamMemberId the workspace member id for which rules will be applied (or the current one if unspecified)
    * @return {Promise}
    */
-  static hydrateActivity({ activity, fieldPaths, teamMemberId }) {
-    return ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, teamMemberId })
+  static hydrateActivity({ activity, fieldPaths, wsId }) {
+    return ActivityHydrator.hydrateActivities({ activities: [activity], fieldPaths, wsId })
         .then(activities => activities[0]);
   }
 
@@ -70,13 +70,13 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
    * @param teamMemberId the workspace member id for which rules will be applied (or the current one if unspecified)
    * @return {Promise}
    */
-  static hydrateActivities({ activities, fieldPaths, teamMemberId }) {
+  static hydrateActivities({ activities, fieldPaths, wsId }) {
     // Note: 926 activities are hydrated in 0.2s, where a significant time is consumed by promises
-    if (teamMemberId === undefined) {
+    if (wsId === undefined) {
       return Promise.reject(new Notification(
         { message: 'noWorkspace', origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY }));
     }
-    return FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS)
+    return FieldsHelper.findByWorkspaceIdAndType(wsId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS)
       .then(fieldsDef => {
         if (fieldsDef === null) {
           throw new Notification(

@@ -68,6 +68,8 @@ export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
         .then(data => {
           // eslint-disable-next-line no-return-assign
           data.forEach(i => i['ws-member-ids'] = i.wsMemberIds);
+          // eslint-disable-next-line no-return-assign
+          data.forEach(i => i['activity-fields'] = i.fields);
           return FieldsHelper.replaceAll(data);
         });
     });
