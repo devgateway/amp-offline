@@ -22,7 +22,11 @@ let newIdsData = [];
 
 export default ({
   changelog: {
-    preConditions: [],
+    preConditions: [{
+      func: () => ActivityHelper.count().then(nr => nr > 0),
+      onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+      onError: MC.ON_FAIL_ERROR_CONTINUE
+    }],
     changesets: [
       {
         changeid: 'AMPOFFLINE-1515-update-location-ids-activities',
@@ -35,9 +39,13 @@ export default ({
             const activitiesToUpdate = [];
             return Promise.all([DatabaseManager._getCollection(Constants.COLLECTION_ACTIVITIES).then(collection => {
               logger.info('Create index for locations.');
-              DatabaseManager.createIndex(collection, { fieldName: locationsField });
+              DatabaseManager.createIndex(collection, {fieldName: locationsField});
               return Promise.resolve();
-            }), ConnectionHelper.doPost({ url: ACTIVITY_PUBLIC_FIELD_VALUES, shouldRetry: true, body: [FieldPathConstants.LOCATION_PATH] })
+            }), ConnectionHelper.doPost({
+              url: ACTIVITY_PUBLIC_FIELD_VALUES,
+              shouldRetry: true,
+              body: [FieldPathConstants.LOCATION_PATH]
+            })
               .then(data => {
                 logger.info('Got new ids for locations.');
                 newIdsData = data[FieldPathConstants.LOCATION_PATH];
@@ -45,7 +53,7 @@ export default ({
               })]).then(() => (
               Promise.all(newIdsData.map(d =>
                 // NOTE: Filtering first by 'locations: $exists' made it slower.
-                ActivityHelper.findAll({ 'locations.location': d[ActivityConstants.EXTRA_INFO].old_location_id })
+                ActivityHelper.findAll({'locations.location': d[ActivityConstants.EXTRA_INFO].old_location_id})
                   .then(activities => {
                     if (activities.length > 0) {
                       activities.forEach(a => {
@@ -111,14 +119,14 @@ export default ({
           }).then((activities) => ActivityHelper.saveOrUpdateCollection(activities, false)
             .then(result => result))
         },
-        {
-          update: {
-            table: Constants.COLLECTION_CLIENT_SETTINGS,
-            field: 'value',
-            value: true,
-            filter: { name: CSC.FORCE_SYNC_UP }
-          }
-        }],
+          {
+            update: {
+              table: Constants.COLLECTION_CLIENT_SETTINGS,
+              field: 'value',
+              value: true,
+              filter: {name: CSC.FORCE_SYNC_UP}
+            }
+          }],
         rollback: {
           func: () => logger.error('rollback')
         }
