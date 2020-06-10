@@ -22,17 +22,17 @@ let newIdsData = [];
 
 export default ({
   changelog: {
-    preConditions: [{
-      func: () => ActivityHelper.count().then(nr => nr > 0),
-      onFail: MC.ON_FAIL_ERROR_MARK_RAN,
-      onError: MC.ON_FAIL_ERROR_CONTINUE
-    }],
+    preConditions: [],
     changesets: [
       {
         changeid: 'AMPOFFLINE-1515-update-location-ids-activities',
         author: 'ginchauspe',
         comment: 'Go online to retrieve new ids for amp locations (Part 1 of 2)',
-        preConditions: [],
+        preConditions: [{
+          func: () => ActivityHelper.count().then(nr => nr > 0),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
         context: MC.CONTEXT_AFTER_LOGIN,
         changes: [{
           func: () => {
