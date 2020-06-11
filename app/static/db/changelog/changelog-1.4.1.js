@@ -53,15 +53,18 @@ export default ({
                   .then(activities => {
                     if (activities.length > 0) {
                       activities.forEach(a => {
-                        a.locations.filter(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id)
-                          .forEach(l => {
-                            l.location = d.id;
-                          });
-                        activitiesToUpdate.push(a);
+                        const auxActivity = activitiesToUpdate.find(aux => aux.internal_id === a.internal_id);
+                        // Dont overwrite an activity or only last location will be updated.
+                        if (auxActivity === null || auxActivity === undefined) {
+                          a.locations.find(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id).location = d.id;
+                          activitiesToUpdate.push(a);
+                        } else {
+                          auxActivity.locations.find(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id).location = d.id;
+                        }
                       });
                     }
                     return Promise.resolve();
-                  }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate))
+                  }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate)) // much faster than one by one.
             ));
           }
         }],
