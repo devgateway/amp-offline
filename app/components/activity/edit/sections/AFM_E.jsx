@@ -42,7 +42,7 @@ class AFM_E extends Component {
 
   render() {
     const { activity } = this.props;
-    const indicators = activity[ActivityConstants.INDICATORS];
+    const indicators = activity[ActivityConstants.INDICATORS] || [];
     return (<div className={afStyles.full_width} >
       <Grid className={afStyles.full_width} >
         <Row>
