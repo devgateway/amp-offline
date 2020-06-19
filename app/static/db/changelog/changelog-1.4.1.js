@@ -28,7 +28,11 @@ export default ({
         changeid: 'AMPOFFLINE-1515-update-location-ids-activities',
         author: 'ginchauspe',
         comment: 'Go online to retrieve new ids for amp locations (Part 1 of 2)',
-        preConditions: [],
+        preConditions: [{
+          func: () => ActivityHelper.count().then(nr => nr > 0),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
         context: MC.CONTEXT_AFTER_LOGIN,
         changes: [{
           func: () => {
@@ -49,15 +53,18 @@ export default ({
                   .then(activities => {
                     if (activities.length > 0) {
                       activities.forEach(a => {
-                        a.locations.filter(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id)
-                          .forEach(l => {
-                            l.location = d.id;
-                          });
-                        activitiesToUpdate.push(a);
+                        const auxActivity = activitiesToUpdate.find(aux => aux.internal_id === a.internal_id);
+                        // Dont overwrite an activity or only last location will be updated.
+                        if (auxActivity === null || auxActivity === undefined) {
+                          a.locations.find(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id).location = d.id;
+                          activitiesToUpdate.push(a);
+                        } else {
+                          auxActivity.locations.find(l => l.location === d[ActivityConstants.EXTRA_INFO].old_location_id).location = d.id;
+                        }
                       });
                     }
                     return Promise.resolve();
-                  }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate))
+                  }))).then(() => ActivityHelper.saveOrUpdateCollection(activitiesToUpdate)) // much faster than one by one.
             ));
           }
         }],
@@ -82,6 +89,42 @@ export default ({
         changes: [{
           func: () => Promise.all([PossibleValuesHelper.deleteById(FieldPathConstants.LOCATION_PATH),
             ClientSettingsHelper.updateSettingValue(CSC.FORCE_SYNC_UP, true)])
+        }],
+        rollback: {
+          func: () => logger.error('rollback')
+        }
+      },
+      {
+        changeid: 'AMPOFFLINE-1520-update-ids-financial-instrument',
+        author: 'ginchauspe',
+        comment: 'Change financial_instrument id type from single value to an array.',
+        preConditions: [{
+          func: () => ActivityHelper.count().then(nr => nr > 0),
+          onFail: MC.ON_FAIL_ERROR_MARK_RAN,
+          onError: MC.ON_FAIL_ERROR_CONTINUE
+        }],
+        context: MC.CONTEXT_STARTUP,
+        changes: [{
+          func: () => ActivityHelper.findAll({}).then(activities => {
+            activities.forEach(activity => {
+              const currentId = activity[ActivityConstants.FINANCIAL_INSTRUMENT];
+              if (currentId) {
+                activity[ActivityConstants.FINANCIAL_INSTRUMENT] = [currentId];
+              } else {
+                activity[ActivityConstants.FINANCIAL_INSTRUMENT] = [];
+              }
+            });
+            return Promise.resolve(activities);
+          }).then((activities) => ActivityHelper.saveOrUpdateCollection(activities, false)
+            .then(result => result))
+        },
+        {
+          update: {
+            table: Constants.COLLECTION_CLIENT_SETTINGS,
+            field: 'value',
+            value: true,
+            filter: { name: CSC.FORCE_SYNC_UP }
+          }
         }],
         rollback: {
           func: () => logger.error('rollback')

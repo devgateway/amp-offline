@@ -2,14 +2,14 @@
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FeatureManagerConstants, FeatureManager } from 'amp-ui';
+import { ActivityConstants, FeatureManager, FeatureManagerConstants } from 'amp-ui';
 import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import AFField from './../../components/AFField';
 import * as Types from '../../components/AFComponentTypes';
 import styles from './Item.css';
 
-const logger = new Logger('AF Issues Item');
+const logger = new Logger('AF Issues/Line Ministry Observation Item');
 
 /**
  * @author Gabriel Inchauspe
@@ -33,6 +33,7 @@ export default class Item extends Component {
     removeMeasure: PropTypes.func.isRequired,
     removeActor: PropTypes.func.isRequired,
     topPath: PropTypes.string.isRequired,
+    topFMPath: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -41,7 +42,7 @@ export default class Item extends Component {
   }
 
   _generateIssueRow() {
-    const { topPath } = this.props;
+    const { topPath, topFMPath } = this.props;
     return (<div>
       <table className={styles.table}>
         <tr>
@@ -57,7 +58,7 @@ export default class Item extends Component {
               showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_ADD_MEASURE`]) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Measure')}:</span>
                 <a
@@ -66,9 +67,9 @@ export default class Item extends Component {
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ISSUE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_DELETE_TOP`]) ?
               <a
-                title={translate('Delete Issue')}
+                title={translate('Delete')}
                 className={styles.delete}
                 onClick={this.props.removeTopItem.bind(null, this.props.itemIndex)} />
               : null}
@@ -82,14 +83,14 @@ export default class Item extends Component {
             measure={m} item={this.props.item} key={Math.random()} removeActor={this.props.removeActor}
             removeMeasure={this.props.removeMeasure} removeTopItem={this.props.removeTopItem}
             addMeasure={this.props.addMeasure} addActor={this.props.addActor} measureIndex={i}
-            itemIndex={this.props.itemIndex} topPath={this.props.topPath} />
+            itemIndex={this.props.itemIndex} topPath={this.props.topPath} topFMPath={this.props.topFMPath} />
         ))
         : null}
     </div>);
   }
 
   _generateMeasureRow() {
-    const { topPath } = this.props;
+    const { topPath, topFMPath } = this.props;
     return (<div className={styles.measure}>
       <table className={styles.table}>
         <tr>
@@ -107,7 +108,7 @@ export default class Item extends Component {
               type={Types.DATE} showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_ADD_ACTOR`]) ?
               <span className={styles.addButton}>
                 <span>{translate('Add Actor')}:</span>
                 <a
@@ -116,7 +117,7 @@ export default class Item extends Component {
                   href={null} />
               </span>
               : null}
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_MEASURE) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_DELETE_MEASURE`]) ?
               <a
                 title={translate('Delete Measure')}
                 className={styles.delete}
@@ -135,14 +136,14 @@ export default class Item extends Component {
             removeMeasure={this.props.removeMeasure} removeTopItem={this.props.removeTopItem}
             addMeasure={this.props.addMeasure} addActor={this.props.addActor}
             measureIndex={this.props.measureIndex} itemIndex={this.props.itemIndex} actorIndex={i}
-            topPath={this.props.topPath} />
+            topPath={this.props.topPath} topFMPath={this.props.topFMPath} />
         ))
         : null}
     </div>);
   }
 
   _generateActorRow() {
-    const { topPath } = this.props;
+    const { topPath, topFMPath } = this.props;
     return (<div className={styles.actor}>
       <table className={styles.table}>
         <tr>
@@ -154,7 +155,7 @@ export default class Item extends Component {
               type={Types.TEXT_AREA} />
           </td>
           <td>
-            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_DELETE_ACTOR) ?
+            {FeatureManager.isFMSettingEnabled(FeatureManagerConstants[`${topFMPath}_DELETE_ACTOR`]) ?
               <a
                 title={translate('Delete Actor')}
                 className={[styles.delete, styles.delete_actor].join(' ')}

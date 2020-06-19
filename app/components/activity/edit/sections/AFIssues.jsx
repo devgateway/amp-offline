@@ -98,7 +98,7 @@ class AFIssues extends Component {
 
   render() {
     const content = [];
-    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_ISSUE)) {
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_ISSUES_ADD_TOP)) {
       content.push(<Button
         bsStyle="primary"
         key={Math.random()}
@@ -111,7 +111,7 @@ class AFIssues extends Component {
           item={issue} key={Math.random()} itemIndex={i} addActor={this.addActorHandler}
           addMeasure={this.addMeasureHandler} removeTopItem={this.removeTopItemHandler}
           removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler}
-          topPath={ActivityConstants.ISSUES}
+          topPath={ActivityConstants.ISSUES} topFMPath="ACTIVITY_ISSUES"
         />);
       });
     }

@@ -13,6 +13,7 @@ import AFLineMinistryObservations from './AFLineMinistryObservations';
 import { AFContactsPage } from '../../../../containers/ContactPage';
 import AFStructures from './AFStructures';
 import { AFDocumentPage } from '../../../../containers/ResourcePage';
+import AFRegionalFunding from './AFRegionalFunding';
 import AFME from './AFM_E';
 
 /**
@@ -46,6 +47,8 @@ const loadSection = (sectionName) => {
       return <AFContactsPage />;
     case SC.RELATED_DOCUMENTS:
       return <AFDocumentPage />;
+    case SC.REGIONAL_FUNDING:
+      return <AFRegionalFunding />;
     case SC.M_E:
       return <AFME />;
     case SC.LINE_MINISTRY_OBSERVATIONS:

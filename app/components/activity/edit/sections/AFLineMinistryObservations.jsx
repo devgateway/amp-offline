@@ -100,8 +100,7 @@ class AFLineMinistryObservations extends Component {
 
   render() {
     const content = [];
-    if (FeatureManager
-      .isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_LINE_MINISTRY_OBSERVATIONS_ADD_OBSERVATION)) {
+    if (FeatureManager.isFMSettingEnabled(FeatureManagerConstants.ACTIVITY_LINE_MINISTRY_OBSERVATIONS_ADD_TOP)) {
       content.push(<Button
         bsStyle="primary"
         key={Math.random()}
@@ -115,6 +114,7 @@ class AFLineMinistryObservations extends Component {
           addMeasure={this.addMeasureHandler} removeTopItem={this.removeTopItemHandler}
           removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler}
           topPath={ActivityConstants.LINE_MINISTRY_OBSERVATIONS}
+          topFMPath="ACTIVITY_LINE_MINISTRY_OBSERVATIONS"
         />);
       });
     }
