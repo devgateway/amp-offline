@@ -166,7 +166,8 @@ class AFM_E extends Component {
         <Col md={12} lg={12}>
           <AFField
             parent={this.props.activity} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.INDICATOR}`}
-            type={AFComponentTypes.SEARCH} onAfterUpdate={this.handleAddME} />
+            type={AFComponentTypes.SEARCH} onAfterUpdate={this.handleAddME}
+            extraParams={{ placeholder: translate('Search') }} />
         </Col>
         <Row />
       </Grid>

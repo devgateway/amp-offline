@@ -234,7 +234,7 @@ class AFField extends Component {
     const afOptions = this._toAFOptions(this._getOptions(fieldPath));
     return (<AFSearchList
       onSearchSelect={onAfterUpdate} options={afOptions}
-      placeholder={(extraParams && extraParams.placehoder ? extraParams.placehoder : null)} />);
+      placeholder={(extraParams && extraParams.placeholder ? extraParams.placeholder : null)} />);
   }
 
   _getListSelector() {
