@@ -115,6 +115,7 @@ class AFLineMinistryObservations extends Component {
           removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler}
           topPath={ActivityConstants.LINE_MINISTRY_OBSERVATIONS}
           topFMPath="ACTIVITY_LINE_MINISTRY_OBSERVATIONS"
+          prefix="LINE_MINISTRY_OBSERVATIONS"
         />);
       });
     }
