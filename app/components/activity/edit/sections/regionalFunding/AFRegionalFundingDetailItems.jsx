@@ -31,23 +31,19 @@ export default class AFRegionalFundingDetailItems extends Component {
               <td>
                 <div className={styles.row}>
                   <AFField
-                    parent={l} className={styles.cell_4}
+                    parent={l} className={styles.cell_3}
                     fieldPath={`${path}~${ActivityConstants.ADJUSTMENT_TYPE}`} />
                   <AFField
-                    parent={l} className={styles.cell_4}
+                    parent={l} className={styles.cell_3}
                     fieldPath={`${path}~${ActivityConstants.TRANSACTION_AMOUNT}`} />
                   <AFField
-                    parent={l} className={styles.cell_4}
+                    parent={l} className={styles.cell_3}
                     fieldPath={`${path}~${ActivityConstants.CURRENCY}`}
                     defaultValueAsEmptyObject
                     extraParams={{ noChooseOneOption: true, showOrigValue: true }} />
                   <AFField
-                    parent={l} className={styles.cell_4}
+                    parent={l} className={styles.cell_3}
                     fieldPath={`${path}~${ActivityConstants.TRANSACTION_DATE}`} />
-                </div>
-              </td>
-              <td className={styles.delete_col}>
-                <div className={styles.grid}>
                   <div className={styles.cell_10}>
                     <a
                       onClick={removeFundingDetailItem.bind(this, l[ActivityConstants.TEMPORAL_ID])}
