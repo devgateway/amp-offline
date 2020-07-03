@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityConstants, FieldsManager, UIUtils } from 'amp-ui';
+import { ActivityConstants, FieldsManager, UIUtils, CurrencyRatesManager } from 'amp-ui';
 import Logger from '../../../../modules/util/LoggerManager';
 import AFSection from './AFSection';
 import { REGIONAL_FUNDING } from './AFSectionConstants';
 import translate from '../../../../utils/translate';
-import DateUtils from '../../../../utils/DateUtils';
 import AFRegionalFundingLocationPanel from './regionalFunding/AFRegionalFundingLocationPanel';
+import * as AFUtils from '../util/AFUtils';
 
 const logger = new Logger('AF regional funding');
 
@@ -17,7 +17,9 @@ class AFRegionalFunding extends Component {
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activity: PropTypes.object.isRequired,
-    activityFundingSectionPanelStatus: PropTypes.array.isRequired
+    activityFundingSectionPanelStatus: PropTypes.array.isRequired,
+    currentWorkspaceSettings: PropTypes.object.isRequired,
+    currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager).isRequired,
   };
 
   static propTypes = {
@@ -55,11 +57,18 @@ class AFRegionalFunding extends Component {
 
   _addTransactionItem(trnType, location) {
     logger.debug('_addTransactionItem');
-    const { activity } = this.context;
+    const { activity, activityFieldsManager, currentWorkspaceSettings, currencyRatesManager } = this.context;
     const path = `${REGIONAL_SUB_PATH}${trnType}`;
     const fundingDetailItem = {};
-    fundingDetailItem[ActivityConstants.TRANSACTION_DATE] = DateUtils.getTimestampForAPI(new Date());
-    fundingDetailItem[ActivityConstants.CURRENCY] = {};
+    fundingDetailItem[ActivityConstants.TRANSACTION_DATE] = undefined;
+
+    // When adding a new item we select the default currency like in AMP.
+    const currencyPath = `${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.CURRENCY}`;
+    const currencies = activityFieldsManager.getPossibleValuesOptions(currencyPath);
+    const wsCurrencyCode = currentWorkspaceSettings.currency.code;
+    const currency = AFUtils.getDefaultOrFirstUsableCurrency(currencies, wsCurrencyCode, currencyRatesManager);
+    fundingDetailItem[ActivityConstants.CURRENCY] = currency;
+
     fundingDetailItem[ActivityConstants.TRANSACTION_AMOUNT] = undefined;
     fundingDetailItem[ActivityConstants.ADJUSTMENT_TYPE] = undefined;
     fundingDetailItem[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
