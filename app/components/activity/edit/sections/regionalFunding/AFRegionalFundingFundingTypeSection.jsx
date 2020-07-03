@@ -6,6 +6,7 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import AFRegionalFundingDetailItems from './AFRegionalFundingDetailItems';
 import fundingStyles from '../funding/AFFundingContainer.css';
 import translate from '../../../../../utils/translate';
+import styles from './AFRegionalFundingDetailItems.css';
 
 const logger = new Logger('AF regional funding funding type section');
 
@@ -87,7 +88,7 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
             removeFundingDetailItem={removeFundingDetailItem}
             hasErrors={hasErrors} />
           <Button
-            className={fundingStyles.add_button} bsStyle="primary"
+            className={styles.add_button} bsStyle="primary"
             onClick={() => handleNewTransaction(type, location)}>{button}
           </Button>
         </Panel>

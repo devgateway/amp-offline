@@ -44,10 +44,6 @@ export default class AFRegionalFundingDetailItems extends Component {
                   <AFField
                     parent={l} className={styles.cell_3}
                     fieldPath={`${path}~${ActivityConstants.TRANSACTION_DATE}`} />
-                </div>
-              </td>
-              <td className={styles.delete_col}>
-                <div className={styles.grid}>
                   <div className={styles.cell_10}>
                     <a
                       onClick={removeFundingDetailItem.bind(this, l[ActivityConstants.TEMPORAL_ID])}
