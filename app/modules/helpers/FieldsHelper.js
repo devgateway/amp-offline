@@ -89,19 +89,13 @@ const FieldsHelper = {
    * @return {Promise}
    */
   replaceAllByFieldsType(fieldsTrees, fieldsType) {
-    logger.log('replaceAllByFieldsType');
+    logger.log('replaceAll');
     if (this._isValid(fieldsTrees)) {
       fieldsTrees.forEach(this._setIdIfUndefined);
       const filter = Utils.toMap(fieldsType, { $exists: true });
       return DatabaseManager.replaceCollection(fieldsTrees, Constants.COLLECTION_FIELDS, filter);
     }
     return Promise.reject('Invalid Fields Tree structure. A workspace member must be linked to only one fields tree');
-  },
-
-  replaceAll(fieldsTrees) {
-    logger.log('replaceAll');
-    fieldsTrees.forEach(this._setIdIfUndefined);
-    return DatabaseManager.replaceCollection(fieldsTrees, Constants.COLLECTION_FIELDS, { });
   },
 
   _isValid(fieldsTrees) {

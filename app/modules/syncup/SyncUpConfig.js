@@ -74,7 +74,7 @@ export default class SyncUpConfig {
     dependencies[Constants.SYNCUP_TYPE_ACTIVITIES_PULL] = Utils.toMap(Constants.SYNCUP_TYPE_ACTIVITIES_PUSH,
       SS.STATES_FINISH);
     // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
-    dependencies[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(Constants.SYNCUP_TYPE_WORKSPACES,
+    dependencies[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(Constants.SYNCUP_TYPE_WORKSPACE_MEMBERS,
       SS.STATES_PARTIAL_SUCCESS);
     dependencies[Constants.SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] =
       Utils.toMap(Constants.SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);

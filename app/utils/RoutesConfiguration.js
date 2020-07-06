@@ -3,6 +3,7 @@ import {
   ACTIVITY_EXPORT_BATCHES_URL,
   ACTIVITY_IMPORT_URL,
   ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
+  ACTIVITY_SINGLE_FIELDS_TREE_URL,
   AMP_COUNTRY_FLAG,
   AMP_REGISTRY_PRODUCTION_SETTINGS_URL,
   AMP_REGISTRY_STAGING_SETTINGS_URL,
@@ -10,9 +11,6 @@ import {
   CALENDAR_PULL_URL,
   CHANGE_PASSWORD_URL,
   CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
-  ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL,
-  RESOURCE_FIELDS_PER_WORKSPACE_MEMBER_URL,
-  CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL,
   CONTACT_BATCHES_PULL_URL,
   CONTACT_PULL_URL,
   CONTACT_PUSH_URL,
@@ -21,7 +19,6 @@ import {
   DOWNLOAD_UPGRADE_URL,
   ELECTRON_UPDATER_CHECK_URL,
   FEATURE_MANAGER_URL,
-  FEATURE_MANAGER_BY_WS_URL,
   GET_FULL_EXCHANGE_RATES,
   GET_INCREMENTAL_EXCHANGE_RATES,
   GET_TRANSLATIONS_URL,
@@ -44,7 +41,6 @@ import {
   MAP_TILES_URL,
   GAZETTEER_URL,
   COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
-  ACTIVITY_PUBLIC_FIELD_VALUES,
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -106,8 +102,8 @@ const routesConfiguration = [{
   method: 'POST',
   requiresAuth: true
 }, {
-  url: ACTIVITY_FIELDS_PER_WORKSPACE_MEMBER_URL,
-  method: 'POST',
+  url: ACTIVITY_SINGLE_FIELDS_TREE_URL,
+  method: 'GET',
   requiresAuth: true
 }, {
   url: ACTIVITY_POSSIBLE_VALUES_PER_FIELD_PATHS,
@@ -144,11 +140,7 @@ const routesConfiguration = [{
   url: FEATURE_MANAGER_URL,
   method: 'POST',
   requiredAuth: true
-},
-{ url: FEATURE_MANAGER_BY_WS_URL,
-  method: 'POST',
-  requiredAuth: true },
-{
+}, {
   url: DOWNLOAD_UPGRADE_URL,
   method: 'GET',
   isBinary: true
@@ -181,16 +173,7 @@ const routesConfiguration = [{
   url: CONTACT_SINGLE_FIELDS_TREE_URL,
   method: 'GET',
   requiredAuth: true
-},
-{
-  url: RESOURCE_FIELDS_PER_WORKSPACE_MEMBER_URL,
-  method: 'GET',
-  requiredAuth: true
-},
-{ url: CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL,
-  method: 'GET',
-  requiredAuth: true },
-{
+}, {
   url: CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
   method: 'POST',
   requiredAuth: true
@@ -237,10 +220,6 @@ const routesConfiguration = [{
 }, {
   url: CALENDAR_PULL_URL,
   method: 'GET',
-  requiredAuth: true,
-}, {
-  url: ACTIVITY_PUBLIC_FIELD_VALUES,
-  method: 'POST',
   requiredAuth: true,
 }
 ];

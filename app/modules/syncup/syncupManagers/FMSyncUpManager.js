@@ -1,6 +1,6 @@
 import { Constants, FeatureManagerConstants, FeatureManager, FmManagerHelper } from 'amp-ui';
 import ConnectionHelper from '../../connectivity/ConnectionHelper';
-import { FEATURE_MANAGER_BY_WS_URL } from '../../connectivity/AmpApiConstants';
+import { FEATURE_MANAGER_URL } from '../../connectivity/AmpApiConstants';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import Logger from '../../util/LoggerManager';
 import FMHelper from '../../helpers/FMHelper';
@@ -18,20 +18,18 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
   constructor() {
     super(Constants.SYNCUP_TYPE_FEATURE_MANAGER);
     this.fmPaths = Object.values(FeatureManagerConstants);
-    this.fmTrees = null;
   }
 
   doAtomicSyncUp() {
     logger.log('doAtomicSyncUp');
     const body = FmManagerHelper.getRequestFmSyncUpBody(this.fmPaths);
-    return ConnectionHelper.doPost({ url: FEATURE_MANAGER_BY_WS_URL, body, shouldRetry: true })
+    return ConnectionHelper.doPost({ url: FEATURE_MANAGER_URL, body, shouldRetry: true })
       .then((fmTree) => {
-        fmTree.forEach((tree) => {
-          tree = tree['fm-tree']['fm-settings'];
-          this._setUndetectedFMSettingsAsDisabled(tree);
-        });
+        fmTree = fmTree && fmTree['fm-settings'];
+        this._setUndetectedFMSettingsAsDisabled(fmTree);
         return FMHelper.replaceAll([{ fmTree }]).then((res) => {
-          this.fmTrees = fmTree;
+          // update FeatureManager with the new tree immediately to no longer report new local settings to pull
+          FeatureManager.setFMTree(fmTree);
           return res;
         });
       });
@@ -42,17 +40,7 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
   }
 
   _hasNewLocalSettingsToPull() {
-    let result = false;
-    if (this.fmTrees != null) {
-      this.fmTrees.forEach(tree => {
-        const subTree = tree['fm-tree']['fm-settings'];
-        const futureFM = new FeatureManager(subTree, Logger);
-        if (this.fmPaths.some(fmPath => !futureFM.hasFMSetting(fmPath))) {
-          result = true;
-        }
-      });
-    }
-    return result;
+    return this.fmPaths.some(fmPath => !FeatureManager.hasFMSetting(fmPath));
   }
 
   _setUndetectedFMSettingsAsDisabled(newFmTree) {
