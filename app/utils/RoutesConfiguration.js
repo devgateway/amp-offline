@@ -44,7 +44,7 @@ import {
   MAP_TILES_URL,
   GAZETTEER_URL,
   COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
-  ACTIVITY_PUBLIC_FIELD_VALUES,
+    ACTIVITY_PUBLIC_FIELD_VALUES,
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
