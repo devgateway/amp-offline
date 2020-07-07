@@ -197,8 +197,9 @@ export function loadFMTree(id = undefined) {
   const fmPromise = FMHelper.findAll(dbFilter)
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))
     .then(fmTree => {
-      FeatureManager.setFMTree(fmTree ? fmTree.fmTree : null);
-      return fmTree;
+      const tree = fmTree ? fmTree.fmTree[0]['fm-tree']['fm-settings'] : null;
+      FeatureManager.setFMTree(tree);
+      return tree;
     });
   store.dispatch({
     type: STATE_FM,
