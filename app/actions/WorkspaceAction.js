@@ -11,6 +11,7 @@ import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import { isForceSyncUp } from './SyncUpAction';
 
 import * as URLUtils from '../utils/URLUtils';
+import * as StartupAction from './StartUpAction';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_SELECT_WORKSPACE_ERROR = 'STATE_SELECT_WORKSPACE_ERROR';
@@ -43,7 +44,8 @@ function loadWorkspaceData(wsId) {
     WorkspaceHelper.findById(wsId),
     TeamMemberHelper.findByUserAndWorkspaceId(userId, wsId, true),
     WSSettingsHelper.findByWorkspaceId(wsId),
-    PossibleValuesHelper.findById(`${FieldPathConstants.PREFIX_COMMON}~${ActivityConstants.CURRENCY}`)
+    PossibleValuesHelper.findById(`${FieldPathConstants.PREFIX_COMMON}~${ActivityConstants.CURRENCY}`),
+    StartupAction.loadFMTree(wsId)
   ])
     .then(([workspace, teamMember, workspaceSettings, possibleValue]) => {
       if (!teamMember) {
