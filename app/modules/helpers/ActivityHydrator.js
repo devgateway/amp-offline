@@ -55,7 +55,7 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
    * Hydrates an activity for the specified fields paths and team member
    * @param activity activities to hydrate with full field values
    * @param fieldPaths the field paths to hydrate
-   * @param teamMemberId the workspace member id for which rules will be applied (or the current one if unspecified)
+   * @param wsId the workspace id for which rules will be applied (or the current one if unspecified)
    * @return {Promise}
    */
   static hydrateActivity({ activity, fieldPaths, wsId }) {
@@ -67,7 +67,7 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
    * Hydrates activities with full value data for the selected field paths (or all if no one specific is slected)
    * @param activities activities to hydrate with full field values
    * @param fieldPaths the field paths to hydrate
-   * @param teamMemberId the workspace member id for which rules will be applied (or the current one if unspecified)
+   * @param wsId the workspace id for which rules will be applied (or the current one if unspecified)
    * @return {Promise}
    */
   static hydrateActivities({ activities, fieldPaths, wsId }) {
