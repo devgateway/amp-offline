@@ -25,7 +25,6 @@ export default class ResourceFieldsSyncUpManager extends FieldsSyncUpManager {
       const params = Utils.flattenToListByKey(wsMemberIdsMap, 'id');
       return ConnectionHelper.doPost({ url: this._perWSFieldsUrl, body: params, shouldRetry: true })
         .then(data => {
-          console.error(data);
           // eslint-disable-next-line no-return-assign
           data.forEach(i => i['ws-member-ids'] = i.wsMemberIds);
           // eslint-disable-next-line no-return-assign
