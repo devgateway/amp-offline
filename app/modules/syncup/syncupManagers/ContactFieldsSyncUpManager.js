@@ -29,7 +29,7 @@ export default class ContactFieldsSyncUpManager extends FieldsSyncUpManager {
           data.forEach(i => i['ws-member-ids'] = i.wsMemberIds);
           // eslint-disable-next-line no-return-assign
           data.forEach(i => i['contact-fields'] = i.fields);
-          return FieldsHelper.replaceAll(data);
+          return FieldsHelper.replaceAllByFieldsType(data, 'contact-fields');
         });
     });
   }
