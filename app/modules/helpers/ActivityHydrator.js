@@ -76,7 +76,7 @@ export default class ActivityHydrator extends AbstractEntityHydrator {
       return Promise.reject(new Notification(
         { message: 'noWorkspace', origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY }));
     }
-    return FieldsHelper.findByWorkspaceIdAndType(wsId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS)
+    return FieldsHelper.findByWorkspaceIdAndTypeAndCollection(wsId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS)
       .then(fieldsDef => {
         if (fieldsDef === null) {
           throw new Notification(

@@ -35,7 +35,7 @@ const FieldsHelper = {
     return DatabaseManager.findOne(filter, Constants.COLLECTION_FIELDS);
   },
 
-  findByWorkspaceIdAndType(workspaceId, fieldsType) {
+  findByWorkspaceIdAndTypeAndCollection(workspaceId, fieldsType) {
     logger.debug('findByWorkspaceIdAndType');
     const filter = { 'ws-member-ids': { $elemMatch: workspaceId } };
     filter[fieldsType] = { $exists: true };

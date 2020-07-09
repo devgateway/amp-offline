@@ -46,7 +46,7 @@ export const loadHydratedContactsForActivity = (activity) => (dispatch, ownProps
 
 export const loadHydratedContacts = (ids) => (dispatch, ownProps) => dispatch({
   type: CONTACTS_LOAD,
-  payload: _hydrateContacts(ids, ownProps().userReducer.teamMember.id, ownProps().contactReducer.contactFieldsManager,
+  payload: _hydrateContacts(ids, ownProps().workspaceReducer.currentWorkspace.id, ownProps().contactReducer.contactFieldsManager,
     ownProps().activityReducer.activity)
 });
 
@@ -61,7 +61,7 @@ export const dehydrateAndSaveActivityContacts = (activity) => (dispatch, ownProp
 
 export const configureContactManagers = () => (dispatch, ownProps) => dispatch({
   type: CONTACT_MANAGERS,
-  payload: _getContactManagers(ownProps().userReducer.teamMember.id, ownProps().translationReducer.lang)
+  payload: _getContactManagers(ownProps().workspaceReducer.currentWorkspace.id, ownProps().translationReducer.lang)
 });
 
 export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => {
@@ -70,17 +70,17 @@ export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => 
     !c[ContactConstants.TMP_HYDRATED]).map(([id]) => id);
 };
 
-const _getContactManagers = (teamMemberId, currentLanguage) => Promise.all([
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
+const _getContactManagers = (wsId, currentLanguage) => Promise.all([
+  FieldsHelper.findByWorkspaceIdAndTypeAndCollection(wsId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_CONTACT)
 ]).then(([cFields, possibleValuesCollection]) => ({
   contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage, LoggerManager)
 }));
 
-const _hydrateContacts = (ids, teamMemberId, contactFieldsManager, activity) => Promise.all([
+const _hydrateContacts = (ids, wsId, contactFieldsManager, activity) => Promise.all([
   ContactHelper.findContactsByIds(ids),
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
+  FieldsHelper.findByWorkspaceIdAndTypeAndCollection(wsId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS])
 ]).then(([contacts, cFields]) => {
   const ch = new ContactHydrator(cFields);

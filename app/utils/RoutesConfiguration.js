@@ -184,11 +184,11 @@ const routesConfiguration = [{
 },
 {
   url: RESOURCE_FIELDS_PER_WORKSPACE_MEMBER_URL,
-  method: 'GET',
+  method: 'POST',
   requiredAuth: true
 },
 { url: CONTACT_FIELDS_PER_WORKSPACE_MEMBER_URL,
-  method: 'GET',
+  method: 'POST',
   requiredAuth: true },
 {
   url: CONTACT_POSSIBLE_VALUES_PER_FIELD_PATHS,
