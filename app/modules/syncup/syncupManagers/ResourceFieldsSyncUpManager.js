@@ -28,8 +28,8 @@ export default class ResourceFieldsSyncUpManager extends FieldsSyncUpManager {
           // eslint-disable-next-line no-return-assign
           data.forEach(i => i['ws-member-ids'] = i.wsMemberIds);
           // eslint-disable-next-line no-return-assign
-          data.forEach(i => i['resource-fields'] = i.fields);
-          return FieldsHelper.replaceAllByFieldsType(data, 'resource-fields');
+          data.forEach(i => i[Constants.SYNCUP_TYPE_RESOURCE_FIELDS] = i.fields);
+          return FieldsHelper.replaceAllByFieldsType(data, Constants.SYNCUP_TYPE_RESOURCE_FIELDS);
         });
     });
   }

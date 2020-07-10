@@ -27,8 +27,8 @@ export default class ContactFieldsSyncUpManager extends FieldsSyncUpManager {
           // eslint-disable-next-line no-return-assign
           data.forEach(i => i['ws-member-ids'] = i.wsMemberIds);
           // eslint-disable-next-line no-return-assign
-          data.forEach(i => i['contact-fields'] = i.fields);
-          return FieldsHelper.replaceAllByFieldsType(data, 'contact-fields');
+          data.forEach(i => i[Constants.SYNCUP_TYPE_CONTACT_FIELDS] = i.fields);
+          return FieldsHelper.replaceAllByFieldsType(data, Constants.SYNCUP_TYPE_CONTACT_FIELDS);
         });
     });
   }
