@@ -65,10 +65,14 @@ const FieldsHelper = {
    */
   getSingleFieldsDef(fieldsType, filter, projections) {
     return FieldsHelper.findAllPerFieldType(fieldsType, filter, projections).then(fieldDefs => {
-      if (fieldDefs.length === 1) {
-        return fieldDefs[0][fieldsType];
-      } else if (!fieldDefs.length) {
-        return null;
+      if (fieldDefs) {
+        // Remove fields that could break the sync.
+        fieldDefs.map(fd => {
+          delete fd.wsMemberIds;
+          delete fd[fieldsType];
+          return fd;
+        });
+        return fieldDefs;
       }
       return null;
     });
