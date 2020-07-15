@@ -68,7 +68,8 @@ const FieldsHelper = {
       if (fieldDefs) {
         // Remove fields that could break the sync.
         fieldDefs.map(fd => {
-          delete fd.wsMemberIds;
+          // delete fd.wsMemberIds;
+          delete 'ws-member-ids';
           delete fd[fieldsType];
           return fd;
         });
