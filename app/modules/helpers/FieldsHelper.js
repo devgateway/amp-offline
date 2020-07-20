@@ -1,8 +1,7 @@
-import { Constants, ErrorConstants, UIUtils } from 'amp-ui';
+import { Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
-import Notification from './NotificationHelper';
 
 const logger = new Logger('Fields helper');
 

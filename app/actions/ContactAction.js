@@ -46,7 +46,8 @@ export const loadHydratedContactsForActivity = (activity) => (dispatch, ownProps
 
 export const loadHydratedContacts = (ids) => (dispatch, ownProps) => dispatch({
   type: CONTACTS_LOAD,
-  payload: _hydrateContacts(ids, ownProps().workspaceReducer.currentWorkspace.id, ownProps().contactReducer.contactFieldsManager,
+  payload: _hydrateContacts(ids, ownProps().workspaceReducer.currentWorkspace.id,
+    ownProps().contactReducer.contactFieldsManager,
     ownProps().activityReducer.activity)
 });
 
