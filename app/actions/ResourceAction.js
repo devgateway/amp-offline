@@ -80,7 +80,7 @@ export const loadHydratedResourcesForActivity = (activity) => (dispatch, ownProp
 
 export const loadHydratedResources = (uuids) => (dispatch, ownProps) => dispatch({
   type: RESOURCES_LOAD,
-  payload: _hydrateResources(uuids, ownProps().userReducer.teamMember.id,
+  payload: _hydrateResources(uuids, ownProps().workspaceReducer.currentWorkspace.id,
     ownProps().resourceReducer.resourceFieldsManager, ownProps().activityReducer.activity)
 });
 
@@ -198,20 +198,20 @@ export const uploadFileToPendingResourceAsync = (srcFile) => (dispatch, ownProps
 
 export const configureResourceManagers = () => (dispatch, ownProps) => dispatch({
   type: RESOURCE_MANAGERS,
-  payload: _getResourceManagers(ownProps().userReducer.teamMember.id, ownProps().translationReducer.lang)
+  payload: _getResourceManagers(ownProps().workspaceReducer.currentWorkspace.id, ownProps().translationReducer.lang)
 });
 
-const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
+const _getResourceManagers = (wsId, currentLanguage) => Promise.all([
+  FieldsHelper.findByWorkspaceMemberIdAndType(wsId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_RESOURCE)
 ]).then(([rFields, possibleValuesCollection]) => ({
   resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage, LoggerManager)
 }));
 
-const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([
+const _hydrateResources = (uuids, wsId, resourceFieldsManager, activity) => Promise.all([
   ResourceManager.findResourcesByUuidsWithContent(uuids),
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
+  FieldsHelper.findByWorkspaceMemberIdAndType(wsId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
   if (resources && resources.length) {

@@ -46,7 +46,7 @@ export function loadActivityForActivityPreview(activityId) {
       type: ACTIVITY_LOAD,
       payload: _loadActivity({
         activityId,
-        teamMemberId: ownProps().userReducer.teamMember.id,
+        wsId: ownProps().workspaceReducer.currentWorkspace.id,
         possibleValuesPaths: paths,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
         currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
@@ -65,7 +65,7 @@ export function loadActivityForActivityForm(activityId) {
       type: ACTIVITY_LOAD,
       payload: _loadActivity({
         activityId,
-        teamMemberId: ownProps().userReducer.teamMember.id,
+        wsId: ownProps().workspaceReducer.currentWorkspace.id,
         isAF: true,
         possibleValuesPaths: null,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
@@ -125,13 +125,13 @@ export function saveActivity(activity) {
 }
 
 function _loadActivity({
-                         activityId, teamMemberId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
+                         activityId, wsId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
                          isAF, currentLanguage
                        }) {
   const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
   return Promise.all([
-    _getActivity(activityId, teamMemberId),
-    FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
+    _getActivity(activityId, wsId),
+    FieldsHelper.findByWorkspaceMemberIdAndType(wsId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
     PossibleValuesHelper.findAll(pvFilter),
     isAF ? ActivityHelper.findAllNonRejected({ id: { $ne: activityId } },
       Utils.toMap(ActivityConstants.PROJECT_TITLE, 1)) : []
@@ -178,13 +178,13 @@ const _toNotification = (error) => new Notification(
 
   { message: error, origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY });
 
-const _getActivity = (activityId, teamMemberId) => {
+const _getActivity = (activityId, wsId) => {
   // special case for the new activity
   if (activityId === ValueConstants.NEW_ACTIVITY_ID) {
     return Promise.resolve({});
   }
   return ActivityHelper.findAll({ id: activityId }).then(activity =>
-    ActivityHydrator.hydrateActivity({ activity: activity[0], teamMemberId }));
+    ActivityHydrator.hydrateActivity({ activity: activity[0], fieldPaths: [], wsId }));
 };
 
 function _saveActivity(activity, teamMember, fieldDefs, dispatch) {

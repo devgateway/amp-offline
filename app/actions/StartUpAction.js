@@ -193,12 +193,19 @@ export function loadPossibleValuesManager() {
 export function loadFMTree(id = undefined) {
   logger.log('loadFMTree');
   FeatureManager.setLoggerManager(Logger);
-  const dbFilter = id ? { id } : {};
-  const fmPromise = FMHelper.findAll(dbFilter)
+  const fmPromise = FMHelper.findAll({ })
     .then(fmTrees => (fmTrees.length ? fmTrees[0] : null))
     .then(fmTree => {
-      FeatureManager.setFMTree(fmTree ? fmTree.fmTree : null);
-      return fmTree;
+      let tree = null;
+      if (fmTree && fmTree.fmTree) {
+        if (id !== undefined) {
+          tree = fmTree.fmTree.find(t => t['ws-member-ids'].find(ws => ws === id))['fm-tree']['fm-settings'];
+        } else {
+          tree = fmTree.fmTree[0]['fm-tree']['fm-settings'];
+        }
+      }
+      FeatureManager.setFMTree(tree);
+      return tree;
     });
   store.dispatch({
     type: STATE_FM,

@@ -1,8 +1,7 @@
-import { Constants, ErrorConstants, UIUtils } from 'amp-ui';
+import { Constants, UIUtils } from 'amp-ui';
 import * as DatabaseManager from '../database/DatabaseManager';
 import * as Utils from '../../utils/Utils';
 import Logger from '../../modules/util/LoggerManager';
-import Notification from './NotificationHelper';
 
 const logger = new Logger('Fields helper');
 
@@ -35,6 +34,13 @@ const FieldsHelper = {
     return DatabaseManager.findOne(filter, Constants.COLLECTION_FIELDS);
   },
 
+  findByWorkspaceIdAndTypeAndCollection(workspaceId, fieldsType) {
+    logger.debug('findByWorkspaceIdAndType');
+    const filter = { 'ws-member-ids': { $elemMatch: workspaceId } };
+    filter[fieldsType] = { $exists: true };
+    return DatabaseManager.findOne(filter, Constants.COLLECTION_FIELDS);
+  },
+
   /**
    * Find fields trees for specific fields type only
    * @param fieldsType fields type like 'activity-fields'
@@ -58,16 +64,17 @@ const FieldsHelper = {
    */
   getSingleFieldsDef(fieldsType, filter, projections) {
     return FieldsHelper.findAllPerFieldType(fieldsType, filter, projections).then(fieldDefs => {
-      if (fieldDefs.length === 1) {
-        return fieldDefs[0][fieldsType];
-      } else if (!fieldDefs.length) {
-        return null;
+      if (fieldDefs) {
+        // Remove fields that could break the sync.
+        fieldDefs.map(fd => {
+          // delete fd.wsMemberIds;
+          delete 'ws-member-ids';
+          delete fd[fieldsType];
+          return fd;
+        });
+        return fieldDefs;
       }
-      // TODO remove this error once AMP-25568 is also done, as part of AMPOFFLINE-270
-      return Promise.reject(new Notification({
-        message: 'noUniqueFieldsTree',
-        origin: ErrorConstants.NOTIFICATION_ORIGIN_DATABASE
-      }));
+      return null;
     });
   },
 
