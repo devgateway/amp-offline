@@ -233,7 +233,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
             }
           });
         });
-        copyMasterTrnFile = this.cleanupKeysWithoutPrefix(copyMasterTrnFile, prefixes);
+        // copyMasterTrnFile = this.cleanupKeysWithoutPrefix(copyMasterTrnFile, prefixes);
 
         // Overwrite local file for this language with the new translations from server.
         const localTrnFile = `${Constants.LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`;
