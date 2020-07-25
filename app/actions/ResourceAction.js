@@ -34,6 +34,7 @@ import translate from '../utils/translate';
 import * as URLUtils from '../utils/URLUtils';
 import { VALIDATE_ON_CHANGE_ONLY } from '../utils/constants/EntityConstants';
 import ValidationError from '../modules/field/ValidationError';
+import store from '../index';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -228,7 +229,8 @@ const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
     ars.forEach(ar => {
       const r = rMap.get(ar[UUID]);
       if (r) {
-        r[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
+        r[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null,
+          store.getState().workspaceReducer.currentWorkspace);
         r[VALIDATE_ON_CHANGE_ONLY] = true;
         ar[UUID] = r;
         ar[ValueConstants.TMP_ENTITY_VALIDATOR] = r[ValueConstants.TMP_ENTITY_VALIDATOR];
@@ -298,7 +300,8 @@ const _getActivityResources = (activity, asIds = true) => {
 export const buildNewResource = (resourceFieldsManager, resourceType) => {
   const resource = {};
   ResourceHelper.stampClientChange(resource);
-  resource[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  resource[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, [],
+    store.getState().workspaceReducer.currentWorkspace);
   resource[RESOURCE_TYPE] = { id: resourceType, value: resourceType };
   return resource;
 };

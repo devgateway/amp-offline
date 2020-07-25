@@ -3,6 +3,7 @@ import { ActivityConstants, Constants, FieldPathConstants, FieldsManager, Contac
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
+import store from '../index';
 
 import PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
 import * as Utils from '../utils/Utils';
@@ -93,7 +94,8 @@ const _flagAsFullyHydrated = (contacts, contactFieldsManager, activity) => {
   contacts.forEach(c => {
     const skipValidationFor = ContactHelper.isNewContact(c) ? ['id'] : null;
     c[ContactConstants.TMP_HYDRATED] = true;
-    c[ContactConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(c, contactFieldsManager, null, skipValidationFor);
+    c[ContactConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(c, contactFieldsManager, null,
+      skipValidationFor, store.getState().workspaceReducer.currentWorkspace);
     if (aCsMap) {
       const aCs = aCsMap.get(c.id);
       aCs[ContactConstants.TMP_ENTITY_VALIDATOR] = c[ContactConstants.TMP_ENTITY_VALIDATOR];
@@ -172,7 +174,8 @@ export const buildNewActivityContact = (contactFieldsManager) => {
   const contact = {};
   ContactHelper.stampClientChange(contact);
   contact[ContactConstants.TMP_HYDRATED] = true;
-  contact[ContactConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(contact, contactFieldsManager, null, ['id']);
+  contact[ContactConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(contact, contactFieldsManager, null, ['id'],
+      store.getState().workspaceReducer.currentWorkspace);
   return {
     [ActivityConstants.CONTACT]: contact,
     [ActivityConstants.PRIMARY_CONTACT]: false,
