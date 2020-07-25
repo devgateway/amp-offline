@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
 import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager, FeatureManager,
-  PossibleValuesManager, Loading } from 'amp-ui';
+  PossibleValuesManager, Loading, Constants } from 'amp-ui';
 import * as styles from './ActivityForm.css';
 import { FIELDS_PER_SECTIONS, IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
@@ -48,7 +48,8 @@ export default class ActivityForm extends Component {
     params: PropTypes.shape({
       activityId: PropTypes.string
     }).isRequired,
-    router: PropTypes.object
+    router: PropTypes.object,
+    workspaceReducer: PropTypes.object
   };
 
   static childContextTypes = {
@@ -121,7 +122,8 @@ export default class ActivityForm extends Component {
       return;
     }
     if (activityFieldsManager) {
-      this.activityValidator = new ActivityValidator(activity, activityFieldsManager, otherProjectTitles);
+      this.activityValidator = new ActivityValidator(activity, activityFieldsManager, otherProjectTitles, null,
+        this.props.workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD]);
       this.sections = SECTIONS.map(name => {
         const fmPath = SECTIONS_FM_PATH[name];
         if (!fmPath) {
@@ -180,7 +182,7 @@ export default class ActivityForm extends Component {
     const { currentSection, sectionsWithErrors } = this.state;
     const sectionLinks = this.sections && this.sections.map(sectionName => {
       const linkStyle = currentSection === sectionName ? styles.quick_links_highlight : styles.quick_links_button;
-      const textStyle = `${styles.quick_links} 
+      const textStyle = `${styles.quick_links}
       ${sectionsWithErrors.includes(sectionName) && currentSection !== sectionName ? styles.quick_links_required : ''}`;
       return (<Button
         key={sectionName} onClick={this._selectSection.bind(this, sectionName)} bsStyle="link" block
