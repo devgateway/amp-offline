@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
-import { CurrencyRatesManager, FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager } from 'amp-ui';
+import { CurrencyRatesManager, FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager,
+  Constants } from 'amp-ui';
 import AFLabel from './AFLabel';
 import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
@@ -67,7 +68,8 @@ class AFField extends Component {
     forceRequired: PropTypes.bool,
     fmPath: PropTypes.string,
     onBeforeDelete: PropTypes.func,
-    calendar: PropTypes.object.isRequired
+    calendar: PropTypes.object.isRequired,
+    workspacePrefix: PropTypes.string,
   };
 
   static defaultProps = {
@@ -149,7 +151,8 @@ class AFField extends Component {
       return null;
     }
     const { customLabel, fieldPath } = this.props;
-    const label = translate(customLabel) || this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath);
+    const label = translate(customLabel) || this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath,
+      this.props.workspacePrefix);
     return <AFLabel value={label} required={required} className={styles.label_highlight} extraParams={extraParams} />;
   }
 
@@ -413,7 +416,8 @@ export default connect(
   state => ({
     validationResult: state.activityReducer.validationResult,
     lang: state.translationReducer.lang,
-    calendar: state.startUpReducer.calendar
+    calendar: state.startUpReducer.calendar,
+    workspacePrefix: state.workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD]
   }),
   dispatch => ({
     onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))
