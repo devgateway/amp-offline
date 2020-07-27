@@ -213,7 +213,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
           .readTextDataFileSync(Constants.FS_LOCALES_DIRECTORY,
             `${Constants.LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`));
       }
-      let copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
+      const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
       return new Promise((resolve, reject) => {
         if (prefixes.length === 0) {
           return resolve();

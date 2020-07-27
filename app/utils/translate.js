@@ -13,22 +13,29 @@ const logger = new Logger('translate');
 export default (k, lng) => {
   if (k !== undefined) {
     let prefix;
-    if (store.getState().workspaceReducer
-    && store.getState().workspaceReducer.currentWorkspace
-    && store.getState().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]) {
+    const workspaceReducer = store.getState().workspaceReducer;
+    if (workspaceReducer && workspaceReducer.currentWorkspace
+      && workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]) {
       prefix = Constants.WORKSPACE_PREFIX_SEPARATOR +
-        store.getState().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
+        workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
     } else {
       prefix = Constants.WORKSPACE_PREFIX_SEPARATOR + Constants.DEFAULT_WORKSPACE_PREFIX;
     }
-    k += prefix;
+    const kPrefix = k + prefix;
     // if lng === undefined, then i18next will ignore { lng: undefined } and will use the currently set language
     // we do not use namespaces, while some msgs may include : which is the default i18next ns separator => using &sup;
-    let ret = i18next.t(k, { lng, nsSeparator: '&sup;' });
+    let ret = i18next.t(kPrefix, { lng, nsSeparator: '&sup;' });
     if (ret === undefined) {
-      ret = k;
-      logger.error(`Missing translation for: ${k}`);
+      ret = kPrefix;
+      logger.error(`Missing translation for: ${kPrefix}`);
     }
+
+    // Before first sync.
+    if (ret === k + Constants.WORKSPACE_PREFIX_SEPARATOR + Constants.DEFAULT_WORKSPACE_PREFIX) {
+      logger.warn(`fallback to key without prefix: ${k}`);
+      ret = i18next.t(k, { lng, nsSeparator: '&sup;' });
+    }
+
     // console.log(`translate ${k}  ${ret}`);
     return ret.replace(prefix, '');
   }
