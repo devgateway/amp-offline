@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { FieldPathConstants, FieldsManager, UIUtils, ContactConstants, Constants } from 'amp-ui';
+import { FieldPathConstants, FieldsManager, UIUtils, ContactConstants, WorkspaceConstants } from 'amp-ui';
 import * as styles from './ContactForm.css';
 import * as afStyles from '../../activity/edit/ActivityForm.css';
 import EntityValidator from '../../../modules/field/EntityValidator';
@@ -129,7 +129,7 @@ class ContactForm extends Component {
     const maxListSize = fieldDef[FieldPathConstants.LIST_MAX_SIZE];
     if (maxListSize && maxListSize < newItems.length) {
       const fieldLabel = contactFieldsManager.getFieldLabelTranslation(fieldName,
-        this.context.workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD]);
+        this.context.workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]);
       newItems.pop();
       currentMaxSizeValidation.error = translate('listTooLong')
         .replace('%fieldName%', fieldLabel).replace('%sizeLimit%', maxListSize);

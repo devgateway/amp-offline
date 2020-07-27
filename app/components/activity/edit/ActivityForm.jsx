@@ -123,7 +123,7 @@ export default class ActivityForm extends Component {
     }
     if (activityFieldsManager) {
       this.activityValidator = new ActivityValidator(activity, activityFieldsManager, otherProjectTitles, null,
-        this.props.workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD]);
+        this.props.workspaceReducer.currentWorkspace[Constants.PREFIX_FIELD]);
       this.sections = SECTIONS.map(name => {
         const fmPath = SECTIONS_FM_PATH[name];
         if (!fmPath) {

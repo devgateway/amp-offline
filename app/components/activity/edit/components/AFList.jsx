@@ -1,4 +1,4 @@
-import { ErrorConstants, FieldsManager, Constants } from 'amp-ui';
+import { ErrorConstants, FieldsManager, WorkspaceConstants } from 'amp-ui';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -203,7 +203,7 @@ class AFList extends Component {
 
 export default connect(
   state => Object.assign({}, state, {
-    workspacePrefix: state.workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD]
+    workspacePrefix: state.workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]
   }),
   dispatch => ({
     onConfirmationAlert: (message) => dispatch(addFullscreenAlert(

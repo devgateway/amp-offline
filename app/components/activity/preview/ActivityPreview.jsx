@@ -129,6 +129,7 @@ export default class ActivityPreview extends Component {
           [WorkspaceConstants.CROSS_TEAM_VALIDATION]: workspaceReducer.currentWorkspace[WorkspaceConstants.CROSS_TEAM_VALIDATION],
           [WorkspaceConstants.IS_PRIVATE]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_PRIVATE],
           id: workspaceReducer.currentWorkspace.id,
+          prefix: workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]
         },
       },
       calendar: startUpReducer.calendar,

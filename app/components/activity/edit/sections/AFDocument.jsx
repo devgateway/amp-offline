@@ -13,7 +13,7 @@ import {
   FieldsManager,
   Loading,
   PossibleValuesManager,
-  Constants
+  WorkspaceConstants
 } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
@@ -180,7 +180,7 @@ class AFDocument extends Component {
       const formatExtraData = { fd };
       const customTrn = AF_CUSTOM_TRN[fieldName];
       const label = customTrn ? translate(customTrn) : resourceFieldsManager.getFieldLabelTranslation(fieldName,
-        this.props.workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD]);
+        this.props.workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]);
       return (
         <TableHeaderColumn
           key={fieldName} dataField={fieldName} dataFormat={this.toAPLabel} formatExtraData={formatExtraData}

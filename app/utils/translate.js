@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { Constants } from 'amp-ui';
+import { Constants, WorkspaceConstants } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
 import store from '../index';
 
@@ -15,9 +15,9 @@ export default (k, lng) => {
     let prefix;
     if (store.getState().workspaceReducer
     && store.getState().workspaceReducer.currentWorkspace
-    && store.getState().workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD]) {
+    && store.getState().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]) {
       prefix = Constants.WORKSPACE_PREFIX_SEPARATOR +
-        store.getState().workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD];
+        store.getState().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
     } else {
       prefix = Constants.WORKSPACE_PREFIX_SEPARATOR + Constants.DEFAULT_WORKSPACE_PREFIX;
     }

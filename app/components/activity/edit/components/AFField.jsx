@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { CurrencyRatesManager, FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager,
-  Constants } from 'amp-ui';
+  WorkspaceConstants } from 'amp-ui';
 import AFLabel from './AFLabel';
 import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
@@ -417,7 +417,7 @@ export default connect(
     validationResult: state.activityReducer.validationResult,
     lang: state.translationReducer.lang,
     calendar: state.startUpReducer.calendar,
-    workspacePrefix: state.workspaceReducer.currentWorkspace[Constants.WORKSPACE_PREFIX_FIELD]
+    workspacePrefix: state.workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]
   }),
   dispatch => ({
     onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))
