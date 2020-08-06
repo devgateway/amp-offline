@@ -376,8 +376,8 @@ export default class EntityValidator {
     // using the same messages as in AMP
     if (!Number.isFinite(value)) {
       validationError = translate('percentageValid');
-    } else if (value < 0) {
-      validationError = translate('percentageMinimumError');
+    } else if (value <= 0) {
+      validationError = translate('percentageMinimumZeroError');
     } else if (value > 100) {
       validationError = translate('percentageRangeError');
     }
