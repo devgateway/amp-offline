@@ -377,7 +377,7 @@ export default class EntityValidator {
     if (!Number.isFinite(value)) {
       validationError = translate('percentageValid');
     } else if (value <= 0) {
-      validationError = translate('percentageMinimumError');
+      validationError = translate('percentageMinimumZeroError');
     } else if (value > 100) {
       validationError = translate('percentageRangeError');
     }
