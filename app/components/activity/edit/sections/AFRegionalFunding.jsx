@@ -98,7 +98,8 @@ class AFRegionalFunding extends Component {
   render() {
     const { activity } = this.context;
     const locations = activity[ActivityConstants.LOCATIONS] ? activity[ActivityConstants.LOCATIONS].filter(l =>
-      l.location.extra_info[ActivityConstants.IMPLEMENTATION_LOCATION_EXTRA_INFO] === ActivityConstants.REGION)
+      l.location.extra_info && l.location.extra_info[ActivityConstants.IMPLEMENTATION_LOCATION_EXTRA_INFO] ===
+      ActivityConstants.REGION)
       : [];
     if (locations.length > 0) {
       return (<div>
