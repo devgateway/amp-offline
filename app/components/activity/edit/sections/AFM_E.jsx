@@ -86,6 +86,10 @@ class AFM_E extends Component {
   }
 
   deletedIndicator(id) {
+    const doDelete = confirm(translate('deleteIndicatorConfirm'));
+    if (!doDelete) {
+      return false;
+    }
     const { activity } = this.props;
     const indicators = activity[ActivityConstants.INDICATORS];
     let i = -1;

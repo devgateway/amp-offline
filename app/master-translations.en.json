@@ -391,6 +391,7 @@
   "financing_id": "Financing Id",
   "deleteFundingItem": "Do you really want to delete this funding item?",
   "deleteFundingTransactionItem": "Do you really want to delete this funding transaction item?",
+  "deleteIndicatorConfirm":"Do you really want to delete this indicator?",
   "dontStopUpdateWarning": "AMP Offline is currently being updated. Please do not close the application.",
   "updateConfirmed": "Update availability reconfirmed.",
   "updateNA": "Update not available.",
