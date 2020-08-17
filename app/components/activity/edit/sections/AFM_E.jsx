@@ -12,7 +12,6 @@ import fundingStyles from './funding/AFFundingContainer.css';
 import * as AFComponentTypes from '../components/AFComponentTypes';
 import PossibleValuesHelper from '../../../../modules/helpers/PossibleValuesHelper';
 import translate from '../../../../utils/translate';
-import { TEXT_AREA } from '../components/AFComponentTypes';
 
 const logger = new Logger('AF M&E');
 
@@ -147,7 +146,7 @@ class AFM_E extends Component {
                                 parent={i[s]}
                                 // eslint-disable-next-line max-len
                                 fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_COMMENT}`}
-                                customLabel={`${s} comment`} type={TEXT_AREA} />
+                                customLabel={`${s} comment`} type={AFComponentTypes.TEXT_AREA} />
                             </div>
                           </td>
                         </tr>
