@@ -12,6 +12,7 @@ import fundingStyles from './funding/AFFundingContainer.css';
 import * as AFComponentTypes from '../components/AFComponentTypes';
 import PossibleValuesHelper from '../../../../modules/helpers/PossibleValuesHelper';
 import translate from '../../../../utils/translate';
+import { TEXT_AREA } from '../components/AFComponentTypes';
 
 const logger = new Logger('AF M&E');
 
