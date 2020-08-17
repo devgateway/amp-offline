@@ -146,7 +146,7 @@ class AFM_E extends Component {
                                 parent={i[s]}
                                 // eslint-disable-next-line max-len
                                 fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_COMMENT}`}
-                                customLabel={`${s} comment`} />
+                                customLabel={`${s} comment`} type={TEXT_AREA} />
                             </div>
                           </td>
                         </tr>
