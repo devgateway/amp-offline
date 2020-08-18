@@ -225,7 +225,7 @@ export default class EntityValidator {
             // similarly to AMP, we should report total error if there are % set. E.g. In Niger, Programs % is optional.
             const childrenValues = value.filter(child => child && child instanceof Object
               && this._hasValue(child[percentageChild.field_name]));
-            const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name);
+            const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name, value);
             this.processValidationResult(obj, fieldPath, totError);
           }
           if (fieldDef.uniqueConstraint) {
@@ -394,7 +394,7 @@ export default class EntityValidator {
    * @param fieldName
    * @return {String|boolean}
    */
-  totalPercentageValidator(values, fieldName) {
+  totalPercentageValidator(values, fieldName, value) {
     logger.log('totalPercentageValidator');
     let validationError = null;
     const totalPercentage = values.reduce((totPercentage, val) => {
@@ -403,6 +403,15 @@ export default class EntityValidator {
     }, 0);
     if (values.length && totalPercentage !== 100) {
       validationError = translate('percentageSumError').replace('%totalPercentage%', totalPercentage);
+    } else if (value.length > 0) {
+      // AMPOFFLINE-1539: One or more items without % that dont sum 100.
+      let percentage = 0;
+      value.forEach(val => {
+        percentage += (val[fieldName] || 0);
+      });
+      if (percentage !== 100) {
+        validationError = translate('percentageSumError').replace('%totalPercentage%', percentage);
+      }
     }
     return validationError || true;
   }
