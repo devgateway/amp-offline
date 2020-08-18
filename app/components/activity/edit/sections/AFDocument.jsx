@@ -12,7 +12,8 @@ import {
   FieldPathConstants,
   FieldsManager,
   Loading,
-  PossibleValuesManager
+  PossibleValuesManager,
+  WorkspaceConstants
 } from 'amp-ui';
 import { ResourceFormPage } from '../../../../containers/ResourcePage';
 import AFSection from './AFSection';
@@ -77,12 +78,14 @@ class AFDocument extends Component {
     activityValidator: PropTypes.instanceOf(ActivityValidator),
     Logger: PropTypes.func.isRequired,
     translate: PropTypes.func.isRequired,
+    workspaceReducer: PropTypes.object
   };
 
   static propTypes = {
     resourceReducer: PropTypes.object.isRequired,
     addNewActivityResource: PropTypes.func.isRequired,
     saveFileDialog: PropTypes.func.isRequired,
+    workspaceReducer: PropTypes.object
   };
 
   constructor(props, context) {
@@ -176,7 +179,8 @@ class AFDocument extends Component {
       const fieldName = fd[FieldPathConstants.FIELD_NAME];
       const formatExtraData = { fd };
       const customTrn = AF_CUSTOM_TRN[fieldName];
-      const label = customTrn ? translate(customTrn) : resourceFieldsManager.getFieldLabelTranslation(fieldName);
+      const label = customTrn ? translate(customTrn) : resourceFieldsManager.getFieldLabelTranslation(fieldName,
+        this.props.workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]);
       return (
         <TableHeaderColumn
           key={fieldName} dataField={fieldName} dataFormat={this.toAPLabel} formatExtraData={formatExtraData}

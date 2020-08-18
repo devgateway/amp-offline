@@ -203,6 +203,7 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
 
   updateTranslationFiles(newTranslations, originalMasterTrnFile, langIds) {
     logger.log('updateTranslationFiles');
+    const prefixes = Object.keys(newTranslations);
     const fn = (lang) => {
       // We might need access to previous translations for this language.
       const oldTranslationFileExists = TranslationSyncUpManager.detectSynchronizedTranslationFile(lang);
@@ -214,17 +215,25 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
       }
       const copyMasterTrnFile = Object.assign({}, originalMasterTrnFile);
       return new Promise((resolve, reject) => {
+        if (prefixes.length === 0) {
+          return resolve();
+        }
         // Iterate the master-file copy and look for translations on this language.
         Object.keys(copyMasterTrnFile).forEach(key => {
           const textFromMaster = copyMasterTrnFile[key];
-          const newTextObject = newTranslations[textFromMaster];
-          if (newTextObject && newTextObject[lang]) {
-            copyMasterTrnFile[key] = newTextObject[lang];
-          } else if (oldTranslationFileExists && oldTrnFile[key]) {
-            // Check if we have a previous translation and use it.
-            copyMasterTrnFile[key] = oldTrnFile[key];
-          }
+          prefixes.forEach(prefix => {
+            const keyWithPrefix = `${key}---${prefix}`;
+            const newTextObject = newTranslations[prefix][textFromMaster];
+            if (newTextObject && newTextObject[lang]) {
+              copyMasterTrnFile[keyWithPrefix] = newTextObject[lang];
+            } else if (oldTranslationFileExists && oldTrnFile[key]) {
+              // Check if we have a previous translation and use it.
+              // Also we need to use the new key or the old one in case is the first sync.
+              copyMasterTrnFile[keyWithPrefix] = oldTrnFile[keyWithPrefix] || oldTrnFile[key];
+            }
+          });
         });
+        // copyMasterTrnFile = this.cleanupKeysWithoutPrefix(copyMasterTrnFile, prefixes);
 
         // Overwrite local file for this language with the new translations from server.
         const localTrnFile = `${Constants.LANGUAGE_TRANSLATIONS_FILE}.${lang}.json`;
@@ -241,5 +250,14 @@ export default class TranslationSyncUpManager extends SyncUpManagerInterface {
     // If we have more than one language we make the process in parallel to save time.
     const promises = langIds.map(fn);
     return Promise.all(promises);
+  }
+
+  cleanupKeysWithoutPrefix(trnFile, prefixes) {
+    Object.keys(trnFile).forEach(key => {
+      if (!prefixes.find(p => key.indexOf(p) > -1)) {
+        delete trnFile[key];
+      }
+    });
+    return trnFile;
   }
 }
