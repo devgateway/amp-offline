@@ -1,5 +1,5 @@
 import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants,
-  FieldsManager } from 'amp-ui';
+  FieldsManager, WorkspaceConstants } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -199,15 +199,16 @@ export const uploadFileToPendingResourceAsync = (srcFile) => (dispatch, ownProps
 
 export const configureResourceManagers = () => (dispatch, ownProps) => dispatch({
   type: RESOURCE_MANAGERS,
-  payload: _getResourceManagers(ownProps().workspaceReducer.currentWorkspace.id, ownProps().translationReducer.lang)
+  payload: _getResourceManagers(ownProps().workspaceReducer.currentWorkspace.id, ownProps().translationReducer.lang,
+    ownProps().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD])
 });
 
-const _getResourceManagers = (wsId, currentLanguage) => Promise.all([
+const _getResourceManagers = (wsId, currentLanguage, wsPrefix) => Promise.all([
   FieldsHelper.findByWorkspaceMemberIdAndType(wsId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_RESOURCE)
 ]).then(([rFields, possibleValuesCollection]) => ({
-  resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage, LoggerManager)
+  resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage, LoggerManager, wsPrefix)
 }));
 
 const _hydrateResources = (uuids, wsId, resourceFieldsManager, activity) => Promise.all([

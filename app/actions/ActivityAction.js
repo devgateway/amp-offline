@@ -1,5 +1,5 @@
 import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants
-  , FieldsManager } from 'amp-ui';
+  , FieldsManager, WorkspaceConstants } from 'amp-ui';
 import * as ActivityHelper from '../modules/helpers/ActivityHelper';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
 import * as PossibleValuesHelper from '../modules/helpers/PossibleValuesHelper';
@@ -50,7 +50,8 @@ export function loadActivityForActivityPreview(activityId) {
         possibleValuesPaths: paths,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
         currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
-        currentLanguage: ownProps().translationReducer.lang
+        currentLanguage: ownProps().translationReducer.lang,
+        wsPrefix: ownProps().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]
       }).then(data => {
         ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
         ResourceAction.loadHydratedResourcesForActivity(data.activity)(dispatch, ownProps);
@@ -70,7 +71,8 @@ export function loadActivityForActivityForm(activityId) {
         possibleValuesPaths: null,
         currentWorkspaceSettings: ownProps().workspaceReducer.currentWorkspaceSettings,
         currencyRatesManager: ownProps().currencyRatesReducer.currencyRatesManager,
-        currentLanguage: ownProps().translationReducer.lang
+        currentLanguage: ownProps().translationReducer.lang,
+        wsPrefix: ownProps().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]
       }).then(data => {
         dispatch({ type: ACTIVITY_LOADED_FOR_AF });
         ContactAction.loadHydratedContactsForActivity(data.activity)(dispatch, ownProps);
@@ -126,7 +128,7 @@ export function saveActivity(activity) {
 
 function _loadActivity({
                          activityId, wsId, possibleValuesPaths, currentWorkspaceSettings, currencyRatesManager,
-                         isAF, currentLanguage
+                         isAF, currentLanguage, wsPrefix
                        }) {
   const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
   return Promise.all([
@@ -139,7 +141,7 @@ function _loadActivity({
     .then(([activity, fieldsDef, possibleValuesCollection, otherProjectTitles]) => {
       fieldsDef = fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS];
       const activityFieldsManager = new FieldsManager(fieldsDef, possibleValuesCollection, currentLanguage,
-        LoggerManager);
+        LoggerManager, wsPrefix);
       const activityFundingTotals = new ActivityFundingTotals(activity, activityFieldsManager,
         currentWorkspaceSettings, currencyRatesManager);
       const activityWsId = activity[ActivityConstants.TEAM] && activity[ActivityConstants.TEAM].id;
