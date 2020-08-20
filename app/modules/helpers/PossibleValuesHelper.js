@@ -241,6 +241,15 @@ const PossibleValuesHelper = {
   },
 
   /**
+   * Deletes all possible values.
+   * @return {*}
+   */
+  deleteAll() {
+    logger.log('deleteAll');
+    return DatabaseManager.removeAll({ }, Constants.COLLECTION_POSSIBLE_VALUES);
+  },
+
+  /**
    * Transforms data from AMP format to local format
    * @param fieldPath
    * @param possibleOptionsFromAMP

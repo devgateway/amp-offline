@@ -12,6 +12,9 @@ const changelogs = [
   {
     file: 'changelog-1.4.1.js',
   },
+  {
+    file: 'changelog-1.5.0.js',
+  }
 ];
 
 export default changelogs;
