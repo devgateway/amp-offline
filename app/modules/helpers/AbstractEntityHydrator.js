@@ -1,7 +1,8 @@
 /* eslint-disable class-methods-use-this */
-import { FieldPathConstants, PossibleValuesManager } from 'amp-ui';
+import { FieldPathConstants, PossibleValuesManager, WorkspaceConstants } from 'amp-ui';
 import Logger from '../util/LoggerManager';
 import PossibleValuesHelper from './PossibleValuesHelper';
+import store from '../../index';
 
 const logger = new Logger('AbstractEntityHydrator');
 
@@ -95,8 +96,15 @@ export default class AbstractEntityHydrator {
 
 
   _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs, hydrate = true) {
+    const wsPrefix = store.getState().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
     const fieldName = possibleValues[FieldPathConstants.FIELD_PATH][pathIndex];
-    const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
+    let fieldDef;
+    if (wsPrefix) {
+      const fieldNameWithoutPrefix = fieldName.startsWith(wsPrefix) ? fieldName.substring(wsPrefix.length) : fieldName;
+      fieldDef = fieldDefs.find(fd => fd.field_name === fieldNameWithoutPrefix);
+    } else {
+      fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
+    }
     if (fieldDef === undefined) {
       const warn = `Field definition not found for: ${possibleValues[FieldPathConstants.FIELD_PATH]
         .slice(0, pathIndex + 1).join('~')}`;

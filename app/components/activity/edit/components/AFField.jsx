@@ -251,7 +251,13 @@ class AFField extends Component {
   }
 
   _getOptions(fieldPath, selectedId) {
-    const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
+    let options = null;
+    if (this.props.workspacePrefix) {
+      options = this.context.activityFieldsManager.possibleValuesMap[this.props.workspacePrefix + fieldPath]
+        || this.context.activityFieldsManager.possibleValuesMap[fieldPath];
+    } else {
+      options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
+    }
     if (options === null) {
       // TODO throw error but continue to render (?)
       logger.error(`Options not found for ${this.props.fieldPath}`);
