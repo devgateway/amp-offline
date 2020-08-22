@@ -94,17 +94,9 @@ export default class AbstractEntityHydrator {
     return entities;
   }
 
-
   _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs, hydrate = true) {
-    const wsPrefix = store.getState().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
     const fieldName = possibleValues[FieldPathConstants.FIELD_PATH][pathIndex];
-    let fieldDef;
-    if (wsPrefix) {
-      const fieldNameWithoutPrefix = fieldName.startsWith(wsPrefix) ? fieldName.substring(wsPrefix.length) : fieldName;
-      fieldDef = fieldDefs.find(fd => fd.field_name === fieldNameWithoutPrefix);
-    } else {
-      fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
-    }
+    const fieldDef = fieldDefs.find(fd => fd.field_name === fieldName);
     if (fieldDef === undefined) {
       const warn = `Field definition not found for: ${possibleValues[FieldPathConstants.FIELD_PATH]
         .slice(0, pathIndex + 1).join('~')}`;
@@ -188,6 +180,20 @@ export default class AbstractEntityHydrator {
           if (missing.size > 0) {
             logger.error(`Field paths not found: ${missing.toJSON()}`);
           }
+        }
+        /* If the workspace has a prefix then replace ids in regular fields with their counterparts for that ws prefix.
+        * ie: "modalities" <-> SSC_modalities. The reason to do it here is because we cant do it later
+        * on _hydrateFieldPath  */
+        const wsPrefix = store.getState().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
+        if (wsPrefix) {
+          const pvWithPrefix = possibleValuesCollection.filter(pv => pv.id.startsWith(wsPrefix));
+          pvWithPrefix.forEach(pvwp => {
+            possibleValuesCollection.forEach((pv, i) => {
+              if (wsPrefix + pv.id === pvwp.id) {
+                possibleValuesCollection[i]['possible-options'] = pvwp['possible-options'];
+              }
+            });
+          });
         }
         return possibleValuesCollection;
       });
