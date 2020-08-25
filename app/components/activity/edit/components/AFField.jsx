@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
 import { CurrencyRatesManager, FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager,
-  WorkspaceConstants } from 'amp-ui';
+  WorkspaceConstants, ActivityConstants } from 'amp-ui';
 import AFLabel from './AFLabel';
 import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
@@ -251,21 +251,28 @@ class AFField extends Component {
   }
 
   _getOptions(fieldPath, selectedId) {
-    let options = null;
-    if (this.props.workspacePrefix) {
-      options = this.context.activityFieldsManager.possibleValuesMap[this.props.workspacePrefix + fieldPath]
-        || this.context.activityFieldsManager.possibleValuesMap[fieldPath];
-    } else {
-      options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
-    }
+    const { workspacePrefix } = this.props;
+    const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
     if (options === null) {
       // TODO throw error but continue to render (?)
       logger.error(`Options not found for ${this.props.fieldPath}`);
       return [];
     }
+    let optionsWithPrefix = { };
+    if (workspacePrefix && Object.keys(options).filter(o => options[o][ActivityConstants.EXTRA_INFO]
+      && options[o][ActivityConstants.EXTRA_INFO][WorkspaceConstants.PREFIX_FIELD] === workspacePrefix)) {
+      Object.keys(options).forEach(o => {
+        if (options[o][ActivityConstants.EXTRA_INFO][WorkspaceConstants.PREFIX_FIELD] === workspacePrefix) {
+          optionsWithPrefix[o] = options[o];
+        }
+      });
+    }
+    if (Object.keys(optionsWithPrefix).length === 0) {
+      optionsWithPrefix = options;
+    }
     const isORFilter = (this.props.extraParams && this.props.extraParams.isORFilter) || false;
     return PossibleValuesManager.setVisibility(
-      options, fieldPath, this.context.currencyRatesManager, this.props.filter, isORFilter, selectedId);
+      optionsWithPrefix, fieldPath, this.context.currencyRatesManager, this.props.filter, isORFilter, selectedId);
   }
 
   _toAFOptions(options) {
