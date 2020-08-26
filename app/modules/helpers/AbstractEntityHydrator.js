@@ -91,6 +91,7 @@ export default class AbstractEntityHydrator {
 
   _hydrateEntitiesWithFullObjects(entities, possibleValuesCollection, hydrate = true) {
     possibleValuesCollection.forEach(pv => this._hydrateFieldPath(entities, pv, 0, this._fieldsDef, hydrate));
+    console.error(entities);
     return entities;
   }
 
@@ -180,20 +181,6 @@ export default class AbstractEntityHydrator {
           if (missing.size > 0) {
             logger.error(`Field paths not found: ${missing.toJSON()}`);
           }
-        }
-        /* If the workspace has a prefix then replace ids in regular fields with their counterparts for that ws prefix.
-        * ie: "modalities" <-> SSC_modalities. The reason to do it here is because we cant do it later
-        * on _hydrateFieldPath  */
-        const wsPrefix = store.getState().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
-        if (wsPrefix) {
-          const pvWithPrefix = possibleValuesCollection.filter(pv => pv.id.startsWith(wsPrefix));
-          pvWithPrefix.forEach(pvwp => {
-            possibleValuesCollection.forEach((pv, i) => {
-              if (wsPrefix + pv.id === pvwp.id) {
-                possibleValuesCollection[i]['possible-options'] = pvwp['possible-options'];
-              }
-            });
-          });
         }
         return possibleValuesCollection;
       });

@@ -252,6 +252,7 @@ class AFField extends Component {
 
   _getOptions(fieldPath, selectedId) {
     const { workspacePrefix } = this.props;
+    const somePrefix = workspacePrefix || '';
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
     if (options === null) {
       // TODO throw error but continue to render (?)
@@ -259,10 +260,11 @@ class AFField extends Component {
       return [];
     }
     let optionsWithPrefix = { };
-    if (workspacePrefix && Object.keys(options).filter(o => options[o][ActivityConstants.EXTRA_INFO]
-      && options[o][ActivityConstants.EXTRA_INFO][WorkspaceConstants.PREFIX_FIELD] === workspacePrefix)) {
+    if (Object.keys(options).filter(o => options[o][ActivityConstants.EXTRA_INFO]
+      && options[o][ActivityConstants.EXTRA_INFO][WorkspaceConstants.PREFIX_FIELD] === somePrefix)) {
       Object.keys(options).forEach(o => {
-        if (options[o][ActivityConstants.EXTRA_INFO][WorkspaceConstants.PREFIX_FIELD] === workspacePrefix) {
+        if (options[o][ActivityConstants.EXTRA_INFO] &&
+          options[o][ActivityConstants.EXTRA_INFO][WorkspaceConstants.PREFIX_FIELD] === somePrefix) {
           optionsWithPrefix[o] = options[o];
         }
       });
