@@ -1,5 +1,6 @@
 import equal from 'fast-deep-equal';
-import { ActivityConstants, Constants, FieldPathConstants, FieldsManager, ContactConstants } from 'amp-ui';
+import { ActivityConstants, Constants, FieldPathConstants, FieldsManager, ContactConstants,
+  WorkspaceConstants } from 'amp-ui';
 import ContactHelper from '../modules/helpers/ContactHelper';
 import ContactHydrator from '../modules/helpers/ContactHydrator';
 import * as FieldsHelper from '../modules/helpers/FieldsHelper';
@@ -63,7 +64,8 @@ export const dehydrateAndSaveActivityContacts = (activity) => (dispatch, ownProp
 
 export const configureContactManagers = () => (dispatch, ownProps) => dispatch({
   type: CONTACT_MANAGERS,
-  payload: _getContactManagers(ownProps().workspaceReducer.currentWorkspace.id, ownProps().translationReducer.lang)
+  payload: _getContactManagers(ownProps().workspaceReducer.currentWorkspace.id, ownProps().translationReducer.lang,
+    ownProps().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD])
 });
 
 export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => {
@@ -72,12 +74,12 @@ export const filterForUnhydratedByIds = (contactIds) => (dispatch, ownProps) => 
     !c[ContactConstants.TMP_HYDRATED]).map(([id]) => id);
 };
 
-const _getContactManagers = (wsId, currentLanguage) => Promise.all([
+const _getContactManagers = (wsId, currentLanguage, wsPrefix) => Promise.all([
   FieldsHelper.findByWorkspaceIdAndTypeAndCollection(wsId, Constants.SYNCUP_TYPE_CONTACT_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_CONTACT_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_CONTACT)
 ]).then(([cFields, possibleValuesCollection]) => ({
-  contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage, LoggerManager)
+  contactFieldsManager: new FieldsManager(cFields, possibleValuesCollection, currentLanguage, LoggerManager, wsPrefix)
 }));
 
 const _hydrateContacts = (ids, wsId, contactFieldsManager, activity) => Promise.all([

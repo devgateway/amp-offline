@@ -1,4 +1,5 @@
-import { ActivityConstants, Constants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, Constants, ValueConstants, FieldPathConstants, FieldsManager,
+  WorkspaceConstants } from 'amp-ui';
 import * as WorkspaceHelper from '../helpers/WorkspaceHelper';
 import Utils from '../../utils/Utils';
 import ActivityFilter from './ActivityFilter';
@@ -55,7 +56,8 @@ export default class WorkspaceFilterBuilder {
         FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
         PossibleValuesHelper.findAll(FieldPathConstants.ADJUSTMENT_TYPE_PATHS),
       ]).then(([fieldsDef, pvs]) => {
-        const fieldsManager = new FieldsManager(fieldsDef, pvs, LoggerManager);
+        const fieldsManager = new FieldsManager(fieldsDef, pvs, LoggerManager,
+          this._workspace[WorkspaceConstants.PREFIX_FIELD]);
         return (new ActivityFilter(this._wsFilters, fieldsManager)).getDBFilter();
       });
     }
