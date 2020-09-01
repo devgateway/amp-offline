@@ -56,7 +56,11 @@ export default class EntityValidator {
         // once required fields are checked, exclude objects without values from further validation
         const objectsWithFDValues = objects.filter(o => o[fd.name] !== null && o[fd.name] !== undefined);
         this._validateValue(objectsWithFDValues, asDraft, fd, fieldPath);
-        if (fd.isList() && fd.isImportable() && !this._firstLevelOnly) {
+
+        /* The 2nd condition is for structures like "indicators" where part of the tree is not defined as a list,
+        but it still has children. */
+        if ((fd.isList() && fd.isImportable() && !this._firstLevelOnly)
+          || (fd.isImportable() && fd.children)) {
           let childrenObj = objectsWithFDValues.map(o => o[fd.name]);
           // isList === either an actual list or a complex object
           if (Array.isArray(childrenObj[0])) {
@@ -221,7 +225,7 @@ export default class EntityValidator {
             // similarly to AMP, we should report total error if there are % set. E.g. In Niger, Programs % is optional.
             const childrenValues = value.filter(child => child && child instanceof Object
               && this._hasValue(child[percentageChild.field_name]));
-            const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name);
+            const totError = this.totalPercentageValidator(childrenValues, percentageChild.field_name, value);
             this.processValidationResult(obj, fieldPath, totError);
           }
           if (fieldDef.uniqueConstraint) {
@@ -372,8 +376,8 @@ export default class EntityValidator {
     // using the same messages as in AMP
     if (!Number.isFinite(value)) {
       validationError = translate('percentageValid');
-    } else if (value < 0) {
-      validationError = translate('percentageMinimumError');
+    } else if (value <= 0) {
+      validationError = translate('percentageMinimumZeroError');
     } else if (value > 100) {
       validationError = translate('percentageRangeError');
     }
@@ -390,7 +394,7 @@ export default class EntityValidator {
    * @param fieldName
    * @return {String|boolean}
    */
-  totalPercentageValidator(values, fieldName) {
+  totalPercentageValidator(values, fieldName, value) {
     logger.log('totalPercentageValidator');
     let validationError = null;
     const totalPercentage = values.reduce((totPercentage, val) => {
@@ -399,6 +403,15 @@ export default class EntityValidator {
     }, 0);
     if (values.length && totalPercentage !== 100) {
       validationError = translate('percentageSumError').replace('%totalPercentage%', totalPercentage);
+    } else if (value.length > 0) {
+      // AMPOFFLINE-1539: One or more items without % that dont sum 100.
+      let percentage = 0;
+      value.forEach(val => {
+        percentage += (val[fieldName] || 0);
+      });
+      if (percentage !== 100) {
+        validationError = translate('percentageSumError').replace('%totalPercentage%', percentage);
+      }
     }
     return validationError || true;
   }

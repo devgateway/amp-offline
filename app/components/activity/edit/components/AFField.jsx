@@ -7,6 +7,7 @@ import AFLabel from './AFLabel';
 import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
 import AFDropDown from './AFDropDown';
+import AFSearchList from './AFSearchList';
 import AFOption from './AFOption';
 import AFRichTextEditor from './AFRichTextEditor';
 import * as Types from './AFComponentTypes';
@@ -209,6 +210,8 @@ class AFField extends Component {
         return this._getMultiSelect();
       case Types.DATE_YEAR:
         return this._getDateYear();
+      case Types.SEARCH:
+        return this._getSearch();
       case Types.CUSTOM: {
         return this._getCustom();
       }
@@ -224,6 +227,14 @@ class AFField extends Component {
       options={afOptions} onChange={this.onChange} selectedId={selectedId}
       className={this.props.className} defaultValueAsEmptyObject={this.props.defaultValueAsEmptyObject}
       extraParams={this.props.extraParams} />);
+  }
+
+  _getSearch() {
+    const { fieldPath, onAfterUpdate, extraParams } = this.props;
+    const afOptions = this._toAFOptions(this._getOptions(fieldPath));
+    return (<AFSearchList
+      onSearchSelect={onAfterUpdate} options={afOptions}
+      placeholder={(extraParams && extraParams.placeholder ? extraParams.placeholder : null)} />);
   }
 
   _getListSelector() {

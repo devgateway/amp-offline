@@ -10,6 +10,7 @@ import translate from '../../utils/translate';
 import LoginTroubleshootingLinks from './LoginTroubleshootingLinks';
 import { doSetupFirst } from '../../actions/SetupAction';
 import * as Utils from '../../utils/Utils';
+import DBMigrationProgressDialogModal from '../dbMigration/DBMigrationProgressDialogModal';
 
 const logger = new Logger('login');
 
@@ -115,6 +116,7 @@ export default class Login extends Component {
         <br />
         {!this.props.loginReducer.loginProcessing ?
           <ErrorMessage message={this.props.loginReducer.errorMessage} /> : null}
+        <DBMigrationProgressDialogModal show={this.props.loginReducer.showDBMigrationMessage} />
       </div>
     );
   }

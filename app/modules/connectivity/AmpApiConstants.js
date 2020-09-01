@@ -43,6 +43,7 @@ export const AMP_REGISTRY_PRODUCTION_SETTINGS_URL = 'https://amp-registry.ampsit
 export const AMP_REGISTRY_STAGING_SETTINGS_URL = 'https://amp-registry-stg.ampsite.net/amp-registry';
 export const PP_SUFFIX = '/portal';
 export const AMP_SUFFIX = '/aim';
+export const ACTIVITY_PUBLIC_FIELD_VALUES = '/activity/field/values/public';
 
 /** OTHER */
 export const AMP_OFFLINE_ENABLED = 'amp-offline-enabled';

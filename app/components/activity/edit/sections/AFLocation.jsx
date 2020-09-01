@@ -11,6 +11,7 @@ import { addMessage } from '../../../../actions/NotificationAction';
 import { createNotification } from '../../../../modules/helpers/ErrorNotificationHelper';
 import translate from '../../../../utils/translate';
 import Logger from '../../../../modules/util/LoggerManager';
+import { REGIONAL_SUB_PATH } from './AFRegionalFunding';
 
 const logger = new Logger('AF location');
 
@@ -35,6 +36,8 @@ class AFLocation extends Component {
     };
     this.defaultCountry = null;
     this.onImplLevelOrImplLocChange = this.onImplLevelOrImplLocChange.bind(this);
+    this.handleLocationsChange = this.handleLocationsChange.bind(this);
+    this.checkIfRegionalFundingEnabled = this.checkIfRegionalFundingEnabled.bind(this);
   }
 
   componentWillMount() {
@@ -92,6 +95,42 @@ class AFLocation extends Component {
     return locFilter;
   }
 
+  handleLocationsChange(locations) {
+    const { activityFieldsManager } = this.props;
+    if (locations) {
+      if (activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_COMMITMENTS) ||
+        activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_DISBURSEMENTS) ||
+        activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_EXPENDITURES)) {
+        const { activity } = this.props;
+        FieldPathConstants.TRANSACTION_TYPES.forEach(tt => {
+          const field = REGIONAL_SUB_PATH + tt;
+          if (!activity[field]) {
+            activity[field] = [];
+          }
+          activity[field].forEach(rf => {
+            if (!locations.find(l => (l.location._id === rf[ActivityConstants.REGION_LOCATION].id))) {
+              const newFundingDetails = activity[field].slice();
+              const index = newFundingDetails.findIndex((item) =>
+                (item[ActivityConstants.REGION_LOCATION].id === rf[[ActivityConstants.REGION_LOCATION]].id));
+              newFundingDetails.splice(index, 1);
+              activity[field] = newFundingDetails;
+            }
+          });
+        });
+      }
+    }
+  }
+
+  checkIfRegionalFundingEnabled() {
+    const { activityFieldsManager } = this.props;
+    if (activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_COMMITMENTS) ||
+    activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_DISBURSEMENTS) ||
+    activityFieldsManager.isFieldPathEnabled(ActivityConstants.REGIONAL_FUNDINGS_EXPENDITURES)) {
+      return confirm(translate('deleteLocationRegionalFundingWarning'));
+    }
+    return true;
+  }
+
   render() {
     return (<div className={afStyles.full_width}>
       <Grid className={afStyles.full_width}>
@@ -112,7 +151,8 @@ class AFLocation extends Component {
           <Col md={12} lg={12}>
             <AFField
               parent={this.props.activity} fieldPath={ActivityConstants.LOCATIONS}
-              filter={this._getLocationFilter()} />
+              filter={this._getLocationFilter()} onAfterUpdate={this.handleLocationsChange}
+              onBeforeDelete={this.checkIfRegionalFundingEnabled} />
           </Col>
         </Row>
         <Row />
