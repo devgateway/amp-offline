@@ -26,8 +26,6 @@ export default class ResourceFieldsSyncUpManager extends FieldsSyncUpManager {
       return ConnectionHelper.doPost({ url: this._perWSFieldsUrl, body: params, shouldRetry: true })
         .then(data => {
           // eslint-disable-next-line no-return-assign
-          data.forEach(i => i['ws-member-ids'] = i.wsMemberIds);
-          // eslint-disable-next-line no-return-assign
           data.forEach(i => i[Constants.SYNCUP_TYPE_RESOURCE_FIELDS] = i.fields);
           return FieldsHelper.replaceAllByFieldsType(data, Constants.SYNCUP_TYPE_RESOURCE_FIELDS);
         });
