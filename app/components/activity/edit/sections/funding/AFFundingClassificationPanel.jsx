@@ -8,7 +8,7 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
-import { INPUT_TYPE } from '../../components/AFComponentTypes';
+import { INPUT_TYPE, RADIO_BOOLEAN } from '../../components/AFComponentTypes';
 import fundingStyles from './AFFundingContainer.css';
 
 const logger = new Logger('AF Funding classication panel');
@@ -107,6 +107,42 @@ export default class AFFundingClassificationPanel extends Component {
                   parent={funding}
                   fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_CLASSIFICATION_DATE}`}
                   onAfterUpdate={this._refreshAfterChanges} />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.VULNERABLE_GROUP}`} />
+              </Col>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_AVAILABLE}`}
+                  type={RADIO_BOOLEAN} />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_JOINT_DECISION}`} />
+              </Col>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_MONITORING}`} />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding} f
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_SUSTAINABILITY}`} />
+              </Col>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_PROBLEMS}`} />
               </Col>
             </Row>
           </Grid>
