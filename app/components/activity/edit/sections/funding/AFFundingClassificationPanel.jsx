@@ -8,7 +8,7 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import AFField from '../../components/AFField';
 import afStyles from '../../ActivityForm.css';
-import { INPUT_TYPE } from '../../components/AFComponentTypes';
+import { INPUT_TYPE, RADIO_BOOLEAN } from '../../components/AFComponentTypes';
 import fundingStyles from './AFFundingContainer.css';
 
 const logger = new Logger('AF Funding classication panel');
@@ -107,6 +107,37 @@ export default class AFFundingClassificationPanel extends Component {
                   parent={funding}
                   fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_CLASSIFICATION_DATE}`}
                   onAfterUpdate={this._refreshAfterChanges} />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~vulnerable_group`} />
+              </Col>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_results_available`}
+                  type={RADIO_BOOLEAN} />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_joint_decision`} />
+              </Col>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_monitoring`} />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_sustainability`} />
+              </Col>
+              <Col md={6} lg={6}>
+                <AFField
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_problems`} />
               </Col>
             </Row>
           </Grid>
