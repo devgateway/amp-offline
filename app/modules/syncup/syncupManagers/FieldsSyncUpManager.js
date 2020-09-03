@@ -67,8 +67,6 @@ export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
       return ConnectionHelper.doPost({ url: this._perWSFieldsUrl, body: params, shouldRetry: true })
         .then(data => {
           // eslint-disable-next-line no-return-assign
-          data.forEach(i => i['ws-member-ids'] = i.wsMemberIds);
-          // eslint-disable-next-line no-return-assign
           data.forEach(i => i['activity-fields'] = i.fields);
           return FieldsHelper.replaceAllByFieldsType(data, 'activity-fields');
         });
