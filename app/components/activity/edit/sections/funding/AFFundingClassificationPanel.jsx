@@ -116,28 +116,33 @@ export default class AFFundingClassificationPanel extends Component {
               </Col>
               <Col md={6} lg={6}>
                 <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_results_available`}
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_AVAILABLE}`}
                   type={RADIO_BOOLEAN} />
               </Col>
             </Row>
             <Row>
               <Col md={6} lg={6}>
                 <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_joint_decision`} />
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_JOINT_DECISION}`} />
               </Col>
               <Col md={6} lg={6}>
                 <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_monitoring`} />
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_MONITORING}`} />
               </Col>
             </Row>
             <Row>
               <Col md={6} lg={6}>
                 <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_sustainability`} />
+                  parent={funding} f
+                  ieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_SUSTAINABILITY}`} />
               </Col>
               <Col md={6} lg={6}>
                 <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~project_problems`} />
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_PROBLEMS}`} />
               </Col>
             </Row>
           </Grid>
