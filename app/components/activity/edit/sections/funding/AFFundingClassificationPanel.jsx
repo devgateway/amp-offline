@@ -112,7 +112,7 @@ export default class AFFundingClassificationPanel extends Component {
             <Row>
               <Col md={6} lg={6}>
                 <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~vulnerable_group`} />
+                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.VULNERABLE_GROUP}`} />
               </Col>
               <Col md={6} lg={6}>
                 <AFField
@@ -137,7 +137,7 @@ export default class AFFundingClassificationPanel extends Component {
               <Col md={6} lg={6}>
                 <AFField
                   parent={funding} f
-                  ieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_SUSTAINABILITY}`} />
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_SUSTAINABILITY}`} />
               </Col>
               <Col md={6} lg={6}>
                 <AFField
