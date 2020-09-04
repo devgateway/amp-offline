@@ -121,6 +121,9 @@ class AFIdentification extends Component {
                 key={ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP} parent={this.props.activity}
                 fieldPath={ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP} type={Types.RADIO_BOOLEAN}
                 customLabel="multi_stakeholder_partnership" />
+              <AFField
+                key={ActivityConstants.MULTI_STAKEHOLDER_PARTNERS} parent={this.props.activity}
+                fieldPath={ActivityConstants.MULTI_STAKEHOLDER_PARTNERS} />
             </Col>
             <Clearfix visibleSmBlock />
             <Col key="right-col" md={6} sm={12}>
