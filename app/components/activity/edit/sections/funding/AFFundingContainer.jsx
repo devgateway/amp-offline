@@ -28,7 +28,7 @@ export default class AFFundingContainer extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    hasErrors: PropTypes.func.isRequired
+    hasErrors: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -126,7 +126,9 @@ export default class AFFundingContainer extends Component {
           </Row>
         </Grid>
       </FormGroup>
-      <AFFundingClassificationPanel funding={funding} hasErrors={this.props.hasErrors} />
+      <AFFundingClassificationPanel
+        funding={funding} hasErrors={this.props.hasErrors}
+        activityFieldsManager={this.context.activityFieldsManager} />
       <AFMTEFProjectionContainer
         mtefProjections={funding[ActivityConstants.MTEF_PROJECTIONS] || []} hasErrors={this.props.hasErrors}
         funding={funding}
