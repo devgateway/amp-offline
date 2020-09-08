@@ -24,7 +24,8 @@ export default class AFFundingClassificationPanel extends Component {
 
   static propTypes = {
     funding: PropTypes.object.isRequired,
-    hasErrors: PropTypes.func.isRequired
+    hasErrors: PropTypes.func.isRequired,
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
   };
 
   constructor(props) {
@@ -32,9 +33,13 @@ export default class AFFundingClassificationPanel extends Component {
     logger.debug('constructor');
     this._refreshAfterChanges = this._refreshAfterChanges.bind(this);
     const errors = props.hasErrors(props.funding);
+    const showProjectResultsLink = this.props.activityFieldsManager
+        .isFieldPathEnabled(`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_AVAILABLE}`)
+      && this.isProjectsResultsAvailableEnabled();
     this.state = {
       errors,
-      refresh: 0
+      refresh: 0,
+      showProjectResultsLink
     };
     if (errors) {
       props.funding.fundingClassificationOpen = true;
@@ -47,12 +52,25 @@ export default class AFFundingClassificationPanel extends Component {
     this._refreshAfterChanges();
   }
 
+  onProjectsResultsAvailableChange(object, value) {
+    if (value === true) {
+      this.setState({ showProjectResultsLink: true });
+    } else {
+      this.setState({ showProjectResultsLink: false });
+    }
+  }
+
   _refreshAfterChanges() {
     const { funding, hasErrors } = this.props;
     const errors = hasErrors(funding);
     if (errors !== this.state.errors) {
       this.setState({ errors });
     }
+  }
+
+  isProjectsResultsAvailableEnabled() {
+    const { funding } = this.props;
+    return funding[ActivityConstants.PROJECT_RESULTS_AVAILABLE] === true;
   }
 
   render() {
@@ -110,15 +128,24 @@ export default class AFFundingClassificationPanel extends Component {
               </Col>
             </Row>
             <Row>
-              <Col md={6} lg={6}>
+              <Col md={12} lg={12}>
                 <AFField
                   parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.VULNERABLE_GROUP}`} />
               </Col>
+            </Row>
+            <Row>
               <Col md={6} lg={6}>
                 <AFField
                   parent={funding}
                   fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_AVAILABLE}`}
-                  type={RADIO_BOOLEAN} />
+                  type={RADIO_BOOLEAN}
+                  onAfterUpdate={this.onProjectsResultsAvailableChange.bind(this,
+                    ActivityConstants.PROJECT_RESULTS_AVAILABLE)} />
+              </Col>
+              <Col md={6} lg={6}>
+                {this.state.showProjectResultsLink ? <AFField
+                  parent={funding}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_LINK}`} /> : null}
               </Col>
             </Row>
             <Row>
