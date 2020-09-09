@@ -59,7 +59,8 @@ export default class ActivityForm extends Component {
     activityValidator: PropTypes.instanceOf(ActivityValidator),
     currencyRatesManager: PropTypes.instanceOf(CurrencyRatesManager),
     currentWorkspaceSettings: PropTypes.object,
-    activityFundingSectionPanelStatus: PropTypes.array
+    activityFundingSectionPanelStatus: PropTypes.array,
+    workspaceReducer: PropTypes.object
   };
 
   constructor(props) {
@@ -76,7 +77,8 @@ export default class ActivityForm extends Component {
       activityValidator: this.activityValidator,
       currencyRatesManager: this.props.activityReducer.currencyRatesManager,
       currentWorkspaceSettings: this.props.activityReducer.currentWorkspaceSettings,
-      activityFundingSectionPanelStatus: this.activityFundingSectionPanelStatus
+      activityFundingSectionPanelStatus: this.activityFundingSectionPanelStatus,
+      workspaceReducer: this.props.workspaceReducer
     };
   }
 

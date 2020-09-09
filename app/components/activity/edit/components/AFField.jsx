@@ -254,7 +254,7 @@ class AFField extends Component {
     const { workspacePrefix } = this.props;
     const somePrefix = workspacePrefix || '';
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
-    if (options === null) {
+    if (options === null || options === undefined) {
       // TODO throw error but continue to render (?)
       logger.error(`Options not found for ${this.props.fieldPath}`);
       return [];
