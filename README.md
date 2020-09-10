@@ -49,4 +49,4 @@ Contributing
 
 Contact information
 ------
-For any comments, please [conctact us](info@developmentgateway.org).
+For any comments, please [conctact us](info@developmentgateway.org)
