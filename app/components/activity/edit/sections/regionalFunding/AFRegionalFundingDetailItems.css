@@ -27,9 +27,9 @@
 }
 
 .tr {
-  border: 1px solid lightgray;
+  /*border: 1px solid lightgray;
   border-radius: 4px;
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, .05);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, .05);*/
 }
 
 .cell_1 {
@@ -72,7 +72,7 @@
   max-width: 10%;
   float: left;
   padding: 5px;
-  min-width: 5%;
+  /*min-width: 5%;*/
   max-height: 70px;
   margin-bottom: 25px;
 }
@@ -85,3 +85,8 @@
   width: 100%;
   border-bottom: 1px solid lightgrey;
 }
+
+.add_button {
+  margin-top: 30px;
+}
+

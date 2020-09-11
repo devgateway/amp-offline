@@ -34,6 +34,7 @@ export default class Item extends Component {
     removeActor: PropTypes.func.isRequired,
     topPath: PropTypes.string.isRequired,
     topFMPath: PropTypes.string.isRequired,
+    prefix: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -42,18 +43,18 @@ export default class Item extends Component {
   }
 
   _generateIssueRow() {
-    const { topPath, topFMPath } = this.props;
+    const { topPath, topFMPath, prefix } = this.props;
     return (<div>
       <table className={styles.table}>
         <tr>
           <td>
             <AFField
-              parent={this.props.item} fieldPath={`${topPath}~${ActivityConstants.ISSUE_NAME}`}
+              parent={this.props.item} fieldPath={`${topPath}~${ActivityConstants[`${prefix}_NAME`]}`}
               type={Types.TEXT_AREA} />
           </td>
           <td>
             <AFField
-              parent={this.props.item} fieldPath={`${topPath}~${ActivityConstants.ISSUE_DATE}`}
+              parent={this.props.item} fieldPath={`${topPath}~${ActivityConstants[`${prefix}_DATE`]}`}
               type={Types.DATE}
               showLabel={false} extraParams={{ todayAsDefaultDate: true }} />
           </td>
@@ -83,14 +84,15 @@ export default class Item extends Component {
             measure={m} item={this.props.item} key={Math.random()} removeActor={this.props.removeActor}
             removeMeasure={this.props.removeMeasure} removeTopItem={this.props.removeTopItem}
             addMeasure={this.props.addMeasure} addActor={this.props.addActor} measureIndex={i}
-            itemIndex={this.props.itemIndex} topPath={this.props.topPath} topFMPath={this.props.topFMPath} />
+            itemIndex={this.props.itemIndex} topPath={this.props.topPath} topFMPath={this.props.topFMPath}
+            prefix={prefix} />
         ))
         : null}
     </div>);
   }
 
   _generateMeasureRow() {
-    const { topPath, topFMPath } = this.props;
+    const { topPath, topFMPath, prefix } = this.props;
     return (<div className={styles.measure}>
       <table className={styles.table}>
         <tr>
@@ -136,7 +138,7 @@ export default class Item extends Component {
             removeMeasure={this.props.removeMeasure} removeTopItem={this.props.removeTopItem}
             addMeasure={this.props.addMeasure} addActor={this.props.addActor}
             measureIndex={this.props.measureIndex} itemIndex={this.props.itemIndex} actorIndex={i}
-            topPath={this.props.topPath} topFMPath={this.props.topFMPath} />
+            topPath={this.props.topPath} topFMPath={this.props.topFMPath} prefix={prefix} />
         ))
         : null}
     </div>);

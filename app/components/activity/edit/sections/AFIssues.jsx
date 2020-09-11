@@ -112,6 +112,7 @@ class AFIssues extends Component {
           addMeasure={this.addMeasureHandler} removeTopItem={this.removeTopItemHandler}
           removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler}
           topPath={ActivityConstants.ISSUES} topFMPath="ACTIVITY_ISSUES"
+          prefix="ISSUE"
         />);
       });
     }
