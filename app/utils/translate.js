@@ -3,12 +3,7 @@ import { Constants, WorkspaceConstants } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
 
 const logger = new Logger('translate');
-
-let store = null;
-if (process.env.NODE_ENV !== 'test') {
-  // eslint-disable-next-line global-require
-  store = require('../index');
-}
+const workspace = null;
 
 /**
  * Translates a message to the current language or to the specified one
@@ -18,11 +13,8 @@ if (process.env.NODE_ENV !== 'test') {
 export default (k, lng) => {
   if (k !== undefined) {
     let prefix;
-    const workspaceReducer = store ? store.getState().workspaceReducer : null;
-    if (workspaceReducer && workspaceReducer.currentWorkspace
-      && workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]) {
-      prefix = Constants.WORKSPACE_PREFIX_SEPARATOR +
-        workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
+    if (workspace && workspace[WorkspaceConstants.PREFIX_FIELD]) {
+      prefix = Constants.WORKSPACE_PREFIX_SEPARATOR + workspace[WorkspaceConstants.PREFIX_FIELD];
     } else {
       prefix = Constants.WORKSPACE_PREFIX_SEPARATOR + Constants.DEFAULT_WORKSPACE_PREFIX;
     }
