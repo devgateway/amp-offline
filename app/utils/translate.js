@@ -34,7 +34,11 @@ export default (k, lng) => {
     }
 
     // console.log(`translate ${k}  ${ret}`);
-    return ret.replace(prefix, '');
+    if (ret) {
+      return ret.replace(prefix, '');
+    }
+    console.error('undefined');
+    return '';
   }
   return k;
 };
