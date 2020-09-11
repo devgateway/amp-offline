@@ -12,7 +12,6 @@ import { isForceSyncUp } from './SyncUpAction';
 
 import * as URLUtils from '../utils/URLUtils';
 import * as StartupAction from './StartUpAction';
-import translate from '../../app/utils/translate';
 
 export const STATE_SELECT_WORKSPACE = 'STATE_SELECT_WORKSPACE';
 export const STATE_SELECT_WORKSPACE_ERROR = 'STATE_SELECT_WORKSPACE_ERROR';
