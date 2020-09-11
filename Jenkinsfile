@@ -60,6 +60,7 @@ node('master') {
 	try {
 		stage('PrepareSetup') {
 			checkout scm
+			sh 'nvm use 6.9.2'
 			//we print node version
 			sh 'node -v'
 			sh returnStatus: true, script: 'tar xf ../nm_cache.tar'
