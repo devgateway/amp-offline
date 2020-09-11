@@ -3,7 +3,7 @@ import { Constants, WorkspaceConstants } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
 
 const logger = new Logger('translate');
-const workspace = null;
+const currentWorkspace = null;
 
 /**
  * Translates a message to the current language or to the specified one
@@ -13,8 +13,8 @@ const workspace = null;
 export default (k, lng) => {
   if (k !== undefined) {
     let prefix;
-    if (workspace && workspace[WorkspaceConstants.PREFIX_FIELD]) {
-      prefix = Constants.WORKSPACE_PREFIX_SEPARATOR + workspace[WorkspaceConstants.PREFIX_FIELD];
+    if (currentWorkspace && currentWorkspace[WorkspaceConstants.PREFIX_FIELD]) {
+      prefix = Constants.WORKSPACE_PREFIX_SEPARATOR + currentWorkspace[WorkspaceConstants.PREFIX_FIELD];
     } else {
       prefix = Constants.WORKSPACE_PREFIX_SEPARATOR + Constants.DEFAULT_WORKSPACE_PREFIX;
     }
@@ -34,10 +34,12 @@ export default (k, lng) => {
     }
 
     // console.log(`translate ${k}  ${ret}`);
+
+    // AMPOFFLINE-1541: Extra check for test.
     if (ret) {
       return ret.replace(prefix, '');
     }
-    console.error('undefined');
+    logger.error('undefined');
     return '';
   }
   return k;

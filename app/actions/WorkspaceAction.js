@@ -65,7 +65,7 @@ function loadWorkspaceData(wsId) {
       currency['translated-value'] = currencyOption['translated-value'];
       workspaceSettings.currency = currency;
       const actionData = { teamMember, workspace, workspaceSettings };
-      translate.workspace = workspace;
+      translate.currentWorkspace = workspace; // AMPOFFLINE-1541: Cant use the store inside translate.js
       store.dispatch({ type: STATE_SELECT_WORKSPACE, actionData });
       return actionData;
     })
