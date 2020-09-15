@@ -1,9 +1,14 @@
 import i18next from 'i18next';
 import { Constants, WorkspaceConstants } from 'amp-ui';
 import Logger from '../modules/util/LoggerManager';
-import store from '../index';
 
 const logger = new Logger('translate');
+
+let store = null;
+if (process.env.NODE_ENV !== 'test') {
+  // eslint-disable-next-line global-require
+  store = require('../index.js');
+}
 
 /**
  * Translates a message to the current language or to the specified one
@@ -13,7 +18,7 @@ const logger = new Logger('translate');
 export default (k, lng) => {
   if (k !== undefined) {
     let prefix;
-    const workspaceReducer = store.getState().workspaceReducer;
+    const workspaceReducer = store != null ? store.default.getState().workspaceReducer : null;
     if (workspaceReducer && workspaceReducer.currentWorkspace
       && workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]) {
       prefix = Constants.WORKSPACE_PREFIX_SEPARATOR +
@@ -37,7 +42,13 @@ export default (k, lng) => {
     }
 
     // console.log(`translate ${k}  ${ret}`);
-    return ret.replace(prefix, '');
+
+    // AMPOFFLINE-1541: Extra check for test.
+    if (ret) {
+      return ret.replace(prefix, '');
+    }
+    logger.error('undefined');
+    return '';
   }
   return k;
 };
