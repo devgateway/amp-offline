@@ -25,11 +25,12 @@ export const ROLLBACK = 'rollback';
 
 export const CONTEXT_STARTUP = 'startup';
 export const CONTEXT_INIT = 'init';
+export const CONTEXT_AFTER_LOGIN = 'after_login';
 export const CONTEXT_ALL = 'all';
 
-export const CONTEXT_OPTIONS = [CONTEXT_STARTUP, CONTEXT_INIT, CONTEXT_ALL];
+export const CONTEXT_OPTIONS = [CONTEXT_STARTUP, CONTEXT_INIT, CONTEXT_ALL, CONTEXT_AFTER_LOGIN];
 /** list of contexts ordered by execution priority */
-export const CONTEXT_BY_ORDER = [CONTEXT_STARTUP, CONTEXT_INIT];
+export const CONTEXT_BY_ORDER = [CONTEXT_STARTUP, CONTEXT_INIT, CONTEXT_AFTER_LOGIN];
 
 export const ON_FAIL_ERROR_HALT = 'HALT';
 export const ON_FAIL_ERROR_CONTINUE = 'CONTINUE';

@@ -68,7 +68,7 @@ node('master') {
 			//install all needed dependencies
 			sh 'npm install'
 			sh 'npm run build-dll'
-			sh returnStatus: true, script: 'tar cf ../nm_cache.tar node_modules'
+			sh returnStatus: true, script: 'tar cf ../nm_cache.tar node_modules --exclude=amp-ui'
 		}
 		stage('StyleCheck') {
 			try {

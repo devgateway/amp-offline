@@ -17,6 +17,11 @@
   width: 100%;
 }
 
+.table > tr > td {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .addButton {
   width: 20px;
   margin-bottom: 6px;

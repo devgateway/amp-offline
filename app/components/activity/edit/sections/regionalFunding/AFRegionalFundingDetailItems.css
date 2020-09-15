@@ -1,0 +1,92 @@
+.grid {
+  /*border-bottom: 1px solid grey;*/
+  width: 100%;
+  /*margin-bottom: 10px;*/
+  display: grid;
+}
+
+.delete {
+  background-image: url('../../../../../assets/images/ico_del.gif');
+  background-repeat: no-repeat;
+  padding: 0.5em;
+  top: 34px;
+  position: relative;
+}
+
+.delete:hover {
+  text-decoration: none;
+}
+
+.row {
+  width: 100%;
+  min-width: 100%;
+}
+
+.table {
+  width: 100%;
+}
+
+.tr {
+  /*border: 1px solid lightgray;
+  border-radius: 4px;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, .05);*/
+}
+
+.cell_1 {
+  max-width: 100%;
+  float: left;
+  padding: 5px;
+  min-width: 100%;
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
+.cell_3 {
+  max-width: 30%;
+  float: left;
+  padding: 5px;
+  min-width: 20%;
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
+.cell_2 {
+  max-width: 50%;
+  float: left;
+  padding: 5px;
+  min-width: 40%;
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
+.cell_4 {
+  max-width: 25%;
+  float: left;
+  padding: 5px;
+  min-width: 20%;
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
+.cell_10 {
+  max-width: 10%;
+  float: left;
+  padding: 5px;
+  /*min-width: 5%;*/
+  max-height: 70px;
+  margin-bottom: 25px;
+}
+
+.delete_col {
+  vertical-align: top;
+}
+
+.full_width {
+  width: 100%;
+  border-bottom: 1px solid lightgrey;
+}
+
+.add_button {
+  margin-top: 30px;
+}
+
