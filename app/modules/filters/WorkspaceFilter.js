@@ -44,7 +44,9 @@ export default class WorkspaceFilterBuilder {
     const privateWSFilter = Utils.toMap(IS_PRIVATE, true);
     return Promise.all([this._getActivityFiltersPromise(), WorkspaceHelper.findAll(privateWSFilter, { id: 1 })])
       .then(([activityDbFilter, privateWorkspaces]) => {
-        this._activityDbFilter = activityDbFilter;
+        this._activityDbFilter = activityDbFilter == null ||
+        (Object.keys(activityDbFilter).length === 0 && activityDbFilter.constructor === Object)
+          ? null : activityDbFilter;
         this._privateWorkspaces = Utils.flattenToListByKey(privateWorkspaces, 'id');
         return activityDbFilter;
       });
@@ -141,24 +143,24 @@ export default class WorkspaceFilterBuilder {
     return new Promise((resolve, reject) =>
       wsIds.reduce((promise, wsId) =>
         promise.then(() => new Promise(() => {
-          if (!processedWsIds.has(wsId)) {
-            logger.log(wsId);
-            processedWsIds.add(wsId);
+            if (!processedWsIds.has(wsId)) {
+              logger.log(wsId);
+              processedWsIds.add(wsId);
 
-            WorkspaceHelper.findAll({ 'parent-workspace-id': wsId }, { id: 1 }).then(childWsIds => {
-              const idsList = childWsIds.map(ws => ws.id);
-              return self._getChildrenWorkspaces(idsList, processedWsIds).then(result => resolve(result));
-            }).catch(reject);
-          }
-          return processedWsIds;
-        }),
-          Promise.resolve(processedWsIds)).then(() => {
-            logger.log('done');
+              WorkspaceHelper.findAll({ 'parent-workspace-id': wsId }, { id: 1 }).then(childWsIds => {
+                const idsList = childWsIds.map(ws => ws.id);
+                return self._getChildrenWorkspaces(idsList, processedWsIds).then(result => resolve(result));
+              }).catch(reject);
+            }
             return processedWsIds;
-          }, (e) => {
-            logger.error(e);
-            reject(e);
-          })
+          }),
+          Promise.resolve(processedWsIds)).then(() => {
+          logger.log('done');
+          return processedWsIds;
+        }, (e) => {
+          logger.error(e);
+          reject(e);
+        })
       ));
   }
 }
