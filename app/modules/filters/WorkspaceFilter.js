@@ -44,7 +44,9 @@ export default class WorkspaceFilterBuilder {
     const privateWSFilter = Utils.toMap(IS_PRIVATE, true);
     return Promise.all([this._getActivityFiltersPromise(), WorkspaceHelper.findAll(privateWSFilter, { id: 1 })])
       .then(([activityDbFilter, privateWorkspaces]) => {
-        this._activityDbFilter = activityDbFilter;
+        this._activityDbFilter = activityDbFilter == null ||
+        (Object.keys(activityDbFilter).length === 0 && activityDbFilter.constructor === Object)
+          ? null : activityDbFilter;
         this._privateWorkspaces = Utils.flattenToListByKey(privateWorkspaces, 'id');
         return activityDbFilter;
       });
