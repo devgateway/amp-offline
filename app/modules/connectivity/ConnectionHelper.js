@@ -96,7 +96,10 @@ const ConnectionHelper = {
           .pipe(writeStream);
       });
     }
-    return rp(requestConfig);
+    // return rp(requestConfig);
+    return new Promise((resolve, reject) => request(requestConfig)
+        .on('response', (response) => resolve(response))
+        .on('error', reject));
   },
 
   _reasonToProcess(reason) {
