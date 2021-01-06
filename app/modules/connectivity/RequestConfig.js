@@ -14,7 +14,7 @@ As of now we have 5 parallel pull activities requests and 5 contacts requests th
 contacts are pulled in batches, it takes about the same time to pull both, though I saw a few other requests come
 in between. According to stats, 11 brings optimal result, plus it's best to avoid running too many keep-alive requests.
  */
-const pool = { maxSockets: 11 };
+const pool = { maxSockets: 100 };
 
 const RequestConfig = {
   /**
