@@ -1,6 +1,6 @@
 /* eslint no-nested-ternary: 0*/
 
-import rp from 'request-promise';
+// import rp from 'request-promise';
 import request from 'request';
 import Promise from 'bluebird';
 import { Constants, ErrorConstants } from 'amp-ui';
