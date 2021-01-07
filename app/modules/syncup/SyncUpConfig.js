@@ -37,12 +37,12 @@ export default class SyncUpConfig {
 
   static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
-    ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
+    ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
     ResourcePossibleValuesSyncUpManager, CommonPossibleValuesSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager, MapTilesSyncUpManager,
-    GazetteerSyncUpManager, CalendarsSyncUpManager];
+    GazetteerSyncUpManager, CalendarsSyncUpManager, ActivityPossibleValuesSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
   static _initCollection() {
