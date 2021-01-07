@@ -21,7 +21,7 @@ const ConnectionHelper = {
     logger.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, 100/*Constants.MAX_RETRY_ATEMPTS*/, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100, shouldRetry, writeStream);
   },
 
   /**
@@ -39,14 +39,14 @@ const ConnectionHelper = {
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, 100/*Constants.MAX_RETRY_ATEMPTS*/, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100, shouldRetry, writeStream);
   },
 
   doPut({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
     logger.debug('doPut');
     const method = 'PUT';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, 100, /*Constants.MAX_RETRY_ATEMPTS*/, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100, shouldRetry, writeStream);
   },
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
@@ -57,7 +57,7 @@ const ConnectionHelper = {
       return this._reportError(ErrorConstants.MSG_INVALID_URL, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     }
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
-    const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
+    // const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
     const requestPromise = this._buildRequestPromise(requestConfig, writeStream);
     const bbPromise = requestPromise.promise && requestPromise.promise();
     /*if (bbPromise) {
