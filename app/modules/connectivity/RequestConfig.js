@@ -3,7 +3,7 @@ import { ErrorConstants } from 'amp-ui';
 import store from '../../index';
 import routesConfiguration from '../../utils/RoutesConfiguration';
 import Notification from '../helpers/NotificationHelper';
-import { LANGUAGE_PARAM, PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
+import { LANGUAGE_PARAM, LONG_TIMEOUT, PARAM_AMPOFFLINE_AGENT, TRANSLATIONS_PARAM } from './AmpApiConstants';
 import { VERSION } from '../../utils/Constants';
 import Utils from '../../utils/Utils';
 
@@ -14,7 +14,7 @@ As of now we have 5 parallel pull activities requests and 5 contacts requests th
 contacts are pulled in batches, it takes about the same time to pull both, though I saw a few other requests come
 in between. According to stats, 11 brings optimal result, plus it's best to avoid running too many keep-alive requests.
  */
-const pool = { maxSockets: 100 };
+const pool = { maxSockets: 11 };
 
 const RequestConfig = {
   /**
@@ -50,7 +50,7 @@ const RequestConfig = {
       forever: true,
       pool,
       jar: cookiesStore, // enables cookies to be saved,
-      timeout: 15000,
+      timeout: LONG_TIMEOUT,
       keepAlive: true
     };
     if (routeConfiguration.isBinary) {
