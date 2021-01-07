@@ -49,7 +49,9 @@ const RequestConfig = {
       gzip: true,
       forever: true,
       pool,
-      jar: cookiesStore // enables cookies to be saved
+      jar: cookiesStore, // enables cookies to be saved,
+      timeout: 15000,
+      keepAlive: true
     };
     if (routeConfiguration.isBinary) {
       // in case its binary we need to set json to false

@@ -21,7 +21,7 @@ const ConnectionHelper = {
     logger.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100/*Constants.MAX_RETRY_ATEMPTS*/, shouldRetry, writeStream);
   },
 
   /**
@@ -39,14 +39,14 @@ const ConnectionHelper = {
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100/*Constants.MAX_RETRY_ATEMPTS*/, shouldRetry, writeStream);
   },
 
   doPut({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
     logger.debug('doPut');
     const method = 'PUT';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100, /*Constants.MAX_RETRY_ATEMPTS*/, shouldRetry, writeStream);
   },
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
@@ -60,9 +60,9 @@ const ConnectionHelper = {
     const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
     const requestPromise = this._buildRequestPromise(requestConfig, writeStream);
     const bbPromise = requestPromise.promise && requestPromise.promise();
-    if (bbPromise) {
+    /*if (bbPromise) {
       bbPromise.timeout(requestPromiseForcedTimeout);
-    }
+    }*/
     // TODO I tried lower timeout for streaming and it seems to ignore it -> check how exactly to handle
     return requestPromise
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
