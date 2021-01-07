@@ -82,7 +82,7 @@ export const ARCH64_USER_AGENT_OPTIONS = ['x86_64', 'amd64'];
 
 export const RESPONSE_CHECK_INTERVAL_MS = 100;
 
-export const MAX_RETRY_ATEMPTS = 100;
+export const MAX_RETRY_ATTEMPTS = 100;
 export const LONG_TIMEOUT = 15000;
 
 export const API_ERROR_TO_AMP_OFFLINE_ERROR_BY_CODE = {

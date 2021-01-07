@@ -12,7 +12,7 @@ import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginActio
 import Logger from '../../modules/util/LoggerManager';
 import * as URLUtils from '../../utils/URLUtils';
 import ApiErrorConverter from './ApiErrorConverter';
-import { MAX_RETRY_ATEMPTS } from './AmpApiConstants';
+import { MAX_RETRY_ATTEMPTS } from './AmpApiConstants';
 
 const logger = new Logger('Connection helper');
 
@@ -22,7 +22,7 @@ const ConnectionHelper = {
     logger.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATTEMPTS, shouldRetry, writeStream);
   },
 
   /**
@@ -40,14 +40,14 @@ const ConnectionHelper = {
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATTEMPTS, shouldRetry, writeStream);
   },
 
   doPut({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
     logger.debug('doPut');
     const method = 'PUT';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, MAX_RETRY_ATTEMPTS, shouldRetry, writeStream);
   },
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
