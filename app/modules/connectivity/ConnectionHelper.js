@@ -60,7 +60,7 @@ const ConnectionHelper = {
     // const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
     const requestPromise = this._buildRequestPromise(requestConfig, writeStream);
     const bbPromise = requestPromise.promise && requestPromise.promise();
-    /*if (bbPromise) {
+    /* if (bbPromise) {
       bbPromise.timeout(requestPromiseForcedTimeout);
     }*/
     // TODO I tried lower timeout for streaming and it seems to ignore it -> check how exactly to handle
