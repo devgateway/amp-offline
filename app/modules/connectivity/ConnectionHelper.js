@@ -12,9 +12,11 @@ import { loginAutomaticallyAction, logoutAction } from '../../actions/LoginActio
 import Logger from '../../modules/util/LoggerManager';
 import * as URLUtils from '../../utils/URLUtils';
 import ApiErrorConverter from './ApiErrorConverter';
-import { MAX_RETRY_ATTEMPTS } from './AmpApiConstants';
+import { LONG_TIMEOUT, MAX_RETRY_ATTEMPTS } from './AmpApiConstants';
 
 const logger = new Logger('Connection helper');
+
+require('request').debug = true;
 
 const ConnectionHelper = {
 
@@ -104,7 +106,9 @@ const ConnectionHelper = {
           .pipe(writeStream));
     }
     logger.log(`Use request-promise ${requestConfig.url}`);
-    return rp(requestConfig);
+    const promiseRequest = rp(requestConfig);
+    promiseRequest.timeout = LONG_TIMEOUT;
+    return promiseRequest;
   },
 
   _reasonToProcess(reason) {
@@ -125,6 +129,7 @@ const ConnectionHelper = {
         logger.log(`case 2: ${requestConfig.url}`);
         if (maxRetryAttempts > 0 && shouldRetry) {
           logger.log(`case 2.1: ${requestConfig.url}`);
+          // TODO: add wait N seconds.
           return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
         } else {
           logger.log(`case 2.2: ${requestConfig.url}`);
