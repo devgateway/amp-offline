@@ -52,7 +52,7 @@ const ConnectionHelper = {
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
     logger.log('_doMethod ');
-    const url = requestConfig.url;
+    const url = `${maxRetryAttempts} - ${requestConfig.url}`;
     logger.log(url);
     if (!URLUtils.isValidUrl(url)) {
       return this._reportError(ErrorConstants.MSG_INVALID_URL, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
@@ -79,7 +79,7 @@ const ConnectionHelper = {
         /* if (bbPromise && bbPromise.isCancelled()) {
           logger.log(`request cancelled ${requestConfig.url}`);
           if (shouldRetry && maxRetryAttempts) {
-            console.log(`attemps n° ${maxRetryAttempts}` - 1);
+            logger.log(`attemps n° ${maxRetryAttempts}` - 1);
             return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
           } else {
             return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
@@ -116,21 +116,21 @@ const ConnectionHelper = {
 
   _processResultOrRetry({ error, response, body, requestConfig, maxRetryAttempts, shouldRetry, writeStream }) {
     if (error || !(response && response.statusCode >= 200 && response.statusCode < 400) || (body && body.error)) {
-      console.log(`case 1: ${requestConfig.url}`);
+      logger.log(`case 1: ${requestConfig.url}`);
       const shouldRetryOnError = Constants.ERRORS_TO_RETRY.filter((value) => (
         value === (error ? error.code : (body ? body.error : ErrorConstants.MSG_UNKNOWN_NETWORK_ERROR))
       ));
       if (shouldRetryOnError.length > 0) {
-        console.log(`case 2: ${requestConfig.url}`);
+        logger.log(`case 2: ${requestConfig.url}`);
         if (maxRetryAttempts > 0 && shouldRetry) {
-          console.log(`case 2.1: ${requestConfig.url}`);
+          logger.log(`case 2.1: ${requestConfig.url}`);
           return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
         } else {
-          console.log(`case 2.2: ${requestConfig.url}`);
+          logger.log(`case 2.2: ${requestConfig.url}`);
           return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
         }
       } else if (response && response.statusCode === 401) {
-        console.log(`case 3: ${requestConfig.url}`);
+        logger.log(`case 3: ${requestConfig.url}`);
         // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
         return store.dispatch(loginAutomaticallyAction())
           .then(() => this._doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream))
@@ -145,7 +145,7 @@ const ConnectionHelper = {
               authError);
           });
       } else {
-        console.log(`case 4: ${requestConfig.url}`);
+        logger.log(`case 4: ${requestConfig.url}`);
         // Being here means the server might not be accessible.
         const isAMPunreachable = (error && Constants.Constants.ERRORS_NO_AMP_SERVER.includes(error.code)) || !response;
         const isAccessDenied = response && response.statusCode === 403;
@@ -159,11 +159,11 @@ const ConnectionHelper = {
         return this._reportError(message, origin, errorCode);
       }
     } else if (response && !response.complete) {
-      console.log(`case 5: ${requestConfig.url}`);
+      logger.log(`case 5: ${requestConfig.url}`);
       return this._reportError('corruptedResponse', ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     } else {
-      console.log(`case 6: ${requestConfig.url}`);
-      console.log(`body: ${body}`);
+      logger.log(`case 6: ${requestConfig.url}`);
+      logger.log(`body: ${body}`);
       return writeStream ? response : body;
     }
   },
