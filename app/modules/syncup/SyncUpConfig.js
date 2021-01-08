@@ -70,6 +70,9 @@ export default class SyncUpConfig {
     // we need to pull resources before activities push, to unlink deleted resources from activities
     dependencies[Constants.SYNCUP_TYPE_ACTIVITIES_PUSH][Constants.SYNCUP_TYPE_RESOURCES_PULL] = SS.STATES_FINISH;
     dependencies[Constants.SYNCUP_TYPE_ACTIVITIES_PUSH][Constants.SYNCUP_TYPE_RESOURCES_PUSH] = SS.STATES_FINISH;
+    // try to give space to possible-values to sync.
+    dependencies[Constants.SYNCUP_TYPE_ACTIVITIES_PUSH][Constants.SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] =
+      SS.STATES_FINISH;
     // push activities before pull to avoid double pull on structural fields changes on non-conflicting activities
     dependencies[Constants.SYNCUP_TYPE_ACTIVITIES_PULL] = Utils.toMap(Constants.SYNCUP_TYPE_ACTIVITIES_PUSH,
       SS.STATES_FINISH);

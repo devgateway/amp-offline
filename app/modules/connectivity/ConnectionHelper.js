@@ -68,12 +68,12 @@ const ConnectionHelper = {
     return this._buildRequestPromise(requestConfig, writeStream)
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
       .catch(reason => {
-        logger.warn(`catch error on ${requestConfig.url}`);
-        logger.warn(reason);
+        logger.error(`catch error on ${requestConfig.url}`);
+        logger.error(reason);
         if (reason instanceof Notification) {
           return Promise.reject(reason);
         }
-        logger.warn(`reprocess ${requestConfig.url}`);
+        logger.error(`reprocess ${requestConfig.url}`);
         return this._processResultOrRetry({ ...resultRetryConfig, ...this._reasonToProcess(reason) });
       })
       .finally(() => {
