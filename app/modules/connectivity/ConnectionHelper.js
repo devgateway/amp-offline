@@ -58,45 +58,51 @@ const ConnectionHelper = {
       return this._reportError(ErrorConstants.MSG_INVALID_URL, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     }
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
-    const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
+    /* const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
     const requestPromise = this._buildRequestPromise(requestConfig, writeStream);
     const bbPromise = requestPromise.promise && requestPromise.promise();
     if (bbPromise) {
       bbPromise.timeout(requestPromiseForcedTimeout);
-    }
+    }*/
     // TODO I tried lower timeout for streaming and it seems to ignore it -> check how exactly to handle
-    return requestPromise
+    return this._buildRequestPromise(requestConfig, writeStream)
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
       .catch(reason => {
+        logger.warn(`catch error on ${requestConfig.url}`);
         if (reason instanceof Notification) {
           return Promise.reject(reason);
         }
+        logger.warn(`reprocess ${requestConfig.url}`);
         return this._processResultOrRetry({ ...resultRetryConfig, ...this._reasonToProcess(reason) });
       })
       .finally(() => {
-        if (bbPromise && bbPromise.isCancelled()) {
+        /* if (bbPromise && bbPromise.isCancelled()) {
+          logger.log(`request cancelled ${requestConfig.url}`);
           if (shouldRetry && maxRetryAttempts) {
+            console.log(`attemps n° ${maxRetryAttempts}` - 1);
             return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
           } else {
             return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
           }
-        }
+        } else {
+          logger.log(`request not cancelled ${requestConfig.url}`);
+        }*/
       });
   },
 
   _buildRequestPromise(requestConfig, writeStream) {
     if (writeStream) {
-      return new Promise((resolve, reject) => {
-        request(requestConfig)
+      logger.log(`Use promise + request ${requestConfig.url}`);
+      return new Promise((resolve, reject) => request(requestConfig)
           .on('response', (response) => {
             writeStream
               .on('finish', () => resolve(response))
               .on('error', reject);
           })
           .on('error', reject)
-          .pipe(writeStream);
-      });
+          .pipe(writeStream));
     }
+    logger.log(`Use request-promise ${requestConfig.url}`);
     return rp(requestConfig);
   },
 
@@ -110,16 +116,21 @@ const ConnectionHelper = {
 
   _processResultOrRetry({ error, response, body, requestConfig, maxRetryAttempts, shouldRetry, writeStream }) {
     if (error || !(response && response.statusCode >= 200 && response.statusCode < 400) || (body && body.error)) {
+      console.log(`case 1: ${requestConfig.url}`);
       const shouldRetryOnError = Constants.ERRORS_TO_RETRY.filter((value) => (
         value === (error ? error.code : (body ? body.error : ErrorConstants.MSG_UNKNOWN_NETWORK_ERROR))
       ));
       if (shouldRetryOnError.length > 0) {
+        console.log(`case 2: ${requestConfig.url}`);
         if (maxRetryAttempts > 0 && shouldRetry) {
+          console.log(`case 2.1: ${requestConfig.url}`);
           return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
         } else {
+          console.log(`case 2.2: ${requestConfig.url}`);
           return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
         }
       } else if (response && response.statusCode === 401) {
+        console.log(`case 3: ${requestConfig.url}`);
         // Lets try to relogin online automatically (https://github.com/reactjs/redux/issues/974)
         return store.dispatch(loginAutomaticallyAction())
           .then(() => this._doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream))
@@ -134,6 +145,7 @@ const ConnectionHelper = {
               authError);
           });
       } else {
+        console.log(`case 4: ${requestConfig.url}`);
         // Being here means the server might not be accessible.
         const isAMPunreachable = (error && Constants.Constants.ERRORS_NO_AMP_SERVER.includes(error.code)) || !response;
         const isAccessDenied = response && response.statusCode === 403;
@@ -147,8 +159,11 @@ const ConnectionHelper = {
         return this._reportError(message, origin, errorCode);
       }
     } else if (response && !response.complete) {
+      console.log(`case 5: ${requestConfig.url}`);
       return this._reportError('corruptedResponse', ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     } else {
+      console.log(`case 6: ${requestConfig.url}`);
+      console.log(`body: ${body}`);
       return writeStream ? response : body;
     }
   },
