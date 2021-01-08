@@ -69,6 +69,7 @@ const ConnectionHelper = {
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
       .catch(reason => {
         logger.warn(`catch error on ${requestConfig.url}`);
+        logger.warn(reason);
         if (reason instanceof Notification) {
           return Promise.reject(reason);
         }
