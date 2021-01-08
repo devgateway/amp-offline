@@ -52,8 +52,8 @@ const ConnectionHelper = {
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
     logger.log('_doMethod ');
-    const url = `${maxRetryAttempts} - ${requestConfig.url}`;
-    logger.log(url);
+    const url = requestConfig.url;
+    logger.log(`${maxRetryAttempts} - ${url}`);
     if (!URLUtils.isValidUrl(url)) {
       return this._reportError(ErrorConstants.MSG_INVALID_URL, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     }
