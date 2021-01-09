@@ -39,6 +39,7 @@ const RequestConfig = {
       headers.Accept = routeConfiguration.accept || 'application/json';
     }
     const requestConfig = {
+      agent: null,
       url: fullUrl,
       json: true,
       headers,
