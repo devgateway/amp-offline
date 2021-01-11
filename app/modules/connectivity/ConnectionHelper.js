@@ -1,8 +1,6 @@
 /* eslint no-nested-ternary: 0*/
 
-import rp from 'request-promise';
-import request from 'request';
-import Promise from 'bluebird';
+import axios from 'axios';
 import { Constants, ErrorConstants } from 'amp-ui';
 import RequestConfig from './RequestConfig';
 import * as ErrorNotificationHelper from '../helpers/ErrorNotificationHelper';
@@ -55,18 +53,11 @@ const ConnectionHelper = {
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
     logger.log('_doMethod ');
     const url = requestConfig.url;
-    logger.log(`${maxRetryAttempts} - ${url}`);
+    logger.log(`retry n° ${maxRetryAttempts} - ${url}`);
     if (!URLUtils.isValidUrl(url)) {
       return this._reportError(ErrorConstants.MSG_INVALID_URL, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     }
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
-    /* const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
-    const requestPromise = this._buildRequestPromise(requestConfig, writeStream);
-    const bbPromise = requestPromise.promise && requestPromise.promise();
-    if (bbPromise) {
-      bbPromise.timeout(requestPromiseForcedTimeout);
-    }*/
-    // TODO I tried lower timeout for streaming and it seems to ignore it -> check how exactly to handle
     return this._buildRequestPromise(requestConfig, writeStream)
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
       .catch(reason => {
@@ -77,19 +68,6 @@ const ConnectionHelper = {
         }
         logger.error(`reprocess ${requestConfig.url}`);
         return this._processResultOrRetry({ ...resultRetryConfig, ...this._reasonToProcess(reason) });
-      })
-      .finally(() => {
-        /* if (bbPromise && bbPromise.isCancelled()) {
-          logger.log(`request cancelled ${requestConfig.url}`);
-          if (shouldRetry && maxRetryAttempts) {
-            logger.log(`attemps n° ${maxRetryAttempts}` - 1);
-            return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
-          } else {
-            return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
-          }
-        } else {
-          logger.log(`request not cancelled ${requestConfig.url}`);
-        }*/
       });
   },
 

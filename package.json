@@ -75,7 +75,11 @@
     },
     "nsis": {
       "artifactName": "${name}-${version}.${ext}",
-      "installerLanguages": ["en_US", "fr_FR", "es_ES"],
+      "installerLanguages": [
+        "en_US",
+        "fr_FR",
+        "es_ES"
+      ],
       "displayLanguageSelector": true
     },
     "linux": {
@@ -221,6 +225,7 @@
   "dependencies": {
     "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#v1.0.0",
     "amp-ui": "git+ssh://github.com/devgateway/amp-ui#v1.2.1",
+    "axios": "^0.21.1",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
     "extract-zip": "^1.6.7",
