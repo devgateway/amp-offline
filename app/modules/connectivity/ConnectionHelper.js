@@ -57,29 +57,14 @@ const ConnectionHelper = {
       return this._reportError(ErrorConstants.MSG_INVALID_URL, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     }
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
-    // const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
-    const requestPromise = this._buildRequestPromise(requestConfig, writeStream);
-    const bbPromise = requestPromise.promise && requestPromise.promise();
-    /* if (bbPromise) {
-      bbPromise.timeout(requestPromiseForcedTimeout);
-    }*/
     // TODO I tried lower timeout for streaming and it seems to ignore it -> check how exactly to handle
-    return requestPromise
+    return this._buildRequestPromise(requestConfig, writeStream)
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
       .catch(reason => {
         if (reason instanceof Notification) {
           return Promise.reject(reason);
         }
         return this._processResultOrRetry({ ...resultRetryConfig, ...this._reasonToProcess(reason) });
-      })
-      .finally(() => {
-        if (bbPromise && bbPromise.isCancelled()) {
-          if (shouldRetry && maxRetryAttempts) {
-            return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
-          } else {
-            return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
-          }
-        }
       });
   },
 
