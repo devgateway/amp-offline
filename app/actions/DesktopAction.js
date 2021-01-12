@@ -20,7 +20,8 @@ export function loadDesktop(workspace, teamMemberId) {
       // totals
       const currentWsSettings = ownProps().workspaceReducer.currentWorkspaceSettings;
       const ratesManager = ownProps().currencyRatesReducer.currencyRatesManager;
-      return DesktopManager.generateDesktopData(workspace, teamMemberId, currentWsSettings, ratesManager)
+      return DesktopManager.generateDesktopData(workspace, teamMemberId, currentWsSettings, ratesManager,
+        ownProps().translationReducer.lang)
         .then((data) => {
           dispatch(_loadDesktop({
             activeProjects: data.activeProjects,
