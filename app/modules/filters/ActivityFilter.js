@@ -1,5 +1,7 @@
-import { ActivityConstants, ErrorConstants, FieldPathConstants, FieldsManager, ApprovalStatus,
-  GlobalSettingsConstants } from 'amp-ui';
+import {
+  ActivityConstants, ErrorConstants, FieldPathConstants, FieldsManager, ApprovalStatus,
+  GlobalSettingsConstants
+} from 'amp-ui';
 import * as Utils from '../../utils/Utils';
 import Notification from '../helpers/NotificationHelper';
 import * as GlobalSettingsHelper from '../helpers/GlobalSettingsHelper';
@@ -227,10 +229,11 @@ export default class ActivityFilter {
     this._addValueFilter(ActivityConstants.EXPENDITURE_CLASS, '$in', 'expenditureClass', details);
 
     if (Object.keys(details).length > 0) {
-      const trnAdjRules = FieldPathConstants.TRANSACTION_TYPES.map(trnType => {
-        // TODO TBC how hidden adj type data is handled on AMP and should be handled in AMP Offline
-        let ato = this._fieldsManager
-          .getPossibleValuesOptions(`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`);
+      const trnAdjRules = FieldPathConstants.TRANSACTION_TYPES.map(trnType =>
+        `${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.ADJUSTMENT_TYPE}`
+      ).filter(adjType => this._fieldsManager.isFieldPathEnabled(adjType)).map(adjType => {
+        const trnType = adjType.split('~')[1];
+        let ato = this._fieldsManager.getPossibleValuesOptions(adjType);
         ato = ato.map(o => o.id);
         return Utils.toMap(trnType, {
           $elemMatch: {

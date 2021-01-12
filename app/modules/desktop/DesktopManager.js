@@ -11,10 +11,10 @@ const logger = new Logger('Desktop manager');
 
 const DesktopManager = {
 
-  generateDesktopData(workspace, teamMemberId, currentWorkspaceSettings, currencyRatesManager) {
+  generateDesktopData(workspace, teamMemberId, currentWorkspaceSettings, currencyRatesManager, currentLanguage) {
     logger.log('generateDesktopData');
     return new Promise((resolve, reject) =>
-      WorkspaceFilter.getDBFilter(workspace, teamMemberId).then(wsFilter =>
+      WorkspaceFilter.getDBFilter(workspace, teamMemberId, currentLanguage).then(wsFilter =>
         this.generateOneTabData(workspace, wsFilter, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
           currencyRatesManager)
           .then((tab1Data) =>
