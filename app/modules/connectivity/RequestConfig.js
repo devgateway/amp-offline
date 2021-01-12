@@ -14,7 +14,7 @@ As of now we have 5 parallel pull activities requests and 5 contacts requests th
 contacts are pulled in batches, it takes about the same time to pull both, though I saw a few other requests come
 in between. According to stats, 11 brings optimal result, plus it's best to avoid running too many keep-alive requests.
  */
-const pool = { maxSockets: 11 };
+const pool = { maxSockets: 100 };
 
 const RequestConfig = {
   /**
@@ -39,6 +39,7 @@ const RequestConfig = {
       headers.Accept = routeConfiguration.accept || 'application/json';
     }
     const requestConfig = {
+      agent: false,
       url: fullUrl,
       json: true,
       headers,
@@ -49,7 +50,9 @@ const RequestConfig = {
       gzip: true,
       forever: true,
       pool,
-      jar: cookiesStore // enables cookies to be saved
+      jar: cookiesStore, // enables cookies to be saved,
+      timeout: 15000,
+      keepAlive: true
     };
     if (routeConfiguration.isBinary) {
       // in case its binary we need to set json to false
