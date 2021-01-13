@@ -121,7 +121,7 @@ export default class WorkspaceFilterBuilder {
       // add draft flag if needed
       if (this._workspace['hide-draft'] === true) {
         const isDraftFilter = Utils.toMap(ActivityConstants.IS_DRAFT, { $ne: true });
-        computedOrgsFilter = { $or: { $and: [activityOrgs, isDraftFilter] } };
+        computedOrgsFilter = { $and: [{ $or: activityOrgs }, isDraftFilter] };
       } else {
         computedOrgsFilter = { $or: activityOrgs };
       }
