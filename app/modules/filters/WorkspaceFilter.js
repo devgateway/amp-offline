@@ -58,6 +58,7 @@ export default class WorkspaceFilterBuilder {
       const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
       return Promise.all([
         FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
+        FieldsHelper.findByWorkspaceMemberIdAndType(this._workspace.id, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
         PossibleValuesHelper.findAll(pvFilter),
       ]).then(([fieldsDef, pvs]) => {
         const fieldsManager = new FieldsManager(fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS],
