@@ -78,7 +78,7 @@ const PossibleValuesHelper = {
   },
 
   /**
-   * Finds all possible values that start with the prefix, optionaly with specific ids and a filter
+   * Finds all possible values that start with the prefix, optionally with specific ids and a filter
    * @param root (optional) the root of the path to add to the listed ids
    * @param idsWithoutRoot (optional) the ids without root
    * @param filter (optional) filter to apply
@@ -238,6 +238,15 @@ const PossibleValuesHelper = {
   deleteByIds(ids) {
     logger.log('deleteByIds');
     return DatabaseManager.removeAll({ id: { $in: ids } }, Constants.COLLECTION_POSSIBLE_VALUES);
+  },
+
+  /**
+   * Deletes all possible values.
+   * @return {*}
+   */
+  deleteAll() {
+    logger.log('deleteAll');
+    return DatabaseManager.removeAll({ }, Constants.COLLECTION_POSSIBLE_VALUES);
   },
 
   /**

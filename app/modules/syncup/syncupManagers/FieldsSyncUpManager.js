@@ -1,6 +1,7 @@
 import * as ConnectionHelper from '../../connectivity/ConnectionHelper';
 import * as FieldsHelper from '../../helpers/FieldsHelper';
 import * as TeamMemberHelper from '../../helpers/TeamMemberHelper';
+import * as WorkspaceHelper from '../../helpers/WorkspaceHelper';
 import AbstractAtomicSyncUpManager from './AbstractAtomicSyncUpManager';
 import * as Utils from '../../../utils/Utils';
 
@@ -12,13 +13,13 @@ import * as Utils from '../../../utils/Utils';
  * @author Nadejda Mandrescu
  */
 export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
-  constructor(fieldsType, singleFieldsTreeUrl, perWSFieldsUrl) {
+  constructor(fieldsType, singleFieldsTreeUrl, perWSFieldsUrl, useSingleTreeEP) {
     super(fieldsType);
     this._fieldsType = fieldsType;
     this._singleFieldsTreeUrl = singleFieldsTreeUrl;
     this._perWSFieldsUrl = perWSFieldsUrl;
     // TODO remove once AMP-25568 is done, as part of AMPOFFLINE-270
-    this._useSingleTreeEP = true;
+    this._useSingleTreeEP = useSingleTreeEP;
     this._doUpdate = true;
   }
 
@@ -61,10 +62,14 @@ export default class FieldsSyncUpManager extends AbstractAtomicSyncUpManager {
   }
 
   _syncUpFieldsTreePerWorkspaceMembers() {
-    return TeamMemberHelper.findAll({}).then(wsMemberIdsMap => {
-      const paramsMap = { 'ws-member-ids': Utils.flattenToListByKey(wsMemberIdsMap, 'id') };
-      return ConnectionHelper.doGet({ url: this._perWSFieldsUrl, paramsMap, shouldRetry: true })
-        .then(FieldsHelper.replaceAll);
+    return WorkspaceHelper.findAll({}).then(wsMemberIdsMap => {
+      const params = Utils.flattenToListByKey(wsMemberIdsMap, 'id');
+      return ConnectionHelper.doPost({ url: this._perWSFieldsUrl, body: params, shouldRetry: true })
+        .then(data => {
+          // eslint-disable-next-line no-return-assign
+          data.forEach(i => i['activity-fields'] = i.fields);
+          return FieldsHelper.replaceAllByFieldsType(data, 'activity-fields');
+        });
     });
   }
 }

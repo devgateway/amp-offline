@@ -13,6 +13,7 @@ const mapStateToProps = (state) => {
   return {
     contactReducer: state.contactReducer,
     teamMemberId: state.userReducer.teamMember.id,
+    workspaceReducer: state.workspaceReducer
   };
 };
 

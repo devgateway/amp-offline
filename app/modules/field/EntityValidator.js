@@ -21,7 +21,7 @@ const logger = new Logger('EntityValidator');
 export default class EntityValidator {
   constructor(entity, fieldsManager: FieldsManager, otherProjectTitles: Array,
     excludedFields = [ActivityConstants.APPROVAL_DATE, ActivityConstants.APPROVAL_STATUS,
-      ActivityConstants.APPROVED_BY]) {
+      ActivityConstants.APPROVED_BY], prefix) {
     logger.log('constructor');
     this._entity = entity;
     this._fieldsDef = fieldsManager.fieldsDef;
@@ -30,6 +30,7 @@ export default class EntityValidator {
     this._otherProjectTitles = new Set(otherProjectTitles);
     this.excludedFields = excludedFields || [];
     this.errorsCollector = new ValidationErrorsCollector();
+    this._prefix = prefix;
   }
 
   set entity(entity) {
@@ -199,7 +200,7 @@ export default class EntityValidator {
 
   _validateValue(objects, asDraft, fieldDef: FieldDefinition, fieldPath) {
     logger.debug('_validateValue');
-    const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath);
+    const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath, this._prefix);
     const wasHydrated = this._wasHydrated(fieldPath);
     const stringLengthError = translate('stringTooLong').replace('%fieldName%', fieldLabel);
     const isLookupChild = fieldDef.hasChildren() && fieldDef.isImportable();
@@ -382,7 +383,7 @@ export default class EntityValidator {
       validationError = translate('percentageRangeError');
     }
     if (validationError) {
-      const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath);
+      const fieldLabel = this._fieldsManager.getFieldLabelTranslation(fieldPath, this._prefix);
       validationError = validationError.replace('%percentageField%', fieldLabel);
     }
     return validationError || true;
@@ -447,7 +448,7 @@ export default class EntityValidator {
   noMultipleValuesValidator(values, fieldName) {
     logger.log('noMultipleValuesValidator');
     if (values && values.length > 1) {
-      const friendlyFieldName = this._fieldsManager.getFieldLabelTranslation(fieldName);
+      const friendlyFieldName = this._fieldsManager.getFieldLabelTranslation(fieldName, this._prefix);
       return translate('multipleValuesNotAllowed').replace('%fieldName%', friendlyFieldName || fieldName);
     }
     return true;
@@ -702,7 +703,7 @@ export default class EntityValidator {
     let error = null;
     if (!isValid) {
       const pcPath = `${contactListFieldName}~${ActivityConstants.PRIMARY_CONTACT}`;
-      const primaryContactLabel = this._fieldsManager.getFieldLabelTranslation(pcPath);
+      const primaryContactLabel = this._fieldsManager.getFieldLabelTranslation(pcPath, this._prefix);
       error = translate('dependencyNotMet').replace('%depName%', primaryContactLabel);
     }
     return isValid || error;

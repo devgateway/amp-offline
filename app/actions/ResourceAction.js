@@ -1,5 +1,5 @@
 import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants,
-  FieldsManager } from 'amp-ui';
+  FieldsManager, WorkspaceConstants } from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -34,6 +34,7 @@ import translate from '../utils/translate';
 import * as URLUtils from '../utils/URLUtils';
 import { VALIDATE_ON_CHANGE_ONLY } from '../utils/constants/EntityConstants';
 import ValidationError from '../modules/field/ValidationError';
+import store from '../index';
 
 export const RESOURCES_LOAD = 'RESOURCES_LOAD';
 export const RESOURCES_LOAD_PENDING = 'RESOURCES_LOAD_PENDING';
@@ -80,7 +81,7 @@ export const loadHydratedResourcesForActivity = (activity) => (dispatch, ownProp
 
 export const loadHydratedResources = (uuids) => (dispatch, ownProps) => dispatch({
   type: RESOURCES_LOAD,
-  payload: _hydrateResources(uuids, ownProps().userReducer.teamMember.id,
+  payload: _hydrateResources(uuids, ownProps().workspaceReducer.currentWorkspace.id,
     ownProps().resourceReducer.resourceFieldsManager, ownProps().activityReducer.activity)
 });
 
@@ -198,20 +199,21 @@ export const uploadFileToPendingResourceAsync = (srcFile) => (dispatch, ownProps
 
 export const configureResourceManagers = () => (dispatch, ownProps) => dispatch({
   type: RESOURCE_MANAGERS,
-  payload: _getResourceManagers(ownProps().userReducer.teamMember.id, ownProps().translationReducer.lang)
+  payload: _getResourceManagers(ownProps().workspaceReducer.currentWorkspace.id, ownProps().translationReducer.lang,
+    ownProps().workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD])
 });
 
-const _getResourceManagers = (teamMemberId, currentLanguage) => Promise.all([
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
+const _getResourceManagers = (wsId, currentLanguage, wsPrefix) => Promise.all([
+  FieldsHelper.findByWorkspaceMemberIdAndType(wsId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS]),
   PossibleValuesHelper.findAllByIdsWithoutPrefixAndCleanupPrefix(FieldPathConstants.PREFIX_RESOURCE)
 ]).then(([rFields, possibleValuesCollection]) => ({
-  resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage, LoggerManager)
+  resourceFieldsManager: new FieldsManager(rFields, possibleValuesCollection, currentLanguage, LoggerManager, wsPrefix)
 }));
 
-const _hydrateResources = (uuids, teamMemberId, resourceFieldsManager, activity) => Promise.all([
+const _hydrateResources = (uuids, wsId, resourceFieldsManager, activity) => Promise.all([
   ResourceManager.findResourcesByUuidsWithContent(uuids),
-  FieldsHelper.findByWorkspaceMemberIdAndType(teamMemberId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
+  FieldsHelper.findByWorkspaceMemberIdAndType(wsId, Constants.SYNCUP_TYPE_RESOURCE_FIELDS)
     .then(fields => fields[Constants.SYNCUP_TYPE_RESOURCE_FIELDS])
 ]).then(([resources, rFields]) => {
   if (resources && resources.length) {
@@ -228,7 +230,8 @@ const _flagAsFullyHydrated = (resources, resourceFieldsManager, activity) => {
     ars.forEach(ar => {
       const r = rMap.get(ar[UUID]);
       if (r) {
-        r[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null);
+        r[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(r, resourceFieldsManager, null, null,
+          store.getState().workspaceReducer.currentWorkspace);
         r[VALIDATE_ON_CHANGE_ONLY] = true;
         ar[UUID] = r;
         ar[ValueConstants.TMP_ENTITY_VALIDATOR] = r[ValueConstants.TMP_ENTITY_VALIDATOR];
@@ -298,7 +301,8 @@ const _getActivityResources = (activity, asIds = true) => {
 export const buildNewResource = (resourceFieldsManager, resourceType) => {
   const resource = {};
   ResourceHelper.stampClientChange(resource);
-  resource[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, []);
+  resource[ValueConstants.TMP_ENTITY_VALIDATOR] = new EntityValidator(resource, resourceFieldsManager, null, [],
+    store.getState().workspaceReducer.currentWorkspace);
   resource[RESOURCE_TYPE] = { id: resourceType, value: resourceType };
   return resource;
 };

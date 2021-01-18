@@ -90,9 +90,9 @@ export default class AbstractEntityHydrator {
 
   _hydrateEntitiesWithFullObjects(entities, possibleValuesCollection, hydrate = true) {
     possibleValuesCollection.forEach(pv => this._hydrateFieldPath(entities, pv, 0, this._fieldsDef, hydrate));
+    console.error(entities);
     return entities;
   }
-
 
   _hydrateFieldPath(objects, possibleValues, pathIndex, fieldDefs, hydrate = true) {
     const fieldName = possibleValues[FieldPathConstants.FIELD_PATH][pathIndex];
