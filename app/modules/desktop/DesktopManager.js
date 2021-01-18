@@ -104,7 +104,8 @@ const DesktopManager = {
     if (item[ActivityConstants.FUNDINGS]) {
       item[ActivityConstants.FUNDINGS].forEach((funding) => {
         const fds = funding[trnType] && funding[trnType]
-          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE].value === ValueConstants.ACTUAL);
+          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE]
+            && fd[ActivityConstants.ADJUSTMENT_TYPE].value === ValueConstants.ACTUAL);
         if (fds) {
           fds.forEach((fd) => {
             amount += currencyRatesManager
