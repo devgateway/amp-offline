@@ -119,6 +119,7 @@ export default class ActivityPreview extends Component {
     const { activity, activityWSManager, currentWorkspaceSettings } = this.props.activityReducer;
     const { startUpReducer, userReducer, workspaceReducer, activityReducer } = this.props;
     const activityContext = {
+      canEditActivities: true,
       activityStatus: activity ? DesktopManager.getActivityStatus(activity) : null,
       teamMember: {
         teamMemberRole: userReducer.teamMember[WorkspaceConstants.ROLE_ID],
