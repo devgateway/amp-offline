@@ -79,7 +79,6 @@ export default class AFOption {
 
   compareByDisplayValue(other: AFOption) {
     return UIUtils.sortByLocalCompare(this.displayValue, other.displayValue);
-
   }
 
   static sortByDisplayValue(afOptions) {
