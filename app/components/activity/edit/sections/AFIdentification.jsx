@@ -18,7 +18,7 @@ const CUSTOM_TYPE = {
   [ActivityConstants.GOVERNMENT_AGREEMENT_NUMBER]: Types.INPUT_TYPE,
   [ActivityConstants.JOINT_CRITERIA]: Types.RADIO_BOOLEAN,
   [ActivityConstants.HUMANITARIAN_AID]: Types.RADIO_BOOLEAN,
-  [ActivityConstants.FINANCIAL_INSTRUMENT]: Types.RADIO_LIST, /* TODO: replace for MULTI_SELECT (AMPOFFLINE-1520). */
+  [ActivityConstants.FINANCIAL_INSTRUMENT]: Types.MULTI_SELECT,
   [ActivityConstants.IATI_IDENTIFIER]: Types.INPUT_TYPE,
 };
 
