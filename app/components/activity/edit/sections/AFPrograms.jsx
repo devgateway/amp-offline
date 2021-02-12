@@ -27,7 +27,8 @@ class AFPrograms extends Component {
     this.state = { [ActivityConstants.NATIONAL_PLAN_OBJECTIVE]: undefined,
       [ActivityConstants.PRIMARY_PROGRAMS]: undefined,
       [ActivityConstants.SECONDARY_PROGRAMS]: undefined,
-      [ActivityConstants.TERTIAR_PROGRAMS]: undefined };
+      [ActivityConstants.TERTIAR_PROGRAMS]: undefined,
+      sourceProgram: undefined };
     this.getFilterForProgramMapping(ActivityConstants.NATIONAL_PLAN_OBJECTIVE);
     this.getFilterForProgramMapping(ActivityConstants.PRIMARY_PROGRAMS);
     this.getFilterForProgramMapping(ActivityConstants.SECONDARY_PROGRAMS);
@@ -35,10 +36,39 @@ class AFPrograms extends Component {
   }
 
   getFilterForProgramMapping(fieldPath) {
+    const { activity } = this.props;
     return ProgramHelper.findAllWithProgramMapping(fieldPath).then(data => {
-      logger.info(data);
-      this.setState({ [fieldPath]: data });
-      return data;
+      if (data && data.length > 0) {
+        return ProgramHelper.findProgramClassificationByProgramId(data[0].src).then(type => {
+          console.log(`${fieldPath} - ${type}`);
+          this.setState({ sourceProgram: type });
+          if (activity[type] && activity[type].length > 0) {
+            const filter = [];
+            activity[type].forEach(p => ProgramHelper.findParentStructure(p.program, type, [])
+              .then(ids => {
+                console.log(ids);
+                return ProgramHelper.findProgramsByClassification(fieldPath).then(p2 => {
+                  const auxId = ids[0].id || ids[0]._id;
+                  const idToAdd = Object.keys(p2[0]['possible-options'])
+                    .find(i => p2[0]['possible-options'][i].extra_info['mapped-program-id'] === auxId);
+                  if (idToAdd) {
+                    filter.push({ path: 'id', value: Number.parseInt(idToAdd, 10) });
+                    this.setState({ [fieldPath]: filter });
+                  }
+                  // TODO: add its parents.
+                  return null;
+                });
+              }));
+          } else {
+            // Since the source program is empty we cant show anything in the destination program.
+            this.setState({ [fieldPath]: [{ path: 'value', value: 'fake-value' }] });
+          }
+          return type;
+        });
+      } else {
+        this.setState({ [fieldPath]: [] });
+        return null;
+      }
     });
   }
 
@@ -47,29 +77,35 @@ class AFPrograms extends Component {
         && this.state[ActivityConstants.PRIMARY_PROGRAMS] !== undefined
         && this.state[ActivityConstants.SECONDARY_PROGRAMS] !== undefined
         && this.state[ActivityConstants.TERTIAR_PROGRAMS] !== undefined) {
-      debugger
       return (<div className={afStyles.full_width}>
         <Grid className={afStyles.full_width}>
           <Row>
             <Col md={12} lg={12}>
-              <AFField parent={this.props.activity} fieldPath={ActivityConstants.NATIONAL_PLAN_OBJECTIVE} />
+              <AFField
+                parent={this.props.activity} fieldPath={ActivityConstants.NATIONAL_PLAN_OBJECTIVE}
+                filter={this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE]} />
             </Col>
           </Row>
           <Row>
             <Col md={12} lg={12}>
               <AFField
                 parent={this.props.activity} fieldPath={ActivityConstants.PRIMARY_PROGRAMS}
+                filter={this.state[ActivityConstants.PRIMARY_PROGRAMS]}
               />
             </Col>
           </Row>
           <Row>
             <Col md={12} lg={12}>
-              <AFField parent={this.props.activity} fieldPath={ActivityConstants.SECONDARY_PROGRAMS} />
+              <AFField
+                parent={this.props.activity} fieldPath={ActivityConstants.SECONDARY_PROGRAMS}
+                filter={this.state[ActivityConstants.SECONDARY_PROGRAMS]} />
             </Col>
           </Row>
           <Row>
             <Col md={12} lg={12}>
-              <AFField parent={this.props.activity} fieldPath={ActivityConstants.TERTIAR_PROGRAMS} />
+              <AFField
+                parent={this.props.activity} fieldPath={ActivityConstants.TERTIAR_PROGRAMS}
+                filter={this.state[ActivityConstants.TERTIAR_PROGRAMS]} />
             </Col>
           </Row>
           <Row>
