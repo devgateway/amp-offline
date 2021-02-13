@@ -28,34 +28,43 @@ class AFPrograms extends Component {
       [ActivityConstants.PRIMARY_PROGRAMS]: undefined,
       [ActivityConstants.SECONDARY_PROGRAMS]: undefined,
       [ActivityConstants.TERTIAR_PROGRAMS]: undefined,
-      sourceProgram: undefined };
+      sourceProgram: undefined,
+      destinationProgram: undefined };
     this.getFilterForProgramMapping(ActivityConstants.NATIONAL_PLAN_OBJECTIVE);
     this.getFilterForProgramMapping(ActivityConstants.PRIMARY_PROGRAMS);
     this.getFilterForProgramMapping(ActivityConstants.SECONDARY_PROGRAMS);
     this.getFilterForProgramMapping(ActivityConstants.TERTIAR_PROGRAMS);
   }
 
+  /**
+   * Given a fieldPath (or classification) check if it depends of another classification (from the NDD) and create a
+   * filter that shows only those programs related (or mapped) with the source program.
+   * @param fieldPath
+   * @returns {*}
+   */
   getFilterForProgramMapping(fieldPath) {
     const { activity } = this.props;
+    // Find mappings where this program is the dst (right side) because the extra-info only exist in one side.
     return ProgramHelper.findAllWithProgramMapping(fieldPath).then(data => {
       if (data && data.length > 0) {
         return ProgramHelper.findProgramClassificationByProgramId(data[0].src).then(type => {
           console.log(`${fieldPath} - ${type}`);
-          this.setState({ sourceProgram: type });
+          this.setState({ sourceProgram: type, destinationProgram: fieldPath });
           if (activity[type] && activity[type].length > 0) {
             const filter = [];
             activity[type].forEach(p => ProgramHelper.findParentStructure(p.program, type, [])
-              .then(ids => {
-                console.log(ids);
-                return ProgramHelper.findProgramsByClassification(fieldPath).then(p2 => {
-                  const auxId = ids[0].id || ids[0]._id;
+              .then(srcIds => {
+                console.log(srcIds);
+                return ProgramHelper.findAllProgramsByClassification(fieldPath).then(p2 => {
+                  const auxId = srcIds[0].id || srcIds[0]._id;
                   const idToAdd = Object.keys(p2[0]['possible-options'])
                     .find(i => p2[0]['possible-options'][i].extra_info['mapped-program-id'] === auxId);
                   if (idToAdd) {
                     filter.push({ path: 'id', value: Number.parseInt(idToAdd, 10) });
+                    // TODO: check why the filter shows only 1 element.
                     this.setState({ [fieldPath]: filter });
+                    // TODO: add its parents (use srcIds.length) to calculate how many parents show.
                   }
-                  // TODO: add its parents.
                   return null;
                 });
               }));
@@ -72,7 +81,14 @@ class AFPrograms extends Component {
     });
   }
 
+  handleChange = (event) => {
+    console.log(event);
+    const { destinationProgram } = this.state;
+    this.getFilterForProgramMapping(destinationProgram);
+  }
+
   render() {
+    // TODO: add method to handle user changes.
     if (this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE] !== undefined
         && this.state[ActivityConstants.PRIMARY_PROGRAMS] !== undefined
         && this.state[ActivityConstants.SECONDARY_PROGRAMS] !== undefined
@@ -83,7 +99,8 @@ class AFPrograms extends Component {
             <Col md={12} lg={12}>
               <AFField
                 parent={this.props.activity} fieldPath={ActivityConstants.NATIONAL_PLAN_OBJECTIVE}
-                filter={this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE]} />
+                filter={this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE]}
+                onAfterUpdate={this.handleChange} />
             </Col>
           </Row>
           <Row>
