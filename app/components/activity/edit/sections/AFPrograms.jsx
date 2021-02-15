@@ -61,7 +61,6 @@ class AFPrograms extends Component {
                     .find(i => p2[0]['possible-options'][i].extra_info['mapped-program-id'] === auxId);
                   if (idToAdd) {
                     filter.push({ path: 'id', value: Number.parseInt(idToAdd, 10) });
-                    // TODO: check why the filter shows only 1 element.
                     this.setState({ [fieldPath]: filter });
                     // TODO: add its parents (use srcIds.length) to calculate how many parents show.
                   }
@@ -81,11 +80,21 @@ class AFPrograms extends Component {
     });
   }
 
+  // eslint-disable-next-line react/sort-comp
   handleChange = (event) => {
     console.log(event);
     const { destinationProgram } = this.state;
     this.getFilterForProgramMapping(destinationProgram);
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  getFilter(filter) {
+    if (filter && filter.length > 0) {
+      return filter;
+    }
+    return null;
+  }
+
 
   render() {
     // TODO: add method to handle user changes.
@@ -93,13 +102,15 @@ class AFPrograms extends Component {
         && this.state[ActivityConstants.PRIMARY_PROGRAMS] !== undefined
         && this.state[ActivityConstants.SECONDARY_PROGRAMS] !== undefined
         && this.state[ActivityConstants.TERTIAR_PROGRAMS] !== undefined) {
+      console.error(this.state);
       return (<div className={afStyles.full_width}>
         <Grid className={afStyles.full_width}>
           <Row>
             <Col md={12} lg={12}>
               <AFField
                 parent={this.props.activity} fieldPath={ActivityConstants.NATIONAL_PLAN_OBJECTIVE}
-                filter={this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE]}
+                extraParams={{ isORFilter: (!!this.getFilter(this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE])) }}
+                filter={this.getFilter(this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE])}
                 onAfterUpdate={this.handleChange} />
             </Col>
           </Row>
@@ -107,7 +118,9 @@ class AFPrograms extends Component {
             <Col md={12} lg={12}>
               <AFField
                 parent={this.props.activity} fieldPath={ActivityConstants.PRIMARY_PROGRAMS}
+                extraParams={{ isORFilter: (!!this.getFilter(this.state[ActivityConstants.PRIMARY_PROGRAMS])) }}
                 filter={this.state[ActivityConstants.PRIMARY_PROGRAMS]}
+                onAfterUpdate={this.handleChange}
               />
             </Col>
           </Row>
@@ -115,14 +128,18 @@ class AFPrograms extends Component {
             <Col md={12} lg={12}>
               <AFField
                 parent={this.props.activity} fieldPath={ActivityConstants.SECONDARY_PROGRAMS}
-                filter={this.state[ActivityConstants.SECONDARY_PROGRAMS]} />
+                extraParams={{ isORFilter: (!!this.getFilter(this.state[ActivityConstants.SECONDARY_PROGRAMS])) }}
+                filter={this.state[ActivityConstants.SECONDARY_PROGRAMS]}
+                onAfterUpdate={this.handleChange} />
             </Col>
           </Row>
           <Row>
             <Col md={12} lg={12}>
               <AFField
                 parent={this.props.activity} fieldPath={ActivityConstants.TERTIAR_PROGRAMS}
-                filter={this.state[ActivityConstants.TERTIAR_PROGRAMS]} />
+                extraParams={{ isORFilter: (!!this.getFilter(this.state[ActivityConstants.TERTIAR_PROGRAMS])) }}
+                filter={this.state[ActivityConstants.TERTIAR_PROGRAMS]}
+                onAfterUpdate={this.handleChange} />
             </Col>
           </Row>
           <Row>

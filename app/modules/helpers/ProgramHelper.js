@@ -88,7 +88,7 @@ const ProgramHelper = {
   },
 
   /**
-   * Find all programs for a given classification/type.
+   * Find all programs for a given classification/type (ie: NPO, PP, SP, etc).
    * @param fieldPath
    * @returns {*}
    */
