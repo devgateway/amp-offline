@@ -51,6 +51,8 @@ class AFPrograms extends Component {
           console.log(`${fieldPath} - ${type}`);
           this.setState({ sourceProgram: type, destinationProgram: fieldPath });
           if (activity[type] && activity[type].length > 0) {
+            // By default dont show anything.
+            this.setState({ [fieldPath]: [{ path: 'value', value: 'fake-value' }] });
             const filter = [];
             activity[type].forEach(p => ProgramHelper.findParentStructure(p.program, type, [])
               .then(srcIds => {
