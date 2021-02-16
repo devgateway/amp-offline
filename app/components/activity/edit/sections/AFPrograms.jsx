@@ -8,6 +8,7 @@ import { PROGRAM } from './AFSectionConstants';
 import Logger from '../../../../modules/util/LoggerManager';
 import * as Types from '../components/AFComponentTypes';
 import ProgramHelper from '../../../../modules/helpers/ProgramHelper';
+import translate from '../../../../utils/translate';
 
 const logger = new Logger('AF programs');
 
@@ -44,24 +45,27 @@ class AFPrograms extends Component {
    */
   getFilterForProgramMapping(fieldPath) {
     const { activity } = this.props;
-    // Find mappings where this program is the dst (right side) because the extra-info only exist in one side.
+    // Find mappings where this program is the dst (right side) because the extra-info only exists in one side.
     return ProgramHelper.findAllWithProgramMapping(fieldPath).then(data => {
       if (data && data.length > 0) {
-        return ProgramHelper.findProgramClassificationByProgramId(data[0].src).then(type => {
-          console.log(`${fieldPath} - ${type}`);
-          this.setState({ sourceProgram: type, destinationProgram: fieldPath });
-          if (activity[type] && activity[type].length > 0) {
+        // Find the type of the src side (NPO, PP, SP, etc) using one of the mappings.
+        return ProgramHelper.findProgramClassificationByProgramId(data[0].src).then(srcType => {
+          logger.log(`src: ${srcType} - dst: ${fieldPath}`);
+          this.setState({ sourceProgram: srcType, destinationProgram: fieldPath });
+          if (activity[srcType] && activity[srcType].length > 0) {
             // By default dont show anything.
             this.setState({ [fieldPath]: [{ path: 'value', value: 'fake-value' }] });
             const filter = [];
-            activity[type].forEach(p => ProgramHelper.findParentStructure(p.program, type, [])
+            activity[srcType].forEach(p => ProgramHelper.findParentStructure(p.program, srcType, [])
               .then(srcIds => {
-                console.log(srcIds);
+                logger.log(srcIds);
+                // Find all programs for this selector.
                 return ProgramHelper.findAllProgramsByClassification(fieldPath).then(p2 => {
                   const auxId = srcIds[0].id || srcIds[0]._id;
                   const idToAdd = Object.keys(p2[0]['possible-options'])
                     .find(i => p2[0]['possible-options'][i].extra_info['mapped-program-id'] === auxId);
                   if (idToAdd) {
+                    // If the program matches exactly by its mapping with an existing program then add it to the filter.
                     filter.push({ path: 'id', value: Number.parseInt(idToAdd, 10) });
                     this.setState({ [fieldPath]: filter });
                     // TODO: add its parents (use srcIds.length) to calculate how many parents show.
@@ -72,8 +76,13 @@ class AFPrograms extends Component {
           } else {
             // Since the source program is empty we cant show anything in the destination program.
             this.setState({ [fieldPath]: [{ path: 'value', value: 'fake-value' }] });
+            // Also we have to remove anything selected.
+            if (activity[fieldPath] && activity[fieldPath].length > 0) {
+              activity[fieldPath] = [];
+              this.forceUpdate();
+            }
           }
-          return type;
+          return srcType;
         });
       } else {
         this.setState({ [fieldPath]: [] });
@@ -83,8 +92,19 @@ class AFPrograms extends Component {
   }
 
   // eslint-disable-next-line react/sort-comp
+  handleDelete = (type, event) => {
+    const { destinationProgram, sourceProgram } = this.state;
+    const { activity } = this.props;
+    if (ProgramHelper.hasRelatedProgram(event.program.id, sourceProgram, destinationProgram, activity, type)) {
+      alert(translate('cantDeleteMappedProgram'));
+      return false;
+    }
+    return true;
+  }
+
+  // eslint-disable-next-line react/sort-comp
   handleChange = (event) => {
-    console.log(event);
+    logger.log(event);
     const { destinationProgram } = this.state;
     this.getFilterForProgramMapping(destinationProgram);
   }
@@ -99,12 +119,11 @@ class AFPrograms extends Component {
 
 
   render() {
-    // TODO: add method to handle user changes.
+    logger.log(this.state);
     if (this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE] !== undefined
         && this.state[ActivityConstants.PRIMARY_PROGRAMS] !== undefined
         && this.state[ActivityConstants.SECONDARY_PROGRAMS] !== undefined
         && this.state[ActivityConstants.TERTIAR_PROGRAMS] !== undefined) {
-      console.error(this.state);
       return (<div className={afStyles.full_width}>
         <Grid className={afStyles.full_width}>
           <Row>
@@ -113,6 +132,7 @@ class AFPrograms extends Component {
                 parent={this.props.activity} fieldPath={ActivityConstants.NATIONAL_PLAN_OBJECTIVE}
                 extraParams={{ isORFilter: (!!this.getFilter(this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE])) }}
                 filter={this.getFilter(this.state[ActivityConstants.NATIONAL_PLAN_OBJECTIVE])}
+                onBeforeDelete={this.handleDelete.bind(null, ActivityConstants.NATIONAL_PLAN_OBJECTIVE)}
                 onAfterUpdate={this.handleChange} />
             </Col>
           </Row>
@@ -122,6 +142,7 @@ class AFPrograms extends Component {
                 parent={this.props.activity} fieldPath={ActivityConstants.PRIMARY_PROGRAMS}
                 extraParams={{ isORFilter: (!!this.getFilter(this.state[ActivityConstants.PRIMARY_PROGRAMS])) }}
                 filter={this.state[ActivityConstants.PRIMARY_PROGRAMS]}
+                onBeforeDelete={this.handleDelete.bind(null, ActivityConstants.PRIMARY_PROGRAMS)}
                 onAfterUpdate={this.handleChange}
               />
             </Col>
@@ -132,6 +153,7 @@ class AFPrograms extends Component {
                 parent={this.props.activity} fieldPath={ActivityConstants.SECONDARY_PROGRAMS}
                 extraParams={{ isORFilter: (!!this.getFilter(this.state[ActivityConstants.SECONDARY_PROGRAMS])) }}
                 filter={this.state[ActivityConstants.SECONDARY_PROGRAMS]}
+                onBeforeDelete={this.handleDelete.bind(null, ActivityConstants.SECONDARY_PROGRAMS)}
                 onAfterUpdate={this.handleChange} />
             </Col>
           </Row>
@@ -141,6 +163,7 @@ class AFPrograms extends Component {
                 parent={this.props.activity} fieldPath={ActivityConstants.TERTIAR_PROGRAMS}
                 extraParams={{ isORFilter: (!!this.getFilter(this.state[ActivityConstants.TERTIAR_PROGRAMS])) }}
                 filter={this.state[ActivityConstants.TERTIAR_PROGRAMS]}
+                onBeforeDelete={this.handleDelete.bind(null, ActivityConstants.TERTIAR_PROGRAMS)}
                 onAfterUpdate={this.handleChange} />
             </Col>
           </Row>

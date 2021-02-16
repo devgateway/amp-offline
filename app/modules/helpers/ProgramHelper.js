@@ -96,6 +96,21 @@ const ProgramHelper = {
     logger.debug('findProgramsByClassification');
     const filter = this.getFilterByProgramClassification(fieldPath);
     return DatabaseManager.findAll(filter, Constants.COLLECTION_POSSIBLE_VALUES);
+  },
+
+  hasRelatedProgram(id, src, dst, activity, type) {
+    if (type === src) {
+      const dstPrograms = activity[dst];
+      let ret = false;
+      dstPrograms.forEach(i => {
+        if (i.program.extra_info['mapped-program-id'] === id) {
+          ret = true;
+        }
+      });
+      return ret;
+    } else {
+      return false;
+    }
   }
 };
 
