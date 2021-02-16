@@ -1,4 +1,4 @@
-import { ActivityConstants, PossibleValuesManager } from 'amp-ui';
+import { ActivityConstants, PossibleValuesManager, UIUtils } from 'amp-ui';
 
 /* eslint-disable class-methods-use-this */
 
@@ -78,7 +78,7 @@ export default class AFOption {
   }
 
   compareByDisplayValue(other: AFOption) {
-    return this.displayValue.localeCompare(other.displayValue);
+    return UIUtils.sortByLocalCompare(this.displayValue, other.displayValue);
   }
 
   static sortByDisplayValue(afOptions) {

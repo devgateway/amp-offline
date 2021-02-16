@@ -41,9 +41,9 @@ class AFLineMinistryObservations extends Component {
   addObservationHandler() {
     const newObservationsList = this.state.lineMinistryObservations.slice();
     const newObservation = {
-      [ActivityConstants.LINE_MINISTRY_OBSERVATIONS_DATE]: undefined,
+      [ActivityConstants.OBSERVATIONS_DATE]: undefined,
       [ActivityConstants.MEASURES]: [],
-      [ActivityConstants.LINE_MINISTRY_OBSERVATIONS_NAME]: ''
+      [ActivityConstants.OBSERVATIONS_NAME]: ''
     };
     newObservationsList.push(newObservation);
     this.setState({ lineMinistryObservations: newObservationsList });
@@ -115,7 +115,7 @@ class AFLineMinistryObservations extends Component {
           removeMeasure={this.removeMeasureHandler} removeActor={this.removeActorHandler}
           topPath={ActivityConstants.LINE_MINISTRY_OBSERVATIONS}
           topFMPath="ACTIVITY_LINE_MINISTRY_OBSERVATIONS"
-          prefix="LINE_MINISTRY_OBSERVATIONS"
+          prefix="OBSERVATIONS"
         />);
       });
     }
