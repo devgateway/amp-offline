@@ -214,7 +214,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-haiti-pr-3400-tc9.ampsite.net",
+    "ampServerUrl": "amp-drc-develop-tc9.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   },
