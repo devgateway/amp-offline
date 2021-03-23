@@ -20,7 +20,7 @@ const ProgramHelper = {
         ids.forEach(i => {
           const programId = data[0]['possible-options'][i].extra_info['mapped-program-id'];
           if (programId) {
-            ret.push({ src: programId, dst: Number.parseInt(i, 10) });
+            ret.push({ dst: programId, src: Number.parseInt(i, 10) });
           }
         });
         logger.info(ret);
@@ -61,7 +61,9 @@ const ProgramHelper = {
   },
 
   getFilterByProgramClassification(classification) {
-    return { id: `${classification}~${ActivityConstants.PROGRAM}` };
+    const filter = { id: `${classification}~${ActivityConstants.PROGRAM}` };
+    logger.info(filter);
+    return filter;
   },
 
   /**

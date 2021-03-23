@@ -49,45 +49,47 @@ class AFPrograms extends Component {
     return ProgramHelper.findAllWithProgramMapping(fieldPath).then(data => {
       if (data && data.length > 0) {
         // Find the type of the src side (NPO, PP, SP, etc) using one of the mappings.
-        return ProgramHelper.findProgramClassificationByProgramId(data[0].src).then(srcType => {
-          logger.log(`src: ${srcType} - dst: ${fieldPath}`);
-          this.setState({ sourceProgram: srcType, destinationProgram: fieldPath });
-          if (activity[srcType] && activity[srcType].length > 0) {
+        return ProgramHelper.findProgramClassificationByProgramId(data[0].dst[0]).then(srcType => {
+          const src = fieldPath;
+          const dst = srcType;
+          logger.log(`src: ${src} - dst: ${dst}`);
+          this.setState({ sourceProgram: src, destinationProgram: dst, [src]: [] });
+          if (activity[src] && activity[src].length > 0) {
             // By default dont show anything.
-            this.setState({ [fieldPath]: [{ path: 'value', value: 'fake-value' }] });
+            this.setState({ [dst]: [{ path: 'value', value: 'fake-value' }] });
             const filter = [];
-            activity[srcType].forEach(p => ProgramHelper.findParentStructure(p.program, srcType, [])
+            activity[src].forEach(p => ProgramHelper.findParentStructure(p.program, src, [])
               .then(srcIds => {
                 logger.log(srcIds);
                 // Find all programs for this selector.
-                return ProgramHelper.findAllProgramsByClassification(fieldPath).then(p2 => {
-                  const auxId = srcIds[0].id || srcIds[0]._id;
-                  const idToAdd = Object.keys(p2[0]['possible-options'])
-                    .find(i => p2[0]['possible-options'][i].extra_info['mapped-program-id'] === auxId);
-                  if (idToAdd) {
-                    // If the program matches exactly by its mapping with an existing program then add it to the filter.
-                    filter.push({ path: 'id', value: Number.parseInt(idToAdd, 10) });
-                    this.setState({ [fieldPath]: filter });
-                    // TODO: add its parents (use srcIds.length) to calculate how many parents show.
-                  }
-                  return null;
-                });
+                return Promise.all([ProgramHelper.findAllProgramsByClassification(src),
+                  ProgramHelper.findAllProgramsByClassification(dst)]).then(progs => {
+                    const srcId = srcIds[0].id || srcIds[0]._id;
+                    const validDstIds = progs[0][0]['possible-options'][srcId].extra_info['mapped-program-id'];
+                    if (validDstIds) {
+                      validDstIds.forEach(id => {
+                        filter.push({ path: 'id', value: id });
+                      });
+                    }
+                    this.setState({ [dst]: filter });
+                    return null;
+                  });
               }));
           } else {
             // Since the source program is empty we cant show anything in the destination program.
-            this.setState({ [fieldPath]: [{ path: 'value', value: 'fake-value' }] });
+            this.setState({ [dst]: [{ path: 'value', value: 'fake-value' }] });
             // Also we have to remove anything selected.
-            if (activity[fieldPath] && activity[fieldPath].length > 0) {
-              activity[fieldPath] = [];
+            if (activity[dst] && activity[dst].length > 0) {
+              activity[dst] = [];
               this.forceUpdate();
             }
           }
-          return srcType;
+          return null;
         });
-      } else {
+      } else if (this.state[fieldPath] === undefined || this.state[fieldPath] === null) {
         this.setState({ [fieldPath]: [] });
-        return null;
       }
+      return null;
     });
   }
 
