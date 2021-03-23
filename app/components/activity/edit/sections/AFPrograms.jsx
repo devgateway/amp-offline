@@ -71,7 +71,9 @@ class AFPrograms extends Component {
                         filter.push({ path: 'id', value: id });
                       });
                     }
+                    if (filter.length > 0) {
                     this.setState({ [dst]: filter });
+                    }
                     return null;
                   });
               }));
