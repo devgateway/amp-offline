@@ -38,7 +38,7 @@ class AFPrograms extends Component {
   }
 
   /**
-   * Given a fieldPath (or classification) check if it depends of another classification (from the NDD) and create a
+   * Given a fieldPath (or classification) check if another classification (from the NDD) depends on it and create a
    * filter that shows only those programs related (or mapped) with the source program.
    * @param fieldPath
    * @returns {*}
@@ -107,8 +107,8 @@ class AFPrograms extends Component {
   // eslint-disable-next-line react/sort-comp
   handleChange = (event) => {
     logger.log(event);
-    const { destinationProgram } = this.state;
-    this.getFilterForProgramMapping(destinationProgram);
+    const { sourceProgram } = this.state;
+    this.getFilterForProgramMapping(sourceProgram);
   }
 
   // eslint-disable-next-line class-methods-use-this

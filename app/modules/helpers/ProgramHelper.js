@@ -104,11 +104,13 @@ const ProgramHelper = {
     if (type === src) {
       const dstPrograms = activity[dst];
       let ret = false;
-      dstPrograms.forEach(i => {
-        if (i.program.extra_info['mapped-program-id'] === id) {
-          ret = true;
-        }
-      });
+      if (dstPrograms) {
+        dstPrograms.forEach(i => {
+          if (i.program.extra_info['mapped-program-id'] === id) {
+            ret = true;
+          }
+        });
+      }
       return ret;
     } else {
       return false;
