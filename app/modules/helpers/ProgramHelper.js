@@ -107,7 +107,8 @@ const ProgramHelper = {
       let ret = false;
       if (dstPrograms) {
         dstPrograms.forEach(i => {
-          if (srcProgramExtraInfo['mapped-program-id'].find(j => j === i.program._id)) {
+          if (srcProgramExtraInfo['mapped-program-id']
+            && srcProgramExtraInfo['mapped-program-id'].find(j => j === i.program._id)) {
             ret = true;
           }
         });
@@ -116,6 +117,26 @@ const ProgramHelper = {
     } else {
       return false;
     }
+  },
+
+  /**
+   * Given an array of program ids return the same ids plus their parents up to level 0.
+   * This is necessary to match the logic in AMP.
+   * @param ids
+   * @param programs
+   * @returns {*}
+   */
+  findAllParents(ids, programs) {
+    const newIds = [];
+    ids.forEach(i => {
+      let auxId = i.value;
+      while (auxId) {
+        const program = programs[0]['possible-options'][auxId];
+        newIds.push({ path: 'id', value: auxId });
+        auxId = program.parentId;
+      }
+    });
+    return newIds;
   }
 };
 
