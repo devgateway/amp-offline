@@ -60,6 +60,7 @@ class AFPrograms extends Component {
             const filter = [];
             activity[src].forEach(p => ProgramHelper.findParentStructure(p.program, src, [])
               .then(srcIds => {
+                logger.debug(srcIds);
                 // Find all programs for this selector.
                 return Promise.all([ProgramHelper.findAllProgramsByClassification(src),
                   ProgramHelper.findAllProgramsByClassification(dst)]).then(progs => {
