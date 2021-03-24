@@ -48,7 +48,7 @@ export default class AFMultiSelect extends Component {
   getSelectedIds() {
     const values = (this.props.values || []);
     if (this.selectFieldDef.isSimpleTypeList()) {
-      return values.map(v => v.id);
+      return values.map(v => v !== undefined && v.id);
     }
     return values.map(v => v[this.props.selectField].id);
   }
