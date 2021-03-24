@@ -102,11 +102,12 @@ const ProgramHelper = {
 
   hasRelatedProgram(id, src, dst, activity, type) {
     if (type === src) {
+      const srcProgramExtraInfo = activity[src].find(i => i.program._id === id).program.extra_info;
       const dstPrograms = activity[dst];
       let ret = false;
       if (dstPrograms) {
         dstPrograms.forEach(i => {
-          if (i.program.extra_info['mapped-program-id'] === id) {
+          if (srcProgramExtraInfo['mapped-program-id'].find(j => j === i.program._id)) {
             ret = true;
           }
         });
