@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, FormControl, FormGroup, Grid, HelpBlock, Row } from 'react-bootstrap';
-import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants, FieldsManager } from 'amp-ui';
+import { ActivityConstants, FeatureManagerConstants, ValueConstants, FieldPathConstants, FieldsManager,
+WorkspaceConstants } from 'amp-ui';
 import AFSection from './AFSection';
 import AFField from '../components/AFField';
 import BudgetCode from './organization/BudgetCode';
@@ -32,7 +33,8 @@ export const orgFormatter = (org: AFOption) => {
 class AFOrganizations extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
+    workspaceReducer: PropTypes.object.isRequired
   };
 
   static propTypes = {
@@ -113,6 +115,14 @@ class AFOrganizations extends Component {
     return canDelete;
   }
 
+  orgFilterForTemplate() {
+    const { workspaceReducer } = this.context;
+    if (workspaceReducer.currentWorkspace[WorkspaceConstants.TEMPLATE_ID]) {
+      return [{ path: 'template', value: workspaceReducer.currentWorkspace[WorkspaceConstants.TEMPLATE_ID] }];
+    }
+    return null;
+  }
+
   render() {
     const validationError = this.getValidationError();
     const validationStyle = `${afStyles.activity_form_control} ${afStyles.help_block}`;
@@ -134,7 +144,9 @@ class AFOrganizations extends Component {
               fieldPath={ActivityConstants.DONOR_ORGANIZATION} extraParams={extraParams}
               fmPath={FeatureManagerConstants.ACTIVITY_ORGANIZATIONS_DONOR_ORGANIZATION}
               onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.DONOR_ORGANIZATION, ValueConstants.DONOR_AGENCY)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.DONOR_ORGANIZATION, ValueConstants.DONOR_AGENCY)} />
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.DONOR_ORGANIZATION, ValueConstants.DONOR_AGENCY)}
+              filter={this.orgFilterForTemplate()}
+            />
           </Col>
         </Row>
         <Row>
@@ -159,7 +171,8 @@ class AFOrganizations extends Component {
               parent={this.props.activity} fieldPath={ActivityConstants.EXECUTING_AGENCY}
               extraParams={extraParams}
               onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.EXECUTING_AGENCY, ValueConstants.EXECUTING_AGENCY)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.EXECUTING_AGENCY, ValueConstants.EXECUTING_AGENCY)} />
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.EXECUTING_AGENCY, ValueConstants.EXECUTING_AGENCY)}
+              filter={this.orgFilterForTemplate()} />
           </Col>
         </Row>
         <Row>
@@ -175,7 +188,8 @@ class AFOrganizations extends Component {
             <AFField
               parent={this.props.activity} fieldPath={ActivityConstants.BENEFICIARY_AGENCY} extraParams={extraParams}
               onBeforeDelete={this.checkIfCanDeleteOrg.bind(this, ActivityConstants.BENEFICIARY_AGENCY, ValueConstants.BENEFICIARY_AGENCY)}
-              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.BENEFICIARY_AGENCY, ValueConstants.BENEFICIARY_AGENCY)} />
+              onAfterUpdate={this.handleOrgListChange.bind(null, ActivityConstants.BENEFICIARY_AGENCY, ValueConstants.BENEFICIARY_AGENCY)}
+              filter={this.orgFilterForTemplate()} />
           </Col>
         </Row>
         <Row>

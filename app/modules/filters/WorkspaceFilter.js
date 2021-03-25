@@ -57,7 +57,7 @@ export default class WorkspaceFilterBuilder {
       const possibleValuesPaths = FieldPathConstants.ADJUSTMENT_TYPE_PATHS;
       const pvFilter = possibleValuesPaths ? { id: { $in: possibleValuesPaths } } : {};
       return Promise.all([
-        FieldsHelper.findByWorkspaceMemberIdAndType(this._teamMemberId, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
+        FieldsHelper.findByWorkspaceMemberIdAndType(this._workspace.id, Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
         PossibleValuesHelper.findAll(pvFilter),
       ]).then(([fieldsDef, pvs]) => {
         const fieldsManager = new FieldsManager(fieldsDef[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS],
@@ -121,7 +121,7 @@ export default class WorkspaceFilterBuilder {
       // add draft flag if needed
       if (this._workspace['hide-draft'] === true) {
         const isDraftFilter = Utils.toMap(ActivityConstants.IS_DRAFT, { $ne: true });
-        computedOrgsFilter = { $or: { $and: [activityOrgs, isDraftFilter] } };
+        computedOrgsFilter = { $and: [{ $or: activityOrgs }, isDraftFilter] };
       } else {
         computedOrgsFilter = { $or: activityOrgs };
       }

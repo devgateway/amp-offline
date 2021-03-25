@@ -37,12 +37,12 @@ export default class SyncUpConfig {
 
   static _COLLECTION = [UsersSyncUpManager, WorkspaceSyncUpManager, WorkspaceSettingsSyncUpManager,
     WorkspaceMemberSyncUpManager, TranslationSyncUpManager, AmpAssetManager, ActivityFieldsSyncUpManager,
-    ActivityPossibleValuesSyncUpManager, ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
+    ActivitiesPushToAMPManager, ActivitiesPullFromAMPManager,
     ContactFieldsSyncUpManager, ContactPossibleValuesSyncUpManager, ContactsPullSyncUpManager,
     ContactsPushSyncUpManager, ResourcesPullSyncUpManager, ResourcesPushSyncUpManager, ResourceFieldsSyncUpManager,
     ResourcePossibleValuesSyncUpManager, CommonPossibleValuesSyncUpManager,
     GlobalSettingsSyncUpManager, CurrencyRatesSyncUpManager, FMSyncUpManager, MapTilesSyncUpManager,
-    GazetteerSyncUpManager, CalendarsSyncUpManager];
+    GazetteerSyncUpManager, CalendarsSyncUpManager, ActivityPossibleValuesSyncUpManager];
   static _COLLECTION_DEPENDENCY = SyncUpConfig._initCollection();
 
   static _initCollection() {
@@ -74,7 +74,7 @@ export default class SyncUpConfig {
     dependencies[Constants.SYNCUP_TYPE_ACTIVITIES_PULL] = Utils.toMap(Constants.SYNCUP_TYPE_ACTIVITIES_PUSH,
       SS.STATES_FINISH);
     // fields & possible values dependencies will be needed in the future when permissions/ws based FM are used
-    dependencies[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(Constants.SYNCUP_TYPE_WORKSPACE_MEMBERS,
+    dependencies[Constants.SYNCUP_TYPE_ACTIVITY_FIELDS] = Utils.toMap(Constants.SYNCUP_TYPE_WORKSPACES,
       SS.STATES_PARTIAL_SUCCESS);
     dependencies[Constants.SYNCUP_TYPE_ACTIVITY_POSSIBLE_VALUES] =
       Utils.toMap(Constants.SYNCUP_TYPE_WORKSPACE_MEMBERS, SS.STATES_PARTIAL_SUCCESS);

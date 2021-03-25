@@ -119,6 +119,7 @@ export default class ActivityPreview extends Component {
     const { activity, activityWSManager, currentWorkspaceSettings } = this.props.activityReducer;
     const { startUpReducer, userReducer, workspaceReducer, activityReducer } = this.props;
     const activityContext = {
+      canEditActivities: true,
       activityStatus: activity ? DesktopManager.getActivityStatus(activity) : null,
       teamMember: {
         teamMemberRole: userReducer.teamMember[WorkspaceConstants.ROLE_ID],
@@ -129,6 +130,7 @@ export default class ActivityPreview extends Component {
           [WorkspaceConstants.CROSS_TEAM_VALIDATION]: workspaceReducer.currentWorkspace[WorkspaceConstants.CROSS_TEAM_VALIDATION],
           [WorkspaceConstants.IS_PRIVATE]: workspaceReducer.currentWorkspace[WorkspaceConstants.IS_PRIVATE],
           id: workspaceReducer.currentWorkspace.id,
+          prefix: workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]
         },
       },
       calendar: startUpReducer.calendar,

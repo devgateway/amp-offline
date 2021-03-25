@@ -21,7 +21,7 @@ const ConnectionHelper = {
     logger.debug('doGet');
     const method = 'GET';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100, shouldRetry, writeStream);
   },
 
   /**
@@ -39,14 +39,14 @@ const ConnectionHelper = {
     // Notice that we are actually receiving an object as a parameter  but we are destructuring it
     const method = 'POST';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100, shouldRetry, writeStream);
   },
 
   doPut({ url, paramsMap, body, shouldRetry, extraUrlParam, writeStream }) {
     logger.debug('doPut');
     const method = 'PUT';
     const requestConfig = RequestConfig.getRequestConfig({ method, url, paramsMap, body, extraUrlParam });
-    return ConnectionHelper._doMethod(requestConfig, Constants.MAX_RETRY_ATEMPTS, shouldRetry, writeStream);
+    return ConnectionHelper._doMethod(requestConfig, 100, shouldRetry, writeStream);
   },
 
   _doMethod(requestConfig, maxRetryAttempts, shouldRetry, writeStream) {
@@ -57,29 +57,14 @@ const ConnectionHelper = {
       return this._reportError(ErrorConstants.MSG_INVALID_URL, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
     }
     const resultRetryConfig = { requestConfig, maxRetryAttempts, shouldRetry, writeStream };
-    const requestPromiseForcedTimeout = store.getState().startUpReducer.connectionInformation.forcedTimeout;
-    const requestPromise = this._buildRequestPromise(requestConfig, writeStream);
-    const bbPromise = requestPromise.promise && requestPromise.promise();
-    if (bbPromise) {
-      bbPromise.timeout(requestPromiseForcedTimeout);
-    }
     // TODO I tried lower timeout for streaming and it seems to ignore it -> check how exactly to handle
-    return requestPromise
+    return this._buildRequestPromise(requestConfig, writeStream)
       .then(response => this._processResultOrRetry({ ...resultRetryConfig, response, body: response.body }))
       .catch(reason => {
         if (reason instanceof Notification) {
           return Promise.reject(reason);
         }
         return this._processResultOrRetry({ ...resultRetryConfig, ...this._reasonToProcess(reason) });
-      })
-      .finally(() => {
-        if (bbPromise && bbPromise.isCancelled()) {
-          if (shouldRetry && maxRetryAttempts) {
-            return this._doMethod(requestConfig, maxRetryAttempts - 1, shouldRetry, writeStream);
-          } else {
-            return this._reportError(ErrorConstants.MSG_TIMEOUT, ErrorConstants.NOTIFICATION_ORIGIN_API_NETWORK);
-          }
-        }
       });
   },
 

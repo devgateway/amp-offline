@@ -1,4 +1,4 @@
-import { ErrorConstants, FieldsManager } from 'amp-ui';
+import { ErrorConstants, FieldsManager, WorkspaceConstants } from 'amp-ui';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -34,7 +34,8 @@ class AFList extends Component {
     onConfirmationAlert: PropTypes.func.isRequired,
     extraParams: PropTypes.object,
     language: PropTypes.string, // Needed to update header translations.
-    onBeforeDelete: PropTypes.func
+    onBeforeDelete: PropTypes.func,
+    workspacePrefix: PropTypes.string,
   };
 
   constructor(props) {
@@ -148,7 +149,7 @@ class AFList extends Component {
       const fieldType = editable ? null : LABEL;
       const className = (editable || CustomType) ? styles.cell_editable : styles.cell_readonly;
 
-      headers.push(this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath));
+      headers.push(this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath, this.props.workspacePrefix));
       let rowId = 0;
       this.state.values.forEach(rowData => {
         if (rowId === content.length) {
@@ -201,7 +202,9 @@ class AFList extends Component {
 }
 
 export default connect(
-  state => state,
+  state => Object.assign({}, state, {
+    workspacePrefix: state.workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]
+  }),
   dispatch => ({
     onConfirmationAlert: (message) => dispatch(addFullscreenAlert(
       new Notification({ message, origin: ErrorConstants.NOTIFICATION_ORIGIN_ACTIVITY, translateMsg: false })

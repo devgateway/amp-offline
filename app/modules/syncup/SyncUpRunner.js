@@ -297,8 +297,12 @@ export default class SyncUpRunner {
       } else if (unitLeftOver !== true) {
         // this is not an atomic sync, let's compare original diff vs leftover to see if at least something was synced
         state = SyncUpDiff.equals(originalDiff, unitLeftOver) ? SS.FAIL : SS.PARTIAL;
+        if (state === SS.FAIL) {
+          logger.error(`Fail. No leftover for type ${type}`);
+        }
       } else {
         // normally for the unitLeftOver = true for atomic syncs, but also fallback for unexpected use cases
+        logger.error(`Fail type ${type}`);
         state = SS.FAIL;
       }
       this._syncUpDependency.setState(type, state);

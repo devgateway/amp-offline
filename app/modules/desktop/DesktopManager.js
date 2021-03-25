@@ -15,10 +15,10 @@ const DesktopManager = {
     logger.log('generateDesktopData');
     return new Promise((resolve, reject) =>
       WorkspaceFilter.getDBFilter(workspace, teamMemberId, currentLanguage).then(wsFilter =>
-        this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
+        this.generateOneTabData(workspace, wsFilter, ActivityHelper.findAllNonRejected, currentWorkspaceSettings,
           currencyRatesManager)
           .then((tab1Data) =>
-            this.generateOneTabData(wsFilter, teamMemberId, ActivityHelper.findAllRejected, currentWorkspaceSettings,
+            this.generateOneTabData(workspace, wsFilter, ActivityHelper.findAllRejected, currentWorkspaceSettings,
               currencyRatesManager)
               .then((tab2Data) =>
                 resolve({
@@ -32,12 +32,12 @@ const DesktopManager = {
     );
   },
 
-  generateOneTabData(wsFilter, teamMemberId, fn, currentWorkspaceSettings, currencyRatesManager) {
+  generateOneTabData(workspace, wsFilter, fn, currentWorkspaceSettings, currencyRatesManager) {
     logger.log('generateOneTabData');
     return new Promise((resolve, reject) => (
       fn.call(ActivityHelper, wsFilter)
         .then((activities) => (
-          this.hydrateActivities(activities, teamMemberId)
+          this.hydrateActivities(activities, workspace.id)
             .then((hydratedActivities) => (
               this.convertActivitiesToGridStructure(hydratedActivities, currentWorkspaceSettings, currencyRatesManager)
                 .then((activitiesForGrid) => (
@@ -48,14 +48,14 @@ const DesktopManager = {
     ));
   },
 
-  hydrateActivities(activities, teamMemberId) {
+  hydrateActivities(activities, wsId) {
     logger.log('hydrateActivities');
     return ActivityHydrator.hydrateActivities({
       activities,
       fieldPaths: [FieldPathConstants.DONOR_ORGANIZATIONS_PATH,
         ...FieldPathConstants.ADJUSTMENT_TYPE_PATHS,
         ...FieldPathConstants.FUNDING_CURRENCY_PATHS],
-      teamMemberId
+      wsId
     });
   },
 
@@ -104,7 +104,8 @@ const DesktopManager = {
     if (item[ActivityConstants.FUNDINGS]) {
       item[ActivityConstants.FUNDINGS].forEach((funding) => {
         const fds = funding[trnType] && funding[trnType]
-          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE].value === ValueConstants.ACTUAL);
+          .filter(fd => fd[ActivityConstants.ADJUSTMENT_TYPE]
+            && fd[ActivityConstants.ADJUSTMENT_TYPE].value === ValueConstants.ACTUAL);
         if (fds) {
           fds.forEach((fd) => {
             amount += currencyRatesManager

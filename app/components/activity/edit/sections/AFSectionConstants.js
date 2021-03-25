@@ -74,7 +74,8 @@ FIELDS_PER_SECTIONS[IDENTIFICATION] = new Set([ActivityConstants.PROJECT_TITLE, 
   ActivityConstants.DESCRIPTION, ActivityConstants.RESULTS, ActivityConstants.BUDGET_CODE_PROJECT_ID,
   ActivityConstants.A_C_CHAPTER, ActivityConstants.GOVERNMENT_APPROVAL_PROCEDURES,
   ActivityConstants.JOINT_CRITERIA, ActivityConstants.HUMANITARIAN_AID, ActivityConstants.FY,
-  ActivityConstants.CRIS_NUMBER, ActivityConstants.PROJECT_MANAGEMENT, ActivityConstants.GOVERNMENT_AGREEMENT_NUMBER]);
+  ActivityConstants.CRIS_NUMBER, ActivityConstants.PROJECT_MANAGEMENT, ActivityConstants.GOVERNMENT_AGREEMENT_NUMBER,
+  ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP]);
 FIELDS_PER_SECTIONS[ACTIVITY_INTERNAL_IDS] = new Set([ActivityConstants.ACTIVITY_INTERNAL_IDS]);
 FIELDS_PER_SECTIONS[PLANNING] = new Set([ActivityConstants.LINE_MINISTRY_RANK,
   ActivityConstants.ORIGINAL_COMPLETION_DATE, ActivityConstants.PROPOSED_APPROVAL_DATE,

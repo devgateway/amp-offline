@@ -36,11 +36,15 @@ class AFIdentification extends Component {
   constructor(props) {
     super(props);
     logger.debug('constructor');
+    const { activityFieldsManager } = this.props;
     // Show "Budget Extras" fields like ministry_code only when activity_budget is enabled and has value 'On Budget'.
-    const showBudgetExtras = this.props.activityFieldsManager.isFieldPathEnabled(ActivityConstants.ACTIVITY_BUDGET)
+    const showBudgetExtras = activityFieldsManager.isFieldPathEnabled(ActivityConstants.ACTIVITY_BUDGET)
       && this.isActivityOnBudget();
+    const showStakeHolderPartners = activityFieldsManager
+        .isFieldPathEnabled(ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP) && this.isMultiHoldersPartnership();
     this.state = {
-      showBudgetExtras
+      showBudgetExtras,
+      showStakeHolderPartners
     };
     this.onActivityBudgetUpdate = this.onActivityBudgetUpdate.bind(this);
     this.mapSimpleFieldDef = this.mapSimpleFieldDef.bind(this);
@@ -52,14 +56,28 @@ class AFIdentification extends Component {
     });
   }
 
-  isActivityOnBudget() {
-    return this.props.activity[ActivityConstants.ACTIVITY_BUDGET] &&
-      this.props.activity[ActivityConstants.ACTIVITY_BUDGET].value === ValueConstants.ON_BUDGET;
+  onStakeHolderPartnershipChange(object, b) {
+    if (b === true) {
+      this.setState({ showStakeHolderPartners: true });
+    } else {
+      this.setState({ showStakeHolderPartners: false });
+    }
   }
 
   mapSimpleFieldDef(fieldName) {
     const type = CUSTOM_TYPE[fieldName] || null;
     return <AFField key={fieldName} parent={this.props.activity} fieldPath={fieldName} type={type} />;
+  }
+
+  isActivityOnBudget() {
+    return this.props.activity[ActivityConstants.ACTIVITY_BUDGET] &&
+      this.props.activity[ActivityConstants.ACTIVITY_BUDGET].value === ValueConstants.ON_BUDGET;
+  }
+
+  isMultiHoldersPartnership() {
+    const { activity } = this.props;
+    return activity[ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP] &&
+      activity[ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP].value === true;
   }
 
   render() {
@@ -117,6 +135,15 @@ class AFIdentification extends Component {
           <Row key="col-split-data">
             <Col key="left-col" md={6} sm={12}>
               {leftColumn}
+              <AFField
+                key={ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP} parent={this.props.activity}
+                fieldPath={ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP} type={Types.RADIO_BOOLEAN}
+                customLabel="multi_stakeholder_partnership"
+                onAfterUpdate={this.onStakeHolderPartnershipChange.bind(this,
+                  ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP)} />
+              {this.state.showStakeHolderPartners ? <AFField
+                key={ActivityConstants.MULTI_STAKEHOLDER_PARTNERS} parent={this.props.activity}
+                fieldPath={ActivityConstants.MULTI_STAKEHOLDER_PARTNERS} /> : null}
             </Col>
             <Clearfix visibleSmBlock />
             <Col key="right-col" md={6} sm={12}>

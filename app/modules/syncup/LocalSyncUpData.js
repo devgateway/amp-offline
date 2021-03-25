@@ -20,9 +20,12 @@ export default class LocalSyncUpData {
    * @returns {Promise<any[] | never>}
    */
   build() {
-    return Promise.all([ActivityHelper.getUniqueAmpIdsList(), UserHelper.getNonBannedRegisteredUserIds(),
-      ActivitiesPushToAMPManager.getActivitiesToPush(), ContactHelper.findAllContactsModifiedOnClient(),
-      ResourceHelper.countAllResourcesModifiedOnClient(), TranslationSyncupManager.getNewTranslationsDifference(),
+    return Promise.all([ActivityHelper.getUniqueAmpIdsList(),
+      UserHelper.getNonBannedRegisteredUserIds(),
+      ActivitiesPushToAMPManager.getActivitiesToPush(),
+      ContactHelper.findAllContactsModifiedOnClient(),
+      ResourceHelper.countAllResourcesModifiedOnClient(),
+      TranslationSyncupManager.getNewTranslationsDifference(),
       FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_ACTIVITY_FIELDS),
       FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_CONTACT_FIELDS),
       FieldsHelper.getSingleFieldsDef(Constants.SYNCUP_TYPE_RESOURCE_FIELDS),

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormControl, FormGroup, HelpBlock } from 'react-bootstrap';
-import { CurrencyRatesManager, FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager } from 'amp-ui';
+import { CurrencyRatesManager, FieldPathConstants, FieldsManager, FeatureManager, PossibleValuesManager,
+  WorkspaceConstants, ActivityConstants } from 'amp-ui';
 import AFLabel from './AFLabel';
 import AFInput from './AFInput';
 import AFTextArea from './AFTextArea';
@@ -68,7 +69,8 @@ class AFField extends Component {
     forceRequired: PropTypes.bool,
     fmPath: PropTypes.string,
     onBeforeDelete: PropTypes.func,
-    calendar: PropTypes.object.isRequired
+    calendar: PropTypes.object.isRequired,
+    workspacePrefix: PropTypes.string,
   };
 
   static defaultProps = {
@@ -150,7 +152,8 @@ class AFField extends Component {
       return null;
     }
     const { customLabel, fieldPath } = this.props;
-    const label = translate(customLabel) || this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath);
+    const label = translate(customLabel) || this.context.activityFieldsManager.getFieldLabelTranslation(fieldPath,
+      this.props.workspacePrefix);
     return <AFLabel value={label} required={required} className={styles.label_highlight} extraParams={extraParams} />;
   }
 
@@ -259,15 +262,30 @@ class AFField extends Component {
   }
 
   _getOptions(fieldPath, selectedId) {
+    const { workspacePrefix } = this.props;
+    const somePrefix = workspacePrefix || '';
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
-    if (options === null) {
+    if (options === null || options === undefined) {
       // TODO throw error but continue to render (?)
       logger.error(`Options not found for ${this.props.fieldPath}`);
       return [];
     }
+    let optionsWithPrefix = { };
+    if (Object.keys(options).filter(o => options[o][ActivityConstants.EXTRA_INFO]
+      && options[o][ActivityConstants.EXTRA_INFO][WorkspaceConstants.PREFIX_FIELD] === somePrefix)) {
+      Object.keys(options).forEach(o => {
+        if (options[o][ActivityConstants.EXTRA_INFO] &&
+          options[o][ActivityConstants.EXTRA_INFO][WorkspaceConstants.PREFIX_FIELD] === somePrefix) {
+          optionsWithPrefix[o] = options[o];
+        }
+      });
+    }
+    if (Object.keys(optionsWithPrefix).length === 0) {
+      optionsWithPrefix = options;
+    }
     const isORFilter = (this.props.extraParams && this.props.extraParams.isORFilter) || false;
     return PossibleValuesManager.setVisibility(
-      options, fieldPath, this.context.currencyRatesManager, this.props.filter, isORFilter, selectedId);
+      optionsWithPrefix, fieldPath, this.context.currencyRatesManager, this.props.filter, isORFilter, selectedId);
   }
 
   _toAFOptions(options) {
@@ -424,7 +442,8 @@ export default connect(
   state => ({
     validationResult: state.activityReducer.validationResult,
     lang: state.translationReducer.lang,
-    calendar: state.startUpReducer.calendar
+    calendar: state.startUpReducer.calendar,
+    workspacePrefix: state.workspaceReducer.currentWorkspace[WorkspaceConstants.PREFIX_FIELD]
   }),
   dispatch => ({
     onFieldValidation: (fieldPath, errors) => dispatch(reportFieldValidation({ fieldPath, errors }))
