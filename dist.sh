@@ -49,9 +49,8 @@ DIST_CMD="
 
 echo DIST_CMD=$DIST_CMD
 
-docker run --rm -t -v ${PWD}:/project \
+docker run --dns=8.8.8.8 --rm -t -v ${PWD}:/project \
 	-v amp-client-electron:/root/.electron \
-	--dns=8.8.8.8 \
 	-v amp-client-cache:/root/.cache \
 	-e PR_NR=$1 -e JENKINS_BRANCH=$2 \
 	electronuserland/electron-builder:wine /bin/bash -c "$DIST_CMD"
