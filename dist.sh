@@ -3,7 +3,7 @@
 rm -r dist
 
 TARGET=$3
-echo TARGET=$TARGETix/AMPOFFLINE-1563/memory-settings
+echo TARGET=$TARGET
 
 # Prepare package command to execute based on the target input
 CMD_WIN_32="npm run package-win-32 && rename 's/.exe/-32.exe/' dist/*.exe"
