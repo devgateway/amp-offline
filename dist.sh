@@ -3,7 +3,7 @@
 rm -r dist
 
 TARGET=$3
-echo TARGET=$TARGET
+echo TARGET=$TARGETix/AMPOFFLINE-1563/memory-settings
 
 # Prepare package command to execute based on the target input
 CMD_WIN_32="npm run package-win-32 && rename 's/.exe/-32.exe/' dist/*.exe"
@@ -51,6 +51,7 @@ echo DIST_CMD=$DIST_CMD
 
 docker run --rm -t -v ${PWD}:/project \
 	-v amp-client-electron:/root/.electron \
+	--dns=8.8.8.8 \
 	-v amp-client-cache:/root/.cache \
 	-e PR_NR=$1 -e JENKINS_BRANCH=$2 \
 	electronuserland/electron-builder:wine /bin/bash -c "$DIST_CMD"
