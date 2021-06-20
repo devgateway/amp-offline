@@ -201,7 +201,14 @@ export function loadFMTree(id = undefined) {
         if (id !== undefined) {
           tree = fmTree.fmTree.find(t => t['ws-member-ids'].find(ws => ws === id))['fm-tree']['fm-settings'];
         } else {
-          tree = fmTree.fmTree[0]['fm-tree']['fm-settings'];
+          /* eslint no-lonely-if: 0 */
+          if (fmTree.fmTree[0]) {
+            tree = fmTree.fmTree[0]['fm-tree']['fm-settings'];
+          } else {
+            /* This means the DB has old structure (1.4.x) and the client is newer (1.5 or above). We need to start and
+             replace the data in feature-manager.db */
+            tree = fmTree.fmTree;
+          }
         }
       }
       FeatureManager.setFMTree(tree);
