@@ -23,7 +23,7 @@ export default ({
       {
         changeid: 'AMPOFFLINE-1531-upgrade-FM-structure',
         author: 'ginchauspe',
-        comment: 'Erase current feature manager and replace with the new structure we made for DRC that has WS info.',
+        comment: 'Erase current feature manager (will be replace with the new structure we made for DRC that has WS info)',
         preConditions: [],
         context: MC.CONTEXT_AFTER_LOGIN,
         changes: [{
