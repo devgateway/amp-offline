@@ -51,6 +51,8 @@ export default class FMSyncUpManager extends AbstractAtomicSyncUpManager {
           result = true;
         }
       });
+    } else {
+      result = true;
     }
     return result;
   }
