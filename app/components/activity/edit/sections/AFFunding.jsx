@@ -27,7 +27,8 @@ class AFFunding extends Component {
   static contextTypes = {
     activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
     activity: PropTypes.object.isRequired,
-    activityFundingSectionPanelStatus: PropTypes.array.isRequired
+    activityFundingSectionPanelStatus: PropTypes.array.isRequired,
+    workspaceReducer: PropTypes.object.isRequired
   };
 
   static propTypes = {
@@ -295,14 +296,18 @@ class AFFunding extends Component {
             tabClassName={overviewTabHasErrors ? styles.error : ''}>{this.generateOverviewTabContent()}</Tab>
           {this.addDonorOrgs()}
         </Tabs>
-        <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
+        <AFFundingOrganizationSelect
+          activity={this.context.activity} handleDonorSelect={this.handleDonorSelect}
+          workspaceReducer={this.context.workspaceReducer} />
       </div>);
     } else {
       return (
         <div>
           <div className={styles.overview_section}>{this.generateOverviewTabContent()}</div>
           <div>{this.addDonorOrgs()}</div>
-          <AFFundingOrganizationSelect activity={this.context.activity} handleDonorSelect={this.handleDonorSelect} />
+          <AFFundingOrganizationSelect
+            activity={this.context.activity} handleDonorSelect={this.handleDonorSelect}
+            workspaceReducer={this.context.workspaceReducer} />
         </div>);
     }
   }
