@@ -78,7 +78,7 @@ class AFFunding extends Component {
 
   handleDonorSelect(values) {
     logger.debug('handleDonorSelect');
-    if (values) {
+    if (values && values.length > 0) {
       const value = (values instanceof Array) ? values[values.length - 1][ActivityConstants.ORGANIZATION] : values;
       const fundingItem = AFUtils.createFundingItem(this.context.activityFieldsManager, value, ValueConstants.DONOR_AGENCY);
       // Needed for new activities or funding is not added.
