@@ -6,7 +6,7 @@ import UrlUtils from './URLUtils';
 import { setLanguage } from '../actions/TranslationAction';
 import { loadHelp } from '../actions/HelpAction';
 import store from '../index';
-import { ADD_ACTIVITY, MY_DESKTOP } from './constants/MenuConstants';
+import { ADD_ACTIVITY, ADD_SSC, MY_DESKTOP, SSC_PREFIX } from './constants/MenuConstants';
 import Logger from '../modules/util/LoggerManager';
 import { didSetupComplete } from '../actions/SetupAction';
 
@@ -35,11 +35,19 @@ class MenuUtils {
 
       if (!workspaceReducer.currentWorkspace || !workspaceReducer.currentWorkspace['add-activity']) {
         delete newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY];
-      } else {
+        delete newMenu.menu.DESKTOP.nodes[ADD_SSC];
+      } else if (workspaceReducer.currentWorkspace['workspace-prefix'] !== SSC_PREFIX) {
         const addActivityRoute = newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route;
         newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY].route = addActivityRoute.replace('NEW_ACTIVITY_ID',
-          ValueConstants.NEW_ACTIVITY_ID);
+            ValueConstants.NEW_ACTIVITY_ID);
+        delete newMenu.menu.DESKTOP.nodes[ADD_SSC];
+      } else {
+        const addActivityRoute = newMenu.menu.DESKTOP.nodes[ADD_SSC].route;
+        newMenu.menu.DESKTOP.nodes[ADD_SSC].route = addActivityRoute.replace('NEW_ACTIVITY_ID',
+            ValueConstants.NEW_ACTIVITY_ID);
+        delete newMenu.menu.DESKTOP.nodes[ADD_ACTIVITY];
       }
+
       if (!workspaceReducer.currentWorkspace) {
         delete newMenu.menu.DESKTOP.nodes[MY_DESKTOP];
       }
