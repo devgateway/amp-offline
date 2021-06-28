@@ -7,7 +7,7 @@ pipeline {
       steps {
         withCredentials([sshUserPrivateKey(
           keyFileVariable: 'PRIVKEY',
-          credentialsId: 'GitHubDgReadOnly'
+          credentialsId: 'GitHubDgReadOnlyKey'
         )]) {
           sh 'uptime'
         }
