@@ -1,8 +1,6 @@
 #!/usr/bin/env groovy
 pipeline {
-  agent {
-    label any //'ansible && docker'
-  }
+  agent any
 
   stages {
     stage('Build') {
@@ -11,9 +9,7 @@ pipeline {
           keyFileVariable: 'PRIVKEY',
           credentialsId: 'GitHubDgReadOnly'
         )]) {
-          docker.image('node:16-alpine').inside(["-v ${env.PRIVKEY}:/root/.ssh/id_rsa"]) {
-            sh 'ssh -T -o "StrictHostKeyChecking no" github.com'
-          }
+          sh 'uptime'
         }
       }
     } // Build
