@@ -9,7 +9,7 @@ pipeline {
           keyFileVariable: 'PRIVKEY',
           credentialsId: 'GitHubDgReadOnlyKey'
         )]) {
-          withDockerContainer(image: 'node:16-alpine', args: "-v ${env.PRIVKEY}:/root/.ssh/id_rsa") {
+          withDockerContainer(image: 'node:16-alpine', args: '-v $PRIVKEY:/root/.ssh/id_rsa') {
             sh 'ssh -T -o "StrictHostKeyChecking no" github.com'
           } // withDockerContainer
         } // withCredentials
