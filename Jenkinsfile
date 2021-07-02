@@ -2,6 +2,11 @@
 pipeline {
   agent any
 
+  environment {
+    COMMIT_HASH = "${sh(returnStdout: true, script: 'git rev-parse --short HEAD')}"
+    BRANCH_NAME = "${sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD')}"
+  }
+
   stages {
     stage('Prepare') {
       steps {
