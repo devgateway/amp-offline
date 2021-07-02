@@ -18,7 +18,6 @@ pipeline {
               sh 'rm -f id_rsa'
             }
           }
-          sh 'docker build -f Dockerfile -t ampofflinebuilder .'
         } // withCredentials
       } // steps
     } // Prepare
