@@ -2,11 +2,6 @@
 pipeline {
   agent any
 
-  environment {
-    COMMIT_HASH = "${sh(returnStdout: true, script: 'git rev-parse --short HEAD')}"
-    BRANCH_NAME = "${sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD')}"
-  }
-
   stages {
     stage('Prepare') {
       steps {
@@ -18,7 +13,15 @@ pipeline {
           // electronuserland/builder: all above preinstalled
           script {
             try {
-              sh 'cp $PRIVKEY id_rsa && docker build -t ampofflinebuilder .'
+              def commitHash = "${sh(returnStdout: true, script: 'git rev-parse --short HEAD')}"
+              def branchName = "${sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD')}"
+              sh """
+                cp \$PRIVKEY id_rsa \\
+                  && docker build -t ampofflinebuilder \\
+                    --build-arg COMMIT_HASH=${commitHash.trim()} \\
+                    --build-arg BRANCH_NAME=${branchName.trim()} \\
+                    .
+              """
             } finally {
               sh 'rm -f id_rsa'
             }
