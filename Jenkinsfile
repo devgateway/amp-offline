@@ -98,6 +98,6 @@ node('master') {
 			}
 		}
 	} finally {
-		sh 'rm -r dist node_modules'
+		sh 'rm -fr dist node_modules'
 	}
 }
