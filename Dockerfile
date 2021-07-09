@@ -13,4 +13,7 @@ ARG BRANCH_NAME
 RUN npm run build-dll 2>&1
 
 FROM electronuserland/builder:wine
-COPY --from=NODE /project .
+COPY webpack.config.electron.js .
+COPY --from=NODE /project ./
+COPY app/utils app/utils/
+RUN npm run build-main
