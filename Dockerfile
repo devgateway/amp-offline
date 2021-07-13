@@ -13,14 +13,15 @@ ARG BRANCH_NAME
 RUN npm run build-dll 2>&1
 
 FROM electronuserland/builder:wine
+WORKDIR /project
 COPY webpack.config.electron.js .
 COPY --from=NODE /project ./
 COPY app/utils app/utils/
 COPY app/modules app/modules/
 COPY app/main.development.js app/
-RUN npm config set progress=false color=false \
-  && npm run build-main
+RUN npm config set progress=false color=false 2>&1 \
+  && npm run build-main 2>&1
 COPY resources ./resources/
 COPY app ./app/
 RUN mkdir repository database \
-  && npm run build-renderer
+  && npm run build-renderer 2>&1

@@ -20,7 +20,8 @@ pipeline {
                   && docker build -t ampofflinebuilder \\
                     --build-arg COMMIT_HASH=${commitHash.trim()} \\
                     --build-arg BRANCH_NAME=${branchName.trim()} \\
-                    .
+                    . \\
+                  && mkdir -p dist
               """
             } finally {
               sh 'rm -f id_rsa'
@@ -29,6 +30,35 @@ pipeline {
         } // withCredentials
       } // steps
     } // Prepare
+
+    stage('Package All') {
+      matrix {
+        axes {
+          axis {
+            name 'PLATFORM'
+            values 'win', 'linux deb'
+          }
+          axis {
+            name 'ARCH'
+            values 'ia32', 'x64'
+          }
+        }
+
+        stages {
+          stage('Package') {
+            steps {
+              script { sh "mkdir dist/${PLATFORM}${ARCH}" }
+              withDockerContainer(
+                image: 'ampofflinebuilder',
+                args: "-v \"\$(pwd)/dist/${PLATFORM}${ARCH}:/project/dist:rw\""
+              ) {
+                sh "electron-builder --${PLATFORM} --${ARCH} 2>&1"
+              }
+            }
+          } // Package
+        }
+      }
+    } // Package All
 
   } // stages
 
