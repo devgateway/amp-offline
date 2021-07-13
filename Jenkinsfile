@@ -47,13 +47,17 @@ pipeline {
         stages {
           stage('Package') {
             steps {
-              script { sh "mkdir \"dist/${PLATFORM}${ARCH}\"" }
-              withDockerContainer(
-                image: 'ampofflinebuilder',
-                args: "-v \"\$(pwd)/dist/${PLATFORM}${ARCH}:/project/dist:rw\""
-              ) {
-                sh "electron-builder --${PLATFORM} --${ARCH} 2>&1"
-              }
+              script {
+                def bindDir = "${env.WORKSPACE}/dist/${PLATFORM}${ARCH}"
+
+                sh "mkdir \"${bindDir}\""
+                withDockerContainer(
+                  image: 'ampofflinebuilder',
+                  args: "-v \"${bindDir}:/project/dist:rw\""
+                ) {
+                  sh "electron-builder --${PLATFORM} --${ARCH} 2>&1"
+                }
+              } // script
             }
           } // Package
         }
