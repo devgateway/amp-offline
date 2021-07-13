@@ -36,11 +36,11 @@ pipeline {
         axes {
           axis {
             name 'PLATFORM'
-            values 'win', 'linux deb'
+            values 'win', 'deb'
           }
           axis {
             name 'ARCH'
-            values 'ia32', 'x64'
+            values '32', '64'
           }
         }
 
@@ -55,7 +55,7 @@ pipeline {
                   image: 'ampofflinebuilder',
                   args: "-v \"${bindDir}:/project/dist:rw\""
                 ) {
-                  sh "electron-builder --${PLATFORM} --${ARCH} 2>&1"
+                  sh "ls -l * && npm run package-${PLATFORM}-${ARCH} 2>&1"
                 }
               } // script
             }
