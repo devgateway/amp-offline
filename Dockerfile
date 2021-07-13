@@ -3,11 +3,11 @@ RUN apk add openssh-client git make g++ python3
 COPY .ssh_known_hosts /etc/ssh/ssh_known_hosts
 COPY id_rsa /root/.ssh/id_rsa
 WORKDIR /project
-COPY package.json .
+COPY package*.json ./
 RUN npm config set progress=false color=false \
   && npm install --production 2>&1
 RUN npm install 2>&1
-COPY webpack.config.base.js webpack.config.dll.js .babelrc ./
+COPY setup.js webpack.config.*.js .babelrc ./
 ARG COMMIT_HASH
 ARG BRANCH_NAME
 RUN npm run build-dll 2>&1
@@ -16,4 +16,11 @@ FROM electronuserland/builder:wine
 COPY webpack.config.electron.js .
 COPY --from=NODE /project ./
 COPY app/utils app/utils/
-RUN npm run build-main
+COPY app/modules app/modules/
+COPY app/main.development.js app/
+RUN npm config set progress=false color=false \
+  && npm run build-main
+COPY resources ./resources/
+COPY app ./app/
+RUN mkdir repository database \
+  && npm run build-renderer
