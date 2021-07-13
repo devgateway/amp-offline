@@ -47,7 +47,7 @@ pipeline {
         stages {
           stage('Package') {
             steps {
-              script { sh "mkdir dist/${PLATFORM}${ARCH}" }
+              script { sh "mkdir \"dist/${PLATFORM}${ARCH}\"" }
               withDockerContainer(
                 image: 'ampofflinebuilder',
                 args: "-v \"\$(pwd)/dist/${PLATFORM}${ARCH}:/project/dist:rw\""
