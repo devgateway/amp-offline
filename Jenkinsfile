@@ -50,13 +50,11 @@ pipeline {
               script {
                 def bindDir = "${env.WORKSPACE}/dist/${PLATFORM}/${ARCH}"
 
-                sh "mkdir -p \"${bindDir}\""
-                withDockerContainer(
-                  image: 'ampofflinebuilder',
-                  args: "-v \"${bindDir}:/project/dist:rw\""
-                ) {
-                  sh "ls -l * && npm run package-${PLATFORM}-${ARCH} 2>&1"
-                }
+                sh """
+                  mkdir -p \"${bindDir}\" \\
+                    && docker run --rm -i -v \"${bindDir}:/project/dist:rw\" ampofflinebuilder \\
+                      npm run package-${PLATFORM}-${ARCH}
+                """
               } // script
             }
           } // Package
