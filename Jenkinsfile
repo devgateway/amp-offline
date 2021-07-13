@@ -48,9 +48,9 @@ pipeline {
           stage('Package') {
             steps {
               script {
-                def bindDir = "${env.WORKSPACE}/dist/${PLATFORM}${ARCH}"
+                def bindDir = "${env.WORKSPACE}/dist/${PLATFORM}/${ARCH}"
 
-                sh "mkdir \"${bindDir}\""
+                sh "mkdir -p \"${bindDir}\""
                 withDockerContainer(
                   image: 'ampofflinebuilder',
                   args: "-v \"${bindDir}:/project/dist:rw\""
