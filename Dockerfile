@@ -14,7 +14,7 @@ RUN npm run build-dll 2>&1
 
 FROM electronuserland/builder:wine
 WORKDIR /project
-RUN npm install electron-builder --no-save 2>&1
+RUN yarn add electron electron-builder electron-devtools-installer --dev 2>&1
 COPY webpack.config.electron.js .
 COPY --from=NODE /project ./
 COPY app/utils app/utils/
