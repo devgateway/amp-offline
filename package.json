@@ -20,7 +20,7 @@
     "start": "env-cmd --no-override production electron ./app/",
     "start-hot-update-main-debug": "env-cmd --no-override development electron --inspect-brk=5858 -r babel-register -r babel-polyfill ./app/main.development",
     "start-hot": "env-cmd --no-override development electron -r babel-register -r babel-polyfill ./app/main.development",
-    "postinstall": "concurrently \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
+    "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "dev": "npm run hot-server -- --start-hot",
     "package": "npm run build && electron-builder --publish never",
     "package-win-32": "electron-builder --win --ia32",
