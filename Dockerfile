@@ -1,12 +1,12 @@
-FROM node:10-alpine AS NODE
+FROM node:8-alpine AS NODE
 RUN apk add openssh-client git make g++ python3
 COPY .ssh_known_hosts /etc/ssh/ssh_known_hosts
 COPY id_rsa /root/.ssh/id_rsa
-RUN { echo Host github.com; echo User git; } >/root/.ssh/config
 WORKDIR /project
-COPY package.json ./
-RUN yarn install --production=true --ignore-scripts 2>&1
-RUN yarn install --production=false 2>&1
+COPY package*.json ./
+RUN npm config set progress=false color=false \
+  && npm install --production 2>&1
+RUN npm install 2>&1
 COPY setup.js webpack.config.*.js .babelrc ./
 ARG COMMIT_HASH
 ARG BRANCH_NAME
@@ -14,7 +14,7 @@ RUN npm run build-dll 2>&1
 
 FROM electronuserland/builder:wine
 WORKDIR /project
-RUN yarn add electron electron-builder electron-devtools-installer --dev 2>&1
+RUN npm install electron-builder --no-save 2>&1
 COPY webpack.config.electron.js .
 COPY --from=NODE /project ./
 COPY app/utils app/utils/
