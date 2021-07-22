@@ -8,8 +8,9 @@ RUN npm config set progress=false color=false \
   && npm install --production 2>&1
 RUN npm install 2>&1
 COPY setup.js webpack.config.*.js .babelrc ./
-ARG COMMIT_HASH
-ARG BRANCH_NAME
+# TODO: set args a late as possible
+#ARG COMMIT_HASH
+#ARG BRANCH_NAME
 RUN npm run build-dll 2>&1
 
 FROM electronuserland/builder:wine

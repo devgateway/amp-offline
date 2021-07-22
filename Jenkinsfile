@@ -15,12 +15,19 @@ pipeline {
             try {
               def commitHash = "${sh(returnStdout: true, script: 'git rev-parse --short HEAD')}"
               def branchName = "${sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD')}"
+              /* TODO: set hash/branch at later phase
               sh """
                 cp \$PRIVKEY id_rsa \\
                   && docker build -t ampofflinebuilder \\
                     --build-arg COMMIT_HASH=${commitHash.trim()} \\
                     --build-arg BRANCH_NAME=${branchName.trim()} \\
                     . \\
+                  && mkdir -p dist
+              """
+              */
+              sh """
+                cp \$PRIVKEY id_rsa \\
+                  && docker build -t ampofflinebuilder . \\
                   && mkdir -p dist
               """
             } finally {
