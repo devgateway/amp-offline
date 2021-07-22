@@ -16,8 +16,6 @@ FROM electronuserland/builder:wine
 WORKDIR /project
 COPY webpack.config.electron.js .
 COPY --from=NODE /project ./
-RUN mkdir repository database \
-  && npm run deps 2>&1
 COPY app/utils app/utils/
 COPY app/modules app/modules/
 COPY app/main.development.js app/
@@ -26,4 +24,5 @@ RUN npm config set progress=false color=false 2>&1 \
 COPY resources ./resources/
 COPY app ./app/
 RUN ls -a node_modules/.bin
-RUN npm run build-renderer 2>&1
+RUN mkdir repository database \
+  && npm run build-renderer 2>&1
