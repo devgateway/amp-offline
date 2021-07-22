@@ -1,6 +1,7 @@
 Dockerfile
 Jenkinsfile
-README.md
 .editorconfig
 .git*
-dist
+*.sh
+*.bat
+*.md

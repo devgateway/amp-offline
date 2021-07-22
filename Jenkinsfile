@@ -49,7 +49,7 @@ pipeline {
             steps {
               script {
                 def bindDir = "${env.WORKSPACE}/dist/${PLATFORM}/${ARCH}"
-                def distVolume = "dist-${PLATFORM}${ARCH}"
+                def distVolume = "${env.JOB_NAME}-${PLATFORM}${ARCH}".replaceAll('[^\\p{Alnum}-]', '_')
 
                 sh """
                   mkdir -p \"${bindDir}\" \\
