@@ -49,10 +49,11 @@ pipeline {
             steps {
               script {
                 def bindDir = "${env.WORKSPACE}/dist/${PLATFORM}/${ARCH}"
+                def distVolume = "dist-${PLATFORM}${ARCH}"
 
                 sh """
                   mkdir -p \"${bindDir}\" \\
-                    && docker run --rm -i -v \"${bindDir}:/project/dist:rw\" ampofflinebuilder \\
+                    && docker run --rm -i -v \"${distVolume}:/project/dist:rw\" ampofflinebuilder \\
                       npm run package-${PLATFORM}-${ARCH}
                 """
               } // script
