@@ -35,7 +35,7 @@ pipeline {
       matrix {
         axes {
           axis {
-            name 'PLATFORM'
+            name 'PKG'
             values 'win', 'deb'
           }
           axis {
@@ -48,13 +48,15 @@ pipeline {
           stage('Package') {
             steps {
               script {
-                def bindDir = "${env.WORKSPACE}/dist/${PLATFORM}/${ARCH}"
-                def distVolume = "${env.JOB_NAME}-${PLATFORM}${ARCH}".replaceAll('[^\\p{Alnum}-]', '_')
+                def jobName = "${env.JOB_NAME}-${PKG}${ARCH}".replaceAll('[^\\p{Alnum}-]', '_')
+                def distVolume = "${jobName}-dist"
+                def cacheVolume = "${jobName}-cache"
 
                 sh """
-                  mkdir -p \"${bindDir}\" \\
-                    && docker run --rm -i -v \"${distVolume}:/project/dist:rw\" ampofflinebuilder \\
-                      npm run package-${PLATFORM}-${ARCH}
+                  docker run --rm -i \\
+                    -v '${distVolume}:/project/dist:rw' \\
+                    -v '${cacheVolume}:/root/.cache:rw' \\
+                    ampofflinebuilder npm run package-${PKG}-${ARCH}
                 """
               } // script
             }
