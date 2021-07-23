@@ -43,16 +43,28 @@ pipeline {
         axes {
           axis {
             name 'SCRIPT'
-            values 'package-win', 'package-deb'
+            values 'lint', 'test-mocha', 'package-win', 'package-deb'
           }
           axis {
             name 'ARCH'
-            values '32', '64'
+            values 'null', '32', '64'
           }
         }
 
         stages {
+          stage('QA') {
+            when {
+              expression { ARCH == 'null' && ! SCRIPT.startsWith('package-') }
+            }
+            steps {
+              script { sh "docker run --rm ampofflinebuilder npm run ${SCRIPT}" }
+            }
+          } // QA
+
           stage('Package') {
+            when {
+              expression { ARCH != 'null' && SCRIPT.startsWith('package-') }
+            }
             steps {
               script {
                 def jobName = "${env.JOB_NAME}-${SCRIPT}${ARCH}".replaceAll('[^\\p{Alnum}-]', '_')
