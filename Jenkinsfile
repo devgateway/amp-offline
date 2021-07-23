@@ -27,8 +27,7 @@ pipeline {
               */
               sh """
                 cp \$PRIVKEY id_rsa \\
-                  && docker build -t ampofflinebuilder . \\
-                  && mkdir -p dist
+                  && docker build -t ampofflinebuilder .
               """
             } finally {
               sh 'rm -f id_rsa'
@@ -57,7 +56,15 @@ pipeline {
               expression { ARCH == 'null' && ! SCRIPT.startsWith('package-') }
             }
             steps {
-              script { sh "docker run --rm ampofflinebuilder npm run ${SCRIPT}" }
+              script {
+                sh """
+                  docker run --rm \\
+                    -v '${env.WORKSPACE}/test:/project/test:ro' \\
+                    -v '${env.WORKSPACE}/.gitignore:/project/.gitignore:ro' \\
+                    -v '${env.WORKSPACE}/.eslintrc:/project/.eslintrc:ro' \\
+                    ampofflinebuilder npm run ${SCRIPT}
+                """
+              }
             }
           } // QA
 
@@ -71,7 +78,6 @@ pipeline {
 
                 sh """
                   docker run --rm \\
-                    -v '${jobName}-dist:/project/dist:rw' \\
                     -v '${jobName}-cache:/root/.cache:rw' \\
                     ampofflinebuilder npm run ${SCRIPT}-${ARCH}
                 """

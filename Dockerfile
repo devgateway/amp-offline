@@ -15,7 +15,7 @@ RUN npm run build-dll 2>&1
 
 FROM electronuserland/builder:wine
 WORKDIR /project
-COPY webpack.config.electron.js .
+COPY webpack.config.electron.js .env-cmdrc ./
 COPY --from=NODE /project ./
 COPY app/utils app/utils/
 COPY app/modules app/modules/
