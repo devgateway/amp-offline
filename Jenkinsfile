@@ -42,8 +42,8 @@ pipeline {
       matrix {
         axes {
           axis {
-            name 'PKG'
-            values 'win', 'deb'
+            name 'SCRIPT'
+            values 'package-win', 'package-deb'
           }
           axis {
             name 'ARCH'
@@ -55,15 +55,13 @@ pipeline {
           stage('Package') {
             steps {
               script {
-                def jobName = "${env.JOB_NAME}-${PKG}${ARCH}".replaceAll('[^\\p{Alnum}-]', '_')
-                def distVolume = "${jobName}-dist"
-                def cacheVolume = "${jobName}-cache"
+                def jobName = "${env.JOB_NAME}-${SCRIPT}${ARCH}".replaceAll('[^\\p{Alnum}-]', '_')
 
                 sh """
-                  docker run --rm -i \\
-                    -v '${distVolume}:/project/dist:rw' \\
-                    -v '${cacheVolume}:/root/.cache:rw' \\
-                    ampofflinebuilder npm run package-${PKG}-${ARCH}
+                  docker run --rm \\
+                    -v '${jobName}-dist:/project/dist:rw' \\
+                    -v '${jobName}-cache:/root/.cache:rw' \\
+                    ampofflinebuilder npm run ${SCRIPT}-${ARCH}
                 """
               } // script
             }
