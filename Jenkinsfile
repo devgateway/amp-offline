@@ -27,22 +27,22 @@ pipeline {
       }
     } // Dependencies
 
+    stage('Prebuild') {
+      steps {
+        script {
+          sh """
+            sed -i 's/#jobName#/${env.jobName}/' Dockerfile \\
+              && docker build -f Dockerfile -t ${env.jobName}-builder .
+          """
+        }
+      } // steps
+    } // Prebuild
+
     stage('Build & Test') {
       failFast true
       parallel {
 
-        stage('Main') {
-          steps {
-            script {
-              sh """
-                sed -i 's/#jobName#/${env.jobName}/' Dockerfile \\
-                  && docker build -f Dockerfile -t ${env.jobName}-builder .
-              """
-            }
-          } // steps
-        } // Main
-
-        stage('Renderer') {
+        stage('Build') {
           steps {
             script {
               sh """
@@ -55,7 +55,7 @@ pipeline {
               """
             }
           } // steps
-        } // Renderer
+        } // Build
 
         stage('Test') {
           steps {
@@ -72,7 +72,7 @@ pipeline {
           } // steps
         } // Test
 
-        stage('ESLint') {
+        stage('Lint') {
           steps {
             script {
               sh """

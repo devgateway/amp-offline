@@ -14,5 +14,6 @@ COPY app/main.development.js app/
 COPY package*.json webpack.config.base.js webpack.config.electron.js .env-cmdrc ./
 RUN npm config set progress=false color=false 2>&1 \
   && mkdir repository database \
+  && ls -R \
   && npm run build-main 2>&1
 COPY --from=DEPS /project/dll dll/
