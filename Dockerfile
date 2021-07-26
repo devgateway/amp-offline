@@ -24,6 +24,5 @@ RUN npm config set progress=false color=false 2>&1 \
   && npm run build-main 2>&1
 COPY resources ./resources/
 COPY app ./app/
-RUN ls -a node_modules/.bin
 RUN mkdir repository database \
   && npm run build-renderer 2>&1
