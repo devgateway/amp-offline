@@ -1,13 +1,5 @@
-FROM node:8-alpine AS NODE
-RUN apk add openssh-client git make g++ python3
-COPY .ssh_known_hosts /etc/ssh/ssh_known_hosts
-COPY id_rsa /root/.ssh/id_rsa
-WORKDIR /project
-COPY package*.json ./
-RUN npm config set progress=false color=false \
-  && npm install --production 2>&1
-RUN npm install 2>&1
-COPY setup.js webpack.config.*.js .babelrc ./
+FROM #jobName#-deps AS DEPS
+COPY webpack.config.base.js webpack.config.dll.js .babelrc ./
 # TODO: set args a late as possible
 #ARG COMMIT_HASH
 #ARG BRANCH_NAME
@@ -15,14 +7,12 @@ RUN npm run build-dll 2>&1
 
 FROM electronuserland/builder:wine
 WORKDIR /project
-COPY webpack.config.electron.js .env-cmdrc ./
-COPY --from=NODE /project ./
 COPY app/utils app/utils/
 COPY app/modules app/modules/
+COPY --from=DEPS /project/node_modules node_modules/
 COPY app/main.development.js app/
+COPY package*.json webpack.config.base.js webpack.config.electron.js .env-cmdrc ./
 RUN npm config set progress=false color=false 2>&1 \
+  && mkdir repository database \
   && npm run build-main 2>&1
-COPY resources ./resources/
-COPY app ./app/
-RUN mkdir repository database \
-  && npm run build-renderer 2>&1
+COPY --from=DEPS /project/dll dll/

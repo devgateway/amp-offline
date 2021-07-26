@@ -50,7 +50,7 @@ export default validate(merge(baseConfig, {
   },
 
   output: {
-    path: path.join(__dirname, 'app/libs/dll'),
+    path: path.join(__dirname, 'dll'),
     filename: '[name].js',
     library: '[name]',
     libraryTarget: 'var'
@@ -58,7 +58,7 @@ export default validate(merge(baseConfig, {
 
   plugins: [
     new webpack.DllPlugin({
-      path: './app/libs/dll/manifest.json',
+      path: './dll/manifest.json',
       name: '[name]',
       context: __dirname
     })

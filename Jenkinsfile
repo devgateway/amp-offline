@@ -2,84 +2,115 @@
 pipeline {
   agent any
 
+  environment {
+    jobName = "${env.JOB_NAME.replaceAll('[^\\p{Alnum}-]', '_').toLowerCase()}"
+  }
+
   stages {
-    stage('Prepare') {
+    stage('Dependencies') {
       steps {
         withCredentials([sshUserPrivateKey(
           keyFileVariable: 'PRIVKEY',
           credentialsId: 'GitHubDgReadOnlyKey'
         )]) {
-          // alpine deps: openssh-client git python3 make g++
-          // electronuserland/builder: all above preinstalled
           script {
-            try {
-              def commitHash = "${sh(returnStdout: true, script: 'git rev-parse --short HEAD')}"
-              def branchName = "${sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD')}"
-              /* TODO: set hash/branch at later phase
-              sh """
-                cp \$PRIVKEY id_rsa \\
-                  && docker build -t ampofflinebuilder \\
-                    --build-arg COMMIT_HASH=${commitHash.trim()} \\
-                    --build-arg BRANCH_NAME=${branchName.trim()} \\
-                    . \\
-                  && mkdir -p dist
-              """
-              */
-              sh """
-                cp \$PRIVKEY id_rsa \\
-                  && docker build -t ampofflinebuilder .
-              """
-            } finally {
-              sh 'rm -f id_rsa'
-            }
+            sh """
+              cp \$PRIVKEY id_rsa \\
+                && docker build -f deps.Dockerfile -t ${env.jobName}-deps .
+            """
           }
         } // withCredentials
       } // steps
-    } // Prepare
+
+      post {
+        cleanup { script { sh 'rm -f id_rsa' } }
+      }
+    } // Dependencies
+
+    stage('Build & Test') {
+      failFast true
+      parallel {
+
+        stage('Main') {
+          steps {
+            script {
+              sh """
+                sed -i 's/#jobName#/${env.jobName}/' Dockerfile \\
+                  && docker build -f Dockerfile -t ${env.jobName}-builder .
+              """
+            }
+          } // steps
+        } // Main
+
+        stage('Renderer') {
+          steps {
+            script {
+              sh """
+                docker run --rm \\
+                  -v '${env.WORKSPACE}/app:/project/app:ro' \\
+                  -v '${env.WORKSPACE}/resources:/project/resources:ro' \\
+                  -v '${env.WORKSPACE}/webpack.config.production.js:/project/webpack.config.production.js:ro' \\
+                  -v '${env.jobName}-dist:/project/dist:rw' \\
+                  ${env.jobName}-builder npm run build-renderer
+              """
+            }
+          } // steps
+        } // Renderer
+
+        stage('Test') {
+          steps {
+            script {
+              sh """
+                docker run --rm \\
+                  -v '${env.WORKSPACE}/app:/project/app:ro' \\
+                  -v '${env.WORKSPACE}/test:/project/test:ro' \\
+                  -v '${env.WORKSPACE}/.gitignore:/project/.gitignore:ro' \\
+                  -v '${env.WORKSPACE}/.eslintrc:/project/.eslintrc:ro' \\
+                  ${env.jobName}-builder npm run test-mocha
+              """
+            }
+          } // steps
+        } // Test
+
+        stage('ESLint') {
+          steps {
+            script {
+              sh """
+                docker run --rm \\
+                  -v '${env.WORKSPACE}/app:/project/app:ro' \\
+                  -v '${env.WORKSPACE}/.gitignore:/project/.gitignore:ro' \\
+                  -v '${env.WORKSPACE}/.eslintrc:/project/.eslintrc:ro' \\
+                  ${env.jobName}-builder npm run test-mocha
+              """
+            }
+          } // steps
+        } // Test
+
+      } // parallel
+    } // Build & Test
 
     stage('Package All') {
       matrix {
         axes {
           axis {
-            name 'SCRIPT'
-            values 'lint', 'test-mocha', 'package-win', 'package-deb'
+            name 'PKG'
+            values 'win', 'deb'
           }
           axis {
             name 'ARCH'
-            values 'null', '32', '64'
+            values '32', '64'
           }
         }
 
         stages {
-          stage('QA') {
-            when {
-              expression { ARCH == 'null' && ! SCRIPT.startsWith('package-') }
-            }
-            steps {
-              script {
-                sh """
-                  docker run --rm \\
-                    -v '${env.WORKSPACE}/test:/project/test:ro' \\
-                    -v '${env.WORKSPACE}/.gitignore:/project/.gitignore:ro' \\
-                    -v '${env.WORKSPACE}/.eslintrc:/project/.eslintrc:ro' \\
-                    ampofflinebuilder npm run ${SCRIPT}
-                """
-              }
-            }
-          } // QA
-
           stage('Package') {
-            when {
-              expression { ARCH != 'null' && SCRIPT.startsWith('package-') }
-            }
             steps {
               script {
-                def jobName = "${env.JOB_NAME}-${SCRIPT}${ARCH}".replaceAll('[^\\p{Alnum}-]', '_')
-
                 sh """
                   docker run --rm \\
-                    -v '${jobName}-cache:/root/.cache:rw' \\
-                    ampofflinebuilder npm run ${SCRIPT}-${ARCH}
+                    -v '${env.jobName}-dist:/project/dist:ro' \\
+                    -v '${env.jobName}-cache-${PKG}${ARCH}:/root/.cache:rw' \\
+                    ${env.jobName}-builder sh -c 'npm run package-${PKG}-${ARCH} && ls -R package'
                 """
               } // script
             }
