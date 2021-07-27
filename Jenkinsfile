@@ -88,7 +88,8 @@ pipeline {
                 'test',
                 '.gitignore',
                 '.eslintrc',
-                'webpack.config.test.js'
+                'webpack.config.test.js',
+                'webpack.config.development.js'
               ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
               sh """
                 docker run --rm \\
