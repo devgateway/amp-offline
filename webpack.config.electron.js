@@ -2,6 +2,7 @@
  * Build config for electron 'Main Process' file
  */
 
+import path from 'path';
 import webpack from 'webpack';
 import validate from 'webpack-validator';
 import BabelMinifyWebpackPlugin from 'babel-minify-webpack-plugin';

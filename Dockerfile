@@ -10,10 +10,10 @@ WORKDIR /project
 COPY app/utils app/utils/
 COPY app/modules app/modules/
 COPY --from=DEPS /project/node_modules node_modules/
+COPY --from=DEPS /project/.babelrc /project/package*.json /project/webpack.config.base.js ./
 COPY app/main.development.js app/
-COPY package*.json webpack.config.base.js webpack.config.electron.js .env-cmdrc ./
+COPY webpack.config.electron.js .env-cmdrc ./
 RUN npm config set progress=false color=false 2>&1 \
   && mkdir repository database \
-  && ls -R \
   && npm run build-main 2>&1
 COPY --from=DEPS /project/dll dll/

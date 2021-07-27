@@ -5,5 +5,5 @@ COPY id_rsa /root/.ssh/id_rsa
 WORKDIR /project
 COPY package*.json ./
 RUN npm config set progress=false color=false \
-  && npm install --production 2>&1
+  && npm install --ignore-scripts --production 2>&1
 RUN npm install 2>&1
