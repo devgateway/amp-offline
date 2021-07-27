@@ -124,12 +124,16 @@ pipeline {
                   docker run --rm \\
                     -v '${env.jobName}-dist:/project/dist:ro' \\
                     -v '${env.jobName}-cache-${PKG}${ARCH}:/root/.cache:rw' \\
-                    ${env.jobName}-builder sh -c 'npm run package-${PKG}-${ARCH} && ls -R package'
+                    ${env.jobName}-builder sh -c 'npm run package-${PKG}-${ARCH}'
                 """
               } // script
             }
           } // Package
         }
+      } // matrix
+
+      post {
+        cleanup { script { sh "docker volume rm '${env.jobName}-dist'" } }
       }
     } // Package All
 
