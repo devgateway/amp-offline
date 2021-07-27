@@ -27,7 +27,7 @@ pipeline {
       }
     } // Dependencies
 
-    stage('Prebuild') {
+    stage('Main') {
       steps {
         script {
           sh """
@@ -36,13 +36,13 @@ pipeline {
           """
         }
       } // steps
-    } // Prebuild
+    } // Main
 
-    stage('Build & Test') {
+    stage('Build & QA') {
       failFast true
       parallel {
 
-        stage('Build') {
+        stage('Renderer') {
           steps {
             script {
               sh """
@@ -55,7 +55,7 @@ pipeline {
               """
             }
           } // steps
-        } // Build
+        } // Renderer
 
         stage('Test') {
           steps {
@@ -66,6 +66,8 @@ pipeline {
                   -v '${env.WORKSPACE}/test:/project/test:ro' \\
                   -v '${env.WORKSPACE}/.gitignore:/project/.gitignore:ro' \\
                   -v '${env.WORKSPACE}/.eslintrc:/project/.eslintrc:ro' \\
+                  -v '${env.WORKSPACE}/webpack.config.test.js:/project/webpack.config.test.js:ro' \\
+                  -v '${env.WORKSPACE}/webpack.config.development.js:/project/webpack.config.development.js:ro' \\
                   ${env.jobName}-builder npm run test-mocha
               """
             }
@@ -78,8 +80,10 @@ pipeline {
               sh """
                 docker run --rm \\
                   -v '${env.WORKSPACE}/app:/project/app:ro' \\
+                  -v '${env.WORKSPACE}/test:/project/test:ro' \\
                   -v '${env.WORKSPACE}/.gitignore:/project/.gitignore:ro' \\
                   -v '${env.WORKSPACE}/.eslintrc:/project/.eslintrc:ro' \\
+                  -v '${env.WORKSPACE}/webpack.config.test.js:/project/webpack.config.test.js:ro' \\
                   ${env.jobName}-builder npm run test-mocha
               """
             }
@@ -87,7 +91,7 @@ pipeline {
         } // Test
 
       } // parallel
-    } // Build & Test
+    } // Build & QA
 
     stage('Package All') {
       matrix {
