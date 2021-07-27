@@ -45,11 +45,14 @@ pipeline {
         stage('Renderer') {
           steps {
             script {
+              def binds = [
+                'app',
+                'resources',
+                'webpack.config.production.js'
+              ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
               sh """
                 docker run --rm \\
-                  -v '${env.WORKSPACE}/app:/project/app:ro' \\
-                  -v '${env.WORKSPACE}/resources:/project/resources:ro' \\
-                  -v '${env.WORKSPACE}/webpack.config.production.js:/project/webpack.config.production.js:ro' \\
+                  ${binds.join(' ')} \\
                   -v '${env.jobName}-dist:/project/dist:rw' \\
                   ${env.jobName}-builder npm run build-renderer
               """
@@ -60,14 +63,17 @@ pipeline {
         stage('Test') {
           steps {
             script {
+              def binds = [
+                'app',
+                'test',
+                '.gitignore',
+                '.eslintrc',
+                'webpack.config.test.js',
+                'webpack.config.development.js'
+              ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
               sh """
                 docker run --rm \\
-                  -v '${env.WORKSPACE}/app:/project/app:ro' \\
-                  -v '${env.WORKSPACE}/test:/project/test:ro' \\
-                  -v '${env.WORKSPACE}/.gitignore:/project/.gitignore:ro' \\
-                  -v '${env.WORKSPACE}/.eslintrc:/project/.eslintrc:ro' \\
-                  -v '${env.WORKSPACE}/webpack.config.test.js:/project/webpack.config.test.js:ro' \\
-                  -v '${env.WORKSPACE}/webpack.config.development.js:/project/webpack.config.development.js:ro' \\
+                  ${binds.join(' ')} \\
                   ${env.jobName}-builder npm run test-mocha
               """
             }
@@ -77,13 +83,16 @@ pipeline {
         stage('Lint') {
           steps {
             script {
+              def binds = [
+                'app',
+                'test',
+                '.gitignore',
+                '.eslintrc',
+                'webpack.config.test.js'
+              ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
               sh """
                 docker run --rm \\
-                  -v '${env.WORKSPACE}/app:/project/app:ro' \\
-                  -v '${env.WORKSPACE}/test:/project/test:ro' \\
-                  -v '${env.WORKSPACE}/.gitignore:/project/.gitignore:ro' \\
-                  -v '${env.WORKSPACE}/.eslintrc:/project/.eslintrc:ro' \\
-                  -v '${env.WORKSPACE}/webpack.config.test.js:/project/webpack.config.test.js:ro' \\
+                  ${binds.join(' ')} \\
                   ${env.jobName}-builder npm run test-mocha
               """
             }
