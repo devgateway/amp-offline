@@ -12,7 +12,7 @@
     "test-watch": "npm test -- --watch",
     "test-mocha-watch": "npm run test-mocha -- --watch",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --retries 2 --compilers js:babel-register --require ./test/setup.js ./test/e2e.js",
-    "lint": "eslint --ignore-path .gitignore --ignore-pattern libs/ --ext .jsx,.js --format=node_modules/eslint-formatter-pretty app test *.js",
+    "lint": "eslint --no-color --ignore-path .gitignore --ignore-pattern libs/ --ext .jsx,.js --format=node_modules/eslint-formatter-pretty app test *.js",
     "hot-server": "env-cmd --no-override development node --max-old-space-size=8192 -r babel-register server.js",
     "build-main": "env-cmd --no-override production node --max-old-space-size=8192 -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --profile --no-color",
     "build-renderer": "env-cmd --no-override production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile --no-color",
