@@ -16,6 +16,7 @@ pipeline {
           script {
             sh """
               cp \$PRIVKEY id_rsa \\
+                && jq --sort-keys --compact-output --from-file package.jq package.json >package.min.json \\
                 && docker build -f deps.Dockerfile -t ${env.jobName}-deps .
             """
           }
@@ -23,7 +24,7 @@ pipeline {
       } // steps
 
       post {
-        cleanup { script { sh 'rm -f id_rsa' } }
+        cleanup { script { sh 'rm -f id_rsa package.min.json' } }
       }
     } // Dependencies
 
