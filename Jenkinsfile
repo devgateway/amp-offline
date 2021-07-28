@@ -2,6 +2,10 @@
 pipeline {
   agent any
 
+  options {
+    buildDiscarder logRotator(artifactNumToKeepStr: '5', numToKeepStr: '20')
+  }
+
   environment {
     jobName = "${env.JOB_NAME.replaceAll('[^\\p{Alnum}-]', '_').toLowerCase()}"
   }
