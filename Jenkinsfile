@@ -52,7 +52,7 @@ pipeline {
                 'webpack.config.production.js'
               ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
               sh """
-                docker run --rm \\
+                docker run --rm -e FORCE_COLOR=0 \\
                   ${binds.join(' ')} \\
                   -v '${env.jobName}-dist:/project/dist:rw' \\
                   ${env.jobName}-builder npm run build-renderer
@@ -73,7 +73,7 @@ pipeline {
                 'webpack.config.development.js'
               ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
               sh """
-                docker run --rm \\
+                docker run --rm -e FORCE_COLOR=0 \\
                   ${binds.join(' ')} \\
                   ${env.jobName}-builder npm run test-mocha
               """
