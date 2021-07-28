@@ -131,7 +131,7 @@ pipeline {
                       -v '${env.jobName}-cache-${PKG}${ARCH}:/root/.cache:rw' \\
                       -v '${env.WORKSPACE}/${env.ARTIFACT_DIR}:/project/package:rw' \\
                       ${env.jobName}-builder sh -c \\
-                      "npm run package-${PKG}-${ARCH} && chown -R \$(id -u) package"
+                      "FORCE_COLOR=0 npm run package-${PKG}-${ARCH} && chown -R \$(id -u) package"
                 """
                 dir("${env.ARTIFACT_DIR}") {
                   archiveArtifacts artifacts: "*.exe,*.deb,*.rpm", onlyIfSuccessful: true
