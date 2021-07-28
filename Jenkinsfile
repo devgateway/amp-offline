@@ -118,14 +118,25 @@ pipeline {
 
         stages {
           stage('Package') {
+            environment {
+              ARTIFACT_DIR = "package-${PKG}-${ARCH}"
+            }
+
             steps {
               script {
                 sh """
-                  docker run --rm \\
-                    -v '${env.jobName}-dist:/project/dist:ro' \\
-                    -v '${env.jobName}-cache-${PKG}${ARCH}:/root/.cache:rw' \\
-                    ${env.jobName}-builder sh -c 'npm run package-${PKG}-${ARCH}'
+                  mkdir -p '${env.ARTIFACT_DIR}' \\
+                    && docker run --rm \\
+                      -v '${env.jobName}-dist:/project/dist:ro' \\
+                      -v '${env.jobName}-cache-${PKG}${ARCH}:/root/.cache:rw' \\
+                      -v '${env.WORKSPACE}/${env.ARTIFACT_DIR}:/project/package:rw' \\
+                      ${env.jobName}-builder sh -c \\
+                      "npm run package-${PKG}-${ARCH} && chown -R \$(id -u) package"
                 """
+                dir("${env.ARTIFACT_DIR}") {
+                  archiveArtifacts artifacts: "*.exe,*.deb,*.rpm", onlyIfSuccessful: true
+                  deleteDir()
+                }
               } // script
             }
           } // Package
