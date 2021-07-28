@@ -151,8 +151,65 @@ pipeline {
       post {
         cleanup { script { sh "docker volume rm '${env.jobName}-dist'" } }
         success {
-          echo "Build succeeded, and the artifacts available at: ${env.RUN_ARTIFACTS_DISPLAY_URL}"
-        }
+          script {
+            def randomWord = { it[(int) (Math.random() * it.size())] }
+            def intro = randomWord([
+              'Yippie-ki-yay,',
+              'Surprisingly,',
+              'Woo hoo!',
+              'This was a triumph.',
+              'I knew it!',
+              'Nothing to see here, just',
+              'I can\'t believe it:',
+              'Nobody expected it, but',
+              'Hear ye, hear ye!',
+              'Just in time,',
+              'Is it a bird? Is it a plane?',
+              'Believe it or not,'
+            ])
+            def verb = randomWord([
+              'turned out',
+              'worked out',
+              'ended up looking',
+              'got built, and it\'s',
+              'is definitely',
+              'succeeded and it\'s looking',
+              'seems to be'
+            ])
+            def adjective = randomWord([
+              'grrreat',
+              'perfect',
+              'excellent',
+              'fantastic',
+              'like a million dollars',
+              'huge success',
+              'legen... wait for it ...dary',
+              'flawless',
+              'smashing'
+            ])
+            def adverb = randomWord([
+              'of course',
+              'as usual',
+              'as always',
+              '(where else?)',
+              'obviously',
+              'immediately',
+              '24/7',
+              'rain or shine',
+              'for the first 100 lucky winners to download',
+              'at no additional cost',
+              'absolutely free'
+            ])
+            slackSend(
+              tokenCredentialId: 'SlackAmpOffline',
+              channel: '#amp-offline-ci',
+              color: 'good',
+              message: "${intro} ${env.JOB_NAME} " +
+                "build ${env.BUILD_DISPLAY_NAME} ${verb} ${adjective}!" +
+                "\nThe artifacts are available ${adverb} at ${env.RUN_ARTIFACTS_DISPLAY_URL}"
+            )
+          } // script
+        } // success
       }
     } // Package All
 
