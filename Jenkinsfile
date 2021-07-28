@@ -145,6 +145,9 @@ pipeline {
 
       post {
         cleanup { script { sh "docker volume rm '${env.jobName}-dist'" } }
+        success {
+          echo "Build succeeded, and the artifacts available at: ${env.RUN_ARTIFACTS_DISPLAY_URL}"
+        }
       }
     } // Package All
 
