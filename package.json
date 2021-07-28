@@ -83,7 +83,7 @@
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${name}-${version}.${ext}",
+      "artifactName": "${name}-${version}-${arch}.${ext}",
       "installerLanguages": [
         "en_US",
         "fr_FR",
