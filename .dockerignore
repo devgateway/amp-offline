@@ -1,0 +1,8 @@
+Dockerfile
+Jenkinsfile
+test
+.editorconfig
+.git*
+*.sh
+*.bat
+*.md
