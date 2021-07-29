@@ -210,6 +210,15 @@ pipeline {
             )
           } // script
         } // success
+        failure {
+            slackSend(
+              tokenCredentialId: 'SlackAmpOffline',
+              channel: '#amp-offline-ci',
+              color: 'danger',
+              message: "Oops! ${env.JOB_NAME} build ${env.BUILD_DISPLAY_NAME} failed." +
+                "\nFind out what went wrong at ${env.BUILD_URL}"
+            )
+	}
       }
     } // Package All
 
