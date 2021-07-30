@@ -9,7 +9,7 @@ import validate from 'webpack-validator';
 import merge from 'webpack-merge';
 import formatter from 'eslint-formatter-pretty';
 import baseConfig from './webpack.config.base';
-import vendorManifest from './app/libs/dll/manifest.json';
+import vendorManifest from './dll/manifest.json';
 
 const port = process.env.PORT || 3000;
 

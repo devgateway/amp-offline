@@ -12,29 +12,29 @@
     "test-watch": "npm test -- --watch",
     "test-mocha-watch": "npm run test-mocha -- --watch",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 mocha --retries 2 --compilers js:babel-register --require ./test/setup.js ./test/e2e.js",
-    "lint": "eslint --ignore-path .gitignore --ignore-pattern libs/ --ext .jsx,.js --format=node_modules/eslint-formatter-pretty app test *.js",
+    "lint": "eslint --no-color --ignore-path .gitignore --ignore-pattern libs/ --ext .jsx,.js --format=node_modules/eslint-formatter-pretty app test *.js",
     "hot-server": "env-cmd --no-override development node --max-old-space-size=8192 -r babel-register server.js",
-    "build-main": "env-cmd --no-override production node --max-old-space-size=8192 -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --profile",
-    "build-renderer": "env-cmd --no-override production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 npm run build-main && npm run build-renderer",
+    "build-main": "env-cmd --no-override production node --max-old-space-size=8192 -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --profile --no-color",
+    "build-renderer": "env-cmd --no-override production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --profile --no-color",
+    "build": "npm run build-main && npm run build-renderer",
     "start": "env-cmd --no-override production electron ./app/",
     "start-hot-update-main-debug": "env-cmd --no-override development electron --inspect-brk=5858 -r babel-register -r babel-polyfill ./app/main.development",
     "start-hot": "env-cmd --no-override development electron -r babel-register -r babel-polyfill ./app/main.development",
-    "postinstall": "concurrently \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
+    "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "dev": "npm run hot-server -- --start-hot",
-    "package": "npm run build && build --publish never",
-    "package-win-32": "build --win --ia32",
-    "package-win-64": "build --win --x64",
-    "package-linux": "build --linux --x64 --ia32",
-    "package-deb": "build --linux deb --x64 --ia32",
-    "package-deb-64": "build --linux deb --x64",
-    "package-deb-32": "build --linux deb --ia32",
-    "package-mac": "npm run build && build -m",
-    "package-all": "npm run build && build -mwl",
+    "package": "npm run build && electron-builder --publish never",
+    "package-win-32": "electron-builder --win --ia32",
+    "package-win-64": "electron-builder --win --x64",
+    "package-linux": "electron-builder --linux --x64 --ia32",
+    "package-deb": "electron-builder --linux deb --x64 --ia32",
+    "package-deb-64": "electron-builder --linux deb --x64",
+    "package-deb-32": "electron-builder --linux deb --ia32",
+    "package-mac": "npm run build && electron-builder -m",
+    "package-all": "npm run build && electron-builder -mwl",
     "cleanup": "mop -v",
     "flow": "flow",
     "build-dll": "cross-env NODE_ENV=development node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.dll.js --profile",
-    "list-asar-win": "asar list dist/win-unpacked/resources/app.asar"
+    "list-asar-win": "asar list ../renderer/win-unpacked/resources/app.asar"
   },
   "build": {
     "appId": "dg.AmpOffline",
@@ -43,13 +43,22 @@
       "target": "zip"
     },
     "directories": {
+      "output": "package",
       "buildResources": "resources"
     },
     "files": [
       {
+        "from": "dll"
+      },
+      {
+        "from": "main"
+      },
+      {
+        "from": "renderer"
+      },
+      {
         "from": "app",
         "filter": [
-          "dist/**/*",
           "libs/**/*",
           "lang/**/*",
           "static/**/*",
@@ -74,8 +83,12 @@
       "target": "nsis"
     },
     "nsis": {
-      "artifactName": "${name}-${version}.${ext}",
-      "installerLanguages": ["en_US", "fr_FR", "es_ES"],
+      "artifactName": "${name}-${version}-${arch}.${ext}",
+      "installerLanguages": [
+        "en_US",
+        "fr_FR",
+        "es_ES"
+      ],
       "displayLanguageSelector": true
     },
     "linux": {
@@ -121,7 +134,7 @@
     "css-loader": "^0.25.0",
     "devtron": "^1.4.0",
     "electron": "^1.4.4",
-    "electron-builder": "19.37.2",
+    "electron-builder": "22.11.7",
     "electron-devtools-installer": "^2.0.1",
     "enzyme": "^2.5.1",
     "eslint": "^3.9.1",
