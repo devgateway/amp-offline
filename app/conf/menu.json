@@ -12,6 +12,9 @@
         "Add Activity": {
           "route": "/activity/edit/NEW_ACTIVITY_ID"
         },
+        "Add SSC": {
+          "route": "/activity/edit/NEW_ACTIVITY_ID"
+        },
         "Change workspace": {
           "public": false,
           "route": null,

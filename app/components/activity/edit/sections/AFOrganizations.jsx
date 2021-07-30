@@ -48,6 +48,7 @@ class AFOrganizations extends Component {
     this.handleOrgListChange = this.handleOrgListChange.bind(this);
     this.checkValidationError = this.checkValidationError.bind(this);
     this.addFundingAutomatically = this.addFundingAutomatically.bind(this);
+    this.orgFilterForTemplate = this.orgFilterForTemplate.bind(this);
   }
 
   /**
@@ -118,7 +119,7 @@ class AFOrganizations extends Component {
   orgFilterForTemplate() {
     const { workspaceReducer } = this.context;
     if (workspaceReducer.currentWorkspace[WorkspaceConstants.TEMPLATE_ID]) {
-      return [{ path: 'template', value: workspaceReducer.currentWorkspace[WorkspaceConstants.TEMPLATE_ID] }];
+      return [{ path: 'extra_info~template', value: workspaceReducer.currentWorkspace[WorkspaceConstants.TEMPLATE_ID] }];
     }
     return null;
   }

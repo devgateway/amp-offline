@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -r dist
+rm -fr dist
 
 TARGET=$3
 echo TARGET=$TARGET
@@ -49,7 +49,7 @@ DIST_CMD="
 
 echo DIST_CMD=$DIST_CMD
 
-docker run --rm -t -v ${PWD}:/project \
+docker run --dns=8.8.8.8 --rm -t -v ${PWD}:/project \
 	-v amp-client-electron:/root/.electron \
 	-v amp-client-cache:/root/.cache \
 	-e PR_NR=$1 -e JENKINS_BRANCH=$2 \

@@ -30,6 +30,7 @@ export default class AFProjectCost extends Component {
   }
 
   render() {
+    const { activityFieldsManager } = this.context;
     return (<div className={afStyles.full_width} >
       <Grid className={afStyles.full_width} >
         <Row>
@@ -38,12 +39,13 @@ export default class AFProjectCost extends Component {
           </Col>
         </Row>
         <Row>
-          <Col md={5} lg={5} >
-            <AFField
-              parent={this.props.activity} fieldPath={ActivityConstants.TOTAL_NUMBER_OF_FUNDING_SOURCES}
-              type={AF.NUMBER}
-              extraParams={{ bigger: 0 }} />
-          </Col>
+          {(activityFieldsManager.isFieldPathEnabled(ActivityConstants.TOTAL_NUMBER_OF_FUNDING_SOURCES))
+            ? (<Col md={5} lg={5} >
+              <AFField
+                parent={this.props.activity} fieldPath={ActivityConstants.TOTAL_NUMBER_OF_FUNDING_SOURCES}
+                type={AF.NUMBER}
+                extraParams={{ bigger: 0 }} />
+            </Col>) : null}
           <Col md={5} lg={5} >
             <AFField parent={this.props.activity} fieldPath={ActivityConstants.TYPE_OF_COOPERATION} />
           </Col>

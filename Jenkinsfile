@@ -1,103 +1,227 @@
-#!groovy
+#!/usr/bin/env groovy
+pipeline {
+  agent any
 
-// Important: What is BRANCH_NAME?
-// It is branch name for builds triggered from branches.
-// It is PR-<pr-id> for builds triggered from pull requests.
-def tag
-if (BRANCH_NAME ==~ /feature\/AMP-\d+.*/) {
-    def jiraId = (BRANCH_NAME =~ /feature\/AMP-(\d+).*/)[0][1]
-    tag = "feature-${jiraId}"
-} else {
-    tag = BRANCH_NAME.replaceAll(/[^a-zA-Z0-9_-]/, "-").toLowerCase()
-}
+  options {
+    buildDiscarder logRotator(artifactNumToKeepStr: '5', numToKeepStr: '20')
+  }
 
-// Record original branch or pull request for cleanup jobs
-def branch = env.CHANGE_ID == null ? BRANCH_NAME : null
-def pr = env.CHANGE_ID
-println "Branch: ${branch}"
-println "Pull request: ${pr}"
-println "Tag: ${tag}"
+  environment {
+    jobName = "${env.JOB_NAME.replaceAll('[^\\p{Alnum}-]', '_').toLowerCase()}"
+  }
 
-def changePretty = (pr != null) ? "pull request ${pr}" : "branch ${branch}"
+  stages {
+    stage('Dependencies') {
+      steps {
+        withCredentials([sshUserPrivateKey(
+          keyFileVariable: 'PRIVKEY',
+          credentialsId: 'GitHubDgReadOnlyKey'
+        )]) {
+          script {
+            sh """
+              cp \$PRIVKEY id_rsa \\
+                && jq --sort-keys --compact-output --from-file package.jq package.json >package.min.json \\
+                && docker build -f deps.Dockerfile -t ${env.jobName}-deps .
+            """
+          }
+        } // withCredentials
+      } // steps
 
-// define target options
-def targetsMap = [
-        'Package All': ['win32', 'win64', 'linux'],
-        'Windows 32 & 64 bits': ['win32', 'win64'],
-        'Windows 64 bits': ['win64'],
-        'Windows 32 bits': ['win32'],
-        'Linux All': ['linux'],
-        'Debian All': ['deb32', 'deb64'],
-        'Debian 64 bits': ['deb64'],
-        'Debian 32 bits': ['deb32'],
-        'Windows and Linux deb 32 & 64 bits': ['win32', 'win64', 'deb32', 'deb64']
-    ]
-// TODO exclude develop?
-def isReleaseBranch = branch != null && branch.matches(/master|develop|pre-release.*|release.*/)
-def defaultTarget = isReleaseBranch ? 'Package All' : 'Windows 64 bits'
-// By default options are listed and sorted ascending and there is no way to configure defaultValue for choices.
-// To ensure that the right default option is selected on automatic build, it must be renamed to be sorted first
-def defaultTargetFirst = "(Default) ${defaultTarget}"
-targetsMap[defaultTargetFirst] = targetsMap[defaultTarget]
-targetsMap = targetsMap.findAll { it.key != defaultTarget }
-def targets = targetsMap.keySet().sort().join('\n')
-println "Is Release branch: ${isReleaseBranch}"
-println "Default Target: ${defaultTarget}"
-println "Options: ${targets}"
+      post {
+        cleanup { script { sh 'rm -f id_rsa package.min.json' } }
+      }
+    } // Dependencies
 
-properties([
-    parameters([
-        choice(name: 'packageTarget', description: 'Package for', choices: targets)
-])])
+    stage('Main') {
+      steps {
+        script {
+          sh """
+            sed -i 's/#jobName#/${env.jobName}/' Dockerfile \\
+              && docker build -f Dockerfile -t ${env.jobName}-builder .
+          """
+        }
+      } // steps
+    } // Main
 
-def selectedTarget = params.packageTarget
-println "Selected target: ${selectedTarget}"
-def scriptTarget = targetsMap.get(selectedTarget).join(',')
-println "Script target: ${scriptTarget}"
+    stage('Build & QA') {
+      failFast true
+      parallel {
 
-// limit to "master" executor until AMPOFFLINE-837 is addressed
-node('master') {
-	try {
-		stage('PrepareSetup') {
-			checkout scm
-			//we print node version
-			sh 'node -v'
-			sh returnStatus: true, script: 'tar xf ../nm_cache.tar'
-			//remove Extraneous packages
-			sh 'npm prune'
-			//install all needed dependencies
-			sh 'npm install'
-			sh 'npm run build-dll'
-			sh returnStatus: true, script: 'tar cf ../nm_cache.tar node_modules --exclude=amp-ui'
-		}
-		stage('StyleCheck') {
-			try {
-				sh 'npm run lint'
-			} catch(e) {
-				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE ESLINT check Failed on ${changePretty}")
-				throw e
-			}
-		}
-		stage('UnitTest') {
-			try {
-				sh 'npm run test-mocha'
-			} catch(e) {
-				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Deploy AMP OFFLINE TESTS  Failed on ${changePretty}")
-				throw e
-			}
-		}
-		stage('Dist') {
-			try {
-				sh "echo Using package target: ${scriptTarget}"
-                sh "./dist.sh ${pr} ${branch} ${scriptTarget}"
-				sh "./publish.sh ${BRANCH_NAME}"
-				slackSend(channel: 'amp-offline-ci', color: 'good', message: "Deploy AMP OFFLINE - Success\nDeployed ${changePretty}")
-			} catch (e) {
-				slackSend(channel: 'amp-offline-ci', color: 'warning', message: "Failed to create and publish installers for ${changePretty}")
-				throw e
-			}
-		}
-	} finally {
-		sh 'rm -r dist node_modules'
+        stage('Renderer') {
+          steps {
+            script {
+              def binds = [
+                'app',
+                'resources',
+                'webpack.config.production.js'
+              ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
+              sh """
+                docker run --rm -e FORCE_COLOR=0 \\
+                  ${binds.join(' ')} \\
+                  -v '${env.jobName}-dist:/project/dist:rw' \\
+                  ${env.jobName}-builder npm run build-renderer
+              """
+            }
+          } // steps
+        } // Renderer
+
+        stage('Test') {
+          steps {
+            script {
+              def binds = [
+                'app',
+                'test',
+                '.gitignore',
+                '.eslintrc',
+                'webpack.config.test.js',
+                'webpack.config.development.js'
+              ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
+              sh """
+                docker run --rm -e FORCE_COLOR=0 \\
+                  ${binds.join(' ')} \\
+                  ${env.jobName}-builder npm run test-mocha
+              """
+            }
+          } // steps
+        } // Test
+
+        stage('Lint') {
+          steps {
+            script {
+              def binds = [
+                'app',
+                'test',
+                '.gitignore',
+                '.eslintrc',
+                'webpack.config.test.js',
+                'webpack.config.development.js'
+              ].collect({"-v '${env.WORKSPACE}/${it}:/project/${it}:ro'"})
+              sh """
+                docker run --rm \\
+                  ${binds.join(' ')} \\
+                  ${env.jobName}-builder npm run test-mocha
+              """
+            }
+          } // steps
+        } // Test
+
+      } // parallel
+    } // Build & QA
+
+    stage('Package All') {
+      matrix {
+        axes {
+          axis {
+            name 'PKG'
+            values 'win', 'deb'
+          }
+          axis {
+            name 'ARCH'
+            values '32', '64'
+          }
+        }
+
+        stages {
+          stage('Package') {
+            environment {
+              ARTIFACT_DIR = "package-${PKG}-${ARCH}"
+            }
+
+            steps {
+              script {
+                sh """
+                  mkdir -p '${env.ARTIFACT_DIR}' \\
+                    && docker run --rm \\
+                      -v '${env.jobName}-dist:/project/dist:ro' \\
+                      -v '${env.jobName}-cache-${PKG}${ARCH}:/root/.cache:rw' \\
+                      -v '${env.WORKSPACE}/${env.ARTIFACT_DIR}:/project/package:rw' \\
+                      ${env.jobName}-builder sh -c \\
+                      "FORCE_COLOR=0 npm run package-${PKG}-${ARCH} && chown -R \$(id -u) package"
+                """
+                dir("${env.ARTIFACT_DIR}") {
+                  archiveArtifacts artifacts: "*.exe,*.deb,*.rpm", onlyIfSuccessful: true
+                  deleteDir()
+                }
+              } // script
+            }
+          } // Package
+        }
+      } // matrix
+
+      post {
+        cleanup { script { sh "docker volume rm '${env.jobName}-dist'" } }
+        success {
+          script {
+            def randomWord = { it[(int) (Math.random() * it.size())] }
+            def intro = randomWord([
+              'Yippie-ki-yay,',
+              'Surprisingly,',
+              'Woo hoo!',
+              'This was a triumph.',
+              'I knew it!',
+              'Nothing to see here, just',
+              'I can\'t believe it:',
+              'Nobody expected it, but',
+              'Hear ye, hear ye!',
+              'Just in time,',
+              'Is it a bird? Is it a plane?',
+              'Believe it or not,'
+            ])
+            def verb = randomWord([
+              'turned out',
+              'worked out',
+              'ended up looking',
+              'got built, and it\'s',
+              'is definitely',
+              'succeeded and it\'s looking',
+              'seems to be'
+            ])
+            def adjective = randomWord([
+              'grrreat',
+              'perfect',
+              'excellent',
+              'fantastic',
+              'like a million dollars',
+              'huge success',
+              'legen... wait for it ...dary',
+              'flawless',
+              'smashing'
+            ])
+            def adverb = randomWord([
+              'of course',
+              'as usual',
+              'as always',
+              '(where else?)',
+              'obviously',
+              'immediately',
+              '24/7',
+              'rain or shine',
+              'for the first 100 lucky winners to download',
+              'at no additional cost',
+              'absolutely free'
+            ])
+            slackSend(
+              tokenCredentialId: 'SlackAmpOffline',
+              channel: '#amp-offline-ci',
+              color: 'good',
+              message: "${intro} ${env.JOB_NAME} " +
+                "build ${env.BUILD_DISPLAY_NAME} ${verb} ${adjective}!" +
+                "\nThe artifacts are available ${adverb} at ${env.RUN_ARTIFACTS_DISPLAY_URL}"
+            )
+          } // script
+        } // success
+        failure {
+            slackSend(
+              tokenCredentialId: 'SlackAmpOffline',
+              channel: '#amp-offline-ci',
+              color: 'danger',
+              message: "Oops! ${env.JOB_NAME} build ${env.BUILD_DISPLAY_NAME} failed." +
+                "\nFind out what went wrong at ${env.BUILD_URL}"
+            )
 	}
+      }
+    } // Package All
+
+  } // stages
+
 }
