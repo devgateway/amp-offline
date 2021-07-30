@@ -2,6 +2,7 @@
  * Build config for electron 'Main Process' file
  */
 
+import path from 'path';
 import webpack from 'webpack';
 import validate from 'webpack-validator';
 import BabelMinifyWebpackPlugin from 'babel-minify-webpack-plugin';
@@ -14,8 +15,8 @@ export default validate(merge(baseConfig, {
 
   // 'main.js' in root
   output: {
-    path: __dirname,
-    filename: './app/main.js'
+    path: path.join(__dirname, 'main'),
+    filename: 'main.js'
   },
 
   plugins: [
