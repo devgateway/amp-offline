@@ -233,7 +233,7 @@
   },
   "dependencies": {
     "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#v1.0.0",
-    "amp-ui": "git+ssh://github.com/devgateway/amp-ui#develop",
+    "amp-ui": "git+ssh://github.com/devgateway/amp-ui#task/AMP-30085/add-disb-id-field",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
     "extract-zip": "^1.6.7",
