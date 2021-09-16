@@ -161,6 +161,12 @@ export default class AFFundingDetailItem extends Component {
               {(trnType === ActivityConstants.DISBURSEMENTS) ?
                 <AFField
                   parent={fundingDetail} className={styles.cell_3}
+                  fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.DISBURSEMENT_ID}`}
+                />
+                : null}
+              {(trnType === ActivityConstants.DISBURSEMENTS) ?
+                <AFField
+                  parent={fundingDetail} className={styles.cell_3}
                   fieldPath={`${ActivityConstants.FUNDINGS}~${trnType}~${ActivityConstants.DISBURSEMENT_ORDER_ID}`} />
                 : null}
               <AFField
