@@ -66,13 +66,6 @@ const config = validate(merge(baseConfig, {
       'process.env.JENKINS_BRANCH': JSON.stringify(process.env.JENKINS_BRANCH)
     }),
 
-    // Minify without warning messages and IE8 support
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        screw_ie8: true,
-        warnings: false
-      }
-    }),
     new ExtractTextPlugin('style.css', { allChunks: true }),
     new HtmlWebpackPlugin({
       filename: '../app.html',
