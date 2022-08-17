@@ -50,6 +50,9 @@ assets/*
 app/libs/dll/manifest.json
 app/libs/dll/lib.js
 updates/
+renderer/
+main/
+dll/
 
 # local only
 rundev.*

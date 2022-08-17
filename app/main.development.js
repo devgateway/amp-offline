@@ -67,14 +67,22 @@ app.on('ready', async () => {
     useContentSize: true,
     closable: false,
     resizable: SHOW_SANITY_APP_DEBUG_WINDOW,
-    frame: SHOW_SANITY_APP_DEBUG_WINDOW
+    frame: SHOW_SANITY_APP_DEBUG_WINDOW,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
   });
 
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
     height: 728,
-    alwaysOnTop: true
+    alwaysOnTop: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
   });
 
   // create a new `splash`-Window

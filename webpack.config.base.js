@@ -83,5 +83,7 @@ export default validate({
     }), new StringReplacePlugin(),
   ],
 
-  externals: {}
+  externals: [
+    'dtrace-provider'
+  ]
 });
