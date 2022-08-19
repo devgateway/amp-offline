@@ -70,7 +70,8 @@ app.on('ready', async () => {
     frame: SHOW_SANITY_APP_DEBUG_WINDOW,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   });
 
@@ -81,7 +82,8 @@ app.on('ready', async () => {
     alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   });
 
