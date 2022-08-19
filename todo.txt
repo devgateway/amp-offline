@@ -2,3 +2,9 @@
 
 
 1. Upgrade webpack to v4. Current version of webpack loads an uglifyjs version that can't process ES code. Some libraries are using ES syntax and cause trouble while minifying.
+
+electron 1.4.4 is old. app does not start without showing any error.
+
+remote functionality was removed in electron v14. see: https://github.com/electron/electron/issues/21408
+trying to use electron v13.
+
