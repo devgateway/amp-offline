@@ -39,22 +39,22 @@ export default class LoggerManager {
   }
 
   constructor(module) {
-    if (ElectronApp.IS_TEST_MODE && ElectronApp.IS_LOG_TO_CONSOLE) {
+    // if (ElectronApp.IS_TEST_MODE && ElectronApp.IS_LOG_TO_CONSOLE) {
       this.logger_ = console;
       this._format = (message) => `${module}: ${message}`;
       // no .debug in node.js console
       this.debug = (message) => console.info(this._format(message));
-    } else {
-      this.logger_ = this.constructor.getBunyanLog().child({ module });
-      this._format = (message) => message;
-      if ((!ElectronApp.IS_DEV_MODE && !ElectronApp.IS_TEST_MODE) || ElectronApp.IS_FORCE_LOGGER) {
-        console.error = this.error.bind(this);
-        console.warn = this.warn.bind(this);
-        console.log = this.log.bind(this);
-        console.info = this.log.bind(this);
-        console.debug = this.debug.bind(this);
-      }
-    }
+    // } else {
+    //   this.logger_ = this.constructor.getBunyanLog().child({ module });
+    //   this._format = (message) => message;
+    //   if ((!ElectronApp.IS_DEV_MODE && !ElectronApp.IS_TEST_MODE) || ElectronApp.IS_FORCE_LOGGER) {
+    //     console.error = this.error.bind(this);
+    //     console.warn = this.warn.bind(this);
+    //     console.log = this.log.bind(this);
+    //     console.info = this.log.bind(this);
+    //     console.debug = this.debug.bind(this);
+    //   }
+    // }
   }
 
   log(message) {
@@ -74,6 +74,8 @@ export default class LoggerManager {
   }
 
   error(message) {
+    const err = new Error();
+    this.logger_.error(err.stack);
     this.logger_.error(this._format(message));
   }
 }
