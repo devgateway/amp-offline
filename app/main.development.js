@@ -15,7 +15,7 @@ import {
 
 const PDFWindow = require('electron-pdf-window');
 
-const skipSanityCheck = IS_DEV_MODE && SKIP_SANITY_CHECK;
+const skipSanityCheck = SKIP_SANITY_CHECK;
 
 let mainWindow = null;
 let sanityCheckWindow = null;
@@ -67,14 +67,24 @@ app.on('ready', async () => {
     useContentSize: true,
     closable: false,
     resizable: SHOW_SANITY_APP_DEBUG_WINDOW,
-    frame: SHOW_SANITY_APP_DEBUG_WINDOW
+    frame: SHOW_SANITY_APP_DEBUG_WINDOW,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
   });
 
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
     height: 728,
-    alwaysOnTop: true
+    alwaysOnTop: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
   });
 
   // create a new `splash`-Window

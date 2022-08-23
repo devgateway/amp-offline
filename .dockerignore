@@ -1,0 +1,7 @@
+.idea
+app/dist
+app/libs/dll
+node_modules
+package
+logs
+Dockerfile
