@@ -4,6 +4,7 @@
 
 import webpack from 'webpack';
 import validate from 'webpack-validator';
+import BabelMinifyWebpackPlugin from 'babel-minify-webpack-plugin';
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 
@@ -28,7 +29,8 @@ export default validate(merge(baseConfig, {
       'process.env': {
         NODE_ENV: JSON.stringify('production')
       }
-    })
+    }),
+    new BabelMinifyWebpackPlugin({}, {})
   ],
 
   /**

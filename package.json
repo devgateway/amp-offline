@@ -34,7 +34,8 @@
     "cleanup": "mop -v",
     "flow": "flow",
     "build-dll": "cross-env NODE_ENV=development node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.dll.js --profile",
-    "list-asar": "asar list package/linux-unpacked/resources/app.asar"
+    "list-asar": "asar list package/linux-unpacked/resources/app.asar",
+    "list-asar-win": "asar list package/win-unpacked/resources/app.asar"
   },
   "build": {
     "appId": "dg.AmpOffline",
@@ -53,6 +54,7 @@
           "libs/**/*",
           "lang/**/*",
           "static/**/*",
+          "dist/**/*",
           "app.html",
           "splash-screen.html",
           "main.js",

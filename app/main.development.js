@@ -15,7 +15,7 @@ import {
 
 const PDFWindow = require('electron-pdf-window');
 
-const skipSanityCheck = true;// IS_DEV_MODE && SKIP_SANITY_CHECK;
+const skipSanityCheck = IS_DEV_MODE && SKIP_SANITY_CHECK;
 
 let mainWindow = null;
 let sanityCheckWindow = null;

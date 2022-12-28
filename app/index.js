@@ -32,11 +32,6 @@ import translate from './utils/translate';
 const logger = new Logger('index');
 
 logger.log('index');
-
-process.noAsar = true;
-
-logger.log(`============================== ${process.resourcesPath}`);
-
 const store = configureStore();
 export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
