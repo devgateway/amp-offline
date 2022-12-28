@@ -2,10 +2,9 @@ import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
 import { IS_DEV_MODE, SHOW_SANITY_APP_DEBUG_WINDOW, SKIP_SANITY_CHECK } from './modules/util/ElectronApp';
 import {
-  CLOSE_SANITY_APP,
+  CLOSE_SANITY_APP_AND_LOAD_MAIN,
   FORCE_CLOSE_APP,
-  SHOW_SANITY_APP,
-  START_MAIN_APP
+  SHOW_SANITY_APP
 } from './utils/constants/ElectronAppMessages';
 import {
   CLOSE_HELP_WINDOW_MSG,
@@ -129,9 +128,10 @@ app.on('ready', async () => {
       });
     });
 
-    ipcMain.on(CLOSE_SANITY_APP, () => {
+    ipcMain.on(CLOSE_SANITY_APP_AND_LOAD_MAIN, () => {
       closeWindow(sanityCheckWindow);
       sanityCheckWindow = null;
+      loadMainApp();
     });
 
     // if sanity app is closed normally, we .destroy() it that won't trigger a 'close' event
@@ -139,8 +139,6 @@ app.on('ready', async () => {
 
     sanityCheckWindow.setMenu(null);
   }
-
-  ipcMain.on(START_MAIN_APP, () => loadMainApp());
 
   ipcMain.on(FORCE_CLOSE_APP, () => {
     closeApp();
