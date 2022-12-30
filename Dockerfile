@@ -3,9 +3,9 @@ COPY webpack.config.base.js webpack.config.dll.js .babelrc ./
 # TODO: set args a late as possible
 #ARG COMMIT_HASH
 #ARG BRANCH_NAME
-RUN npm run build-dll 2>&1
+RUN npm run build 2>&1
 
-FROM electronuserland/builder:wine
+FROM electronuserland/builder:16-wine
 WORKDIR /project
 COPY app/utils app/utils/
 COPY app/modules app/modules/
@@ -16,4 +16,3 @@ COPY webpack.config.electron.js .env-cmdrc ./
 RUN npm config set progress=false color=false 2>&1 \
   && mkdir repository database \
   && npm run build-main 2>&1
-COPY --from=DEPS /project/dll dll/
