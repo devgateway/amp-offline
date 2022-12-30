@@ -3,7 +3,7 @@ COPY webpack.config.base.js webpack.config.dll.js .babelrc ./
 # TODO: set args a late as possible
 #ARG COMMIT_HASH
 #ARG BRANCH_NAME
-RUN npm run build 2>&1
+RUN npm run build-dll 2>&1
 
 FROM electronuserland/builder:16-wine
 WORKDIR /project
