@@ -178,7 +178,7 @@
     "rc-menu": "^5.0.7",
     "react": "15.4.2",
     "react-addons-test-utils": "15.4.2",
-    "react-bootstrap": "^0.30.6",
+    "react-bootstrap": "^0.32.4",
     "react-bootstrap-table": "^3.4.1",
     "react-dom": "15.4.2",
     "react-redux": "^4.4.5",
@@ -225,7 +225,7 @@
   },
   "dependencies": {
     "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#v1.0.0",
-    "amp-ui": "git+ssh://github.com/devgateway/amp-ui#AMP-30335",
+    "amp-ui": "github:devgateway/amp-ui#develop",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
     "extract-zip": "^1.6.7",
