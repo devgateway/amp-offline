@@ -5,6 +5,6 @@ COPY .ssh_known_hosts /etc/ssh/ssh_known_hosts
 COPY id_rsa /root/.ssh/id_rsa
 WORKDIR /project
 COPY package-lock.json ./
-COPY package.min.json package.json
+COPY package.json package.json
 RUN npm ci --legacy-peer-deps 2>&1 \
   && npm cache clean --force
