@@ -9,6 +9,7 @@ FROM electronuserland/builder:16-wine
 WORKDIR /project
 COPY app/utils app/utils/
 COPY app/modules app/modules/
+COPY app/libs app/libs/
 COPY --from=DEPS /project/node_modules node_modules/
 COPY --from=DEPS /project/.babelrc /project/package*.json /project/webpack.config.base.js ./
 COPY app/main.development.js app/
