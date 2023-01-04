@@ -49,6 +49,15 @@
     },
     "files": [
       {
+        "from": "dll"
+      },
+      {
+        "from": "main"
+      },
+      {
+        "from": "renderer"
+      },
+      {
         "from": "app",
         "filter": [
           "libs/**/*",
