@@ -8,7 +8,6 @@ RUN npm run build-dll 2>&1
 FROM electronuserland/builder:16-wine
 WORKDIR /project
 COPY app app
-COPY lang lang
 COPY resources resources
 COPY --from=DEPS /project/node_modules node_modules/
 COPY --from=DEPS /project/.babelrc /project/package*.json /project/webpack.config.base.js ./
