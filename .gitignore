@@ -41,6 +41,7 @@ app/style.css.map
 dist
 main.js
 main.js.map
+app.html
 .idea/
 app/locales/translations.??.json
 lang/*
@@ -53,6 +54,7 @@ updates/
 renderer/
 main/
 dll/
+package/
 
 # local only
 rundev.*
