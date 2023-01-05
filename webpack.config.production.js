@@ -19,7 +19,7 @@ const config = validate(merge(baseConfig, {
   ],
 
   output: {
-    path: path.join(__dirname, 'renderer'),
+    path: path.join(__dirname, 'dist'),
     publicPath: '../dist/'
   },
 

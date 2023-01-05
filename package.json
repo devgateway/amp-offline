@@ -49,13 +49,16 @@
     },
     "files": [
       {
-        "from": "dll"
+        "from": "dll",
+        "filter": [
+          "**/*"
+        ]
       },
       {
-        "from": "main"
-      },
-      {
-        "from": "renderer"
+        "from": "dist",
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "app",
