@@ -25,7 +25,7 @@ export default validate(merge(baseConfig, {
   ],
 
   output: {
-    publicPath: `http://localhost:${port}/dist/`
+    publicPath: `http://localhost:${port}/`
   },
 
   module: {
@@ -70,7 +70,6 @@ export default validate(merge(baseConfig, {
   plugins: [
     new webpack.DllReferencePlugin({
       context: __dirname,
-      name: 'lib',
       manifest: vendorManifest
     }),
 

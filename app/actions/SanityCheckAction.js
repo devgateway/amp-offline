@@ -6,9 +6,8 @@ import TranslationManager from '../modules/util/TranslationManager';
 import { initLanguage, loadAllLanguages } from './TranslationAction';
 import Logger from '../modules/util/LoggerManager';
 import {
-  CLOSE_SANITY_APP,
-  SHOW_SANITY_APP,
-  START_MAIN_APP
+  CLOSE_SANITY_APP_AND_LOAD_MAIN,
+  SHOW_SANITY_APP
 } from '../utils/constants/ElectronAppMessages';
 import { forceCloseApp } from '../modules/util/ElectronApp';
 import DateUtils from '../utils/DateUtils';
@@ -88,8 +87,7 @@ export const flagCleanupComplete = (isStartMainApp) => {
   logger.log(`flagCleanupComplete: isStartMainApp = ${isStartMainApp}`);
   logger.log(`Sanity check duration (possibly with alerts): ${DateUtils.duration(start, new Date())}`);
   if (isStartMainApp) {
-    ipcRenderer.send(CLOSE_SANITY_APP);
-    ipcRenderer.send(START_MAIN_APP);
+    ipcRenderer.send(CLOSE_SANITY_APP_AND_LOAD_MAIN);
   } else {
     forceCloseApp();
   }

@@ -6,11 +6,11 @@ The new workflow uses Docker-based build, managed by a declarative pipeline in J
 
 ### Dependencies
 
-Process `packages.json` with `jq` to extract and presort only the crucial package information and dependencies, when building the Deps image. This allows skipping rebuilds completely, even if other members in `package.json` change. Also, it ensures the image layers are as small as possible to increase container launch speed. This phase uses old Node 8 for compatibility.
+Process `packages.json` with `jq` to extract and presort only the crucial package information and dependencies, when building the Deps image. This allows skipping rebuilds completely, even if other members in `package.json` change. Also, it ensures the image layers are as small as possible to increase container launch speed. This phase Node 16.
 
 ### Build the Builder
 
-Use Node 8 to build the DLL, then use Electron to prebuild the Main module.
+Use Node 16 to build the DLL, then use Electron to prebuild the Main module.
 Both builds depend on code that changes infrequently, allowing CI to cache and skip steps in future. Steps are ordered from least to most likely to change, in order to increase chance of cache hit. Output is produced outside of the `app` tree, in order to keep the latter unmodified for the upcoming phases.
 
 ### Build Renderer and Run QA
