@@ -84,8 +84,8 @@ export const cancelDBCleanup = (sanityStatus) => {
 };
 
 export const flagCleanupComplete = (isStartMainApp) => {
-  console.log(`flagCleanupComplete: isStartMainApp = ${isStartMainApp}`);
-  console.log(`Sanity check duration (possibly with alerts): ${DateUtils.duration(start, new Date())}`);
+  logger.log(`flagCleanupComplete: isStartMainApp = ${isStartMainApp}`);
+  logger.log(`Sanity check duration (possibly with alerts): ${DateUtils.duration(start, new Date())}`);
   if (isStartMainApp) {
     ipcRenderer.send(CLOSE_SANITY_APP_AND_LOAD_MAIN);
   } else {
