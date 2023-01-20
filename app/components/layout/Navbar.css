@@ -57,7 +57,7 @@
 }
 
 .main_menu {
-  float: left;
+  /* float: left; */
   position: relative;
   top: 30px;
   left: 0;
