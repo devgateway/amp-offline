@@ -208,7 +208,7 @@
     "require-context": "^1.1.0",
     "sinon": "^1.17.6",
     "source-map-support": "^0.4.6",
-    "spectron": "^3.4.0",
+    "spectron": "^19.0.0",
     "stack-trace": "0.0.9",
     "string-replace-webpack-plugin": "^0.0.5",
     "stringify-object": "^3.1.0",
