@@ -208,7 +208,7 @@
     "require-context": "^1.1.0",
     "sinon": "^1.17.6",
     "source-map-support": "^0.4.6",
-    "spectron": "^3.4.0",
+    "spectron": "^15.0.0",
     "stack-trace": "0.0.9",
     "string-replace-webpack-plugin": "^0.0.5",
     "stringify-object": "^3.1.0",
@@ -236,7 +236,7 @@
     "ampServerProtocol": "https"
   },
   "dependencies": {
-    "amp-client-security": "git+ssh://github.com/devgateway/amp-client-security#v1.0.0",
+    "amp-client-security": "github:devgateway/amp-client-security#v1.0.0",
     "amp-ui": "github:devgateway/amp-ui#develop",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
