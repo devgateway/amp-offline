@@ -22,7 +22,7 @@ export function loadHelp() {
   const fromDir = FileManager.getFullPathForBuiltInResources(Constants.STATIC_DIR, Constants.HELP_DIR);
   const to = FileManager.copyDataFileToTmpSync(fileName, fromDir);
   logger.debug(to);
-  ipcRenderer.send(CREATE_PDF_WINDOW_MSG, encodeURIComponent(to), closeHelpState);
+  ipcRenderer.send(CREATE_PDF_WINDOW_MSG, encodeURIComponent(to));
 
   /* An alternative option if rendering pdf inside chrome fails is to rely on the client's pdf reader:
    * 1) const { exec } = require('child_process');

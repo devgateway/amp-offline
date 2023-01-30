@@ -231,7 +231,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-togo-develop.stg.ampsite.net",
+    "ampServerUrl": "amp-chad-develop.stg.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   },
