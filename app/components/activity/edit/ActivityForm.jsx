@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
-import { ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager, FeatureManager,
-  PossibleValuesManager, Loading, Constants } from 'amp-ui';
+import {
+  ActivityConstants, CurrencyRatesManager, ValueConstants, FieldPathConstants, FieldsManager, FeatureManager,
+  PossibleValuesManager, Loading, Constants
+} from 'amp-ui';
 import * as styles from './ActivityForm.css';
 import { FIELDS_PER_SECTIONS, IDENTIFICATION, SECTIONS, SECTIONS_FM_PATH } from './sections/AFSectionConstants';
 import AFSectionLoader from './sections/AFSectionLoader';
@@ -167,6 +169,7 @@ export default class ActivityForm extends Component {
   }
 
   _toggleQuickLinks() {
+    console.log(this.state.quickLinksExpanded);
     this.setState({
       quickLinksExpanded: !this.state.quickLinksExpanded
     });
@@ -197,10 +200,14 @@ export default class ActivityForm extends Component {
         <Button bsClass={styles.quick_links_toggle} onClick={this._toggleQuickLinks} block>
           <div className={styles.general_header}>{this._getQuickLinksHeader()}</div>
         </Button>
-        <Panel collapsible defaultExpanded expanded={this.state.quickLinksExpanded}>
-          <div>
-            {sectionLinks}
-          </div>
+        <Panel defaultExpanded expanded={this.state.quickLinksExpanded}>
+          <Panel.Collapse>
+            <Panel.Body>
+              <div>
+                {sectionLinks}
+              </div>
+            </Panel.Body>
+          </Panel.Collapse>
         </Panel>
       </div>
     );
@@ -227,8 +234,8 @@ export default class ActivityForm extends Component {
   _validateActivity(asDraft) {
     let validationError;
     // TODO to adjust this list once is fixed to properly define activity
-    const fieldPathsToSkipSet = new Set([ActivityConstants.AMP_ID,
-      ActivityConstants.INTERNAL_ID, FieldPathConstants.FUNDING_ACTIVE_LIST]);
+    const fieldPathsToSkipSet = new Set([ ActivityConstants.AMP_ID,
+      ActivityConstants.INTERNAL_ID, FieldPathConstants.FUNDING_ACTIVE_LIST ]);
     this.activity[ActivityConstants.IS_DRAFT] = asDraft;
     if (this.activity[ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP] !== true) {
       fieldPathsToSkipSet.add(ActivityConstants.MULTI_STAKEHOLDER_PARTNERS);

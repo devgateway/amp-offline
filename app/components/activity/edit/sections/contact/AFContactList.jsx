@@ -107,14 +107,21 @@ export default class AFContactList extends Component {
     );
     const isContactHydrated = this.isContactHydrated(contactId);
     return (
-      <Panel key={contactRow.uniqueId} defaultExpanded collapsible header={header}>
-        <Row>
-          <Col md={13} lg={13}>
-            {isContactHydrated &&
-            <ContactFormPage
-              contactId={contactId} onEdit={() => this.handleEdit(contactRow, ActivityConstants.CONTACT)} />}
-          </Col>
-        </Row>
+      <Panel key={contactRow.uniqueId} defaultExpanded>
+        <Panel.Heading>
+          <Panel.Title toggle>{header}</Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body>
+            <Row>
+              <Col md={13} lg={13}>
+                {isContactHydrated &&
+                  <ContactFormPage
+                    contactId={contactId} onEdit={() => this.handleEdit(contactRow, ActivityConstants.CONTACT)} />}
+              </Col>
+            </Row>
+          </Panel.Body>
+        </Panel.Collapse>
       </Panel>
     );
   }

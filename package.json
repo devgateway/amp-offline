@@ -190,7 +190,7 @@
     "rc-menu": "^5.0.7",
     "react": "15.4.2",
     "react-addons-test-utils": "15.4.2",
-    "react-bootstrap": "^0.32.4",
+    "react-bootstrap": "^0.33.1",
     "react-bootstrap-table": "^3.4.1",
     "react-dom": "15.4.2",
     "react-redux": "^4.4.5",
