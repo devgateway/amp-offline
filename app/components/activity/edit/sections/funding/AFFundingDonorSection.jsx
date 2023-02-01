@@ -89,7 +89,6 @@ export default class AFFundingDonorSection extends Component {
 
     const newFundingList = this._filterFundings(this.props.fundings).slice();
     newFundingList.push(fundingItem);
-    //this.setState({ refresh: Math.random() });
 
     // Add to activity object or it will disappear when changing section.
     if (!this.context.activity[ActivityConstants.FUNDINGS]) {
@@ -109,7 +108,6 @@ export default class AFFundingDonorSection extends Component {
       const newFundingList = this._filterFundings(this.props.fundings).slice();
       const index0 = newFundingList.findIndex((item) => (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
       newFundingList.splice(index0, 1);
-      //this.setState({ refresh: Math.random() });
 
       const index = activity[ActivityConstants.FUNDINGS].findIndex((item) =>
         (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
@@ -203,7 +201,6 @@ export default class AFFundingDonorSection extends Component {
             const funding = this._findFundingById(g[ActivityConstants.GROUP_VERSIONED_FUNDING]);
             if (funding) {
               funding.open = (funding.open !== undefined ? !funding.open : false);
-              //this.setState({ refresh: Math.random() });
             }
           }}>
           <Panel.Heading>

@@ -216,7 +216,6 @@ class AFFunding extends Component {
               onSelect={() => {
                 group.open = !open;
                 group.forceClose = open;
-                //this.setState({ refresh: Math.random() });
               }}>
               <Panel.Heading>
                 <Panel.Title toggle>{<div className={funding.errors ? styles.error : ''}>

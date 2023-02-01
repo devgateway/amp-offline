@@ -85,7 +85,6 @@ export default class AFFundingClassificationPanel extends Component {
         expanded={this.props.funding.fundingClassificationOpen}
         onSelect={() => {
           this.props.funding.fundingClassificationOpen = !this.props.funding.fundingClassificationOpen;
-          ///this.setState({ refresh: Math.random() });
         }} className={hasErrors ? fundingStyles.error : ''}>
         <FormGroup>
           <Grid className={afStyles.full_width}>

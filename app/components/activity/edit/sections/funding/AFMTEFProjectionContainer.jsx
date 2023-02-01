@@ -7,7 +7,6 @@ import translate from '../../../../../utils/translate';
 import afStyles from '../../ActivityForm.css';
 import fundingStyles from './AFFundingContainer.css';
 import AFMTEFProjectionItem from './AFMTEFProjectionItem';
-import styles from "./AFFunding.css";
 
 const logger = new Logger('AF MTEF container');
 
@@ -57,7 +56,6 @@ export default class AFMTEFProjectionContainer extends Component {
           key={Math.random()} defaultExpanded
           onSelect={() => {
             this.props.funding.mtefSectionOpen = !open;
-            //this.setState({ refresh: Math.random() });
           }} className={hasErrors ? fundingStyles.error : ''}>
           <Panel.Heading>
             <Panel.Title toggle>{translate('MTEF Projections')}</Panel.Title>

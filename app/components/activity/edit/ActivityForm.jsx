@@ -234,8 +234,8 @@ export default class ActivityForm extends Component {
   _validateActivity(asDraft) {
     let validationError;
     // TODO to adjust this list once is fixed to properly define activity
-    const fieldPathsToSkipSet = new Set([ ActivityConstants.AMP_ID,
-      ActivityConstants.INTERNAL_ID, FieldPathConstants.FUNDING_ACTIVE_LIST ]);
+    const fieldPathsToSkipSet = new Set([ActivityConstants.AMP_ID,
+      ActivityConstants.INTERNAL_ID, FieldPathConstants.FUNDING_ACTIVE_LIST]);
     this.activity[ActivityConstants.IS_DRAFT] = asDraft;
     if (this.activity[ActivityConstants.MULTI_STAKEHOLDER_PARTNERSHIP] !== true) {
       fieldPathsToSkipSet.add(ActivityConstants.MULTI_STAKEHOLDER_PARTNERS);

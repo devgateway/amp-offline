@@ -6,7 +6,6 @@ import Logger from '../../../../../modules/util/LoggerManager';
 import translate from '../../../../../utils/translate';
 import AFFundingDetailItem from './AFFundingDetailItem';
 import fundingStyles from './AFFundingContainer.css';
-import styles from "./AFFunding.css";
 
 const logger = new Logger('AF funding detail container');
 
@@ -103,7 +102,6 @@ export default class AFFundingDetailContainer extends Component {
           key={Math.random()} defaultExpanded
           onSelect={() => {
             this._setOpenStatus(this.props.trnType, !open);
-            //this.setState({ refresh: Math.random() });
           }} className={this.state.errors ? fundingStyles.error : ''}>
           <Panel.Heading>
             <Panel.Title toggle>{header}</Panel.Title>
