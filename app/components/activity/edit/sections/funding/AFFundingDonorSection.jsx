@@ -89,7 +89,6 @@ export default class AFFundingDonorSection extends Component {
 
     const newFundingList = this._filterFundings(this.props.fundings).slice();
     newFundingList.push(fundingItem);
-    this.setState({ refresh: Math.random() });
 
     // Add to activity object or it will disappear when changing section.
     if (!this.context.activity[ActivityConstants.FUNDINGS]) {
@@ -109,7 +108,6 @@ export default class AFFundingDonorSection extends Component {
       const newFundingList = this._filterFundings(this.props.fundings).slice();
       const index0 = newFundingList.findIndex((item) => (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
       newFundingList.splice(index0, 1);
-      this.setState({ refresh: Math.random() });
 
       const index = activity[ActivityConstants.FUNDINGS].findIndex((item) =>
         (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
@@ -197,18 +195,22 @@ export default class AFFundingDonorSection extends Component {
     return (<div className={styles.container}>
       {this._filterFundings(this.props.fundings).map((g, i) => (
         <Panel
-          header={this._generateComplexHeader(i, g)}
-          key={Math.random()} collapsible
-          expanded={g.open !== undefined ? g.open : DEFAULT_OPEN}
+          key={Math.random()} defaultExpanded={g.open !== undefined ? g.open : DEFAULT_OPEN}
           onSelect={() => {
             // Look for amp_funding and update "open".
             const funding = this._findFundingById(g[ActivityConstants.GROUP_VERSIONED_FUNDING]);
             if (funding) {
               funding.open = (funding.open !== undefined ? !funding.open : false);
-              this.setState({ refresh: Math.random() });
             }
           }}>
-          <AFFundingContainer funding={g} hasErrors={this.props.hasErrors} />
+          <Panel.Heading>
+            <Panel.Title toggle>{this._generateComplexHeader(i, g)}</Panel.Title>
+          </Panel.Heading>
+          <Panel.Collapse>
+            <Panel.Body>
+              <AFFundingContainer funding={g} hasErrors={this.props.hasErrors} />
+            </Panel.Body>
+          </Panel.Collapse>
         </Panel>
       ))}
       <Button bsStyle="primary" onClick={this._addNewFundingItem}>{translate('New Funding Item')}</Button>

@@ -53,21 +53,27 @@ export default class AFMTEFProjectionContainer extends Component {
       const open = this.props.funding.mtefSectionOpen;
       return (<div className={afStyles.full_width}>
         <Panel
-          header={translate('MTEF Projections')} collapsible expanded={open}
+          key={Math.random()} defaultExpanded
           onSelect={() => {
             this.props.funding.mtefSectionOpen = !open;
-            this.setState({ refresh: Math.random() });
           }} className={hasErrors ? fundingStyles.error : ''}>
-          {mtefProjections.map((mtef) => {
-            // Add a temporal_id field so we can delete items.
-            if (!mtef[ActivityConstants.TEMPORAL_ID]) {
-              mtef[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
-            }
-            return (<AFMTEFProjectionItem
-              mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={mtef[ActivityConstants.TEMPORAL_ID]}
-              updateParentErrors={this._onChildUpdate} />);
-          })}
-          <Button bsStyle="primary" onClick={handleNewItem}>{translate('Add Projection')}</Button>
+          <Panel.Heading>
+            <Panel.Title toggle>{translate('MTEF Projections')}</Panel.Title>
+          </Panel.Heading>
+          <Panel.Collapse>
+            <Panel.Body>
+              {mtefProjections.map((mtef) => {
+                // Add a temporal_id field so we can delete items.
+                if (!mtef[ActivityConstants.TEMPORAL_ID]) {
+                  mtef[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
+                }
+                return (<AFMTEFProjectionItem
+                  mtefItem={mtef} removeMTEFItem={handleRemoveItem} key={mtef[ActivityConstants.TEMPORAL_ID]}
+                  updateParentErrors={this._onChildUpdate} />);
+              })}
+              <Button bsStyle="primary" onClick={handleNewItem}>{translate('Add Projection')}</Button>
+            </Panel.Body>
+          </Panel.Collapse>
         </Panel>
       </div>);
     } else {
