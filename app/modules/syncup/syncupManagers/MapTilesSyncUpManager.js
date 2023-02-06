@@ -31,7 +31,7 @@ export default class MapTilesSyncUpManager extends AbstractAtomicSyncUpManager {
           logger.log(`Tiles downloaded in: ${new Date() - start} ms`);
           // Extract .zip file using absolute paths.
           const zipFile = FileManager.getAbsolutePath(Constants.ASSETS_DIRECTORY, Constants.TILES_ZIP_FILE);
-          const dir = FileManager.getAbsolutePath(Constants.ASSETS_DIRECTORY);
+          const dir = FileManager.getAbsolutePath(Constants.ASSETS_DIRECTORY, Constants.MAP_TILES_DIR);
           return extract(zipFile, { dir }, MapTilesSyncUpManager.afterExtract.bind(null, resolve, reject));
         }).catch((error) => {
           MapTilesSyncUpManager.onError(writeStream, error);
