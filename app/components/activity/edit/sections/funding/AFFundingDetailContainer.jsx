@@ -99,7 +99,7 @@ export default class AFFundingDetailContainer extends Component {
       // const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
       return (<div>
         <Panel
-          key={Math.random()} defaultExpanded
+          key={Math.random()} expanded={open}
           onSelect={() => {
             this._setOpenStatus(this.props.trnType, !open);
           }} className={this.state.errors ? fundingStyles.error : ''}>

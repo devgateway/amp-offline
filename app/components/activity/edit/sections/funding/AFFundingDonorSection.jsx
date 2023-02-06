@@ -98,6 +98,9 @@ export default class AFFundingDonorSection extends Component {
 
     // Keep AFFunding state in sync.
     this.props.addFundingItem();
+    // TODO We need to find a more elegant way of
+    //  refreshing state but so far data is stored in context
+    this.setState({ refresh: Math.random() });
   }
 
   _removeFundingItem(id, orgTypeName) {
@@ -195,7 +198,7 @@ export default class AFFundingDonorSection extends Component {
     return (<div className={styles.container}>
       {this._filterFundings(this.props.fundings).map((g, i) => (
         <Panel
-          key={Math.random()} defaultExpanded={g.open !== undefined ? g.open : DEFAULT_OPEN}
+          key={Math.random()} expanded={g.open !== undefined ? g.open : DEFAULT_OPEN}
           onSelect={() => {
             // Look for amp_funding and update "open".
             const funding = this._findFundingById(g[ActivityConstants.GROUP_VERSIONED_FUNDING]);
