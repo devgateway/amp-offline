@@ -43,6 +43,7 @@ main.js
 main.js.map
 app.html
 .idea/
+.vscode/
 app/locales/translations.??.json
 lang/*
 app/lang/master-translations.en.json

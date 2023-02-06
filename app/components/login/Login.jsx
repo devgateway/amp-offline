@@ -87,7 +87,7 @@ export default class Login extends Component {
         <table>
           <tbody>
             <tr>
-              <td><Span text={translate('user')} /></td>
+              <td><Span text={translate('User')} /></td>
               <td>
                 <input
                   type="text" value={this.state.email} onChange={this.handleEmailChange}
