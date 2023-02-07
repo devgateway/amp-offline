@@ -82,11 +82,15 @@ export default class AFFundingClassificationPanel extends Component {
     return (<div className={afStyles.full_width}>
       <Panel
         expanded={this.props.funding.fundingClassificationOpen}
-        onSelect={() => {
-          this.props.funding.fundingClassificationOpen = !this.props.funding.fundingClassificationOpen;
-        }} className={hasErrors ? fundingStyles.error : ''}>
+        className={hasErrors ? fundingStyles.error : ''}>
         <Panel.Heading>
-          <Panel.Title toggle>{translate('Funding Classification')}</Panel.Title>
+          <Panel.Title
+            toggle
+            onClick={() => {
+              this.props.funding.fundingClassificationOpen = !this.props.funding.fundingClassificationOpen;
+              this.setState({ refresh: Math.random() });
+            }}
+          >{translate('Funding Classification')}</Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
           <Panel.Body>

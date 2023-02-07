@@ -23,8 +23,7 @@ const DEFAULT_OPEN = true;
 export default class AFFundingDonorSection extends Component {
 
   static contextTypes = {
-    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired,
-    activity: PropTypes.object.isRequired
+    activityFieldsManager: PropTypes.instanceOf(FieldsManager).isRequired, activity: PropTypes.object.isRequired
   };
 
   static propTypes = {
@@ -50,8 +49,7 @@ export default class AFFundingDonorSection extends Component {
     });
     const errors = props.fundings.some(f => this._checkChildrenForErrors(f));
     this.state = {
-      errors,
-      refresh: 0
+      errors, refresh: 0
     };
     this._addNewFundingItem = this._addNewFundingItem.bind(this);
     this._checkChildrenForErrors = this._checkChildrenForErrors.bind(this);
@@ -64,8 +62,8 @@ export default class AFFundingDonorSection extends Component {
 
   _checkChildrenForErrors(f) {
     const { hasErrors } = this.props;
-    return (hasErrors(f) || FieldPathConstants.TRANSACTION_TYPES.some(tt => hasErrors(f[tt])) ||
-      hasErrors(f[ActivityConstants.MTEF_PROJECTIONS]));
+    return (hasErrors(f) || FieldPathConstants.TRANSACTION_TYPES
+      .some(tt => hasErrors(f[tt])) || hasErrors(f[ActivityConstants.MTEF_PROJECTIONS]));
   }
 
   _addNewFundingItem() {
@@ -112,24 +110,24 @@ export default class AFFundingDonorSection extends Component {
       const index0 = newFundingList.findIndex((item) => (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
       newFundingList.splice(index0, 1);
 
-      const index = activity[ActivityConstants.FUNDINGS].findIndex((item) =>
-        (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
+      const index = activity[ActivityConstants.FUNDINGS]
+        .findIndex((item) => (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
       const organization = activity[ActivityConstants.FUNDINGS][index][ActivityConstants.FUNDING_DONOR_ORG_ID];
       // Remove from the activity.
-      const index2 = activity[ActivityConstants.FUNDINGS].findIndex((item) =>
-        (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
+      const index2 = activity[ActivityConstants.FUNDINGS]
+        .findIndex((item) => (item[ActivityConstants.GROUP_VERSIONED_FUNDING] === id));
       activity[ActivityConstants.FUNDINGS].splice(index2, 1);
 
       // Delete organization if add funding auto is enabled and it doesnt have more fundings.
       const orgTypeCode = AFUtils.findOrgTypeCodeByName(orgTypeName);
       let addAutoFundingEnabledAndEmpty = false;
       if (AFUtils.checkIfAutoAddFundingEnabled(orgTypeCode)) {
-        if (!AFUtils.checkIfOrganizationAndOrgTypeHasFunding(orgTypeName, organization,
-          this.context.activityFieldsManager, activity)) {
+        if (!AFUtils.checkIfOrganizationAndOrgTypeHasFunding(
+          orgTypeName, organization, this.context.activityFieldsManager, activity)) {
           addAutoFundingEnabledAndEmpty = true;
           const newOrganizationsList = activity[orgTypeCode] ? activity[orgTypeCode].slice() : [];
-          const orgIndex = newOrganizationsList.findIndex(o =>
-            o[ActivityConstants.ORGANIZATION].id === organization.id);
+          const orgIndex = newOrganizationsList
+            .findIndex(o => o[ActivityConstants.ORGANIZATION].id === organization.id);
           newOrganizationsList.splice(orgIndex, 1);
           activity[orgTypeCode] = newOrganizationsList;
         }
@@ -137,6 +135,7 @@ export default class AFFundingDonorSection extends Component {
 
       // Keep AFFunding state in sync.
       this.props.removeFundingItem(addAutoFundingEnabledAndEmpty);
+      this.setState({ refresh: Math.random() });
     }
   }
 
@@ -144,8 +143,9 @@ export default class AFFundingDonorSection extends Component {
     // If source_role is disabled then we filter only by organization.
     const filterSourceRole = this.context.activityFieldsManager
       .isFieldPathEnabled(`${ActivityConstants.FUNDINGS}~${ActivityConstants.SOURCE_ROLE}`);
-    return fundings.filter(f => (f[ActivityConstants.FUNDING_DONOR_ORG_ID].id === this.props.organization.id
-      && (filterSourceRole ? f[ActivityConstants.SOURCE_ROLE].id === this.props.role.id : true)));
+    return fundings
+      .filter(f => (f[ActivityConstants.FUNDING_DONOR_ORG_ID].id === this.props.organization.id
+        && (filterSourceRole ? f[ActivityConstants.SOURCE_ROLE].id === this.props.role.id : true)));
   }
 
   _generateComplexHeader(i, funding) {
@@ -175,8 +175,8 @@ export default class AFFundingDonorSection extends Component {
           className={styles.header_small_item} showLabel={false} type={Types.LABEL} extraParams={{ suffix }} />
         <div className={styles.header_small_item}>
           <a
-            onClick={this._removeFundingItem.bind(this, funding[ActivityConstants.GROUP_VERSIONED_FUNDING],
-              orgTypeName)}
+            onClick={this._removeFundingItem
+              .bind(this, funding[ActivityConstants.GROUP_VERSIONED_FUNDING], orgTypeName)}
             className={styles.delete} href={null} />
         </div>
       </div>
@@ -196,26 +196,24 @@ export default class AFFundingDonorSection extends Component {
   render() {
     // Filter only the fundings for this organization and role.
     return (<div className={styles.container}>
-      {this._filterFundings(this.props.fundings).map((g, i) => (
-        <Panel
-          key={Math.random()} expanded={g.open !== undefined ? g.open : DEFAULT_OPEN}
-          onSelect={() => {
-            // Look for amp_funding and update "open".
-            const funding = this._findFundingById(g[ActivityConstants.GROUP_VERSIONED_FUNDING]);
-            if (funding) {
-              funding.open = (funding.open !== undefined ? !funding.open : false);
-            }
-          }}>
-          <Panel.Heading>
-            <Panel.Title toggle>{this._generateComplexHeader(i, g)}</Panel.Title>
-          </Panel.Heading>
-          <Panel.Collapse>
-            <Panel.Body>
-              <AFFundingContainer funding={g} hasErrors={this.props.hasErrors} />
-            </Panel.Body>
-          </Panel.Collapse>
-        </Panel>
-      ))}
+      {this._filterFundings(this.props.fundings).map((g, i) => <Panel
+        key={Math.random()} expanded={g.open !== undefined ? g.open : DEFAULT_OPEN}>
+        <Panel.Heading>
+          <Panel.Title
+            toggle onClick={() => {
+              const funding = this._findFundingById(g[ActivityConstants.GROUP_VERSIONED_FUNDING]);
+              if (funding) {
+                funding.open = funding.open !== undefined ? !funding.open : false;
+              }
+              this.setState({ refresh: Math.random() });
+            }}>{this._generateComplexHeader(i, g)}</Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body>
+            <AFFundingContainer funding={g} hasErrors={this.props.hasErrors} />
+          </Panel.Body>
+        </Panel.Collapse>
+      </Panel>)}
       <Button bsStyle="primary" onClick={this._addNewFundingItem}>{translate('New Funding Item')}</Button>
     </div>);
   }

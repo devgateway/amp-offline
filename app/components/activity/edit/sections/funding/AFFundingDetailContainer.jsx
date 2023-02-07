@@ -31,8 +31,7 @@ export default class AFFundingDetailContainer extends Component {
     logger.debug('constructor');
     const errors = this.hasErrors(props.funding, props.trnType);
     this.state = {
-      errors,
-      refresh: 0
+      errors, refresh: 0
     };
     if (errors) {
       this._setOpenStatus(props.trnType, true);
@@ -100,11 +99,14 @@ export default class AFFundingDetailContainer extends Component {
       return (<div>
         <Panel
           key={Math.random()} expanded={open}
-          onSelect={() => {
-            this._setOpenStatus(this.props.trnType, !open);
-          }} className={this.state.errors ? fundingStyles.error : ''}>
+          className={this.state.errors ? fundingStyles.error : ''}>
           <Panel.Heading>
-            <Panel.Title toggle>{header}</Panel.Title>
+            <Panel.Title
+              toggle
+              onClick={() => {
+                this._setOpenStatus(this.props.trnType, !open);
+                this.setState({ refresh: Math.random() });
+              }}>{header}</Panel.Title>
           </Panel.Heading>
           <Panel.Collapse>
             <Panel.Body>

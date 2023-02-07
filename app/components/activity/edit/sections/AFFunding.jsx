@@ -212,13 +212,17 @@ class AFFunding extends Component {
             }
             group.forceClose = false;
             return (<Panel
-              key={Math.random()} defaultExpanded
-              onSelect={() => {
-                group.open = !open;
-                group.forceClose = open;
-              }}>
+              key={Math.random()} defaultExpanded expanded={group.open}
+            >
               <Panel.Heading>
-                <Panel.Title toggle>{<div className={funding.errors ? styles.error : ''}>
+                <Panel.Title
+                  toggle
+                  onClick={() => {
+                    group.open = !open;
+                    group.forceClose = open;
+                    this.setState({ refresh: Math.random() });
+                  }}
+                >{<div className={funding.errors ? styles.error : ''}>
                   {`${funding[ActivityConstants.FUNDING_DONOR_ORG_ID][ActivityConstants.VALUE]} (${funding[ActivityConstants.SOURCE_ROLE].value})`}
                 </div>}</Panel.Title>
               </Panel.Heading>
