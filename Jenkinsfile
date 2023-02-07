@@ -10,7 +10,7 @@ pipeline {
     jobName = "${env.JOB_NAME.replaceAll('[^\\p{Alnum}-]', '_').toLowerCase()}"
 	COMMIT_HASH = "${sh(returnStdout: true, script: 'git rev-parse --short HEAD')}"
     BRANCH_NAME = "${sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD')}"
-    PR_NR = env.CHANGE_ID
+    PR_NR = "${env.CHANGE_ID}"
   }
 
   stages {
