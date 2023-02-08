@@ -111,9 +111,9 @@ app.on('ready', async () => {
 
   const loadMainApp = () => {
     mainWindow.loadURL(`file://${__dirname}/app.html`);
-    if (IS_DEV_MODE) {
+    // if (IS_DEV_MODE) {
       mainWindow.openDevTools();
-    }
+    // }
   };
 
   if (skipSanityCheck) {
