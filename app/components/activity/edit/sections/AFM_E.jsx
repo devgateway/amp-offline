@@ -112,70 +112,78 @@ class AFM_E extends Component {
           <Col md={12} lg={12}>
             {indicators.map(i => {
               const errors = ActivityConstants.ME_SECTIONS.some(j => i[j] && i[j].errors && i[j].errors.length > 0);
-              return (<Panel
-                key={Math.random()} expanded={this.findPanel(i.id).panelOpen}
-                collapsible header={i[ActivityConstants.INDICATOR].value}
-                onSelect={this._handlePanelOpenClose.bind(null, i.id)}
-                className={errors ? fundingStyles.error : ''}>
-                <div>
-                  <AFField
-                    parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.LOG_FRAME}`}
-                    fmPath={FeatureManagerConstants.ME_ITEM_LOGFRAME_CATEGORY} />
-                  <hr />
-                  {ActivityConstants.ME_SECTIONS
-                    .map(s => (i[s] ? <table className={styles.full_width} key={Math.random()}>
-                      <tbody>
-                        <tr>
-                          <td className={styles.row}>
-                            <div className={styles.row}>
-                              <AFField
-                                parent={i[s]}
-                                customLabel={`${s} value`}
-                                className={styles.cell_2}
+              return (
+                <Panel
+                  key={Math.random()} expanded={this.findPanel(i.id).panelOpen}
+                  className={errors ? fundingStyles.error : ''}>
+                  <Panel.Heading>
+                    <Panel.Title
+                      toggle
+                      onClick={this._handlePanelOpenClose.bind(null, i.id)}
+                    >{i[ActivityConstants.INDICATOR].value}</Panel.Title>
+                  </Panel.Heading>
+                  <div>
+                    <AFField
+                      parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.LOG_FRAME}`}
+                      fmPath={FeatureManagerConstants.ME_ITEM_LOGFRAME_CATEGORY} />
+                    <hr />
+                    {ActivityConstants.ME_SECTIONS
+                      .map(s => (i[s] ? <table className={styles.full_width} key={Math.random()}>
+                        <tbody>
+                          <tr>
+                            <td className={styles.row}>
+                              <div className={styles.row}>
+                                <AFField
+                                  parent={i[s]}
+                                  customLabel={`${s} value`}
+                                  className={styles.cell_2}
                                 // eslint-disable-next-line max-len
-                                fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_VALUE}`} />
-                              <AFField
-                                parent={i[s]}
-                                customLabel={`${s} date`}
-                                className={styles.cell_2}
+                                  fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_VALUE}`} />
+                                <AFField
+                                  parent={i[s]}
+                                  customLabel={`${s} date`}
+                                  className={styles.cell_2}
                                 // eslint-disable-next-line max-len
-                                fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_DATE}`} />
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className={styles.row}>
-                              <AFField
-                                parent={i[s]}
+                                  fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_DATE}`} />
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div className={styles.row}>
+                                <AFField
+                                  parent={i[s]}
                                 // eslint-disable-next-line max-len
-                                fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_COMMENT}`}
-                                customLabel={`${s} comment`} type={AFComponentTypes.TEXT_AREA} />
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table> : null))}
-                </div>
-                <AFField parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.RISK}`} />
-                <Button
-                  bsStyle="primary"
-                  key={Math.random()}
-                  onClick={() => this.deletedIndicator(i.id)}>{translate('Delete Indicator')}
-                </Button>
-              </Panel>);
+                                  fieldPath={`${ActivityConstants.INDICATORS}~${s}~${ActivityConstants.INDICATOR_COMMENT}`}
+                                  customLabel={`${s} comment`} type={AFComponentTypes.TEXT_AREA} />
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table> : null))}
+                  </div>
+                  <AFField parent={i} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.RISK}`} />
+                  <Button
+                    bsStyle="primary"
+                    key={Math.random()}
+                    onClick={() => this.deletedIndicator(i.id)}>{translate('Delete Indicator')}
+                  </Button>
+                </Panel>
+              );
             })}
           </Col>
         </Row>
         <Col md={12} lg={12}>
           <AFField
-            parent={this.props.activity} fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.INDICATOR}`}
+            parent={this.props.activity}
+            fieldPath={`${ActivityConstants.INDICATORS}~${ActivityConstants.INDICATOR}`}
             type={AFComponentTypes.SEARCH} onAfterUpdate={this.handleAddME}
             extraParams={{ placeholder: translate('Search') }} />
         </Col>
         <Row />
       </Grid>
-    </div>);
+    </div>)
+      ;
   }
 }
 

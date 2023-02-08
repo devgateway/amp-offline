@@ -81,98 +81,111 @@ export default class AFFundingClassificationPanel extends Component {
     const hasErrors = this.props.hasErrors(funding);
     return (<div className={afStyles.full_width}>
       <Panel
-        header={translate('Funding Classification')} collapsible
         expanded={this.props.funding.fundingClassificationOpen}
-        onSelect={() => {
-          this.props.funding.fundingClassificationOpen = !this.props.funding.fundingClassificationOpen;
-        }} className={hasErrors ? fundingStyles.error : ''}>
-        <FormGroup>
-          <Grid className={afStyles.full_width}>
-            <Row>
-              <Col md={4} lg={4}>
-                <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.TYPE_OF_ASSISTANCE}`}
-                  forceRequired={hasFundingDetails} onAfterUpdate={this._refreshAfterChanges}
-                />
-              </Col>
-              <Col md={4} lg={4}>
-                <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FINANCING_INSTRUMENT}`}
-                  forceRequired={hasFundingDetails} onAfterUpdate={this._refreshAfterChanges}
-                />
-              </Col>
-              <Col md={4} lg={4}>
-                <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FINANCING_ID}`}
-                  type={INPUT_TYPE}
-                  onAfterUpdate={this._refreshAfterChanges} />
-              </Col>
-            </Row>
-            <Row>
-              <Col md={4} lg={4}>
-                <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_STATUS}`}
-                  onAfterUpdate={this._refreshAfterChanges} />
-              </Col>
-              <Col md={4} lg={4}>
-                <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MODE_OF_PAYMENT}`}
-                  onAfterUpdate={this._refreshAfterChanges} />
-              </Col>
-              <Col md={4} lg={4}>
-                <AFField
-                  parent={funding}
-                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_CLASSIFICATION_DATE}`}
-                  onAfterUpdate={this._refreshAfterChanges} />
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12} lg={12}>
-                <AFField
-                  parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.VULNERABLE_GROUP}`} />
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6} lg={6}>
-                <AFField
-                  parent={funding}
-                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_AVAILABLE}`}
-                  type={RADIO_BOOLEAN}
-                  onAfterUpdate={this.onProjectsResultsAvailableChange.bind(this,
-                    ActivityConstants.PROJECT_RESULTS_AVAILABLE)} />
-              </Col>
-              <Col md={6} lg={6}>
-                {this.state.showProjectResultsLink ? <AFField
-                  parent={funding}
-                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_LINK}`} /> : null}
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6} lg={6}>
-                <AFField
-                  parent={funding}
-                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_JOINT_DECISION}`} />
-              </Col>
-              <Col md={6} lg={6}>
-                <AFField
-                  parent={funding}
-                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_MONITORING}`} />
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6} lg={6}>
-                <AFField
-                  parent={funding} f
-                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_SUSTAINABILITY}`} />
-              </Col>
-              <Col md={6} lg={6}>
-                <AFField
-                  parent={funding}
-                  fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_PROBLEMS}`} />
-              </Col>
-            </Row>
-          </Grid>
-        </FormGroup>
+        className={hasErrors ? fundingStyles.error : ''}>
+        <Panel.Heading>
+          <Panel.Title
+            toggle
+            onClick={() => {
+              this.props.funding.fundingClassificationOpen = !this.props.funding.fundingClassificationOpen;
+              this.setState({ refresh: Math.random() });
+            }}
+          >{translate('Funding Classification')}</Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body>
+            <FormGroup>
+              <Grid className={afStyles.full_width}>
+                <Row>
+                  <Col md={4} lg={4}>
+                    <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.TYPE_OF_ASSISTANCE}`}
+                      forceRequired={hasFundingDetails} onAfterUpdate={this._refreshAfterChanges}
+                    />
+                  </Col>
+                  <Col md={4} lg={4}>
+                    <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FINANCING_INSTRUMENT}`}
+                      forceRequired={hasFundingDetails} onAfterUpdate={this._refreshAfterChanges}
+                    />
+                  </Col>
+                  <Col md={4} lg={4}>
+                    <AFField
+                      parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FINANCING_ID}`}
+                      type={INPUT_TYPE}
+                      onAfterUpdate={this._refreshAfterChanges} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={4} lg={4}>
+                    <AFField
+                      parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_STATUS}`}
+                      onAfterUpdate={this._refreshAfterChanges} />
+                  </Col>
+                  <Col md={4} lg={4}>
+                    <AFField
+                      parent={funding} fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.MODE_OF_PAYMENT}`}
+                      onAfterUpdate={this._refreshAfterChanges} />
+                  </Col>
+                  <Col md={4} lg={4}>
+                    <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.FUNDING_CLASSIFICATION_DATE}`}
+                      onAfterUpdate={this._refreshAfterChanges} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={12} lg={12}>
+                    <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.VULNERABLE_GROUP}`} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={6} lg={6}>
+                    <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_AVAILABLE}`}
+                      type={RADIO_BOOLEAN}
+                      onAfterUpdate={this.onProjectsResultsAvailableChange.bind(this,
+                        ActivityConstants.PROJECT_RESULTS_AVAILABLE)} />
+                  </Col>
+                  <Col md={6} lg={6}>
+                    {this.state.showProjectResultsLink ? <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_RESULTS_LINK}`} /> : null}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={6} lg={6}>
+                    <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_JOINT_DECISION}`} />
+                  </Col>
+                  <Col md={6} lg={6}>
+                    <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_MONITORING}`} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={6} lg={6}>
+                    <AFField
+                      parent={funding} f
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_SUSTAINABILITY}`} />
+                  </Col>
+                  <Col md={6} lg={6}>
+                    <AFField
+                      parent={funding}
+                      fieldPath={`${ActivityConstants.FUNDINGS}~${ActivityConstants.PROJECT_PROBLEMS}`} />
+                  </Col>
+                </Row>
+              </Grid>
+            </FormGroup>
+          </Panel.Body>
+        </Panel.Collapse>
       </Panel>
     </div>);
   }

@@ -79,20 +79,32 @@ export default class AFRegionalFundingFundingTypeSection extends Component {
           i[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
         }
       });
-      return (<div>
-        <Panel
-          header={title} collapsible key={Math.random()} onSelect={this._handlePanelOpenClose}
-          expanded={panelOpen} className={hasErrors(items) ? fundingStyles.error : ''}>
-          <AFRegionalFundingDetailItems
-            items={items} type={type}
-            removeFundingDetailItem={removeFundingDetailItem}
-            hasErrors={hasErrors} />
-          <Button
-            className={styles.add_button} bsStyle="primary"
-            onClick={() => handleNewTransaction(type, location)}>{button}
-          </Button>
-        </Panel>
-      </div>);
+      return (
+        <div>
+          <Panel
+            key={Math.random()}
+            expanded={panelOpen} className={hasErrors(items) ? fundingStyles.error : ''}>
+            <Panel.Heading>
+              <Panel.Title
+                toggle onClick={() => this._handlePanelOpenClose}>
+                {title}
+              </Panel.Title>
+            </Panel.Heading>
+            <Panel.Collapse>
+              <Panel.Body>
+                <AFRegionalFundingDetailItems
+                  items={items} type={type}
+                  removeFundingDetailItem={removeFundingDetailItem}
+                  hasErrors={hasErrors} />
+                <Button
+                  className={styles.add_button} bsStyle="primary"
+                  onClick={() => handleNewTransaction(type, location)}>{button}
+                </Button>
+              </Panel.Body>
+            </Panel.Collapse>
+          </Panel>
+        </div>
+      );
     }
     return null;
   }
