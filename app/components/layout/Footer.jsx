@@ -5,6 +5,7 @@ import translate from '../../utils/translate';
 import styles from './Footer.css';
 import DateUtils from '../../utils/DateUtils';
 import * as Utils from '../../utils/Utils';
+import { VERSION } from "../../utils/Constants";
 
 export default class Home extends Component {
   static getDevInfo() {
@@ -23,7 +24,7 @@ export default class Home extends Component {
     }
 
     const osAndArch = `${os.type()} ${os.arch()}`;
-    return `${Constants.VERSION}${branchOrPr} ${translate('build')} ${releaseDate} ${osAndArch}`;
+    return `${VERSION}${branchOrPr} ${translate('build')} ${releaseDate} ${osAndArch}`;
   }
 
   render() {
