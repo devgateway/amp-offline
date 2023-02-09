@@ -52,7 +52,8 @@ const installExtensions = async () => {
     for (const name of extensions) { // eslint-disable-line
       try {
         await installer.default(installer[name], forceDownload);
-      } catch (e) {} // eslint-disable-line
+      } catch (e) {
+      } // eslint-disable-line
     }
   }
 };
@@ -200,7 +201,7 @@ app.on('ready', async () => {
             accelerator: 'Cmd+0',
             selector: 'unhideAllApplications:',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               mainWindow.show();
             }
           },
@@ -218,7 +219,7 @@ app.on('ready', async () => {
             label: 'Close',
             accelerator: 'Cmd+W',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               mainWindow.hide();
             }
           },
@@ -226,7 +227,7 @@ app.on('ready', async () => {
             label: 'Quit',
             accelerator: 'Cmd+Q',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               app.quit();
             }
           }

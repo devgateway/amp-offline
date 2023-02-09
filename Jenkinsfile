@@ -8,6 +8,7 @@ pipeline {
 
   environment {
     jobName = "${env.JOB_NAME.replaceAll('[^\\p{Alnum}-]', '_').toLowerCase()}"
+    PR_NR = "${env.CHANGE_ID}"
   }
 
   stages {
@@ -59,6 +60,7 @@ pipeline {
                 docker run --rm -e FORCE_COLOR=0 \\
                   ${binds.join(' ')} \\
                   -v '${env.jobName}-dist:/project/dist:rw' \\
+                  -e PR_NR="${env.CHANGE_ID}" \\
                   ${env.jobName}-builder npm run build-renderer
               """
             }
@@ -135,6 +137,7 @@ pipeline {
                       -v '${env.jobName}-dist:/project/dist:ro' \\
                       -v '${env.jobName}-cache-${PKG}${ARCH}:/root/.cache:rw' \\
                       -v '${env.WORKSPACE}/${env.ARTIFACT_DIR}:/project/package:rw' \\
+                      -e PR_NR="${env.CHANGE_ID}" \\
                       ${env.jobName}-builder sh -c \\
                       "FORCE_COLOR=0 npm run package-${PKG}-${ARCH} && chown -R \$(id -u) package"
                 """
