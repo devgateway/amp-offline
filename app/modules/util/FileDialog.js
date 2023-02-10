@@ -46,11 +46,7 @@ const FileDialog = {
    * @return {string[]} file paths
    */
   openDialog(options = {}) {
-    const files = DIALOG.showOpenDialog(options) || [];
-    if (!files.length) {
-      logger.warn('No file(s) selected');
-    }
-    return files;
+    return DIALOG.showOpenDialog(options);
   },
 
   /**
@@ -58,9 +54,20 @@ const FileDialog = {
    * @return {String} file path
    */
   openSingleFileDialog() {
-    const files = this.openDialog({ multiSelections: false });
-    return files.length ? files[0] : null;
-  },
+    return this.openDialog({ multiSelections: false }
+    ).then((filePaths) => {
+      if (filePaths.filePaths === undefined) {
+        logger.log('No file selected');
+        return [];
+      } else {
+        logger.log('file:', filePaths.filePaths[0]);
+        return filePaths.filePaths[0];
+      }
+    }).catch(err => {
+      logger.log(err);
+      return err;
+    });
+  }
 
 };
 
