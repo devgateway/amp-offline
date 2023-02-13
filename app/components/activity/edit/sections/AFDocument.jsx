@@ -260,19 +260,25 @@ class AFDocument extends Component {
   renderResourcePanel(resourceType) {
     const isDoc = resourceType === TYPE_DOC_RESOURCE;
     const header = isDoc ? 'Add New Document' : 'Add New Web Link';
+    const openStateField = isDoc ? 'docFormOpened' : 'linkFormOpened';
+
     const headerEl = <div className={docStyles.formHeader}>{translate(header)}</div>;
     return (
-      <Panel key={`add-${resourceType}`}>
+      <Panel key={`add-${resourceType}`} expanded={this.state[openStateField]}>
         <Panel.Heading>
-          <Panel.Title toggle>{headerEl}</Panel.Title>
+          <Panel.Title
+            toggle
+            onClick={() => this.setState({ [openStateField]: !this.state[openStateField] })}
+          >{headerEl}</Panel.Title>
         </Panel.Heading>
-        <Panel.Collapse>
-          <Panel.Body>
-            <ResourceFormPage
-              type={resourceType} resource={this.getPendingOrNewResource(resourceType)}
-              onAdd={this.onAdd} onCancel={this.onCancel} />
-          </Panel.Body>
-        </Panel.Collapse>
+        {this.state[openStateField] &&
+          <Panel.Collapse>
+            <Panel.Body>
+              <ResourceFormPage
+                type={resourceType} resource={this.getPendingOrNewResource(resourceType)}
+                onAdd={this.onAdd} onCancel={this.onCancel} />
+            </Panel.Body>
+          </Panel.Collapse>}
       </Panel>
     )
       ;
