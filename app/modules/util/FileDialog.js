@@ -25,18 +25,22 @@ const FileDialog = {
     const options = {
       defaultPath
     };
-    const dstFilePath = DIALOG.showSaveDialog(options);
-    if (!dstFilePath) {
-      logger.warn('No destination file path was selection. Operation canceled.');
-      return;
-    }
-    try {
-      FileManager.copyDataFileSyncUsingFullPaths(srcFilePath, dstFilePath);
-      return dstFilePath;
-    } catch (error) {
-      logger.error(error);
-    }
-    return null;
+    return DIALOG.showSaveDialog(options).then(res => {
+      if (!res.canceled) {
+        const dstFilePath = res.filePath;
+        if (!dstFilePath) {
+          logger.warn('No destination file path was selection. Operation canceled.');
+          return null;
+        }
+        try {
+          FileManager.copyDataFileSyncUsingFullPaths(srcFilePath, dstFilePath);
+          return dstFilePath;
+        } catch (error) {
+          logger.error(error);
+        }
+      }
+      return null;
+    });
   },
 
   /**
