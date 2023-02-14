@@ -1,4 +1,5 @@
 import path from 'path';
+import { shell } from 'electron';
 import { DIALOG } from './ElectronApp';
 import FileManager from './FileManager';
 import Logger from './LoggerManager';
@@ -34,6 +35,7 @@ const FileDialog = {
         }
         try {
           FileManager.copyDataFileSyncUsingFullPaths(srcFilePath, dstFilePath);
+          shell.openPath(dstFilePath);
           return dstFilePath;
         } catch (error) {
           logger.error(error);
