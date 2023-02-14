@@ -13,6 +13,7 @@ import ActivityFundingTotals from '../../../modules/activity/ActivityFundingTota
 import Logger from '../../../modules/util/LoggerManager';
 import DesktopManager from '../../../modules/desktop/DesktopManager';
 import DateUtils from '../../../utils/DateUtils';
+import urlUtils from '../../../utils/URLUtils';
 import { getActivityContactIds } from '../../../actions/ContactAction';
 import { APDocumentPage } from '../../../containers/ResourcePage';
 
@@ -64,6 +65,7 @@ export default class ActivityPreview extends Component {
     Logger: PropTypes.func.isRequired,
     translate: PropTypes.func.isRequired,
     DateUtils: PropTypes.func.isRequired,
+    urlUtils: PropTypes.func.isRequired,
     getActivityContactIds: PropTypes.func.isRequired,
     APDocumentPage: PropTypes.func.isRequired,
     globalSettings: PropTypes.object.isRequired
@@ -85,6 +87,7 @@ export default class ActivityPreview extends Component {
       Logger,
       translate,
       DateUtils,
+      urlUtils,
       getActivityContactIds,
       APDocumentPage
     };

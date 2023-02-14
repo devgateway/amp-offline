@@ -39,6 +39,7 @@ export const ELECTRON_UPDATER_CHECK_URL = '/amp/offline';
 export const CHANGE_PASSWORD_URL = '/aim/showChangePassword.do';
 export const RESET_PASSWORD_URL = '/aim/showEmailForm.do';
 export const AMP_REGISTRY_PRODUCTION_SETTINGS_URL = 'https://amp-registry.ampsite.net/amp-registry';
+export const AMP_RESOURCES_URL = '/contentrepository/downloadFile.do';
 export const AMP_REGISTRY_STAGING_SETTINGS_URL = 'https://amp-registry-stg.ampsite.net/amp-registry';
 export const PP_SUFFIX = '/portal';
 export const AMP_SUFFIX = '/aim';
@@ -64,7 +65,8 @@ export const AMP_ERROR_NOT_COMPATIBLE = 'AMP_ERROR_NOT_COMPATIBLE';
 export const AMP_ERROR_OFFLINE_DISABLED = 'AMP_ERROR_OFFLINE_DISABLED';
 export const AMP_ERRORS_BY_PRIORITY_ASC = [AMP_ERROR_NO_ERROR, AMP_ERROR_OFFLINE_DISABLED, AMP_ERROR_NOT_COMPATIBLE,
   AMP_ERROR_SERVER_ID_MISMATCH, AMP_ERROR_NO_SERVER_ID, AMP_ERROR_NOT_AVAILABLE];
-export const AMP_ERRORS_BY_PRIORITY_DESC = AMP_ERRORS_BY_PRIORITY_ASC.slice().reverse();
+export const AMP_ERRORS_BY_PRIORITY_DESC = AMP_ERRORS_BY_PRIORITY_ASC.slice()
+  .reverse();
 
 export const AMP_COUNTRY_FLAG = '/aim/default/displayFlag.do';
 export const MAP_TILES_URL = '/gis/map-tiles';
