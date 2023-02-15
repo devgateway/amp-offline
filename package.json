@@ -231,7 +231,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-chad-pr-3990.stg.ampsite.net",
+    "ampServerUrl": "amp-togo-develop.stg.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   },
