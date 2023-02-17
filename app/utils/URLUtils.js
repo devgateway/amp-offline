@@ -21,9 +21,11 @@ const urlUtils = {
     history.goBack();
   },
 
-  redirectExternalLink(method, url) {
+  redirectExternalLink(method, url, paramsMap) {
     logger.log('redirectExternalLink');
-    const externalUrl = RequestConfig.getRequestConfig({ method, url }).url;
+
+    const externalUrl = RequestConfig.getRequestConfig({ method, url, paramsMap }).url;
+
     shell.openExternal(externalUrl);
   },
 
@@ -37,7 +39,8 @@ const urlUtils = {
 
   normalizeUrl(url, fallbackProtocol = 'https') {
     if (url) {
-      url = url.trim().toLowerCase();
+      url = url.trim()
+        .toLowerCase();
       while (url.endsWith('/')) {
         url = url.substr(0, url.length - 1);
       }

@@ -44,7 +44,7 @@ import {
   MAP_TILES_URL,
   GAZETTEER_URL,
   COMMON_POSSIBLE_VALUES_PER_FIELD_PATHS,
-    ACTIVITY_PUBLIC_FIELD_VALUES,
+  ACTIVITY_PUBLIC_FIELD_VALUES, AMP_RESOURCES_URL,
 } from '../modules/connectivity/AmpApiConstants';
 
 const routesConfiguration = [{
@@ -52,7 +52,15 @@ const routesConfiguration = [{
   isFull: true,
   method: 'GET',
   requiresAuth: false
-}, {
+},
+{
+  url: AMP_RESOURCES_URL,
+  method: 'GET',
+  requiredAuth: false,
+  regularAmpUrl: true,
+  skipAddLanguage: true
+},
+{
   url: AMP_REGISTRY_STAGING_SETTINGS_URL,
   isFull: true,
   method: 'GET',

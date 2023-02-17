@@ -114,12 +114,14 @@ const RequestConfig = {
   },
 
   _paramsMapToString(paramsMap, routeConfiguration) {
-    const { regularAmpUrl, translations } = routeConfiguration;
+    const { regularAmpUrl, translations, skipAddLanguage } = routeConfiguration;
     const addTranslations = regularAmpUrl !== true && translations !== false;
     if (addTranslations) {
       paramsMap = this._addTranslations(paramsMap);
     }
-    paramsMap = this._addLanguage(paramsMap);
+    if (!skipAddLanguage) {
+      paramsMap = this._addLanguage(paramsMap);
+    }
     const kv = [];
     if (paramsMap) {
       if (paramsMap instanceof Map) {
@@ -127,7 +129,8 @@ const RequestConfig = {
       } else if (paramsMap instanceof Array) {
         paramsMap.forEach(([key, value]) => kv.push(`${key}=${encodeURIComponent(value)}`));
       } else {
-        Object.keys(paramsMap).forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
+        Object.keys(paramsMap)
+          .forEach(prop => kv.push(`${prop}=${encodeURIComponent(paramsMap[prop])}`));
       }
     }
     return kv.length ? `?${kv.join('&')}` : '';
@@ -140,8 +143,14 @@ const RequestConfig = {
     // if the route is regularAMPUrl we fetch the ROOT for amp
     // if not we get the REST url
     return routeConfiguration.regularAmpUrl ?
-      store.getState().startUpReducer.connectionInformation.getFullUrl() + url :
-      store.getState().startUpReducer.connectionInformation.getFullRestUrl() + url;
+      store.getState()
+        .startUpReducer
+        .connectionInformation
+        .getFullUrl() + url :
+      store.getState()
+        .startUpReducer
+        .connectionInformation
+        .getFullRestUrl() + url;
   },
 
   _getRouteConfiguration(method, url) {
