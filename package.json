@@ -231,9 +231,9 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "localhost",
-    "ampServerPort": "8080",
-    "ampServerProtocol": "http"
+    "ampServerUrl": "amp-togo-develop.stg.ampsite.net",
+    "ampServerPort": "443",
+    "ampServerProtocol": "https"
   },
   "dependencies": {
     "amp-client-security": "github:devgateway/amp-client-security#v1.0.0",
