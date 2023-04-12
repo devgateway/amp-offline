@@ -265,6 +265,8 @@ export default class EntityValidator {
       } else if (fieldDef.type === FieldPathConstants.FIELD_TYPE_LONG) {
         if (!Number.isInteger(value) && !this._isAllowInvalidNumber(value, fieldPath)) {
           this.processValidationResult(obj, fieldPath, this.invalidNumber);
+        } else if (regexPattern && !regexPattern.test(value)) {
+          this.processValidationResult(obj, fieldPath, regexError);
         } else {
           this._wasValidatedSeparately(obj, fieldPath, fieldDef, asDraft);
         }
