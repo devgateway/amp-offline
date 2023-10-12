@@ -231,13 +231,13 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-togo-develop.stg.ampsite.net",
+    "ampServerUrl": "amp-bfaso-develop.stg.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   },
   "dependencies": {
     "amp-client-security": "github:devgateway/amp-client-security#v1.0.0",
-    "amp-ui": "github:devgateway/amp-ui#8cb3be8172d66f3f1772930e653f12a84aef592f",
+    "amp-ui": "github:devgateway/amp-ui#develop",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
     "extract-zip": "^1.6.7",
