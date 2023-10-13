@@ -237,7 +237,7 @@
   },
   "dependencies": {
     "amp-client-security": "github:devgateway/amp-client-security#v1.0.0",
-    "amp-ui": "github:devgateway/amp-ui#develop",
+    "amp-ui": "github:devgateway/amp-ui#freeze/v6.0",
     "electron-pdf-window": "1.0.12",
     "esri-leaflet": "^2.1.4",
     "extract-zip": "^1.6.7",
