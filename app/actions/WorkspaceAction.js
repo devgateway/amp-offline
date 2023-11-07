@@ -84,17 +84,31 @@ export function reloadSelectedWorkspace() {
 export function loadWorkspaces() {
   const userId = store.getState().userReducer.userData.id;
   logger.log('loadWorkspaces');
-  return (dispatch) => {
+  return (dispatch, ownProps) => {
     dispatch({ type: STATE_WORKSPACES_LOADING });
+    const defaultLang = ownProps().translationReducer.defaultLang;
     return WorkspaceManager.findAllWorkspacesForUser(userId).then((workspaces) => {
       workspaces = workspaces ? workspaces.sort((a, b) => {
-        if (a.name.toLowerCase() > b.name.toLowerCase()) {
-          return 1;
+        if (typeof a.name === 'string') {
+          if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
+          }
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return -1;
+          }
+          return 0;
+        } else {
+          // MultiLang.
+          const a_ = getWSName(a.name, defaultLang);
+          const b_ = getWSName(b.name, defaultLang);
+          if (a_.toLowerCase() > b_.toLowerCase()) {
+            return 1;
+          }
+          if (a_.toLowerCase() < b_.toLowerCase()) {
+            return -1;
+          }
+          return 0;
         }
-        if (a.name.toLowerCase() < b.name.toLowerCase()) {
-          return -1;
-        }
-        return 0;
       }) : [];
       return dispatch({ type: STATE_WORKSPACES_LOADED, actionData: workspaces });
     }).catch((err) => {
@@ -102,4 +116,18 @@ export function loadWorkspaces() {
       return dispatch({ type: STATE_WORKSPACES_ERROR, actionData: err });
     });
   };
+}
+
+function getWSName(wsNames, defaultLang) {
+  if (wsNames[defaultLang]) {
+    return wsNames[defaultLang];
+  } else {
+    let name = '';
+    Object.keys(wsNames).forEach(k => {
+      if (wsNames[k]) {
+        name = wsNames[k];
+      }
+    });
+    return name;
+  }
 }
