@@ -210,7 +210,7 @@ class AFDocument extends Component {
     const { fd } = formatExtraData;
     const { resourceFieldsManager } = this.props.resourceReducer;
     let value = fd ? resourceFieldsManager.getValue(row, fd[FieldPathConstants.FIELD_NAME],
-      PossibleValuesManager.getOptionTranslation) :
+        PossibleValuesManager.getOptionTranslation) :
       cell;
     if (fd && fd.field_type === 'date') {
       value = DateUtils.createFormattedDate(value);
@@ -261,17 +261,27 @@ class AFDocument extends Component {
     const isDoc = resourceType === TYPE_DOC_RESOURCE;
     const header = isDoc ? 'Add New Document' : 'Add New Web Link';
     const openStateField = isDoc ? 'docFormOpened' : 'linkFormOpened';
+
     const headerEl = <div className={docStyles.formHeader}>{translate(header)}</div>;
     return (
-      <Panel
-        key={`add-${resourceType}`} expanded={this.state[openStateField]} collapsible header={headerEl}
-        onSelect={() => this.setState({ [openStateField]: !this.state[openStateField] })}>
+      <Panel key={`add-${resourceType}`} expanded={this.state[openStateField]}>
+        <Panel.Heading>
+          <Panel.Title
+            toggle
+            onClick={() => this.setState({ [openStateField]: !this.state[openStateField] })}
+          >{headerEl}</Panel.Title>
+        </Panel.Heading>
         {this.state[openStateField] &&
-        <ResourceFormPage
-          type={resourceType} resource={this.getPendingOrNewResource(resourceType)}
-          onAdd={this.onAdd} onCancel={this.onCancel} />}
+          <Panel.Collapse>
+            <Panel.Body>
+              <ResourceFormPage
+                type={resourceType} resource={this.getPendingOrNewResource(resourceType)}
+                onAdd={this.onAdd} onCancel={this.onCancel} />
+            </Panel.Body>
+          </Panel.Collapse>}
       </Panel>
-    );
+    )
+      ;
   }
 
   render() {

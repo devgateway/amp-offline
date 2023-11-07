@@ -55,34 +55,45 @@ export default class AFRegionalFundingLocationPanel extends Component {
       .some(t => hasErrors(activity[REGIONAL_SUB_PATH + t]
         .filter(l => l[ActivityConstants.REGION_LOCATION].id === location.location.id)));
     return (<Panel
-      collapsible header={name} key={name} expanded={panelOpen} onSelect={this._handlePanelOpenClose}
+      key={name} expanded={panelOpen}
       className={hasErrors(location) || errorsOnInternalSections ? fundingStyles.error : ''}>
-      <div>
-        <AFRegionalFundingFundingTypeSection
-          location={location}
-          activity={activity}
-          title={translate('Commitments')}
-          hasErrors={hasErrors}
-          type={ActivityConstants.COMMITMENTS}
-          removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.COMMITMENTS)}
-          handleNewTransaction={handleNewTransaction} />
-        <AFRegionalFundingFundingTypeSection
-          location={location}
-          activity={activity}
-          title={translate('Disbursements')}
-          hasErrors={hasErrors}
-          type={ActivityConstants.DISBURSEMENTS}
-          removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.DISBURSEMENTS)}
-          handleNewTransaction={handleNewTransaction} />
-        <AFRegionalFundingFundingTypeSection
-          location={location}
-          activity={activity}
-          title={translate('Expenditures')}
-          hasErrors={hasErrors}
-          type={ActivityConstants.EXPENDITURES}
-          removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.EXPENDITURES)}
-          handleNewTransaction={handleNewTransaction} />
-      </div>
+      <Panel.Heading>
+        <Panel.Title
+          toggle
+          onClick={this._handlePanelOpenClose}
+        >
+          {name}
+        </Panel.Title>
+      </Panel.Heading>
+      <Panel.Collapse>
+        <Panel.Body>
+          <div>
+            <AFRegionalFundingFundingTypeSection
+              location={location}
+              activity={activity}
+              title={translate('Commitments')}
+              hasErrors={hasErrors}
+              type={ActivityConstants.COMMITMENTS}
+              removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.COMMITMENTS)}
+              handleNewTransaction={handleNewTransaction} />
+            <AFRegionalFundingFundingTypeSection
+              location={location}
+              activity={activity}
+              title={translate('Disbursements')}
+              hasErrors={hasErrors}
+              type={ActivityConstants.DISBURSEMENTS}
+              removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.DISBURSEMENTS)}
+              handleNewTransaction={handleNewTransaction} />
+            <AFRegionalFundingFundingTypeSection
+              location={location}
+              activity={activity}
+              title={translate('Expenditures')}
+              hasErrors={hasErrors}
+              type={ActivityConstants.EXPENDITURES}
+              removeFundingDetailItem={removeFundingDetailItem.bind(this, ActivityConstants.EXPENDITURES)}
+              handleNewTransaction={handleNewTransaction} />
+          </div>
+        </Panel.Body></Panel.Collapse>
     </Panel>);
   }
 }

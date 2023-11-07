@@ -12,7 +12,7 @@ import FileDialog from '../../../modules/util/FileDialog';
 import FileManager from '../../../modules/util/FileManager';
 import GlobalSettingsManager from '../../../modules/util/GlobalSettingsManager';
 import * as resStyles from './ResourceForm.css';
-import { validate } from '../../../actions/ResourceAction';
+import { notifyError, validate } from '../../../actions/ResourceAction';
 
 const logger = new Logger('ResourceForm');
 // columns size
@@ -39,6 +39,7 @@ export default class ResourceForm extends Component {
     updatePendingDocResource: PropTypes.func.isRequired,
     prepareNewResourceForSave: PropTypes.func.isRequired,
     uploadFileToPendingResourceAsync: PropTypes.func.isRequired,
+    notifyError: PropTypes.func.isRequired
   };
 
   static childContextTypes = {
@@ -98,17 +99,20 @@ export default class ResourceForm extends Component {
   }
 
   onFileUpload() {
-    const srcPath = FileDialog.openSingleFileDialog();
-    if (srcPath) {
-      const maxSizeMB = getMaxSizeMB();
-      const { size } = FileManager.statSyncFullPath(srcPath);
-      if ((maxSizeMB * 1024 * 1024) < size) {
-        // eslint-disable-next-line no-alert
-        return alert(translate('FileSizeLimitExceeded').replace('{size}', maxSizeMB));
+    FileDialog.openSingleFileDialog().then(srcPath => {
+      if (srcPath) {
+        const maxSizeMB = getMaxSizeMB();
+        const { size } = FileManager.statSyncFullPath(srcPath);
+        if ((maxSizeMB * 1024 * 1024) < size) {
+          // eslint-disable-next-line no-alert
+          return alert(translate('FileSizeLimitExceeded').replace('{size}', maxSizeMB));
+        }
+        this.setState({ uploadingSize: size });
+        return this.props.uploadFileToPendingResourceAsync(srcPath);
       }
-      this.setState({ uploadingSize: size });
-      this.props.uploadFileToPendingResourceAsync(srcPath);
-    }
+    }).catch(error => {
+      notifyError(error);
+    });
   }
 
   onUploadComplete() {

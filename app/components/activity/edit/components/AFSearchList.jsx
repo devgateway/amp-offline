@@ -92,16 +92,19 @@ export default class AFSearchList extends Component {
     const options = React.Children.toArray(this.state.values.map(option =>
       <Button
         key={option.id} onMouseDown={this.handleSelect.bind(this, option.id)} bsClass={styles.item}
-        block >
+        block>
         <span>{this._getPaddedValue(option)}</span>
       </Button>));
-    return (<div className={styles.searchContainer} >
+    return (<div className={styles.searchContainer}>
       <FormControl
         type="text" placeholder={placeHolderText} onChange={this.applyFilter} value={this.state.filter}
         onFocus={this.showOptions.bind(this)} onBlur={this.closeOptions.bind(this)} />
-      <div hidden={this.state.showOptions === false} >
-        <Panel collapsible expanded={this.state.showOptions === true} bsClass={styles.searchPanel} >
-          {options}
+      <div hidden={this.state.showOptions === false}>
+        <Panel expanded={this.state.showOptions === true} bsClass={styles.searchPanel}>
+          <Panel.Collapse>
+            <Panel.Body>
+              {options}
+            </Panel.Body></Panel.Collapse>
         </Panel>
       </div>
     </div>);

@@ -1,1 +1,1 @@
-{version, name, dependencies, devDependencies, scripts: {postinstall: .scripts.postinstall}}
+{version, name, dependencies, devDependencies, devEngines, scripts: {postinstall: .scripts.postinstall}}

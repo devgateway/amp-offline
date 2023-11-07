@@ -212,25 +212,32 @@ class AFFunding extends Component {
             }
             group.forceClose = false;
             return (<Panel
-              key={Math.random()} collapsible expanded={open}
-              onSelect={() => {
-                group.open = !open;
-                group.forceClose = open;
-                this.setState({ refresh: Math.random() });
-              }}
-              header={<div className={funding.errors ? styles.error : ''}>
-                {`${funding[ActivityConstants.FUNDING_DONOR_ORG_ID][ActivityConstants.VALUE]} (${funding[ActivityConstants.SOURCE_ROLE].value})`}
-              </div>}>
-              <AFFundingDonorSection
-                key={Math.random()}
-                fundings={this.context.activity[ActivityConstants.FUNDINGS] || []}
-                organization={funding[ActivityConstants.FUNDING_DONOR_ORG_ID]}
-                role={sourceRole}
-                removeFundingItem={this.removeFundingItem}
-                addFundingItem={this.addFundingItem}
-                hasErrors={this.hasErrors}
-                tabIndex={tabIndex}
-              />
+              key={Math.random()} defaultExpanded expanded={group.open}
+            >
+              <Panel.Heading>
+                <Panel.Title
+                  toggle
+                  onClick={() => {
+                    group.open = !open;
+                    group.forceClose = open;
+                    this.setState({ refresh: Math.random() });
+                  }}
+                >{<div className={funding.errors ? styles.error : ''}>
+                  {`${funding[ActivityConstants.FUNDING_DONOR_ORG_ID][ActivityConstants.VALUE]} (${funding[ActivityConstants.SOURCE_ROLE].value})`}
+                </div>}</Panel.Title>
+              </Panel.Heading>
+              <Panel.Collapse>
+                <Panel.Body>
+                  <AFFundingDonorSection
+                    key={Math.random()}
+                    fundings={this.context.activity[ActivityConstants.FUNDINGS] || []}
+                    organization={funding[ActivityConstants.FUNDING_DONOR_ORG_ID]}
+                    role={sourceRole}
+                    removeFundingItem={this.removeFundingItem}
+                    addFundingItem={this.addFundingItem}
+                    hasErrors={this.hasErrors}
+                    tabIndex={tabIndex}
+                  /></Panel.Body></Panel.Collapse>
             </Panel>);
           }
         });

@@ -2,10 +2,9 @@ import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import ElectronUpdater from './modules/update/ElectronUpdater';
 import { IS_DEV_MODE, SHOW_SANITY_APP_DEBUG_WINDOW, SKIP_SANITY_CHECK } from './modules/util/ElectronApp';
 import {
-  CLOSE_SANITY_APP,
+  CLOSE_SANITY_APP_AND_LOAD_MAIN,
   FORCE_CLOSE_APP,
-  SHOW_SANITY_APP,
-  START_MAIN_APP
+  SHOW_SANITY_APP
 } from './utils/constants/ElectronAppMessages';
 import {
   CLOSE_HELP_WINDOW_MSG,
@@ -53,7 +52,8 @@ const installExtensions = async () => {
     for (const name of extensions) { // eslint-disable-line
       try {
         await installer.default(installer[name], forceDownload);
-      } catch (e) {} // eslint-disable-line
+      } catch (e) {
+      } // eslint-disable-line
     }
   }
 };
@@ -67,14 +67,24 @@ app.on('ready', async () => {
     useContentSize: true,
     closable: false,
     resizable: SHOW_SANITY_APP_DEBUG_WINDOW,
-    frame: SHOW_SANITY_APP_DEBUG_WINDOW
+    frame: SHOW_SANITY_APP_DEBUG_WINDOW,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
   });
 
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
     height: 728,
-    alwaysOnTop: true
+    alwaysOnTop: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
   });
 
   // create a new `splash`-Window
@@ -102,9 +112,9 @@ app.on('ready', async () => {
 
   const loadMainApp = () => {
     mainWindow.loadURL(`file://${__dirname}/app.html`);
-    if (IS_DEV_MODE) {
+    //if (IS_DEV_MODE) {
       mainWindow.openDevTools();
-    }
+    //}
   };
 
   if (skipSanityCheck) {
@@ -119,9 +129,10 @@ app.on('ready', async () => {
       });
     });
 
-    ipcMain.on(CLOSE_SANITY_APP, () => {
+    ipcMain.on(CLOSE_SANITY_APP_AND_LOAD_MAIN, () => {
       closeWindow(sanityCheckWindow);
       sanityCheckWindow = null;
+      loadMainApp();
     });
 
     // if sanity app is closed normally, we .destroy() it that won't trigger a 'close' event
@@ -129,8 +140,6 @@ app.on('ready', async () => {
 
     sanityCheckWindow.setMenu(null);
   }
-
-  ipcMain.on(START_MAIN_APP, () => loadMainApp());
 
   ipcMain.on(FORCE_CLOSE_APP, () => {
     closeApp();
@@ -192,7 +201,7 @@ app.on('ready', async () => {
             accelerator: 'Cmd+0',
             selector: 'unhideAllApplications:',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               mainWindow.show();
             }
           },
@@ -210,7 +219,7 @@ app.on('ready', async () => {
             label: 'Close',
             accelerator: 'Cmd+W',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               mainWindow.hide();
             }
           },
@@ -218,7 +227,7 @@ app.on('ready', async () => {
             label: 'Quit',
             accelerator: 'Cmd+Q',
             // eslint-disable-next-line
-            click: function() {
+            click: function () {
               app.quit();
             }
           }

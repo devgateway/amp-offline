@@ -111,6 +111,18 @@ class AFIdentification extends Component {
         <AFField
           key={ActivityConstants.PROJECT_CODE} parent={this.props.activity} fieldPath={ActivityConstants.PROJECT_CODE}
           type={Types.INPUT_TYPE}
+          showRequired />,
+        <AFField
+          key={ActivityConstants.VOTE} parent={this.props.activity} fieldPath={ActivityConstants.VOTE}
+          type={Types.INPUT_TYPE}
+          showRequired />,
+        <AFField
+          key={ActivityConstants.SUB_VOTE} parent={this.props.activity} fieldPath={ActivityConstants.SUB_VOTE}
+          type={Types.INPUT_TYPE}
+          showRequired />,
+        <AFField
+          key={ActivityConstants.SUB_PROGRAM} parent={this.props.activity} fieldPath={ActivityConstants.SUB_PROGRAM}
+          type={Types.INPUT_TYPE}
           showRequired />
       ];
       rightColumn.push(<div key="budgetExtras" className={afStyles.budget_extras}>

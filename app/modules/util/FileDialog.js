@@ -1,4 +1,5 @@
 import path from 'path';
+import { shell } from 'electron';
 import { DIALOG } from './ElectronApp';
 import FileManager from './FileManager';
 import Logger from './LoggerManager';
@@ -25,18 +26,23 @@ const FileDialog = {
     const options = {
       defaultPath
     };
-    const dstFilePath = DIALOG.showSaveDialog(options);
-    if (!dstFilePath) {
-      logger.warn('No destination file path was selection. Operation canceled.');
-      return;
-    }
-    try {
-      FileManager.copyDataFileSyncUsingFullPaths(srcFilePath, dstFilePath);
-      return dstFilePath;
-    } catch (error) {
-      logger.error(error);
-    }
-    return null;
+    return DIALOG.showSaveDialog(options).then(res => {
+      if (!res.canceled) {
+        const dstFilePath = res.filePath;
+        if (!dstFilePath) {
+          logger.warn('No destination file path was selection. Operation canceled.');
+          return null;
+        }
+        try {
+          FileManager.copyDataFileSyncUsingFullPaths(srcFilePath, dstFilePath);
+          shell.openPath(dstFilePath);
+          return dstFilePath;
+        } catch (error) {
+          logger.error(error);
+        }
+      }
+      return null;
+    });
   },
 
   /**
@@ -46,11 +52,7 @@ const FileDialog = {
    * @return {string[]} file paths
    */
   openDialog(options = {}) {
-    const files = DIALOG.showOpenDialog(options) || [];
-    if (!files.length) {
-      logger.warn('No file(s) selected');
-    }
-    return files;
+    return DIALOG.showOpenDialog(options);
   },
 
   /**
@@ -58,9 +60,20 @@ const FileDialog = {
    * @return {String} file path
    */
   openSingleFileDialog() {
-    const files = this.openDialog({ multiSelections: false });
-    return files.length ? files[0] : null;
-  },
+    return this.openDialog({ multiSelections: false }
+    ).then((filePaths) => {
+      if (filePaths.filePaths === undefined) {
+        logger.log('No file selected');
+        return [];
+      } else {
+        logger.log('file:', filePaths.filePaths[0]);
+        return filePaths.filePaths[0];
+      }
+    }).catch(err => {
+      logger.log(err);
+      return err;
+    });
+  }
 
 };
 

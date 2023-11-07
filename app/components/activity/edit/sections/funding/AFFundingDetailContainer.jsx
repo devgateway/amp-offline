@@ -31,8 +31,7 @@ export default class AFFundingDetailContainer extends Component {
     logger.debug('constructor');
     const errors = this.hasErrors(props.funding, props.trnType);
     this.state = {
-      errors,
-      refresh: 0
+      errors, refresh: 0
     };
     if (errors) {
       this._setOpenStatus(props.trnType, true);
@@ -99,26 +98,34 @@ export default class AFFundingDetailContainer extends Component {
       // const hasErrors = this.hasErrors(this.props.fundingDetail, this.props.type);
       return (<div>
         <Panel
-          header={header} collapsible expanded={open}
-          onSelect={() => {
-            this._setOpenStatus(this.props.trnType, !open);
-            this.setState({ refresh: Math.random() });
-          }} className={this.state.errors ? fundingStyles.error : ''}>
-          {fundingDetails.map((fd) => {
-            // Add a temporal_id field so we can delete items.
-            if (!fd[ActivityConstants.TEMPORAL_ID]) {
-              fd[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
-            }
-            /* Lesson learned: DO NOT use an array index as component key if later we will remove elements from
-            that array because that will confuse React. */
-            return (<AFFundingDetailItem
-              fundingDetail={fd} trnType={trnType} key={`${header}_${fd[ActivityConstants.TEMPORAL_ID]}`}
-              removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
-          })}
-          <Button
-            className={fundingStyles.add_button} bsStyle="primary"
-            onClick={this._addTransactionItem.bind(this)}>{button}
-          </Button>
+          key={Math.random()} expanded={open}
+          className={this.state.errors ? fundingStyles.error : ''}>
+          <Panel.Heading>
+            <Panel.Title
+              toggle
+              onClick={() => {
+                this._setOpenStatus(this.props.trnType, !open);
+                this.setState({ refresh: Math.random() });
+              }}>{header}</Panel.Title>
+          </Panel.Heading>
+          <Panel.Collapse>
+            <Panel.Body>
+              {fundingDetails.map((fd) => {
+                // Add a temporal_id field so we can delete items.
+                if (!fd[ActivityConstants.TEMPORAL_ID]) {
+                  fd[ActivityConstants.TEMPORAL_ID] = UIUtils.numberRandom();
+                }
+                /* Lesson learned: DO NOT use an array index as component key if later we will remove elements from
+                that array because that will confuse React. */
+                return (<AFFundingDetailItem
+                  fundingDetail={fd} trnType={trnType} key={`${header}_${fd[ActivityConstants.TEMPORAL_ID]}`}
+                  removeFundingDetailItem={this.props.removeFundingDetailItem} funding={this.props.funding} />);
+              })}
+              <Button
+                className={fundingStyles.add_button} bsStyle="primary"
+                onClick={this._addTransactionItem.bind(this)}>{button}
+              </Button>
+            </Panel.Body></Panel.Collapse>
         </Panel>
       </div>);
     } else {

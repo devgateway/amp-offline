@@ -1,5 +1,7 @@
-import { ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants,
-  FieldsManager, WorkspaceConstants } from 'amp-ui';
+import {
+  ActivityConstants, Constants, ErrorConstants, ValueConstants, FieldPathConstants,
+  FieldsManager, WorkspaceConstants
+} from 'amp-ui';
 import RepositoryHelper from '../modules/helpers/RepositoryHelper';
 import {
   CREATOR_EMAIL,
@@ -317,6 +319,10 @@ export const saveFileDialog = (srcFile, fileName) => (dispatch) => {
     }
   }
 };
-
+export const notifyError = (error) => (dispatch) =>
+  dispatch({
+    type: RESOURCE_FILE_UPLOAD_REJECTED,
+    payload: error
+  });
 const toNotif = (message) => new Notification(
   { message, origin: ErrorConstants.NOTIFICATION_ORIGIN_RESOURCE, translateMsg: true });
