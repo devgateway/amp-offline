@@ -9,6 +9,7 @@ pipeline {
   environment {
     jobName = "${env.JOB_NAME.replaceAll('[^\\p{Alnum}-]', '_').toLowerCase()}"
     PR_NR = "${env.CHANGE_ID}"
+	JENKINS_BRANCH = "${env.BRANCH_NAME}"
   }
 
   stages {
