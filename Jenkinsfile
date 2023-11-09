@@ -62,6 +62,7 @@ pipeline {
                   ${binds.join(' ')} \\
                   -v '${env.jobName}-dist:/project/dist:rw' \\
                   -e PR_NR="${env.CHANGE_ID}" \\
+                  -e JENKINS_BRANCH="${env.BRANCH_NAME}" \\
                   ${env.jobName}-builder npm run build-renderer
               """
             }
