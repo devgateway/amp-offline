@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -r dist
+rm -fr dist
 
 TARGET=$3
 echo TARGET=$TARGET
