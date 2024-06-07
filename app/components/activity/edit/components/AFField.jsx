@@ -81,7 +81,7 @@ class AFField extends Component {
 
   constructor(props) {
     super(props);
-    logger.debug('constructor');
+    logger.debug('constructor of AFField');
     this.fieldExists = false;
   }
 
@@ -235,6 +235,7 @@ class AFField extends Component {
   _getSearch() {
     const { fieldPath, onAfterUpdate, extraParams } = this.props;
     const afOptions = this._toAFOptions(this._getOptions(fieldPath));
+    console.log('Options', afOptions);
     return (<AFSearchList
       onSearchSelect={onAfterUpdate} options={afOptions}
       placeholder={(extraParams && extraParams.placeholder ? extraParams.placeholder : null)} />);
@@ -263,8 +264,11 @@ class AFField extends Component {
 
   _getOptions(fieldPath, selectedId) {
     const { workspacePrefix } = this.props;
+    // console.log('Path****', fieldPath);
+    // console.log('Activity****', this.context.activity);
     const somePrefix = workspacePrefix || '';
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
+
     if (options === null || options === undefined) {
       // TODO throw error but continue to render (?)
       logger.error(`Options not found for ${this.props.fieldPath}`);
@@ -280,8 +284,43 @@ class AFField extends Component {
         }
       });
     }
+
     if (Object.keys(optionsWithPrefix).length === 0) {
       optionsWithPrefix = options;
+    }
+    if (fieldPath === 'indicators~indicator') {
+      // return [];
+      const combinedPrograms = [...this.context.activity.primary_programs, ...this.context.activity.secondary_programs];
+      const activityProgramIdsSet = new Set(combinedPrograms.map(program => program.id));
+      // const optionsProgramIds= options.map()
+      if (activityProgramIdsSet.size <= 0) {
+        optionsWithPrefix = { };
+      } else {
+        Object.keys(optionsWithPrefix)
+          .forEach(o => {
+            if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]) {
+              console.log("Prog set", activityProgramIdsSet);
+              // console.log("Option ", options[o][ActivityConstants.EXTRA_INFO]);
+              if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
+                console.log("Here******");
+                if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].length<=0)
+                {
+                  console.log("No program ids related to this indicator");
+
+                  delete optionsWithPrefix[o];
+                }
+                else {
+                  optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].forEach(id => {
+                    if (!activityProgramIdsSet.has(id)) {
+                      console.log('Not Found id ****', id);
+                      delete optionsWithPrefix[o];
+                    }
+                  });
+                }
+              }
+            }
+          });
+      }
     }
     const isORFilter = (this.props.extraParams && this.props.extraParams.isORFilter) || false;
     return PossibleValuesManager.setVisibility(
