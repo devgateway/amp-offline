@@ -303,7 +303,6 @@ class AFField extends Component {
         if (activityProgramIdsSet.size <= 0) {
           optionsWithPrefix = { };
         } else {
-          console.log("Elsee");
           Object.keys(optionsWithPrefix)
           .forEach(o => {
             console.log('Prog set 1', activityProgramIdsSet);
