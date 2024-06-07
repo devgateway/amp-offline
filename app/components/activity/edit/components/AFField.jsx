@@ -28,6 +28,7 @@ import AFRadioList from './AFRadioList';
 import FieldDefinition from '../../../../modules/field/FieldDefinition';
 import Messages from '../../../common/Messages';
 import PossibleValuesHelper from '../../../../modules/helpers/PossibleValuesHelper';
+import GlobalSettingsManager from '../../../../modules/util/GlobalSettingsManager';
 
 const logger = new Logger('AF field');
 
@@ -289,37 +290,45 @@ class AFField extends Component {
       optionsWithPrefix = options;
     }
     if (fieldPath === 'indicators~indicator') {
+      const filterIndicatorByProg = GlobalSettingsManager.getSettingByKey('Filter indicators by program');
+      console.log('Filter ind', filterIndicatorByProg === 'true');
+      if (filterIndicatorByProg === 'true') {
       // return [];
-      const combinedPrograms = [...this.context.activity.primary_programs, ...this.context.activity.secondary_programs];
-      const activityProgramIdsSet = new Set(combinedPrograms.map(program => program.id));
+        // eslint-disable-next-line max-len
+        const combinedPrograms = [...this.context.activity.primary_programs, ...this.context.activity.secondary_programs, ...this.context.activity.tertiary_programs];
+        const activityProgramIdsSet = new Set(combinedPrograms.map(program => program.id));
       // const optionsProgramIds= options.map()
-      if (activityProgramIdsSet.size <= 0) {
-        optionsWithPrefix = { };
-      } else {
-        Object.keys(optionsWithPrefix)
-          .forEach(o => {
-            if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]) {
-              console.log("Prog set", activityProgramIdsSet);
-              // console.log("Option ", options[o][ActivityConstants.EXTRA_INFO]);
-              if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
-                console.log("Here******");
-                if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].length<=0)
-                {
-                  console.log("No program ids related to this indicator");
+        console.log('Prog set', activityProgramIdsSet);
 
-                  delete optionsWithPrefix[o];
-                }
-                else {
-                  optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].forEach(id => {
-                    if (!activityProgramIdsSet.has(id)) {
-                      console.log('Not Found id ****', id);
-                      delete optionsWithPrefix[o];
-                    }
-                  });
-                }
+        if (activityProgramIdsSet.size <= 0) {
+          optionsWithPrefix = { };
+        } else {
+          console.log("Elsee");
+          Object.keys(optionsWithPrefix)
+          .forEach(o => {
+            console.log('Prog set 1', activityProgramIdsSet);
+
+            if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]) {
+              console.log('Prog set', activityProgramIdsSet);
+              // console.log("Option ", options[o][ActivityConstants.EXTRA_INFO]);
+              // if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
+              console.log('Here******');
+              if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].length <= 0) {
+                console.log('No program ids related to this indicator');
+
+                delete optionsWithPrefix[o];
+              } else {
+                optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].forEach(id => {
+                  if (!activityProgramIdsSet.has(id)) {
+                    console.log('Not Found id ****', id);
+                    delete optionsWithPrefix[o];
+                  }
+                });
               }
+              // }
             }
           });
+        }
       }
     }
     const isORFilter = (this.props.extraParams && this.props.extraParams.isORFilter) || false;
