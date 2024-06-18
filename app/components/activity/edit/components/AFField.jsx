@@ -82,7 +82,7 @@ class AFField extends Component {
 
   constructor(props) {
     super(props);
-    logger.debug('constructor of AFField');
+    logger.debug('constructor');
     this.fieldExists = false;
   }
 
@@ -269,7 +269,7 @@ class AFField extends Component {
     // console.log('Activity****', this.context.activity);
     const somePrefix = workspacePrefix || '';
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
-
+    console.log("Options ******", options);
     if (options === null || options === undefined) {
       // TODO throw error but continue to render (?)
       logger.error(`Options not found for ${this.props.fieldPath}`);
@@ -285,7 +285,6 @@ class AFField extends Component {
         }
       });
     }
-
     if (Object.keys(optionsWithPrefix).length === 0) {
       optionsWithPrefix = options;
     }
@@ -311,18 +310,19 @@ class AFField extends Component {
               console.log('Prog set', activityProgramIdsSet);
               // console.log("Option ", options[o][ActivityConstants.EXTRA_INFO]);
               // if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
-              console.log('Here******');
               if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].length <= 0) {
                 console.log('No program ids related to this indicator');
 
                 delete optionsWithPrefix[o];
               } else {
-                optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].forEach(id => {
+                // eslint-disable-next-line no-restricted-syntax
+                for (const id of optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
                   if (!activityProgramIdsSet.has(id)) {
                     console.log('Not Found id ****', id);
                     delete optionsWithPrefix[o];
+                    break;
                   }
-                });
+                }
               }
               // }
             }
