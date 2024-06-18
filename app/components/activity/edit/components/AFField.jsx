@@ -289,27 +289,22 @@ class AFField extends Component {
       optionsWithPrefix = options;
     }
     if (fieldPath === 'indicators~indicator') {
-      console.log("Options ******", optionsWithPrefix);
       const filterIndicatorByProg = GlobalSettingsManager.getSettingByKey('Filter indicators by program');
       console.log('Filter ind', filterIndicatorByProg === 'true');
       if (filterIndicatorByProg === 'true') {
       // return [];
         // eslint-disable-next-line max-len
         const combinedPrograms = [...this.context.activity.primary_programs, ...this.context.activity.secondary_programs, ...this.context.activity.tertiary_programs];
-        console.log("Primary progs: ",this.context.activity.primary_programs);
         const activityProgramIdsSet = new Set(combinedPrograms.map(program => program.program.id));
       // const optionsProgramIds= options.map()
-        console.log('Prog set', activityProgramIdsSet);
 
         if (activityProgramIdsSet.size <= 0) {
           optionsWithPrefix = { };
         } else {
           Object.keys(optionsWithPrefix)
           .forEach(o => {
-            console.log('Prog set 1', activityProgramIdsSet);
 
             if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]) {
-              console.log('Prog set', activityProgramIdsSet);
               // console.log("Option ", options[o][ActivityConstants.EXTRA_INFO]);
               // if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
               if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].length <= 0) {
@@ -319,7 +314,6 @@ class AFField extends Component {
               } else {
                 // eslint-disable-next-line no-restricted-syntax
                 for (const id of optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
-                  console.log("Id here", id);
                   if (!activityProgramIdsSet.has(id)) {
                     console.log('Not Found id ****', id);
                     delete optionsWithPrefix[o];
