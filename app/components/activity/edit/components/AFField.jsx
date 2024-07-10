@@ -288,10 +288,10 @@ class AFField extends Component {
     if (Object.keys(optionsWithPrefix).length === 0) {
       optionsWithPrefix = options;
     }
-    if (fieldPath === 'indicators~indicator') {
-      const filterIndicatorByProg = GlobalSettingsManager.getSettingByKey('Filter indicators by program');
-      console.log('Filter ind', filterIndicatorByProg === 'true');
-      if (filterIndicatorByProg === 'true') {
+    const filterIndicatorByProg = GlobalSettingsManager.getSettingByKey('Filter indicators by program');
+    console.log('Filter ind', filterIndicatorByProg === 'true');
+    if (filterIndicatorByProg === 'true') {
+      if (fieldPath === 'indicators~indicator') {
       // return [];
         // eslint-disable-next-line max-len
         const combinedPrograms = [...this.context.activity.primary_programs, ...this.context.activity.secondary_programs, ...this.context.activity.tertiary_programs];
@@ -303,7 +303,6 @@ class AFField extends Component {
         } else {
           Object.keys(optionsWithPrefix)
           .forEach(o => {
-
             if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]) {
               // console.log("Option ", options[o][ActivityConstants.EXTRA_INFO]);
               // if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
