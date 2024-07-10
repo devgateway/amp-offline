@@ -28,6 +28,7 @@ import AFRadioList from './AFRadioList';
 import FieldDefinition from '../../../../modules/field/FieldDefinition';
 import Messages from '../../../common/Messages';
 import PossibleValuesHelper from '../../../../modules/helpers/PossibleValuesHelper';
+import GlobalSettingsManager from '../../../../modules/util/GlobalSettingsManager';
 
 const logger = new Logger('AF field');
 
@@ -235,6 +236,7 @@ class AFField extends Component {
   _getSearch() {
     const { fieldPath, onAfterUpdate, extraParams } = this.props;
     const afOptions = this._toAFOptions(this._getOptions(fieldPath));
+    console.log('Options', afOptions);
     return (<AFSearchList
       onSearchSelect={onAfterUpdate} options={afOptions}
       placeholder={(extraParams && extraParams.placeholder ? extraParams.placeholder : null)} />);
@@ -263,8 +265,11 @@ class AFField extends Component {
 
   _getOptions(fieldPath, selectedId) {
     const { workspacePrefix } = this.props;
+    // console.log('Path****', fieldPath);
+    // console.log('Activity****', this.context.activity);
     const somePrefix = workspacePrefix || '';
     const options = this.context.activityFieldsManager.possibleValuesMap[fieldPath];
+
     if (options === null || options === undefined) {
       // TODO throw error but continue to render (?)
       logger.error(`Options not found for ${this.props.fieldPath}`);
@@ -282,6 +287,44 @@ class AFField extends Component {
     }
     if (Object.keys(optionsWithPrefix).length === 0) {
       optionsWithPrefix = options;
+    }
+    const filterIndicatorByProg = GlobalSettingsManager.getSettingByKey('Filter indicators by program');
+    console.log('Filter ind', filterIndicatorByProg === 'true');
+    if (filterIndicatorByProg === 'true') {
+      if (fieldPath === 'indicators~indicator') {
+      // return [];
+        // eslint-disable-next-line max-len
+        const combinedPrograms = [...this.context.activity.primary_programs, ...this.context.activity.secondary_programs, ...this.context.activity.tertiary_programs];
+        const activityProgramIdsSet = new Set(combinedPrograms.map(program => program.program.id));
+      // const optionsProgramIds= options.map()
+
+        if (activityProgramIdsSet.size <= 0) {
+          optionsWithPrefix = { };
+        } else {
+          Object.keys(optionsWithPrefix)
+          .forEach(o => {
+            if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]) {
+              // console.log("Option ", options[o][ActivityConstants.EXTRA_INFO]);
+              // if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
+              if (optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids'].length <= 0) {
+                console.log('No program ids related to this indicator');
+
+                delete optionsWithPrefix[o];
+              } else {
+                // eslint-disable-next-line no-restricted-syntax
+                for (const id of optionsWithPrefix[o][ActivityConstants.EXTRA_INFO]['program-ids']) {
+                  if (!activityProgramIdsSet.has(id)) {
+                    console.log('Not Found id ****', id);
+                    delete optionsWithPrefix[o];
+                    break;
+                  }
+                }
+              }
+              // }
+            }
+          });
+        }
+      }
     }
     const isORFilter = (this.props.extraParams && this.props.extraParams.isORFilter) || false;
     return PossibleValuesManager.setVisibility(

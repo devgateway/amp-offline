@@ -231,7 +231,7 @@
     "npm": ">=3.x"
   },
   "config": {
-    "ampServerUrl": "amp-bfaso-develop.stg.ampsite.net",
+    "ampServerUrl": "amp-togo-pr-4327.stg.ampsite.net",
     "ampServerPort": "443",
     "ampServerProtocol": "https"
   },

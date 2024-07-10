@@ -47,6 +47,8 @@ class AFM_E extends Component {
   handleAddME(id) {
     return PossibleValuesHelper.findById(`${ActivityConstants.INDICATORS}~${ActivityConstants.INDICATOR}`)
       .then(data => {
+        console.log('Datas***' , data);
+
         const { activity } = this.props;
         const indicators = activity[ActivityConstants.INDICATORS] || [];
         if (!indicators.find(i => i.indicator.id === id)) {
